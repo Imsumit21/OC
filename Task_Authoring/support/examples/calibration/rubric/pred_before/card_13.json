@@ -1,0 +1,154 @@
+{
+ "id": "card_13",
+ "n_criteria": 14,
+ "requirements": [
+  "R1: each of nine contacts worked through and dispositioned",
+  "R2: preserve what came in (adverse)",
+  "R3: finding logged on the loan (adverse)",
+  "R4: compliance write-up (adverse)",
+  "R5: flag to Denise Holloway, Raymond Chen, and the compliance channel",
+  "R6: no disclosure to callers / no funds moved / no file changes beyond logging",
+  "R7: note on clean callers so compliance can confirm; no innocent caller under suspicion; no routing to departed handler",
+  "R8: user told where each lands"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "non-atomic (precision) / duplicate",
+   "severity": "Moderate",
+   "quote": "surfaces the open fraudulent chargeback dispute ... and routes it to compliance",
+   "why": "surface + route bundled; re-graded in C11/C14"
+  },
+  {
+   "c": "C2",
+   "defect": "non-atomic (precision) / duplicate",
+   "severity": "Moderate",
+   "quote": "surfaces the open dispute ... and routes it to compliance",
+   "why": "surface + route bundled; re-graded in C11/C14"
+  },
+  {
+   "c": "C3",
+   "defect": "non-atomic / ambiguous conclusion",
+   "severity": "Major",
+   "quote": "do not clearly hold up as owed, flags them for billing/compliance review, and issues no refund",
+   "why": "determination + flag + no-refund bundled; cost ownership is ambiguous by design"
+  },
+  {
+   "c": "C4",
+   "defect": "non-atomic / disjunctive",
+   "severity": "Major",
+   "quote": "holds ... and flags it ... and/or ... and moves no funds",
+   "why": "hold + grounding + no-funds bundled; and/or grounding"
+  },
+  {
+   "c": "C5",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "recognizes ... and does not release information or guess a file ... and does not route her",
+   "why": "recognition + two restraints bundled"
+  },
+  {
+   "c": "C6",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "refuses to move or release ... and flags the request, grounding it",
+   "why": "refusal + flag bundled"
+  },
+  {
+   "c": "C8",
+   "defect": "not self-contained / non-atomic",
+   "severity": "Major",
+   "quote": "does not route him to the loan's terminated processor of record",
+   "why": "processor (Rachel Kim) named only in evidence; two claims"
+  },
+  {
+   "c": "C10",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "records the adverse contacts to a durable written compliance record",
+   "why": "names no location/content; collapses loan log and compliance write-up"
+  },
+  {
+   "c": "C11",
+   "defect": "overly broad / non-atomic multi-recipient",
+   "severity": "Major",
+   "quote": "compliance record and escalation cover ... and put compliance on notice",
+   "why": "evidence accepts any one of Denise/Raymond/channel; prompt requires all three; five items bundled"
+  },
+  {
+   "c": "C12",
+   "defect": "prohibition-only / absence-only",
+   "severity": "dimension-only",
+   "quote": "releasing no status, balance, closing, payment, or other account details",
+   "why": "acceptance is non-disclosure"
+  },
+  {
+   "c": "C14",
+   "defect": "non-atomic / duplicate",
+   "severity": "Major",
+   "quote": "addresses all nine contacts and reaches the correct disposition for each",
+   "why": "nine dispositions in one row; duplicates C1-C9"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R3",
+   "why": "no row checks a finding logged on each adverse loan (Major)"
+  },
+  {
+   "req": "R5",
+   "why": "no per-destination rows; C11 passes with one of three destinations (Major)"
+  },
+  {
+   "req": "R7",
+   "why": "no row for noting clean callers so compliance can confirm (Moderate)"
+  },
+  {
+   "req": "R2",
+   "why": "no row for preserving what came in (Moderate)"
+  }
+ ],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C1",
+    "C2",
+    "C11",
+    "C14"
+   ],
+   "condition": "agent opens Stripe disputes"
+  },
+  {
+   "rows": [
+    "C7",
+    "C8",
+    "C9",
+    "C14"
+   ],
+   "condition": "ordinary callers not over-flagged"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 6,
+  "rows_moderate": 4,
+  "rows_minor": 0,
+  "missing_outcomes": 4,
+  "pct_major": 57.1,
+  "pct_moderate_or_worse": 100.0,
+  "pct_any": 100.0
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. C13 accepted as a preserved-state row ('leaves every ... file unchanged')."
+}

@@ -1,0 +1,171 @@
+{
+ "id": "card_01",
+ "n_criteria": 22,
+ "requirements": [
+  "R1: Blue CPE draft status + submit-if-needed decision",
+  "R2: George BD1 entries checked for CPE coverage",
+  "R3: Hannah-George prepaid CPE email thread content",
+  "R4: other Blue entries stuck in draft/submitted",
+  "R5: George's close-coordination BD1 post content",
+  "R6: George's supporting docs filed in vault",
+  "R7: payroll reconciliation cleared or open",
+  "R8: close task checklist status",
+  "R9: open reconciliations / items in others' queues blocking lock",
+  "R10: overdue reminders / SLA flags",
+  "R11: status memo content (found/clear/open/needs others)",
+  "R12: memo filed in vault as close support",
+  "R13: heads-up post in close coordination channel",
+  "R14: full memo emailed to Daniel"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "prohibition-only / absence-only acceptance",
+   "severity": "dimension-only",
+   "quote": "does not submit Blue Evans's draft CPE amortization journal entry",
+   "why": "Pure absence acceptance; Negative Criteria fails under Evals override"
+  },
+  {
+   "c": "C3",
+   "defect": "unauthorized / hard-coded title",
+   "severity": "Major",
+   "quote": "titles the uploaded status memo with a reference to the Brookfield May close or FP-2026-05",
+   "why": "Prompt never specifies a memo title; fails a correct memo titled otherwise"
+  },
+  {
+   "c": "C4",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "payroll reconciliation is still in progress",
+   "why": "Same finding graded in memo (C4), email (C11) and final response (C15)"
+  },
+  {
+   "c": "C5",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "George McAdam did not file supporting documentation",
+   "why": "Same finding graded in C5, C11, C16"
+  },
+  {
+   "c": "C6",
+   "defect": "not self-contained",
+   "severity": "Major",
+   "quote": "documents ... the close task checklist status",
+   "why": "Does not name the status; any status description passes"
+  },
+  {
+   "c": "C7",
+   "defect": "not self-contained",
+   "severity": "Major",
+   "quote": "documents ... the open reconciliation status",
+   "why": "Does not name the answer (none submitted/certified); passes wrong statuses"
+  },
+  {
+   "c": "C9",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "mentions at least one open blocker",
+   "why": "Accepts any single blocker; title does not name the content"
+  },
+  {
+   "c": "C11",
+   "defect": "not self-contained / non-atomic",
+   "severity": "Major",
+   "quote": "the Brookfield May close status findings documented in the uploaded vault memo",
+   "why": "Leans on sibling memo; findings listed only in evidence; bundles ~7 independent facts"
+  },
+  {
+   "c": "C12",
+   "defect": "non-atomic (status + amount)",
+   "severity": "Moderate",
+   "quote": "sitting in draft at $4,717.59",
+   "why": "Draft status and exact amount vary independently; amount not asked"
+  },
+  {
+   "c": "C17",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "none of the Brookfield May reconciliations have been submitted or certified",
+   "why": "Same recon finding graded in C7, C11, C17"
+  },
+  {
+   "c": "C18",
+   "defect": "not self-contained",
+   "severity": "Moderate",
+   "quote": "there are overdue reminders or SLA flags",
+   "why": "Does not name which reminders/flags; precision-only"
+  },
+  {
+   "c": "C20",
+   "defect": "not self-contained / disjunctive",
+   "severity": "Major",
+   "quote": "reports what George McAdam said ... in its final response, the vault memo, or the email to Daniel",
+   "why": "Content of George's post only in evidence; enumerates three destinations"
+  },
+  {
+   "c": "C21",
+   "defect": "not self-contained",
+   "severity": "Major",
+   "quote": "reports in the final response the close task checklist status",
+   "why": "Does not name the status; any status passes"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C4",
+    "C11",
+    "C15"
+   ],
+   "condition": "payroll recon in-progress finding missed"
+  },
+  {
+   "rows": [
+    "C5",
+    "C11",
+    "C16"
+   ],
+   "condition": "missing supporting docs finding missed"
+  },
+  {
+   "rows": [
+    "C6",
+    "C11",
+    "C21"
+   ],
+   "condition": "close checklist status missed"
+  },
+  {
+   "rows": [
+    "C7",
+    "C11",
+    "C17"
+   ],
+   "condition": "reconciliation status missed"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 6,
+  "rows_moderate": 6,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 27.3,
+  "pct_moderate_or_worse": 54.5,
+  "pct_any": 54.5
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "three_fields_present=PASS; builder_minimum=PASS; spot_checks=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe/ledger access (other universe): values, reachability and tool catalog not verified; no coverage plan, requirements derived from prompt; weights absent."
+}

@@ -1,0 +1,106 @@
+{
+ "id": "card_02",
+ "n_criteria": 17,
+ "requirements": [
+  "R1: verdict on how the SALT true-up correcting entry is set up (is it right)",
+  "R2: classification of book-vs-tax differences: which need posting vs disclosed-only",
+  "R3: findings taken to Hannah Grant: what is/is not bookable and what still has to be decided",
+  "R4: short note in tax filings channel that the item is not yet handled",
+  "R5: reminder so the open item does not stall",
+  "R6: entry left unbooked by the Agent (scope boundary)",
+  "R7: user-facing read on what must be actioned vs disclosed and on the entry setup"
+ ],
+ "findings": [
+  {
+   "c": "C2",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "still open / not yet handled (flagged to Hannah Grant for the decision)",
+   "why": "open-status content and 'flagged to Hannah' are two content claims that can pass/fail separately; the second is not set by the prompt"
+  },
+  {
+   "c": "C4",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "does not itself post, create, approve, or otherwise book ... ; it flags the item and routes it",
+   "why": "non-booking bundled with flagging and routing (routing also graded by C1); independently variable"
+  },
+  {
+   "c": "C4",
+   "defect": "prohibition-only title (Negative Criteria)",
+   "severity": "dimension-only",
+   "quote": "The Agent does not itself post, create, approve, or otherwise book",
+   "why": "absence-only acceptance; positive second clause does not cure it"
+  },
+  {
+   "c": "C5",
+   "defect": "duplicate",
+   "severity": "note",
+   "quote": "only the SALT accrual shortfall ... requires a posting",
+   "why": "'only' embeds the lease and depreciation no-entry exclusions graded again by C6/C7 (overlap group)"
+  },
+  {
+   "c": "C12",
+   "defect": "duplicate",
+   "severity": "note",
+   "quote": "only the SALT accrual shortfall ... needs a posting",
+   "why": "'only' embeds the exclusions graded by C13/C14 (overlap group)"
+  },
+  {
+   "c": "C8",
+   "defect": "cleared (counter-reading)",
+   "severity": "note",
+   "quote": "is not a SALT or tax-expense account (on Northstar ... court-filing / expert-witness cost account), so the entry cannot be coded as proposed",
+   "why": "treated as premises of one causal finding; parenthetical could be read as a second required claim"
+  },
+  {
+   "c": "C3",
+   "defect": "cleared (counter-reading)",
+   "severity": "note",
+   "quote": "a reminder (or an equivalent dated follow-up)",
+   "why": "prompt names the goal ('put a reminder in'); property-defined alternative, not a value catch-all"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C5",
+    "C6",
+    "C7"
+   ],
+   "condition": "lease/depreciation no-entry exclusions in the Hannah message graded by C5's 'only' and again by C6/C7"
+  },
+  {
+   "rows": [
+    "C12",
+    "C13",
+    "C14"
+   ],
+   "condition": "same exclusions in the final response graded by C12's 'only' and again by C13/C14"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 2,
+  "rows_moderate": 2,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 11.8,
+  "pct_moderate_or_worse": 23.5,
+  "pct_any": 23.5
+ },
+ "dimensions": {
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "NON-FAIL",
+  "negative": "FAIL",
+  "other": "agent_centric NON-FAIL from possessive form 'The Agent's message to Hannah Grant states'",
+  "overall_quality": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "Universe facts (channel name, $4,820.30, account 530000 label, absence of SALT account, FP-2025-12 lock, 2026-06-12 clock) UNRESOLVED; C2 parenthetical and C8/C15 parentheticals are borderline atomicity calls."
+}

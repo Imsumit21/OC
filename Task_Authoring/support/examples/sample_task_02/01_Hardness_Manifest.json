@@ -1,0 +1,1537 @@
+{
+ "persona": "arthur_blake",
+ "horizon": "Long Horizon",
+ "requirements": {
+  "R1": "cohort membership (ENG/ZOM, Bugs/Regression state or Bug label, open, no Acceptable Behavior, created before the cut-off)",
+  "R2": "lot vs Not-in-lot-Web assignment and listing",
+  "R3": "tier per row (house rule + accepted amendment)",
+  "R4": "fix status per row (code-history rule: 4-month window, latest-merge rule, comment-only references)",
+  "R5": "exact totals per lot x tier over rows that still reproduce",
+  "R6": "destination folder, file name and tabs",
+  "R7": "sharing + recipient + cc + link-only",
+  "R8": "cut-off (current invite) and snapshot-at-send",
+  "R9": "ENG-2439 end state (link in description, In Review)",
+  "R10": "known-issues slide shows the per-lot totals by tier",
+  "R11": "hub-thread reply with totals",
+  "R12": "Confluence checklist disagreement reported",
+  "R13": "per-platform retest results and current-build status per row",
+  "R14": "row grouping: sub-issues folded into the parent's row; folded tier / fix / retest aggregation",
+  "R15": "change-list membership (ENG/ZOM, Done, completed on/after 2025-06-01, archived left out, one row per ticket)",
+  "R16": "store update (first store update it went out in) and release status per change-list row",
+  "R17": "change-list totals per lot by release status"
+ },
+ "services": {
+  "slack": {
+   "role": "hub; claim + partial retraction; reproduction reports; decoy scale; retest kickoff (builds); Leonard's release-audit ask (H5 decoy scope); GitHub-app copies of PR comments; write W6",
+   "weight_reason": "A1 delegations; the retest kickoff naming the store builds; the written reports (ENG-2277 DM, ZOM-611 Oct 21) that decide REPRODUCED vs UNVERIFIED; #zombie-prs / #engineering-bots carry the PR-comment copies (the cheapest path to comment-only fix references)"
+  },
+  "gmail": {
+   "role": "hidden authorities H1 (+ amendment) and H5 (change-list scope, forwarded with the tab name); stale cut-off versions; write W3",
+   "weight_reason": "membership, fix-status (incl. latest-merge), per-platform retest and totals rules, the Web amendment and the snapshot rule exist only in Leonard's forwarded intake thread; the change-list window, archive exclusion, store-update and release-status definitions only in the forwarded code-review email"
+  },
+  "gcal": {
+   "role": "hidden authority H4",
+   "weight_reason": "the current cut-off (Mon Feb 16 17:00Z) exists only on Sunset's calendar event; decides ENG-2440 and the file-name date"
+  },
+  "gdrive": {
+   "role": "destination folder (Arthur-owned 04 Technical) + same-named decoy folder; writes W2/W7",
+   "weight_reason": "the folder the schedule must be moved into and the file-level share"
+  },
+  "gdocs": {
+   "role": "asset schedule",
+   "weight_reason": "lot = Linear team, repos per lot (fix-evidence scope), web build in no lot"
+  },
+  "gsheets": {
+   "role": "hidden authority H3 + write target W1",
+   "weight_reason": "folder, file name, tab names, sharing and notify rules live only in Leonard's data room sheet"
+  },
+  "gslides": {
+   "role": "slide to update (W5)",
+   "weight_reason": "the known-issues slide must show the per-lot totals by tier"
+  },
+  "contacts": {
+   "role": "alternate identity path only (the forward already carries Sunset's onboarding lead)"
+  },
+  "github": {
+   "role": "fix evidence",
+   "weight_reason": "in-window merged PRs referencing ticket ids (titles/branches/bodies in bulk; 7 comment-only references, also copied to Slack by the GitHub app) decide fix status and merge order"
+  },
+  "linear": {
+   "role": "both cohorts + retest comments (both platforms) + Arthur's release-audit notes + reuse ticket",
+   "weight_reason": "the 75 defect candidates (state/priority/labels/parents), their iOS and Android results; the 424 change-list tickets (completion date, archive flag) and each one's store update and release status, which exist only in its audit note; ENG-2439"
+  },
+  "trello": {
+   "role": "hidden authority H2",
+   "weight_reason": "severity tiers, the accepted amendment and the row-grouping rules exist only on Arthur's founders'-board card"
+  },
+  "confluence": {
+   "role": "same-purpose checklist whose disagreement must be reported",
+   "weight_reason": "R12: its engineering definition must be compared and the difference flagged"
+  }
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "prompt_reference": "the known-defects schedule Leonard asked me for in the wind-down channel",
+   "service": "slack",
+   "locator": "C0ADGSZKR3R ts 1770938731.204119"
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "slack",
+   "container": "C0ADGSZKR3R:1770938731.204119",
+   "locator": "hub thread parent",
+   "kind": "delegation",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "44fa0323e16fe8caf412d70a5f7c4f2b"
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "gmail",
+   "container": "arthur.blake@harmonygames.co/1856963042345149306",
+   "locator": "message 1 (Sunset intake rules 1-6)",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>"
+   ]
+  },
+  {
+   "id": "K3",
+   "service": "gmail",
+   "container": "arthur.blake@harmonygames.co/1856963042345149306",
+   "locator": "message 2 (Sunset follow-up)",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_aIafXENPKGRJQRmN8JWFh79ZCuzONuAVSs5SuinXJ0c@mail.gmail.com>"
+   ],
+   "supersedes": "K2 (adds Web list; rest stands)"
+  },
+  {
+   "id": "K4",
+   "service": "trello",
+   "container": "698e523f59165a3daa4028f5",
+   "locator": "card desc (tiers + rows)",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "698e523f59165a3daa4028f5"
+   ]
+  },
+  {
+   "id": "K5",
+   "service": "trello",
+   "container": "698e523f59165a3daa4028f5",
+   "locator": "commentCard Robert + Arthur",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K4"
+   ],
+   "seeded_ids": [
+    "698ef91c10c6c114c525bf10",
+    "698eff8754769f80177eeca5"
+   ],
+   "supersedes": "K4 hot-fix clause"
+  },
+  {
+   "id": "K6",
+   "service": "gsheets",
+   "container": "f_5a83f7de3271d0ddcb28b5",
+   "locator": "Index tab, row 'Known defects schedule'",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_5a83f7de3271d0ddcb28b5"
+   ]
+  },
+  {
+   "id": "K7",
+   "service": "gsheets",
+   "container": "f_5a83f7de3271d0ddcb28b5:Notes",
+   "locator": "Notes tab (share, notify, date rule)",
+   "kind": "recipient",
+   "incorporated_via": [
+    "A1",
+    "K6"
+   ],
+   "seeded_ids": [
+    "f_5a83f7de3271d0ddcb28b5"
+   ]
+  },
+  {
+   "id": "K8",
+   "service": "gcal",
+   "container": "656be08ecb712237ee7060e4e59c7ccf@hg4",
+   "locator": "event copies (current time)",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "evt_dc8a6f6d61d9d99f8d5545",
+    "evt_0565966dd887050bd9824d",
+    "evt_977e7982179ff398fb2715"
+   ]
+  },
+  {
+   "id": "K9",
+   "service": "gdocs",
+   "container": "f_9c5260cbc1cfe2ee32591a",
+   "locator": "lots section",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_9c5260cbc1cfe2ee32591a"
+   ]
+  },
+  {
+   "id": "K10",
+   "service": "linear",
+   "container": "ENG-2439",
+   "locator": "tracking ticket description (end state)",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "ENG-2439"
+   ]
+  },
+  {
+   "id": "K11",
+   "service": "gslides",
+   "container": "f_fe90457cba7d7620b0b39b",
+   "locator": "slide 5 (index 4) element",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_fe90457cba7d7620b0b39b",
+    "el_101445bd1107"
+   ]
+  },
+  {
+   "id": "K12",
+   "service": "confluence",
+   "container": "page_ip_sale_data_room",
+   "locator": "Engineering section",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "page_ip_sale_data_room"
+   ]
+  },
+  {
+   "id": "K13",
+   "service": "slack",
+   "container": "C05V5FNLB9V:1770940961.204551",
+   "locator": "retest kickoff (builds per game, where each platform's result lives)",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "825da0a9790061f6dfc0cacea25cf32e"
+   ]
+  },
+  {
+   "id": "K14",
+   "service": "gmail",
+   "container": "arthur.blake@harmonygames.co/Fwd: Harmony Games - code review: change list",
+   "locator": "Leonard's forward (tab name) + Sunset's change-list rules 1-5",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_a0Tq7LmW2dVh4XnK9pRs3YcF6uZe1JgBo8NiAw5Kt@mail.gmail.com>"
+   ],
+   "supersedes": "K6 tab list (adds the Changes tab; rest stands)"
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "Sunset's intake list (issuer: Sunset)",
+   "home_service": "gmail",
+   "decoy_service": "confluence",
+   "governs": [
+    "R1",
+    "R4",
+    "R13"
+   ],
+   "findable_query": "Sunset intake",
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>",
+    "arthur.blake@harmonygames.co/<CAPBs_aIafXENPKGRJQRmN8JWFh79ZCuzONuAVSs5SuinXJ0c@mail.gmail.com>"
+   ],
+   "decoy_seeded_ids": [
+    "page_ip_sale_data_room"
+   ]
+  },
+  {
+   "id": "H2",
+   "name": "Arthur's severity tiers (issuer: Arthur)",
+   "home_service": "trello",
+   "decoy_service": "slack",
+   "governs": [
+    "R3",
+    "R14"
+   ],
+   "findable_query": "severity tiers",
+   "seeded_ids": [
+    "698e523f59165a3daa4028f5",
+    "698ef91c10c6c114c525bf10",
+    "698eff8754769f80177eeca5"
+   ],
+   "decoy_seeded_ids": [
+    "e5ffcec7a40630d80eee161c037a9499",
+    "9fdb7546f53b9e9bf58864fe117169b4"
+   ]
+  },
+  {
+   "id": "H3",
+   "name": "Leonard's data room sheet (issuer: Leonard)",
+   "home_service": "gsheets",
+   "decoy_service": "gdrive",
+   "governs": [
+    "R6",
+    "R7"
+   ],
+   "findable_query": "IP Sale Data Room",
+   "seeded_ids": [
+    "f_5a83f7de3271d0ddcb28b5"
+   ],
+   "decoy_seeded_ids": [
+    "d_bfe053a06cf4d6f1021a98",
+    "d_2f55ba7fcbe116ce345503"
+   ]
+  },
+  {
+   "id": "H4",
+   "name": "Sunset's invite as it stands (issuer: Sunset)",
+   "home_service": "gcal",
+   "decoy_service": "gmail",
+   "governs": [
+    "R8"
+   ],
+   "findable_query": "technical intake cut-off",
+   "seeded_ids": [
+    "evt_dc8a6f6d61d9d99f8d5545",
+    "evt_0565966dd887050bd9824d",
+    "evt_977e7982179ff398fb2715"
+   ],
+   "decoy_seeded_ids": [
+    "arthur.blake@harmonygames.co/<calendar-2afaf3e1-debe-9e19-365e-acab8d62be8b@google.com>"
+   ]
+  },
+  {
+   "id": "H5",
+   "name": "Sunset's change-list scope (issuer: Sunset technical due diligence, forwarded by Leonard)",
+   "home_service": "gmail",
+   "decoy_service": "slack",
+   "governs": [
+    "R15",
+    "R16",
+    "R17"
+   ],
+   "findable_query": "change list",
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_a0Tq7LmW2dVh4XnK9pRs3YcF6uZe1JgBo8NiAw5Kt@mail.gmail.com>"
+   ],
+   "decoy_seeded_ids": [
+    "35a73b7bd79cc043c60cb4d99a7c0a35",
+    "7429bf2c4ad65c7aa50b7bffc826ed49"
+   ]
+  }
+ ],
+ "cohort": {
+  "definition_source": "H1 (open defects, 75 candidates) + H5 (change list, 424 tickets)",
+  "key": "Linear identifier",
+  "size": 499,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1,
+    "records": 67,
+    "seeded": true,
+    "why_no_bulk": "VERIFIED (Ask_Carriers 6b): linear_list_issues returns no comments; injected comments render via list_comments",
+    "short_circuit": "one call per retested ticket returns Oliver's iOS and Robert's Android result; both are output columns (rule 2/4) and the outcome is unpredictable per ticket (13 both-negative, 11 one-platform, 6 unfinished, 4 corrected in a later comment, 4 without Android). Counted at 67, not 73: the 6 cohort tickets with no comment keep a pre-kickoff updated_at, so their absence can be inferred from the list"
+   },
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1,
+    "records": 424,
+    "seeded": true,
+    "why_no_bulk": "VERIFIED (Ask_Carriers 6b): linear_list_issues returns no comments and no bulk path returns them; Linear comments are not copied into a Slack channel (13 Linear comment notifications in all of Slack, all in DMs / group DMs, none in a channel feed)",
+    "short_circuit": "each change-list row needs two output columns that exist only in the ticket's audit note: the store update date (every row; 38 notes name a missed cut before the real date) and the release status (52 ROLLED BACK + 28 NOT RELEASED = 80/424 = 18% flip; 22 more were turned off and back on and stay RELEASED). Nothing upstream says which: Arthur wrote every note in one pass on Feb 11-12 (uniform updated_at), the 80 May tickets carry notes too, ticket fields (labels, assignee, dates) do not predict the outcome, and the notes avoid H5's status words (RELEASED / ROLLED BACK / NOT RELEASED, reverted, switched off)"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_conversations_search_messages",
+    "per_record_calls": 1,
+    "records": 4,
+    "why_no_bulk": "a later written report can sit in any channel or DM; searched by ticket id",
+    "short_circuit": "needed only for the 4 merged-fix tickets still unresolved after the PR sweep, Regression state and retests (ENG-2400, ZOM-610, ZOM-611, ZOM-614); ZOM-611's Oct 21 report must be dated against its latest merge"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "human fix claims vs code-history rule (no stated conclusion)",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "e9e6052aa67c6c99d4a6e09257b29358",
+     "finding": "Leonard: sign-in bugs fixed before xmas (claim)"
+    },
+    {
+     "service": "slack",
+     "record": "39fffa92a9d74612f1c04fae07fd1764",
+     "finding": "Leonard narrows it to the splash hang; 'dunno about the rest'"
+    },
+    {
+     "service": "slack",
+     "record": "be168c6e698b67532607eef22aa6c1c9",
+     "finding": "Oliver: splash hang fixed in the fix/login race PR"
+    },
+    {
+     "service": "github",
+     "record": "GameOfDominoes#1876 (base, merged 2025-10-29) names no ticket",
+     "finding": "no fix evidence for ENG-2363 / ENG-2280 group"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2363, ENG-2280 (+2073/2114/2281)",
+     "finding": "open; NO FIX"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "persona's own fix claim, later written reproduction",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "github",
+     "record": "harmonygames-Games/game-of-dominoes-backend#79#c_2",
+     "finding": "server-side part of ENG-2277 / ENG-2400"
+    },
+    {
+     "service": "slack",
+     "record": "2875e5886fe9b4e288f6b15c52db64ee",
+     "finding": "Leonard Feb 11: 2277 back on 309"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2277 REPRODUCED; ENG-2400 retest unfinished on both -> UNVERIFIED",
+     "finding": "R4"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "issuer-named house rule with an accepted partial amendment",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "44fa0323e16fe8caf412d70a5f7c4f2b",
+     "finding": "hub: use your severity tiers"
+    },
+    {
+     "service": "trello",
+     "record": "698e523f59165a3daa4028f5",
+     "finding": "tiers + order + row rules"
+    },
+    {
+     "service": "trello",
+     "record": "698ef91c10c6c114c525bf10",
+     "finding": "hot-fix clause narrowed; accepted in 698eff8754769f80177eeca5"
+    },
+    {
+     "service": "linear",
+     "record": "ZOM-616 (T2 not T1)",
+     "finding": "priority/state/labels"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "scope amendment in a later email",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>",
+     "finding": "intake rules"
+    },
+    {
+     "service": "gmail",
+     "record": "arthur.blake@harmonygames.co/<CAPBs_aIafXENPKGRJQRmN8JWFh79ZCuzONuAVSs5SuinXJ0c@mail.gmail.com>",
+     "finding": "web build not in a lot; separate list, not counted"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2406, ENG-2407, ENG-2408",
+     "finding": "WebGL label"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "cut-off moved after the written statements; current invite governs",
+   "ends_in": "R8",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>",
+     "finding": "Sunset: Fri 12:00 PT"
+    },
+    {
+     "service": "gmail",
+     "record": "arthur.blake@harmonygames.co/<calendar-2afaf3e1-debe-9e19-365e-acab8d62be8b@google.com>",
+     "finding": "invitation Fri 12pm PST"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_dc8a6f6d61d9d99f8d5545",
+     "finding": "event now Mon 09:00 PT (no update email)"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2440",
+     "finding": "created Fri 20:31Z: in"
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "root_cause": "deck count replaced by computed totals",
+   "ends_in": "R10",
+   "hops": [
+    {
+     "service": "gslides",
+     "record": "f_fe90457cba7d7620b0b39b",
+     "finding": "19 open bugs (13/6)"
+    },
+    {
+     "service": "linear",
+     "record": "cohort",
+     "finding": "67 rows"
+    },
+    {
+     "service": "linear",
+     "record": "retest comments",
+     "finding": "13 rows leave the totals"
+    }
+   ]
+  },
+  {
+   "id": "C7",
+   "root_cause": "fix evidence only in PR conversation comments",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "github",
+     "record": "lot-repo PRs merged on/after 2025-10-13 (73)",
+     "finding": "no title/branch/body reference for these tickets"
+    },
+    {
+     "service": "github",
+     "record": "game-of-dominoes-backend#79#c_2, match3d#520#c_2, #528#c_2, #527#c_3, #542#c_3, GameOfDominoes#1912#c_2, #1907#c_2",
+     "finding": "in-window comments say they fix/address the tickets"
+    },
+    {
+     "service": "slack",
+     "record": "a88fd742d6925613d6da9e3f6578fd42",
+     "finding": "the GitHub app's copy of the #528 comment in #zombie-prs (same text; the cheaper path)"
+    },
+    {
+     "service": "slack",
+     "record": "2fbb8bc2420ab69a5866a1c820f14f5d",
+     "finding": "ZOM-608 written report two days after #520 merged"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2277, ENG-2400, ZOM-608, ZOM-610, ZOM-611, ENG-2345, ENG-2242",
+     "finding": "state + retest comments decide UNVERIFIED vs REPRODUCED"
+    }
+   ]
+  },
+  {
+   "id": "C8",
+   "root_cause": "per-platform retest results in two services, each a column",
+   "ends_in": "R13",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>",
+     "finding": "rule 4: per-platform results + current-build rule"
+    },
+    {
+     "service": "slack",
+     "record": "825da0a9790061f6dfc0cacea25cf32e",
+     "finding": "builds named (DD 0.3.309, ZM 0.3.157); where results live"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_248942f08d0563c68d76",
+     "finding": "iOS (Oliver's comment): could not make it happen"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_cb2071c495e2be5c358b",
+     "finding": "Android: still happens -> REPRODUCES"
+    }
+   ]
+  },
+  {
+   "id": "C9",
+   "root_cause": "latest-merge rule with a report between two merged fixes",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#527#c_3",
+     "finding": "first half of ZOM-611 (merged Oct 18)"
+    },
+    {
+     "service": "slack",
+     "record": "66795aeba98ec214bb0595c3e9b1a698",
+     "finding": "Oct 21: still resets"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#542#c_3",
+     "finding": "more of ZOM-611 (merged Oct 24) = latest fix"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_9e4e9d28b5f9ca88a52b",
+     "finding": "Feb 13 retests both negative -> UNVERIFIED, NOT REPRODUCED"
+    }
+   ]
+  },
+  {
+   "id": "C10",
+   "root_cause": "change list: buyer scope vs the persona's own audit scope; status lives only in each ticket's note",
+   "ends_in": "R16",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "arthur.blake@harmonygames.co/<CAPBs_a0Tq7LmW2dVh4XnK9pRs3YcF6uZe1JgBo8NiAw5Kt@mail.gmail.com>",
+     "finding": "Leonard's forward: Sunset change list (completed on/after Jun 1, no archived, store update + release status), tab 'Changes'"
+    },
+    {
+     "service": "slack",
+     "record": "35a73b7bd79cc043c60cb4d99a7c0a35",
+     "finding": "Leonard's Feb 11 ask: audit every ticket closed since May 1 (wider scope)"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_59103a5a5b44a89995fd",
+     "finding": "audit note: went out, then kill switch / backed out -> ROLLED BACK"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_5a54559f642bd4f0d2bd",
+     "finding": "audit note: turned off, back on -> RELEASED"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "exact_predicate",
+   "independent": true,
+   "services": [
+    "linear",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "cmt_a89857cd39fdd384b096",
+    "cmt_45dcb1ae2c302c32542c"
+   ],
+   "base_pointers": [
+    "linear:data.json /issues ENG-1411",
+    "linear:data.json /issues ENG-1877",
+    "linear:data.json /issues ART-695",
+    "linear:data.json /issues ENG-1866 (Regression, no Bug label)"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "AB tickets listed / ART tickets added / Regression-without-Bug-label tickets missed",
+   "resolver": "H1 rule 1"
+  },
+  {
+   "id": "T1a",
+   "family": "distractor",
+   "distractor_type": "near_duplicate_record",
+   "independent": false,
+   "merged_into": "T1",
+   "services": [
+    "confluence"
+   ],
+   "seeded_ids": [
+    "page_ip_sale_data_room"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Bugs column only",
+   "resolver": "H1 governs; Confluence only to be compared (R12)"
+  },
+  {
+   "id": "T1b",
+   "family": "distractor",
+   "distractor_type": "partial_listing",
+   "independent": false,
+   "merged_into": "T1",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "825da0a9790061f6dfc0cacea25cf32e"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "retest list used as the cohort (adds 2 AB, misses ENG-1866, ZOM-542, 3 WebGL, ENG-2440)",
+   "resolver": "Linear enumeration under H1"
+  },
+  {
+   "id": "T1c",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "independent": false,
+   "merged_into": "T1",
+   "services": [
+    "linear"
+   ],
+   "base_pointers": [
+    "linear:data.json /issues ART-696",
+    "linear:data.json /issues EPI-25"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "DD art bugs in Lot A",
+   "resolver": "H1: ENG/ZOM teams"
+  },
+  {
+   "id": "T2",
+   "family": "conclusion_stop",
+   "independent": true,
+   "services": [
+    "linear",
+    "trello",
+    "github"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/GameOfDominoes#1907#c_2",
+    "698e523f59165a3daa4028f5"
+   ],
+   "base_pointers": [
+    "linear:data.json /issues ENG-2242 parent ENG-2128",
+    "linear:data.json /issues ENG-2073 parent ENG-2280"
+   ],
+   "requirement": "R14",
+   "expected_wrong_reading": "73 flat rows; or the ENG-2128 row marked FIX MERGED because child ENG-2242 has a fix; or the row dropped because child ENG-2130 is NOT REPRODUCED",
+   "resolver": "H2 rows clause: parent's fix status; most severe tier; NOT REPRODUCED only if every member is"
+  },
+  {
+   "id": "T3",
+   "family": "superseding",
+   "independent": true,
+   "services": [
+    "trello",
+    "slack"
+   ],
+   "seeded_ids": [
+    "698ef91c10c6c114c525bf10",
+    "698eff8754769f80177eeca5"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "every Hot-Fix ticket T1 (ZOM-616 T1; Lot B 11/3/3/1) or the Slack launch scale used",
+   "resolver": "Arthur's card + accepted amendment",
+   "discovery_order": "card desc is returned first; the amendment is in the comments; the Slack scale shares the search term",
+   "version_records": [
+    {
+     "service": "trello",
+     "id": "698e523f59165a3daa4028f5",
+     "seeded": true,
+     "at": "2026-02-12T22:20:47Z"
+    },
+    {
+     "service": "trello",
+     "id": "698ef91c10c6c114c525bf10",
+     "seeded": true,
+     "at": "2026-02-13T10:12:44Z"
+    },
+    {
+     "service": "trello",
+     "id": "698eff8754769f80177eeca5",
+     "seeded": true,
+     "at": "2026-02-13T10:40:07Z"
+    }
+   ]
+  },
+  {
+   "id": "T3a",
+   "family": "distractor",
+   "distractor_type": "non_authoritative_instruction",
+   "independent": false,
+   "merged_into": "T3",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "e5ffcec7a40630d80eee161c037a9499",
+    "9fdb7546f53b9e9bf58864fe117169b4"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "3-level launch scale; no-priority skipped",
+   "resolver": "hub: 'your' tiers = Arthur's card"
+  },
+  {
+   "id": "T4",
+   "family": "tool_surface",
+   "independent": true,
+   "services": [
+    "github",
+    "slack"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/game-of-dominoes-backend#79#c_2",
+    "harmonygames-Games/match3d#520#c_2",
+    "harmonygames-Games/match3d#528#c_2",
+    "harmonygames-Games/match3d#527#c_3",
+    "harmonygames-Games/match3d#542#c_3",
+    "harmonygames-Games/GameOfDominoes#1912#c_2",
+    "harmonygames-Games/GameOfDominoes#1907#c_2"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "ENG-2277, ENG-2400, ENG-2345, ZOM-608, ZOM-610, ZOM-611 = NO FIX (search/title/branch matching only; comments are not search-indexed)",
+   "resolver": "read the in-window PRs' conversation comments - per PR in GitHub, or their GitHub-app copies in #zombie-prs / #engineering-bots (one filter-only sweep)",
+   "mirror_seeded_ids": [
+    "5d9bce8dab5dc52c3537a2b6cc600e06",
+    "06b12ffda0dcb948c167afa343c237b4",
+    "a88fd742d6925613d6da9e3f6578fd42",
+    "8b4a90e1c8551782a13324f98e566c20",
+    "04c00722f0b20288746a867a9c5131f6",
+    "b5ff066b2c443980d3e839500831f2b8",
+    "8f7db34a80895a59ce95755e4b8556a6"
+   ]
+  },
+  {
+   "id": "T16",
+   "family": "exact_predicate",
+   "independent": true,
+   "services": [
+    "github",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#316#c_2"
+   ],
+   "base_pointers": [
+    "github:data.json /pull_requests GameOfDominoes#1583 (merged 2024-12-22)",
+    "github:data.json /pull_requests GameOfDominoes#1773 (merged 2025-04-08)"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "ENG-1866 / ZOM-359 marked FIX MERGED - REPRODUCED from fixes merged before 2025-10-13",
+   "resolver": "H1 rule 3 window: only PRs merged on/after Oct 13, 2025 count"
+  },
+  {
+   "id": "T5",
+   "family": "near_miss_mention",
+   "independent": true,
+   "services": [
+    "github",
+    "slack"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#521#c_3",
+    "harmonygames-Games/GameOfDominoes#1886#c_2",
+    "harmonygames-Games/GameOfDominoes#1882#c_3",
+    "harmonygames-Games/match3d#529#c_3",
+    "harmonygames-Games/GameOfDominoes#1888#c_3",
+    "be168c6e698b67532607eef22aa6c1c9",
+    "e9e6052aa67c6c99d4a6e09257b29358"
+   ],
+   "base_pointers": [
+    "github:data.json /branches GameOfDominoes:owen.baker/ENG-2363",
+    "github:data.json /pull_requests GameOfDominoes#1876"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "ZOM-591, ENG-2042, ENG-1838, ZOM-599, ENG-2094, ENG-2149, ENG-2363 or the sign-in group marked fixed (mention, branch, chat claim or unnamed PR)",
+   "resolver": "H1 rule 3: a merged PR must itself say it fixes or addresses the ticket id"
+  },
+  {
+   "id": "T6",
+   "family": "superseding",
+   "independent": true,
+   "services": [
+    "github",
+    "slack"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/game-of-dominoes-backend#79#c_2",
+    "2875e5886fe9b4e288f6b15c52db64ee"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "ENG-2277 UNVERIFIED (later DM report not found)",
+   "resolver": "written report after the latest merge",
+   "discovery_order": "the PR comment is found from the code side; the report sits in a DM",
+   "version_records": [
+    {
+     "service": "github",
+     "id": "harmonygames-Games/game-of-dominoes-backend#79#c_2",
+     "seeded": true,
+     "at": "2025-12-03T20:41:26Z"
+    },
+    {
+     "service": "slack",
+     "id": "2875e5886fe9b4e288f6b15c52db64ee",
+     "seeded": true,
+     "at": "2026-02-11T03:10:32Z"
+    }
+   ]
+  },
+  {
+   "id": "T7",
+   "family": "effective_date",
+   "independent": true,
+   "services": [
+    "github",
+    "slack"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#527#c_3",
+    "66795aeba98ec214bb0595c3e9b1a698",
+    "harmonygames-Games/match3d#542#c_3"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "ZOM-611 FIX MERGED - REPRODUCED (Oct 21 report counted against the first merge)",
+   "resolver": "H1 rule 3: only reports after the latest merged fix count",
+   "discovery_order": "the Oct 21 report is dated after the first fix (merged Oct 18 02:01Z) and before the second (merged Oct 24 13:08Z); it is found by id search",
+   "version_records": [
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d#527#c_3",
+     "seeded": true,
+     "at": "2025-10-18T01:47:33Z"
+    },
+    {
+     "service": "slack",
+     "id": "66795aeba98ec214bb0595c3e9b1a698",
+     "seeded": true,
+     "at": "2025-10-21T16:30:28Z"
+    },
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d#542#c_3",
+     "seeded": true,
+     "at": "2025-10-24T12:51:16Z"
+    }
+   ]
+  },
+  {
+   "id": "T8",
+   "family": "synthesis_omission",
+   "independent": true,
+   "services": [
+    "linear",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "cmt_248942f08d0563c68d76",
+    "cmt_0a9b6e91b3d70ae7ea32",
+    "cmt_947e1192640b82b31f07",
+    "cmt_8225bf52dacbff3fd76e",
+    "cmt_383efe34a6f22269b6f2",
+    "cmt_5895864646cc3003d1ba",
+    "cmt_9799f5906062a928254e",
+    "cmt_cb2071c495e2be5c358b",
+    "cmt_115dc5a414a9a2a8cbcb",
+    "cmt_e6d3fbb6e1ae6ddf280f",
+    "cmt_b239e602399e8aa374e5"
+   ],
+   "requirement": "R13",
+   "expected_wrong_reading": "one platform's column missing or wrong; 11 rows wrongly dropped by an iOS-only reader; first reply taken where a later one corrects it",
+   "resolver": "rule 4: both platforms are columns; read each ticket's comment list in full"
+  },
+  {
+   "id": "T9",
+   "family": "exact_predicate",
+   "independent": true,
+   "services": [
+    "linear",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "cmt_9148ed538af165eb2c19",
+    "cmt_73f801797ff5141c6283",
+    "cmt_80e2966f0941a2e38943",
+    "cmt_bcfaef99646b3fe8103a",
+    "cmt_38fb34a02ab34827487a",
+    "cmt_bc1e1fe7052e9a5337fd",
+    "cmt_306924eb384152f4204d"
+   ],
+   "requirement": "R13",
+   "expected_wrong_reading": "an unfinished retest or one on another build (ENG-1854, 0.3.307) treated as 'could not make it happen'; ENG-2400's unfinished retest treated as a written reproduction",
+   "resolver": "rule 4: other build = not retested; unfinished = could not finish; neither is a report"
+  },
+  {
+   "id": "T10",
+   "family": "superseding",
+   "independent": true,
+   "services": [
+    "gmail",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>",
+    "arthur.blake@harmonygames.co/<calendar-2afaf3e1-debe-9e19-365e-acab8d62be8b@google.com>",
+    "evt_dc8a6f6d61d9d99f8d5545"
+   ],
+   "requirement": "R8",
+   "expected_wrong_reading": "cut-off Fri Feb 13; ENG-2440 dropped; file dated 2026-02-13",
+   "resolver": "hub: the invite as it stands when you send; event now Mon Feb 16",
+   "discovery_order": "both written statements say Friday and are in Gmail; only the event's current time says Monday",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>",
+     "seeded": true,
+     "at": "2026-02-12T21:48:36Z"
+    },
+    {
+     "service": "gmail",
+     "id": "arthur.blake@harmonygames.co/<calendar-2afaf3e1-debe-9e19-365e-acab8d62be8b@google.com>",
+     "seeded": true,
+     "at": "2026-02-12T22:05:19Z"
+    },
+    {
+     "service": "gcal",
+     "id": "evt_dc8a6f6d61d9d99f8d5545",
+     "seeded": true,
+     "at": "2026-02-13T16:05:33Z"
+    }
+   ]
+  },
+  {
+   "id": "T10a",
+   "family": "distractor",
+   "distractor_type": "already_done",
+   "independent": false,
+   "merged_into": "T10",
+   "services": [
+    "gdrive",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "f_3e8b0d27c4a91f56e2d7b0",
+    "f_b61f4c0e9a2d73e85c1a4f",
+    "f_07d9e2a5c8b41f36d0e9a7",
+    "evt_c90d3a6e41f72b85e0a1f7"
+   ],
+   "requirement": "R8",
+   "expected_wrong_reading": "file name dated 2026-02-13 copied from Leonard's filed PDFs / Friday review block",
+   "resolver": "current invite"
+  },
+  {
+   "id": "T11",
+   "family": "superseding",
+   "independent": true,
+   "services": [
+    "gmail",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_aIafXENPKGRJQRmN8JWFh79ZCuzONuAVSs5SuinXJ0c@mail.gmail.com>"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "WebGL tickets counted in Lot A, or dropped entirely (the asset schedule says the web build is in no lot)",
+   "resolver": "Sunset follow-up: separate list, not counted",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "arthur.blake@harmonygames.co/<CAPBs_a5YriV8YwXlt9JRc8sDFarrACB2BfoDJjmEKqnywOiu@mail.gmail.com>",
+     "seeded": true,
+     "at": "2026-02-12T23:12:40Z"
+    },
+    {
+     "service": "gmail",
+     "id": "arthur.blake@harmonygames.co/<CAPBs_aIafXENPKGRJQRmN8JWFh79ZCuzONuAVSs5SuinXJ0c@mail.gmail.com>",
+     "seeded": true,
+     "at": "2026-02-13T15:41:07Z"
+    }
+   ]
+  },
+  {
+   "id": "T12",
+   "family": "distractor",
+   "distractor_type": "lookalike_entity",
+   "independent": true,
+   "services": [
+    "gdrive",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "d_bfe053a06cf4d6f1021a98",
+    "d_2f55ba7fcbe116ce345503"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "filed in Robert's same-named 'IP Sale Data Room / Technical'",
+   "resolver": "H3: Leonard's folder, subfolder 04 Technical"
+  },
+  {
+   "id": "T13",
+   "family": "exact_predicate",
+   "independent": true,
+   "services": [
+    "gsheets",
+    "gdrive",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "f_5a83f7de3271d0ddcb28b5"
+   ],
+   "requirement": "R7",
+   "expected_wrong_reading": "folder shared instead of file, attachment sent, cc missing, or link sent without sharing",
+   "resolver": "H3 Notes"
+  },
+  {
+   "id": "T13a",
+   "family": "distractor",
+   "distractor_type": "lookalike_entity",
+   "independent": false,
+   "merged_into": "T13",
+   "services": [
+    "contacts"
+   ],
+   "seeded_ids": [
+    "cnt_e56c834094c1"
+   ],
+   "requirement": "R7",
+   "expected_wrong_reading": "email to Sunset's CEO",
+   "resolver": "the forward's sender = onboarding lead"
+  },
+  {
+   "id": "T14",
+   "family": "reuse_exclusion",
+   "independent": true,
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [
+    "ENG-2439"
+   ],
+   "requirement": "R9",
+   "expected_wrong_reading": "new ticket created, or ENG-2439 moved to Done",
+   "resolver": "ENG-2439 description: link + In Review"
+  },
+  {
+   "id": "T17",
+   "family": "exact_predicate",
+   "independent": true,
+   "services": [
+    "gmail",
+    "linear",
+    "slack"
+   ],
+   "seeded_ids": [
+    "arthur.blake@harmonygames.co/<CAPBs_a0Tq7LmW2dVh4XnK9pRs3YcF6uZe1JgBo8NiAw5Kt@mail.gmail.com>",
+    "35a73b7bd79cc043c60cb4d99a7c0a35",
+    "cmt_f2e5697f810d875f9d0a",
+    "cmt_b09d144410cbfe5a334f",
+    "cmt_470b1485ff80c825c00f",
+    "cmt_1d82127381ecc7b2af85",
+    "cmt_85a9d7127e04774f46e8",
+    "cmt_d5a2b0915fdd42698771"
+   ],
+   "base_pointers": [
+    "linear:data.json /issues ZOM-397 (Done 2025-07, archived)",
+    "linear:data.json /issues ENG-2202 (Done 2025-06-16, archived)"
+   ],
+   "requirement": "R15",
+   "expected_wrong_reading": "504 rows (Leonard's May 1 audit scope), 412 rows (membership by store update on/after Jun 1), or 497 rows (archived tickets included)",
+   "resolver": "H5 rule 1: Done, completed on/after June 1, 2025, archived left out (424 rows)"
+  },
+  {
+   "id": "T17a",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "independent": false,
+   "merged_into": "T17",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "35a73b7bd79cc043c60cb4d99a7c0a35",
+    "7429bf2c4ad65c7aa50b7bffc826ed49"
+   ],
+   "requirement": "R15",
+   "expected_wrong_reading": "audit scope (closed since May 1) used as the list scope",
+   "resolver": "H5 is the buyer's list; the audit ask only says where the facts are"
+  },
+  {
+   "id": "T18",
+   "family": "conclusion_stop",
+   "independent": true,
+   "services": [
+    "linear",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "cmt_5a54559f642bd4f0d2bd",
+    "cmt_28f523197fa9f09e9e3f",
+    "cmt_068f47a5686a9ff32ecf",
+    "cmt_0286c32833e99984676c",
+    "cmt_5c8d90f51c82ae29d225",
+    "cmt_d70a503bab58c645c7dd",
+    "cmt_6a2072ba5ca5ec93e8ed",
+    "cmt_4825bb2f645c3e02cbe1"
+   ],
+   "requirement": "R16",
+   "expected_wrong_reading": "the 22 rows that were turned off and then back on marked ROLLED BACK (reader stops at the kill switch)",
+   "resolver": "H5 rule 4: ROLLED BACK only if not in the build that is in the stores now"
+  },
+  {
+   "id": "T19",
+   "family": "near_miss_mention",
+   "independent": true,
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [
+    "cmt_ff3082b3a98e160a1a13",
+    "cmt_105236a9645d4967540d",
+    "cmt_92e413dcfc1308a110e4",
+    "cmt_ff16c17b9c18e722c286",
+    "cmt_b62e1db6ba083288528b",
+    "cmt_d1a687a763f5179c3643",
+    "cmt_b41ddafd89f0504fcea4",
+    "cmt_27a2eeb2f1ade8ae7ddd"
+   ],
+   "requirement": "R16",
+   "expected_wrong_reading": "store update = the update the note says the change missed (38 rows) or the first update after completion",
+   "resolver": "H5 rule 3: the first store update the change went out in"
+  },
+  {
+   "id": "T20",
+   "family": "synthesis_omission",
+   "independent": true,
+   "services": [
+    "linear",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "cmt_40988e2dfc3a2b06f094",
+    "cmt_dc92bb7345dce9221110",
+    "cmt_0940a92dc8b6bc16becb",
+    "cmt_419f9e153ce3db906d4a",
+    "cmt_f8ab12d86d9ce963e13b",
+    "cmt_45889dbd4048de350c15",
+    "cmt_59103a5a5b44a89995fd",
+    "cmt_2f6310fa4e8889f5b77b",
+    "cmt_4cebec6e012a08a53355",
+    "cmt_6d7c91197603029a8d41",
+    "cmt_4b1a997cd1a3e87fae69",
+    "cmt_17299dd5f336bd8df244"
+   ],
+   "requirement": "R17",
+   "expected_wrong_reading": "totals from Linear state alone (every Done ticket RELEASED: Lot A 31/0/0, Lot B 393/0/0) or from a sampled subset of notes",
+   "resolver": "read every cohort ticket's audit note; totals per lot by release status"
+  },
+  {
+   "id": "T21",
+   "family": "superseding",
+   "independent": true,
+   "services": [
+    "gsheets",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "f_5a83f7de3271d0ddcb28b5",
+    "arthur.blake@harmonygames.co/<CAPBs_a0Tq7LmW2dVh4XnK9pRs3YcF6uZe1JgBo8NiAw5Kt@mail.gmail.com>"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "schedule file without the Changes tab (index lists three tabs) or the change list sent as a separate file",
+   "resolver": "Leonard's later forward adds the Changes tab to the same file; Sunset asks for it with the schedule",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "id": "f_5a83f7de3271d0ddcb28b5",
+     "seeded": true,
+     "at": "2026-02-12T22:41:58Z"
+    },
+    {
+     "service": "gmail",
+     "id": "arthur.blake@harmonygames.co/<CAPBs_a0Tq7LmW2dVh4XnK9pRs3YcF6uZe1JgBo8NiAw5Kt@mail.gmail.com>",
+     "seeded": true,
+     "at": "2026-02-13T14:22:30Z"
+    }
+   ]
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "distractor_type": "partial_listing",
+   "independent": false,
+   "merged_into": "T8",
+   "services": [
+    "gslides"
+   ],
+   "seeded_ids": [
+    "f_fe90457cba7d7620b0b39b"
+   ],
+   "requirement": "R10",
+   "expected_wrong_reading": "slide keeps 19 / 13 / 6 or shows listed instead of counted totals",
+   "resolver": "hub: per-lot totals by tier you send Sunset"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 7,
+   "reason": "hub + thread, #winddown history (hub, audit ask + reply), Leonard DM + claim thread, Oliver DM, retest kickoff"
+  },
+  {
+   "phase": "discovery",
+   "service": "gmail",
+   "calls": 4,
+   "reason": "intake thread (both messages in one fetch), code-review forward, invitation"
+  },
+  {
+   "phase": "discovery",
+   "service": "trello",
+   "calls": 3,
+   "reason": "search 'severity tiers' (card + Slack decoy share the term), card, comments"
+  },
+  {
+   "phase": "discovery",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "find Leonard's data room sheet, read both tabs"
+  },
+  {
+   "phase": "discovery",
+   "service": "gcal",
+   "calls": 2,
+   "reason": "find Sunset's event, read its current time"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 2,
+   "reason": "asset schedule"
+  },
+  {
+   "phase": "discovery",
+   "service": "gslides",
+   "calls": 2,
+   "reason": "overview deck + slide element id"
+  },
+  {
+   "phase": "discovery",
+   "service": "confluence",
+   "calls": 2,
+   "reason": "checklist page to compare (R12)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "two same-named 'IP Sale Data Room' folders; list Leonard's subfolders"
+  },
+  {
+   "phase": "enumeration",
+   "service": "linear",
+   "calls": 12,
+   "reason": "ENG/ZOM open defects with parent/labels/state (2 pages) + Done tickets ordered by updatedAt down to June 1 completions (~500 rows at 50 per page; completedAt is not a filter)"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 4,
+   "reason": "lot-repo PRs merged on/after 2025-10-13: titles, branches, bodies, merged_at in bulk"
+  },
+  {
+   "phase": "enumeration",
+   "service": "slack",
+   "calls": 14,
+   "reason": "filter-only sweep of the GitHub-app copies of PR comments in #zombie-prs + #engineering-bots from Oct 13 (698 messages at 50 per page; text search does not match attachments)"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 67,
+   "reason": "list_comments per retested open defect: iOS + Android columns (verified per-record)"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 424,
+   "reason": "list_comments per change-list ticket: store update + release status exist only in its audit note (verified per-record)"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 4,
+   "reason": "later-report search for the 4 merged-fix tickets still unresolved"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 6,
+   "reason": "create (first tab) + add 3 tabs (one batched request) + 4 tab writes"
+  },
+  {
+   "phase": "writes",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "move into 04 Technical + share file with Sunset's lead (viewer)"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 1,
+   "reason": "email link to Sunset's lead, cc Leonard"
+  },
+  {
+   "phase": "writes",
+   "service": "linear",
+   "calls": 1,
+   "reason": "ENG-2439 link + In Review"
+  },
+  {
+   "phase": "writes",
+   "service": "gslides",
+   "calls": 1,
+   "reason": "known-issues slide totals"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "hub-thread reply"
+  },
+  {
+   "phase": "verification",
+   "service": "gsheets",
+   "calls": 1,
+   "reason": "read back the four tabs"
+  },
+  {
+   "phase": "verification",
+   "service": "gdrive",
+   "calls": 1,
+   "reason": "confirm parent + share"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_create_spreadsheet + gsheets_batch_update (addSheet) + gsheets_values_update",
+   "count": 1,
+   "depends_on": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "K6",
+    "K14"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_move_file",
+   "count": 1,
+   "depends_on": [
+    "K6",
+    "T12"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_share_file",
+   "count": 1,
+   "depends_on": [
+    "K7",
+    "T13"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_send_message",
+   "count": 1,
+   "depends_on": [
+    "K7",
+    "T13",
+    "C5"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue",
+   "count": 1,
+   "depends_on": [
+    "K10",
+    "T14"
+   ]
+  },
+  {
+   "service": "gslides",
+   "tool": "gslides_batch_update",
+   "count": 1,
+   "depends_on": [
+    "K11",
+    "C6",
+    "C8"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "K1",
+    "K12",
+    "C3",
+    "C8"
+   ]
+  }
+ ]
+}

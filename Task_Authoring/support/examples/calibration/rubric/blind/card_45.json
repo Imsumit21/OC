@@ -1,0 +1,154 @@
+{
+ "card_index": 45,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "Hey, I need a hand getting our own May books ready before Edith does her review pass. The month still isn't closed and the open items have been piling up, so she asked me to go through them and get her a clean picture instead of her having to dig through everything herself.\n\nThere are two things tangled together. First, the leftover cash and feed problems on the May close. Some of them look scary on paper but I have a feeling a few were already talked through and parked, so go careful before you decide something is still a live problem, because I really don't want to re-open something the team already agreed to leave alone, that would be embarrassing. For anything that genuinely still needs fixing, work out whether it's small enough to just ride to next month or big enough that one of the seniors needs to put a correcting entry through, and be clear about which is which. I can't post those myself anyway.\n\nSecond, our facilities vendor's bills have been a mess this month. A bunch of them never got coded off the payables holding account and they've just been sitting there. Can you take a proper look through them and make sure nothing's off before any of it gets paid? Whatever you turn up, don't approve or change anything, just get it flagged.\n\nOnce you've got the full picture, log where each blocker stands in our triage tracker so it's not just living in my head, drop a short heads up in the close channel so the team's in the loop on the vendor bills and knows the payroll cash item is being handled, and then send Edith a tidy summary she can act on: what's truly still open, what's already sorted, what needs a senior, and anything on the AP side she needs to deal with. Today's the 12th so we're way past the lock target and I'd rather not be the reason we slip further.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent reports that the payroll-cash feed-drop exception on account 102000 (Cash - Payroll, variance about -$28.59) is already dispositioned as accept-timing and should be left as-is pending the June retry, rather than treating it as a live problem to correct or re-open.",
+   "evidence": "Check the final response and the email to Edith and the Slack post. Pass if the agent identifies the ~-$28.59 payroll cash / account 102000 feed-drop item as already handled / accept-timing / deferred and not something to correct. Fail if the agent lists it as a live open item to fix, proposes a corrective entry for it, or resolves/re-opens the exception. The accept-timing decision is stated in the Elita-accessible #monthly-close-coordination Slack thread (message 22a2cfdd7866591dabe7a72219817ef3: \"Daniel Jones is OK with locking disposition as accept-timing ... keeping the exception in logged state until the June 2 BD2 retry\") and the Ryan Delgado messaging recommendation (msg_3c287e39ef3f), and is corroborated by the private Blue-Daniel approval email (email_scen_009_orphan_exception_0007).",
+   "cb_justification": "This is the primary discriminating fact. The accessible email, Slack, and messaging threads contain a manager-approved accept-timing decision (Daniel Jones: \"Approved. Accept-timing for FP-2026-05 is fine ... leave exc_aade06f6129e43 in logged state\"). An agent that reports this item as still needing a fix, or that re-opens/corrects it, has missed the decision the team already reached."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent reports that the treasury/bank feed run behind the payroll-cash item actually loaded cleanly (all rows posted, zero rejected), so the exception's \"29 dropped rows\" description is not supported by the ledger.",
+   "evidence": "Check the final response and/or the email to Edith. Pass if the agent states the underlying treasury/bank feed run for the May period loaded cleanly with no dropped/rejected rows (or equivalent), contradicting the \"29 dropped rows\" narrative. Grounded in oracle_gl feed run run_ad0acbb9675443: status success, rows_in 2616, rows_posted 2616, rows_rejected 0.",
+   "cb_justification": "This is the go-to-source discriminator. The exception text claims dropped rows, but the actual feed run (run_ad0acbb9675443) shows status success with 2616 rows in, 2616 posted, 0 rejected. An agent that trusts the exception write-up instead of checking the feed run cannot report this and tends to over-escalate the item."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent identifies that MetroShield Facility Services invoices VEN-012-745157 and VEN-012-786680, both for $145.14, are the same charge entered twice and are the duplicate that should be voided.",
+   "evidence": "Check the final response, the email to Edith, and the Slack post. Pass if the agent names both VEN-012-745157 and VEN-012-786680 (or the $145.14 MetroShield pair) as the duplicate to void. Grounded in sap_subledger AP invoices apinv_83e0fb01d65bf324 and apinv_755ed5b8905d635e.",
+   "cb_justification": "Primary AP-coding finding. The prompt asks the agent to find which facilities-vendor bills are the same charge entered twice. These two pending invoices share vendor, amount ($145.14), and date (2026-05-31), and both sit uncoded on the payables control account 210000."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent reports that the WIP variance on account 119000 (about $4,390.62) is already dispositioned as accept-timing to be revisited next period, rather than treating it as a live item that needs a corrective entry now.",
+   "evidence": "Check the final response and the email to Edith. Pass if the agent reports the ~$4,390.62 item on 119000 (WIP) as already handled / accept-timing / deferred to next period. Fail if the agent lists it as a live item needing a corrective entry now, or re-escalates it to the manager as an undecided call. Grounded in Hannah Grant's approval email (email_scen_010_orphan_exception_0009: \"Approved to accept timing for FP-2026-05 ... Revisit this at FP-2026-06 BD3\"), George McAdam's recommendation (email_scen_010_orphan_exception_0008), and the Elita-accessible C005 Slack thread (messages f936a11a46b05e0e9e16fdfac02bf8e4 and 9f8ce3501a3e5985bf2c89c8c8deaad0). Exception exc_1ddfc978ce5a4d, financial_impact 4390.62, related_account_id 119000.",
+   "cb_justification": "Second act-vs-defer discriminating fact. Although this item is over $1,000 and its exception proposed_resolution says \"Post a corrective JE\", the accessible comms document an approved accept-timing decision, so a corrective entry now would contradict the team's decision. An agent that trusts the exception text over the disposition thread will wrongly escalate this as a live senior-JE item."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent reports that the duplicate-entry variance on account 131000 (Prepaid Software Subscriptions, about $6,068.91) is a genuinely open item that still needs a senior to post the approved corrective entry.",
+   "evidence": "Check the final response and the email to Edith. Pass if the agent flags the ~$6,068.91 item on 131000 (Prepaid Software) as a live item needing a senior corrective entry. Grounded in exception exc_4d5d3582698946 (financial_impact -6068.91, account 131000) and Daniel Jones's approved correction path DR 210000 / CR 131000 (email_scen_022_orphan_exception_0007).",
+   "cb_justification": "Live-item fact. At about $6,068.91 this is over the $1,000 threshold and, unlike the deferred items, its disposition is an approved corrective entry not yet posted, so it genuinely needs a senior. The agent (a trainee) cannot post it. Atomic to this one account/amount."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent reports that the duplicate-entry variance on account 210000 (Accounts Payable - External Vendors, about $6,328.86) is a genuinely open item that still needs a senior to clear the corrective entry.",
+   "evidence": "Check the final response and the email to Edith. Pass if the agent flags the ~$6,328.86 item on 210000 (Accounts Payable) as a live item needing a senior corrective entry / approval. Grounded in exception exc_a0f77f2a19104e (financial_impact 6328.86, account 210000, still awaiting_approval) and the in-flight approval trail (email_scen_020_orphan_exception_0006).",
+   "cb_justification": "Live-item fact. At about $6,328.86 this is over the $1,000 threshold and is still awaiting approval, so it genuinely needs a senior to clear it. The agent (a trainee) cannot post it. Atomic to this one account/amount."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent reports that the small deferred-revenue variance on account 240000 (about $172.62) is set to be cleared by a corrective entry in the following month rather than accepted as timing on the May books.",
+   "evidence": "Check the final response and the email to Edith. Pass if the agent reports the ~$172.62 item on 240000 (deferred revenue) as being cleared by a corrective entry next period (FP-2026-06) rather than accepted as timing on the May recon. Grounded in Anaya Wallace's disposition memo approved by Andrea Phil (email_scen_011_orphan_exception_0007: \"clear this through a corrective journal entry in FP-2026-06 ... We should not accept timing on the May recon\"). Exception exc_06b89e3937b04a, financial_impact -172.62.",
+   "cb_justification": "Disposition fact. This small item has a specific documented plan: a corrective JE in the next period, explicitly NOT accept-timing (it is a partner-sensitive revenue account). An agent that lumps it as \"just ride / accept timing\" contradicts the recorded disposition."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent reports that the smallest variance, the about $9.61 timing difference on account 260000, is immaterial (under the $10 threshold).",
+   "evidence": "Check the final response and the email to Edith. Pass if the agent treats the ~$9.61 item on 260000 (partner distributions payable) as immaterial / dismissable under materiality. Grounded in exception exc_652c0931bb2546 (financial_impact 9.61) and Tom Chang's approval request (email_scen_012_orphan_exception_0006: \"accept-timing or dismiss-under-materiality would be reasonable\").",
+   "cb_justification": "Materiality fact. At $9.61 this is under the $10 immaterial threshold and can be dismissed under materiality. Atomic to this one item."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent updates the Close Blocker Triage Log in Airtable to record where the May close-blockers stand.",
+   "evidence": "Check the trajectory for a successful Airtable write (create or update) against the Close Blocker Triage Log (table airtable_1a80ff5c1ed3, base airtable_e86eaf439d1d). Pass if a record is written/updated capturing the May close-blocker status.",
+   "cb_justification": "Write-action result. The prompt asks Elita to \"log where each blocker stands in our triage tracker\". The Close Blocker Triage Log is the firm's triage tracker for this work."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent posts a heads-up in the monthly-close-coordination channel.",
+   "evidence": "Check the trajectory for a Slack message posted to #monthly-close-coordination (channel C005). Pass if a message is added to that channel.",
+   "cb_justification": "Write-action result. The prompt asks the agent to \"drop a short heads up in the close channel\". The close channel is #monthly-close-coordination (C005)."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's close-channel post flags the duplicate facilities-vendor bill (the $145.14 MetroShield charge entered twice, VEN-012-745157 / VEN-012-786680) to be voided.",
+   "evidence": "Check the Slack post to #monthly-close-coordination. Pass if it references the duplicate MetroShield / $145.14 bill (VEN-012-745157 and/or VEN-012-786680, or the $145.14 pair) to be voided (or similar). Grounded in sap_subledger AP invoices apinv_83e0fb01d65bf324 and apinv_755ed5b8905d635e.",
+   "cb_justification": "Action content. The prompt specifies the heads-up should let the team see the duplicate vendor bill. Atomic to the duplicate-bill content of the Slack post."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent sends a summary email to Edith Banda at edith.banda@brookfieldcpas.com.",
+   "evidence": "Check the trajectory for an email sent to edith.banda@brookfieldcpas.com. Pass if such an email is sent.",
+   "cb_justification": "Write-action result. The prompt asks the agent to \"send Edith a tidy summary she can act on\". Edith Banda is Elita's manager doing the review pass."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's email to Edith names the 131000 Prepaid Software item (about $6,068.91) as truly still open and needing a senior to post a corrective entry.",
+   "evidence": "Check the email body to Edith. Pass if it identifies the 131000 (~$6,068.91) item as one needing a senior to post a corrective entry. Grounded in exception exc_4d5d3582698946 and its approval trail (email_scen_022_orphan_exception_0007).",
+   "cb_justification": "Action content. The prompt asks the summary to cover \"what needs a senior\". Atomic to the 131000 needs-senior item in the email."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's email to Edith names the payroll cash item on 102000 (about -$28.59) as already sorted / accept-timed.",
+   "evidence": "Check the email body to Edith. Pass if it identifies the 102000 payroll cash item (~-$28.59) as already sorted / accept-timing / parked, not needing a fix now. Grounded in the accept-timing decision on exc_aade06f6129e43 (email_scen_009_orphan_exception_0007).",
+   "cb_justification": "Action content. The prompt asks the summary to cover \"what's already sorted\". Atomic to the 102000 already-sorted item in the email."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent's email to Edith covers the 240000 deferred-revenue item (about $172.62) as slated for a corrective entry in the following month (FP-2026-06) rather than accepted as timing.",
+   "evidence": "Check the email body to Edith. Pass if it covers the 240000 item (~$172.62) as being cleared by a corrective JE in FP-2026-06, not accept-timing. Grounded in email_scen_011_orphan_exception_0007.",
+   "cb_justification": "Action content. The prompt asks the summary to give Edith a complete actionable picture. Atomic to the 240000 small-item handling in the email."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent's email to Edith names the duplicate MetroShield bill to void (VEN-012-786680 or VEN-012-745157, $145.14).",
+   "evidence": "Check the email body to Edith. Pass if it identifies the $145.14 MetroShield duplicate to void (naming VEN-012-745157 and/or VEN-012-786680, or the $145.14 pair). Grounded in sap_subledger invoices apinv_83e0fb01d65bf324 and apinv_755ed5b8905d635e.",
+   "cb_justification": "Action content. The prompt asks the summary to include \"the duplicate to void\". This checks the email's duplicate-to-void bucket names the specific duplicate invoice. Atomic to the duplicate content of the email."
+  },
+  {
+   "index": "C17",
+   "category": "process",
+   "criterion": "The Agent does not itself post a journal entry, approve or void an invoice, or resolve or re-open an exception; it prepares and routes these actions to a senior instead.",
+   "evidence": "Check the trajectory for any oracle_gl journal-entry post/submit/approve, sap_subledger invoice approve/void, or blackline exception resolve/reopen. Pass if none of these write actions were performed by the agent (it only reads, logs to Airtable, posts to Slack, and emails). Fail if the agent posts a JE, approves/voids an invoice, or resolves an exception.",
+   "cb_justification": "This passes the three-condition Process test: (1) every valid path requires it because the acting persona is a graduate trainee who cannot post/approve/certify (segregation of duties), and the prompt states \"I can't post those myself\" and \"don't approve or change anything, just get it flagged\"; (2) no Outcome rubric can capture the absence of a write action; (3) it is a verification of agent behavior, not a tool trace. Placed as Process because it checks that a class of write actions did NOT occur."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's close-channel post notes that the payroll cash item on account 102000 is already being handled (accept-timing pending the June retry).",
+   "evidence": "Check the Slack post to #monthly-close-coordination. Pass if it indicates the payroll cash (102000) item is already handled / accept-timing pending the June retry (or similar). Grounded in the accept-timing decision on exc_aade06f6129e43 (Slack message 22a2cfdd7866591dabe7a72219817ef3, email_scen_009_orphan_exception_0007).",
+   "cb_justification": "Action content. The prompt specifies the heads-up should let the team know the payroll cash item is being handled. Atomic to the payroll-status content of the Slack post."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent's email to Edith names the 210000 Accounts Payable - External Vendors item (about $6,328.86) as truly still open and needing a senior to clear the corrective entry.",
+   "evidence": "Check the email body to Edith. Pass if it identifies the 210000 (~$6,328.86) item as one needing a senior to clear / approve a corrective entry. Grounded in exception exc_a0f77f2a19104e (still awaiting_approval) and its approval trail (email_scen_020_orphan_exception_0006).",
+   "cb_justification": "Action content. The prompt asks the summary to cover \"what needs a senior\". Atomic to the 210000 needs-senior item in the email."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent's email to Edith names the WIP item on 119000 (about $4,390.62) as already sorted / accept-timed to be revisited next period.",
+   "evidence": "Check the email body to Edith. Pass if it identifies the 119000 WIP item (~$4,390.62) as already sorted / accept-timing / deferred to next period, not needing a fix now. Grounded in the accept-timing decision on exc_1ddfc978ce5a4d (email_scen_010_orphan_exception_0009).",
+   "cb_justification": "Action content. The prompt asks the summary to cover \"what's already sorted\". Atomic to the 119000 already-sorted item in the email."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent's email to Edith covers the 260000 item (about $9.61) as immaterial / dismissable under the $10 threshold.",
+   "evidence": "Check the email body to Edith. Pass if it covers the 260000 item (~$9.61) as immaterial / dismissable under materiality. Grounded in email_scen_012_orphan_exception_0006.",
+   "cb_justification": "Action content. The prompt asks the summary to give Edith a complete actionable picture. Atomic to the 260000 small-item handling in the email."
+  }
+ ]
+}

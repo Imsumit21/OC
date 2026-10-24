@@ -1,0 +1,203 @@
+{
+ "card_index": 36,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Samira emailed me last night \u2014 Elena wants a straight engineering read before Thursday's sync on two problems leadership keeps treating like separate fires: whether ExpenseBot is actually ready to come off human-review-only mode, and whether we finally closed the loop on the Sunbelt/Palmetto invoice attachment mess that blew up after we kept deferring the safeguard work from the Terraform pricing leak.\n\nI know where my own pipeline and config fixes landed, but I have not reconciled that against the Linear board, Dmitri's audit threads, or whatever Marcus and David already escalated by email. I don't want to walk in with ticket statuses that lie about what shipped \u2014 and I don't want to just repeat Slack summaries when the stipend platform, the CRM, or QuickBooks may tell a different story than the threads.\n\nCan you reconstruct where we really stand?\n\nFor the ExpenseBot track, go through the open pilot tickets and cross-check each against Slack, email, and the stipend records in Airtable so we know which fixes actually deployed and which of the validation gaps Dmitri flagged are still open. Surface every stipend record his post-pause review flagged that's still unresolved \u2014 and be careful here: check whether any of those flags turned out to be wrong, because a bad flag that pushed friction onto a client matters as much as a missed one. Also confirm whether the false rejections the team promised to fix manually actually got reconciled, or whether people are still sitting rejected. If a ticket says in progress but the work clearly shipped, correct it with a brief resolution note. If something still blocks turning automated decisions back on safely, say so plainly and reprioritize anything on my plate that shouldn't still be idle.\n\nFor the invoice attachment incident, trace it from the April batch send through the client complaints and finance reconstruction. Pull the Sunbelt and Palmetto records straight from QuickBooks to confirm the billed amounts and invoice numbers against what actually left our outboxes, and flag anywhere this has already spilled past the original billing question into a broader client-relationship or commercial exposure. Then check whether the attachment-safety ticket Samira opened after Terraform is still parked in backlog despite Elena ordering it reopened \u2014 that work needs an active owner and a realistic stopgap, not another deprioritized item.\n\nWhen you have the picture, post a concise combined status in engineering so the team has one thread, correct the tickets that are out of date, and email Samira a summary she can forward to Elena \u2014 loop in whoever else finance already had on the escalation thread \u2014 covering what's done, what still blocks ExpenseBot relaunch, and what we owe finance on the attachment control.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent concludes that ExpenseBot is NOT ready to turn automated approve/deny decisions back on safely and should remain in human-review-only mode for now.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for a clear conclusion that ExpenseBot is not ready for automated decision relaunch yet / must stay on human review / automated approve-deny should remain off. A conclusion that the pilot is ready to exit human-review-only mode is a fail.",
+   "cb_justification": "The prompt asks whether ExpenseBot is actually ready to come off human review only mode and to say plainly if something still blocks turning automated decisions back on safely. Ground truth: auto-approve/auto-deny remain disabled since 3/18, ENG-217/218/219/212/220 are still open, duplicate receipt detection (ENG-220) is not shipped, and Mosaic stipend records still show false pilot approvals. Concluding relaunch is safe would be the naive failure mode."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent identifies that automated approve/deny remains disabled and ExpenseBot is operating in categorize-plus-human-review mode for the Vectral and Mosaic pilot clients.",
+   "evidence": "In the agent's final response, Samira email, #engineering post, and/or ticket updates, look for the agent reporting that automated approve/deny is still disabled / human review only / auto-decisions remain off for the pilot clients.",
+   "cb_justification": "The prompt asks what actually deployed versus what tickets claim. Lena's 3/18 engineering update confirms auto_decisions_enabled: false for both pilot clients with expenses routed to the AM review queue. Reporting that auto-approve/deny is already back on would contradict the universe ground truth."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Dmitri Volkov's completed pilot audit found 3 incorrect Mosaic auto-approvals with approximately $885 total financial exposure (not merely the earlier $1,550 estimate).",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting Dmitri's audit result of 3 Mosaic false approvals and approximately $885 financial exposure (or listing the three items: Andre Washington $1,200 standing desk, Andre Washington $350 coworking, Kenji Nakamura $135 coworking day passes).",
+   "cb_justification": "The prompt asks to cross-check Dmitri's audit threads against ticket status. Dmitri's 3/19 audit (Slack #engineering, email to Elena, Linear comment on ENG-216) found 47 expenses reviewed, 3 false approvals (all Mosaic), net $885 exposure after Kenji Nakamura's coworking day passes were included."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Andre Washington's $1,200 Mosaic standing desk stipend record is still marked Approved in Airtable despite being a pilot false approval.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that Andre Washington's $1,200 standing desk remains Approved (or still shows as a false approval) in the stipend records.",
+   "cb_justification": "The prompt asks whether Vectral and Mosaic stipend records still show false approvals Dmitri flagged, explicitly naming Andre's standing desk item. The Airtable Stipend Transactions record for Andre Washington's $1,200 Standing Desk still shows Approval Status Approved with review notes citing ExpenseBot auto-approval in error and string-comparison bug ($400 over the $800 limit)."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Andre Washington's $350 Mosaic coworking membership stipend record is still marked Approved even though coworking is an excluded category.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting Andre Washington's $350 coworking membership as still Approved / a false approval / an excluded-category approval that should not stand.",
+   "cb_justification": "The prompt asks whether stipend records still show false approvals. Andre Washington's $350 Coworking Space Membership record remains Approved with review notes that coworking is explicitly excluded and the excluded_categories config bug caused a false approval."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent identifies the duplicate receipt issue between Kevin Tran (Vectral) and Andre Washington (Mosaic): both submitted the same $89 TechComfort ErgoKey Pro keyboard receipt with an identical SHA-256 hash.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting the identical $89 TechComfort keyboard receipt submitted by Kevin Tran (Vectral) and Andre Washington (Mosaic), including the duplicate hash finding (or equivalent cross-client duplicate receipt description).",
+   "cb_justification": "The prompt asks whether stipend records still show duplicate receipt items from Dmitri's review, including the Kevin/Andre keyboard hash duplicate. Kevin Tran's and Andre Washington's keyboard submissions share the same receipt hash (a3f7c8d1...f0a2b4) and TC-RECEIPT-STD-041 template metadata; Kevin's was paid out 3/8. This is a distinct open validation gap beyond the config bugs."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent identifies that ENG-220 (Stipend duplicate detection \u2014 receipt hash fingerprinting) is still open and has not been shipped.",
+   "evidence": "In the agent's final response, Samira email, ticket updates, and/or #engineering post, look for the agent reporting that duplicate receipt detection / ENG-220 is still open, not started, or not yet shipped.",
+   "cb_justification": "The prompt asks which validation gaps Dmitri flagged are still open. issue_stipend_duplicate_detection / ENG-220 remains state_todo with assignee Dmitri Volkov \u2014 the proposed DuplicateDetector pipeline stage is not in production."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent identifies that ENG-219 (launch readiness checklist for automated financial decisions) is still incomplete.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that the launch readiness checklist / ENG-219 is still open or not finalized.",
+   "cb_justification": "The prompt asks what still blocks safe relaunch. ENG-219 remains state_todo on Samira Tariq's plate; Samira was still drafting the checklist after the pilot post-mortem and Elena's directive. Missing this is a common agent failure when it only reads Slack summaries."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent identifies at least one additional open ExpenseBot remediation item still blocking relaunch beyond the audit itself (e.g., ENG-217 pipeline hardening, ENG-218 dashboard type validation, or ENG-212 schema/edge-case validation tests).",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent naming at least one still-open remediation ticket such as ENG-217, ENG-218, or ENG-212 as blocking ExpenseBot relaunch.",
+   "cb_justification": "The prompt asks which fixes actually deployed and what still blocks relaunch. Even after config deploy and audit completion, ENG-217 (Lena), ENG-218 (Anh), and ENG-212 (Dmitri) remain in_progress past their March due dates as of late April \u2014 any one is a valid relaunch blocker to surface."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent identifies that QuickBooks billing records are correct: Sunbelt Venture Partners was invoiced INV-2026-0398 for $4,800.00 and Palmetto Community Foundation was invoiced INV-2026-0399 for $2,400.00.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting Sunbelt INV-2026-0398 at $4,800 and Palmetto INV-2026-0399 at $2,400 as the correct QuickBooks amounts.",
+   "cb_justification": "The prompt asks to pull Sunbelt and Palmetto invoice records directly from QuickBooks to confirm billed amounts and invoice numbers. Marcus's reconstruction and quickbooks/invoices.json show the accounting records were correct on 2026-04-10; the failure was the emailed PDF layer, not QuickBooks generation."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the April 10 outbound invoice emails sent the wrong PDF attachments: each client received the other client's invoice document even though QuickBooks was correct.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that the April 10 emailed PDF attachments were swapped/crossed between Sunbelt and Palmetto despite correct QuickBooks records.",
+   "cb_justification": "The prompt asks to trace the Sunbelt/Palmetto incident from the April batch send through client complaints. Emeka, Marcus, and Hana's reconstruction confirms the 4/10 email send crossed PDFs \u2014 Sunbelt received Palmetto's nonprofit-rate PDF and Palmetto received Sunbelt's commercial-rate PDF."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Raj Greenfield at Sunbelt received a PDF showing Palmetto Community Foundation at $2,400, which triggered questions about a nonprofit pricing program Sunbelt does not have.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that Sunbelt/Raj saw Palmetto's nonprofit header and $2,400 total (or equivalent description of the commercial pricing exposure).",
+   "cb_justification": "The prompt asks to trace client complaints. Raj Greenfield's email on INV-2026-0398 notes the PDF header shows Palmetto Community Foundation and total $2,400, asking whether Sunbelt has access to nonprofit-rate pricing \u2014 the commercial pricing exposure angle Marcus and Elena flagged."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Carmen Delgado-Reyes at Palmetto received a PDF showing $4,800 (Sunbelt's commercial rate), creating nonprofit audit-documentation risk ahead of Palmetto's May 15 review deadline.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting Palmetto/Carmen received the $4,800 commercial PDF in error and/or needs audit-clean corrected documentation.",
+   "cb_justification": "The prompt asks to trace the incident through finance reconstruction. Carmen's emails dispute INV-2026-0399 because the attached PDF shows $4,800 instead of Palmetto's approved nonprofit quote, and she needs written correction for their 501(c)(3) vendor file by 2026-05-15."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the Invoice email template safety checks ticket (ENG-187, linear_issue_6b59cce3afc2) was still parked in backlog without a production stopgap when the Sunbelt/Palmetto incident occurred, despite originating after the Terraform pricing leak.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that ENG-187 / invoice attachment safety checks was still in backlog or deprioritized (not actively owned with a shipped stopgap) when the 4/10 send failure happened.",
+   "cb_justification": "The prompt asks whether the attachment safety ticket Samira opened after Terraform is still parked even though Elena ordered it reopened. linear_issue_6b59cce3afc2 shows state_backlog, deprioritized 4/6 for DOT work; Samira's email confirms engineering had identified the attachment-validation gap but left it unassigned with no interim safeguard."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent posts a concise combined status update to the #engineering channel (channel ID C003).",
+   "evidence": "Look for a message posted to the #engineering channel (channel ID: C003) via slack_send_message or conversations_add_message. Confirm it was posted successfully.",
+   "cb_justification": "The prompt explicitly requires posting a concise status in engineering so the team has one thread covering both ExpenseBot relaunch status and the attachment incident follow-up."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to [samira.tariq@moveops.com](mailto:samira.tariq@moveops.com) with a summary she can forward to Elena.",
+   "evidence": "Look for an email sent to samira.tariq@moveops.com. Confirm the email was sent successfully.",
+   "cb_justification": "The prompt explicitly requires emailing Samira a summary covering what is done, what still blocks ExpenseBot relaunch, and what engineering owes finance on the attachment control."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent updates all three stale ExpenseBot Linear tickets \u2014 ENG-214, ENG-215, and ENG-216 \u2014 with corrected status or resolution comments reflecting work that already shipped (3/18 config deploys and the completed 47-expense audit).",
+   "evidence": "Look for linear_update_issue and/or linear_create_comment on all three ExpenseBot tickets: issue_p1_vectral_config / ENG-214, issue_p1_mosaic_malformed / ENG-215, and issue_audit_expenses / ENG-216, each reflecting completed shipped work. Confirm all three updates succeeded.",
+   "cb_justification": "The prompt explicitly asks to close out ENG-214, ENG-215, and ENG-216 if the board still lies about the 3/18 config deploy and the 47-expense audit. All three remain stale in ground truth: ENG-214/215 configs deployed 3/18 but tickets may still show in_progress; ENG-216 audit completed 3/19 but ticket still shows in_progress. Updating only one is insufficient."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent reprioritizes or reactivates the attachment safeguard ticket ENG-187 (linear_issue_6b59cce3afc2) so it reflects active Sunbelt/Palmetto incident follow-up rather than backlog deprioritization.",
+   "evidence": "Look for a linear_update_issue on linear_issue_6b59cce3afc2 (ENG-187) that elevates priority and/or moves state out of backlog (e.g., to in_progress or todo) and/or assigns active ownership. Confirm the update succeeded.",
+   "cb_justification": "The prompt says that work needs to reflect active incident follow up with an owner and a realistic stopgap plan, not another deprioritized item, and to reprioritize anything on Lena's plate that should not still be sitting idle. ENG-187 must move out of passive backlog treatment after Elena's and Marcus's reopen directives."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent adds a comment or update on ENG-187 documenting a realistic stopgap plan for attachment validation (e.g., pre-send recipient/customer-name PDF check or a manual batch checkpoint before invoice emails go out).",
+   "evidence": "Look for a linear_create_comment or linear_update_issue on linear_issue_6b59cce3afc2 whose content describes a stopgap such as pre-send attachment/recipient validation, customer-name mismatch warning, or manual batch review before invoice emails send. Confirm the write succeeded.",
+   "cb_justification": "The prompt requires the attachment safeguard work to include a realistic stopgap plan, not just ticket reprioritization. Marcus, Samira, and Elena explicitly asked for fastest shippable controls separate from the full workflow validation: attachment-to-recipient verification or manual checkpoint blocking mismatched customer names."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent's #engineering status post mentions both (a) ExpenseBot relaunch blockers and (b) the Sunbelt/Palmetto invoice attachment incident.",
+   "evidence": "Check the message posted to #engineering (C003): it must reference ExpenseBot relaunch status/blockers AND the Sunbelt/Palmetto attachment incident (or ENG-187 safeguard follow-up).",
+   "cb_justification": "The prompt asks for one combined engineering thread covering both leadership problems Elena treats as separate fires. A post covering only ExpenseBot or only the invoice incident misses half the ask."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent's email to [samira.tariq@moveops.com](mailto:samira.tariq@moveops.com) covers what remediation is done, what still blocks ExpenseBot relaunch, and what engineering owes finance on the attachment control.",
+   "evidence": "Check the email to samira.tariq@moveops.com: it must address (1) completed/done remediation, (2) remaining ExpenseBot relaunch blockers, and (3) engineering's attachment-control obligations to finance (ENG-187 reactivation/stopgap).",
+   "cb_justification": "The prompt specifies three required content areas for Samira's forwardable summary to Elena. Missing any one leaves leadership under-briefed for Thursday's sync."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent identifies that ENG-216 (Full audit of all 47 auto-processed pilot expenses) shows stale in-progress status even though Dmitri's audit was completed by 2026-03-19.",
+   "evidence": "In the agent's final response, Samira email, ticket updates, and/or #engineering post, look for the agent noting ENG-216 / the 47-expense audit is complete while the ticket is still marked in progress (or the agent marks it done with that rationale).",
+   "cb_justification": "The prompt warns that ticket statuses may lie about what shipped and asks the agent to reconcile board state against Slack/email. ENG-216 remains state_in_progress on the board while Dmitri posted complete audit results 3/19 \u2014 a key decoy where agents trust Linear status over comms."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Kenji Nakamura's $135 Mosaic coworking day passes stipend record is still marked Approved in Airtable as a false approval from the excluded_categories config bug.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting Kenji Nakamura by name together with the $135 coworking day passes amount as still Approved / a false approval / an excluded-category approval that should not stand. Merely listing Kenji among the three false approvals without the $135 amount, or mentioning $135 coworking exposure without naming Kenji, does not pass.",
+   "cb_justification": "The prompt explicitly asks to verify Kenji Nakamura's coworking day passes in Airtable stipend records. rec_stipend_kenji_nakamura_cowork shows Approval Status Approved for $135 Coworking Passes with review notes citing the same excluded_categories bug as Andre Washington's coworking membership \u2014 the third Mosaic false approval in Dmitri's $885 exposure total."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent identifies the Jordan Ekwueme (BrightLoop) PDF template-match duplicate flag Dmitri raised: a $45 TechComfort monitor stand receipt flagged for matching template TC-RECEIPT-STD-041 metadata despite a different hash than the Kevin/Andre keyboard pair.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting Jordan Ekwueme's flagged receipt (monitor stand / $45 / BrightLoop) and the PDF template match or TC-RECEIPT-STD-041 finding.",
+   "cb_justification": "The prompt explicitly asks about the Jordan Ekwueme template-match flag Dmitri raised after the pause. rec_stipend_jordan_monitor_stand shows Audit Flag PDF Template Match with /Template(TC-RECEIPT-STD-041) \u2014 a distinct duplicate-receipt exposure class beyond identical hash matching, relevant to ENG-220 scope."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent CCs [david.chen@moveops.com](mailto:david.chen@moveops.com) on the email to [samira.tariq@moveops.com](mailto:samira.tariq@moveops.com).",
+   "evidence": "Look for an email sent to samira.tariq@moveops.com whose cc (or recipients) field includes david.chen@moveops.com. Confirm the email was sent successfully.",
+   "cb_justification": "The prompt asks the Agent to loop in whoever else finance already had on the escalation thread when emailing Samira's forwardable summary. Ground truth: David Chen was on Marcus Thorne's Sunbelt/Palmetto remediation escalation thread and is separately the recipient of the Sunbelt COO's commercial escalation, so he is the party the Agent must discover and CC. Agents frequently send the Samira email without identifying and adding David."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Maria Santos, James Okafor, and Lisa Park Vectral false rejections are all still sitting Rejected or Pending Approval in Airtable despite Mina's engineering Slack promise to manually approve them.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that Maria Santos, James Okafor, AND Lisa Park expenses remain Rejected or Pending Approval / unreconciled in stipend records despite Mina's manual-approval commitment. Reporting only one or two of the three names does not pass.",
+   "cb_justification": "The prompt asks to check whether Maria, James, and Lisa are still rejected or pending in Airtable even though Mina said she was manually approving them in #engineering on 4/7. Ground truth: rec_stipend_maria_santos_desk, rec_stipend_lisa_park_wifi show Pending Approval; recStip000000018/019/020 show Rejected \u2014 the stipend platform was never reconciled after the audit."
+  },
+  {
+   "index": "C27",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Kevin Tran's flagged duplicate/fraud stipend receipt turned out to be legitimate, and that this false-positive flag pushed unnecessary friction onto the client \u2014 a factor now cited in Vectral Systems' at-risk Q3 2026 renewal (churn threat).",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that Kevin Tran's duplicate/fraud flag was actually legitimate / a false positive / wrongly flagged, and/or that this created unnecessary client friction contributing to Vectral's at-risk renewal (churn threat). Grounded in deal_vectral_q3_renewal_risk. Reporting the Kevin/Andre duplicate hash only as a fraud finding, without noting Kevin's turned out legitimate or the resulting client-relationship fallout, does not pass.",
+   "cb_justification": "The prompt warns that the stipend platform and CRM may tell a different story than the threads, and explicitly asks the Agent to check whether any of Dmitri's flags turned out to be wrong because a bad flag that pushed friction onto a client matters as much as a missed one. This is a reply-that-changes-the-conclusion trap: the naive reading treats the Kevin Tran / Andre Washington identical-hash finding purely as fraud (R6), but the CRM deal deal_vectral_q3_renewal_risk (dealstage at_risk, opened 2026-04-18) records that Kevin Tran's receipt 'flagged in fraud audit ... turned out to be legitimate (April 2026 \u2014 unnecessary friction pushed onto client HR team)' as one of three service failures Rachel Whitfield (VP of People) cites while threatening non-renewal. The finding lives in the CRM with no corresponding Slack discussion, so agents that only read Slack/email miss it."
+  },
+  {
+   "index": "C28",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the Sunbelt/Palmetto attachment error escalated beyond Raj Greenfield's billing question into a commercial exposure: Sunbelt COO Victoria Chen-Nakamura emailed David Chen asking whether MoveOps offers portfolio-wide pricing for Sunbelt-backed companies, after seeing the mis-attached $2,400 Palmetto-rate PDF.",
+   "evidence": "In the agent's final response, Samira email, and/or #engineering post, look for the agent reporting that Sunbelt escalated beyond Raj's invoice question \u2014 specifically Victoria Chen-Nakamura (Sunbelt COO) reaching out to David Chen about portfolio-wide / portfolio-company pricing \u2014 as a commercial-exposure consequence of the attachment swap. Merely reporting Raj's original complaint does not pass.",
+   "cb_justification": "The prompt asks the Agent to trace the incident through the client complaints and to flag anywhere it has already spilled past the original billing question into a broader client-relationship or commercial exposure. Ground truth: after Raj Greenfield's 4/14\u20134/15 invoice questions, Sunbelt COO Victoria Chen-Nakamura (contact_1a6adad0d0a6) emailed David Chen (CC Raj) referencing the two-relocation $2,400 Palmetto-header invoice and requesting a portfolio-wide pricing structure for Sunbelt portfolio companies \u2014 a second-order commercial consequence of the crossed PDF that most agents miss because they stop at the first complaint."
+  }
+ ]
+}

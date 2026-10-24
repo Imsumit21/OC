@@ -1,0 +1,92 @@
+{
+ "id": "card_04",
+ "n_criteria": 11,
+ "requirements": [
+  "R1: item-by-item disposition of 4 contested charges",
+  "R2: recommended credit amount (1250)",
+  "R3: reply to Tessa with credit and why",
+  "R4: hand credit to finance to process against invoice",
+  "R5: summary in support channel",
+  "R6: no billing application by agent"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "determines that the additional service credit ... is 1250 US dollars",
+   "why": "1250 graded in C1, C6, C8, C9; one miscalculation fails all"
+  },
+  {
+   "c": "C7",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "explains ... why the credit is not the full 2830 she claimed (for example ...)",
+   "why": "Any rationale passes; reasons given only as examples"
+  },
+  {
+   "c": "C8",
+   "defect": "disjunctive / non-atomic",
+   "severity": "Major",
+   "quote": "addressed to a member of the finance team (Marcus Thorne ..., or Hana Kim ...), including the supporting evidence",
+   "why": "Enumerates recipients; bundles recipient, amount and unspecified evidence"
+  },
+  {
+   "c": "C9",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "stating the 1250 credit and that it has been routed to Finance",
+   "why": "Two independent claims in one post row"
+  },
+  {
+   "c": "C10",
+   "defect": "prohibition-only / absence-only acceptance",
+   "severity": "dimension-only",
+   "quote": "does not itself apply, issue, or create the credit ... and does not modify BrightLoop's April invoice",
+   "why": "Absence-only; Negative fails under Evals override"
+  },
+  {
+   "c": "C11",
+   "defect": "prohibition-only + unauthorized",
+   "severity": "Moderate",
+   "quote": "does not modify any BrightLoop relocation record",
+   "why": "Absence-only and prompt never mentions relocation records; precision-only effect"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C1",
+    "C3",
+    "C6",
+    "C8",
+    "C9"
+   ],
+   "condition": "platform-failure discovery missed -> 750 instead of 1250"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 1,
+  "rows_moderate": 4,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 9.1,
+  "pct_moderate_or_worse": 45.5,
+  "pct_any": 45.5
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "three_fields_present=PASS; builder_minimum=PASS; spot_checks=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe/ledger access (other universe): values, reachability and tool catalog not verified; no coverage plan, requirements derived from prompt; weights absent."
+}

@@ -1,0 +1,427 @@
+{
+ "card_index": 58,
+ "universe": "star-pm-generic-expanded-nofs",
+ "prompt": "Sandra flagged a collision on Las Vistas 9D to me because I handled the onsite side of that turn and was copied when Brooke handed the unit back to leasing. She has a second showing with prospect Catalina Reyes penciled in tomorrow morning, but a make-ready kickoff appeared ahead of it. I thought the turn was behind us, yet the final-QC trail is messy, and I don't want us to cancel genuine work or send Catalina into an active worksite. Can you reconstruct 9D's trail from move-out through the handoff to Sandra and determine whether anything afterward establishes a real new turnover?\n\nBefore either team arrives, please get the current property records back in line with what the evidence supports while keeping Brooke looped in. Treat the most recently updated current turn record as canonical, resolve any QC or maintenance follow-up that is still open after the underlying work was completed, and leave historical records alone. On the calendar, cancel the unsupported appointment rather than repurposing it, with cancellation notices sent to everyone listed on it. Create or retain the supported appointment with me, Sandra, and Catalina as attendees. If the showing is the supported appointment, leave an unsent confirmation email draft addressed to Catalina in my mailbox and include its proposed copy in your final note so I can review it with Sandra.\n\nPost separate factual status updates in the leasing and make-ready channels, tagging Brooke for any cross-team direction, and add a note with the final showing details to Catalina's HubSpot contact. Open a prevention item on the Property Ops board for Brooke to own at the portfolio level; identify who actually created the unsupported calendar event rather than assuming its organizer did, document which completed scope it repeated, and recommend a check that would prevent that scope from being scheduled again. Please let me know the evidence you relied on and every current record, appointment, notification, and follow-up you changed.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent updates Airtable Maintenance Ticket MT-2026-0519 (rec2b7b06c6b6e955) with a completion date of May 20, 2026.",
+   "evidence": "Inspect the Airtable update to base appPropertyOps, table tblMaintenanceTickets, record rec2b7b06c6b6e955. The update may address the field as \"Completion Date\" or fldCompletionDate, but its value must be 2026-05-20.",
+   "cb_justification": "The prompt requires the Agent to resolve current QC or maintenance follow-up that remained open after the underlying work was completed."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent records on MT-2026-0519 that John Smith completed the hallway-baseboard touch-up on May 20, 2026.",
+   "evidence": "Inspect the update to rec2b7b06c6b6e955 for materially equivalent description text identifying John Smith's May 20 hallway-baseboard correction.",
+   "cb_justification": "The current ticket must document the completed repair that resolves the defect recorded in the stale follow-up."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent performs no writes to historical Las Vistas 9D Make-Ready record rec1380f41ec09a51.",
+   "evidence": "Review all Airtable writes and verify that none targets tblMakeReady record rec1380f41ec09a51.",
+   "cb_justification": "The prompt requires historical Make-Ready records to remain unchanged while current records are reconciled."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent deletes organizer Tony Reyes's calendar copy 1zw3533cqjrtg0kwmbvifytko8-106c3ef9 of the July 2, 2026 \"Las Vistas 9D Unit-Turn Make-Ready Kickoff\" from [tony.reyes@starpm.com](mailto:tony.reyes@starpm.com).",
+   "evidence": "Look for a calendar deletion using calendarId tony.reyes@starpm.com and eventId 1zw3533cqjrtg0kwmbvifytko8-106c3ef9. Passing logical event ID c4d207be044fa099c6262383952d7fae, updating the event, or repurposing it does not satisfy the criterion.",
+   "cb_justification": "Deleting the organizer copy is the primary cancellation action for the unsupported kickoff and is the copy from which attendee cancellation notices must be issued."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent sends cancellation notices for the unsupported kickoff to all listed attendees: [tony.reyes@starpm.com](mailto:tony.reyes@starpm.com), [brooke.phillips@starpm.com](mailto:brooke.phillips@starpm.com), [carlos.mendez@starpm.com](mailto:carlos.mendez@starpm.com), and [wesley.tran@starpm.com](mailto:wesley.tran@starpm.com).",
+   "evidence": "Inspect the deletion of organizer copy 1zw3533cqjrtg0kwmbvifytko8-106c3ef9 from calendar tony.reyes@starpm.com and verify notificationLevel \"all.\" The retrieved event must list the four exact addresses in the criterion.",
+   "cb_justification": "The prompt explicitly requires cancellation notices to everyone listed on the appointment."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent creates a Las Vistas Unit 9D showing on July 2, 2026 from 10:30 a.m. to 11:15 a.m. in the America/Chicago time zone.",
+   "evidence": "Look for a calendar event creation with start 2026-07-02T10:30:00-05:00, end 2026-07-02T11:15:00-05:00, time zone America/Chicago, and a summary/location identifying Las Vistas Unit 9D.",
+   "cb_justification": "Sandra's Slack message fixes the supported appointment's date and time, and no matching showing exists in the calendar."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent includes [lisa.smith@starpm.com](mailto:lisa.smith@starpm.com), [sandra.allen@starpm.com](mailto:sandra.allen@starpm.com), and [catalina.reyes@gmail.com](mailto:catalina.reyes@gmail.com) as attendees on the supported showing.",
+   "evidence": "Inspect the attendee list in the created showing event and verify that all three exact email addresses are present.",
+   "cb_justification": "The prompt explicitly identifies Lisa, Sandra, and Catalina as the required showing attendees."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent creates an unsent email draft addressed to [catalina.reyes@gmail.com](mailto:catalina.reyes@gmail.com).",
+   "evidence": "Look for a Gmail create_draft call with catalina.reyes@gmail.com in the to field and no email-send action to Catalina.",
+   "cb_justification": "The prompt asks for a draft in Lisa's mailbox for review, not a sent confirmation."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's draft to Catalina confirms the July 2, 2026 showing from 10:30 a.m. to 11:15 a.m. at Las Vistas Unit 9D.",
+   "evidence": "Inspect the Gmail draft subject and body for the property/unit, July 2 date, and 10:30\u201311:15 a.m. time window.",
+   "cb_justification": "The draft must communicate the exact supported appointment rather than the canceled kickoff."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent posts a status update in the #leasing channel (C002).",
+   "evidence": "Look for a Slack send-message call whose destination is channel C002.",
+   "cb_justification": "The prompt explicitly requests a separate leasing-channel update."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent states in the #leasing update that Las Vistas 9D remains Rent Ready after the passed May 20 reinspection.",
+   "evidence": "Inspect the message sent to C002 for Las Vistas 9D, Rent Ready or equivalent cleared status, and the passed May 20 reinspection.",
+   "cb_justification": "Leasing needs the authoritative unit status and the QC basis supporting the showing."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent states in the #leasing update that Catalina Reyes's supported showing is July 2, 2026 from 10:30 a.m. to 11:15 a.m.",
+   "evidence": "Inspect the message sent to C002 for Catalina Reyes and the exact July 2, 10:30\u201311:15 time window.",
+   "cb_justification": "The leasing team needs the final supported appointment details."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent states in the #leasing update that the conflicting 9:00 a.m. make-ready kickoff was canceled.",
+   "evidence": "Inspect the message sent to C002 for an explicit statement that the 9:00 a.m. kickoff was canceled.",
+   "cb_justification": "Leasing must know the collision was resolved rather than merely moved or left pending."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent tags Brooke Phillips in the #leasing update for cross-team visibility or direction.",
+   "evidence": "Inspect the C002 message text for the Slack mention <@U9741B657FE>.",
+   "cb_justification": "The prompt requires Brooke to remain looped in on cross-team direction."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent posts a separate status update in the #make-ready channel (C004).",
+   "evidence": "Look for a Slack send-message call whose destination is C004, separate from the call to C002.",
+   "cb_justification": "The prompt explicitly requires distinct leasing and make-ready communications."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent states in the #make-ready update that no verified post-handoff turnover trigger supports reopening the completed Las Vistas 9D turn after its May 21, 2026 Rent Ready handoff.",
+   "evidence": "Inspect the message sent to C004 for the conclusion that the completed 9D turn has no verified post-handoff turnover trigger supporting its reopening.",
+   "cb_justification": "This single operational conclusion is what maintenance needs before deciding whether to mobilize."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent states in the #make-ready update that the unsupported kickoff repeated the three exact items from the same source event\u2014painting, carpet work, and punch-list work\u2014already completed during the May turn.",
+   "evidence": "Inspect the same C004 message for an explicit statement that the kickoff repeated painting, carpet work, and punch-list work already completed during the May turn.",
+   "cb_justification": "A single criterion captures the three completed May scope items repeated by the same unsupported kickoff."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent tags Brooke Phillips in the #make-ready update.",
+   "evidence": "Inspect the C004 message text for the Slack mention <@U9741B657FE>.",
+   "cb_justification": "Brooke owns portfolio-level direction and must remain visible on the cross-team correction."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent creates a HubSpot note associated with Catalina Reyes's contact contact_2f6f1ae97cd25bf09d48fa927b197822.",
+   "evidence": "Look for a HubSpot CRM-object creation with object type notes and contact_id equal to contact_2f6f1ae97cd25bf09d48fa927b197822.",
+   "cb_justification": "The prompt explicitly requires the final showing details to be added to Catalina's HubSpot contact."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent records in the same Catalina HubSpot note that the showing is at Las Vistas Unit 9D on July 2, 2026 from 10:30 a.m. to 11:15 a.m., with Lisa Smith, Sandra Allen, and Catalina Reyes as participants.",
+   "evidence": "Inspect the same created HubSpot note body for Las Vistas Unit 9D, July 2, 2026, the 10:30\u201311:15 a.m. window, and Lisa Smith, Sandra Allen, and Catalina Reyes.",
+   "cb_justification": "A single criterion captures the complete appointment and participant details required in the same CRM note."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent creates a prevention issue in the Linear \"Property Ops\" project (proj_001).",
+   "evidence": "Look for a Linear issue creation whose project is proj_001, Property Ops.",
+   "cb_justification": "The prompt explicitly requests a portfolio-level prevention item on the Property Ops board."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent assigns the prevention issue to Brooke Phillips (user_0aa171072660514bb4e76ed0fae5bdb9).",
+   "evidence": "Inspect the created Linear issue parameters for Brooke Phillips or user ID user_0aa171072660514bb4e76ed0fae5bdb9 as assignee.",
+   "cb_justification": "Brooke is explicitly named as the owner of the portfolio-level follow-up."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent gives the prevention issue a title related to preventing stale or duplicate make-ready scheduling (or similar).",
+   "evidence": "Inspect the Linear issue title for a clear reference to stale, duplicate, unsupported, or pre-validated make-ready calendar scheduling.",
+   "cb_justification": "The issue title should make the prevention purpose discoverable without prescribing exact free-text wording."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent documents in the prevention issue that Brooke Phillips created the unsupported event and Tony Reyes organized it.",
+   "evidence": "Inspect the Linear issue description for Brooke Phillips as creator and Tony Reyes as organizer.",
+   "cb_justification": "The prompt explicitly warns against assuming that the organizer was the creator, and Calendar distinguishes the two fields."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent documents in the same Linear prevention issue that the unsupported kickoff repeated the three exact items from the same source event: painting, carpet work, and punch-list work already completed during the May turn.",
+   "evidence": "Inspect the same Linear issue description for an explicit statement that the kickoff repeated painting, carpet work, and punch-list work already completed during the May turn.",
+   "cb_justification": "A single criterion captures all three completed May scope categories repeated by the same stale event in the same issue."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent recommends in the prevention issue a control that would prevent painting, carpet work, and punch-list work already completed during the May Las Vistas 9D turn from being scheduled again (or similar effective prevention control).",
+   "evidence": "Inspect the Linear issue description for a recommendation that materially prevents completed May scope from being rescheduled; valid controls may use current-status validation, duplicate-scope detection, approval gates, or another effective mechanism.",
+   "cb_justification": "The prompt asks for an effective prevention control but does not prescribe one specific implementation."
+  },
+  {
+   "index": "C27",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that an unsent confirmation draft addressed to [catalina.reyes@gmail.com](mailto:catalina.reyes@gmail.com) was created in Lisa Smith's mailbox.",
+   "evidence": "Inspect the final response for confirmation that the Catalina Reyes draft was created in Lisa Smith's mailbox and left unsent.",
+   "cb_justification": "The user asks to be told every notification and follow-up changed, including the draft that must remain unsent for review."
+  },
+  {
+   "index": "C28",
+   "category": "outcome",
+   "criterion": "The Agent concludes in the final response that no post-handoff evidence establishes a genuine new turnover for Las Vistas 9D.",
+   "evidence": "Inspect the final response for an explicit conclusion that no new move-out, turnover, scope, or QC request exists after the May handoff.",
+   "cb_justification": "The user directly asks the Agent to determine whether anything after the handoff establishes a real new turnover."
+  },
+  {
+   "index": "C29",
+   "category": "outcome",
+   "criterion": "The Agent cites the canonical Airtable evidence in the final response: record rec697bf52cc11f55 shows Las Vistas 9D as Rent Ready after the May 20 passed reinspection.",
+   "evidence": "Inspect the final response for the canonical record ID or an unambiguous description of the latest Airtable record, Rent Ready status, and passed May 20 reinspection.",
+   "cb_justification": "The user asks to know the evidence relied on, and the latest turn record is the authoritative property record."
+  },
+  {
+   "index": "C30",
+   "category": "outcome",
+   "criterion": "The Agent cites the stale Airtable follow-up in the final response: MT-2026-0519 still had no completion date after documenting the May 19, 2026 QC failure.",
+   "evidence": "Inspect the final response for MT-2026-0519, its missing or null completion date, and its May 19, 2026 QC-failure context.",
+   "cb_justification": "The null completion date establishes why this current follow-up record required correction."
+  },
+  {
+   "index": "C31",
+   "category": "outcome",
+   "criterion": "The Agent cites the Gmail handoff evidence in the final response: Brooke Phillips emailed Sandra Allen (thread `fe8a2292788bfebf`) with Lisa Smith copied, reporting that Unit 9D had cleared final QC and been marked Rent Ready on May 21, 2026.",
+   "evidence": "Inspect the final response for the Brooke-to-Sandra Gmail handoff (identifiable by thread ID `fe8a2292788bfebf` or by sender/recipient), Lisa Smith being copied, and the message's statement that 9D cleared final QC and reached Rent Ready on May 21, 2026.",
+   "cb_justification": "This citation preserves the substantive content of the Gmail handoff (Brooke sender, Sandra recipient, Lisa CC, May 21 Rent Ready) without pinning the criterion to the email's June 8 metadata send-date, which agents seldom surface when quoting the email body."
+  },
+  {
+   "index": "C32",
+   "category": "outcome",
+   "criterion": "The Agent cites the Slack evidence in the final response showing that the July 2, 2026 supported appointment for Catalina Reyes runs from 10:30 a.m. to 11:15 a.m.",
+   "evidence": "Inspect the final response for a Slack-sourced citation of Catalina Reyes's July 2 10:30 a.m. to 11:15 a.m. showing. Either explicit attribution to Sandra Allen or a generic reference to the #leasing channel/thread satisfies the criterion.",
+   "cb_justification": "The material fact is the supported showing time being sourced from the #leasing Slack thread; agents may attribute the source generically (channel name) or by author name."
+  },
+  {
+   "index": "C33",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that Brooke Phillips, not organizer Tony Reyes, was the actual creator of the unsupported calendar event.",
+   "evidence": "Inspect the final response for Brooke Phillips as creator and Tony Reyes as organizer.",
+   "cb_justification": "The prompt explicitly asks the Agent to distinguish the event creator from its organizer."
+  },
+  {
+   "index": "C34",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that Airtable ticket MT-2026-0519 was closed or corrected to reflect the May 20 completion.",
+   "evidence": "Inspect the final response for a specific confirmation of the MT-2026-0519 Airtable update.",
+   "cb_justification": "The user asks to be told every current record changed."
+  },
+  {
+   "index": "C35",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the 9:00 a.m. kickoff was canceled with attendee notifications.",
+   "evidence": "Inspect the final response for a specific confirmation of the kickoff cancellation and notices to its attendees.",
+   "cb_justification": "The user asks to be told every appointment and notification changed."
+  },
+  {
+   "index": "C36",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the July 2, 10:30\u201311:15 a.m. Catalina showing was created with Lisa, Sandra, and Catalina as attendees.",
+   "evidence": "Inspect the final response for a specific confirmation of the showing event and all three attendees.",
+   "cb_justification": "The user asks to be told every supported appointment changed."
+  },
+  {
+   "index": "C37",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that an update was posted to #leasing.",
+   "evidence": "Inspect the final response for confirmation that the #leasing update was posted.",
+   "cb_justification": "The user asks to be told every notification changed, including the leasing-channel post."
+  },
+  {
+   "index": "C38",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that Catalina Reyes's HubSpot contact received a note with the final showing details.",
+   "evidence": "Inspect the final response for confirmation of the HubSpot note on Catalina's contact.",
+   "cb_justification": "The user asks to be told every current record and follow-up changed."
+  },
+  {
+   "index": "C39",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that a Property Ops prevention issue was opened and assigned to Brooke Phillips.",
+   "evidence": "Inspect the final response for confirmation of the Linear prevention issue, Property Ops project, and Brooke assignment.",
+   "cb_justification": "The user asks to be told every follow-up changed, including the portfolio-level prevention item."
+  },
+  {
+   "index": "C40",
+   "category": "outcome",
+   "criterion": "The Agent reproduces in the final response the proposed copy from the unsent email draft addressed to Catalina Reyes.",
+   "evidence": "Compare the final response's quoted or clearly delimited proposed email copy with the body supplied to the Gmail draft creation; they should match in substance and appointment details.",
+   "cb_justification": "The prompt explicitly asks Lisa to receive the proposed copy so she can review it with Sandra."
+  },
+  {
+   "index": "C41",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that a separate update was posted to #make-ready.",
+   "evidence": "Inspect the final response for confirmation that the #make-ready update was posted.",
+   "cb_justification": "The user asks to be told every notification changed, including the distinct make-ready-channel post."
+  },
+  {
+   "index": "C42",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that Catalina Reyes's July 2, 2026 showing from 10:30 a.m. to 11:15 a.m. was the supported appointment.",
+   "evidence": "Inspect the final response for an explicit conclusion that Catalina Reyes's July 2, 10:30\u201311:15 showing was supported.",
+   "cb_justification": "The user needs a separate conclusion identifying which appointment was supported by the post-handoff evidence."
+  },
+  {
+   "index": "C43",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the Las Vistas 9D move-out occurred on May 5, 2026.",
+   "evidence": "Inspect the final response for May 5, 2026 as the Las Vistas 9D move-out date.",
+   "cb_justification": "The user explicitly asks for the trail to be reconstructed from move-out through handoff."
+  },
+  {
+   "index": "C44",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that John Smith completed the Las Vistas 9D scope walk and established the punch list before the turnover work proceeded.",
+   "evidence": "Inspect the final response for John Smith's Las Vistas 9D scope walk and the resulting punch list or turnover scope; do not require an exact date.",
+   "cb_justification": "The scope walk and resulting punch list are the next independent milestone in the requested turnover reconstruction. The universe sources disagree on its exact date, so the criterion tests the supported event without imposing a disputed date."
+  },
+  {
+   "index": "C45",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the May 19, 2026 QC inspection failed only for a hallway-baseboard paint drip.",
+   "evidence": "Inspect the final response for the May 19 QC failure and the hallway-baseboard paint drip as its sole defect.",
+   "cb_justification": "The isolated May 19 QC defect explains the later stale follow-up without implying a new turnover."
+  },
+  {
+   "index": "C46",
+   "category": "outcome",
+   "criterion": "The Agent states in the #make-ready update that the conflicting July 2, 2026 9:00 a.m. kickoff was canceled.",
+   "evidence": "Inspect the message sent to C004 for an explicit statement that the July 2, 2026 9:00 a.m. kickoff was canceled.",
+   "cb_justification": "The make-ready team needs confirmation that the unsupported appointment was canceled rather than retained or repurposed."
+  },
+  {
+   "index": "C47",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the dishwasher and garbage-disposal replacement work for Las Vistas 9D was completed on May 12, 2026.",
+   "evidence": "Inspect the final response for the May 12, 2026 completion of the dishwasher and garbage-disposal replacement work in Las Vistas 9D.",
+   "cb_justification": "The appliance swap is an independent execution milestone in the requested reconstruction from move-out through handoff."
+  },
+  {
+   "index": "C48",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that drywall patching and repainting for Las Vistas 9D were completed over May 13\u201314, 2026.",
+   "evidence": "Inspect the final response for Las Vistas 9D drywall patching and repainting being completed over May 13\u201314, 2026.",
+   "cb_justification": "The drywall-and-paint phase is an independent execution milestone in the requested turnover reconstruction."
+  },
+  {
+   "index": "C49",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that Victor Rios completed the carpet cleaning for Las Vistas 9D before the deep clean and final QC.",
+   "evidence": "Inspect the final response for Victor Rios completing the Las Vistas 9D carpet cleaning before the subsequent deep-clean and final-QC stages; do not require an exact date.",
+   "cb_justification": "Carpet completion is an independent execution milestone between the scope walk and final QC. The universe sources disagree on its exact date, so the criterion preserves the supported work and sequence without imposing a disputed date."
+  },
+  {
+   "index": "C50",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the deep clean for Las Vistas 9D was completed on May 16, 2026.",
+   "evidence": "Inspect the final response for completion of the Las Vistas 9D deep clean on May 16, 2026.",
+   "cb_justification": "Deep-clean completion is the final independent work milestone before the May 19 QC inspection."
+  },
+  {
+   "index": "C51",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that John Smith completed the hallway-baseboard touch-up for Las Vistas 9D on May 20, 2026.",
+   "evidence": "Inspect the final response for John Smith completing the Las Vistas 9D hallway-baseboard touch-up on May 20, 2026.",
+   "cb_justification": "The repair is the independent milestone that resolves the sole May 19 QC defect before the passed reinspection."
+  },
+  {
+   "index": "C52",
+   "category": "outcome",
+   "criterion": "The Agent records on MT-2026-0519 that Jaime Salinas passed the reinspection on May 20, 2026.",
+   "evidence": "Inspect the update to rec2b7b06c6b6e955 for materially equivalent description text identifying Jaime Salinas's passed May 20 reinspection.",
+   "cb_justification": "The current ticket must separately document the successful QC result that justifies resolving the stale follow-up."
+  },
+  {
+   "index": "C53",
+   "category": "outcome",
+   "criterion": "The Agent performs no writes to historical Las Vistas 9D Make-Ready record rec6c700af81c8157, the May 8 scope-walk punch-list entry.",
+   "evidence": "Review all Airtable writes and verify that none targets tblMakeReady record rec6c700af81c8157. This record documents the May 8 scope-walk punch-list entry and must remain untouched during reconciliation, along with every other historical 9D turn record.",
+   "cb_justification": "The prompt requires historical Make-Ready records to remain unchanged while current records are reconciled."
+  },
+  {
+   "index": "C54",
+   "category": "outcome",
+   "criterion": "The Agent performs no writes to historical Las Vistas 9D Make-Ready record rec090176a77d5450, the May 15 carpet-cleaning progress entry.",
+   "evidence": "Review all Airtable writes and verify that none targets tblMakeReady record rec090176a77d5450. This record documents the May 15 carpet-cleaning progress entry and must remain untouched during reconciliation, along with every other historical 9D turn record.",
+   "cb_justification": "The prompt requires historical Make-Ready records to remain unchanged while current records are reconciled."
+  },
+  {
+   "index": "C55",
+   "category": "outcome",
+   "criterion": "The Agent performs no writes to historical Las Vistas 9D Make-Ready record rec1347fb87038a54, the May 16 deep-clean advance-to-Pending-QC entry.",
+   "evidence": "Review all Airtable writes and verify that none targets tblMakeReady record rec1347fb87038a54. This record documents the May 16 deep-clean advance-to-Pending-QC entry and must remain untouched during reconciliation, along with every other historical 9D turn record.",
+   "cb_justification": "The prompt requires historical Make-Ready records to remain unchanged while current records are reconciled."
+  },
+  {
+   "index": "C56",
+   "category": "outcome",
+   "criterion": "The Agent performs no writes to historical Las Vistas 9D Make-Ready record rec014e107f3c265c, a duplicate May 20 baseboard-rework Ready entry (first duplicate).",
+   "evidence": "Review all Airtable writes and verify that none targets tblMakeReady record rec014e107f3c265c. This record documents a duplicate May 20 baseboard-rework Ready entry (first duplicate) and must remain untouched during reconciliation, along with every other historical 9D turn record.",
+   "cb_justification": "The prompt requires historical Make-Ready records to remain unchanged while current records are reconciled."
+  },
+  {
+   "index": "C57",
+   "category": "outcome",
+   "criterion": "The Agent performs no writes to historical Las Vistas 9D Make-Ready record receeb2b3334dd754, a duplicate May 20 baseboard-rework Ready entry (second duplicate).",
+   "evidence": "Review all Airtable writes and verify that none targets tblMakeReady record receeb2b3334dd754. This record documents a duplicate May 20 baseboard-rework Ready entry (second duplicate) and must remain untouched during reconciliation, along with every other historical 9D turn record.",
+   "cb_justification": "The prompt requires historical Make-Ready records to remain unchanged while current records are reconciled."
+  },
+  {
+   "index": "C58",
+   "category": "outcome",
+   "criterion": "The Agent deletes Brooke Phillips's residual calendar copy 1zw3533cqjrtg0kwmbvifytko8-0f82233a of the unsupported July 2, 2026 Las Vistas 9D kickoff from [brooke.phillips@starpm.com](mailto:brooke.phillips@starpm.com), reflecting that Brooke is the actual event creator whose independent calendar copy would otherwise persist after the organizer deletion.",
+   "evidence": "Look for a `delete_event` call with `calendarId` brooke.phillips@starpm.com and `eventId` 1zw3533cqjrtg0kwmbvifytko8-0f82233a. Either notification level is acceptable; the material outcome is removal of Brooke's independently stored copy after the primary organizer cancellation on Tony Reyes's calendar.",
+   "cb_justification": "The mock calendar stores attendee copies independently, so the unsupported kickoff remains visible on Brooke's calendar unless this residual copy is removed."
+  },
+  {
+   "index": "C59",
+   "category": "outcome",
+   "criterion": "The Agent deletes Carlos Mendez's residual calendar copy 1zw3533cqjrtg0kwmbvifytko8-e6a2ac74 of the unsupported July 2, 2026 Las Vistas 9D kickoff from [carlos.mendez@starpm.com](mailto:carlos.mendez@starpm.com), reflecting that Carlos is an invited maintenance attendee whose independent calendar copy must also be cleared.",
+   "evidence": "Look for a `delete_event` call with `calendarId` carlos.mendez@starpm.com and `eventId` 1zw3533cqjrtg0kwmbvifytko8-e6a2ac74. Either notification level is acceptable; the material outcome is removal of Carlos's independently stored copy after the primary organizer cancellation on Tony Reyes's calendar.",
+   "cb_justification": "The mock calendar stores attendee copies independently, so the unsupported kickoff remains visible on Carlos's calendar unless this residual copy is removed."
+  },
+  {
+   "index": "C60",
+   "category": "outcome",
+   "criterion": "The Agent deletes Wesley Tran's residual calendar copy 1zw3533cqjrtg0kwmbvifytko8-bb51ad21 of the unsupported July 2, 2026 Las Vistas 9D kickoff from [wesley.tran@starpm.com](mailto:wesley.tran@starpm.com), reflecting that Wesley is an invited make-ready attendee whose independent calendar copy must also be cleared.",
+   "evidence": "Look for a `delete_event` call with `calendarId` wesley.tran@starpm.com and `eventId` 1zw3533cqjrtg0kwmbvifytko8-bb51ad21. Either notification level is acceptable; the material outcome is removal of Wesley's independently stored copy after the primary organizer cancellation on Tony Reyes's calendar.",
+   "cb_justification": "The mock calendar stores attendee copies independently, so the unsupported kickoff remains visible on Wesley's calendar unless this residual copy is removed."
+  }
+ ]
+}

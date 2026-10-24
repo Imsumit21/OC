@@ -1,0 +1,115 @@
+{
+ "id": "card_11",
+ "n_criteria": 13,
+ "requirements": [
+  "R1: exact wire amount (cash to close) determined",
+  "R2: amount passed to Robert Bianchi",
+  "R3: amount passed to Lisa Tran",
+  "R4: figure logged on Robert's record",
+  "R5: file successor has the number",
+  "R6: bookkeeper has the number"
+ ],
+ "findings": [
+  {
+   "c": "C2",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "materially lower than the circulated $22,900.00 ... gives him a good-faith estimate of that lower amount",
+   "why": "title names no wire figure; any lower estimate passes; prompt asks 'exactly what he needs to wire'"
+  },
+  {
+   "c": "C2",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "is materially lower ... because of credits already on his file, and gives him a good-faith estimate",
+   "why": "verdict, grounding and estimate bundled"
+  },
+  {
+   "c": "C6",
+   "defect": "dimension-only",
+   "severity": "dimension-only",
+   "quote": "does not present $22,900.00 to Robert Bianchi as the amount",
+   "why": "prohibition-only title -> Negative FAIL"
+  },
+  {
+   "c": "C7",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "materially lower than the circulated $22,900.00",
+   "why": "no figure named; 'materially' replaces a concrete target; wrong lower figure ($18,150) passes"
+  },
+  {
+   "c": "C9",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "at grace.yamamoto@... or by correcting her in the handoff Slack thread (channel C006)",
+   "why": "prompt says 'make sure ... have the number'; a Slack DM to Grace is a valid route the closed list rejects"
+  },
+  {
+   "c": "C10",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "routes ... to the bookkeeper Hana Kim at hana.kim@keystonemortgage.com",
+   "why": "email-address lock-in; other supported delivery (Slack DM) rejected; inconsistent with C9 which allows Slack"
+  },
+  {
+   "c": "C11",
+   "defect": "dimension-only",
+   "severity": "dimension-only",
+   "quote": "does not change the loan record or its status",
+   "why": "prohibition-only -> Negative FAIL; also arguably rejects logging the figure on the loan record ('log it on Robert's record')"
+  },
+  {
+   "c": "C12",
+   "defect": "dimension-only",
+   "severity": "dimension-only",
+   "quote": "does not clear or alter any loan condition",
+   "why": "prohibition-only, not prompt-stated -> Negative FAIL"
+  },
+  {
+   "c": "C13",
+   "defect": "dimension-only",
+   "severity": "dimension-only",
+   "quote": "does not process or execute any payment or refund",
+   "why": "prohibition-only, not prompt-stated -> Negative FAIL"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R2",
+   "why": "no row requires the exact wire amount ($17,240) in the communication to Robert; C2 evidence explicitly accepts an estimate"
+  }
+ ],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C2",
+    "C6"
+   ],
+   "condition": "presenting $22,900 as the wire amount fails both (C2 evidence restates C6)"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 4,
+  "rows_moderate": 1,
+  "rows_minor": 0,
+  "missing_outcomes": 1,
+  "pct_major": 38.5,
+  "pct_moderate_or_worse": 46.2,
+  "pct_any": 46.2
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "none"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe access (other universe): all literal values UNRESOLVED; no weights on card (N/A); channel/tool availability not verifiable. C3-C5 (credit identification rows) left clean on counter-reading that they ground the asked figure; their artifact is unspecified."
+}

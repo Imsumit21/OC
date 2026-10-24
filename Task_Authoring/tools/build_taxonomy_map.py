@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""Regenerate references/Taxonomy_V2_Step_Map.md from the platform Taxonomy.json.
+
+The taxonomy changes often; this keeps the bundle's step map in sync instead of a
+hand-maintained copy. It lists every task screen in order with its type, the input
+fields it collects (with limits), visibility conditions, and which slot in
+task_inputs/ feeds it.
+
+Usage (from the workspace root):
+  python3 Task_Authoring/tools/build_taxonomy_map.py <path/to/Taxonomy.json>
+"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+# Screen id -> task_inputs slot that feeds it (see setup/GEN_EXECUTION.md §5).
+SLOT_FOR_STEP = {
+    "step-TextCollection-40d66f34a917": "00_Assigments.md",
+    "step-ServerConfigInject": "03_Error_Async_Config.txt",
+    "step-AgentEnvFileUpload-af88c8e9a70c": "02_Reference_Files/",
+    "step-TextCollection-245dfe409279": "02_Reference_Files/",
+    "step-TextCollection-c88e318712d8": "01_Universe_Inject.sql (design: 01_Scenario_Design.md)",
+    "step-1772066557728": "04_Prompt.txt (Claude or human)",
+    "step-TextCollection-97f4edcbe80f": "05_Human_Time.md (human types) · prep 05_Human_Time_Worksheet.md",
+    "step-ExternalApp-290a5f7d9d8c": "06_PreCheck_Trajectory/trajectory.json",
+    "step-TextCollection-b5c0b5e6bd21": "06_PreCheck_Trajectory/ (human difficulty answer)",
+    "step-1772044998707-h7ql51": "07_Baseline_Trajectories/",
+    "step-TextCollection-7db54f55fdc6": "08_Oracle_Events.md (Claude or human)",
+    "step-1772044948565": "09_Rubrics.json (Claude or human)",
+    "step-ExternalApp-90d25b4b2b6e": "10_Baseline_Verifier_Results.md",
+    "step-RubricCriteriaRating-cbdb5ab64f4d": "11_AF_Justification.md",
+    "step-TextCollection-difficulty-check": "12_Difficulty_Stats.txt",
+}
+
+
+# Screens whose full text is appended (assignment, competencies, task skill, complexity,
+# friction, universe/seeding, prompt, oracle events, rubric quick reference, difficulty).
+APPENDIX_STEPS = [
+    "step-Instruction-1d5632aa14d0", "step-Instruction-f7b5acada947", "step-Instruction-ba5526d5fb90",
+    "step-Instruction-7068e3fe2651", "step-Instruction-0c7c0a88333a", "step-Instruction-8758f537c428",
+    "step-Instruction-a4009f4e3d8b", "step-Instruction-7a9af321b7e7", "step-Instruction-3ca66758f21f",
+    "step-Instruction-d6502e94a1e6", "step-Instruction-f2d70be69820", "step-1772157782440-hqhy3e",
+    "step-Instruction-417cc94e9140", "step-1772066557728", "step-Instruction-b1b42be239ec",
+    "step-Instruction-eb66d2690a20", "step-Instruction-difficulty-check",
+]
+
+
+def describe_field(field: dict) -> str:
+    parts = [f"`{field.get('field_id')}` ({field.get('type')})"]
+    for key, label in (("min_characters", "min chars"), ("max_characters", "max chars"),
+                       ("min", "min"), ("max", "max"), ("step", "step")):
+        if key in field:
+            parts.append(f"{label} {field[key]}")
+    if field.get("disable_pasting"):
+        parts.append("paste blocked")
+    choices = field.get("choices") or []
+    if choices and len(choices) <= 6:
+        parts.append("choices: " + " / ".join(str(c.get("value")) for c in choices))
+    elif choices:
+        parts.append(f"{len(choices)} choices")
+    return " ".join(parts)
+
+
+def describe_params(step: dict) -> str:
+    params = step.get("params", {})
+    notes = []
+    for field in params.get("fields", []) or []:
+        notes.append(describe_field(field))
+    if step["type"] == "PromptInput":
+        notes.append(f"words {params.get('minWords')}–{params.get('maxWords')}")
+    if step["type"] == "RubricCriteriaBuilder":
+        prefill = params.get("criteriaPrefiller", {}).get("enabled")
+        notes.append(f"min criteria {params.get('minCriteria')}; weights {params.get('weightMin')}–{params.get('weightMax')}; prefill {'on' if prefill else 'off'}")
+    if step["type"] == "SandboxEnvironment":
+        notes.append("downloads: " + ", ".join(Path(p).name for p in params.get("downloadPaths", [])))
+    if params.get("conditional_visibility"):
+        notes.append("conditional")
+    if params.get("visibility_restricted"):
+        notes.append(f"visible to levels {params['visibility_restricted']} (incl. -1 = attempter)")
+    return "; ".join(notes)
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) != 1:
+        print(__doc__, file=sys.stderr)
+        return 2
+    taxonomy = json.loads(Path(argv[0]).read_text())
+    variables = taxonomy.get("templateVariables", {})
+    rows = ["| # | Type | Screen | Inputs / notes | Slot |", "|---|---|---|---|---|"]
+    for i, step in enumerate(taxonomy["turn"]):
+        title = (step.get("title") or "").replace("|", "\\|").replace("# ", "")
+        rows.append(f"| {i} | {step['type']} | {title} | {describe_params(step).replace('|', '/')} | "
+                    f"{SLOT_FOR_STEP.get(step['id'], '')} |")
+    after = [s.get("title", "") for s in taxonomy.get("after", [])]
+    out = [
+        "# Taxonomy V2 — Step Map",
+        "",
+        f"> Generated by `tools/build_taxonomy_map.py` from `{Path(argv[0]).name}` — do not edit by hand; re-run when the taxonomy changes.",
+        "",
+        f"{len(taxonomy['turn'])} task screens. Template variables: "
+        + ", ".join(f"`{k}`" for k in variables if k != "system_prompt") + ".",
+        "",
+        *rows,
+        "",
+        "Reviewer-only screens after the task: " + ("; ".join(after) or "none") + ".",
+        "",
+        "Known stale screen text (per `1_Changelog.md` and `5_Eval Sandbox - V2.md`): the Run Evals screens say",
+        "\"Sandbox 1\" (there is one sandbox); the `/prompt` paste list mentions dynamic context (removed);",
+        "the `/rubric` paste list asks for \"verified oracle events/GTFA\" (the Evals accept the OE as a comparison",
+        "reference only). The difficulty screen's average-pass rule (< 90%) is looser than the Evals",
+        "(`scoring.json`: < 75%, SD 0.1–0.3) — design to the strictest (`setup/GEN_EXECUTION.md` §3).",
+    ]
+    out += ["", "## Appendix — screen text the playbooks cite", "",
+            "Verbatim, so the bundle works where `Taxonomy.json` is not available (e.g. inside the eval sandbox).", ""]
+    by_id = {s["id"]: (i, s) for i, s in enumerate(taxonomy["turn"])}
+    for step_id in APPENDIX_STEPS:
+        if step_id not in by_id:
+            continue
+        i, step = by_id[step_id]
+        params = step.get("params", {})
+        out += [f"### Screen {i} — {(step.get('title') or '').replace('# ', '')}", ""]
+        for key in ("instructions", "goal", "writingGuideline"):
+            if params.get(key):
+                text = params[key].replace("\n#", "\n####")  # keep screen headings below this level
+                out += [f"*{key}*", "", text.strip(), ""]
+    target = Path(__file__).resolve().parent.parent / "references" / "Taxonomy_V2_Step_Map.md"
+    target.write_text("\n".join(out) + "\n")
+    print(f"wrote {target} ({len(taxonomy['turn'])} screens)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

@@ -1,0 +1,81 @@
+# 12 — Baseline Difficulty & Failure Patterns (Playbook) — HarmonyGames · Spec V2
+
+> Command: `/create-difficulty` · Writes: `task_inputs/Working_Files/12_Difficulty_Stats.txt` (+ `task_inputs/Working_Files/12_difficulty_input.json`) · Paired eval: none (QC-scored as the Trajectory dimensions) · Read first: `setup/GEN_EXECUTION.md`
+
+## Purpose
+
+Reproduce the platform's Baseline Difficulty Statistics from the six baseline
+rollouts and the single verifier, check them against the QC Spec V2 gates, and —
+when a gate fails — say where the fix belongs. The platform computes these numbers
+itself; this report exists so you can see *why* they come out as they do before
+you confirm the Difficulty & Failure-Pattern Check.
+
+## Inputs / Output
+
+Inputs (all required; stop and name what is missing)
+- `task_inputs/10_Baseline_Verifier_Results.md` — per-rollout rubric results.
+- `task_inputs/07_Baseline_Trajectories/` — six trajectory JSONs (tool-call counts, errors, friction evidence).
+- `task_inputs/09_Rubrics.json` — rubric ids and weights.
+- `task_inputs/00_Assigments.md` — task type.
+- `task_inputs/11_AF_Justification.md` if it exists — invalid all-fails change the picture.
+
+Output
+- `task_inputs/Working_Files/12_difficulty_input.json` — the matrix in the format documented in `tools/difficulty_stats.py`.
+- `task_inputs/Working_Files/12_Difficulty_Stats.txt` — the calculator output plus the diagnosis below.
+
+## The gates (strictest of QC Spec V2 and Evals `scoring.json`)
+
+| Gate | Pass condition | Failure mode |
+|---|---|---|
+| Completed runs | ≤ 2 of 6 errored | Too Many Erroneous Runs (Fail) |
+| pass@1 | ≤ 50% of completed rollouts pass every rubric (≤ 3 of 6) | Too Easy (Fail) |
+| Avg weighted pass rate | < 75% (Evals; QC Spec V2 alone allows < 90%) | Avg Pass Rate Too High (Fail) |
+| Per-rollout spread | population SD of per-rollout weighted pass rates 0.1–0.3 | Too deterministic (< 0.1: add friction / independent difficulties) · Too noisy (> 0.3: check rubric ambiguity) |
+| Failure patterns | ≥ 2 patterns; same pattern unless results differ on ≥ 2 rubrics; largest ≤ 50% of failing rollouts | Too Few Signatures / Signature Over-Concentrated (Fail) |
+| Horizon | Golden-run tool calls if any rollout scored 100%, else the completed-rollout average; Normal 50–100, Long-Horizon 100+ | Wrong Horizon (Fail, under) · Borderline Horizon (Non-fail, over) |
+
+The taxonomy's check screen (Oct 3) now says pass@1 ≤ 50% and average < 90%. The
+Evals scoring is stricter on the average (< 75%) and adds the SD band — report against
+the strictest value and show the looser one beside it (the calculator does both).
+
+## Hard gates
+
+1. **Measure, never estimate.** Every number comes from the verifier results and trajectories. If a rollout's result for a rubric is unreadable, stop and ask.
+2. **Count real tool calls.** Count the calls in each trajectory. Note blocked or repeated calls separately — they add nothing to real depth, and an inflated count is a failure mode of its own.
+3. **Use the calculator.** Build `12_difficulty_input.json` and run `python3 Task_Authoring/tools/difficulty_stats.py Task_Authoring/task_inputs/Working_Files/12_difficulty_input.json`. Paste its output into the report unchanged. If you disagree with a grouping (the "chained merge" note), say so beside it; do not edit the numbers.
+4. **Friction actually fired.** If `03_Error_Async_Config.txt` configured errors or waits, confirm from the trajectories that the errored tool was called and failed, and that the submit → check → get sequence appeared. If not, the friction contributed nothing and any recovery criteria are ungradeable — flag it.
+5. **Never tune.** When a gate fails, the fix is the prompt or the universe. Never recommend deleting or softening criteria to move the numbers; that creates a missing-coverage defect and leaves the task as easy as it was.
+
+## Diagnosis and routing
+
+| Symptom | Likely cause | Route |
+|---|---|---|
+| Too Easy / average too high | Evidence sits in one obvious place; the prompt names the artifact; no conclusion-sounding message to stop at; correction met before the claim it overturns | `/create-hardening` (MODE B forensics), then `/create-injection`; prompt-side defects go to the human |
+| One pattern dominates | A single choke point carries all the difficulty (bimodal scores: runs either find the authority and pass most rows, or miss it and fail most) | Add an independent source of difficulty in the universe — a second hidden authority governing different requirements, an independent chain landing on different rows (`Hardness_Mastery.md` §0 bimodality trap) |
+| SD < 0.1 | Every run lands on the same score: uniform success, or one universal blind spot | Uniform success → `/create-hardening`; uniform failure on the same rows → check those rows for predicted all-fail defects first |
+| SD > 0.3 | Scores swing between near-0 and near-100 | Usually one gating discovery or an ambiguous rubric row — check row ambiguity, then split the gating discovery |
+| Wrong Horizon | Scenario too narrow for the tier | Deepen the universe (day-level data, threads read past the apparent end, more sources that genuinely matter); never pad with blocked or repeated calls |
+| Borderline Horizon | Scenario larger than the tier | Non-fail; note it. Narrow the scope only if it also simplifies the task honestly |
+| 3+ errored rollouts | Platform or friction problem | Re-run; check the friction settings against the first trajectory |
+| Invalid all-fails (from `11_`) | Rubric defects inflate difficulty | Human fixes the criteria, re-runs the verifier, then re-run this step |
+
+After any prompt or universe change, the baseline is re-run in full (re-inject the
+SQL first), and every downstream step is re-checked.
+
+## Report format
+
+```
+Task type: <normal | long-horizon>      Completed: <n>/6      Errored: <ids>      Per-rollout SD: <x>
+<calculator markdown output, unchanged>
+Friction check: <fired / not configured / did not fire — evidence>
+Tool-call notes: <blocked or repeated calls observed, per rollout>
+Diagnosis: <for each failing gate: cause + route>
+Platform screen: confirm only if every QC gate passes.
+```
+
+## Deliver
+
+Report the gate table, the blocking gates, and the routing. Confirm the
+Difficulty & Failure-Pattern Check only when every gate passes; if only an
+Evals-stricter gate fails (average 75–90%, SD outside the band), say so plainly —
+QC Spec V2 alone would pass, the Evals scoring would not.

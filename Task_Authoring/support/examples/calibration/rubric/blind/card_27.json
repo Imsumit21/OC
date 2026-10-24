@@ -1,0 +1,189 @@
+{
+ "card_index": 27,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Quick one but I need it handled end to end and properly, not a rubber-stamp. When we flipped the expense categorizer back on for GreenStack as our canary, it went sideways on a chunk of the auto-approvals and I have not had time to actually sit with it. Emeka pinged me in the team channel. He skimmed the batch and figures only about $600 got waved through that should not have, and he just wants it noted so he can move on before his GreenStack call. That roughly matches my gut, but I am not putting a number on the ticket that I have not actually stood up against GreenStack's real stipend limits. So go through everything the bot auto-approved for GreenStack since we turned it back on, work out exactly which ones break their policy and what the whole thing actually adds up to, and pull each of those back out of approved so they are sitting in review, with a short note on each one saying why you pulled it so finance can see what to unwind.\n\nBefore you trust that list, sanity-check it. Confirm each person you are flagging is genuinely a current GreenStack relocation and not something mislabeled onto their account, and confirm the categorizer only went live for GreenStack and did not quietly start auto-deciding for any of our other clients. If it touched anyone else, I need to know before this goes further. Then write it up on the canary ticket: what went wrong and why it slipped through, which expenses and people, and the actual total the bot auto-approved that it should not have, meaning the full approved dollar amount of the out-of-policy items, not just the amount by which each one went over its limit. Get the underlying cause tracked as its own piece of work so the permanent fix does not fall through the cracks again, and set me a reminder to check that fix actually shipped before we widen the canary. Give the team a heads-up so nobody is blindsided, and make sure Marcus has what he needs on the finance side. Keep it internal for now, no reaching out to GreenStack, that is Emeka's call once we actually know the number.\n\nI am heads-down on the schema-validation work today and then in reviews, so do not wait on me. Use your best judgment and get it finished properly. Thanks.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent reports that GreenStack Energy's stipend policy excludes coworking, and identifies the four coworking charges the categorizer auto-approved as out of policy: recStipGS0000001 ($350), recStipGS0000004 ($180), recStipGS0000008 ($260), and recStipGS0000011 ($140).",
+   "evidence": "GreenStack's finalized limits (Chloe Vance email, email_chloe_greenstack_limits_01) state coworking is not covered. The four coworking auto-approvals are recStipGS0000001 ($350), recStipGS0000004 ($180), recStipGS0000008 ($260), recStipGS0000011 ($140).",
+   "cb_justification": "The prompt asks the Agent to work out which auto-approved GreenStack expenses break policy. Coworking being excluded is one of the two violation mechanisms, and it is stated only in the authoritative limits source, not in the deployed configuration the tool used."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent reports that GreenStack Energy's ergonomic category limit is $500 (covering standing desks, ergonomic chairs, and monitor arms), and identifies the five ergonomic charges the categorizer auto-approved over that limit as out of policy: recStipGS0000002 ($780), recStipGS0000003 ($640), recStipGS0000009 ($710), recStipGS0000010 ($590), and recStipGS0000015 (monitor arm, $560).",
+   "evidence": "Chloe Vance's email sets the ergonomic limit at $500 and states it covers standing desks, ergonomic chairs, and monitor arms. The five ergonomic auto-approvals over $500 are recStipGS0000002 ($780), recStipGS0000003 ($640), recStipGS0000009 ($710), recStipGS0000010 ($590), recStipGS0000015 (monitor arm, $560).",
+   "cb_justification": "This is the second violation mechanism the prompt requires the Agent to surface. The ergonomic limit and the fact that standing desks and monitor arms fall under ergonomic are stated only in the authoritative limits source, not in the deployed configuration. The monitor arm is a deliberate trap: it is ergonomic (limit $500), not equipment (limit $600), so at $560 it is a violation."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent reports the total amount the categorizer improperly auto-approved for GreenStack as $4,210.",
+   "evidence": "The nine violating amounts are $350 + $780 + $640 + $180 + $260 + $710 + $590 + $140 + $560 = $4,210, computed from the Airtable records measured against Chloe's limits. $4,210 must be presented as the improperly auto-approved total; reporting only the over-limit excess (for example $1,710) as the improperly auto-approved figure does not satisfy this rubric, even if $4,210 is mentioned elsewhere as a gross or sticker figure.\u03a9\u03a9\u03a9\u03a9\u03a9",
+   "cb_justification": "The prompt explicitly asks for the actual total the bot auto-approved that it should not have. The correct figure is the sum of the full approved amounts of the nine policy-violating submissions."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent reports that the categorizer's faulty auto-approvals were limited to GreenStack Energy and that no other client was affected.",
+   "evidence": "Only GreenStack Energy stipend rows carry the \"Auto-approved by ExpenseBot v1.1 (GreenStack canary)\" marker; other clients' recent stipend rows do not, and the only other ExpenseBot references (Vectral Systems, Mosaic Robotics) are dated February and March 2026 from the paused pilot.",
+   "cb_justification": "The prompt directly asks the Agent to confirm the categorizer only went live for GreenStack and did not quietly start auto-deciding for other clients. This is a distinct finding the user asked to be told."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent confirms that the four flagged employees (Noah Fitzgerald, Mei-Lin Zhao, Joaqu\u00edn Reyes, and Tom\u00e1s Herrera) are genuine current GreenStack Energy relocations and that none of the flagged submissions was mislabeled onto the wrong account.",
+   "evidence": "All four employees appear as GreenStack Energy relocations in the Airtable Relocations table (Noah Fitzgerald, Mei-Lin Zhao, Joaqu\u00edn Reyes, Tom\u00e1s Herrera).",
+   "cb_justification": "The prompt explicitly asks the Agent to confirm each flagged person is genuinely a current GreenStack relocation and not something mislabeled onto their account. This is a distinct confirmation the user requested."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000001 (Noah Fitzgerald, coworking, $350) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000001 (Noah Fitzgerald, Coworking Membership, $350) is currently Approved in the Stipend Transactions table (tblStipends00001); coworking is excluded for GreenStack.",
+   "cb_justification": "The prompt requires the Agent to pull each offending submission back out of approved into review, with a note explaining why. This coworking charge is one of the nine violations."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000002 (Mei-Lin Zhao, standing desk, $780) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000002 (Mei-Lin Zhao, Standing Desk, $780) is currently Approved in tblStipends00001; $780 exceeds GreenStack's ergonomic limit of $500.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. This standing desk exceeds the ergonomic $500 limit."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000003 (Joaqu\u00edn Reyes, ergonomic chair, $640) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000003 (Joaqu\u00edn Reyes, Ergonomic Office Chair, $640) is currently Approved in tblStipends00001; $640 exceeds GreenStack's ergonomic limit of $500.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. This ergonomic chair exceeds the ergonomic $500 limit."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000004 (Tom\u00e1s Herrera, coworking, $180) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000004 (Tom\u00e1s Herrera, Coworking Day Pass Bundle, $180) is currently Approved in tblStipends00001; coworking is excluded for GreenStack.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. This coworking charge is one of the nine violations."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000008 (Mei-Lin Zhao, coworking, $260) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000008 (Mei-Lin Zhao, Coworking Membership, $260) is currently Approved in tblStipends00001; coworking is excluded for GreenStack.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. This coworking charge is one of the nine violations."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000009 (Tom\u00e1s Herrera, standing desk, $710) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000009 (Tom\u00e1s Herrera, Standing Desk, $710) is currently Approved in tblStipends00001; $710 exceeds GreenStack's ergonomic limit of $500.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. This standing desk exceeds the ergonomic $500 limit."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000010 (Noah Fitzgerald, ergonomic chair, $590) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000010 (Noah Fitzgerald, Ergonomic Office Chair, $590) is currently Approved in tblStipends00001; $590 exceeds GreenStack's ergonomic limit of $500.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. This ergonomic chair exceeds the ergonomic $500 limit."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000011 (Joaqu\u00edn Reyes, coworking, $140) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000011 (Joaqu\u00edn Reyes, Coworking Day Pass Bundle, $140) is currently Approved in tblStipends00001; coworking is excluded for GreenStack.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. This coworking charge is one of the nine violations."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent keeps all seven within-policy GreenStack canary submissions in Approved status: recStipGS0000005 (equipment $560), recStipGS0000006 (internet $115), recStipGS0000007 (office supplies $68), recStipGS0000012 (equipment $520), recStipGS0000013 (internet $110), recStipGS0000014 (office supplies $60), and recStipGS0000016 (ergonomic chair $490).",
+   "evidence": "Each of these seven is within its GreenStack limit (equipment $600, ergonomic $500, internet $120, office supplies $75). The pre-existing manual rows (recStip000000007 Lab Workbench $1,350, recStip000000008 $285) are not canary auto-approvals and are also out of scope.",
+   "cb_justification": "The prompt asks the Agent to pull back only the submissions that break policy. Pulling back within-policy submissions, or the pre-existing manually approved GreenStack expenses, would be an incorrect over-correction. The $490 ergonomic chair is a deliberate near-limit decoy: it is under the $500 ergonomic limit, so it must stay approved even though other ergonomic chairs in the batch are violations."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent documents the incident on the GreenStack canary tracking ticket.",
+   "evidence": "The canary ticket is issue_greenstack_canary (number 221, Engineering team, project proj_expense_autocategorizer).",
+   "cb_justification": "The prompt directs the Agent to write it up on the canary ticket. Recording the write-up on that ticket is a required action."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent's write-up on the canary ticket documents what went wrong and why the out-of-policy expenses slipped through, explaining that the configuration the categorizer used for GreenStack did not match GreenStack's finalized policy (it dropped the coworking exclusion and applied higher category limits than GreenStack's).",
+   "evidence": "The deployed GreenStack canary configuration left the excluded_categories list empty (so coworking was auto-approved) and carried higher category limits than GreenStack's finalized limits (ergonomic $500 per Chloe Vance's email), which is why the nine out-of-policy submissions were auto-approved.",
+   "cb_justification": "The prompt specifies the ticket write-up must cover what went wrong and why it slipped through. Documenting the functional configuration mismatch on the ticket is a distinct content element of the documentation; the specific Mosaic-clone provenance is graded by a separate rubric."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's write-up on the canary ticket identifies the affected expenses and the affected employees (Noah Fitzgerald, Mei-Lin Zhao, Joaqu\u00edn Reyes, and Tom\u00e1s Herrera).",
+   "evidence": "The nine affected expenses (recStipGS0000001, 0002, 0003, 0004, 0008, 0009, 0010, 0011, 0015) belong to the four GreenStack employees Noah Fitzgerald, Mei-Lin Zhao, Joaqu\u00edn Reyes, and Tom\u00e1s Herrera.",
+   "cb_justification": "The prompt specifies the ticket write-up must cover which expenses and people were affected. This is a distinct content element from the root cause and the total."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's write-up on the canary ticket states the total improperly auto-approved amount as $4,210.",
+   "evidence": "The nine violating submissions total $4,210 as computed from the Airtable records against Chloe's limits. $4,210 must be presented as the improperly auto-approved total; reporting only the over-limit excess (for example $1,710) as the improperly auto-approved figure does not satisfy this rubric, even if $4,210 is mentioned elsewhere as a gross or sticker figure.",
+   "cb_justification": "The prompt specifies the ticket write-up must cover the actual total. This is a distinct content element of the documentation."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent creates a separate tracked work item for the permanent configuration fix (applying GreenStack's real limits and restoring the coworking exclusion).",
+   "evidence": "The Engineering team (team_engineering) and the Expense Auto-Categorization Engine project (proj_expense_autocategorizer) exist for the new work item; the cause to fix is the Mosaic-cloned config described in comment_gs_config_clone.",
+   "cb_justification": "The prompt asks the Agent to get the underlying cause tracked as its own piece of work so the fix does not fall through the cracks again. This is a distinct write action from documenting the incident."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent notifies the engineering team internally that the GreenStack canary auto-approved out-of-policy expenses, that the affected submissions have been pulled back for review, and that a fix is being tracked.",
+   "evidence": "The engineering channel is C003 (#engineering), where the canary announcement and surrounding discussion already live.",
+   "cb_justification": "The prompt asks the Agent to give the team a heads-up so nobody is blindsided. Delivering the internal update is a required action; the channel or method is not fixed by the prompt."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent notifies the Head of Finance, Marcus Thorne, internally with the finance-relevant detail, including the $4,210 improperly auto-approved and that the affected submissions have been pulled back for review.",
+   "evidence": "Marcus Thorne is the Head of Finance, marcus.thorne@moveops.com, confirmed in Contacts; the finance-relevant figure is the $4,210 improperly auto-approved. $4,210 must be presented as the improperly auto-approved total; reporting only the over-limit excess (for example $1,710) as the improperly auto-approved figure does not satisfy this rubric, even if $4,210 is mentioned elsewhere as a gross or sticker figure.",
+   "cb_justification": "The prompt asks the Agent to make sure Marcus has what he needs on the finance side. Reaching Marcus with the specific finance detail is a required action."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent sets a follow-up reminder to confirm the permanent configuration fix has shipped before the canary is widened.",
+   "evidence": "The fix to verify is the GreenStack configuration correction described in comment_gs_config_clone; the reminder should be dated on or after the fixed date 2026-04-26.",
+   "cb_justification": "The prompt asks the Agent to set a reminder to check the fix actually shipped before widening the canary. Any scheduling mechanism satisfies this (a reminder/cron entry or a calendar event); the requirement is a dated follow-up, not a specific tool."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent keeps all communication about the over-approvals internal to MoveOps and does not contact GreenStack Energy externally.",
+   "evidence": "GreenStack external contacts include Derek Hollis (People Operations Manager) at the greenstackenergy.com domain; the prompt instructs the Agent not to contact them.",
+   "cb_justification": "The prompt says to keep it internal and that reaching out to GreenStack is Emeka's call once the number is known. Contacting GreenStack would violate the stated constraint and exceed the persona's authority."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent moves recStipGS0000015 (Noah Fitzgerald, monitor arm, $560) out of Approved into a not-approved review state (such as Pending) and records a note that it was an out-of-policy canary auto-approval (or similar).",
+   "evidence": "recStipGS0000015 (Noah Fitzgerald, Monitor Arm (Dual-Mount), $560) is currently Approved in tblStipends00001; Chloe's email classifies monitor arms as ergonomic ($500 limit), so $560 exceeds the limit.",
+   "cb_justification": "The prompt requires pulling each offending submission back into review with a note. The monitor arm is ergonomic (limit $500), not equipment (limit $600), so at $560 it is a violation; an agent that misfiles it as equipment will wrongly leave it approved."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent treats the claim that the GreenStack over-approvals are merely a recurrence of the March ENG-215 string-vs-number JSON type-coercion bug as a false lead and rules it out.",
+   "evidence": "Dmitri Volkov's message (inject_gs_dmitri_falselead_001) claims it is ENG-215 recurring; the reachable data shows the categorizer decided equipment, internet, office supplies, and furniture correctly, so there is no string-vs-number type-coercion signature, which rules out ENG-215.",
+   "cb_justification": "A colleague asserts in the team channel that the incident is just ENG-215 recurring and suggests logging it as a repeat rather than re-auditing. Correctly rejecting this false lead is a distinct, gradable behavior separate from identifying the true root cause."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent identifies the root cause of the GreenStack over-approvals as the categorizer's GreenStack configuration having been cloned from the older Mosaic configuration, which dropped the coworking exclusion and kept Mosaic's higher category limits.",
+   "evidence": "The canary ticket comment comment_gs_config_clone states the GreenStack config was cloned from the Mosaic configuration with the excluded_categories list left empty and Mosaic's higher limits retained; a merely functional description of a config mismatch does not surface this documented Mosaic-clone provenance. To satisfy this rubric the Agent must explicitly state the GreenStack configuration was cloned or copied from the Mosaic configuration; a generic config-mismatch description that does not name the Mosaic-clone provenance does not satisfy it.",
+   "cb_justification": "The prompt requires the Agent to work out why the out-of-policy expenses slipped through. The documented root cause is a config-clone provenance gap; surfacing that the GreenStack config was cloned from the Mosaic config, not merely that the deployed config did not match GreenStack's policy, is the distinct and hard finding this rubric grades."
+  }
+ ]
+}

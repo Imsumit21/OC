@@ -1,0 +1,181 @@
+{
+ "id": "card_01",
+ "n_criteria": 22,
+ "requirements": [
+  "R1: Blue's CPE amortization entry status (still in draft?)",
+  "R2: submit-or-hold decision on Blue's CPE entry after checking George's BD1 entries",
+  "R3: whether George's BD1 batch already covered the CPE line",
+  "R4: Hannah-George prepaid CPE email thread: what was discussed / whether anything shifted",
+  "R5: other Blue entries stuck in draft/submitted",
+  "R6: what George said in close coordination thread on BD1 posting",
+  "R7: whether George filed BD1 supporting docs in vault",
+  "R8: payroll reconciliation cleared or still open",
+  "R9: close task checklist status",
+  "R10: open reconciliations status",
+  "R11: sign-offs/recon items in someone else's queue blocking lock (who must move)",
+  "R12: overdue reminders / SLA flags tied to May close",
+  "R13: status memo content (found / clear / open / needs someone else)",
+  "R14: memo filed in vault as close support",
+  "R15: heads-up post in close coordination channel",
+  "R16: email Daniel the full memo",
+  "R17: what is actually holding up the lock"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "negative",
+   "severity": "dimension-only",
+   "quote": "The Agent does not submit Blue Evans's draft CPE amortization journal entry",
+   "why": "prohibition-only title; Negative Criteria FAIL"
+  },
+  {
+   "c": "C3",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "titles the uploaded status memo with a reference to the Brookfield May close or FP-2026-05",
+   "why": "prompt sets no memo title; unstated expectation rejects valid titles"
+  },
+  {
+   "c": "C6",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "documents ... the close task checklist status",
+   "why": "names topic, not the finding; evidence also uses 'such as'"
+  },
+  {
+   "c": "C6",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "such as tasks still pending, not started",
+   "why": "exemplar phrase in evidence"
+  },
+  {
+   "c": "C7",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "documents ... the open reconciliation status",
+   "why": "names topic, not which recons / what status"
+  },
+  {
+   "c": "C9",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "mentions at least one open blocker",
+   "why": "'at least one' of unnamed blockers; any-one acceptance"
+  },
+  {
+   "c": "C9",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "such as payroll reconciliation, open reconciliations",
+   "why": "exemplar phrase in evidence"
+  },
+  {
+   "c": "C11",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "the Brookfield May close status findings documented in the uploaded vault memo",
+   "why": "vague reference to another artifact; evidence bundles 7 topics (also non_atomic)"
+  },
+  {
+   "c": "C12",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "sitting in draft at $4,717.59",
+   "why": "prompt asked whether it is still sitting there; unrequested amount rejects a correct status-only answer"
+  },
+  {
+   "c": "C12",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "(e.g., $4,718 or $4,717)",
+   "why": "exemplar phrase in evidence"
+  },
+  {
+   "c": "C13",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "(je_35e2bfa7562441e8, $8,425) already covers ... on accounts 535000 and 133000",
+   "why": "evidence accepts ID OR amount OR 'do not submit Blue's draft' - widens title"
+  },
+  {
+   "c": "C18",
+   "defect": "overly_broad",
+   "severity": "Moderate",
+   "quote": "there are overdue reminders or SLA flags tied to the Brookfield May close",
+   "why": "no reminder/flag named; citing a wrong reminder passes"
+  },
+  {
+   "c": "C19",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "concerned a separate April variance issue (BL-390E6284EC1D), distinct from Blue's May CPE entry",
+   "why": "what was discussed + distinctness/whether anything shifted fail separately; evidence widens to any one marker"
+  },
+  {
+   "c": "C20",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "reports what George McAdam said in the close coordination channel",
+   "why": "title never states what George said; evidence and/or list"
+  },
+  {
+   "c": "C21",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "reports in the final response the close task checklist status",
+   "why": "names topic, not the finding"
+  },
+  {
+   "c": "C21",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "such as tasks done, pending, blocked",
+   "why": "exemplar phrase in evidence"
+  },
+  {
+   "c": "C22",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "Oracle GL still shows brookfield_FP-2026-05 open while the BD3 GL-lock close task is blocked, contradicting George's downstream assumption",
+   "why": "GL open, BD3 blocked and George's assumption are separable claims; evidence and/or widens"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R11",
+   "why": "no row names the sign-offs/recon items in someone else's queue or who must move before lock (memo or reply)"
+  }
+ ],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C2",
+    "C11"
+   ],
+   "condition": "C11 acceptance embeds the vault memo; C11 already Major so group adds 0"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 11,
+  "rows_moderate": 1,
+  "rows_minor": 0,
+  "missing_outcomes": 1,
+  "pct_major": 54.5,
+  "pct_moderate_or_worse": 59.1,
+  "pct_any": 59.1
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe access (other universe): entity IDs, amounts, statuses, dates and tool catalog unverified (UNRESOLVED); clock 2026-02-14 not applied to this universe; no weights on cards. Correctness of CPE double-count, George's posted entry and absence of vault docs unverified."
+}

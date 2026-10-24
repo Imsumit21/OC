@@ -1,0 +1,364 @@
+{
+ "card_index": 42,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Rachel still hasn't come back on Mina's final offer. It's been about a week, her board should've happened, and I'm not authorizing a chase. CE doesn't go back in blind. Before anyone touches Vectral, pull the real picture from our systems, not Slack: deal status, anything from Rachel since the nineteenth, whether the client record still matches, whether the platform issues she escalated are closed in tracking or still open, stipend mess since the audit, real open AR versus estimates, and moves still in flight. If CRM, email, billing, and ops don't line up, say so.\n\nSame pass on NorthWind, BrightLoop, Mosaic, StormCloud, and Terraform Digital. Only flag where the systems materially disagree. While you're in it, catch me up on the four calls warping Vectral posture: Chloe and David's BrightLoop temp-coordinator ask, Terraform coordinator capacity after the hire I signaled, Marcus on the vendor strategy memo, and whether the June DOT package still has placarding or cert gaps vendors only covered verbally.\n\nThen document the posture. No outreach to Rachel. Keep the renewal at risk; CRM note on the hold and what's still live on ExpenseBot, stipends, billing, and active moves. Same on the other five with honest status and next steps; move both open NorthWind Denver expansion deals to at-risk and leave closed-won alone. Comment still-open ExpenseBot remediation tickets, Marcus's vendor memo workstream, and outstanding DOT work. Brief David and Mina on the hold and what CE needs if Rachel reaches out first; Marcus on finance/vendor/billing/compliance and what's blocking his memo; Samira on whether engineering is still in Rachel's way; Chloe on capacity and the staffing answer I still owe her. Short #executive readout: hold, isolated or pattern, which accounts matter, what's still on me. Don't dress it up if the records are messy.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent keeps the Vectral Systems Q3 2026 contract renewal deal (deal_vectral_q3_renewal_risk) at stage at_risk, and does not move it to a healthier stage.",
+   "evidence": "Look for a deal-stage update on deal_vectral_q3_renewal_risk with dealstage = at_risk, or confirm the deal remains at_risk with no update to a healthier stage (e.g. qualifiedToBuy, contractSent, closedWon).",
+   "cb_justification": "The prompt explicitly says to keep the renewal at risk and not authorize a chase. Confirming or leaving at_risk is the required deal posture."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent creates a CRM engagement note linked to Vectral Systems (company_vectral) documenting the hold.",
+   "evidence": "Look for a CRM engagement create with engagement_type note (or equivalent) and company_ids including company_vectral.",
+   "cb_justification": "The prompt requires a CRM note on the Vectral hold and what is still live. Linking via company (not deal id) matches how CRM engagements work."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent creates a CRM engagement note linked to NorthWind Technologies (company_northwind) with current status and next steps.",
+   "evidence": "Look for a CRM engagement note with company_ids including company_northwind and body covering status and next steps (or similar).",
+   "cb_justification": "The prompt requires the same CRM documentation pass on the other five accounts, including NorthWind."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent creates a CRM engagement note linked to BrightLoop Analytics (company_brightloop) with current status and next steps.",
+   "evidence": "Look for a CRM engagement note with company_ids including company_brightloop.",
+   "cb_justification": "BrightLoop is one of the five peer accounts the prompt requires documenting with honest status and next steps."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent creates a CRM engagement note linked to Mosaic Robotics (company_mosaic) with current status and next steps.",
+   "evidence": "Look for a CRM engagement note with company_ids including company_mosaic.",
+   "cb_justification": "Mosaic is one of the five peer accounts that must receive a CRM note from the recon."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent creates a CRM engagement note linked to StormCloud Analytics (company_stormcloud) with current status and next steps.",
+   "evidence": "Look for a CRM engagement note with company_ids including company_stormcloud.",
+   "cb_justification": "StormCloud is one of the five peer accounts that must receive a CRM note from the recon."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent creates a CRM engagement note linked to Terraform Digital, Vantage Distributed (company-terraform-digital) with current status and next steps.",
+   "evidence": "Look for a CRM engagement note with company_ids including company-terraform-digital.",
+   "cb_justification": "Terraform Digital (CRM company company-terraform-digital, also surfaced as Vantage Distributed) is the fifth peer account requiring a CRM note."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent updates the NorthWind Denver expansion deal deal_northwind_denver_expansion to stage at_risk.",
+   "evidence": "Look for a deal-stage update on id deal_northwind_denver_expansion with dealstage = at_risk.",
+   "cb_justification": "The prompt requires moving both open NorthWind Denver expansion deals to at-risk. This is the first open deal (qualifiedToBuy)."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent updates the NorthWind Denver expansion deal deal_northwind_denver_expansion_v2 to stage at_risk.",
+   "evidence": "Look for a deal-stage update on id deal_northwind_denver_expansion_v2 with dealstage = at_risk.",
+   "cb_justification": "The prompt requires both open Denver expansion deals moved to at-risk. This is the second open deal (contractSent)."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent does not change any closed-won deal stage (including deal_northwind_won and other closedWon records) away from closed-won.",
+   "evidence": "Confirm no deal-stage update moves a closedWon / closed-won deal (including deal_northwind_won) to a non-closed-won stage.",
+   "cb_justification": "The prompt explicitly says to leave closed-won alone. Updating a closed-won deal would violate the instruction."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue issue_p1_vectral_config (#214).",
+   "evidence": "Look for a Linear comment create on issueId issue_p1_vectral_config (or #214).",
+   "cb_justification": "The prompt requires commenting still-open ExpenseBot remediation tickets. #214 is an open Vectral config P1."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue issue_p1_mosaic_malformed (#215).",
+   "evidence": "Look for a Linear comment create on issueId issue_p1_mosaic_malformed (or #215).",
+   "cb_justification": "#215 is a still-open ExpenseBot P1 remediation ticket required by the prompt's comment ask."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue issue_audit_expenses (#216).",
+   "evidence": "Look for a Linear comment create on issueId issue_audit_expenses (or #216).",
+   "cb_justification": "#216 is the still-open ExpenseBot audit ticket that must be commented per the prompt."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue issue_pipeline_hardening (#217).",
+   "evidence": "Look for a Linear comment create on issueId issue_pipeline_hardening (or #217).",
+   "cb_justification": "#217 is still-open pipeline hardening work under ExpenseBot remediation and must be commented."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue issue_stipend_duplicate_detection (#220).",
+   "evidence": "Look for a Linear comment create on issueId issue_stipend_duplicate_detection (or #220).",
+   "cb_justification": "#220 is still-open duplicate-detection work tied to the stipend audit fallout and must be commented."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue linear_issue_d21d94ce9b36 (CEO vendor strategy memo, due 2026-04-29).",
+   "evidence": "Look for a Linear comment create on issueId linear_issue_d21d94ce9b36 (CEO vendor strategy memo).",
+   "cb_justification": "The prompt requires commenting Marcus's vendor memo workstream. linear_issue_d21d94ce9b36 is that open ticket (due 2026-04-29)."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue issue_dot_docs_tanaka_mosaic (Tanaka, Mosaic DOT docs, placarding gap).",
+   "evidence": "Look for a Linear comment create on issueId issue_dot_docs_tanaka_mosaic.",
+   "cb_justification": "The prompt requires commenting outstanding DOT work. This is the still-open parent DOT ticket with missing placarding certificate."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent leaves a comment on Linear issue issue_dot_tanaka_subtask_swift_cert (Swift placarding certificate subtask).",
+   "evidence": "Look for a Linear comment create on issueId issue_dot_tanaka_subtask_swift_cert.",
+   "cb_justification": "This is the other still-open DOT ticket (todo) that must be commented as outstanding DOT work."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent briefs both [david.chen@moveops.com](mailto:david.chen@moveops.com) and [mina.hashimoto@moveops.com](mailto:mina.hashimoto@moveops.com) (via email, Slack DM, or similar) from [elena.rostova@moveops.com](mailto:elena.rostova@moveops.com), Elena Rostova.",
+   "evidence": "Look for an email and/or Slack DM (or similar) from Elena covering both david.chen@moveops.com and mina.hashimoto@moveops.com (one message to both, or equivalent separate messages covering both).",
+   "cb_justification": "The prompt requires briefing David and Mina on the hold and what CE needs if Rachel reaches out first. The prompt names the goal (brief), not a specific channel."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent briefs [marcus.thorne@moveops.com](mailto:marcus.thorne@moveops.com) (via email, Slack DM, or similar) from [elena.rostova@moveops.com](mailto:elena.rostova@moveops.com), Elena Rostova.",
+   "evidence": "Look for an email and/or Slack DM (or similar) from Elena to marcus.thorne@moveops.com.",
+   "cb_justification": "The prompt requires briefing Marcus on finance, vendor, billing, compliance, and what is blocking his memo. Channel is not prescribed."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent briefs [samira.tariq@moveops.com](mailto:samira.tariq@moveops.com) (via email, Slack DM, or similar) from [elena.rostova@moveops.com](mailto:elena.rostova@moveops.com), Elena Rostova.",
+   "evidence": "Look for an email and/or Slack DM (or similar) from Elena to samira.tariq@moveops.com.",
+   "cb_justification": "The prompt requires briefing Samira on whether engineering is still in Rachel's way. Channel is not prescribed."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent briefs [chloe.vance@moveops.com](mailto:chloe.vance@moveops.com) (via email, Slack DM, or similar) from [elena.rostova@moveops.com](mailto:elena.rostova@moveops.com), Elena Rostova.",
+   "evidence": "Look for an email and/or Slack DM (or similar) from Elena to chloe.vance@moveops.com.",
+   "cb_justification": "The prompt requires briefing Chloe on capacity and the staffing answer Elena still owes her. Channel is not prescribed."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent posts a short status update in the #executive Slack channel (C004).",
+   "evidence": "Look for a Slack channel message post to channel_id C004 (channel name executive) or equivalent post that lands in #executive.",
+   "cb_justification": "The prompt requires a short #executive readout covering hold, pattern, accounts, and decisions still on Elena."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent does not send any proactive outreach to Rachel Whitfield ([rachel.whitfield@vectralsystems.com](mailto:rachel.whitfield@vectralsystems.com)) via email, Slack, or similar.",
+   "evidence": "Confirm the trajectory has no outbound email, Slack DM/message, or similar proactive contact to rachel.whitfield@vectralsystems.com (or Rachel Whitfield as recipient) initiated by the Agent.",
+   "cb_justification": "The prompt explicitly forbids outreach to Rachel and says Elena is not authorizing a chase. Any proactive channel counts as outreach."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent's Vectral CRM hold note must include: (a) no proactive contact with Rachel until Elena reopens it, (b) ExpenseBot or stipend remediation still open for at least Kevin Tran, Maria Santos, Lisa Park, or James Okafor (or similar), (c) billing landmine referencing past-due INV-2026-0302 or open invoice AR versus estimate EST-2026-0419 (or similar), and (d) active moves still in flight (or similar).",
+   "evidence": "Check the body of the CRM engagement note on company_vectral for those four content elements (wording may vary; required elements must be present).",
+   "cb_justification": "The prompt requires the Vectral CRM note to cover the hold and what is still live on ExpenseBot, stipends, billing, and active moves, not a vague status line."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on issue_p1_vectral_config (#214) references the Vectral hold or client-facing renewal risk (or similar).",
+   "evidence": "Check the comment body on issue_p1_vectral_config / #214 for Vectral hold, renewal risk, or client-facing exposure language (or similar).",
+   "cb_justification": "Commenting an empty check-in would not document posture. The prompt ties remediation comments to the executive hold context."
+  },
+  {
+   "index": "C27",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on issue_p1_mosaic_malformed (#215) references the Vectral hold or client-facing renewal risk (or similar).",
+   "evidence": "Check the comment body on issue_p1_mosaic_malformed / #215 for Vectral hold, renewal risk, or client-facing exposure language (or similar).",
+   "cb_justification": "#215 is part of the still-open ExpenseBot remediation set that must be commented with hold context, not an empty check-in."
+  },
+  {
+   "index": "C28",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on issue_audit_expenses (#216) references the Vectral hold or client-facing renewal risk (or similar).",
+   "evidence": "Check the comment body on issue_audit_expenses / #216 for Vectral hold, renewal risk, or client-facing exposure language (or similar).",
+   "cb_justification": "#216 is the still-open ExpenseBot audit ticket; the comment must tie to the executive hold context."
+  },
+  {
+   "index": "C29",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on issue_pipeline_hardening (#217) references the Vectral hold or client-facing renewal risk (or similar).",
+   "evidence": "Check the comment body on issue_pipeline_hardening / #217 for Vectral hold, renewal risk, or client-facing exposure language (or similar).",
+   "cb_justification": "#217 is still-open pipeline hardening under ExpenseBot remediation and must be commented with hold context."
+  },
+  {
+   "index": "C30",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on issue_stipend_duplicate_detection (#220) references the Vectral hold or client-facing renewal risk (or similar).",
+   "evidence": "Check the comment body on issue_stipend_duplicate_detection / #220 for Vectral hold, renewal risk, or client-facing exposure language (or similar).",
+   "cb_justification": "#220 is still-open duplicate-detection work tied to stipend audit fallout and must be commented with hold context."
+  },
+  {
+   "index": "C31",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on linear_issue_d21d94ce9b36 states the vendor strategy memo is still open or due 2026-04-29 and blocking clean executive posture on vendor or margin exposure (or similar).",
+   "evidence": "Check the comment body on linear_issue_d21d94ce9b36 for still-open or due-date and blocking language (or similar).",
+   "cb_justification": "The prompt asks to comment the vendor memo workstream; the content must reflect that it is still blocking, not that it is done."
+  },
+  {
+   "index": "C32",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on issue_dot_docs_tanaka_mosaic notes that placarding or cert gaps remain open versus verbal vendor claims (or similar).",
+   "evidence": "Check the comment body on issue_dot_docs_tanaka_mosaic for placarding/cert gap versus verbal vendor claims (or similar).",
+   "cb_justification": "The prompt requires commenting outstanding DOT work. The parent DOT ticket comment must capture the placarding/cert gap versus verbal vendor coverage; the June package deadline is graded in the final-response ask (R50), not as comment content."
+  },
+  {
+   "index": "C33",
+   "category": "outcome",
+   "criterion": "The Agent's Linear comment on issue_dot_tanaka_subtask_swift_cert notes that placarding or cert gaps remain open versus verbal vendor claims (or similar).",
+   "evidence": "Check the comment body on issue_dot_tanaka_subtask_swift_cert for placarding/cert gap versus verbal vendor claims (or similar).",
+   "cb_justification": "The Swift placarding certificate subtask is the other still-open DOT ticket; its comment must capture the same gap versus verbal vendor claims. June package deadline context belongs in the user-facing report (R50), not as a required comment field."
+  },
+  {
+   "index": "C34",
+   "category": "outcome",
+   "criterion": "The Agent's brief to [david.chen@moveops.com](mailto:david.chen@moveops.com) and [mina.hashimoto@moveops.com](mailto:mina.hashimoto@moveops.com) must include: (a) the Vectral hold / no chase / no proactive Rachel contact, and (b) facts CE needs if Rachel reaches out first, including silence since the 19th and at least one of ExpenseBot/stipend status, billing landmines, or open relocations (or similar).",
+   "evidence": "Check the body of the email and/or Slack DM (or similar) to david.chen@moveops.com and mina.hashimoto@moveops.com for hold/no-chase and the CE fact pack elements (or similar).",
+   "cb_justification": "The prompt specifies what CE needs if Rachel reaches out first; a bare \"we're on hold\" brief is not enough."
+  },
+  {
+   "index": "C35",
+   "category": "outcome",
+   "criterion": "The Agent's brief to [marcus.thorne@moveops.com](mailto:marcus.thorne@moveops.com) covers finance, vendor, billing, or compliance exposure from the recon and states what is still blocking his vendor strategy memo (or similar).",
+   "evidence": "Check the body of the email and/or Slack DM (or similar) to marcus.thorne@moveops.com for those topics and memo-blocking status (or similar).",
+   "cb_justification": "The prompt requires Marcus to get finance/vendor/billing/compliance plus what is blocking his memo, not a generic FYI."
+  },
+  {
+   "index": "C36",
+   "category": "outcome",
+   "criterion": "The Agent's brief to [samira.tariq@moveops.com](mailto:samira.tariq@moveops.com) states whether engineering is still a blocker on what Rachel cares about, referencing open ExpenseBot config, audit, pipeline, or duplicate-detection work (or similar).",
+   "evidence": "Check the body of the email and/or Slack DM (or similar) to samira.tariq@moveops.com for engineering-still-blocker language tied to open ExpenseBot work (or similar).",
+   "cb_justification": "The prompt asks Samira specifically whether engineering is still in Rachel's way; the answer must reflect still-open remediation."
+  },
+  {
+   "index": "C37",
+   "category": "outcome",
+   "criterion": "The Agent's brief to [chloe.vance@moveops.com](mailto:chloe.vance@moveops.com) covers ops capacity and the unanswered staffing decision, including the BrightLoop temp-coordinator ask and Terraform Digital capacity or coordinator-hire wait on Elena (or similar).",
+   "evidence": "Check the body of the email and/or Slack DM (or similar) to chloe.vance@moveops.com for capacity/staffing and BrightLoop and/or Terraform wait-on-Elena content (or similar).",
+   "cb_justification": "The prompt says Chloe needs capacity and the staffing answer Elena still owes her; both BrightLoop and Terraform threads are in scope."
+  },
+  {
+   "index": "C38",
+   "category": "outcome",
+   "criterion": "The Agent's #executive post must include: (a) the Vectral hold, (b) whether the situation is isolated or a pattern, (c) which peer accounts matter among NorthWind, BrightLoop, Mosaic, StormCloud, and Terraform Digital (or similar), and (d) which decisions are still on Elena (or similar).",
+   "evidence": "Check the Slack message body in C004 / #executive for those four elements (or similar).",
+   "cb_justification": "The prompt specifies the short #executive readout contents and says not to dress it up if records are messy."
+  },
+  {
+   "index": "C39",
+   "category": "outcome",
+   "criterion": "The Agent reports that the Vectral renewal deal (deal_vectral_q3_renewal_risk) is already at stage at_risk (or similar).",
+   "evidence": "Final response states Vectral renewal deal is at risk, at_risk (or similar).",
+   "cb_justification": "The prompt asks for deal status from systems before anyone touches Vectral."
+  },
+  {
+   "index": "C40",
+   "category": "outcome",
+   "criterion": "The Agent reports that Rachel Whitfield has not replied since April 19 after Mina's final 10% + Preferred Partner offer (or similar).",
+   "evidence": "Final response states silence from Rachel after April 19, Mina's final offer (or similar).",
+   "cb_justification": "The prompt asks for anything from Rachel since the nineteenth; silence after Mina's final offer is the discriminating fact."
+  },
+  {
+   "index": "C41",
+   "category": "outcome",
+   "criterion": "The Agent flags that the Vectral client record does not match CRM deal stage. Airtable shows Renewal Pending / awaiting board around April 23 while CRM is at_risk (or similar).",
+   "evidence": "Final response explicitly calls out the Airtable vs CRM disagreement on Vectral renewal status (or similar).",
+   "cb_justification": "The prompt asks whether the client record still matches and to say so if CRM, email, billing, and ops do not line up."
+  },
+  {
+   "index": "C42",
+   "category": "outcome",
+   "criterion": "The Agent reports that platform issues Rachel escalated are still open in tracking, naming still-open ExpenseBot work including at least issue #214 (issue_p1_vectral_config) or equivalent open config/audit/pipeline/duplicate-detection tickets (or similar).",
+   "evidence": "Final response states ExpenseBot / platform remediation is still open and cites concrete open tickets or equivalent (or similar).",
+   "cb_justification": "The prompt asks whether the platform issues she escalated are closed in tracking or still open."
+  },
+  {
+   "index": "C43",
+   "category": "outcome",
+   "criterion": "The Agent reports open stipend mess after the audit for Kevin Tran, Maria Santos, Lisa Park, and James Okafor (rejected, pending, or audit-flagged), and does not treat Danielle Osei's approved chair rows as the open landmine (or similar).",
+   "evidence": "Final response names those open stipend cases (or equivalent statuses) and does not claim Danielle's chairs are still the open problem (or similar).",
+   "cb_justification": "The prompt asks for the stipend mess since the audit; GT open mess is Kevin/Maria/Lisa/James, not Danielle's already-approved chairs."
+  },
+  {
+   "index": "C44",
+   "category": "outcome",
+   "criterion": "The Agent reports real open Vectral invoice AR of approximately $37,297 from NMX-2026-0032 ($5,397), INV-2026-0302 ($16,000, due 2026-04-20, past due as of April 26), and INV-2026-0410 ($15,900), and separates estimate EST-2026-0419 ($58,400) as not collectible AR (or similar).",
+   "evidence": "Final response states open invoice AR approximately $37,297 (or the three invoice amounts) and treats EST-2026-0419 / $58,400 as estimate, not AR (or similar).",
+   "cb_justification": "The prompt asks for real open AR versus estimates. The discriminating fact is excluding the $58,400 estimate from collectible AR."
+  },
+  {
+   "index": "C45",
+   "category": "outcome",
+   "criterion": "The Agent reports five Vectral moves still in flight: Priya Suresh (Portland to Denver), Terrence Nakamura (Austin to San Francisco), Camille Oduya (Boston to Seattle), Daniel Reeves (Seattle to San Diego), and Maya Johansson (Portland to San Diego) (or similar).",
+   "evidence": "Final response lists five open Vectral moves with those names/routes (or equivalent clear identification of all five).",
+   "cb_justification": "The prompt asks for moves still in flight; GT has five In Progress Vectral relocations."
+  },
+  {
+   "index": "C46",
+   "category": "outcome",
+   "criterion": "The Agent flags a material systems disagreement on NorthWind: open Denver expansion CRM stages (qualifiedToBuy, contractSent before update) do not match Pam Kowalski's formal escalation, final-warning retention trail around 2026-04-24 (or similar).",
+   "evidence": "Final response flags NorthWind CRM vs escalation disagreement with Pam Kowalski, April 24 escalation (or similar).",
+   "cb_justification": "The prompt requires the same pass on NorthWind and only flagging where systems materially disagree."
+  },
+  {
+   "index": "C47",
+   "category": "outcome",
+   "criterion": "The Agent reports that Chloe Vance and David Chen's BrightLoop temp-coordinator ask was unanswered, still waiting on Elena at recon time (or similar), even if the Agent then answers or approves it in the Chloe brief.",
+   "evidence": "Final response states the BrightLoop temp-coordinator ask was unanswered, still waiting on Elena at recon time (or similar). Approving or answering it in the Chloe brief afterward still passes.",
+   "cb_justification": "This is one of the four calls warping Vectral posture that the prompt asks Elena to be caught up on. The recon finding is that the ask was unanswered; answering it later in Chloe's brief is a valid Elena path and must not fail this criterion."
+  },
+  {
+   "index": "C48",
+   "category": "outcome",
+   "criterion": "The Agent reports that Terraform Digital coordinator capacity after the signaled hire is still blocked on Elena, not live yet (or similar).",
+   "evidence": "Final response states Terraform, Vantage coordinator relief or May capacity is still waiting on Elena (or similar).",
+   "cb_justification": "This is the second of the four posture-warping calls the prompt requires."
+  },
+  {
+   "index": "C49",
+   "category": "outcome",
+   "criterion": "The Agent reports that Marcus's CEO vendor strategy memo (linear_issue_d21d94ce9b36) is not done and due 2026-04-29 (or similar).",
+   "evidence": "Final response states the vendor strategy memo (linear_issue_d21d94ce9b36) is still open / not delivered, with due date 2026-04-29 if cited (or similar).",
+   "cb_justification": "This is the third posture-warping call; Elena asked to be caught up on Marcus and the vendor strategy memo."
+  },
+  {
+   "index": "C50",
+   "category": "outcome",
+   "criterion": "The Agent reports that the June DOT, PHMSA package still has open placarding or cert gaps on Tanaka, Mosaic (issue_dot_docs_tanaka_mosaic and/or issue_dot_tanaka_subtask_swift_cert) despite verbal vendor assurances, with package due June 5, 2026 (or similar).",
+   "evidence": "Final response states placarding/cert gaps still open and references June 5, June package (or similar).",
+   "cb_justification": "This is the fourth posture-warping call; the prompt asks whether vendors only covered gaps verbally."
+  },
+  {
+   "index": "C51",
+   "category": "outcome",
+   "criterion": "The Agent concludes the Vectral hold is part of a broader pattern (not isolated), naming at least NorthWind plus one or more of BrightLoop, Mosaic, StormCloud, or Terraform Digital as accounts that matter (or similar), and does not invent a calm clean-records narrative.",
+   "evidence": "Final response (and/or #executive content already checked in R38) states pattern vs isolated and names material peer accounts without claiming systems are clean (or similar).",
+   "cb_justification": "The #executive ask and the peer pass require an honest isolated-vs-pattern call; the prompt says not to dress it up if records are messy."
+  }
+ ]
+}

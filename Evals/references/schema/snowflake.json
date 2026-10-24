@@ -1,0 +1,2886 @@
+{
+  "format_version": 1,
+  "service": "snowflake",
+  "databases": [
+    {
+      "name": "ANALYTICS",
+      "comment": "Primary analytics data warehouse for Harmony Games mobile titles",
+      "id": "ANALYTICS",
+      "created_at": "2023-04-24T00:00:00Z"
+    },
+    {
+      "name": "FINANCE",
+      "comment": "Financial reporting: burn rate, cash, headcount",
+      "id": "FINANCE",
+      "created_at": "2023-03-28T00:00:00Z"
+    },
+    {
+      "name": "LIVE_OPS",
+      "comment": "Live-ops events, quests, and operational metrics",
+      "id": "LIVE_OPS",
+      "created_at": "2024-02-16T00:00:00Z"
+    }
+  ],
+  "schemas": [
+    {
+      "database": "ANALYTICS",
+      "name": "GAME_EVENTS",
+      "comment": "Daily active users, retention cohorts, level performance",
+      "id": "ANALYTICS.GAME_EVENTS",
+      "database_id": "ANALYTICS",
+      "created_at": "2023-04-24T00:00:00Z"
+    },
+    {
+      "database": "ANALYTICS",
+      "name": "MARKETING",
+      "comment": "Ad spend, install attribution, ROAS",
+      "id": "ANALYTICS.MARKETING",
+      "database_id": "ANALYTICS",
+      "created_at": "2023-10-28T00:00:00Z"
+    },
+    {
+      "database": "ANALYTICS",
+      "name": "MONETIZATION",
+      "comment": "IAP transactions and daily revenue",
+      "id": "ANALYTICS.MONETIZATION",
+      "database_id": "ANALYTICS",
+      "created_at": "2023-10-28T00:00:00Z"
+    },
+    {
+      "database": "ANALYTICS",
+      "name": "RAW_TELEMETRY",
+      "comment": "Raw event firehose. RAW_EVENTS is the single client telemetry stream; 6 of the other 8 tables here are deterministic session-sampled projections of it (marked [DERIVED VIEW]), and 1 further projection lives elsewhere (SESSION_LEVEL_EVENTS). CLIENT_ERROR_EVENTS and RESOURCE_FLOW_EVENTS are NOT sampled -- computed from the full stream.",
+      "id": "ANALYTICS.RAW_TELEMETRY",
+      "database_id": "ANALYTICS",
+      "created_at": "2023-10-28T00:00:00Z"
+    },
+    {
+      "database": "FINANCE",
+      "name": "EXPENSES",
+      "comment": "Signed ledger, monthly burn by category, cash balance, headcount",
+      "id": "FINANCE.EXPENSES",
+      "database_id": "FINANCE",
+      "created_at": "2023-03-28T00:00:00Z"
+    },
+    {
+      "database": "LIVE_OPS",
+      "name": "EVENTS",
+      "comment": "Live-ops events and push campaigns",
+      "id": "LIVE_OPS.EVENTS",
+      "database_id": "LIVE_OPS",
+      "created_at": "2024-02-16T00:00:00Z"
+    }
+  ],
+  "tables": [
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "AD_SPEND_DAILY",
+      "table_type": "BASE TABLE",
+      "comment": "Daily marketing spend by game, channel, and country. Channels present: adjoe, applovin, google_uac, meta, unity_ads. By game -- combo_fighter: meta; domino_delights: adjoe, applovin, google_uac, meta, unity_ads; zombie_match_3d: applovin, meta, unity_ads. Spend runs 2024-09-01 to 2026-02-09 (attribution MMP = Singular). No blended CPI is quoted: compute it from these rows for the window you care about, because a single blended figure hides a 3x spread across channels and months.",
+      "columns": [
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "channel",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "meta | google_uac | unity_ads | applovin | adjoe"
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "spend_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "impressions",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "clicks",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "installs",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "cpi_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "day1_roas",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false,
+          "comment": "Revenue / spend ratio on Day 1 post-install"
+        }
+      ],
+      "created_at": "2024-08-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.AD_SPEND_DAILY"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "INSTALL_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Individual install events, 31,210 rows: Domino Delights 22,980, Zombie Match 3D 7,329, Combo Fighter 901. Lifetime distinct players are in DIM_PLAYER. Combo Fighter runs 2025-12-27 to 2026-02-09 (615 paid / 286 organic); no IAP sales recorded for this title, though a store is present - see IAP_TRANSACTIONS. Domino Delights spans three phases: closed alpha from 2023-11-01 (internal testers, pre-launch), unannounced Google Play availability from ~2024-08, and the US soft launch 2025-04-11. 3,784 of its installs predate the US soft launch, so the earliest install date for this title is not its launch date.",
+      "columns": [
+        {
+          "name": "install_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "channel",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "device_model",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "device_model_generic",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "marketing name; device_model holds the canonical hardware code"
+        },
+        {
+          "name": "os_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "attributed_campaign",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "cpi_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false,
+          "comment": "0.0 for organic"
+        },
+        {
+          "name": "is_organic",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.INSTALL_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "SINGULAR_INSTALLS_RAW",
+      "table_type": "BASE TABLE",
+      "comment": "Singular MMP landing table derived from INSTALL_EVENTS. singular_id equals INSTALL_EVENTS.install_id for joinability; install_meta and event_value are nested raw payloads. Singular was HG's operational MMP (AppsFlyer was historical/referenced only).",
+      "columns": [
+        {
+          "name": "singular_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "install_time",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        },
+        {
+          "name": "app_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "media_source",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "campaign_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "idfa",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "gaid",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "customer_user_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "cost_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "install_meta",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        },
+        {
+          "name": "event_value",
+          "data_type": "VARIANT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2024-08-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.SINGULAR_INSTALLS_RAW"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "UA_SPEND_UNIFIED_V2",
+      "table_type": "BASE TABLE",
+      "comment": "Versioned paid-UA spend mart for all titles (includes 152 combo_fighter rows), reconciled from AD_SPEND_DAILY and carrying source_meta for the versioned calculation.",
+      "columns": [
+        {
+          "name": "report_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "network_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "campaign_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "spend_current",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "impressions_current",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "clicks_current",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "installs_current",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "cpi_current",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "source_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "source_meta",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2024-08-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.UA_SPEND_UNIFIED_V2"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MONETIZATION",
+      "name": "IAP_TRANSACTIONS",
+      "table_type": "BASE TABLE",
+      "comment": "Individual in-app purchase records, 977 rows (2024-02-23 to 2026-02-09). By game: domino_delights 976, zombie_match_3d 1. SKUs present: bundle.tier2.abandoned_backpack, dd_coins_large, dd_coins_medium, dd_coins_mega, dd_coins_small, dd_remove_ads, dd_starter_pack. Titles absent from this table recorded no purchases; absence here means no sales, not the absence of a store. NET of refunds: ANALYTICS.MONETIZATION.STORE_TRANSACTIONS holds 993 gross receipts = 977 completed + 16 refunded ($125.84); the refunded ones are excluded here. The two tables share transaction_id, so this is a strict subset - use that table for receipt counts and this one for revenue.",
+      "columns": [
+        {
+          "name": "transaction_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "product_sku",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "product_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "price_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "is_subscription",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        }
+      ],
+      "created_at": "2024-02-22T00:00:00Z",
+      "id": "ANALYTICS.MONETIZATION.IAP_TRANSACTIONS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "APP_STORE_REVIEWS",
+      "table_type": "BASE TABLE",
+      "comment": "App-store review stream with one-star spikes aligned to incidents.",
+      "columns": [
+        {
+          "name": "review_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "review_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "rating",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "review_text",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "app_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "sentiment_score",
+          "data_type": "NUMBER(38,1)",
+          "is_nullable": false
+        },
+        {
+          "name": "incident_related",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "topic_bucket",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "review_meta",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.APP_STORE_REVIEWS"
+    },
+    {
+      "database": "LIVE_OPS",
+      "schema": "EVENTS",
+      "name": "PUSH_NOTIFICATION_STATS",
+      "table_type": "BASE TABLE",
+      "comment": "Daily push-notification send/open/click stats for shipped games, with nested delivery metadata.",
+      "columns": [
+        {
+          "name": "push_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "send_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "campaign_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "message_type",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "audience_segment",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "sent_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "open_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "click_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "conversion_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "opt_out_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "status",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "delivery_meta",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2024-02-16T00:00:00Z",
+      "id": "LIVE_OPS.EVENTS.PUSH_NOTIFICATION_STATS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "PLAYER_DAILY_PROGRESS",
+      "table_type": "BASE TABLE",
+      "comment": "Per-player daily snapshot: level reached, sessions, coins, boosters, levels attempted/completed, purchase flag. coins_earned is what play paid out; coins bought from the store arrive as iap_grant rows in RESOURCE_FLOW_EVENTS and are not counted here. coins_spent and boosters_used count purchases at each game's shipped booster prices, so a player-day with no affordable purchase reads zero, and boosters_used is zero throughout for Combo Fighter, which ships none. made_purchase is reconciled against IAP_TRANSACTIONS at the game-date grain. Holds 183,033 player-days over 31,210 distinct players, against 31,210 installs lifetime -- a player appears here only on days they actually played. Aggregated upstream of the retained event tables. RAW_GAME_EVENTS and STG_EVENTS_ENRICHED retain a 1:8 session sample, and PROGRESSION_EVENTS, SESSION_LEVEL_EVENTS and AD_IMPRESSION_EVENTS a 1:16 sample, so a recount from those tables will not match these totals.",
+      "columns": [
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "current_level",
+          "data_type": "NUMBER",
+          "is_nullable": true,
+          "comment": "Highest level unlocked"
+        },
+        {
+          "name": "sessions_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "total_session_minutes",
+          "data_type": "NUMBER(38,1)",
+          "is_nullable": false
+        },
+        {
+          "name": "coins_earned",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "coins_spent",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "boosters_used",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "levels_attempted",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "levels_completed",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "made_purchase",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.PLAYER_DAILY_PROGRESS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "DAILY_ACTIVE_USERS",
+      "table_type": "BASE TABLE",
+      "comment": "Daily aggregated user metrics per game and platform. Includes DAU, new/returning split, session counts, average session length, and D1/D7/D30 retention percentages. combo_fighter from 2025-12-27, domino_delights from 2023-11-01. Zombie Match 3D is ABSENT BY DESIGN and its absence is a fact about the company, not a gap: it never had a DAU instrument. Derive ZM3D volume from ANALYTICS.MARKETING.INSTALL_EVENTS and ANALYTICS.GAME_EVENTS.USER_COHORT_RETENTION instead. Do not synthesise a ZM3D DAU series. Aggregated upstream of the retained event tables. RAW_GAME_EVENTS and STG_EVENTS_ENRICHED retain a 1:8 session sample, and PROGRESSION_EVENTS, SESSION_LEVEL_EVENTS and AD_IMPRESSION_EVENTS a 1:16 sample, so a recount from those tables will not match these totals.",
+      "columns": [
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false,
+          "comment": "Calendar date (UTC)"
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "combo_fighter | domino_delights -- zombie_match_3d is absent by design, see the table comment"
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "ios | android"
+        },
+        {
+          "name": "dau",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "Daily active users. GRAIN: one row per game x platform x date -- SUM the platform rows to get a game's DAU for a day. AVG(dau) averages PLATFORM ROWS, not days, and halves the answer for any two-platform game."
+        },
+        {
+          "name": "new_users",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "First-time users that day"
+        },
+        {
+          "name": "returning_users",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "total_sessions",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "avg_session_minutes",
+          "data_type": "NUMBER(38,1)",
+          "is_nullable": false
+        },
+        {
+          "name": "d1_retention_pct",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false,
+          "comment": "% of Day-0 cohort returning on Day 1"
+        },
+        {
+          "name": "d7_retention_pct",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "NULL until the 7-day window closes"
+        },
+        {
+          "name": "d30_retention_pct",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "NULL until the 30-day window closes"
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.DAILY_ACTIVE_USERS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "LEVEL_PERFORMANCE",
+      "table_type": "BASE TABLE",
+      "comment": "Per-level aggregates, 5,497 rows. Level ranges present: combo_fighter 1-442, domino_delights 1-4755, zombie_match_3d 1-300. fail_reason_top is the modal failure for that level and uses each title's OWN fail vocabulary -- the three games do not share one. Aggregated upstream of the retained event tables. RAW_GAME_EVENTS and STG_EVENTS_ENRICHED retain a 1:8 session sample, and PROGRESSION_EVENTS, SESSION_LEVEL_EVENTS and AD_IMPRESSION_EVENTS a 1:16 sample, so a recount from those tables will not match these totals.",
+      "columns": [
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "level_number",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "level_type",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "tutorial | standard | hard | boss"
+        },
+        {
+          "name": "avg_attempts",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "Average attempts to complete (1.0 = first try always)"
+        },
+        {
+          "name": "completion_rate_pct",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "% of players who complete level on a given attempt"
+        },
+        {
+          "name": "avg_time_seconds",
+          "data_type": "NUMBER(38,1)",
+          "is_nullable": true
+        },
+        {
+          "name": "boosters_used_per_attempt",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": true
+        },
+        {
+          "name": "fail_reason_top",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "Most common failure reason"
+        },
+        {
+          "name": "created_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.LEVEL_PERFORMANCE"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "USER_COHORT_RETENTION",
+      "table_type": "BASE TABLE",
+      "comment": "Weekly install cohorts with Day 1 through Day 60 retention, 333 cohort rows. D1 across cohorts ranges 0.0%-75.0%, unweighted mean 24.4% over all 333 cohorts. Per-cohort scatter is wide. Aggregated upstream of the retained event tables. RAW_GAME_EVENTS and STG_EVENTS_ENRICHED retain a 1:8 session sample, and PROGRESSION_EVENTS, SESSION_LEVEL_EVENTS and AD_IMPRESSION_EVENTS a 1:16 sample, so a recount from those tables will not match these totals.",
+      "columns": [
+        {
+          "name": "cohort_week",
+          "data_type": "DATE",
+          "is_nullable": false,
+          "comment": "Week of install (Monday)"
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "installs",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "d1_ret",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false,
+          "comment": "% returning on Day 1"
+        },
+        {
+          "name": "d7_ret",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "NULL until the 7-day window closes"
+        },
+        {
+          "name": "d14_ret",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "NULL until the 14-day window closes"
+        },
+        {
+          "name": "d30_ret",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "NULL until the 30-day window closes"
+        },
+        {
+          "name": "d60_ret",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true,
+          "comment": "NULL until the 60-day window closes"
+        },
+        {
+          "name": "avg_iap_per_user",
+          "data_type": "NUMBER(38,3)",
+          "is_nullable": false,
+          "comment": "Average IAP spend per install in the cohort"
+        },
+        {
+          "name": "pct_ever_paid",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false,
+          "comment": "% of cohort who ever made an IAP"
+        }
+      ],
+      "created_at": "2023-10-29T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.USER_COHORT_RETENTION"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "DIM_PLAYER",
+      "table_type": "BASE TABLE",
+      "comment": "Player dimension for the install universe, 31,210 rows. Acquisition channels are derived from INSTALL_EVENTS and match AD_SPEND_DAILY. Channel mix: adjoe 8,730, applovin 699, google_uac 256, meta 1,455, organic 15,610, unity_ads 4,460.",
+      "columns": [
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "first_seen_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "last_seen_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "primary_game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "acquisition_channel",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "lifecycle_bucket",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "is_payer",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "max_level_seen",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "total_sessions_est",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "player_traits",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.DIM_PLAYER"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MONETIZATION",
+      "name": "REVENUE_DAILY",
+      "table_type": "BASE TABLE",
+      "comment": "Daily revenue aggregated by game, platform, and top country. Includes both IAP and ad revenue. Best single day by game -- combo_fighter peaks at $0.73 on 2026-01-28; domino_delights peaks at $159.03 on 2025-06-28; zombie_match_3d peaks at $1.99 on 2025-07-31. Aggregated upstream of the retained event tables. RAW_GAME_EVENTS and STG_EVENTS_ENRICHED retain a 1:8 session sample, and PROGRESSION_EVENTS, SESSION_LEVEL_EVENTS and AD_IMPRESSION_EVENTS a 1:16 sample, so a recount from those tables will not match these totals.",
+      "columns": [
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_top",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "iap_revenue_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "ad_revenue_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "total_revenue_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false,
+          "comment": "Total revenue for the day. GRAIN: one row per game x platform x country_top -- SUM before comparing to any daily figure; an average over these rows is not a daily average."
+        },
+        {
+          "name": "paying_users",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "arpu_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": true,
+          "comment": "Average revenue per user (total revenue / DAU)"
+        },
+        {
+          "name": "arppu_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false,
+          "comment": "Average revenue per paying user"
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.MONETIZATION.REVENUE_DAILY"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MONETIZATION",
+      "name": "REVENUE_DAILY_V2",
+      "table_type": "BASE TABLE",
+      "comment": "Versioned all-title (includes 90 combo_fighter) revenue mart. Includes Combo Fighter (90 rows) and keeps a calc_metadata payload explaining the scope. Aggregated upstream of the retained event tables. RAW_GAME_EVENTS and STG_EVENTS_ENRICHED retain a 1:8 session sample, and PROGRESSION_EVENTS, SESSION_LEVEL_EVENTS and AD_IMPRESSION_EVENTS a 1:16 sample, so a recount from those tables will not match these totals.",
+      "columns": [
+        {
+          "name": "report_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "iap_revenue_current",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "ad_revenue_current",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "total_revenue_current",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "paying_users_current",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "arpu_current",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": true
+        },
+        {
+          "name": "source_table",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "calc_metadata",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.MONETIZATION.REVENUE_DAILY_V2"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "DAILY_METRICS_AGG",
+      "table_type": "BASE TABLE",
+      "comment": "Daily metrics mart derived from the DAU and revenue tables. Aggregated upstream of the retained event tables. RAW_GAME_EVENTS and STG_EVENTS_ENRICHED retain a 1:8 session sample, and PROGRESSION_EVENTS, SESSION_LEVEL_EVENTS and AD_IMPRESSION_EVENTS a 1:16 sample, so a recount from those tables will not match these totals.",
+      "columns": [
+        {
+          "name": "metric_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "dau",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "new_users",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "total_sessions",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "iap_revenue_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "ad_revenue_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "total_revenue_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "arpu_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "source_rows",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "metric_flag",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.DAILY_METRICS_AGG"
+    },
+    {
+      "database": "FINANCE",
+      "schema": "EXPENSES",
+      "name": "MONTHLY_BURN",
+      "table_type": "BASE TABLE",
+      "comment": "Monthly cash burn by expense category, 239 rows across 35 months. 35 months here vs 34 in FINANCE.EXPENSES.CASH_BALANCE is not a disagreement: 2026-02 accrued $15,717.28 of burn but never reached a month-end close, so it has a burn row and no cash row. Peak monthly burn $158,557 (2024-09). From 2025-10 the post-downsizing run-rate is $15,717-$58,115/month; the wind-down decision was 2026-02-09.",
+      "columns": [
+        {
+          "name": "month",
+          "data_type": "DATE",
+          "is_nullable": false,
+          "comment": "First day of month"
+        },
+        {
+          "name": "category",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "salaries | contractor_fees | aws_hosting | marketing | legal | tools_software | art_outsourcing | other"
+        },
+        {
+          "name": "amount_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "headcount_impacted",
+          "data_type": "NUMBER",
+          "is_nullable": true,
+          "comment": "salaries rows: NON-FOUNDER PAYEES active in that month (= CASH_BALANCE.headcount; company.headcount_peak_paid.scope). contractor_fees rows: non-founder CONTRACTORS active in that month. 0 for non-payroll categories. Founders are on the roster and are NOT in either count - see PAYROLL_ROSTER.is_founder"
+        }
+      ],
+      "created_at": "2023-03-28T00:00:00Z",
+      "id": "FINANCE.EXPENSES.MONTHLY_BURN"
+    },
+    {
+      "database": "FINANCE",
+      "schema": "EXPENSES",
+      "name": "CASH_BALANCE",
+      "table_type": "BASE TABLE",
+      "comment": "Month-end cash position, 34 closed months 2023-04..2026-01. Key milestones: the seed round totals $3.00M across 8 entries, the largest a $2.70M wire from the lead investor; Jul 2025 month-end ($286K, 3.6 months runway); final closed month 2026-01 ($8K). The wind-down was initiated 2026-02-09 and no February close exists, so the series ends at the last month the company traded.",
+      "columns": [
+        {
+          "name": "month_end_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "cash_usd",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "monthly_net_burn",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "CASH delta month-over-month, NOT operating spend. Reconciles to MONTHLY_BURN only as sum(MONTHLY_BURN categories) - revenue = monthly_net_burn. A residual remains in most months, up to ~$47K in either direction. It is NOT severance: the termination letters record earned wages only (independent-contractor agreements) and Oct-2025 payroll was $32,172 across 9 people. Treat it as unexplained cash movement in a P&L that stopped being maintained in 2025 -- its UA row omits $46,201.50 of bank-confirmed wires."
+        },
+        {
+          "name": "runway_months",
+          "data_type": "NUMBER(38,1)",
+          "is_nullable": false
+        },
+        {
+          "name": "headcount",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "NON-FOUNDER PAYEES at that month end - the population company.headcount_peak_paid and company.headcount_actual_tail both count, and it reads 16 at the 2024-09 peak. COMPOSITION, because the total alone misleads: it is non-founder FULL-TIME staff PLUS non-founder CONTRACTORS, counted as distinct people - 2024-09 is 12 full-time + 4 contractors, and 2026-01's 4 is 2 + 2. Only the three co-founders are excluded, so ALL PEOPLE = this + 3, peaking at 19. That 19 is the warehouse's answer to company.headcount_peak_concurrent, whose quoted \"21 people including contractors\" is kind=REPORTED with a band of 19-21 - 21 is the top of that band, not a realised count"
+        },
+        {
+          "name": "notes",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-04-29T00:00:00Z",
+      "id": "FINANCE.EXPENSES.CASH_BALANCE"
+    },
+    {
+      "database": "FINANCE",
+      "schema": "EXPENSES",
+      "name": "HEADCOUNT",
+      "table_type": "BASE TABLE",
+      "comment": "Employee roster with monthly cost, 371 rows (one per employee per cost regime; employee_id is NOT unique). 3 founders and 19 non-founder staff over the company's life. Non-founder payees peaked at 16, reached in 2024-09 and 2025-04 and fell to 8 in 2025-11. That payee count is non-founder FULL-TIME plus non-founder CONTRACTORS (13 and 6 distinct people over the company's life); only founders are outside it, so ALL PEOPLE peaked at 19; the tail runs 2025-09 12, 2025-10 13, 2025-11 8, 2025-12 7, 2026-01 4. Separately, one engineer was terminated 2025-10-20 for undisclosed dual employment (moonlighting) at a second company; that individual is anonymized and NOT identified in this roster.",
+      "columns": [
+        {
+          "name": "employee_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "department",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "employment_type",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "start_month",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "end_month",
+          "data_type": "DATE",
+          "is_nullable": true,
+          "comment": "NULL = still active"
+        },
+        {
+          "name": "monthly_cost_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "roster_line_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "surrogate key. One row per (employee_id, cost regime); employee_id repeats across a person's consecutive, non-overlapping month ranges"
+        },
+        {
+          "name": "is_founder",
+          "data_type": "BOOLEAN",
+          "is_nullable": false,
+          "comment": "TRUE for the three co-founders. CASH_BALANCE.headcount and MONTHLY_BURN.headcount_impacted count the rows where this is FALSE"
+        }
+      ],
+      "created_at": "2023-03-28T00:00:00Z",
+      "id": "FINANCE.EXPENSES.HEADCOUNT"
+    },
+    {
+      "database": "LIVE_OPS",
+      "schema": "EVENTS",
+      "name": "LIVE_EVENT_PERFORMANCE",
+      "table_type": "BASE TABLE",
+      "comment": "Per-event metrics for all live-ops events, 827 runs. Event catalogue present in this table: Axe Arena, Plague Race, River Rush, Season Pass, Streak Fever, Weekly Leaderboards, Weekly Quests, Win & Collect. Recorded incidents against these events -- 2024-11-15 Weekly Quests: Quest-system auto-deploy incident (ENG-1892); 2025-07-12 River Rush: Scheduler outage; 2025-08-05 Plague Race: Plague Race algo bug (ZOM-459).",
+      "columns": [
+        {
+          "name": "event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "start_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "end_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "participants",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "completions",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "completion_rate_pct",
+          "data_type": "NUMBER(38,1)",
+          "is_nullable": false
+        },
+        {
+          "name": "avg_score",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "revenue_generated_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "status",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "completed | failed | degraded"
+        },
+        {
+          "name": "failure_note",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2024-10-01T00:00:00Z",
+      "id": "LIVE_OPS.EVENTS.LIVE_EVENT_PERFORMANCE"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "RESOURCE_FLOW_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Sink/source ledger for the in-game economy, 1,483,075 rows: one row-set per PLAYER_DAILY_PROGRESS player-day. Not a sample. Currency movements present: bones source 9,556, coins sink 31,882, coins source 1,441,637. Booster prices as transacted: draw_3 1200, draw_5 1800, dynamite 1000, glue 400, gust 2000, rewind 500, trampoline 200, wildcard 1600. Combo Fighter is absent by design -- its prototype economy is not modelled in this ledger, and PLAYER_DAILY_PROGRESS does not credit it either, so the two agree. SCOPE: this ledger records soft-currency flows (coins) and the ZM3D bones faucet only. Gem-denominated purchases are NOT recorded here: the gem catalogue is real and priced in the shipped client, but no gem economy is simulated in this warehouse, so the absence of gem rows is a modelling boundary and not evidence that gems were unused.",
+      "columns": [
+        {
+          "name": "resource_event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_ts",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        },
+        {
+          "name": "app_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "domino_delights | zombie_match_3d (renamed game key)"
+        },
+        {
+          "name": "user_pseudo_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "flow_type",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "Sink | Source"
+        },
+        {
+          "name": "currency",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "coins | bones"
+        },
+        {
+          "name": "amount",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "item_type",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "level_reward | booster | rewarded_video | hourly_collection | live_ops | mini_game | quest | chapter_reward | iap_grant"
+        },
+        {
+          "name": "item_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "level_index",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "Level the flow occurred at (renamed level key)"
+        },
+        {
+          "name": "balance_after",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "event_params",
+          "data_type": "OBJECT",
+          "is_nullable": true,
+          "comment": "Semi-structured params: spend_source, is_first_of_day, post_crisis"
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.RESOURCE_FLOW_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MONETIZATION",
+      "name": "VIRTUAL_CURRENCY_LEDGER",
+      "table_type": "BASE TABLE",
+      "comment": "Virtual-currency ledger, a 1:1 projection of RESOURCE_FLOW_EVENTS keyed by ledger_meta.source_event_id, preserving the Apr 2025 coin-crisis economy version. Amounts and running balances are the source row's, not recomputed.",
+      "columns": [
+        {
+          "name": "ledger_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "currency",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "amount",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "sink_source",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "item_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "balance_after",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "economy_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "ledger_meta",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.MONETIZATION.VIRTUAL_CURRENCY_LEDGER"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "RAW_GAME_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Derived from RAW_EVENTS and retained at a 1:8 session sample; sampling is by session, so every event of a retained session is present. Unprocessed client analytics firehose across all HG4 titles (GameAnalytics-style). One row per emitted event with device/geo/custom_fields as nested payloads. app_version tracks the seed release timeline; event volume dips on known incident dates. Combo Fighter appears only at prototype scale (~3%).",
+      "columns": [
+        {
+          "name": "event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_dt",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false,
+          "comment": "Event emission time (UTC), full timestamp; date-truncate for daily rollups"
+        },
+        {
+          "name": "app_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "domino_delights | zombie_match_3d | combo_fighter (renamed game key)"
+        },
+        {
+          "name": "user_pseudo_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_category",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "session | progression | economy | ui | ad"
+        },
+        {
+          "name": "event_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "sdk_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "app_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "Release version from the seed release timeline"
+        },
+        {
+          "name": "device",
+          "data_type": "OBJECT",
+          "is_nullable": true,
+          "comment": "Semi-structured: model, platform, os_version, is_tablet"
+        },
+        {
+          "name": "geo",
+          "data_type": "OBJECT",
+          "is_nullable": true,
+          "comment": "Semi-structured: country, region"
+        },
+        {
+          "name": "custom_fields",
+          "data_type": "VARIANT",
+          "is_nullable": true,
+          "comment": "Free-form per-event params (level_index, engagement_bucket, on_incident_day)"
+        },
+        {
+          "name": "ingested_at",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-11-02T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.RAW_GAME_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "STG_EVENTS_ENRICHED",
+      "table_type": "BASE TABLE",
+      "comment": "Derived from RAW_EVENTS and retained at a 1:8 session sample; sampling is by session, so every event of a retained session is present. Enriched staging table over RAW_GAME_EVENTS with normalized country/device fields and event_attrs payload.",
+      "columns": [
+        {
+          "name": "event_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_family",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "level_num",
+          "data_type": "NUMBER",
+          "is_nullable": true
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "app_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "device_model",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "event_attrs",
+          "data_type": "VARIANT",
+          "is_nullable": true
+        },
+        {
+          "name": "ingest_source",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-11-02T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.STG_EVENTS_ENRICHED"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "PROGRESSION_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Derived from RAW_EVENTS and retained at a 1:16 session sample; sampling is by session, so every event of a retained session is present. Raw level lifecycle stream for all titles (includes 1,370 combo_fighter rows). Includes nested board_state and custom_fields payloads; includes Combo Fighter (1,370 rows).",
+      "columns": [
+        {
+          "name": "progression_event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_ts",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        },
+        {
+          "name": "app_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "user_pseudo_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "level_index",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "stage_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "attempt_number",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "result",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "duration_seconds",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "move_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "booster_count",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "board_state",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        },
+        {
+          "name": "custom_fields",
+          "data_type": "VARIANT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-11-02T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.PROGRESSION_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "STG_PROGRESSION_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Derived from RAW_EVENTS and retained at a 1:16 session sample; sampling is by session, so every event of a retained session is present. Thin staging layer over PROGRESSION_EVENTS with renamed join keys and retained board_state payload.",
+      "columns": [
+        {
+          "name": "event_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "level_num",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "event_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "result",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "attempt_number",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "duration_seconds",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "source_event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "board_state",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        },
+        {
+          "name": "loaded_at",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-11-03T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.STG_PROGRESSION_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "SESSION_LEVEL_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Derived from RAW_EVENTS and retained at a 1:16 session sample; sampling is by session, so every event of a retained session is present. Raw level attempt events (sampled). Each row = one player action: level_started, level_completed, level_failed, booster_used, or tutorial_step. LEVEL_PERFORMANCE is aggregated from the full upstream event stream before sampling, not from this table, so a recount here will not reproduce it.",
+      "columns": [
+        {
+          "name": "event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "level_number",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "event_type",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "level_started | level_completed | level_failed | booster_used"
+        },
+        {
+          "name": "event_timestamp",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "duration_seconds",
+          "data_type": "NUMBER",
+          "is_nullable": true
+        },
+        {
+          "name": "booster_type",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "result",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "win | out_of_moves | time_limit | board_stuck (domino_delights) | hp_depleted | out_of_space (zombie_match_3d) | knocked_out (combo_fighter)"
+        },
+        {
+          "name": "attempt_number",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-11-02T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.SESSION_LEVEL_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "CLIENT_ERROR_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Client crash/error log. Volume spikes on the known incident windows (Baklava launch crash, ZM3D launch crash + font freeze, progression wipe, etc.). ZM3D crashes concentrate at levels 3-5 (~82% per the crashed-users funnel). stack_context is a semi-structured OBJECT.",
+      "columns": [
+        {
+          "name": "error_event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "logged_at",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        },
+        {
+          "name": "app_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "domino_delights | zombie_match_3d (renamed game key)"
+        },
+        {
+          "name": "user_pseudo_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "severity",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "fatal | error | warning"
+        },
+        {
+          "name": "error_kind",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "message",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "at_level",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "Level index where the error was logged"
+        },
+        {
+          "name": "app_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "device_model",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "os_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "stack_context",
+          "data_type": "OBJECT",
+          "is_nullable": true,
+          "comment": "Semi-structured: thread, frames, on_incident_day"
+        }
+      ],
+      "created_at": "2023-11-01T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.CLIENT_ERROR_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "AD_IMPRESSION_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Derived from RAW_EVENTS and retained at a 1:16 session sample; sampling is by session, so every event of a retained session is present. One row per ad_impression event, priced at AD_REVENUE's daily eCPM for the same date, game, platform, country, network and placement; custom_fields.source_spend_date links each impression to AD_SPEND_DAILY. Network payloads are nested and incident windows reduce realized revenue.",
+      "columns": [
+        {
+          "name": "impression_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "impression_ts",
+          "data_type": "TIMESTAMP",
+          "is_nullable": false
+        },
+        {
+          "name": "app_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "user_pseudo_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "network_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "placement",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "ad_format",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "revenue_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "latency_ms",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "mediation_meta",
+          "data_type": "OBJECT",
+          "is_nullable": true
+        },
+        {
+          "name": "custom_fields",
+          "data_type": "VARIANT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2024-01-02T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.AD_IMPRESSION_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "DESIGN_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Derived from RAW_EVENTS and retained at a 1:64 session sample; sampling is by session, so every event of a retained session is present. Product/design instrumentation events (A/B assignments, tuning knobs, funnel probes).",
+      "columns": [
+        {
+          "name": "design_event_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_dt",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "title_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "event_value",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "value_1",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "value_2",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "metric_bucket",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "payload",
+          "data_type": "VARIANT",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-11-16T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.DESIGN_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "DIM_DATE",
+      "table_type": "BASE TABLE",
+      "comment": "Calendar dimension over the active warehouse period.",
+      "columns": [
+        {
+          "name": "date_key",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "week_start",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "month",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "quarter",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "year",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "day_of_week",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "is_weekend",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "fiscal_month",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "company_phase",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-04-24T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.DIM_DATE"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "DIM_COUNTRY",
+      "table_type": "BASE TABLE",
+      "comment": "Country dimension distinguishing revenue countries from UA-only countries.",
+      "columns": [
+        {
+          "name": "country_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "region",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "is_revenue_country",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "is_ua_country",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "primary_market_tier",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "currency_code",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "gdpr_region",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "notes",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "first_seen_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.DIM_COUNTRY"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "GAME_EVENTS",
+      "name": "DIM_DEVICE",
+      "table_type": "BASE TABLE",
+      "comment": "Device dimension: the phone/tablet models seen across HG4 titles with platform, OS version, form factor, and an estimated market value. Anchored to the device deep-dive device space (iPhone/iPad + Samsung/Pixel/Oppo/OnePlus). Domino Delights install sample skews ~77% iOS.",
+      "columns": [
+        {
+          "name": "device_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "device_model",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "Canonical hardware code, e.g. iPhone14,5 / Samsung Galaxy S23+ (joins RAW_GAME_EVENTS.device.model, CLIENT_ERROR_EVENTS.device_model)"
+        },
+        {
+          "name": "device_model_generic",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "Consumer marketing name for the hardware code, e.g. iPhone11,6 = iPhone XS Max; joins INSTALL_EVENTS.device_model. NULL for tablets (no install-table equivalent)."
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "ios | android"
+        },
+        {
+          "name": "os_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "form_factor",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "phone | tablet"
+        },
+        {
+          "name": "is_tablet",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "first_seen_date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "est_market_value_usd",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "Estimated retail value used for LTV/segmentation"
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.GAME_EVENTS.DIM_DEVICE"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "RAW_TELEMETRY",
+      "name": "RAW_EVENTS",
+      "table_type": "BASE TABLE",
+      "comment": "Client telemetry, retained here at a deterministic 1-in-8 SESSION sample: 807,015 rows standing for an upstream stream of 6,463,483. Other tables in this schema are retained at different sample rates and some use a different session key name, so a session_id join against this table is not necessarily complete. Aggregate marts were computed before sampling.",
+      "columns": [
+        {
+          "name": "event_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "Primary key"
+        },
+        {
+          "name": "event_ts",
+          "data_type": "TIMESTAMP_NTZ",
+          "is_nullable": false,
+          "comment": "Client event time (UTC)"
+        },
+        {
+          "name": "ingested_at",
+          "data_type": "TIMESTAMP_NTZ",
+          "is_nullable": false,
+          "comment": "Warehouse arrival; always >= event_ts"
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "ONE player key for the whole warehouse; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "session_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "Shared by every event of one session"
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "domino_delights | zombie_match_3d | combo_fighter"
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "ios | android"
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "ISO-2"
+        },
+        {
+          "name": "device_model",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "app_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "build_number",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "event_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "session_start | session_end | begin_level | left_level | oom_in_level | currency_grant | currency_spend | iap_purchase | ad_impression | ad_reward | client_error | experiment_assign"
+        },
+        {
+          "name": "level_index",
+          "data_type": "NUMBER",
+          "is_nullable": true
+        },
+        {
+          "name": "level_difficulty",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "regular | hard | boss"
+        },
+        {
+          "name": "currency",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "coins | gems | bones | usd"
+        },
+        {
+          "name": "amount",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": true
+        },
+        {
+          "name": "balance_after",
+          "data_type": "NUMBER",
+          "is_nullable": true
+        },
+        {
+          "name": "flow_type",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "Sink | Source"
+        },
+        {
+          "name": "item_type",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "item_id",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "ad_network",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "ad_placement",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "error_code",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "severity",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "fatal | error | warning"
+        },
+        {
+          "name": "experiment_id",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "variant",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-11-02T00:00:00Z",
+      "id": "ANALYTICS.RAW_TELEMETRY.RAW_EVENTS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "INSTALL_ATTRIBUTION",
+      "table_type": "BASE TABLE",
+      "comment": "Installs, carrying player_id.",
+      "columns": [
+        {
+          "name": "install_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "install_ts",
+          "data_type": "TIMESTAMP_NTZ",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "device_model",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "canonical HARDWARE code, joins DIM_DEVICE.device_model (D6)"
+        },
+        {
+          "name": "device_model_generic",
+          "data_type": "VARCHAR",
+          "is_nullable": true,
+          "comment": "marketing name, joins DIM_DEVICE.device_model_generic"
+        },
+        {
+          "name": "os_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "media_source",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "organic | meta | google_uac | unity_ads | applovin | adjoe"
+        },
+        {
+          "name": "campaign_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "cost_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "is_organic",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "mmp_reported_at",
+          "data_type": "TIMESTAMP_NTZ",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.INSTALL_ATTRIBUTION"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "AD_SPEND",
+      "table_type": "BASE TABLE",
+      "comment": "What we paid the networks (as the MMP reported it).",
+      "columns": [
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "network",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "campaign_key",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "spend_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "impressions",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "clicks",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "installs_reported",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2024-08-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.AD_SPEND"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MONETIZATION",
+      "name": "AD_REVENUE",
+      "table_type": "BASE TABLE",
+      "comment": "What the networks paid us, split accrued vs paid.",
+      "columns": [
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "network",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "placement",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "impressions",
+          "data_type": "NUMBER",
+          "is_nullable": false,
+          "comment": "BILLABLE impressions as reported by the ad network - what the network paid on, not what the client fired. Legitimately much SMALLER than AD_IMPRESSION_EVENTS, which is the client-side impression stream (materialised at a 1-in-16 session sample): unfilled, no-fill and non-billable impressions never reach this column. The two tables reconcile on MONEY, not on counts - AD_IMPRESSION_EVENTS.revenue_usd scaled by the sample rate matches revenue_usd here. Do not compare the counts, and do not truncate either side to make them agree"
+        },
+        {
+          "name": "revenue_usd",
+          "data_type": "NUMBER(38,4)",
+          "is_nullable": false
+        },
+        {
+          "name": "accrued_vs_paid",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "paid | accrued_unpaid"
+        }
+      ],
+      "created_at": "2023-12-28T00:00:00Z",
+      "id": "ANALYTICS.MONETIZATION.AD_REVENUE"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MONETIZATION",
+      "name": "STORE_TRANSACTIONS",
+      "table_type": "BASE TABLE",
+      "comment": "IAP receipts, 993 rows (2024-02-23 to 2026-02-09). GROSS: includes refunded receipts (is_refunded). 993 = 977 completed + 16 refunded ($125.84). ANALYTICS.MONETIZATION.IAP_TRANSACTIONS is this table NET of refunds and shares transaction_id, so it is a strict subset -- use this table for receipt counts and that one for revenue.",
+      "columns": [
+        {
+          "name": "transaction_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "receipt_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "player_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "renamed player key; joins to PLAYER_DAILY_PROGRESS.player_id"
+        },
+        {
+          "name": "product_sku",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "product_name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "price_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false
+        },
+        {
+          "name": "is_subscription",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        },
+        {
+          "name": "is_refunded",
+          "data_type": "BOOLEAN",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2024-02-22T00:00:00Z",
+      "id": "ANALYTICS.MONETIZATION.STORE_TRANSACTIONS"
+    },
+    {
+      "database": "ANALYTICS",
+      "schema": "MARKETING",
+      "name": "STORE_REVIEWS",
+      "table_type": "BASE TABLE",
+      "comment": "Player-submitted review text from the app stores.",
+      "columns": [
+        {
+          "name": "review_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "game_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "platform",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "country",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "rating",
+          "data_type": "NUMBER",
+          "is_nullable": false
+        },
+        {
+          "name": "title",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        },
+        {
+          "name": "body",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "app_version",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "topic_bucket",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        }
+      ],
+      "created_at": "2023-10-28T00:00:00Z",
+      "id": "ANALYTICS.MARKETING.STORE_REVIEWS"
+    },
+    {
+      "database": "FINANCE",
+      "schema": "EXPENSES",
+      "name": "FINANCE_LEDGER",
+      "table_type": "BASE TABLE",
+      "comment": "Signed cash movements including inflows.",
+      "columns": [
+        {
+          "name": "entry_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "date",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "category",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "counterparty",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "amount_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false,
+          "comment": "SIGNED: inflows positive"
+        },
+        {
+          "name": "employee_id",
+          "data_type": "VARCHAR",
+          "is_nullable": true
+        }
+      ],
+      "created_at": "2023-04-24T00:00:00Z",
+      "id": "FINANCE.EXPENSES.FINANCE_LEDGER"
+    },
+    {
+      "database": "FINANCE",
+      "schema": "EXPENSES",
+      "name": "PAYROLL_ROSTER",
+      "table_type": "BASE TABLE",
+      "comment": "The payroll roster that FINANCE_LEDGER salaries key off.",
+      "columns": [
+        {
+          "name": "roster_line_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false,
+          "comment": "surrogate key. One row per (employee_id, cost regime); employee_id repeats"
+        },
+        {
+          "name": "employee_id",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "name",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "role",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "employment_type",
+          "data_type": "VARCHAR",
+          "is_nullable": false
+        },
+        {
+          "name": "is_founder",
+          "data_type": "BOOLEAN",
+          "is_nullable": false,
+          "comment": "TRUE for the three co-founders (Slack founders-only channel membership + three Founder's Stock Purchase Agreements). Excluded from CASH_BALANCE.headcount and MONTHLY_BURN.headcount_impacted"
+        },
+        {
+          "name": "start_month",
+          "data_type": "DATE",
+          "is_nullable": false
+        },
+        {
+          "name": "end_month",
+          "data_type": "DATE",
+          "is_nullable": true
+        },
+        {
+          "name": "monthly_cost_usd",
+          "data_type": "NUMBER(38,2)",
+          "is_nullable": false,
+          "comment": "flat over THIS row's month range; 0 = on the roster, not on the payroll (unpaid founders pre-seed, and everyone in 2026-02)"
+        }
+      ],
+      "created_at": "2023-03-28T00:00:00Z",
+      "id": "FINANCE.EXPENSES.PAYROLL_ROSTER"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+# 11 — All-Fail Rubric Analysis (Playbook) — HarmonyGames · Spec V2
+
+> Command: `/create-allfail` · Writes: `task_inputs/11_AF_Justification.md` · Paired eval: none (QC-scored as "Rubrics — All-Failing Rubrics") · Read first: `setup/GEN_EXECUTION.md`
+
+## Purpose
+
+After the single baseline verifier runs, every rubric that failed **all completed
+rollouts** must be rated with a 1–2 line justification confirming the failure is
+a genuine model failure, not a rubric defect (`references/Docs/07_Rubric_Writing.md` §11).
+This step finds those rubrics, decides valid vs invalid from the trajectories, and
+drafts justifications for the valid ones.
+
+An invalid all-fail is a false negative: the task looks harder than it is. Two or
+more invalid all-fails fail the task; one is a non-fail. Invalid criteria are fixed
+by the human — criteria are human-only in V2 — so this step reports them and
+never rewrites them.
+
+## Inputs / Output
+
+Inputs (all required; stop and name what is missing)
+- `task_inputs/10_Baseline_Verifier_Results.md` — the platform verifier output.
+- `task_inputs/07_Baseline_Trajectories/` — the six rollouts.
+- `task_inputs/09_Rubrics.json` — the criteria.
+- `task_inputs/04_Prompt.txt`, `08_Oracle_Events.md`, `08_Evidence_Ledger.md`, `03_Error_Async_Config.txt`.
+
+Output
+- `task_inputs/11_AF_Justification.md` — the denominator, the all-fail list, a
+  valid/invalid verdict per all-fail rubric with evidence, justifications for the valid
+  ones, and findings for the invalid ones. `NONE` when no rubric failed every completed rollout.
+
+## Hard gates
+
+1. **Denominator = completed rollouts.** Exclude errored rollouts. If 4 of 6 completed, an all-fail is a rubric failed on all 4. Record which rollouts were excluded and why. Three or more errored rollouts fail the task outright — say so and stop.
+2. **Validate before justifying.** For each all-fail rubric answer, with evidence:
+   - Self-contained, atomic, agent-centric, affirmative, tool-free?
+   - Grounded — does the expected value match the universe (check the ledger, then the record)?
+   - Flexible enough to accept valid alternatives (route, wording, title the prompt did not specify)?
+   - Actually required by the prompt (not an unstated expectation, not grading a distractor, not a hard-coded conclusion on ambiguous evidence)?
+   - Reachable from the persona's scoped view, and supported by a catalog write tool if it grades a write?
+   - If a forced error was configured: does the recovery path exist and did the error actually fire?
+   - If an async wait was configured: did the agent actually take the slow path?
+   Any "no" makes the rubric **invalid**. Invalid rubrics are never justified.
+3. **Genuine failure, shown per rollout.** For a valid all-fail, cite what each completed rollout actually did (tool call, value reported, or omission) — from the trajectory, not assumed from the verifier's one-liner.
+4. **Check the judge.** If a rollout's trajectory shows the criterion was met and the verifier still failed it, record a judge error. That rubric is not an all-fail for justification purposes; flag it for the reviewer.
+5. **Justification shape.** One or two sentences: the grounded expectation (value and where it comes from), why it is a fair requirement of this prompt, and the concrete model error. No restatement of the criterion, no padding. The platform's rating field takes it as-is.
+6. **Invalid → report, not rewrite.** For each invalid rubric: quote the criterion, name the defect and the evidence, and state the consequence (it inflates difficulty). Do not propose replacement criterion text. The human fixes the criterion and re-runs the verifier; then re-run this step and `/create-difficulty`.
+7. **Never tune.** Do not recommend deleting valid criteria to move the difficulty numbers.
+
+## Procedure (checklist)
+
+- [ ] Parse the verifier results into a rubric × rollout matrix; mark errored rollouts.
+- [ ] List rubrics failed by every completed rollout.
+- [ ] For each: run gate 2 with evidence; check the trajectories (gate 3) and the judge (gate 4).
+- [ ] Draft justifications for valid all-fails; write findings for invalid ones.
+- [ ] Tally: valid, invalid, judge errors. Two or more invalid = blocking.
+
+## Output format
+
+```
+Completed rollouts: <n>/6 (excluded: <ids + reason>)
+All-fail rubrics: <ids or NONE>
+
+### <rubric id> — VALID | INVALID | JUDGE ERROR
+Criterion: "<quoted>"
+Evidence: <per completed rollout: what the agent did, with trajectory locator>
+Validity checks: <each gate-2 question: yes/no + why>
+Justification (VALID only): <1–2 sentences>
+Finding (INVALID only): <defect · rule · consequence>
+
+Summary: valid <n> · invalid <n> (≥2 blocks the task) · judge errors <n>
+```
+
+## Self-check (QC Spec V2)
+
+- **Rubrics — All-Failing Rubrics**: 2+ invalid = Fail; 1 invalid = Non-fail; a valid all-fail with an unfactual or irrelevant justification = Non-fail.
+- **Trajectory — Error Rate**: 3+ errored rollouts = Fail.
+
+## Deliver
+
+Report the denominator, each all-fail rubric's verdict, the justifications ready to
+enter on the Rate All-Fail Rubrics screen, and any invalid criteria the human must
+fix. Next: `/create-difficulty`.

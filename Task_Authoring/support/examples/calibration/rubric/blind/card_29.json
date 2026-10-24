@@ -1,0 +1,154 @@
+{
+ "card_index": 29,
+ "universe": "mortgage-broker-01-keystone",
+ "prompt": "Grace just briefed me on the external security audit findings. It's worse than I expected. They flagged us on access controls: over-scoped permissions, credential red flags, and basically no process for locking people out when they leave or change roles. She wants a full picture of every security or access incident from the past 90 days before she and Denise sit down with Robert for the quarterly review.\n\nI know bits and pieces. Keisha had some kind of credential issue a few weeks back, there was a situation with an intern accessing borrower records he had no business looking at, and Marcus Webb's exit was not clean from an IT standpoint. But I'm only in the office two days a week, so I'm sure I'm missing things that were discussed in channels I don't monitor closely. Grace also mentioned Victor flagged some payment activity that doesn't track, which could tie into the same governance issues. I need to understand what he actually found and whether there's an access or financial exposure tied to it.\n\nFor everything you turn up, I need the actual scope: which borrower records or loans were directly at risk in each case, whether each gap has been closed or is still open, and if there are any accounts on our systems right now that shouldn't be. Reconcile the current staff roster against what you can find for recent activity across our platforms. Then send Grace and Denise a single briefing covering each incident with the exposure details and a prioritized list of what needs to be locked down first. Drop a summary in the compliance channel as well so there's a formal record, and make sure any loans you can tie to an incident get flagged with notes about it.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends the security/access incident briefing email to [grace.yamamoto@keystonemortgage.com](mailto:grace.yamamoto@keystonemortgage.com) and [denise.holloway@keystonemortgage.com](mailto:denise.holloway@keystonemortgage.com).",
+   "evidence": "Look for a send_email call whose recipients include grace.yamamoto@keystonemortgage.com and denise.holloway@keystonemortgage.com (OE 16).",
+   "cb_justification": "The prompt's primary write action is 'send Grace and Denise a single briefing.' Both recipients are set in the same email, so they are checked together."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent reports that Keisha Williams's compromised lender-portal credentials exposed borrower loan files in the briefing email to Grace Yamamoto and Denise Holloway.",
+   "evidence": "send_email content covers Keisha's portal compromise and the exposure of borrower loan files (OE 7).",
+   "cb_justification": "The prompt asks the briefing to cover the compromised-portal incident and its exposure. The specific loans are independently enforced by the per-loan flag rubrics, so this stays a single atomic incident-exposure claim."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent covers the Leo Park intern unauthorized borrower-file access incident in the briefing email to Grace Yamamoto and Denise Holloway.",
+   "evidence": "send_email content covers Leo Park's unauthorized borrower-file access (OE 8).",
+   "cb_justification": "In-scope access incident the prompt names. The specific loans are enforced by the per-loan flag rubrics, so this stays a single atomic incident-coverage claim."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent covers the Marcus Webb data-exfiltration incident in the briefing email to Grace Yamamoto and Denise Holloway.",
+   "evidence": "send_email content covers Marcus Webb's data exfiltration (OE 9).",
+   "cb_justification": "One of the three incidents the prompt names by hand ('Marcus Webb's exit was not clean from an IT standpoint'). Single incident-coverage claim."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent covers the external security-audit finding on Raj Anand's over-scoped LOS/VPN access in the briefing email to Grace Yamamoto and Denise Holloway.",
+   "evidence": "send_email content covers the external audit finding on Raj's over-scoped access (OE 10).",
+   "cb_justification": "The audit is the incident Grace briefed Raj on ('over-scoped permissions, credential red flags'); it must appear in the briefing. Single incident-coverage claim. Verifier runs confirm this is achievable (covered in 3 of 6 runs)."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent covers the Evan Mercer post-termination LOS-access incident in the briefing email to Grace Yamamoto and Denise Holloway.",
+   "evidence": "send_email content covers Evan Mercer's post-termination LOS access (OE 11).",
+   "cb_justification": "In-scope access incident. The specific accessed-loan set is left out because the universe sources disagree on which files, so requiring a specific set would fail valid paths."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent identifies Evan Mercer's LOS account as an account that should no longer have system access in the briefing email to Grace Yamamoto and Denise Holloway.",
+   "evidence": "send_email content names Evan Mercer as the departed user whose LOS access should not exist (OE 11, OE 14).",
+   "cb_justification": "Covers the prompt's explicit ask: 'if there are any accounts on our systems right now that shouldn't be.' Evan Mercer is the orphan account found via the roster reconciliation."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent covers the spoofed-wire fraud incident on loan LN-2026-00605 (Destiny Pham) in the briefing email to Grace Yamamoto and Denise Holloway.",
+   "evidence": "send_email content covers the spoofed-wire fraud on LN-2026-00605 / Destiny Pham (OE 12).",
+   "cb_justification": "A security incident in the window that the prompt scopes in; verifier runs confirm it is achievable (covered in Run 3). The loan number identifies the single wire-fraud incident (one finding)."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent covers a payment-governance anomaly flagged by Victor Osei in the briefing email to Grace Yamamoto and Denise Holloway at least one of: the unsupported recurring Premier Data Solutions payments, the DeLuca Appraisal Group appraisal-steering payments, or the ongoing commission payments to departed loan officer Marcus Webb.",
+   "evidence": "send_email content covers at least one payment-governance anomaly tied to Victor Osei (Premier Data Solutions / DeLuca appraisal steering / departed-LO commissions) (OE 13).",
+   "cb_justification": "The prompt asks the agent to understand what Victor flagged and its exposure. Victor's flag maps to more than one payment anomaly in the universe, so accepting any one avoids failing a valid alternative path (verifier runs showed agents reasonably picked different ones DeLuca, departed-LO commissions, or Premier Data)."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent distinguishes which incident gaps are already closed versus still open in the briefing email to Grace Yamamoto and Denise Holloway (for example, Evan Mercer's LOS access disabled = closed, while Marcus Webb's credential revocation is unconfirmed and/or Keisha's credential-reuse exposure remains open) (or similar).",
+   "evidence": "send_email content indicates open-vs-closed status across the incidents (OEs 7-13).",
+   "cb_justification": "The prompt explicitly asks 'whether each gap has been closed or is still open.' Phrased flexibly since the exact wording is free-text."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent includes a prioritized list of what to lock down first, drawn from the still-open gaps, in the briefing email to Grace Yamamoto and Denise Holloway (or similar).",
+   "evidence": "send_email content contains a prioritized lockdown list (OE 16).",
+   "cb_justification": "The prompt asks for 'a prioritized list of what needs to be locked down first.' The specific ordering is agent judgment, so this is flexible."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent posts a summary of the security/access incident review to the #compliance-alerts Slack channel (C004).",
+   "evidence": "Look for a conversations_add_message call to channel #compliance-alerts (channel_id C004) (OE 17).",
+   "cb_justification": "The prompt asks to 'drop a summary in the compliance channel as well so there's a formal record'; #compliance-alerts is the compliance channel."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent summarizes the past-90-day security/access incident inventory in the #compliance-alerts (C004) post (or similar).",
+   "evidence": "conversations_add_message payload to C004 summarizes the incidents (OE 17).",
+   "cb_justification": "The compliance-channel post is a formal record; it should convey the incident inventory. Flexible on exact wording."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00522 (Destiny Pham) flagging potential borrower-data exposure from Keisha Williams's compromised lender-portal credentials.",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00522 (los_loan_6305758350b5) with a note referencing the portal compromise (OE 18).",
+   "cb_justification": "The prompt asks to flag any loans tied to an incident; LN-2026-00522 is in the compromised-portal exposure set."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00008 (Yuki Wilson) flagging borrower-data exposure tied to a recent security incident (the compromised lender portal and/or Marcus Webb's departure).",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00008 (los_loan_58b56696d513) with an incident note (OE 18, OE 20).",
+   "cb_justification": "LN-2026-00008 appears in both the compromised-portal exposure set and Marcus Webb's file set; either basis is valid, so the reason is method-agnostic."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00010 (Vincent Ferguson) flagging potential borrower-data exposure from Keisha Williams's compromised lender-portal credentials.",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00010 (los_loan_6a1a6849f5bd) (OE 18).",
+   "cb_justification": "LN-2026-00010 is in the compromised-portal exposure set the prompt asks to flag."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00009 (Darren Singh) flagging borrower-data exposure tied to a recent security incident (the compromised lender portal and/or Marcus Webb's departure).",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00009 (los_loan_ad53e691489a) (OE 18, OE 20).",
+   "cb_justification": "LN-2026-00009 appears in both the compromised-portal and Marcus file sets; either basis is valid."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00606 (Harrison Brooks) flagging unauthorized access by intern Leo Park to this celebrity borrower file.",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00606 (los_loan_5552d1047cbb) (OE 19).",
+   "cb_justification": "The celebrity file is the highest-exposure loan in the Leo Park incident the prompt asks to flag; verifier runs confirm it is achievable (flagged in Runs 1-2)."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00554 (James Singh) flagging unauthorized access by intern Leo Park.",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00554 (los_loan_82b451f094e6) (OE 19).",
+   "cb_justification": "LN-2026-00554 is a named file in the Leo Park intern-access incident."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00608 (Natasha Okafor) flagging exfiltration/bulk access tied to Marcus Webb's departure.",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00608 (los_loan_2df55e4995ed) (OE 20).",
+   "cb_justification": "LN-2026-00608 is the named exfiltration example in the Marcus Webb incident (confirmed borrower-file exposure, unlike the commission-transfer loans)."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent adds an activity note to loan LN-2026-00605 (Destiny Pham) flagging the spoofed-wire fraud in which the borrower wired funds to a fraudulent account.",
+   "evidence": "mortgage_los_add_activity on loan LN-2026-00605 (los_loan_e0934521fda4) (OE 22).",
+   "cb_justification": "LN-2026-00605 is the loan tied to the spoofed-wire incident the prompt asks to flag; verifier runs confirm it is achievable (flagged in Run 3)."
+  }
+ ]
+}

@@ -1,0 +1,171 @@
+{
+ "id": "card_10",
+ "n_criteria": 17,
+ "requirements": [
+  "R1: full GraniteRack AP picture across entities (entity, age, issue, exception/escalation status per pending invoice)",
+  "R2: vendor-master entries current? (report)",
+  "R3: each pending invoice tracked in project tools? (report)",
+  "R4: vendor-master correction request logged with the right reference",
+  "R5: exception logged for any invoice past escalation threshold without one",
+  "R6: active SOW findable and clearly labeled",
+  "R7: Priya and Daniel looped in on their actions",
+  "R8: reminder for vendor-master correction deadline",
+  "R9: plain verdict on proceeding with the rebill"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "overly specific",
+   "severity": "Major",
+   "quote": "creates a Linear issue on the CAO team board (linear_5477c0808ac2)",
+   "why": "prompt only says 'log the correction request'; fixes one tool/board"
+  },
+  {
+   "c": "C2",
+   "defect": "hard-coded phrasing / non-atomic",
+   "severity": "Major",
+   "quote": "'GraniteRack Compute Services - infrastructure services per SOW-2025-GR-rev1 (effective 2026-01-15, supersedes SOW-2024-GR-rev3)'",
+   "why": "exact string required; three entities + release condition bundled"
+  },
+  {
+   "c": "C4",
+   "defect": "non-atomic / unauthorized",
+   "severity": "Major",
+   "quote": "gl_account 219000, a severity of High ..., status Open, and notes explaining",
+   "why": "eight field/content claims; gl_account/severity not prompt-set"
+  },
+  {
+   "c": "C5",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "creates a Linear issue ... for the northstar_legal GraniteRack invoice",
+   "why": "prompt asks to report tracking status and log an exception, not open a Linear issue"
+  },
+  {
+   "c": "C6",
+   "defect": "unauthorized / non-atomic",
+   "severity": "Major",
+   "quote": "describes: the invoice pending since 2026-03-20 ..., the required void-and-rebill path mirroring the acme_cloud decision",
+   "why": "content of an unrequested artifact; six claims"
+  },
+  {
+   "c": "C7",
+   "defect": "disjunctive",
+   "severity": "Moderate",
+   "quote": "(email or internal message) ... reaching both",
+   "why": "enumerates routes; precision-only"
+  },
+  {
+   "c": "C8",
+   "defect": "non-atomic / multi-recipient bundle",
+   "severity": "Major",
+   "quote": "covers: (a) ... (f)",
+   "why": "six claims across two recipients incl. per-person asks"
+  },
+  {
+   "c": "C10",
+   "defect": "overly specific / non-atomic",
+   "severity": "Major",
+   "quote": "all three entity vendor-master entries ... before either invoice - acme_cloud VEN-012-753165 ($39,090.56) or northstar_legal",
+   "why": "prompt sets no reminder content; entities, SOWs, invoices bundled"
+  },
+  {
+   "c": "C11",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "currently carry the deprecated SOW-2024-GR-rev3 reference and that the correction request has been formally logged",
+   "why": "two independent claims"
+  },
+  {
+   "c": "C12",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "(1) VEN-012-753165 ... no approver, blocked by SOW mismatch; and (2) VEN-012-847291",
+   "why": "two invoices x six attributes in one row; 'no approver' unasked"
+  },
+  {
+   "c": "C13",
+   "defect": "unauthorized / non-atomic",
+   "severity": "Major",
+   "quote": "and that both gaps have now been closed",
+   "why": "depends on the unrequested Linear issue (C5); prior + current state bundled"
+  },
+  {
+   "c": "C14",
+   "defect": "harmless bundling",
+   "severity": "Minor",
+   "quote": "in contrast to the northstar_legal invoice which had no prior tracking",
+   "why": "contrast clause re-grades C13 fact; wording"
+  },
+  {
+   "c": "C16",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "NOT yet in a position ... identifies the vendor-master correction ... along with the need for Daniel Jones",
+   "why": "verdict + two reasons bundled"
+  },
+  {
+   "c": "C17",
+   "defect": "Process fails three-condition test / unauthorized ordering",
+   "severity": "Major",
+   "quote": "logs the vendor-master correction request ... before sending the notification",
+   "why": "prompt sets no order; fails condition (1); fails a correct run that emails first"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C5",
+    "C6",
+    "C13"
+   ],
+   "condition": "unrequested northstar Linear issue created"
+  },
+  {
+   "rows": [
+    "C1",
+    "C2",
+    "C11",
+    "C17"
+   ],
+   "condition": "correction request logged as a Linear issue"
+  }
+ ],
+ "predicted_all_fail_rows": [
+  {
+   "c": "C2",
+   "basis": "exact quoted vendor-master string; careful runs paraphrase"
+  },
+  {
+   "c": "C6",
+   "basis": "content of an artifact a correct run need not create"
+  },
+  {
+   "c": "C8",
+   "basis": "six-part bundle incl. Records Vault and per-person asks; careful runs miss one"
+  }
+ ],
+ "tally": {
+  "rows_major": 11,
+  "rows_moderate": 2,
+  "rows_minor": 1,
+  "missing_outcomes": 0,
+  "pct_major": 64.7,
+  "pct_moderate_or_worse": 76.5,
+  "pct_any": 82.4
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "NON-FAIL",
+  "agent_centric": "PASS",
+  "negative": "PASS",
+  "predicted_all_fail": "FAIL",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. Could not verify whether a non-Linear route for the correction request exists (C1)."
+}

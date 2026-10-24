@@ -1,0 +1,154 @@
+{
+ "card_index": 8,
+ "universe": "mortgage-broker-01-keystone",
+ "prompt": "Grace pulled me into a quick call about an hour ago and asked me to scrub my pipeline before the ops review on Friday. She wants to know which of my files are still being actively worked and which ones have gone cold. I told her I'd have a full picture by end of day, but as soon as I started pulling things up I realized I've got a bigger problem than I expected. Some of my loans are still showing loan officers who I'm pretty sure left the company months ago, and I've got files sitting in processing and underwriting where I can't tell whether anyone on the origination side has talked to the borrower recently. On top of that, I know I have documents that are still marked as needed but haven't come in.\n\nI need you to go through every active loan in my pipeline and build me a status picture. For each file, check who the assigned loan officer is and whether that person is still with the company, because if they're gone then nobody is managing the borrower relationship and that loan needs reassignment. Check the document checklist and flag anything still in a required or requested state. Then search email and Slack to figure out which files have had no communication with the borrower or the assigned LO in the past three weeks, because those are the ones Grace will want to focus on. For the loans that have any of those problems, a departed LO, missing documents, or no recent communication, also pull the borrower's fee history and compare it against what's been billed to our vendors for appraisals and credit reports on that same file, because if a file fell through the cracks on the origination side the fee side might have gaps too.\n\nEmail Grace with a summary organized by urgency: which files are still moving, which need LO reassignment, and which have document or fee gaps. For every loan where the assigned LO is no longer active, send Elena an email asking her to help coordinate reassignment with Grace. Post in the processing channel that I'm running a pipeline scrub ahead of Friday's review. And log an activity note on every loan where the LO has left, a document is missing, or a fee discrepancy was found, so there's a record of what was flagged today.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends an email from [darnell.price@keystonemortgage.com](mailto:darnell.price@keystonemortgage.com) to [grace.yamamoto@keystonemortgage.com](mailto:grace.yamamoto@keystonemortgage.com) with a pipeline scrub summary.",
+   "evidence": "Look for send_email tool call with sender darnell.price@keystonemortgage.com and recipient grace.yamamoto@keystonemortgage.com. Confirm success.",
+   "cb_justification": "The prompt explicitly asks to email Grace with a summary organized by urgency. This is the primary deliverable of the task. Grace Yamamoto is the Director of Operations at grace.yamamoto@keystonemortgage.com."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent sends an email from [darnell.price@keystonemortgage.com](mailto:darnell.price@keystonemortgage.com) to [elena.marchetti@keystonemortgage.com](mailto:elena.marchetti@keystonemortgage.com) requesting help coordinating loan officer reassignment with Grace for the loans with terminated LOs.",
+   "evidence": "Look for send_email tool call with sender darnell.price@keystonemortgage.com and recipient elena.marchetti@keystonemortgage.com. Content should reference LO reassignment coordination.",
+   "cb_justification": "The prompt says 'For every loan where the assigned LO is no longer active, send Elena an email asking her to help coordinate reassignment with Grace.' Elena Marchetti is the Senior Processor."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent posts a message in the #loan-processing channel mentioning a pipeline scrub ahead of the Friday ops review.",
+   "evidence": "Look for conversations_add_message tool call with channel_id C002. Payload should reference a pipeline scrub and/or the Friday ops review.",
+   "cb_justification": "The prompt says 'Post in the processing channel that I'm running a pipeline scrub ahead of Friday's review.' The #loan-processing channel is C002."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, LN-2024-00088 (Crystal Ryan, $453,600 FHA) as needing loan officer reassignment because the assigned LO, Todd Jennings, is no longer with the company.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for mention of LN-2024-00088 or Crystal Ryan along with Todd Jennings identified as a terminated or inactive LO.",
+   "cb_justification": "LN-2024-00088 is assigned to Todd Jennings (los_staff_0375f7c91014, terminated 2024-07-31). The prompt asks to check who the assigned LO is and whether they are still with the company, and flag loans needing reassignment."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, LN-2025-00229 (Tiffany Turner, $254,700 FHA) as needing loan officer reassignment because the assigned LO, Veronica Hayes, is no longer with the company.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for mention of LN-2025-00229 or Tiffany Turner along with Veronica Hayes identified as terminated or inactive.",
+   "cb_justification": "LN-2025-00229 is assigned to Veronica Hayes (los_staff_06b484d01f94, terminated 2025-09-30). This is one of three Veronica Hayes loans in Darnell's pipeline."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, LN-2025-00240 (Jennifer Moore, $208,800 conventional) as needing loan officer reassignment because the assigned LO, Veronica Hayes, is no longer with the company.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for mention of LN-2025-00240 or Jennifer Moore along with Veronica Hayes as terminated or inactive.",
+   "cb_justification": "LN-2025-00240 is assigned to Veronica Hayes (terminated 2025-09-30). This tests whether the agent found all three Veronica Hayes loans, not just one."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, LN-2026-00626 (Daniel Osborne, $320,000 conventional) as needing loan officer reassignment because the assigned LO, Veronica Hayes, is no longer with the company.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for mention of LN-2026-00626 or Daniel Osborne along with Veronica Hayes as terminated or inactive.",
+   "cb_justification": "LN-2026-00626 is the third Veronica Hayes loan. This loan also has missing documents and no Stripe fees collected, making it the most problematic file in the pipeline."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, outstanding required documents on LN-2026-00626, mentioning the missing driver's license or HOI binder (or both).",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for LN-2026-00626 or Daniel Osborne with references to missing driver's license, HOI binder, or outstanding documents.",
+   "cb_justification": "The document checklist for LN-2026-00626 shows drivers_license and hoi_binder in required status. The prompt asks to check the document checklist and flag anything still in a required or requested state."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, outstanding required documents on LN-2026-00607, mentioning the missing pay stub or W-2 (or both).",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for LN-2026-00607 with references to missing pay stub, W-2, or outstanding documents.",
+   "cb_justification": "The document checklist for LN-2026-00607 shows paystub_1 and w2_current in required status. This loan is assigned to an active LO (Amy Chen), so it tests whether the agent checked document gaps beyond just the terminated-LO files."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, a fee collection gap on LN-2026-00626 (Daniel Osborne), specifically that no borrower fees have been collected for this loan.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for mention of LN-2026-00626 or Daniel Osborne with a reference to missing fees, no charges collected, or a fee gap.",
+   "cb_justification": "The prompt asks to pull the borrower's fee history and compare against vendor billing for problem loans. LN-2026-00626 has zero Stripe charges, meaning no credit report fee, no application deposit, and no appraisal fee were ever collected. This is a significant gap to flag."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent organizes the email to Grace by urgency, distinguishing between files that are still moving, files that need LO reassignment, and files that have document or fee gaps (or a similar urgency-based structure).",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for any structural organization by urgency, priority tiers, or categorization of files by problem type.",
+   "cb_justification": "The prompt explicitly asks for the email to be 'organized by urgency: which files are still moving, which need LO reassignment, and which have document or fee gaps.'"
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent includes LN-2024-00088 in the email to Elena as one of the loans needing LO reassignment and identifies Todd Jennings as the terminated loan officer on that file.",
+   "evidence": "Check the send_email content to elena.marchetti@keystonemortgage.com for mention of LN-2024-00088 or Crystal Ryan along with Todd Jennings.",
+   "cb_justification": "The prompt asks to send Elena an email for every loan where the assigned LO is no longer active. LN-2024-00088 is the only loan assigned to Todd Jennings in Darnell's pipeline, so this rubric tests whether both terminated LOs (Todd and Veronica) appear in Elena's email."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent includes LN-2026-00626 in the email to Elena as one of the loans needing LO reassignment and identifies Veronica Hayes as the terminated loan officer on that file.",
+   "evidence": "Check the send_email content to elena.marchetti@keystonemortgage.com for mention of LN-2026-00626 or Daniel Osborne along with Veronica Hayes.",
+   "cb_justification": "The prompt asks to send Elena an email for every loan where the assigned LO is no longer active. This tests whether a representative Veronica Hayes loan is included. LN-2026-00626 is the most critical of the three because it also has missing documents and no fees."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent logs an activity note on LN-2024-00088 flagging that the assigned loan officer is no longer active and the file needs reassignment review.",
+   "evidence": "Look for mortgage_los_add_activity tool call with the loan_id corresponding to LN-2024-00088. The detail should reference the inactive LO, reassignment, or Todd Jennings.",
+   "cb_justification": "The prompt says 'log an activity note on every loan where the LO has left, a document is missing, or a fee discrepancy was found.' LN-2024-00088 is assigned to Todd Jennings (terminated 2024-07-31)."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent logs an activity note on LN-2026-00626 flagging that the assigned loan officer is no longer active, that required documents are missing, or that no borrower fees have been collected (or any combination of these issues).",
+   "evidence": "Look for mortgage_los_add_activity tool call with the loan_id corresponding to LN-2026-00626. The detail should reference one or more of: inactive LO, missing documents, or missing fees.",
+   "cb_justification": "The prompt says to log an activity note on every loan where the LO has left, a document is missing, or a fee discrepancy was found. LN-2026-00626 qualifies on all three criteria: Veronica Hayes terminated, driver's license and HOI binder missing, zero Stripe charges."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent logs an activity note on LN-2025-00229 flagging that the assigned loan officer is no longer active and the file needs reassignment review.",
+   "evidence": "Look for mortgage_los_add_activity tool call with the loan_id corresponding to LN-2025-00229. The detail should reference the inactive LO, reassignment, or Veronica Hayes.",
+   "cb_justification": "The prompt says to log an activity note on every loan where the LO has left. LN-2025-00229 is assigned to Veronica Hayes (terminated 2025-09-30)."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent logs an activity note on LN-2025-00240 flagging that the assigned loan officer is no longer active and the file needs reassignment review.",
+   "evidence": "Look for mortgage_los_add_activity tool call with the loan_id corresponding to LN-2025-00240. The detail should reference the inactive LO, reassignment, or Veronica Hayes.",
+   "cb_justification": "The prompt says to log an activity note on every loan where the LO has left. LN-2025-00240 is assigned to Veronica Hayes (terminated 2025-09-30)."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent logs an activity note on LN-2026-00607 flagging that required documents (pay stub and/or W-2) are still outstanding.",
+   "evidence": "Look for mortgage_los_add_activity tool call with the loan_id corresponding to LN-2026-00607. The detail should reference missing or outstanding documents.",
+   "cb_justification": "The prompt says to log an activity note on every loan where a document is missing. LN-2026-00607 has paystub_1 and w2_current in required status. This loan is assigned to an active LO (Amy Chen), so it tests whether the agent logged notes on document-gap loans independently of the terminated-LO set."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, that appraisal fees were charged to borrowers on the terminated-LO loans that were charged (e.g., LN-2024-00088) but no matching per-loan appraisal vendor bill exists in the accounting records.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for mention of a vendor-billing gap on appraisals, specifically that fees were charged to borrowers but no matching vendor bill was recorded on the accounting side.",
+   "cb_justification": "The prompt asks to compare borrower fee history against what has been billed to vendors for appraisals and to call out any file where the numbers do not line up or where a charge is missing entirely. OE 9 establishes that no per-loan appraisal vendor bills exist in QuickBooks for the three terminated-LO loans that have Stripe appraisal charges (LN-2024-00088 $525, LN-2025-00229 $475, LN-2025-00240 $450). LN-2026-00626 had no charges at all and is covered separately by id 10."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent notes, in the email to Grace, that credit report fees are billed in monthly batches so per-loan credit reconciliation was not possible.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for a note that credit report fees are billed in monthly batches or that per-loan credit reconciliation was not possible.",
+   "cb_justification": "The prompt asks to compare borrower fee history against vendor billing for both appraisals and credit reports. CoreLogic Credco bills credit reports in monthly batches (not per-loan), making per-loan credit reconciliation infeasible. Reporting this limitation to Grace is part of the fee reconciliation deliverable requested in the prompt."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent identifies, in the email to Grace, that essentially all of the active files have gone cold, with no borrower or loan officer origination communication in the past three weeks (most recent activity in late March), including the four terminated-LO files LN-2024-00088, LN-2025-00229, LN-2025-00240, and LN-2026-00626.",
+   "evidence": "Check the send_email content to grace.yamamoto@keystonemortgage.com for a statement that (nearly) all active files have had no borrower or loan officer communication in the past three weeks / have gone cold, with the most recent activity in late March, covering the terminated-LO files.",
+   "cb_justification": "The prompt opens with Grace wanting to know which files are still being actively worked and which have gone cold, and dedicates a full instruction to searching email and Slack for files with no borrower or assigned-LO communication in the past three weeks. Verified against the universe: of Darnell's 32 in-process loans, only LN-2025-00229 (a compliance breach notice from Denise Holloway on 4/14, not origination activity) and LN-2026-00197 (a boundary Slack message on 4/7) show any activity in the 3-week window; the remaining loans have no borrower/LO origination communication since late March, so the correct finding is that essentially the whole pipeline has gone cold. This is a distinct reported finding from the reassignment, document, and fee rubrics."
+  }
+ ]
+}

@@ -1,0 +1,133 @@
+{
+ "card_index": 31,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Elena's vendor memo is due Wednesday and I've been putting out fires all week on the Mosaic damage claim and the DOT extension. I haven't given this the time it needs.\n\nThe Heartland piece is the more pressing one. Jake came back with a specific response to our dispute. I've only skimmed it, but I think he's conceding part of it while still fighting the rest. Before I reply or adjust anything in QuickBooks, I want someone to go through his email carefully and compare his claims against our actual records. For the moves he's still disputing, pull whatever documentation we have and tell me what we can legitimately push back on. Once we have a defensible position, reply to him with our counter, update the QuickBooks hold to reflect where we actually stand, and bring the Heartland Linear tracking ticket current.\n\nOn the Swift side, Greg wrote back to me directly with more specific terms on the DOT documentation surcharge, there's apparently a condition that could reduce it. Check what he said and flag the relevant detail for the memo.\n\nAlejandro's been working a per-client margin model in #finance. Check what he's posted and use it as the backbone for the client-by-client section Elena asked for.\n\nOnce you have all of that: write the memo. Cover each vendor's current position, the per-client margin exposure, and a concrete recommendation on how we move forward with each. Send it to Elena and copy Alejandro and Chloe. Drop a note in #finance once it's out.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends a reply to jake.loomis@heartlandmovers.com from marcus.thorne@moveops.com responding to the dispute on invoice HM-2026-Q1-0042.",
+   "evidence": "Look for an email reply or send action addressed to jake.loomis@heartlandmovers.com from marcus.thorne@moveops.com referencing the HM-2026-Q1-0042 invoice dispute. Confirm the action succeeded.",
+   "cb_justification": "The prompt says 'reply to him with our counter' after reviewing Jake's Apr 25 email. Jake's email (email_jake_dispute_line_response_apr25) was sent from jake.loomis@heartlandmovers.com. The reply must originate from marcus.thorne@moveops.com because Marcus is the authoring persona."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent's reply to jake.loomis@heartlandmovers.com accepts the Marchetti credit (Line 6, Lily Marchetti, Nashville to Chicago, Canopy Health, $1,600).",
+   "evidence": "Check the content of the reply to jake.loomis@heartlandmovers.com for acknowledgment of the Marchetti credit, Line 6 concession, or the $1,600 credit forthcoming from Jake.",
+   "cb_justification": "Jake's Apr 25 email concedes Line 6 (Lily Marchetti, $1,600) and commits to a credit on the next statement. The reply must acknowledge this acceptance to confirm the dispute resolution on that line is recorded."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent's reply to jake.loomis@heartlandmovers.com contests the Osei charge (Line 7, Danielle Osei, $1,600) by referencing the Feb 13 timestamped cancellation notice sent to Heartland and challenging the claim that a move date of Feb 14 was confirmed by MoveOps.",
+   "evidence": "Check the reply to jake.loomis@heartlandmovers.com for reference to the Feb 13 cancellation notice or RELOC-2026-010, and a challenge to Heartland's claimed confirmed move date of Feb 14.",
+   "cb_justification": "Jake holds Line 7 as valid under section 8.2 (48-hour pre-dispatch window), asserting a confirmed move date of Feb 14. MoveOps' counter rests on the Feb 13 timestamped cancellation email (email_cancel_osei_heartland) addressed directly to Heartland, and the absence of any confirmed Feb 14 move date in MoveOps' system (rec_reloc_osei shows only a client-initiated cancellation with no vendor-confirmed date)."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's reply to jake.loomis@heartlandmovers.com contests the Venkatesh charge (Line 8, Priya Venkatesh, $1,600) by providing documentation that Swift Relocations completed RELOC-2026-015 (Houston to Seattle, GreenStack Energy).",
+   "evidence": "Check the reply to jake.loomis@heartlandmovers.com for reference to RELOC-2026-015, Priya Venkatesh, or documentation showing Swift Relocations completed the move and Heartland had no involvement.",
+   "cb_justification": "Jake holds Line 8 pending counter-documentation. The MoveOps Airtable record rec_reloc_venkatesh (RELOC-2026-015) shows Status=Completed and Moving Vendor=Swift Relocations at a cost of $1,600, confirming Heartland had no involvement in this move and the charge is not payable."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent creates a new QuickBooks bill entry to document the adjusted payable position on the Heartland Movers Q1 2026 invoice (HM-2026-Q1-0042).",
+   "evidence": "Look for a QuickBooks bill creation action referencing Heartland Movers or invoice HM-2026-Q1-0042. Confirm the action succeeded.",
+   "cb_justification": "The prompt says 'update the QuickBooks hold to reflect where we actually stand.' No quickbooks_update_bill tool exists; the corrected dispute position must be captured as a new bill or credit entry. The existing hold (bill_heartland_q1_2026_hold) carries $12,800 with three disputed lines ($4,800), one of which (Marchetti, $1,600) has now been conceded by Jake."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's QuickBooks entry documents that the Marchetti line ($1,600) is accepted per Jake's Apr 25 concession, and that $3,200 remains under active dispute (Osei $1,600 + Venkatesh $1,600).",
+   "evidence": "Check the content of the QuickBooks bill creation action for reference to the Marchetti acceptance and approximately $3,200 in remaining disputed amounts, or equivalent documentation of the revised payable position.",
+   "cb_justification": "After accepting Jake's Marchetti credit, the correct outstanding dispute balance drops from $4,800 to $3,200 (Osei + Venkatesh). The QB entry must reflect this updated position so the hold balance accurately captures where MoveOps stands on the invoice."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent updates the Heartland Movers invoice reconciliation issue (issue_heartland_q1_recon) in Linear with a comment capturing the Apr 25 dispute development.",
+   "evidence": "Look for a Linear comment creation or issue update action targeting issue_heartland_q1_recon. Confirm the action succeeded.",
+   "cb_justification": "The prompt says 'bring the Heartland Linear tracking ticket current.' Issue issue_heartland_q1_recon (title: 'Vendor invoice reconciliation \u2014 Heartland Movers Q1 2026 (HM-2026-Q1-0042)', priority 2) is the active tracking ticket and must be updated to reflect the state of the dispute as of Apr 25."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's comment on issue_heartland_q1_recon notes that Jake's Apr 25 email concedes the Marchetti charge ($1,600 credit), that Osei and Venkatesh remain in active dispute, and that a counter-reply has been sent to Jake.",
+   "evidence": "Check the Linear comment on issue_heartland_q1_recon for reference to the Marchetti concession, the continued dispute on Osei and Venkatesh, and confirmation that a reply was sent to Jake.",
+   "cb_justification": "The Linear ticket must reflect the three-line resolution status as of Apr 25: Marchetti conceded (credit forthcoming), Osei and Venkatesh still disputed, and the counter-response sent. Without this content, the ticket is not brought current as the prompt requires."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent sends the vendor strategy memo to elena.rostova@moveops.com from marcus.thorne@moveops.com, copying alejandro.fuentes@moveops.com and chloe.vance@moveops.com.",
+   "evidence": "Look for an email send action with recipient elena.rostova@moveops.com, CC including alejandro.fuentes@moveops.com and chloe.vance@moveops.com, and sender marcus.thorne@moveops.com. Confirm the action succeeded.",
+   "cb_justification": "The prompt says 'Send it to Elena and copy Alejandro and Chloe.' Elena Rostova is the CEO (elena.rostova@moveops.com), Alejandro Fuentes is the Financial Analyst (alejandro.fuentes@moveops.com), and Chloe Vance is the Operations Manager (chloe.vance@moveops.com)."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's memo covers Heartland's current position: the Marchetti credit ($1,600) is accepted, and Osei ($1,600) and Venkatesh ($1,600) remain under active dispute with documented counter-positions.",
+   "evidence": "Check the memo sent to elena.rostova@moveops.com for reference to Marchetti credit being accepted and Osei and Venkatesh as the two remaining disputed lines, with their counter-positions documented.",
+   "cb_justification": "The prompt says 'Cover each vendor's current position' in the memo. As of Apr 25, Heartland's position is: Marchetti conceded by Jake ($1,600 credit forthcoming), Osei and Venkatesh each still disputed at $1,600 with counter-documentation provided."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's memo covers Swift Relocations' permanent 15% base rate increase, effective for all MoveOps bookings tendered on or after April 11, 2026.",
+   "evidence": "Check the memo sent to elena.rostova@moveops.com for reference to Swift's 15% base rate increase and its effective date of April 11, 2026, or similar phrasing from Greg's email.",
+   "cb_justification": "Greg Pallone's Apr 25 email (email_greg_swift_surcharge_terms_apr25) confirms the 15% increase is permanent and not subject to volume thresholds or renegotiation. This is a core component of Swift's current pricing position and must appear in the vendor section of the memo."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's memo covers the Swift DOT documentation surcharge reduction condition: the $500 per-shipment surcharge is reducible to $150 for hazmat-classified moves if MoveOps submits a DOT compliance training certification to Swift.",
+   "evidence": "Check the memo sent to elena.rostova@moveops.com for reference to the $500 DOT surcharge and the $150 reduction path contingent on a training certification submission (or similar phrasing).",
+   "cb_justification": "The prompt explicitly says 'there's apparently a condition that could reduce it. Check what he said and flag the relevant detail for the memo.' Greg's email specifies: the $500 surcharge drops to $150 per hazmat shipment if MoveOps provides a DOT training completion certificate from a qualified trainer, confirming in-house coordinators can handle hazmat paperwork independently."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's memo includes a per-client margin section identifying GreenStack Energy, BrightLoop Analytics, Mosaic Robotics, and NorthWind Technologies as clients that fall below the 25% margin floor if the vendor cost increases are fully absorbed.",
+   "evidence": "Check the memo sent to elena.rostova@moveops.com for a per-client breakdown referencing the four below-floor clients (GreenStack Energy, BrightLoop Analytics, Mosaic Robotics, NorthWind Technologies) and the 25% margin floor threshold.",
+   "cb_justification": "The prompt says to use Alejandro's #finance model as the backbone for the client-by-client section. Alejandro's message (slack_alejandro_vendor_client_breakdown_apr25) flags GreenStack Energy (-7.1 pts), BrightLoop Analytics (-6.4 pts), Mosaic Robotics (-6.9 pts), and NorthWind Technologies (-8.7 pts) as going below the 25% margin floor. Canopy Health (-2.3 pts) and PivotPoint Labs (-2.1 pts) can absorb; Vectral Systems (-3.8 pts) needs careful handling."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's memo includes a concrete recommendation on how to move forward with each vendor (Heartland and Swift, or similar phrasing).",
+   "evidence": "Check the memo sent to elena.rostova@moveops.com for recommendation language addressed to each vendor, such as a path to close out the Heartland credit dispute or a stance on the Swift training certification option.",
+   "cb_justification": "The prompt says the memo must cover 'a concrete recommendation on how we move forward with each.' The memo must not merely summarize the current position, it must propose a forward-looking course of action for both Heartland and Swift."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent posts a note in the #finance (C005) Slack channel after the vendor strategy memo has been sent.",
+   "evidence": "Look for a Slack message post to the #finance channel (C005 or channel name 'finance'). Confirm it succeeded and was posted after the memo send action.",
+   "cb_justification": "The prompt says 'Drop a note in #finance once it's out.' This write action must occur after the memo has been dispatched to Elena. #finance is Slack channel C005."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that the Osei and Venkatesh lines ($1,600 each, $3,200 total) remain under active dispute and states the documented basis for contesting each.",
+   "evidence": "Check the agent's final response for identification of Osei and Venkatesh as the two remaining disputed lines and the factual basis for contesting each (cancellation timing for Osei, Swift-completed documentation for Venkatesh, or similar).",
+   "cb_justification": "The prompt says 'tell me what we can legitimately push back on.' Marcus needs to know the defensible counter-position for each remaining disputed line before the reply is sent. Osei: Feb 13 timestamped cancellation notice pre-dates Jake's claimed move date, and MoveOps has no record of confirming Feb 14. Venkatesh: RELOC-2026-015 documents Swift completed the move; Heartland had no involvement."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that the Swift DOT documentation surcharge can be reduced from $500 to $150 per hazmat shipment by submitting a DOT compliance training certification to Swift.",
+   "evidence": "Check the agent's final response for the $500-to-$150 surcharge reduction condition or the training certification requirement tied to the Swift DOT surcharge.",
+   "cb_justification": "The prompt says 'there's apparently a condition that could reduce it. Check what he said and flag the relevant detail.' Greg's email specifies the exact reduction condition: $500 drops to $150 for hazmat-classified moves if MoveOps submits a qualifying DOT compliance training certification. This is the detail Marcus explicitly asks to be flagged."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that GreenStack Energy, BrightLoop Analytics, Mosaic Robotics, and NorthWind Technologies fall below the 25% margin floor if the vendor cost increases are fully absorbed, based on Alejandro's analysis.",
+   "evidence": "Check the agent's final response for identification of GreenStack Energy, BrightLoop Analytics, Mosaic Robotics, and NorthWind Technologies as below-floor clients, or a characterization consistent with Alejandro's margin model.",
+   "cb_justification": "The prompt says 'Check what he's posted and use it as the backbone for the client-by-client section.' Marcus needs to know which clients are most exposed before the memo goes out. Alejandro's model in #finance flags these four clients as requiring commercial conversations before any billing change."
+  }
+ ]
+}

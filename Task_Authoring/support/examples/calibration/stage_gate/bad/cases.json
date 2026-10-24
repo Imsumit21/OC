@@ -1,0 +1,939 @@
+{
+ "_note": "stage_gate --self-test: each case copies ../good as it stood when the stage ran, applies the mutations (content edits keep the file's mtime), and expects FAIL with every listed check id (prefix match) blocking. The good fixture's pasted hardness_gate/base_check/fact_check blocks are not re-run (self-test uses --rerun lint semantics).",
+ "cases": [
+  {
+   "name": "scenario-hazard-category-missing",
+   "stage": "scenario",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "| T01 |",
+     "replace": "| n/a |"
+    }
+   ],
+   "expect": [
+    "kb.coherence_hazards"
+   ]
+  },
+  {
+   "name": "scenario-fabricated-census",
+   "stage": "scenario",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "visible channels=216",
+     "replace": "visible channels=250"
+    }
+   ],
+   "expect": [
+    "tool.persona_reach"
+   ]
+  },
+  {
+   "name": "scenario-lb-record-not-visible",
+   "stage": "scenario",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "| evt_e02ad4661e15802e6a6e84 | gcal | own calendar |",
+     "replace": "| evt_e02ad4661e15802e6a6e84 | gcal | own calendar |\n| d_63fffeb4fab5233ed5bb73 | gdrive | Leonard's root |"
+    }
+   ],
+   "expect": [
+    "reach.scenario"
+   ]
+  },
+  {
+   "name": "scenario-wrong-activity-status",
+   "stage": "scenario",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "| quiet_since_2025-12 |",
+     "replace": "| active_feb_2026 |"
+    }
+   ],
+   "expect": [
+    "kb.activity"
+   ]
+  },
+  {
+   "name": "scenario-no-dual-redteam",
+   "stage": "scenario",
+   "mutate": [
+    {
+     "delete": "01b_Redteam_Review.second.md"
+    }
+   ],
+   "expect": [
+    "tool.redteam_dual"
+   ]
+  },
+  {
+   "name": "scenario-todo-placeholder",
+   "stage": "scenario",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\nTODO: finish the chain table\n"
+    }
+   ],
+   "expect": [
+    "structure.placeholders"
+   ]
+  },
+  {
+   "name": "scenario-self-review-without-counter-readings",
+   "stage": "scenario",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "| Check | Verdict | Strongest counter-reading |",
+     "replace": "| Check | Verdict | Note |"
+    }
+   ],
+   "expect": [
+    "review.counter_readings"
+   ]
+  },
+  {
+   "name": "injection-stale-sql-lint-paste",
+   "stage": "injection",
+   "mutate": [
+    {
+     "file": "01_Universe_Inject.sql",
+     "append": "INSERT INTO slack.slack_messages (id, ts, channel_id, type, user_id, text, reply_count, reply_users_count, is_activity_message, reactions_json, files_json, attachments_json, created_at, metadata_json)\nVALUES ('0f2d3c4b5a69788796a5b4c3d2e1f001', '1770940100.000100', 'C0ADGSZKR3R', 'message', 'EMPLOYEE_0025_SLACK_ID', 'sheet is up', 0, 0, false, '[]', '[]', '[]', '2026-02-12T23:48:20.000100Z', '{}');\n"
+    }
+   ],
+   "expect": [
+    "tool.sql_lint"
+   ]
+  },
+  {
+   "name": "injection-lb-record-in-another-mailbox",
+   "stage": "injection",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "find": "## 9 Platform follow-ups",
+     "replace": "- LB decisive reply leonard.hayes@harmonygames.co/1856829076182331843\n\n## 9 Platform follow-ups"
+    }
+   ],
+   "expect": [
+    "reach.injection"
+   ]
+  },
+  {
+   "name": "injection-speaker-without-activity",
+   "stage": "injection",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "find": "activity.json status_at_clock active_feb_2026;",
+     "replace": "status checked;"
+    }
+   ],
+   "expect": [
+    "kb.activity"
+   ]
+  },
+  {
+   "name": "injection-check-sql-report-only",
+   "stage": "injection",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "find": "verdict: PASS (0 load-bearing rows not visible)",
+     "replace": "verdict: REPORT-ONLY (no --load-bearing list: report only)"
+    }
+   ],
+   "expect": [
+    "tool.check_sql_pasted"
+   ]
+  },
+  {
+   "name": "injection-upstream-edited-after-gate",
+   "stage": "injection",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n- Extra anchor ENG-2281 added after the scenario gate ran.\n"
+    }
+   ],
+   "expect": [
+    "chain.scenario"
+   ]
+  },
+  {
+   "name": "brief-older-than-dossier",
+   "stage": "prompt-writing",
+   "mutate": [
+    {
+     "file": "04_Prompt_Writing_Brief.md",
+     "older_than": "01_Grounding_Dossier.md"
+    }
+   ],
+   "expect": [
+    "structure.fresh"
+   ]
+  },
+  {
+   "name": "brief-anchor-not-findable",
+   "stage": "prompt-writing",
+   "mutate": [
+    {
+     "file": "04_Prompt_Writing_Brief.md",
+     "find": "| 0 | D04UGG61DUM/1770751702.596069 | YES |",
+     "replace": "| 0 | D04UGG61DUM/1770751702.596069 | NO |"
+    }
+   ],
+   "expect": [
+    "tool.search_as_persona"
+   ]
+  },
+  {
+   "name": "brief-fact-not-visible",
+   "stage": "prompt-writing",
+   "mutate": [
+    {
+     "file": "04_Prompt_Writing_Brief.md",
+     "find": "| F2 loading-screen report | 0.3.309 stuck at 8% | D04UGG61DUM/1770751702.596069 |",
+     "replace": "| F2 loading-screen report | 0.3.309 stuck at 8% | d_63fffeb4fab5233ed5bb73 |"
+    }
+   ],
+   "expect": [
+    "reach.brief"
+   ]
+  },
+  {
+   "name": "prompt-check-prompt-edited",
+   "stage": "prompt-check",
+   "mutate": [
+    {
+     "file": "04_Prompt.txt",
+     "append": " pls"
+    }
+   ],
+   "expect": [
+    "structure.prompt_hash"
+   ]
+  },
+  {
+   "name": "prompt-check-span-not-in-prompt",
+   "stage": "prompt-check",
+   "mutate": [
+    {
+     "file": "04_Prompt_Check.md",
+     "find": "| \"before monday\" |",
+     "replace": "| \"by monday\" |"
+    }
+   ],
+   "expect": [
+    "evidence.quoted_spans"
+   ]
+  },
+  {
+   "name": "humantime-arithmetic",
+   "stage": "humantime",
+   "mutate": [
+    {
+     "file": "05_Human_Time_Worksheet.md",
+     "find": "| 16 min | 16 |",
+     "replace": "| 16 min | 20 |"
+    }
+   ],
+   "expect": [
+    "structure.arithmetic"
+   ]
+  },
+  {
+   "name": "ledger-fabricated-can-see",
+   "stage": "oe-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "arthur_blake slack D04UGG61DUM/1770751702.596069: YES",
+     "replace": "arthur_blake slack C04T0V1MU1F: YES"
+    }
+   ],
+   "expect": [
+    "tool.pasted_can_see"
+   ]
+  },
+  {
+   "name": "ledger-unsourced-fact",
+   "stage": "oe-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "| — | evt_e02ad4661e15802e6a6e84 |",
+     "replace": "| — | calendar |"
+    }
+   ],
+   "expect": [
+    "evidence.facts_sourced"
+   ]
+  },
+  {
+   "name": "oe-check-stale-against-oes",
+   "stage": "oe-check",
+   "mutate": [
+    {
+     "file": "08_Oracle_Events.md",
+     "append": "\nOE 4 post the location in winddown. Expected: a message in the channel.\n"
+    }
+   ],
+   "expect": [
+    "structure.header_counts"
+   ]
+  },
+  {
+   "name": "rubric-writing-unknown-fact-id",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "| F3 (exact) `d_cc3e90160f490686039986` |",
+     "replace": "| F9 (exact) `d_cc3e90160f490686039986` |"
+    }
+   ],
+   "expect": [
+    "evidence.fids_in_ledger"
+   ]
+  },
+  {
+   "name": "rubric-check-wrong-count",
+   "stage": "rubric-check",
+   "mutate": [
+    {
+     "file": "09_Rubric_Check.md",
+     "find": "Criteria 5 (builder",
+     "replace": "Criteria 6 (builder"
+    }
+   ],
+   "expect": [
+    "structure.criteria_count"
+   ]
+  },
+  {
+   "name": "allfail-wrong-list",
+   "stage": "allfail",
+   "mutate": [
+    {
+     "file": "11_AF_Justification.md",
+     "find": "All-fail rubrics: R5",
+     "replace": "All-fail rubrics: R4"
+    }
+   ],
+   "expect": [
+    "tool.difficulty_stats",
+    "structure.blocks"
+   ]
+  },
+  {
+   "name": "difficulty-edited-number",
+   "stage": "difficulty",
+   "mutate": [
+    {
+     "file": "12_Difficulty_Stats.txt",
+     "find": "| avg_weighted_pass_rate | 44.1%",
+     "replace": "| avg_weighted_pass_rate | 74.1%"
+    }
+   ],
+   "expect": [
+    "tool.difficulty_stats"
+   ]
+  },
+  {
+   "name": "error-async-unselectable-function",
+   "stage": "error-async",
+   "mutate": [
+    {
+     "file": "03_Error_Async_Config.txt",
+     "find": "Friction:          none",
+     "replace": "Friction:          configured"
+    },
+    {
+     "file": "03_Error_Async_Config.txt",
+     "find": "error_functions:\n",
+     "replace": "error_functions:   slack_delete_message\n"
+    }
+   ],
+   "expect": [
+    "structure.picker_values"
+   ]
+  },
+  {
+   "name": "reference-files-readme-left",
+   "stage": "reference-files",
+   "mutate": [
+    {
+     "create": "02_Reference_Files/README.md",
+     "content": "template\n"
+    }
+   ],
+   "expect": [
+    "structure.folder"
+   ]
+  },
+  {
+   "name": "hardening-mode-b-without-run-steps",
+   "stage": "hardening",
+   "mutate": [
+    {
+     "file": "01a_Hardening_Report.md",
+     "find": "MODE A (design, no runs)",
+     "replace": "MODE B (pre-check)"
+    }
+   ],
+   "expect": [
+    "evidence.register_run_step"
+   ]
+  },
+  {
+   "name": "rubric-writing-one-predicted-allfail",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "predicted all-fail rows 0 ☑",
+     "replace": "predicted all-fail rows 1 ☑"
+    },
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "| schedule only (the reply carries no count) | none |",
+     "replace": "| schedule only (the reply carries no count) | entity_unreachable |"
+    }
+   ],
+   "expect": [
+    "validity.predicted_allfail"
+   ]
+  },
+  {
+   "name": "rubric-check-one-predicted-allfail",
+   "stage": "rubric-check",
+   "mutate": [
+    {
+     "file": "09_Rubric_Check.md",
+     "find": "| Predicted all-fail | 0 |",
+     "replace": "| Predicted all-fail | 1 |"
+    }
+   ],
+   "expect": [
+    "validity.rubric"
+   ]
+  },
+  {
+   "name": "rubric-check-incorrect-finding-blocks",
+   "stage": "rubric-check",
+   "mutate": [
+    {
+     "file": "09_Rubric_Check.md",
+     "find": "| harmless_specificity | Minor |",
+     "replace": "| incorrect | Major |"
+    }
+   ],
+   "expect": [
+    "validity.rubric"
+   ]
+  },
+  {
+   "name": "rubric-check-coverage-gap-blocks",
+   "stage": "rubric-check",
+   "mutate": [
+    {
+     "file": "09_Rubric_Check.md",
+     "find": "| P5 | C5 | covered (hub estimate rejected) |",
+     "replace": "| P5 | — | gap: no criterion rejects the hub estimate |"
+    }
+   ],
+   "expect": [
+    "validity.rubric"
+   ]
+  },
+  {
+   "name": "prompt-check-no-hardness-manifest",
+   "stage": "prompt-check",
+   "mutate": [
+    {
+     "delete": "01_Hardness_Manifest.json"
+    }
+   ],
+   "expect": [
+    "tier.hardness"
+   ]
+  },
+  {
+   "name": "prompt-check-tier-profile-mismatch",
+   "stage": "prompt-check",
+   "mutate": [
+    {
+     "file": "00_Assigments.md",
+     "find": "horizon:            Long Horizon",
+     "replace": "horizon:            Normal Horizon"
+    }
+   ],
+   "expect": [
+    "tier.hardness"
+   ]
+  },
+  {
+   "name": "ledger-invisible-fact-not-pasted",
+   "stage": "oe-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "\nVisibility proof (persona_view, pasted verbatim):",
+     "replace": "| F6 | Leonard's root folder | Drive | gdrive_search | d_63fffeb4fab5233ed5bb73 | search \"leonard\" | folder listing | YES (asserted) | — | d_63fffeb4fab5233ed5bb73 |\n\nVisibility proof (persona_view, pasted verbatim):"
+    }
+   ],
+   "expect": [
+    "reach.ledger_B"
+   ]
+  },
+  {
+   "name": "ledger-scoped-fact-without-id",
+   "stage": "oe-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "evt_e02ad4661e15802e6a6e84",
+     "replace": "the wind-down event",
+     "all": true
+    }
+   ],
+   "expect": [
+    "reach.ledger_B_ids"
+   ]
+  },
+  {
+   "name": "rubric-writing-cited-fact-not-visible",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "| F3 | sale folder | Drive | gdrive_search | d_cc3e90160f490686039986 |",
+     "replace": "| F3 | sale folder | Drive | gdrive_search | d_63fffeb4fab5233ed5bb73 |"
+    }
+   ],
+   "expect": [
+    "reach.plan_fids"
+   ]
+  },
+  {
+   "name": "ledger-locator-without-provenance",
+   "stage": "oe-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "| search \"loading screen\" |",
+     "replace": "| — |"
+    }
+   ],
+   "expect": [
+    "provenance.locators"
+   ]
+  },
+  {
+   "name": "ledger-dependency-not-topological",
+   "stage": "oe-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "| YES (can-see below) | F1 | d_cc3e90160f490686039986 |",
+     "replace": "| YES (can-see below) | F4 | d_cc3e90160f490686039986 |"
+    }
+   ],
+   "expect": [
+    "provenance.locators"
+   ]
+  },
+  {
+   "name": "ledger-defer-search-incomplete",
+   "stage": "oe-writing",
+   "mutate": [
+    {
+     "file": "08_OE_Writing_Ledger.md",
+     "find": "+ confluence: population complete, pagination complete, newest version 2026-02-12 governs;",
+     "replace": "+ confluence:"
+    }
+   ],
+   "expect": [
+    "evidence.defer_search"
+   ]
+  },
+  {
+   "name": "rubric-writing-shortcut-hit-undispositioned",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "verdict: CLEAR (0 shortcut records)",
+     "replace": "HIT slack C0ADGSZKR3R/1770940000.000200 holds 3/4 values (k=3): `0.3.309` · `ENG-2280` · `winddown`\nverdict: HITS (1)"
+    }
+   ],
+   "expect": [
+    "tool.shortcut_probe"
+   ]
+  },
+  {
+   "name": "rubric-writing-shortcut-values-changed",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "| F2 (exact) `0.3.309` |",
+     "replace": "| F2 (exact) `0.3.309` `stuck at the loading screen` |"
+    }
+   ],
+   "expect": [
+    "tool.shortcut_probe"
+   ]
+  },
+  {
+   "name": "rubric-writing-shortcut-probe-missing",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "SHORTCUT PROBE as arthur_blake",
+     "replace": "probe not run as arthur_blake"
+    }
+   ],
+   "expect": [
+    "tool.shortcut_probe"
+   ]
+  },
+  {
+   "name": "rubric-writing-one-authority-decides-majority",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "| 5 | C1 | — | schedule only",
+     "replace": "| 5 | T1 | — | schedule only"
+    }
+   ],
+   "expect": [
+    "diversity.authority_share"
+   ]
+  },
+  {
+   "name": "rubric-writing-population-without-exact-set-row",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "No repetitive item groups in this fixture (P1–P5 are single items; P4/P5 grade the open set as one aggregate).",
+     "replace": "| G | Item set (F-IDs, total N; keys as backticked literals) | Sampled items (≤ 5) and why hard/edge | Volume row | Core requirement? |\n|---|---|---|---|---|\n| G1 | F5 children, total 48: `ENG-2281` `ENG-2290` | ENG-2281, ENG-2290 boundary states | P5 | no |"
+    }
+   ],
+   "expect": [
+    "structure.exact_set_rows"
+   ]
+  },
+  {
+   "name": "brief-no-canonical-outcome",
+   "stage": "prompt-writing",
+   "mutate": [
+    {
+     "file": "04_Prompt_Writing_Brief.md",
+     "find": "| Allowed equivalence class |",
+     "replace": "| Allowed class |"
+    }
+   ],
+   "expect": [
+    "structure.canonical_outcome"
+   ]
+  },
+  {
+   "name": "release-rubric-edited-after-check",
+   "stage": "release",
+   "mutate": [
+    {
+     "file": "09_Rubrics.json",
+     "find": "\"weight\": 1,",
+     "replace": "\"weight\": 3,"
+    }
+   ],
+   "expect": [
+    "chain.rubric-check",
+    "release.bundle_digest"
+   ]
+  },
+  {
+   "name": "release-provisional-plan",
+   "stage": "release",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "OE status: /oe PASS 2026-10-04",
+     "replace": "OE status: PROVISIONAL"
+    }
+   ],
+   "expect": [
+    "release.markers"
+   ]
+  },
+  {
+   "name": "release-open-unresolved-item",
+   "stage": "release",
+   "mutate": [
+    {
+     "file": "08_OE_Check.md",
+     "find": "| R2 covered | PASS | event 3 writes outside the folder | Expected names the folder d_cc3e90160f490686039986 | none |",
+     "replace": "| R2 covered | PASS | event 3 writes outside the folder | Expected names the folder d_cc3e90160f490686039986 | folder owner not re-read |"
+    }
+   ],
+   "expect": [
+    "release.markers"
+   ]
+  },
+  {
+   "name": "release-oe-solvability-not-established",
+   "stage": "release",
+   "mutate": [
+    {
+     "file": "08_OE_Check.md",
+     "find": "Task solvability SUPPORTED_BY_OE",
+     "replace": "Task solvability NOT_ESTABLISHED"
+    }
+   ],
+   "expect": [
+    "release.oe_solvability"
+   ]
+  },
+  {
+   "name": "release-difficulty-gate-blocking",
+   "stage": "release",
+   "mutate": [
+    {
+     "file": "12_Difficulty_Stats.txt",
+     "find": "Blocking gates: none",
+     "replace": "Blocking gates: pass_at_1"
+    }
+   ],
+   "expect": [
+    "release.difficulty"
+   ]
+  },
+  {
+   "name": "release-no-precheck-trajectory",
+   "stage": "release",
+   "mutate": [
+    {
+     "delete": "06_PreCheck_Trajectory"
+    }
+   ],
+   "expect": [
+    "release.precheck_trajectory"
+   ]
+  },
+  {
+   "name": "scenario-denied-probe-without-alternate",
+   "stage": "scenario",
+   "redteam": "A item 1 (R1 #3)",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "; alternate_evidence_ids: D04UGG61DUM/1770751702.596069 |",
+     "replace": " |"
+    }
+   ],
+   "expect": [
+    "reach.scenario"
+   ]
+  },
+  {
+   "name": "scenario-denied-probe-marked-load-bearing",
+   "stage": "scenario",
+   "redteam": "A item 1 (R1 #3)",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "| d_63fffeb4fab5233ed5bb73 | gdrive | DENIAL-INTENDED:",
+     "replace": "| d_63fffeb4fab5233ed5bb73 LB | gdrive | DENIAL-INTENDED:"
+    }
+   ],
+   "expect": [
+    "reach.scenario"
+   ]
+  },
+  {
+   "name": "scenario-denied-probe-alternate-not-visible",
+   "stage": "scenario",
+   "redteam": "A item 1 (R1 #3)",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "alternate_evidence_ids: D04UGG61DUM/1770751702.596069 |",
+     "replace": "alternate_evidence_ids: leonard.hayes@harmonygames.co/1856829076182331843 |"
+    }
+   ],
+   "expect": [
+    "reach.scenario"
+   ]
+  },
+  {
+   "name": "scenario-anchor-name-imperative",
+   "stage": "scenario",
+   "redteam": "A item 9 (R2 #3)",
+   "mutate": [
+    {
+     "file": "01_Scenario_Design.md",
+     "find": "| A1 | the known-defects list | C0ADGSZKR3R/1770940000.000100 |",
+     "replace": "| A1 | pull the known-defects list | C0ADGSZKR3R/1770940000.000100 |"
+    }
+   ],
+   "expect": [
+    "boundary.anchor_naming"
+   ]
+  },
+  {
+   "name": "scenario-manifest-anchor-over-six-words",
+   "stage": "scenario",
+   "redteam": "A item 9 (R2 #3)",
+   "mutate": [
+    {
+     "file": "01_Hardness_Manifest.draft.json",
+     "find": "\"prompt_reference\": \"the known-defects list\"",
+     "replace": "\"prompt_reference\": \"the known-defects schedule Leonard asked about in the wind-down channel\""
+    }
+   ],
+   "expect": [
+    "boundary.anchor_naming"
+   ]
+  },
+  {
+   "name": "injection-unverified-probe-marked-load-bearing",
+   "stage": "injection",
+   "redteam": "A item 1 (R1 #3)",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "find": "## 9 Platform follow-ups",
+     "replace": "- LB reply leonard.hayes@harmonygames.co/1856829076182331843 DENIAL-INTENDED: designed denial; alternate_evidence_ids: D04UGG61DUM/1770751702.596069\n\n## 9 Platform follow-ups"
+    }
+   ],
+   "expect": [
+    "reach.injection"
+   ]
+  },
+  {
+   "name": "injection-anchor-name-second-person",
+   "stage": "injection",
+   "redteam": "A item 9 (R2 #3)",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "find": "| A1 | the known-defects list; the open defect list |",
+     "replace": "| A1 | the known-defects list; the list you asked about |"
+    }
+   ],
+   "expect": [
+    "boundary.anchor_naming"
+   ]
+  },
+  {
+   "name": "injection-draft-id-dropped-without-delta",
+   "stage": "injection",
+   "redteam": "A item 14 (R1 #18)",
+   "mutate": [
+    {
+     "file": "01_Hardness_Manifest.json",
+     "find": "\"id\": \"T1\"",
+     "replace": "\"id\": \"T7\""
+    }
+   ],
+   "expect": [
+    "structure.design_delta"
+   ]
+  },
+  {
+   "name": "injection-no-draft-manifest",
+   "stage": "injection",
+   "redteam": "A item 14 (R1 #18)",
+   "mutate": [
+    {
+     "delete": "01_Hardness_Manifest.draft.json"
+    }
+   ],
+   "expect": [
+    "structure.inputs"
+   ]
+  },
+  {
+   "name": "injection-pasted-profile-not-effective-profile",
+   "stage": "injection",
+   "redteam": "A item 7 (R1 #17)",
+   "mutate": [
+    {
+     "file": "01_Hardness_Manifest.json",
+     "find": "\"effective_profile\": \"extreme\"",
+     "replace": "\"effective_profile\": \"normal\""
+    }
+   ],
+   "expect": [
+    "tool.hardness_gate_profile"
+   ]
+  },
+  {
+   "name": "brief-anchor-name-imperative",
+   "stage": "prompt-writing",
+   "redteam": "A item 9 (R2 #3)",
+   "mutate": [
+    {
+     "file": "04_Prompt_Writing_Brief.md",
+     "find": "## 6 · Triggers, incorporation and implicit requirements",
+     "replace": "| Anchor | May be named |\n|---|---|\n| A1 | find the defect list |\n\n## 6 · Triggers, incorporation and implicit requirements"
+    }
+   ],
+   "expect": [
+    "boundary.anchor_naming"
+   ]
+  },
+  {
+   "name": "brief-anchor-name-over-six-words",
+   "stage": "prompt-writing",
+   "redteam": "A item 9 (R2 #3)",
+   "mutate": [
+    {
+     "file": "04_Prompt_Writing_Brief.md",
+     "find": "## 6 · Triggers, incorporation and implicit requirements",
+     "replace": "| Anchor | May be named |\n|---|---|\n| A1 | the list of every open defect for the data room |\n\n## 6 · Triggers, incorporation and implicit requirements"
+    }
+   ],
+   "expect": [
+    "boundary.anchor_naming"
+   ]
+  },
+  {
+   "name": "hardening-revision-fails-injection-checks",
+   "stage": "hardening",
+   "redteam": "A item 14 (R1 #18)",
+   "mutate": [
+    {
+     "file": "01_Universe_Inject.sql",
+     "append": "INSERT INTO slack.slack_messages (id, ts, channel_id, type, user_id, text, reply_count, reply_users_count, is_activity_message, reactions_json, files_json, attachments_json, created_at, metadata_json)\nVALUES ('0f2d3c4b5a69788796a5b4c3d2e1f001', '1770940100.000100', 'C0ADGSZKR3R', 'message', 'EMPLOYEE_0025_SLACK_ID', 'sheet is up', 0, 0, false, '[]', '[]', '[]', '2026-02-12T23:48:20.000100Z', '{}');\n"
+    }
+   ],
+   "expect": [
+    "revision.injection"
+   ]
+  },
+  {
+   "name": "rubric-writing-population-none-without-separate-records-reason",
+   "stage": "rubric-writing",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "No repetitive item groups in this fixture (P1–P5 are single items; P4/P5 grade the open set as one aggregate).",
+     "replace": "| G | Item set (F-IDs, total N; keys as backticked literals) | Sampled items (≤ 5) and why hard/edge | Volume row | Exact-set row (P-n) | Core requirement? |\n|---|---|---|---|---|---|\n| G1 | F5 children, total 48: `ENG-2281` `ENG-2290` | ENG-2281, ENG-2290 boundary states | P5 | none | no |"
+    }
+   ],
+   "expect": [
+    "structure.exact_set_rows"
+   ]
+  }
+ ]
+}

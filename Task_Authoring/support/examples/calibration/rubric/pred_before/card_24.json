@@ -1,0 +1,98 @@
+{
+ "id": "card_24",
+ "n_criteria": 11,
+ "requirements": [
+  "R1: account-by-account read (what it is, real story, recommendation, support)",
+  "R2: figures tied to own books (correct AR account)",
+  "R3: nothing slipped through on the way in",
+  "R4: collectibility question left to client finance lead, not booked",
+  "R5: finished review filed in right place with right retention",
+  "R6: collection correspondence per account, tone fitted",
+  "R7: package to manager for sign-off before client",
+  "R8: nothing booked or sent to client"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "to the Records Vault under the firm's standard working-paper retention (AICPA_SQMS_7Y)",
+   "why": "location and retention are independently variable"
+  },
+  {
+   "c": "C3",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "as contract-consistent ... and recommends only a soft or light-touch chase",
+   "why": "classification + recommendation bundled"
+  },
+  {
+   "c": "C4",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "as genuine slippage ... and recommends a firmer chase",
+   "why": "classification + recommendation bundled"
+  },
+  {
+   "c": "C5",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "identifies CUST-acme-1356 ... and surfaces a partial bad-debt or specific-allowance option (the IRC Section 166 treatment) for the Acme CFO to direct, without booking it",
+   "why": "identification, option, CFO routing, not-booked bundled"
+  },
+  {
+   "c": "C10",
+   "defect": "prohibition-only / absence-only",
+   "severity": "dimension-only",
+   "quote": "does not post or create any write-off, allowance, or reserve journal entry ... and does not post",
+   "why": "acceptance is absence of postings"
+  },
+  {
+   "c": "C11",
+   "defect": "non-atomic / duplicate; negative lead",
+   "severity": "Moderate",
+   "quote": "does not send the collection correspondence to the client; the Agent keeps the draft chase letters as internal documents and routes them to Daniel Jones",
+   "why": "prohibition + routing that C2 already grades"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C3",
+    "C6"
+   ],
+   "condition": "CUST-acme-1187 read as net-90"
+  },
+  {
+   "rows": [
+    "C4",
+    "C7"
+   ],
+   "condition": "CUST-acme-1294 read as slippage"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 1,
+  "rows_moderate": 4,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 9.1,
+  "pct_moderate_or_worse": 45.5,
+  "pct_any": 45.5
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. Unsure whether CUST-acme-1356 'warrants' correspondence (R6); not counted as a gap."
+}

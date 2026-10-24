@@ -1,0 +1,159 @@
+{
+ "id": "card_10",
+ "n_criteria": 17,
+ "requirements": [
+  "R1: every pending GraniteRack invoice across entities with entity, age, issue, exception/escalation status",
+  "R2: whether vendor-master entries are current (report)",
+  "R3: active SOW findable and clearly labeled for AP",
+  "R4: logged vendor-master correction request with requested change and right reference",
+  "R5: exception record for any invoice past escalation threshold not yet logged",
+  "R6: per pending invoice state and project-tool tracking status reported",
+  "R7: Priya and Daniel looped in on what requires their action",
+  "R8: reminder for vendor-master correction deadline",
+  "R9: plain verdict on whether rebill can proceed"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "creates a Linear issue on the CAO team board (linear_5477c0808ac2)",
+   "why": "prompt says 'log the correction request' without a tool/board; locks method and team"
+  },
+  {
+   "c": "C2",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "to 'GraniteRack Compute Services - infrastructure services per SOW-2025-GR-rev1 (effective 2026-01-15, supersedes SOW-2024-GR-rev3)' before either invoice is released",
+   "why": "hard-coded exact string and added release condition; evidence further narrows (both invoices with IDs/amounts)"
+  },
+  {
+   "c": "C4",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "invoice_id ..., gl_account 219000, a severity of High (or similar...), status Open, and notes explaining ... mismatch ..., the 83+ day age ..., and the absence of prior ... tracking",
+   "why": "many independent field/content claims; gl_account/severity not prompt-set; '(or similar)' catch-all"
+  },
+  {
+   "c": "C5",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "creates a Linear issue ... for the northstar_legal GraniteRack invoice",
+   "why": "prompt asks whether invoices are tracked and requires an exception log, not a new Linear tracking issue"
+  },
+  {
+   "c": "C6",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "The Agent's Linear issue for the northstar_legal GraniteRack invoice describes: ...",
+   "why": "content of an unrequested write; also bundles six content items (non_atomic)"
+  },
+  {
+   "c": "C7",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "reaching both priya.khatri@... and daniel.jones@...",
+   "why": "looping in two people is two sends when separate messages are valid"
+  },
+  {
+   "c": "C8",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "covers: (a) ... (b) ... (c) ... (d) ... (e) ... (f)",
+   "why": "six independent content items across two recipients"
+  },
+  {
+   "c": "C9",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "e.g., 2026-06-19 or a similar near-term forward date",
+   "why": "exemplar in evidence"
+  },
+  {
+   "c": "C10",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "specifies that all three entity vendor-master entries ... must be updated from SOW-2024-GR-rev3 to SOW-2025-GR-rev1 before either invoice - ... ($39,090.56) or ... ($18,240.00) - can be released",
+   "why": "prompt sets only the reminder's purpose; rejects a valid reminder on the correction deadline; also bundles many items"
+  },
+  {
+   "c": "C11",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "currently carry the deprecated SOW-2024-GR-rev3 reference and that the correction request has been formally logged",
+   "why": "finding and action report fail separately"
+  },
+  {
+   "c": "C12",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "at minimum the two SOW-mismatch GraniteRack invoices ... (1) ... (2) ...",
+   "why": "two invoices x entity/amount/date/age/approver/issue; 'at minimum' quantifier; '(or similar aging)'"
+  },
+  {
+   "c": "C13",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "had not been formally logged as an exception or tracked in Linear prior to this task, and that both gaps have now been closed",
+   "why": "prior exception status, prior Linear status and closure reported in one row; Linear closure is unauthorized"
+  },
+  {
+   "c": "C14",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "already tracked via two existing Linear issues ..., in contrast to the northstar_legal invoice which had no prior tracking",
+   "why": "acme tracking fact plus northstar contrast (re-grades C13)"
+  },
+  {
+   "c": "C16",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "NOT yet in a position to proceed ... and identifies the vendor-master correction ... - along with the need for Daniel Jones ... to confirm",
+   "why": "verdict bundled with two separate grounds"
+  },
+  {
+   "c": "C17",
+   "defect": "category",
+   "severity": "Moderate",
+   "quote": "logs the vendor-master correction request (Linear issue on the CAO board) before sending the notification",
+   "why": "prompt states no ordering; condition (1) fails and notification content (C8b) captures it; also Linear lock-in"
+  },
+  {
+   "c": "C15",
+   "defect": "cleared (counter-reading)",
+   "severity": "note",
+   "quote": "already filed and clearly labeled in Records Vault, and that AP can independently verify",
+   "why": "one finding with its consequence"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R1",
+   "why": "justification says SAP holds additional pending GraniteRack (VEN-012) invoices; prompt asks about other pending invoices; no row covers them ('may also report')"
+  }
+ ],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 13,
+  "rows_moderate": 2,
+  "rows_minor": 0,
+  "missing_outcomes": 1,
+  "pct_major": 82.4,
+  "pct_moderate_or_worse": 94.1,
+  "pct_any": 94.1
+ },
+ "dimensions": {
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "NON-FAIL",
+  "agent_centric": "NON-FAIL",
+  "negative": "PASS",
+  "other": "agent_centric NON-FAIL from possessive forms (\"The Agent's vendor-master correction Linear issue specifies\")",
+  "overall_quality": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "Invoice IDs/amounts/ages, entity vendor-master states, Records Vault labeling, escalation threshold and tool availability (whether a vendor-master/other logging tool exists) UNRESOLVED; C1 lock-in depends on tool catalog."
+}

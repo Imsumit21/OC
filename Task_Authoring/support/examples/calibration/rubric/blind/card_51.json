@@ -1,0 +1,105 @@
+{
+ "card_index": 51,
+ "universe": "star-pm-generic-expanded-nofs",
+ "prompt": "Brooke wants clean QC numbers for the end-of-quarter sync and I'm not confident my tracking is right. I've been in the field more than at a desk the past month and some of what I logged didn't land where it should have. Need you to go through my recent QC work and make sure the systems actually match what happened.\n\nLas Vistas 3C is the one I'm least sure about. I failed it mid-June, kicked back the punch items, re-walked a couple days later and cleared it. But I've been burned before where I sign off and the tracking doesn't catch up behind me. Make sure everything from that cycle is actually closed out. If anything fell through, fix it.\n\nLas Palmas 8D I haven't touched since my walk back in May. I know maintenance was on it after that, and I think something else came up with the unit more recently. I need to know where it actually stands - if it's ready for my final walk, get it on my calendar. If something's still open, tell me what and who owns it.\n\nThe HVAC preventive maintenance tickets need checking too. I ran spot checks across the clusters a few weeks back but I'm not confident the tickets reflect what actually happened. If they're stale, clean them up.\n\nAnd Brooke's going to ask for the full make-ready picture - how many units need my QC walk versus how many I've already cleared. Get me the real count from the records.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent updates OPS-225 (\"Reclean refrigerator and oven interiors, Las Vistas 3C\") to Done.",
+   "evidence": "Look for a save_issue call targeting OPS-225 with state set to Done (or the equivalent state ID \\\"state_OPS_4\\\"). The pass condition is the save_issue call arguments (id + target state), which are verifiable directly from the trajectory.\\n",
+   "cb_justification": "Las Vistas 3C passed Jaime's second-pass QC on June 18 and the Airtable make-ready record shows Ready with Brooke's sign-off. OPS-224 and OPS-226 (the other two punch items) are already Done. But OPS-225 was stuck in In Review, meaning the tracking never caught up. The prompt says \"If anything fell through, fix it,\" and this is the item that fell through."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent updates OPS-87 (\"South and North cluster HVAC QC spot-checks, both passed\") from Todo to Done.",
+   "evidence": "Look for a save_issue call targeting OPS-87 with state set to Done (or the equivalent state ID \\\"state_OPS_4\\\"). The pass condition is the save_issue call arguments (id + target state), which are verifiable directly from the trajectory.\\n",
+   "cb_justification": "OPS-87 is assigned to Jaime. Its description says \"I've commented the results directly on each cluster's issue and moved both from In Review to Done,\" but the actual state is still Todo. The prompt says \"If they're stale, clean them up.\" This ticket's state contradicts what Jaime logged."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent updates OPS-96 (\"HVAC filter replacements QC spot-check, portfolio-wide\") from Todo to In Review, not to Done.",
+   "evidence": "Look for a save_issue call targeting OPS-96. Check the state parameter: it must be \"In Review\" (or the equivalent state ID \"state_OPS_3\"). If the agent set it to Done (or \"state_OPS_4\"), this rubric fails.",
+   "cb_justification": "OPS-96 is assigned to Jaime. Both the issue description and Jaime's comment on May 30 use the exact words \"Moving this to In Review.\" The correct target state is In Review, matching Jaime's stated intention. An agent that sets it to Done overrides the persona's explicit words and substitutes its own judgment that a passed spot-check should be closed. This is the precision test for the HVAC thread."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent updates OPS-98 (\"QC spot-checks complete, South and North clusters closed\") from In Progress to Done.",
+   "evidence": "Look for a save_issue call targeting OPS-98 with state set to Done (or the equivalent state ID \\\"state_OPS_4\\\"). The pass condition is the save_issue call arguments (id + target state), which are verifiable directly from the trajectory.\\n",
+   "cb_justification": "OPS-98 is assigned to Jaime. Its description says \"I'm moving both cluster issues to Done,\" and two comments from Jaime (May 25) confirm the spot-checks passed. The actual state is still In Progress. This is a stale ticket the prompt asks to be cleaned up."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent addresses the stale East-cluster HVAC ticket OPS-99 (\\\"East cluster HVAC service complete - QC passed\\\"), either by updating it to Done or by leaving it open and flagging its status conflict.",
+   "evidence": "PASS if the agent addresses OPS-99 in EITHER defensible way: (a) a save_issue call targets OPS-99 setting its state to Done (or the equivalent state ID \\\"state_OPS_4\\\"); OR (b) the agent's final response surfaces OPS-99 (the East-cluster HVAC ticket) and either intentionally leaves it open or flags its status conflict - the ticket says complete/QC-passed while Brooke's June update says one cluster is still in progress. FAIL only if the agent ignores OPS-99 entirely: no save_issue targeting OPS-99 AND no mention of the East-cluster stale ticket or its status conflict anywhere in the response. A response that never surfaces OPS-99 in any form does not pass - the agent must have handled it one way or the other.\\n",
+   "cb_justification": "OPS-99 is state In Progress while its own title says the East-cluster HVAC service is complete and QC passed, and its description states Jaime pulled a spot-check, confirmed the work is up to standard, and is closing out this phase. That text plus Jaime's QC sign-off supports transitioning OPS-99 to Done (parallel to the stale OPS-87/OPS-98 cleanup). However, Brooke's June #maintenance update - \\\"two clusters basically wrapped up, one still in progress\\\" - conflicts with the ticket's \\\"complete\\\" claim and is a defensible signal to leave the East-cluster ticket open, or to flag the discrepancy rather than blindly close it; 2 of 6 Opus runs deliberately left OPS-99 open citing exactly this. Because both end-states are genuinely defensible, this criterion must NOT hard-gate the Done outcome, which would false-fail a valid trajectory (QC spec 06/09, multiple valid end-states). It only requires that the agent not ignore this stale East-cluster ticket, which the prompt's \\\"if they're stale, clean them up\\\" asks be addressed.\\n"
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent identifies that OPS-225 (\"Reclean refrigerator and oven interiors, Las Vistas 3C\") was stuck in In Review despite the unit passing QC on June 18.",
+   "evidence": "Check the agent's final response for language stating that OPS-225 (or the refrigerator/oven reclean item for Las Vistas 3C) was still open, stuck, or not closed out, despite the unit having passed its second-pass QC.",
+   "cb_justification": "The prompt asks to \"go through my recent QC work and make sure the systems actually match what happened.\" The Airtable record and Slack messages both say 3C is cleared, but one Linear rework item (OPS-225) was never transitioned to Done. This discrepancy is the core finding for the Las Vistas 3C thread and should be reported to Jaime."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent reports that Las Palmas 8D is currently In Progress (not Ready), based on the most recent Airtable record from June 25 showing the refrigerator swap completed and lease signing still pending.",
+   "evidence": "Check the agent's final response for language identifying 8D as In Progress, in the middle of a turn, or not yet ready for Jaime's QC walk. The agent must not report 8D as Ready or cleared based on the stale May 1 record.",
+   "cb_justification": "Las Palmas 8D has three Airtable make-ready records with different dates: May 1 (Ready/closed), May 14 (In Progress/drywall and paint), and June 25 (In Progress/fridge swap completed that morning, lease signing pending). The June 25 record is the most recent and reflects the current status. An agent that latches onto the May 1 \"Ready\" record would report incorrect status. The prompt asks \"where it actually stands\" and \"if it's ready for my final walk.\""
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent identifies OPS-227 (\\\"Clear garbage disposal jam, Las Palmas 8D\\\") as the open blocker preventing Las Palmas 8D from being ready.",
+   "evidence": "Check the agent's final response for identification of OPS-227 (or the Las Palmas 8D garbage disposal issue) as the open item blocking 8D's readiness. Passes if the agent names the disposal / OPS-227 as what is still open on 8D; do not require the replacement-scope or ownership detail here (those are R9 and R10).",
+   "cb_justification": "The prompt asks for 8D: \\\"If something's still open, tell me what and who owns it.\\\" OPS-227 is the only open Linear issue for 8D (state In Review, created June 22), so identifying it as the item still open is the first atomic fact Jaime needs. This criterion checks only that the agent surfaces the correct blocker; the seized-scope and ownership facts are graded separately (R9, R10)."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent notes that the Las Palmas 8D garbage disposal is seized and needs a full unit replacement, not just the jam clear the ticket title (\\\"Clear garbage disposal jam\\\") suggests.",
+   "evidence": "Check the agent's final response for language stating the 8D disposal is seized and/or needs a full replacement (not just clearing the jam). Fails if the agent only repeats the ticket title's \\\"jam clear\\\" framing without surfacing the replacement scope.",
+   "cb_justification": "James Bennett's comment on OPS-227 dated June 22 states the disposal is seized (the motor will not reset, the flywheel is frozen) and needs a full unit replacement rather than a simple jam clear. This scope detail changes the timeline and is a distinct fact from merely identifying the blocker: an agent that reads only the ticket title would report a routine jam clear and miss that a part must be replaced. Grading it separately from the blocker identity (R8) keeps each criterion atomic."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent identifies the ownership on the 8D disposal blocker: it is pending John Smith's parts approval before James Bennett can install the replacement.",
+   "evidence": "Check the agent's final response for identification of the owner(s) on the disposal blocker - James Bennett for execution/installation and/or John Smith for parts approval. Passes if the agent names who the item is waiting on (parts approval) and/or who will perform the work.\\n",
+   "cb_justification": "The prompt explicitly asks Jaime be told \\\"who owns it.\\\" OPS-227's June 22 comment states James Bennett routed the replacement to John Smith for parts approval before he can perform the swap. Naming both owners (John Smith for parts approval, James Bennett for execution) is a distinct fact from the blocker identity (R8) and the replacement scope (R9), so it is graded on its own.\\n"
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent does not create a calendar event for a Las Palmas 8D QC walk-through.",
+   "evidence": "Verify the trajectory does not contain a create_event call scheduling a QC walk for Las Palmas 8D. If such an event was created, this rubric fails. If no 8D-related calendar event was created, this rubric passes.",
+   "cb_justification": "The prompt's scheduling instruction is conditional: \"if it's ready for my final walk, get it on my calendar.\" Since the ground truth is that 8D is not ready (OPS-227 garbage disposal still open, parts approval pending), the correct behavior is to not schedule a walk. Creating a calendar event for an 8D QC walk would be premature and exactly the kind of \"sign-off getting ahead of tracking\" the prompt warns about."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent identifies that no HubSpot deal or leasing pipeline entry exists for Las Vistas 3C, despite the unit being cleared for marketing on June 18.",
+   "evidence": "Check the agent's final response or trajectory for any mention of checking HubSpot or the CRM for a Las Vistas 3C deal. Also check for language noting that the leasing team was never notified, no deal was created, or the unit never entered the leasing pipeline. If the agent never searched HubSpot for 3C or never reported this gap, this rubric fails.",
+   "cb_justification": "The Airtable record for 3C states \"cleared for marketing with supervisory sign-off from Brooke Phillips\" as of June 18. As of the prompt date (July 1), thirteen days have passed with no HubSpot deal created for this unit. The prompt says \"Make sure everything from that cycle is actually closed out. If anything fell through, fix it.\" A unit cleared for marketing but absent from the leasing pipeline is a tracking gap. The search_crm_objects tool with object_type \"deals\" and query \"Las Vistas 3C\" returns no results, confirming the absence."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent reports that 9 units are cleared (Ready) in the portfolio make-ready count, derived by deduplicating to each unit's latest record and excluding the five non-unit records.",
+   "evidence": "Check the agent's final response for the count of cleared (Ready) units, derived by deduplicating to each unit's latest record (by created_time or last_modified_time) and excluding the five non-unit records: \\\"Ridgeview - Roof Section (Common/Structural)\\\" and the four eviction/delinquency fragments \\\"Tanya Mitchell - Eviction Track\\\", \\\"Tanya Mitchell - Delinquency Escalation\\\", \\\"Unit 14\\\", and \\\"Unit 14 - Tanya Mitchell Eviction\\\". PASS if the reported Ready (cleared) count is 8-10 (this small band covers only legitimate boundary calls on genuinely ambiguous labels such as \\\"Unit 4B\\\" vs \\\"Las Palmas 4B\\\"). FAIL if the Ready count is outside 8-10, if the agent reports a raw un-deduplicated figure (e.g., the ~30 labels or ~120 records), if it counts the roof-repair or eviction/delinquency records as leasable units, or if it provides no cleared count at all.",
+   "cb_justification": "The prompt asks: \\\"how many units need my QC walk versus how many I've already cleared. Get me the real count from the records.\\\" The make-ready table has 120 records across 30 distinct fldUnit labels; 5 labels are not genuine leasable units (1 common-area structural roof repair, \\\"Ridgeview - Roof Section\\\", and 4 fragments of one tenant eviction/delinquency situation), and Las Palmas 204B alone has 53 records requiring deduplication to each unit's latest entry. After deduplicating to each unit's latest record and excluding those 5 non-unit records, 9 of the 25 leasable units have a latest status of Ready (cleared). This criterion grades ONLY the cleared (Ready) figure; the pending figure is graded separately in R14 so each count fails for exactly one reason."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent reports that 16 units are still pending (In Progress or Scheduled) in the portfolio make-ready count, derived by deduplicating to each unit's latest record and excluding the five non-unit records.",
+   "evidence": "Check the agent's final response for the count of pending units (In Progress or Scheduled / still needing a QC walk), derived by deduplicating to each unit's latest record and excluding the five non-unit records: \\\"Ridgeview - Roof Section (Common/Structural)\\\" and the four eviction/delinquency fragments \\\"Tanya Mitchell - Eviction Track\\\", \\\"Tanya Mitchell - Delinquency Escalation\\\", \\\"Unit 14\\\", and \\\"Unit 14 - Tanya Mitchell Eviction\\\". PASS if the reported pending count is 14-17 (this small band covers only legitimate boundary calls on genuinely ambiguous labels such as the \\\"Unit 14\\\" family). FAIL if the pending count is 13 or fewer or 18 or more, if the agent reports raw un-deduplicated counts (e.g., the ~30 labels or ~120 records), if it counts the roof-repair or eviction/delinquency records as leasable units, or if it provides no pending count at all.",
+   "cb_justification": "The prompt asks: \\\"how many units need my QC walk versus how many I've already cleared. Get me the real count from the records.\\\" After deduplicating the 120-record make-ready table to each unit's latest entry and excluding the 5 non-unit labels (the common-area roof repair and the four tenant eviction/delinquency fragments), 16 of the 25 leasable units have a latest status of In Progress or Scheduled (i.e., still need Jaime's QC walk). This criterion grades ONLY the pending figure; the cleared (Ready) figure is graded separately in R13, so a wrong pending count fails for exactly one clear reason."
+  }
+ ]
+}

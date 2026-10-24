@@ -1,0 +1,147 @@
+{
+ "card_index": 21,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "The AML threshold calibration session is coming up but I've been told the calendar invite doesn't match the date I announced when I closed out the Acme Cloud wire case \u2014 fix that first, then pull together the briefing file covering both cases worked this cycle: the Acme Cloud wire-transfer review and the Northstar Legal adverse-media triage. For each one I need the full trail of who did the analyst work, who gave supervisory and partner sign-off, and what observations came out, and make sure you're pulling from everything, not just email. The partner sign-off on the wire case flagged that someone from the engagement side should join the calibration \u2014 verify that person is on the invite. For Northstar, the written recap went to Daniel but I want to know whether the historical precedent and the cash review findings from the triage thread both made it into the formal record. Once you have the full picture, send the compiled briefing to the session attendees and file the memo to the vault under the seven-year quality management retention with restricted classification.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent updates the AML threshold calibration calendar event (event_scen_041_audit_compliance_0011) start date to 2026-06-18.",
+   "evidence": "Look for a calendar edit action targeting event_scen_041_audit_compliance_0011 with start_datetime containing 2026-06-18.",
+   "cb_justification": "The prompt says 'the calendar invite doesn't match the date I announced when I closed out the Acme Cloud wire case - fix that first.' The calendar currently shows 2026-06-03; Marina's Slack closure message announces 2026-06-18. This is the first explicit ask."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent sends an email from [marina.soko@brookfieldcpas.com](mailto:marina.soko@brookfieldcpas.com) to [anita.knowles@brookfieldcpas.com](mailto:anita.knowles@brookfieldcpas.com), [farah.dlamini@brookfieldcpas.com](mailto:farah.dlamini@brookfieldcpas.com), [matthew.li@brookfieldcpas.com](mailto:matthew.li@brookfieldcpas.com), and [steven.perry@brookfieldcpas.com](mailto:steven.perry@brookfieldcpas.com).",
+   "evidence": "Look for an email send action with sender marina.soko@brookfieldcpas.com and all four recipient addresses present in the recipients field.",
+   "cb_justification": "The prompt says to send the compiled briefing to the session attendees. The calendar event lists these five as attendees; Marina is the sender, so the other four are the recipients."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent uploads a document to the Records Vault with retention_policy_code 'AICPA_SQMS_7Y' and classification 'restricted'",
+   "evidence": "Look for a vault upload action with retention_policy_code 'AICPA_SQMS_7Y' and classification 'restricted' in the parameters.",
+   "cb_justification": "The prompt says to file the memo to the vault under the seven-year quality management retention with restricted classification. AICPA_SQMS_7Y is the universe's 7-year retention policy (regulatory basis: AICPA SQMS 1); 'restricted' requires elevated role access."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email names Farah Dlamini as the analyst who performed the review work on the Acme Cloud wire transfer case.",
+   "evidence": "Check the email body for a mention of Farah Dlamini in the context of analyst work on the Acme Cloud case.",
+   "cb_justification": "The prompt asks for 'the full trail of who did the analyst work' for each case. Farah Dlamini conducted the counterparty, beneficial-owner file, and source-of-funds review on the Acme Cloud wire (confirmed in email_scen_041_audit_compliance_0008 and Slack C008 thread)."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email names Anita Knowles as the supervisory approver on the Acme Cloud wire-transfer case.",
+   "evidence": "Check the email body for a mention of Anita Knowles in the context of supervisory approval on the Acme Cloud case.",
+   "cb_justification": "The prompt asks for 'who gave supervisory\u2026 sign-off.' Anita Knowles provided supervisory sign off (email_scen_041_audit_compliance_0009, from anita.knowles@brookfieldcpas.com to Marina and Steven)."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email names Steven Perry as the partner who gave final sign-off on the Acme Cloud wire-transfer case.",
+   "evidence": "Check the email body for a mention of Steven Perry in the context of partner sign off on the Acme Cloud case.",
+   "cb_justification": "The prompt asks for 'who gave\u2026 partner sign-off.' Steven Perry granted final clearance (email_scen_041_audit_compliance_0010, from steven.perry@brookfieldcpas.com)."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email states the Acme Cloud wire-transfer case outcome as CLEAR with no SAR filing.",
+   "evidence": "Check the email body for 'CLEAR' and 'no SAR' (or equivalent phrasing) in the context of the Acme Cloud case.",
+   "cb_justification": "The prompt asks for 'what observations came out.' The Acme Cloud case concluded with a CLEAR disposition and no Suspicious Activity Report filing - this is the definitive outcome from Farah's analyst review, confirmed by supervisory and partner sign off."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email references the observation that the current $10,000 threshold creates administrative review volume for the client profile (or similar).",
+   "evidence": "Check the email body for a mention of the $10,000 (or $10K) threshold and administrative burden or review volume (or similar phrasing).",
+   "cb_justification": "The prompt asks for 'what observations came out.' Anita's supervisory sign off email (email_scen_041_audit_compliance_0009) flags that 'the current $10K threshold is creating administrative review volume.' This is a key observation for the calibration session."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email references Steven Perry's recommendation that Matthew Li from the engagement side should join the calibration session.",
+   "evidence": "Check the email body for a mention of Steven Perry recommending or requesting Matthew Li join the calibration.",
+   "cb_justification": "The prompt says 'the partner sign-off on the wire case flagged that someone from the engagement side should join the calibration.' Steven Perry's email (email_scen_041_audit_compliance_0010) requests Matthew Li be included. This is a distinct observation from the sign off chain."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email references George McAdam's Q4 2025 historical precedent finding for the Northstar Legal case - the same partial-match adverse-media pattern appeared on the monitoring row with no subsequent development (or similar).",
+   "evidence": "Check the briefing email body for George McAdam's name and a reference to Q4 2025 or historical precedent or prior triage with no development.",
+   "cb_justification": "The prompt asks for the full trail and observations on Northstar. George surfaced the Q4 2025 historical precedent in the Slack triage thread, showing the same entity had a prior partial-match with no escalation. This is content of the briefing email, so it is an Outcome content check, not Process."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email references Ben Arinzo's cash review on accounts 101000 and 105000, indicating no anomalies (or similar clean result).",
+   "evidence": "Check the email body for Ben Arinzo and accounts 101000 and/or 105000 with a clean/no-anomaly result.",
+   "cb_justification": "The prompt says 'make sure you're pulling from everything, not just email.' Ben's cash review findings are in the messaging DM (conversation_scen_062_aml_review_general_0000): 101000 clean, 105000 IOLTA netted to zero, one $14,200 partner draw consistent with schedule. These specific account numbers prove the agent accessed the DM, not just email."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email names Daniel Jones as approving the soft watch disposition on the Northstar Legal case.",
+   "evidence": "Check the email body for Daniel Jones in the context of approving soft watch on Northstar.",
+   "cb_justification": "The prompt asks for 'who gave supervisory and partner sign-off.' Daniel Jones's countersign email (email_scen_062_aml_review_general_0008) approves the soft watch with quarterly re-screening. He is the key approver on the Northstar disposition."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email references the Northstar Legal next re-screen date of FP-2026-08.",
+   "evidence": "Check the email body for 'FP-2026-08' or a reference to the next re-screen in August 2026.",
+   "cb_justification": "The prompt asks for 'what observations came out.' Daniel Jones's countersign (email_scen_062_aml_review_general_0008) sets the next re-screen at FP-2026-08. This is a concrete action item from the case and relevant for the calibration session."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email references the counsel-of-record clarification - that the named partner on the Northstar Legal letterhead is counsel-of-record, not a beneficial owner (or similar).",
+   "evidence": "Check the email body for a mention of counsel-of-record or clarification about the named partner's role.",
+   "cb_justification": "The prompt asks for 'what observations came out.' Marina's counsel-of-record clarification is a key observation from the Northstar triage that resolved confusion about the partner's role. It appears in both the Slack thread and the formal recap email."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent's briefing email subject line relates to the AML threshold calibration session or the compiled case briefing (e.g., 'AML Threshold Calibration - Case Briefing' or similar).",
+   "evidence": "Check the email subject/subject line for a reference to AML, calibration, threshold, or briefing (or similar).",
+   "cb_justification": "The email is a compiled briefing for a specific calibration session. The subject should identify its purpose. Exact wording is agent-generated, so fuzzy matching applies."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent's Records Vault document title relates to the AML threshold calibration briefing or the two case reviews (e.g., 'AML Threshold Calibration Briefing' or similar).",
+   "evidence": "Check the title parameter in the vault upload for a reference to AML, calibration, or the case names.",
+   "cb_justification": "The vault upload requires a title. The prompt says 'file the memo to the vault' - the title should identify the document's content. Exact wording is agent-generated."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent reports that Matthew Li ([matthew.li@brookfieldcpas.com](mailto:matthew.li@brookfieldcpas.com)) is confirmed as an attendee on the AML calibration session invite.",
+   "evidence": "Check the Agent's final response for a confirmation that Matthew Li is on the invite or is listed as an attendee.",
+   "cb_justification": "The prompt says 'the partner sign off on the wire case flagged that someone from the engagement side should join the calibration - verify that person is on the invite.' Steven Perry flagged Matthew Li. The calendar event already lists matthew.li@brookfieldcpas.com as an attendee. The agent must report this verification result to the user."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent reports that the historical precedent - George McAdam's Q4 2025 triage finding - is present in the formal written record (Marina's recap email to Daniel Jones, 2026-05-20).",
+   "evidence": "Check the Agent's final response for a statement confirming the historical precedent appears in the formal email record.",
+   "cb_justification": "The prompt says 'I want to know whether the historical precedent\u2026 made it into the formal record.' Marina's recap email (email_scen_062_aml_review_general_0007) does include George's Q4 2025 precedent. The agent must confirm this to the user."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent reports that the cash review findings - Ben Arinzo's review of accounts 101000 and 105000 - are present in the formal written record (Marina's recap email to Daniel Jones, 2026-05-20).",
+   "evidence": "Check the Agent's final response for a statement confirming the cash review findings appear in the formal email record.",
+   "cb_justification": "The prompt says 'I want to know whether\u2026 the cash review findings from the triage thread both made it into the formal record.' Marina's recap email (email_scen_062_aml_review_general_0007) does include Ben's cash review results. This is the second half of the user's verification ask, split from R18 for atomicity."
+  },
+  {
+   "index": "C20",
+   "category": "process",
+   "criterion": "The Agent corrects the calendar event date to 2026-06-18 before sending the compiled briefing email to the session attendees.",
+   "evidence": "In the trajectory, confirm the calendar edit action appears chronologically before the email send action.",
+   "cb_justification": "The prompt says 'fix that first, then pull together the briefing file.' This is an explicit ordering constraint. Both the calendar edit (R1) and email send (R2) pass their Outcome rubrics regardless of sequence - only a Process rubric can verify the ordering."
+  }
+ ]
+}

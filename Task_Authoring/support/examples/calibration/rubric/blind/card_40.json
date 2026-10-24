@@ -1,0 +1,112 @@
+{
+ "card_index": 40,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "Marcus Knell sent me his draft numbers yesterday afternoon for the first supplemental billing cycle under the Acme Cloud change order, and as the Acme file owner I'm the validation gate on those hours nothing goes client-facing without my sign off. The supplemental invoice is supposed to release alongside the May management accounts on Monday, so this has to be put to bed today.\n\nI haven't had a minute to go through any of the support myself the May close and the Datadog memo ate my last two weeks but the sales tax line reads heavy to me for a single month given where Acme's state footprint actually landed this quarter, and Marcus is new enough in the billing seat that I'm not signing anything on trust. This is the first cycle under the new terms, so whatever we bill now sets the pattern for every month after. Scrub the whole draft properly against what was actually worked and what we actually agreed with the client before a dollar of it moves, and don't stop at whatever surfaces first I want the number I can put my name on, with nothing in it we'd have to claw back later. Leave the May close package alone that's signed off and stays as is.\n\nWhen you know where the numbers really land, send Marcus the corrected validation with the amounts that should actually go out and the reason for every correction, and copy Daniel Jones so he sees the first cycle got a proper scrub. If anything was logged in a way that shouldn't hit the client, get the tracker entries to reflect the right treatment so the next cycle doesn't sweep it in again. Put a short validation memo for the May cycle on file in the vault under AICPA_SQMS_7Y against the Acme engagement, and post a wrap-up in #monthly-close-coordination covering how the first change-order cycle landed and anything in the executed terms that needs revisiting when the addendum comes up for review at the Q2 cycle. Nothing goes to the client from our side - Marcus releases the invoice once he has my validation.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends Marcus Knell at [marcus.knell@brookfieldcpas.com](mailto:marcus.knell@brookfieldcpas.com) a validation response on the May supplemental billing, either as a reply on his May billing thread or as a new email.",
+   "evidence": "Look at the email write actions in the trajectory. Verify an email about the May supplemental billing validation is sent to marcus.knell@brookfieldcpas.com (a reply to his 2026-06-11 'First Acme Cloud change-order billing cycle' message also satisfies this) and the send returned success.",
+   "cb_justification": "The prompt's central ask is to send Marcus the validation; Marcus is the Billing Coordinator holding the release until the Acme file owner signs off. Whether the amounts in it are correct is checked separately."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent includes Daniel Jones at [daniel.jones@brookfieldcpas.com](mailto:daniel.jones@brookfieldcpas.com) on the validation sent to Marcus Knell, as a cc or co-recipient.",
+   "evidence": "Look at the recipient and cc fields of the validation email to Marcus Knell in the trajectory. Verify daniel.jones@brookfieldcpas.com appears in either.",
+   "cb_justification": "The prompt explicitly says to copy Daniel Jones so the manager sees the first cycle got a proper scrub; cc or direct co-recipient both satisfy the copy."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent's validation to Marcus Knell states the corrected scope line 1 (multi-state sales tax) figure as 7.0 hours / $1,260.00.",
+   "evidence": "Look at the body of the validation email to Marcus Knell. Verify it gives scope line 1 as 7.0 hours and $1,260.00 (the two values are arithmetically linked; the $180.00 rate need not be restated).",
+   "cb_justification": "Only 7.0 of the 11.5 tagged May hours are billable compliance work; the partner treatment ruling excludes the 4.5 GA/NC wind-down hours, making 7.0 hours ($1,260.00 at the $180.00 rate) the only correct scope line 1 figure."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's validation to Marcus Knell removes the AR-aging bucket cleanup line for the May cycle, stating it as $0.00 or explicitly dropped.",
+   "evidence": "Look at the body of the validation email to Marcus Knell. Verify the AR-aging bucket cleanup line is shown as $0.00, 0 hours, removed, or not billable for May.",
+   "cb_justification": "No AR-aging work ran in May and the change order bills that line only for quarters in which a full AR-aging review cycle is performed, so the 6.0-hour / $1,080.00 draft line must not bill."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's validation to Marcus Knell states that the 4.5 hours of GA and NC de-registration wind-down work are excluded because they are firm-absorbed / not billable to the client (or similar).",
+   "evidence": "Look at the body of the validation email to Marcus Knell. Verify it identifies the 4.5 hours (or the 2.0h GA + 2.5h NC entries) of GA/NC wind-down / de-registration work as excluded on a firm-absorbed or equivalent not-billable-to-client basis.",
+   "cb_justification": "The prompt requires the reason for every correction; the scope line 1 reduction is correct only on the basis that the GA/NC wind-down hours are absorbed by the firm rather than billed."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent updates the `GA registration wind-down` entry (record airtable_b95d40e1c3f8, 2.0 hours, work date 2026-05-15) in the Acme Cloud engagement scope-line time log so its treatment is recorded as firm_absorbed (or a similar non-billable treatment).",
+   "evidence": "Look at the record update write actions on the engagement scope-line time log in the trajectory. Verify record airtable_b95d40e1c3f8 (the GA registration wind-down entry, 2.0 hours, 2026-05-15) is updated so it reads firm_absorbed or an equivalent non-billable treatment, and the update returned success.",
+   "cb_justification": "The prompt asks that tracker entries logged in a way that shouldn't hit the client be corrected so the next cycle doesn't sweep them in; the GA wind-down row is one of the two entries wrongly carrying a billable tag."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent updates the `NC de-registration and standing-entry unwind` entry (record airtable_072cf5a8d9b3, 2.5 hours, work date 2026-05-20) in the Acme Cloud engagement scope-line time log so its treatment is recorded as firm_absorbed (or a similar non-billable treatment).",
+   "evidence": "Look at the record update write actions on the engagement scope-line time log in the trajectory. Verify record airtable_072cf5a8d9b3 (the NC de-registration entry, 2.5 hours, 2026-05-20) is updated so it reads firm_absorbed or an equivalent non-billable treatment, and the update returned success.",
+   "cb_justification": "The NC wind-down row is the second of the two entries wrongly carrying a billable tag; correcting it prevents the June cycle from re-billing absorbed remediation hours."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent files a validation memo for the Acme Cloud May 2026 change-order billing cycle in the records vault under the AICPA_SQMS_7Y retention policy.",
+   "evidence": "Look at the document upload write actions in the trajectory. Verify a memo about the Acme Cloud May 2026 change-order / supplemental billing validation is uploaded with retention policy AICPA_SQMS_7Y and the upload returned success.",
+   "cb_justification": "The prompt explicitly asks for a short validation memo for the May cycle on file in the vault under AICPA_SQMS_7Y against the Acme engagement."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's filed validation memo states the corrected May supplemental total of $1,260.00.",
+   "evidence": "Look at the content of the uploaded validation memo. Verify it contains $1,260.00 as the corrected/validated May supplemental total.",
+   "cb_justification": "A validation memo that records the wrong release figure would put an incorrect number on the quality-management file; $1,260.00 is the only correct validated total."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent posts a wrap-up message in the #monthly-close-coordination channel about the first Acme Cloud change-order billing cycle.",
+   "evidence": "Look at the Slack write actions in the trajectory. Verify a message about the first Acme Cloud change-order / supplemental billing cycle is posted to the #monthly-close-coordination channel and the post returned success.",
+   "cb_justification": "The prompt explicitly asks for a wrap-up in #monthly-close-coordination covering how the first change-order cycle landed."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's #monthly-close-coordination wrap-up includes the validated May supplemental total of $1,260.00.",
+   "evidence": "Look at the text of the message posted to #monthly-close-coordination. Verify it includes $1,260.00 as the validated/corrected May total.",
+   "cb_justification": "The wrap-up must tell the close team how the first cycle actually landed, which requires the validated release figure rather than the draft number."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's #monthly-close-coordination wrap-up flags the executed change order's scope line 1 state list (TX/GA/NC) as needing correction at the Q2 addendum review, against Acme's actual taxable footprint (TX/NY/WA/AZ, the determination memo, or equivalent wording).",
+   "evidence": "Look at the text of the message posted to #monthly-close-coordination. Verify it identifies the change order's TX/GA/NC state list as out of date / to be corrected at the Q2 addendum review, with the correct footprint conveyed as TX/NY/WA/AZ, via the determination memo, or equivalent wording.",
+   "cb_justification": "The prompt asks the wrap-up to cover anything in the executed terms that needs revisiting at the Q2 addendum review; the stale TX/GA/NC state list is that item, and referencing the correct footprint by state list or by the determination memo are equivalent."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent reports in its final response that the validated May supplemental total is $1,260.00.",
+   "evidence": "Look at the final response text. Verify it states $1,260.00 as the validated/corrected May supplemental billing total.",
+   "cb_justification": "The prompt asks for the number Jones can put his name on; the final response must land on the single correct validated total."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent leaves the signed-off Acme Cloud May close package untouched - it does not create, submit, approve, post, or reverse any journal entries and does not change any reconciliation state for FP-2026-05.",
+   "evidence": "Look at all write actions in the trajectory. Verify there are no journal-entry lifecycle actions and no reconciliation state changes for Acme Cloud FP-2026-05.",
+   "cb_justification": "The prompt explicitly says the May close package is signed off and stays as is; touching the accounting package would be an incorrect action outside the billing-validation task."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent sends nothing to Acme Cloud client-side recipients - the supplemental invoice release is left with Marcus Knell after validation.",
+   "evidence": "Look at all email and message write actions in the trajectory. Verify no recipient is an Acme Cloud client-side contact (such as the Acme CFO or client finance staff) and no invoice or client-facing communication is released; firm-internal recipients are fine.",
+   "cb_justification": "The prompt states nothing goes to the client from Jones's side and that Marcus releases the invoice once he has the validation."
+  }
+ ]
+}

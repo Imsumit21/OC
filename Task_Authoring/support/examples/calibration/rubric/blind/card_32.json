@@ -1,0 +1,133 @@
+{
+ "card_index": 32,
+ "universe": "mortgage-broker-01-keystone",
+ "prompt": "Hana's closing the books for month-end and asked me to true up the rate-lock extension fees before they lock, because her booked totals don't match what actually cleared through payment processing. I set the extension pricing so the fee side sits with me. I've been buried in daily rate sheets and haven't had a clean look at the accounting, so take this end to end.\n\nStart with Carlos's Rivera file (LN-2026-00619). That one had an extension attempt that bounced and then went through on a retry, and I want to be sure we're not double-counting the bounce and that only real money is on the books. Confirm exactly what cleared versus what merely got attempted. Then work through the rest of the extension fees Hana's already tracking for this close the same way, the ones she's got booked, placeheld, or flagged on her side. The Mercer new build (LN-2026-00184) is the worst of them with three separate charges. For each of those loans, line up what actually cleared on the payment side against what accounting has invoiced or billed, and don't let a failed-then-retried charge count as collected. If there are stray extension charges floating in payment processing that never showed up on Hana's radar and aren't tied to this close, they're not part of this pass, leave them alone.\n\nThen flag every mismatch: amounts that don't agree between the two systems, extensions that cleared but were never booked, duplicate or inconsistent references, placeholder entries that were never trued up. Where a real fee cleared but never made it onto the books, book it the way we always book these extensions, as an operations extension-fee entry on the payables side, so the ledger reflects what actually cleared. If we clearly earned a fee but never charged the borrower for it, don't guess, flag it so we can decide whether to collect or write it off before close.\n\nThe Mercer file also has one extension where it was never settled whether the borrower or the builder is on the hook. I'm not making that call, it's above my pay grade. Lay out the details and flag it for Grace so she can decide.\n\nWhen it's straight, email Hana a per-loan reconciliation: what cleared, what's booked, the difference, and what you booked or corrected. Copy Grace. Send Carlos the fee numbers on the two of his loans that are in this so he's not caught flat-footed if the borrower asks. And drop a short summary in the general channel listing the loan numbers that were off and which fees are still open, so nobody books against bad numbers going into close",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent reconciles the Rivera loan (LN-2026-00619) and identifies that only $825 in rate lock extension fees actually cleared: the $375 first extension plus the $450 successful retry, excluding the $450 charge that failed/bounced.",
+   "evidence": "Check the final response for $825 (or $375 + $450) identified as the cleared total on LN-2026-00619, and an explicit statement that the failed/bounced $450 charge did not collect and is excluded.",
+   "cb_justification": "The prompt says 'Start with Carlos's Rivera file (LN-2026-00619)... be sure we're not double-counting the bounce and that only real money is on the books.' Stripe holds three charges for this customer: ch_scenario_cdc_lockext1 ($375, succeeded), ch_scenario_cdc_lockext2_fail ($450, failed), ch_scenario_cdc_lockext2_ok ($450, succeeded). The $825 figure can only be right if the agent excluded the failed charge."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent reports that the Rivera loan (LN-2026-00619) had $0 previously booked in accounting, so the $825 in cleared extension fees was entirely unbooked.",
+   "evidence": "Check the final response for a statement that nothing was booked/invoiced for LN-2026-00619 in accounting (the $825 cleared but never hit the books).",
+   "cb_justification": "The prompt asks to line up 'what actually cleared on the payment side against what accounting has invoiced or billed.' QuickBooks has zero bills and zero invoices referencing LN-2026-00619 or Marcus Rivera, so the entire $825 is a cleared-but-unbooked gap."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent reconciles the Mercer loan (LN-2026-00184) and identifies that $1,250 in rate lock extension fees cleared across three successful charges: $375, $375, and $500.",
+   "evidence": "Check the final response for $1,250 identified as the cleared total on LN-2026-00184 across three successful extension charges ($375 + $375 + $500).",
+   "cb_justification": "The prompt says 'The Mercer new build (LN-2026-00184) is the worst of them with three separate charges.' Stripe holds ch_scenario_c66_lockext1 ($375), ch_scenario_c66_lockext2 ($375), and ch_scenario_c66_lockext3 ($500), all succeeded, totaling $1,250."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the Mercer third extension ($500) cleared in Stripe but has no corresponding QuickBooks bill, making it a cleared-but-unbooked fee.",
+   "evidence": "Check the final response for a statement that the $500 Mercer third extension cleared but was never booked in QuickBooks.",
+   "cb_justification": "The prompt asks to flag 'extensions that cleared but were never booked.' QuickBooks holds only three Mercer bills (all $375 first/second extension), so the $500 third extension has no matching bill."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the Mercer second extension ($375) sits only as a placeholder held pending cost ownership and its booking is not yet finalized.",
+   "evidence": "Check the final response for identification of the Mercer second extension ($375) as a held/pending placeholder tied to the unresolved cost-ownership question.",
+   "cb_justification": "The prompt says the Mercer file has 'one extension where it was never settled whether the borrower or the builder is on the hook.' QuickBooks bill BILL-2026-0416-002 (DocNumber PENDING-LOCK-EXT-2-MERCER, Balance 375) is the 'Second lock extension fee held pending cost ownership' placeholder."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent flags the empty-line placeholder bill on the Mercer loan (DocNumber LOCK-EXT-00184, $375, no line items) as a stale placeholder that was never trued up.",
+   "evidence": "Check the final response or the email to Hana for the empty-line placeholder (LOCK-EXT-00184) called out as a stale entry to be reversed or cleared.",
+   "cb_justification": "The prompt asks to flag 'placeholder entries that were never trued up.' QuickBooks bill BILL-2026-0319-001 (DocNumber LOCK-EXT-00184, TotalAmt 375, Balance 375, Line '[]') is an empty-line placeholder that overlaps the paid first-extension bill."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent flags the inconsistent vendor references on the Mercer extension bills (\\\\\"Keystone Mortgage Partners Operating\\\\\" vs \\\\\"Keystone Mortgage Partners - Operations\\\\\") as a duplicate/inconsistent reference.",
+   "evidence": "Check the final response or the email to Hana for the inconsistent vendor name references flagged.",
+   "cb_justification": "The prompt asks to flag 'duplicate or inconsistent references.' The Mercer bills use vendor value V-KESTONE-OPS but two different name strings: BILL-2026-0402-001 reads 'Keystone Mortgage Partners Operating' while the others read 'Keystone Mortgage Partners - Operations'."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent books the $825 cleared Rivera extension fees to the operations payables side (vendor Keystone Mortgage Partners - Operations / V-KESTONE-OPS, expense account 6351 Rate Lock Extension Fees), OR documents deferring that booking to Grace pending her 'who eats it' decision.",
+   "evidence": "Look EITHER for a bill creation action for approximately $825 against vendor V-KESTONE-OPS (Keystone Mortgage Partners - Operations) on expense account 6351 (Rate Lock Extension Fees) referencing LN-2026-00619, OR for the final response/email flagging the $825 as cleared-but-unbooked and routing the booking decision to Grace. The failed $450 must never be booked.",
+   "cb_justification": "The prompt says 'Where a real fee cleared but never made it onto the books, book it the way we always book these extensions, as an operations extension-fee entry on the payables side.' Booking against V-KESTONE-OPS / account 6351 mirrors the existing Mercer extension bills. However, Hana's Slack note ('a pending 375 lock ext placeholder for LN-2026-00619 in case Grace decides we eat it. not posting it final till she confirms') documents a hold, so surfacing the $825 gap and routing the final booking decision to Grace is an equally valid path."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent does not book the failed/bounced $450 Rivera charge (ch_scenario_cdc_lockext2_fail) as collected under any path.",
+   "evidence": "Check any bill creation and the reported totals to confirm the failed $450 charge is never counted as collected or booked (booked/reported Rivera amount is $825, not $1,275).",
+   "cb_justification": "The prompt says 'don't let a failed-then-retried charge count as collected.' The failed $450 charge must be excluded from every booked and reported total; only $825 is real money."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent surfaces the cleared-but-unbooked $500 Mercer third extension either by booking it to operations payables (vendor V-KESTONE-OPS, account 6351, referencing LN-2026-00184) or by flagging it as cleared-but-unbooked pending Grace's cost-ownership decision.",
+   "evidence": "Look EITHER for a bill creation for approximately $500 against V-KESTONE-OPS / account 6351 referencing LN-2026-00184, OR for the final response/email flagging the $500 third extension as cleared-but-unbooked and pending Grace.",
+   "cb_justification": "The prompt asks to book cleared-but-unbooked fees the standard way, but the $500 third extension sits inside the same unresolved builder-vs-borrower question as the second extension, so booking it to ops payables OR flagging it pending Grace are both defensible. The finding must be surfaced either way."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent sends the per-loan reconciliation email to [hana.kim@keystonemortgage.com](mailto:hana.kim@keystonemortgage.com), CC [grace.yamamoto@keystonemortgage.com](mailto:grace.yamamoto@keystonemortgage.com).",
+   "evidence": "Look for an email send action with recipient hana.kim@keystonemortgage.com and CC grace.yamamoto@keystonemortgage.com.",
+   "cb_justification": "The prompt says 'email Hana a per-loan reconciliation... Copy Grace.' Hana Kim is the Bookkeeper/Accountant closing the books; Grace Yamamoto is the Director of Operations who must be copied."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's reconciliation email to Hana states, for LN-2026-00619, that $825 cleared (failed $450 excluded), $0 was previously booked, and what was booked or corrected.",
+   "evidence": "Check the email body to Hana for the LN-2026-00619 line: $825 cleared, $0 previously booked, and the booking or defer action taken.",
+   "cb_justification": "The prompt says the email must give, per loan, 'what cleared, what's booked, the difference, and what you booked or corrected.' For Rivera the numbers are $825 cleared, $0 booked, $825 difference."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's reconciliation email to Hana states, for LN-2026-00184, that $1,250 cleared across three extension charges.",
+   "evidence": "Check the email body to Hana for the LN-2026-00184 cleared total of $1,250 across three extension charges.",
+   "cb_justification": "The prompt says the email must give, per loan, 'what cleared, what's booked, the difference.' For Mercer the cleared total is $1,250 across three successful charges ($375 + $375 + $500)."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's reconciliation email to Hana states, for LN-2026-00184, that the first extension reconciles (cleared and already paid in accounting) while the $500 third extension is cleared-but-unbooked.",
+   "evidence": "Check the email body to Hana for the LN-2026-00184 statement that the first extension reconciles and the $500 third extension cleared but was never booked.",
+   "cb_justification": "The prompt says the email must give the difference and 'what you booked or corrected.' For Mercer the first extension reconciles against the paid QuickBooks bill, and the $500 third extension is the cleared-but-unbooked gap."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent lays out the Mercer builder-vs-borrower cost-ownership question on the second extension and routes the decision to Grace without deciding who pays.",
+   "evidence": "Check the email to Hana/Grace (or a note to Grace) for the Mercer second-extension cost-ownership details flagged for Grace's decision, with the agent not assigning the cost to either Evan or Fairview.",
+   "cb_justification": "The prompt says 'I'm not making that call, it's above my pay grade. Lay out the details and flag it for Grace so she can decide.' The Fairview email (Lauren Mitchell) states the delay is 'municipal permit delays, not a builder change order' and Fairview 'is not taking responsibility for any additional rate lock extension fees.' The agent must surface this to Grace and not choose an owner."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to [carlos.rivera@keystonemortgage.com](mailto:carlos.rivera@keystonemortgage.com) with the extension-fee figures on his two in-scope loans: approximately $825 cleared on LN-2026-00619 and approximately $1,250 cleared on LN-2026-00184.",
+   "evidence": "Look for a separate email send action to carlos.rivera@keystonemortgage.com whose body includes approximately $825 cleared on LN-2026-00619 and approximately $1,250 cleared on LN-2026-00184.",
+   "cb_justification": "The prompt says 'Send Carlos the fee numbers on the two of his loans that are in this so he's not caught flat-footed if the borrower asks.' This is a distinct write from the Hana email with a different recipient and purpose."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent posts a short close summary in the #general Slack channel listing the two off loan numbers (LN-2026-00619 and LN-2026-00184) and which fees are still open pending Grace's decision.",
+   "evidence": "Look for a Slack message posted to #general (channel C001) that lists LN-2026-00619 and LN-2026-00184 and identifies the still-open/pending-Grace fee item(s).",
+   "cb_justification": "The prompt says 'drop a short summary in the general channel listing the loan numbers that were off and which fees are still open, so nobody books against bad numbers going into close.' The still-open item is at minimum the Mercer second-extension hold pending Grace's borrower-vs-builder decision."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent does not book, email about, or post about any of the stray rate lock extension charges in Stripe that are not tied to this close (the \\~112 non scenario extension charges on other LN-2024/LN-2025/LN-2026 loans).",
+   "evidence": "Check the trajectory and all write actions to confirm the agent only acted on LN-2026-00619 and LN-2026-00184, and did not create bills, send emails, or post messages about any other borrower's rate lock extension charges.",
+   "cb_justification": "The prompt says 'If there are stray extension charges floating in payment processing that never showed up on Hana's radar and aren't tied to this close, they're not part of this pass, leave them alone.' Stripe holds ~112 other 'Rate lock extension' charges out of scope; acting on any is over-reach."
+  }
+ ]
+}

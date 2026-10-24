@@ -1,0 +1,98 @@
+{
+ "id": "card_61",
+ "n_criteria": 25,
+ "requirements": [
+  "R1: everything paid, what is outstanding, exact rent owed as of today (to user)",
+  "R2: where the payment arrangement landed and whether she held to it",
+  "R3: correct next procedural step",
+  "R4: scope limited to Renee / 212B",
+  "R5: package to Brooke with balance, notice history, recommendation",
+  "R6: tenant-facing notice drafted (not sent) along the lines of the outcome",
+  "R7: delinquency record updated with where it stands",
+  "R8: anything that does not add up flagged"
+ ],
+ "findings": [
+  {
+   "c": "C8",
+   "defect": "prohibition-only title (Negative Criteria)",
+   "severity": "dimension-only",
+   "quote": "The Agent does not send or serve the tenant-facing notice to Renee",
+   "why": "absence-only acceptance; positive second clause does not cure"
+  },
+  {
+   "c": "C11",
+   "defect": "absence-only acceptance (Negative Criteria)",
+   "severity": "dimension-only",
+   "quote": "draft excludes the disputed $240",
+   "why": "evidence passes on absence ('does not add the $240'); also overlaps C10"
+  },
+  {
+   "c": "C20",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "identifies the $240 charge as building-caused, traced to the upstairs unit's supply-line leak",
+   "why": "prompt asks to flag what does not add up, not the cause of the disputed charge"
+  },
+  {
+   "c": "C23",
+   "defect": "prohibition-only title (Negative Criteria)",
+   "severity": "dimension-only",
+   "quote": "The Agent does not recommend an eviction filing",
+   "why": "absence-only acceptance; also overlaps C22"
+  },
+  {
+   "c": "C25",
+   "defect": "prohibition clause (Negative Criteria)",
+   "severity": "note",
+   "quote": "and does not fold in the other past-due accounts",
+   "why": "scope boundary leads; negative restatement"
+  },
+  {
+   "c": "C1",
+   "defect": "tool name in supporting field",
+   "severity": "note",
+   "quote": "slack_send_message ... create_draft",
+   "why": "tool names only in evidence; Slack lock-in depends on Gmail send capability (UNRESOLVED)"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C10",
+    "C11"
+   ],
+   "condition": "a $1,025 demand already excludes the $240; both fail on a demand that includes it"
+  },
+  {
+   "rows": [
+    "C22",
+    "C23"
+   ],
+   "condition": "recommending the three-day notice and not recommending eviction filing fail together"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 1,
+  "rows_moderate": 2,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 4.0,
+  "pct_moderate_or_worse": 12.0,
+  "pct_any": 12.0
+ },
+ "dimensions": {
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "NON-FAIL",
+  "negative": "FAIL",
+  "other": "agent_centric NON-FAIL from possessive \"The Agent's escalation to Brooke\"",
+  "overall_quality": "NON-FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "Amounts, notice date, arrangement terms, record ID, policy ladder and Gmail send capability UNRESOLVED; C7 email-draft form may be a lock-in if a document route exists."
+}

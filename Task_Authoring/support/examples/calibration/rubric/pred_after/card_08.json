@@ -1,0 +1,124 @@
+{
+ "id": "card_08",
+ "n_criteria": 21,
+ "requirements": [
+  "R1: per-loan LO check; departed-LO loans flagged for reassignment (in Grace email)",
+  "R2: document-checklist items still required/requested flagged",
+  "R3: files with no borrower/LO communication in past three weeks (cold) vs still moving",
+  "R4: fee history vs vendor billing (appraisal, credit report) for problem loans",
+  "R5: email to Grace organized by urgency: still moving / need reassignment / doc or fee gaps",
+  "R6: email to Elena covering every departed-LO loan asking to coordinate reassignment with Grace",
+  "R7: processing-channel post that a pipeline scrub is running ahead of Friday's review",
+  "R8: activity note on every loan with departed LO, missing document or fee discrepancy"
+ ],
+ "findings": [
+  {
+   "c": "C3",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "Payload should reference a pipeline scrub and/or the Friday ops review",
+   "why": "evidence 'and/or' widens acceptance beyond the title's 'pipeline scrub ahead of the Friday ops review'"
+  },
+  {
+   "c": "C3",
+   "defect": "tool name in supporting field",
+   "severity": "note",
+   "quote": "conversations_add_message tool call with channel_id C002",
+   "why": "tool name only in evidence"
+  },
+  {
+   "c": "C8",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "mentioning the missing driver's license or HOI binder (or both)",
+   "why": "both documents are required to be flagged; disjunction over required items"
+  },
+  {
+   "c": "C9",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "mentioning the missing pay stub or W-2 (or both)",
+   "why": "both documents required; disjunction over required items"
+  },
+  {
+   "c": "C11",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "(or a similar urgency-based structure)",
+   "why": "catch-all; evidence further widens to 'any structural organization'"
+  },
+  {
+   "c": "C15",
+   "defect": "overly_broad",
+   "severity": "Moderate",
+   "quote": "inactive, that required documents are missing, or that no borrower fees have been collected (or any combination of these issues)",
+   "why": "note naming only one of the three flagged problems on LN-2026-00626 passes"
+  },
+  {
+   "c": "C19",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "on the terminated-LO loans that were charged (e.g., LN-2024-00088)",
+   "why": "loan set and amounts only in justification; title names one example"
+  },
+  {
+   "c": "C19",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "(e.g., LN-2024-00088)",
+   "why": "exemplar in title"
+  },
+  {
+   "c": "C21",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "essentially all of the active files have gone cold",
+   "why": "'essentially all' leaves the accepted set undefined; exceptions only in justification; also bundles window date and four named files"
+  },
+  {
+   "c": "C1",
+   "defect": "tool name in supporting field",
+   "severity": "note",
+   "quote": "send_email tool call",
+   "why": "tool name only in evidence"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R6",
+   "why": "Elena email checked only for LN-2024-00088 and LN-2026-00626 (C13 'representative'); LN-2025-00229 missing - sampled core requirement"
+  },
+  {
+   "req": "R6",
+   "why": "LN-2025-00240 in Elena email not covered - sampled core requirement"
+  },
+  {
+   "req": "R3/R5",
+   "why": "no row names which files are still moving (e.g. the files with in-window activity) in the Grace email"
+  }
+ ],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 6,
+  "rows_moderate": 1,
+  "rows_minor": 0,
+  "missing_outcomes": 3,
+  "pct_major": 42.9,
+  "pct_moderate_or_worse": 47.6,
+  "pct_any": 47.6
+ },
+ "dimensions": {
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "PASS",
+  "other": "repair gates: coverage, self-containment, atomicity fail",
+  "overall_quality": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "Pipeline membership, LO terminations, document states, fee/vendor-bill facts and the 3-week cold set UNRESOLVED; could not verify whether other loans also have missing docs or fee gaps (possible further missing activity-note coverage)."
+}

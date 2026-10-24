@@ -1,0 +1,102 @@
+{
+ "id": "card_43",
+ "n_criteria": 25,
+ "requirements": [
+  "R1: each loan reviewed before moving money",
+  "R2: firm-caused extension made right (refund + company absorption)",
+  "R3: borrower-caused extension left with borrower",
+  "R4: investor credits booked",
+  "R5: every account settled correctly (no double handling, decoy untouched)",
+  "R6: activity log on each file",
+  "R7: short summary to Hana and Grace",
+  "R8: note in rate-watch"
+ ],
+ "findings": [
+  {
+   "c": "C5",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "does not issue any borrower refund on the Okoro loan ... and does not book any company absorption",
+   "why": "two independent prohibitions (refund vs bill); prohibition-only"
+  },
+  {
+   "c": "C6",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "counts only the single collected Okoro charge ... and does not treat the failed Okoro charge as a second",
+   "why": "grades an intermediate count the prompt never asks to be reported; no artifact; also absence clause"
+  },
+  {
+   "c": "C7",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "does not book a new company absorption bill for the Tan loan ... and does not issue any borrower refund",
+   "why": "two independent prohibitions; prohibition-only"
+  },
+  {
+   "c": "C8",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "takes no financial action on the Owusu loan: no refund, no company absorption bill, and no investor credit",
+   "why": "three prohibitions enumerated; prohibition-only"
+  },
+  {
+   "c": "C18",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "borrower-requested and correctly paid, so no borrower refund is owed and no investor credit applies",
+   "why": "classification + paid + no refund + no credit bundled"
+  },
+  {
+   "c": "C19",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "excluded ... because it locked on the corrected sheet, and that no refund, bill, or credit applies",
+   "why": "verdict + grounding + three dispositions bundled"
+  },
+  {
+   "c": "C23",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "stating that the March rate-sheet-error true-up is closed out with an investor credit total of 1,650 dollars",
+   "why": "prompt sets no rate-watch content; a valid 'it landed' note without the total fails"
+  },
+  {
+   "c": "C24",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "rate-watch note states that a 500 dollar borrower refund was issued",
+   "why": "unstated content requirement for the rate-watch note"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R4",
+   "why": "no row grades booking the investor credits ($900 UWM, $750 Pennymac) in the books; C3/C4 only 'recognize' them"
+  }
+ ],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 8,
+  "rows_moderate": 0,
+  "rows_minor": 0,
+  "missing_outcomes": 1,
+  "pct_major": 36.0,
+  "pct_moderate_or_worse": 36.0,
+  "pct_any": 36.0
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "NON-FAIL",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "none"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe access (other universe): all literal values UNRESOLVED; no weights on card (N/A); channel/tool availability not verifiable. C25 Process judged valid (prompt: 'Give each one a real look before you move anything'). Firm policy treated as incorporated ('You know how we treat these')."
+}

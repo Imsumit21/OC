@@ -1,0 +1,166 @@
+{
+ "id": "card_12",
+ "n_criteria": 24,
+ "requirements": [
+  "R1: per-client net position and margin",
+  "R2: per-vendor amount owed",
+  "R3: per-vendor amount in dispute",
+  "R4: vendor new-rate impact on outstanding/future",
+  "R5: books-vs-teams divergences: which correct and why",
+  "R6: correct stale/misbooked book entries",
+  "R7: CRM note per materially changed client",
+  "R8: ticket per untracked open financial item",
+  "R9: one consolidated email to Elena and Marcus",
+  "R10: email exposure by client and by vendor",
+  "R11: email exec decisions before Friday",
+  "R12: email total consolidated liability",
+  "R13: #finance post for Hana",
+  "R14: post calls out books-vs-ops contradictions"
+ ],
+ "findings": [
+  {
+   "c": "C3",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "approximately $90,000 damage-claim exposure",
+   "why": "C3/C8/C10 all embed the Mosaic $90,000 claim"
+  },
+  {
+   "c": "C4",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "approximately $60,000 outstanding and/or the INV-2026-0412 non-standard surcharges",
+   "why": "and/or accepts either fact"
+  },
+  {
+   "c": "C5",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "Preferred Partner renewal / approximately $58,400 estimate change",
+   "why": "Slash alternative accepts either fact"
+  },
+  {
+   "c": "C10",
+   "defect": "not self-contained",
+   "severity": "Major",
+   "quote": "states a single total consolidated liability figure that combines",
+   "why": "No total named in title; acceptable range lives only in evidence, passes a wrong total"
+  },
+  {
+   "c": "C11",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "lays out the exposure broken down by client",
+   "why": "Names no values; any by-client layout passes"
+  },
+  {
+   "c": "C12",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "lays out the exposure broken down by vendor",
+   "why": "Names no values"
+  },
+  {
+   "c": "C13",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "flags at least one specific item ... (such as ...) (or similar)",
+   "why": "Prompt asks for the specific items; 'at least one' + examples"
+  },
+  {
+   "c": "C14",
+   "defect": "not self-contained",
+   "severity": "Moderate",
+   "quote": "calls out where the books contradict ... (or similar)",
+   "why": "Does not name the contradictions"
+  },
+  {
+   "c": "C15",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "Heartland approximately $12,800, Swift approximately $11,010, Atlas (... or ...), and KeyMove",
+   "why": "Four independently variable vendor amounts plus disjunctive Atlas in one row"
+  },
+  {
+   "c": "C18",
+   "defect": "duplicate grading",
+   "severity": "Moderate",
+   "quote": "BrightLoop Analytics' April relocations read as complete",
+   "why": "Evidence accepts the C6 CRM note; same fact graded twice"
+  },
+  {
+   "c": "C19",
+   "defect": "duplicate grading",
+   "severity": "Moderate",
+   "quote": "$500 goodwill credit was posted against cancelled estimate",
+   "why": "Same misposting graded in C7 CRM note"
+  },
+  {
+   "c": "C21",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "15% rate increase plus a $500-per-shipment DOT documentation surcharge",
+   "why": "Two independently variable terms"
+  },
+  {
+   "c": "C24",
+   "defect": "hard-coded conclusion",
+   "severity": "Major",
+   "quote": "a precise client-by-client margin cannot be fully reconciled",
+   "why": "Prompt asks for per-client margin; a run that attributes costs and computes margins fails"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R6",
+   "why": "Major: No criterion grades any book correction (prompt: 'correct anything in our books that is clearly stale or misbooked')"
+  }
+ ],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C3",
+    "C8",
+    "C10"
+   ],
+   "condition": "Mosaic $90,000 claim found"
+  },
+  {
+   "rows": [
+    "C7",
+    "C19"
+   ],
+   "condition": "StormCloud $500 misposting found"
+  },
+  {
+   "rows": [
+    "C6",
+    "C18"
+   ],
+   "condition": "BrightLoop open items found"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 4,
+  "rows_moderate": 9,
+  "rows_minor": 0,
+  "missing_outcomes": 1,
+  "pct_major": 20.8,
+  "pct_moderate_or_worse": 58.3,
+  "pct_any": 58.3
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "PASS",
+  "predicted_all_fail": "PASS",
+  "other": "three_fields=PASS; spot_checks=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No plan/ledger; universe values for other universes not verifiable; weights absent. Which clients 'materially changed' and per-client margin feasibility not verifiable."
+}

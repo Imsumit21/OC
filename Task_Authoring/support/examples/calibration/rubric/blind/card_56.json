@@ -1,0 +1,196 @@
+{
+ "card_index": 56,
+ "universe": "star-pm-generic-expanded-nofs",
+ "prompt": "Brooke runs her quarterly pipeline review next week, and before she pulls my numbers I want the leasing board to reflect where things actually stand instead of the half-updated picture our records show right now. A handful of my deals moved late in the season and I never got the CRM caught up, so a few of them still read the way they did weeks ago rather than how they truly landed. Two renewals I have been carrying need a real answer. Gregory Vance at Las Palmas 216A and Nadia Okonkwo at Las Vistas 7B have both been through enough back and forth that I cannot tell cleanly from the deals alone how each one actually closed. There is also Damon Whitfield at Las Vistas 402A, which I need confirmed the same way. On the intake side, two applications need a straight yes or no: Reuben Salazar for Rio Bend 405C and Yolanda Prieto for Rio Bend 309B both need their real decision confirmed, because at least one of them stalled at an earlier stage and was never cleaned up.\n\nCan you work back through all five and tell me the true current state of each, pulling each outcome from wherever it genuinely got recorded rather than trusting whichever deal happens to surface first. For the three renewals, I need whether the resident is actually staying or leaving, along with the dates that matter, when a renewal was signed and when the new term takes effect, or when the unit comes empty. For the two applications, whether we ended up approving or denying. The real outcome on these often got recorded somewhere other than the deal itself, so the record that looks most official is not always the one telling the truth.\n\nOnce you have the real picture, drop a clean, friendly status in our leasing channel so Brooke walks into her review with the right numbers, running through where each of the five landed and the dates that go with the renewals. And for the ones whose deal records still read wrong against what actually happened, add a note on each of those deals capturing the true outcome, with the dates where they apply, so the pipeline finally reflects reality instead of the unfinished picture the deals still show.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent posts a status update in the leasing channel (#leasing).",
+   "evidence": "Look for a message posted via slack_send_message to #leasing (channel_id C002) returning success. FAIL if it is posted to a different channel (e.g., #applications / C008) or is only stated in the final response and never posted.",
+   "cb_justification": "The prompt explicitly says to 'drop a clean, friendly status in our leasing channel so Brooke walks into her review with the right numbers.' The leasing channel is #leasing (channel_id C002). This checks that the status post write happened, separate from the criteria grading what the post says about each of the five residents and applicants."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent's final response to the user reports the true current state of all five: Gregory Vance (Las Palmas 216A) not renewing, Nadia Okonkwo (Las Vistas 7B) renewed, Damon Whitfield (Las Vistas 402A) renewed, Reuben Salazar (Rio Bend 405C) denied, and Yolanda Prieto (Rio Bend 309B) approved.",
+   "evidence": "In the Agent's final response text, look for all five outcomes stated: Vance not renewing / moving out, Okonkwo renewed / signed / staying, Whitfield renewed / staying, Salazar denied, Prieto approved. FAIL if the response omits any of the five or states an outcome that contradicts this list. Dates are not graded by this criterion.",
+   "cb_justification": "The prompt's first ask is to 'work back through all five and tell me the true current state of each.' The leasing-channel status post and the deal notes are separate deliverables, so without this criterion an agent can post a correct #leasing summary, write correct notes, and still return a bare acknowledgement to the user. This checks the five reported outcomes in the final response only; the renewal dates are graded in the status-post criteria."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent adds a new note object to Gregory Vance's Las Palmas 216A lease-renewal deal or contact record (Gregory Vance, [gregory.vance@gmail.com](mailto:gregory.vance@gmail.com)).",
+   "evidence": "Look for a note created via manage_crm_objects (object_type 'notes') associated to Vance's renewal deal (deal_6a1b2c3d4e5f60718293a4b5c6d7e8f9) or his contact (contact_9a1b2c3d4e5f60718293a4b5c6d7e8f9 / gregory.vance@gmail.com), returning success. FAIL if no note is created for Vance or it is attached to a different person's record. FAIL if the text is written into the deal's description field instead of a new note object.",
+   "cb_justification": "The prompt says to 'add a note on each of those deals' whose records still read wrong. Vance's renewal deal (deal_6a1b2c3d4e5f60718293a4b5c6d7e8f9) still reads 'closedwon / resident retained' but the true outcome is a non-renewal, so it is one of the wrong deals. This checks the note write happened on Vance's record, separate from the criteria grading what that note says about his outcome and his move-out date."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent adds a new note object to Nadia Okonkwo's Las Vistas 7B lease-renewal deal or contact record (Nadia Okonkwo, [nadia.okonkwo@gmail.com](mailto:nadia.okonkwo@gmail.com)).",
+   "evidence": "Look for a note created via manage_crm_objects (object_type 'notes') associated to Nadia's renewal deal (deal_5b2c3d4e5f60718293a4b5c6d7e8f9a0) or her contact (contact_8b2c3d4e5f60718293a4b5c6d7e8f9a0 / nadia.okonkwo@gmail.com), returning success. FAIL if no note is created for Nadia or it is attached to a different person's record. FAIL if the text is written into the deal's description field instead of a new note object.",
+   "cb_justification": "The prompt says to 'add a note on each of those deals' whose records still read wrong. Nadia's renewal deal (deal_5b2c3d4e5f60718293a4b5c6d7e8f9a0) still reads 'contractsent / awaiting signature' but the true outcome is signed, so it is one of the wrong deals. This checks the note write happened on Nadia's record, separate from the criteria grading what that note says about her outcome, her signed date and her new-term effective date."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent adds a new note object to Reuben Salazar's Rio Bend 405C application deal or contact record (Reuben Salazar, [reuben.salazar@gmail.com](mailto:reuben.salazar@gmail.com)).",
+   "evidence": "Look for a note created via manage_crm_objects (object_type 'notes') associated to Salazar's application deal (deal_4c3d4e5f60718293a4b5c6d7e8f9a0b1) or his contact (contact_7c3d4e5f60718293a4b5c6d7e8f9a0b1 / reuben.salazar@gmail.com), returning success. FAIL if no note is created for Salazar or it is attached to a different person's record. FAIL if the text is written into the deal's description field instead of a new note object.",
+   "cb_justification": "The prompt says to 'add a note on each of those deals' whose records still read wrong. Salazar's application deal (deal_4c3d4e5f60718293a4b5c6d7e8f9a0b1) still reads 'closedwon / approved' but the true outcome is denied, so it is one of the wrong deals. This checks the note write happened on Salazar's record, separate from the criterion grading what that note says about the denial."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent adds a new note object to Yolanda Prieto's Rio Bend 309B application deal or contact record (Yolanda Prieto, [yolanda.prieto@gmail.com](mailto:yolanda.prieto@gmail.com)).",
+   "evidence": "Look for a note created via manage_crm_objects (object_type 'notes') associated to Prieto's application deal (deal_2e3f4a5b6c70819293a4b5c6d7e8f001) or her contact (contact_1d2e3f4a5b6c70819293a4b5c6d7e8f0 / yolanda.prieto@gmail.com), returning success. FAIL if no note is created for Prieto or it is attached to a different person's record. FAIL if the text is written into the deal's description field instead of a new note object.",
+   "cb_justification": "The prompt says to 'add a note on each of those deals' whose records still read wrong. Prieto's application deal (deal_2e3f4a5b6c70819293a4b5c6d7e8f001) still reads 'closedlost / declined' but the true outcome is approved, so it is one of the wrong deals. This checks the note write happened on Prieto's record, separate from the criterion grading what that note says about the approval and its move-in date."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent adds a new note object to Damon Whitfield's Las Vistas 402A deal or contact record (Damon Whitfield, [damon.whitfield@gmail.com](mailto:damon.whitfield@gmail.com)).",
+   "evidence": "Look for a note created via manage_crm_objects (object_type 'notes') associated to Whitfield's deal (deal_6c7d8e9f0a1b2c3d4e5f60718293a4b5) or his contact (contact_5b6c7d8e9f0a1b2c3d4e5f60718293a4 / damon.whitfield@gmail.com), returning success. FAIL if no note is created for Whitfield or it is attached to a different person's record. FAIL if the text is written into the deal's description field instead of a new note object.",
+   "cb_justification": "The prompt says to 'add a note on each of those deals' whose records still read wrong. Whitfield's deal (deal_6c7d8e9f0a1b2c3d4e5f60718293a4b5) still reads 'closedlost / non-renewal move-out' but the true outcome is a renewal, so it is one of the wrong deals. This checks the note write happened on Whitfield's record, separate from the criteria grading what that note says about his outcome, his signed date and his new-term effective date."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update reports that Gregory Vance (Las Palmas 216A) is not renewing / moving out (equivalently: declined the renewal, vacating, not staying), rather than renewed or retained.",
+   "evidence": "In the #leasing message content, look for a statement that Gregory Vance is not renewing / declining / moving out of Las Palmas 216A. FAIL if it reports Vance as renewed, retained, or staying.",
+   "cb_justification": "The prompt asks whether each resident is 'actually staying or leaving.' Vance's true outcome is a non-renewal: Sandra's own SENT email to Brooke (2026-06-24) states Gregory 'is not renewing 216A after all' and will move out. The CRM deal (closedwon 'retained') and CLOSED ticket are stale and wrong. This checks Vance's outcome in the status post only, separate from the criterion grading his move-out date."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update states that Gregory Vance's move-out / vacancy date is July 31, 2026.",
+   "evidence": "In the #leasing message content, look for Vance's move-out / vacancy date stated as July 31, 2026. FAIL if the date is missing, or is any other date.",
+   "cb_justification": "The prompt asks for 'the dates that matter ... when the unit comes empty.' Vance's SENT email states he 'will move out at the end of his current lease, on July 31.' This checks the vacate date in the status post, separate from the criterion grading whether Vance is reported as not renewing."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update reports that Nadia Okonkwo (Las Vistas 7B) renewed / signed / is staying, rather than still awaiting signature.",
+   "evidence": "In the #leasing message content, look for a statement that Nadia Okonkwo renewed / signed / is staying at Las Vistas 7B. FAIL if it reports Nadia as still awaiting signature, undecided, or not renewed.",
+   "cb_justification": "The prompt asks whether each resident is 'actually staying or leaving.' Nadia's true outcome is a completed renewal: her inbound email reply (2026-06-26) returns the signed copy and confirms she stays, and a #leasing thread reply confirms she signed. The CRM deal (contractsent 'awaiting') and OPEN ticket are stale and wrong. This checks Nadia's outcome in the status post only, separate from the criteria grading her signed date and her new-term effective date."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update states that Nadia Okonkwo's renewal was signed on June 26, 2026.",
+   "evidence": "In the #leasing message content, look for Nadia's signed date stated as June 26, 2026. FAIL if the signed date is missing, or is any other date.",
+   "cb_justification": "The prompt asks for 'the dates that matter ... when a renewal was signed.' Nadia's inbound reply is dated 2026-06-26 and returns the signed copy; the signed date appears only in that email (the Slack reply omits it). This checks the signed date in the status post, separate from the criterion grading whether Nadia is reported as renewed and from the criterion grading her new-term effective date."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update states that Nadia Okonkwo's new lease term takes effect August 1, 2026.",
+   "evidence": "In the #leasing message content, look for Nadia's new-term effective date stated as August 1, 2026. FAIL if the effective date is missing, or is any other date.",
+   "cb_justification": "The prompt asks for 'the dates that matter ... when the new term takes effect.' Nadia's renewal offer and the deal both state the new twelve-month term begins August 1, 2026. This checks the effective date in the status post, separate from the criterion grading whether Nadia is reported as renewed and from the criterion grading her signed date."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update reports that Damon Whitfield (Las Vistas 402A) renewed / is staying, rather than moving out or not renewing.",
+   "evidence": "In the #leasing message content, look for a statement that Damon Whitfield renewed / is staying at Las Vistas 402A. FAIL if it reports Whitfield as moving out, vacating, or not renewing.",
+   "cb_justification": "The prompt asks whether each resident is 'actually staying or leaving.' Whitfield's true outcome is a renewal: the #leasing post of 2026-06-28 states Damon 'reversed course and signed his renewal on June 27 after all, he's staying another year.' The CRM deal (closedlost 'non-renewal / move-out') and the OPEN move-out ticket are stale and wrong. This checks Whitfield's outcome in the status post only, separate from the criteria grading his signed date and his new-term effective date."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update states that Damon Whitfield's renewal was signed on June 27, 2026.",
+   "evidence": "In the #leasing message content, look for Whitfield's signed date stated as June 27, 2026. FAIL if the signed date is missing, or is any other date.",
+   "cb_justification": "The prompt asks for 'the dates that matter ... when a renewal was signed.' The #leasing thread reply states Damon 'signed his renewal on June 27.' This checks the signed date in the status post, separate from the criterion grading whether Whitfield is reported as staying and from the criterion grading his new-term effective date."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update states that Damon Whitfield's new lease term takes effect September 1, 2026.",
+   "evidence": "In the #leasing message content, look for Whitfield's new-term effective date stated as September 1, 2026. FAIL if the effective date is missing, or is any other date.",
+   "cb_justification": "The prompt asks for 'the dates that matter ... when the new term takes effect.' The #leasing thread reply states the 'new term starting September 1.' This checks the effective date in the status post, separate from the criterion grading whether Whitfield is reported as staying and from the criterion grading his signed date."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update reports that Reuben Salazar's application (Rio Bend 405C) was denied, rather than approved.",
+   "evidence": "In the #leasing message content, look for a statement that Reuben Salazar's application was denied / declined / not approved. FAIL if it reports Salazar as approved.",
+   "cb_justification": "The prompt asks 'For the two applications, whether we ended up approving or denying.' Salazar's true outcome is a denial: a #applications thread reply (2026-06-25) states 'we had to deny Salazar ... adverse action notice went out.' The CRM deal (closedwon 'approved') and the parent Slack message are stale and wrong. This checks Salazar's outcome in the status post."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's leasing-channel status update reports that Yolanda Prieto's application (Rio Bend 309B) was approved, rather than denied.",
+   "evidence": "In the #leasing message content, look for a statement that Yolanda Prieto's application was approved. FAIL if it reports Prieto as denied, declined, or still under review.",
+   "cb_justification": "The prompt asks 'For the two applications, whether we ended up approving or denying.' Prieto's true outcome is an approval: a HubSpot note on her record (2026-06-24) states the application was 'approved on June 24, 2026' after a co-signer and updated pay stubs cleared income. The CRM deal (closedlost 'declined'), CLOSED ticket, and #applications parent message are stale and wrong. This checks Prieto's outcome in the status post."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Gregory Vance states that Vance is not renewing / moving out of Las Palmas 216A, rather than renewed or retained.",
+   "evidence": "In the note created for Vance (deal_6a1b2c3d4e5f60718293a4b5c6d7e8f9 or the matching contact record), look for text stating Vance is not renewing / moving out. FAIL if the note says renewed/retained/staying, or contains no outcome.",
+   "cb_justification": "The prompt says the note must capture 'the true outcome' for each wrong deal. Vance's true outcome is a non-renewal (per Sandra's SENT email of 2026-06-24). This checks the outcome recorded in Vance's note, separate from the criterion grading the move-out date in that same note and from the criterion grading Vance's outcome in the leasing-channel status post."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Gregory Vance states the move-out / vacancy date of July 31, 2026.",
+   "evidence": "In the note created for Vance (deal_6a1b2c3d4e5f60718293a4b5c6d7e8f9 or the matching contact record), look for the move-out date July 31, 2026. FAIL if the date is missing or is any other date.",
+   "cb_justification": "The prompt says the note must capture the true outcome 'with the dates where they apply.' Vance's vacate date is July 31, 2026 (SENT email). This checks the date recorded in Vance's note, separate from the criterion grading the outcome recorded in that same note."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Nadia Okonkwo states that Nadia renewed / signed at Las Vistas 7B, rather than still awaiting signature.",
+   "evidence": "In the note created for Nadia (deal_5b2c3d4e5f60718293a4b5c6d7e8f9a0 or the matching contact record), look for text stating Nadia renewed / signed / is staying. FAIL if the note says awaiting/undecided/not renewed, or contains no outcome.",
+   "cb_justification": "The prompt says the note must capture 'the true outcome' for each wrong deal. Nadia's true outcome is a signed renewal (inbound reply of 2026-06-26). This checks the outcome recorded in Nadia's note, separate from the criteria grading the signed date and the effective date in that same note and from the criterion grading Nadia's outcome in the leasing-channel status post."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Nadia Okonkwo states the renewal was signed on June 26, 2026.",
+   "evidence": "In the note created for Nadia (deal_5b2c3d4e5f60718293a4b5c6d7e8f9a0 or the matching contact record), look for the signed date June 26, 2026. FAIL if the signed date is missing or is any other date.",
+   "cb_justification": "The prompt says the note must capture the true outcome 'with the dates where they apply.' Nadia's signed date is June 26, 2026 (inbound reply). This checks the signed date recorded in Nadia's note, separate from the criterion grading the outcome in that same note and from the criterion grading the effective date in that same note."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Nadia Okonkwo states the new lease term takes effect August 1, 2026.",
+   "evidence": "In the note created for Nadia (deal_5b2c3d4e5f60718293a4b5c6d7e8f9a0 or the matching contact record), look for the effective date August 1, 2026. FAIL if the effective date is missing or is any other date.",
+   "cb_justification": "The prompt says the note must capture the true outcome 'with the dates where they apply.' Nadia's new term is effective August 1, 2026 (offer and deal description). This checks the effective date recorded in Nadia's note, separate from the criterion grading the outcome in that same note and from the criterion grading the signed date in that same note."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Reuben Salazar states that his application (Rio Bend 405C) was denied, rather than approved.",
+   "evidence": "In the note created for Salazar (deal_4c3d4e5f60718293a4b5c6d7e8f9a0b1 or the matching contact record), look for text stating the application was denied / declined / not approved. FAIL if the note says approved, or contains no outcome.",
+   "cb_justification": "The prompt says the note must capture 'the true outcome' for each wrong deal. Salazar's true outcome is a denial (#applications thread reply of 2026-06-25). This checks the outcome recorded in Salazar's note, separate from the criterion grading Salazar's outcome in the leasing-channel status post."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Yolanda Prieto states that her application (Rio Bend 309B) was approved, with move-in August 8, 2026.",
+   "evidence": "In the note created for Prieto (deal_2e3f4a5b6c70819293a4b5c6d7e8f001 or the matching contact record), look for text stating the application was approved and the move-in date August 8, 2026. FAIL if the note says denied/declined/under review, contains no outcome, or omits or misstates the move-in date.",
+   "cb_justification": "The prompt says the note must capture 'the true outcome' for each wrong deal, 'with the dates where they apply.' Prieto's true outcome is an approval (HubSpot note of 2026-06-24) with move-in set for August 8, 2026. Approval and move-in date come from the same note and are right or wrong together, so they are graded as one fact here, separate from the criterion grading Prieto's outcome in the leasing-channel status post."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Damon Whitfield states that Whitfield renewed / is staying at Las Vistas 402A, rather than moving out.",
+   "evidence": "In the note created for Whitfield (deal_6c7d8e9f0a1b2c3d4e5f60718293a4b5 or the matching contact record), look for text stating Whitfield renewed / is staying. FAIL if the note says moving out/vacating/not renewing, or contains no outcome.",
+   "cb_justification": "The prompt says the note must capture 'the true outcome' for each wrong deal. Whitfield's true outcome is a renewal (#leasing thread reply of 2026-06-28). This checks the outcome recorded in Whitfield's note, separate from the criteria grading the signed date and the effective date in that same note and from the criterion grading Whitfield's outcome in the leasing-channel status post."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Damon Whitfield states the renewal was signed on June 27, 2026.",
+   "evidence": "In the note created for Whitfield (deal_6c7d8e9f0a1b2c3d4e5f60718293a4b5 or the matching contact record), look for the signed date June 27, 2026. FAIL if the signed date is missing or is any other date.",
+   "cb_justification": "The prompt says the note must capture the true outcome 'with the dates where they apply.' Whitfield's signed date is June 27, 2026 (#leasing thread reply). This checks the signed date recorded in Whitfield's note, separate from the criterion grading the outcome in that same note and from the criterion grading the effective date in that same note."
+  },
+  {
+   "index": "C27",
+   "category": "outcome",
+   "criterion": "The Agent's CRM note for Damon Whitfield states the new lease term takes effect September 1, 2026.",
+   "evidence": "In the note created for Whitfield (deal_6c7d8e9f0a1b2c3d4e5f60718293a4b5 or the matching contact record), look for the effective date September 1, 2026. FAIL if the effective date is missing or is any other date.",
+   "cb_justification": "The prompt says the note must capture the true outcome 'with the dates where they apply.' Whitfield's new term is effective September 1, 2026 (#leasing thread reply). This checks the effective date recorded in Whitfield's note, separate from the criterion grading the outcome in that same note and from the criterion grading the signed date in that same note."
+  }
+ ]
+}

@@ -1,0 +1,154 @@
+{
+ "card_index": 3,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "David's Customer Engagement portfolio review is first thing Monday, and he wants my whole book walked in clean before it. It's been a rough few weeks, between the Sunbelt and Palmetto invoice mix-up, the Mosaic damage claim, and the coverage gap I flagged earlier that we never properly closed out, and I'd rather none of that land as a surprise in front of the team.\n\nTake a pass through every deal I'm still carrying so we know exactly where each one stands and the CRM is telling the truth. The two April billing deals wrapped last week once the corrected invoices went out to the clients and the payment dates were confirmed, so they're settled and should be marked won rather than left open. Anything still genuinely mid-move stays exactly where it is; don't advance or close a deal just to make the list look tidier.\n\nWhat David really wants is which account is closest to walking, and he's after the honest read, based on what actually happened to my book this month rather than a hunch. Once you've landed on it, add a clear risk note to that account in the CRM so the history's on record for whoever picks it up later, but leave the deal stage untouched and just add the note. Then lock in the call I already promised that client and never got onto the calendar, the one where I said David and I would both join alongside their side to walk it through, before it slips any further.\n\nOne of my clients also came back to me this week wanting to do more with us after how their first moves went, and I haven't set anything up for it yet. Tee it up as a new deal in the CRM so we don't lose that momentum.\n\nOnce all of that's done, email David the account-by-account rundown of where every deal stands and what I changed. Then post a short version in the team channel so the coordinators can see where each of my accounts sits going into Monday.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent marks the Sunbelt Venture Partners April 2026 relocation billing deal (crm_deal_5464b8677e6a) as won by setting its stage to closedwon, without altering its amount, closedate, or other fields.",
+   "evidence": "Look for a deal stage update on deal id crm_deal_5464b8677e6a setting the stage to closedwon, returning success. Confirm the amount ($4,800), closedate (2026-05-10), and other fields were not changed.",
+   "cb_justification": "The prompt says the two April billing deals are settled and should be marked won rather than left open. crm_deal_5464b8677e6a (Sunbelt, $4,800, INV-2026-0398) sat in contractsent and is one of exactly two 'April 2026 relocation billing' deals in Emeka's book."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent marks the Palmetto Community Foundation April 2026 relocation billing deal (crm_deal_7ec892bc6085) as won by setting its stage to closedwon, without altering its amount, closedate, or other fields.",
+   "evidence": "Look for a deal stage update on deal id crm_deal_7ec892bc6085 setting the stage to closedwon, returning success. Confirm the amount ($2,400), closedate (2026-05-10), and other fields were not changed.",
+   "cb_justification": "The prompt says the two April billing deals are settled and should be marked won rather than left open. crm_deal_7ec892bc6085 (Palmetto, $2,400, INV-2026-0399) sat in contractsent and is the second of exactly two 'April 2026 relocation billing' deals in Emeka's book."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent does not change the stage of any of Emeka's five mid-move deals: deal_mosaic_okoye_apr2026, deal_mosaic_okoye_apr2026_risk, deal_mosaic_hartley_apr2026, deal_mosaic_tanaka_apr2026, and deal_greenstack_apr2026_zhao_reyes.",
+   "evidence": "Scan the trajectory for all deal stage update actions. Confirm NONE target deal_mosaic_okoye_apr2026, deal_mosaic_okoye_apr2026_risk, deal_mosaic_hartley_apr2026, deal_mosaic_tanaka_apr2026, or deal_greenstack_apr2026_zhao_reyes.",
+   "cb_justification": "The prompt explicitly says anything still genuinely mid-move stays exactly where it is and not to advance or close a deal just to make the list look tidier. These five deals are all dealstage inprogress and must remain inprogress; only the two billing deals get a stage change."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent logs a new risk note in the CRM against Mosaic Robotics (company_mosaic) recording it as the account closest to walking, without changing any Mosaic deal stage.",
+   "evidence": "Look for a CRM engagement creation (NOTE type) with company_ids including company_mosaic, returning success. Confirm no Mosaic deal stage was modified as part of this step.",
+   "cb_justification": "The prompt says to determine the account closest to walking and add a clear risk note to that account in the CRM so the history's on record, but leave the deal stage untouched and just add the note. Mosaic Robotics is the at-risk account; the note must be a new CRM engagement on company_mosaic."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's Mosaic risk note conveys the basis for the risk, including at least the $90,000 prototype Unit #1 damage during Zara Okoye's Savannah-to-Atlanta move, the $40,000 uncovered insurance gap, and the Tamara Byrd / Rafael Mendes executive escalation (the newest-client / short-tenure status may also be noted).",
+   "evidence": "Check the engagement body/title for the $90K prototype Unit #1 damage, the $40K insurance gap, and the Tamara Byrd / Rafael Mendes escalation (or similar wording conveying the same basis). The newest-client status is acceptable to include but not required.",
+   "cb_justification": "The prompt says the risk note must leave the history on record for whoever picks it up later. These signals come from the risk-flagged deal record (deal_mosaic_okoye_apr2026_risk) and the damage engagement (engagement_mosaic_damage_incident_041526) and justify Mosaic as closest to walking. The damage, gap, and executive escalation are the load-bearing basis; the newest-client point is a supporting characterization a valid note may frame differently (e.g., highest-volume / most critical client), so it is not mandatory."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent books a calendar event for the promised Mosaic prototype damage claim call, with attendees including [david.chen@moveops.com](mailto:david.chen@moveops.com), [tamara.byrd@mosaicrobotics.com](mailto:tamara.byrd@mosaicrobotics.com), and [rafael.mendes@mosaicrobotics.com](mailto:rafael.mendes@mosaicrobotics.com).",
+   "evidence": "Look for a calendar event creation whose attendees include david.chen@moveops.com, tamara.byrd@mosaicrobotics.com, and rafael.mendes@mosaicrobotics.com, with a near-term (next-week) start/end datetime.",
+   "cb_justification": "The prompt says to lock in the call Emeka already promised that client and never got onto the calendar, the one where David and Emeka would both join alongside the client's side. Emeka's April 20 email to Tamara (cc David, Rafael) proposes exactly this call (David + Emeka on our side, Tamara + Rafael on theirs); the calendar is empty so it must be created."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent's calendar event references the Mosaic Robotics prototype damage claim and the $40K coverage gap.",
+   "evidence": "Check the calendar event title and/or description for reference to the Mosaic prototype damage claim and the $40K coverage gap / remediation plan (or similar wording).",
+   "cb_justification": "The promised call was specifically to walk the prototype damage claim, the $40K coverage gap, and the remediation plan (per Emeka's April 20 email). The event title/description must reflect this so the call is identifiable."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent creates a new CRM deal for the Tideway Hospitality Tech Q3 2026 second-wave expansion with amount $15,000 in an open (non-closed) stage.",
+   "evidence": "Look for a deal creation for a Tideway Q3 / second-wave expansion with amount 15000 and an open, non-closed stage (e.g., qualifiedtobuy, appointmentscheduled, or contractsent). Confirm the stage is NOT closedwon or closedlost.",
+   "cb_justification": "The prompt says a client came back this week wanting to do more and asks to tee it up as a new deal in the CRM so the momentum isn't lost. Yolanda Bridges' April 24 email approves two more Q3 relocations (Charlotte and Nashville) at $7,500 each = $15,000, intent to proceed with paperwork to follow. No existing Q3 Tideway deal exists, so a new deal is required in an open stage, not a closed one."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's new Tideway deal captures the two Q3 relocations out of Tampa (one to Charlotte, one to Nashville) at $7,500 each, targeting July/August 2026.",
+   "evidence": "Check the new deal's name/description for the two relocations (Charlotte and Nashville) at $7,500 each and the July/August (Q3 2026) target. If a closedate is set, it should be a Q3 2026 date (or similar).",
+   "cb_justification": "The deal must reflect the actual expansion Yolanda described so the momentum and scope are not lost before she sends dates. These details come from email_tideway_expansion_signal."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent sends an email from [emeka.diallo@moveops.com](mailto:emeka.diallo@moveops.com) to [david.chen@moveops.com](mailto:david.chen@moveops.com) with the account-by-account rundown of where every deal stands and what changed.",
+   "evidence": "Look for an email send with sender emeka.diallo@moveops.com and recipient david.chen@moveops.com, subject relating to the Customer Engagement portfolio review / Emeka's book status (or similar).",
+   "cb_justification": "The prompt says to email David the account-by-account rundown of where every deal stands and what was changed. David Chen is the Customer Engagement Lead running the Monday portfolio review."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's email to David reports that the two April billing deals (Sunbelt INV-2026-0398, $4,800; Palmetto INV-2026-0399, $2,400) are now marked won, with billing confirmed and May 10 payment dates.",
+   "evidence": "Check the email body to David for both billing deals marked won: Sunbelt $4,800 (INV-2026-0398) and Palmetto $2,400 (INV-2026-0399), with May 10 payment dates.",
+   "cb_justification": "The rundown must cover what changed. Marking the two billing deals won is the primary write action, and billing was confirmed resolved with May 10 payment dates (per the April 22 correction emails and the April 10 invoice emails)."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's email to David reports that the mid-move deals (Mosaic Okoye, Hartley, Tanaka; GreenStack Zhao + Reyes) remain in progress and were intentionally left as-is.",
+   "evidence": "Check the email body to David for the mid-move deals (Mosaic Okoye/Hartley/Tanaka and the GreenStack Zhao + Reyes relocations) reported as still in progress / intentionally unchanged.",
+   "cb_justification": "The prompt asks David to know where every account stands; the mid-move deals were deliberately not advanced, which is a decision David needs visibility on."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's email to David identifies Mosaic Robotics as the account closest to walking, citing the basis (including at least the 90K prototype damage, the 40K insurance gap, and the executive escalation; the newest-client / short-tenure point may also be noted).",
+   "evidence": "Check the email body to David for Mosaic Robotics named as the account closest to walking, with its basis (90K prototype damage / 40K insurance gap / executive escalation). The newest-client status is acceptable to include but not required.",
+   "cb_justification": "The prompt says what David really wants is which account is closest to walking, based on what actually happened to the book this month. This is the central analytical conclusion the email must convey. The damage, gap, and executive escalation are the load-bearing basis; the newest-client point is a supporting characterization a valid email may frame differently, so it is not mandatory."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's email to David reports that a risk note has been logged against Mosaic in the CRM and that the previously promised David + Emeka + Tamara + Rafael call is now booked.",
+   "evidence": "Check the email body to David for confirmation that the CRM risk note was logged on Mosaic AND that the prototype-damage call with David, Tamara, and Rafael is now on the calendar.",
+   "cb_justification": "The prompt asks David to know what changed; logging the risk note and booking the promised call are the two follow-up actions taken on the at-risk account that David needs confirmed. Both are the Mosaic at-risk follow-up reported in one breath."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent's email to David reports that Tideway Hospitality Tech has come back for a second wave (two Q3 relocations, Charlotte and Nashville, $15,000) and that a new CRM deal has been teed up.",
+   "evidence": "Check the email body to David for Tideway's second-wave expansion (two Q3 relocations to Charlotte and Nashville, $15,000) and confirmation a new CRM deal was created.",
+   "cb_justification": "The prompt says a client came back wanting to do more and asks David to know what changed; teeing up the Tideway expansion is one of the write actions David needs reported."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent posts a short account-by-account status message for Emeka's book to the #customer-engagement Slack channel (C002).",
+   "evidence": "Look for a Slack message posted to channel C002 (#customer-engagement) containing a brief, account-by-account status summary of Emeka's book.",
+   "cb_justification": "The prompt says to post a short version in the team channel so the coordinators can see where each of Emeka's accounts sits going into Monday. The Customer Engagement team channel is C002 (#customer-engagement)."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's Slack message reports that the two April billing deals (Sunbelt and Palmetto) are closed/won.",
+   "evidence": "Check the Slack message in C002 for the Sunbelt and Palmetto April billing deals reported as closed/won.",
+   "cb_justification": "The team-channel version is the short status so coordinators can see where each account sits going into Monday; the closed billing deals are part of that status."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's Slack message flags Mosaic Robotics as the at-risk account (closest to walking) and notes the Tideway second-wave expansion was teed up.",
+   "evidence": "Check the Slack message in C002 for Mosaic Robotics flagged as the account closest to walking AND the Tideway second-wave expansion noted as teed up.",
+   "cb_justification": "The short status for coordinators must surface the at-risk account and the new Tideway expansion so the team sees where the book sits going into Monday. Both are part of the same one-glance status line for coordinators."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent identifies Mosaic Robotics as the account closest to walking and does not select Vectral Systems, Sunbelt Venture Partners, or any other account.",
+   "evidence": "Check the final response, the risk note, the email to David, and the Slack message. Confirm the at-risk account identified is Mosaic Robotics. The criterion FAILS if Vectral Systems or Sunbelt Venture Partners is named as the account closest to walking (Vectral is another AM's account; Sunbelt's escalation is resolved per the David/Victoria thread).",
+   "cb_justification": "The prompt asks for the real at-risk account based on what actually happened to Emeka's book. Mosaic Robotics is correct: its prototype damage claim ($90K damage, $40K uncovered gap, newest client, Tamara Byrd/Rafael Mendes exec escalation) is the only churn signal in Emeka's book still OPEN and unresolved going into the review (the promised joint call has not even been held). Two decoys must NOT be chosen: (1) Vectral Systems carries a genuine at_risk signal, but it is Mina Hashimoto's account (per Airtable Client Accounts), not Emeka's; (2) Sunbelt Venture Partners had a real COO-level pricing escalation, but that thread is explicitly RESOLVED before the review (David's reply explains the misattached nonprofit PDF and confirms the commercial rate; Victoria's acknowledgement accepts it and closes the matter) - relationship intact, no live churn risk."
+  },
+  {
+   "index": "C20",
+   "category": "process",
+   "criterion": "The Agent verifies that the Sunbelt April billing closed out - the corrected invoice went to the client and the payment date was confirmed - before marking the Sunbelt billing deal (crm_deal_5464b8677e6a) won.",
+   "evidence": "In the trajectory, confirm the Agent reviews the Sunbelt billing evidence (the April 22 correction confirming INV-2026-0398 at $4,800 and the April 10 invoice confirming the May 10 payment date) before the stage update on crm_deal_5464b8677e6a.",
+   "cb_justification": "The prompt says the two April billing deals wrapped 'once the corrected invoices went out to the clients and the payment dates were confirmed,' making that verification a prerequisite for the stage change. No Outcome rubric can capture the ordering (the stage update passes regardless of whether the agent checked the billing first), so this is a Process rubric."
+  },
+  {
+   "index": "C21",
+   "category": "process",
+   "criterion": "The Agent verifies that the Palmetto April billing closed out - the corrected invoice went to the client and the payment date was confirmed - before marking the Palmetto billing deal (crm_deal_7ec892bc6085) won.",
+   "evidence": "In the trajectory, confirm the Agent reviews the Palmetto billing evidence (the April 22 correction confirming INV-2026-0399 at $2,400 at the nonprofit rate and the April 10 invoice confirming the May 10 payment date) before the stage update on crm_deal_7ec892bc6085.",
+   "cb_justification": "The prompt says the two April billing deals wrapped 'once the corrected invoices went out to the clients and the payment dates were confirmed,' making that verification a prerequisite for the stage change. No Outcome rubric can capture the ordering (the stage update passes regardless of whether the agent checked the billing first), so this is a Process rubric."
+  }
+ ]
+}

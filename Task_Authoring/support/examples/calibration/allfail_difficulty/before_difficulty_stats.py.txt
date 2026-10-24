@@ -1,0 +1,299 @@
+#!/usr/bin/env python3
+"""Compute the Spec V2 baseline difficulty gates from a rubric x rollout matrix.
+
+Gates (strictest of QC Spec V2, Oct 2 2026, and Evals references/rules/scoring.json —
+see setup/GEN_EXECUTION.md §3):
+  - Errored runs:        <= 2 of 6 (3+ errored = Fail)
+  - pass@1:              <= 50% of completed rollouts pass every rubric (<= 3 of 6)
+  - Avg weighted pass:   < 75% gate (Evals scoring.json; QC Spec V2 alone allows < 90%)
+  - Per-rollout spread:  population standard deviation of the per-rollout weighted pass
+                         rates within 0.1-0.3 (Evals scoring.json: > 0.3 suggests ambiguous
+                         rubrics, < 0.1 a deterministic task that needs friction)
+  - Failure patterns:    >= 2 distinct patterns; largest <= 50% of failing rollouts.
+                         Two failing rollouts are the same pattern unless their
+                         rubric results differ on >= 2 rubrics.
+  - Horizon:             tool calls of the golden run (100% rollout) if any,
+                         else the average over completed rollouts.
+                         normal 50-100, long-horizon 100+. Under = Fail,
+                         over the normal band = Non-fail (Borderline Horizon).
+
+Input JSON (build it from 10_Baseline_Verifier_Results.md + the trajectories):
+
+  {
+    "task_type": "normal" | "long-horizon"   (or "Normal Horizon" | "Long Horizon"),
+    "rubrics": [{"id": "R1", "weight": 3}, ...],
+    "rollouts": [
+      {"id": "run-1", "status": "completed", "tool_calls": 87,
+       "results": {"R1": true, "R2": false, ...}},
+      {"id": "run-6", "status": "errored"}
+    ]
+  }
+
+Usage:
+  python3 Task_Authoring/tools/difficulty_stats.py <input.json>          # markdown
+  python3 Task_Authoring/tools/difficulty_stats.py <input.json> --json   # machine-readable
+  python3 Task_Authoring/tools/difficulty_stats.py --self-test
+"""
+from __future__ import annotations
+
+import json
+import statistics
+import sys
+from pathlib import Path
+
+ALLOWED_WEIGHTS = {1, 3, 5}
+TIERS = {"normal": (50, 100), "long-horizon": (100, None)}
+ALIASES = {"normal horizon": "normal", "long horizon": "long-horizon"}
+
+
+def _fail(message: str) -> None:
+    raise ValueError(message)
+
+
+def validate(data: dict) -> None:
+    task_type = ALIASES.get(str(data.get("task_type", "")).strip().lower(), data.get("task_type"))
+    data["task_type"] = task_type
+    if task_type not in TIERS:
+        _fail(f"task_type must be one of {sorted(TIERS)}; got {task_type!r}")
+    rubrics = data.get("rubrics") or []
+    if not rubrics:
+        _fail("rubrics is empty")
+    ids = [r["id"] for r in rubrics]
+    if len(ids) != len(set(ids)):
+        _fail("duplicate rubric ids")
+    for r in rubrics:
+        if r.get("weight") not in ALLOWED_WEIGHTS:
+            _fail(f"rubric {r['id']}: weight must be 1, 3 or 5 (got {r.get('weight')!r})")
+    rollouts = data.get("rollouts") or []
+    if not rollouts:
+        _fail("rollouts is empty")
+    for ro in rollouts:
+        status = ro.get("status")
+        if status not in ("completed", "errored"):
+            _fail(f"rollout {ro.get('id')}: status must be completed or errored")
+        if status == "completed":
+            results = ro.get("results") or {}
+            missing = [i for i in ids if i not in results]
+            if missing:
+                _fail(f"rollout {ro['id']}: no result for rubrics {missing}")
+            if not isinstance(ro.get("tool_calls"), int):
+                _fail(f"rollout {ro['id']}: tool_calls must be an integer")
+
+
+def group_patterns(failing: list[dict], ids: list[str]) -> list[list[str]]:
+    """Single-linkage grouping: rollouts differing on <= 1 rubric share a pattern."""
+    failed_sets = {ro["id"]: {i for i in ids if not ro["results"][i]} for ro in failing}
+    names = list(failed_sets)
+    parent = {n: n for n in names}
+
+    def find(n: str) -> str:
+        while parent[n] != n:
+            parent[n] = parent[parent[n]]
+            n = parent[n]
+        return n
+
+    for i, a in enumerate(names):
+        for b in names[i + 1:]:
+            if len(failed_sets[a] ^ failed_sets[b]) <= 1:
+                parent[find(a)] = find(b)
+    groups: dict[str, list[str]] = {}
+    for n in names:
+        groups.setdefault(find(n), []).append(n)
+    return sorted(groups.values(), key=len, reverse=True)
+
+
+def compute(data: dict) -> dict:
+    validate(data)
+    ids = [r["id"] for r in data["rubrics"]]
+    weights = {r["id"]: r["weight"] for r in data["rubrics"]}
+    total_weight = sum(weights.values())
+    completed = [ro for ro in data["rollouts"] if ro["status"] == "completed"]
+    errored = [ro["id"] for ro in data["rollouts"] if ro["status"] == "errored"]
+
+    per_rollout = []
+    for ro in completed:
+        passed_weight = sum(weights[i] for i in ids if ro["results"][i])
+        failed = [i for i in ids if not ro["results"][i]]
+        per_rollout.append({
+            "id": ro["id"],
+            "tool_calls": ro["tool_calls"],
+            "weighted_pass_rate": passed_weight / total_weight,
+            "failed_rubrics": failed,
+            "full_pass": not failed,
+        })
+
+    n = len(completed)
+    full_passes = [r["id"] for r in per_rollout if r["full_pass"]]
+    pass_at_1 = len(full_passes) / n if n else 0.0
+    avg_weighted = sum(r["weighted_pass_rate"] for r in per_rollout) / n if n else 0.0
+    rates = [r["weighted_pass_rate"] for r in per_rollout]
+    sd = statistics.pstdev(rates) if n >= 2 else 0.0
+    sd_sample = statistics.stdev(rates) if n >= 2 else 0.0
+
+    failing = [ro for ro in completed if any(not ro["results"][i] for i in ids)]
+    groups = group_patterns(failing, ids)
+    failed_sets = {r["id"]: set(r["failed_rubrics"]) for r in per_rollout}
+    chained = []
+    for g in groups:
+        for i, a in enumerate(g):
+            for b in g[i + 1:]:
+                if len(failed_sets[a] ^ failed_sets[b]) >= 2:
+                    chained.append([a, b])
+    largest_share = (len(groups[0]) / len(failing)) if failing else 0.0
+
+    all_fail = [i for i in ids if completed and all(not ro["results"][i] for ro in completed)]
+
+    lo, hi = TIERS[data["task_type"]]
+    if full_passes:
+        basis = "golden run(s)"
+        counts = [r["tool_calls"] for r in per_rollout if r["full_pass"]]
+    else:
+        basis = "average of completed rollouts"
+        counts = [sum(r["tool_calls"] for r in per_rollout) / n] if n else [0]
+    horizon_low, horizon_high = min(counts), max(counts)
+    if horizon_low < lo:
+        horizon = "FAIL (Wrong Horizon)"
+    elif hi is not None and horizon_high > hi:
+        horizon = "NON-FAIL (Borderline Horizon — above the tier)"
+    else:
+        horizon = "PASS"
+
+    gates = {
+        "errored_runs": {
+            "value": f"{len(errored)} errored of {len(data['rollouts'])}",
+            "rule": "<= 2 errored (3+ = Fail)",
+            "verdict": "PASS" if len(errored) <= 2 else "FAIL (Too Many Erroneous Runs)",
+        },
+        "pass_at_1": {
+            "value": f"{len(full_passes)}/{n} = {pass_at_1:.0%}",
+            "rule": "<= 50% (<= 3 of 6)",
+            "verdict": "PASS" if pass_at_1 <= 0.5 else "FAIL (Too Easy)",
+        },
+        "avg_weighted_pass_rate": {
+            "value": f"{avg_weighted:.1%}",
+            "rule": "< 75% (Evals); QC Spec V2 alone < 90%",
+            "verdict": "PASS" if avg_weighted < 0.75
+            else "FAIL (Avg Pass Rate Too High — Evals < 75%; still under the QC Spec V2 90% gate)" if avg_weighted < 0.90
+            else "FAIL (Avg Pass Rate Too High)",
+        },
+        "per_rollout_sd": {
+            "value": f"{sd:.3f} (sample SD {sd_sample:.3f})",
+            "rule": "0.1-0.3 (population SD of per-rollout weighted pass rates)",
+            "verdict": "PASS" if 0.1 <= sd <= 0.3
+            else "FAIL (Spread Too Low — deterministic; add friction)" if sd < 0.1
+            else "FAIL (Spread Too High — check rubric ambiguity)",
+        },
+        "failure_patterns": {
+            "value": f"{len(groups)} pattern(s); largest {largest_share:.0%} of {len(failing)} failing",
+            "rule": ">= 2 patterns (differ on >= 2 rubrics); largest <= 50%",
+            "verdict": (
+                "FAIL (Too Few Signatures)" if len(groups) < 2
+                else "FAIL (Signature Over-Concentrated)" if largest_share > 0.5
+                else "PASS"
+            ),
+        },
+        "horizon": {
+            "value": f"{basis}: " + ", ".join(f"{c:.0f}" for c in counts),
+            "rule": f"{data['task_type']} tier {lo}-{hi if hi else '500+'}",
+            "verdict": horizon,
+        },
+    }
+    return {
+        "completed": n,
+        "errored": errored,
+        "per_rollout": per_rollout,
+        "golden_runs": full_passes,
+        "all_fail_rubrics": all_fail,
+        "patterns": groups,
+        "chained_pattern_merges": chained,
+        "gates": gates,
+        "blocking": [k for k, g in gates.items() if g["verdict"].startswith("FAIL")],
+    }
+
+
+def to_markdown(result: dict) -> str:
+    lines = ["| Rollout | Tool calls | Weighted pass | Failed rubrics |", "|---|---|---|---|"]
+    for r in result["per_rollout"]:
+        failed = ", ".join(r["failed_rubrics"]) or "— (golden run)"
+        lines.append(f"| {r['id']} | {r['tool_calls']} | {r['weighted_pass_rate']:.1%} | {failed} |")
+    for e in result["errored"]:
+        lines.append(f"| {e} | — | errored (excluded) | — |")
+    lines += ["", "| Gate | Value | Rule | Verdict |", "|---|---|---|---|"]
+    for name, g in result["gates"].items():
+        lines.append(f"| {name} | {g['value']} | {g['rule']} | {g['verdict']} |")
+    lines += ["", "Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):"]
+    for i, g in enumerate(result["patterns"], 1):
+        lines.append(f"- Pattern {i}: {', '.join(g)}")
+    if result["chained_pattern_merges"]:
+        pairs = "; ".join(" vs ".join(p) for p in result["chained_pattern_merges"])
+        lines.append(f"- Note: chained merge — these pairs differ on >= 2 rubrics but were joined through an intermediate rollout: {pairs}. A reviewer may count them separately.")
+    lines.append(f"All-fail rubrics (completed rollouts only): {', '.join(result['all_fail_rubrics']) or 'none'}")
+    lines.append(f"Blocking gates: {', '.join(result['blocking']) or 'none'}")
+    return "\n".join(lines)
+
+
+def _self_test() -> None:
+    rubrics = [{"id": f"C{i}", "weight": 3} for i in range(1, 9)]
+
+    def run(rid: str, failed: set[str], calls: int = 80) -> dict:
+        return {"id": rid, "status": "completed", "tool_calls": calls,
+                "results": {r["id"]: r["id"] not in failed for r in rubrics}}
+
+    # QC Spec V2 example 1: {2,4,6} x3 and {4,6,8} x3 -> two patterns, 50% each -> PASS
+    ex1 = {"task_type": "normal", "rubrics": rubrics, "rollouts": [
+        run("R1", {"C2", "C4", "C6"}), run("R2", {"C4", "C6", "C8"}), run("R3", {"C2", "C4", "C6"}),
+        run("R4", {"C4", "C6", "C8"}), run("R5", {"C4", "C6", "C8"}), run("R6", {"C2", "C4", "C6"})]}
+    r1 = compute(ex1)
+    assert len(r1["patterns"]) == 2, r1["patterns"]
+    assert r1["gates"]["failure_patterns"]["verdict"] == "PASS"
+
+    # QC Spec V2 example 2: {2,4,6} and {4,6} differ on one rubric -> one pattern -> FAIL
+    ex2 = {"task_type": "normal", "rubrics": rubrics, "rollouts": [
+        run("R1", {"C2", "C4", "C6"}), run("R2", {"C4", "C6"}), run("R3", {"C2", "C4", "C6"}),
+        run("R4", {"C4", "C6"}), run("R5", {"C4", "C6"}), run("R6", {"C2", "C4", "C6"})]}
+    assert compute(ex2)["gates"]["failure_patterns"]["verdict"].startswith("FAIL (Too Few")
+
+    # 4 of 6 full passes -> Too Easy; golden runs set the horizon basis
+    ex3 = {"task_type": "long-horizon", "rubrics": rubrics, "rollouts": [
+        run("R1", set(), 130), run("R2", set(), 120), run("R3", set(), 110), run("R4", set(), 140),
+        run("R5", {"C1", "C2"}, 60), {"id": "R6", "status": "errored"}]}
+    r3 = compute(ex3)
+    assert r3["gates"]["pass_at_1"]["verdict"].startswith("FAIL (Too Easy)")
+    assert r3["gates"]["horizon"]["verdict"] == "PASS"
+    assert r3["completed"] == 5 and r3["errored"] == ["R6"]
+
+    # Normal task averaging 120 calls -> Borderline Horizon (non-fail)
+    ex4 = {"task_type": "normal", "rubrics": rubrics, "rollouts": [
+        run(f"R{i}", {"C1", f"C{i + 1}"} if i % 2 else {"C3", "C4", "C5"}, 120) for i in range(1, 7)]}
+    assert compute(ex4)["gates"]["horizon"]["verdict"].startswith("NON-FAIL")
+
+    # Identical scores -> SD 0 -> deterministic; mixed scores -> SD inside the band
+    assert compute(ex1)["gates"]["per_rollout_sd"]["verdict"].startswith("FAIL (Spread Too Low")
+    ex5 = {"task_type": "Long Horizon", "rubrics": rubrics, "rollouts": [
+        run("R1", set(), 300), run("R2", {"C1", "C2", "C3", "C4"}, 400), run("R3", {"C5", "C6"}, 350),
+        run("R4", {"C1", "C2", "C7", "C8", "C3"}, 500), run("R5", {"C6", "C7"}, 420), run("R6", {"C2", "C3", "C4"}, 380)]}
+    r5 = compute(ex5)
+    assert r5["gates"]["per_rollout_sd"]["verdict"] == "PASS", r5["gates"]["per_rollout_sd"]
+    assert r5["gates"]["avg_weighted_pass_rate"]["verdict"] == "PASS", r5["gates"]["avg_weighted_pass_rate"]
+    print("self-test: ok")
+
+
+def main(argv: list[str]) -> int:
+    if "--self-test" in argv:
+        _self_test()
+        return 0
+    paths = [a for a in argv if not a.startswith("--")]
+    if len(paths) != 1:
+        print(__doc__, file=sys.stderr)
+        return 2
+    result = compute(json.loads(Path(paths[0]).read_text()))
+    print(json.dumps(result, indent=2) if "--json" in argv else to_markdown(result))
+    return 1 if result["blocking"] else 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main(sys.argv[1:]))
+    except (ValueError, KeyError, json.JSONDecodeError) as error:
+        print(f"difficulty_stats: {error}", file=sys.stderr)
+        raise SystemExit(2)

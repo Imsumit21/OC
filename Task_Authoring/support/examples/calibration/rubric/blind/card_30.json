@@ -1,0 +1,182 @@
+{
+ "card_index": 30,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Hey, I want to get ahead of the Terraform relocations before they blow up on us. Rachel sent over the first three employees a few days ago and I forwarded it along, and I know it's gotten a little messy internally since then with the account changing hands and that whole reply-all situation. Mina's running point now, which is fine, but I closed this deal and I still feel like I own making sure it doesn't fall apart, especially after the AWS thing where I didn't flag something I should have.\n\nCan you check where things actually stand on Priya, Marcus, and Samantha's moves? I want to know if ops is actually tracking these three the way we told Rachel we would, so make sure each of them has a real relocation record set up on our side reflecting what she sent us, not just the account-level note. Rachel gave us real specifics on each of them when she followed up, not just names and cities, so make sure none of that got lost in the handoff mess and that it actually shows up in their records, not just buried in an email thread somewhere. We also don't have anything set up to actually track this account the way we do for our other clients, so get that started too, every other client we run end-to-end relocations for has their own project with tickets for the individual moves, and Terraform doesn't have that yet even though Rachel's already expecting dozens more of these. If anything in our financials doesn't line up with the rate we agreed on with her, flag it to Marcus \u2014 don't touch it yourself. And if there's a staffing concern that only Chloe or Elena can actually decide, send it straight to them. If there's a real risk these moves slip before her people are supposed to start, I want Rachel to hear it from us first. Loop in David too since he's been managing the fallout from the pricing leak.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent creates an Airtable relocation record for Priya Dasgupta tracking her Austin, TX to Chicago, IL move for Terraform Digital / Vantage Distributed.",
+   "evidence": "Look for an Airtable create/update record call (or equivalent) in the Relocations table with Name 'Priya Dasgupta', Company referencing Terraform Digital or Vantage Distributed, Origin Austin TX, Destination Chicago IL.",
+   "cb_justification": "Priya's move was requested by Rachel Nguyen on April 22 with a May 5 move-in date, but no Airtable Relocations record exists for her despite the Client Account record showing 'Total Relocations: 3.' The prompt asks the agent to make MoveOps' own tracking reflect what was actually agreed with Rachel."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent creates an Airtable relocation record for Marcus Liu tracking his Portland, OR to New York, NY move for Terraform Digital / Vantage Distributed.",
+   "evidence": "Look for an Airtable create/update record call in the Relocations table with Name 'Marcus Liu', Company referencing Terraform Digital or Vantage Distributed, Origin Portland OR, Destination New York NY.",
+   "cb_justification": "Marcus Liu's move was requested with a target move-in around May 12, but no Airtable Relocations record exists for him. This is an independent record from Priya's and Samantha's and must be checked on its own."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent creates an Airtable relocation record for Samantha Obi tracking her Denver, CO to San Francisco, CA move for Terraform Digital / Vantage Distributed.",
+   "evidence": "Look for an Airtable create/update record call in the Relocations table with Name 'Samantha Obi', Company referencing Terraform Digital or Vantage Distributed, Origin Denver CO, Destination San Francisco CA.",
+   "cb_justification": "Samantha Obi's move was requested with a target move-in around May 8, but no Airtable Relocations record exists for her. This is an independent record from Priya's and Marcus's and must be checked on its own."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's Airtable relocation record for Priya Dasgupta (see rubric 1) has a Move Start Date or Move End Date consistent with May 5, not a different or unrelated date.",
+   "evidence": "Compare the Move Start Date / Move End Date field written in the Airtable record created for Priya Dasgupta (see rubric 1) against May 5 (or the first week of May as communicated by Rachel).",
+   "cb_justification": "The move-in date is the operational anchor for Priya's relocation. Getting the company or status right but the date wrong would leave ops scheduling against bad information, directly undermining the prompt's goal of making MoveOps' tracking reflect what was agreed with Rachel."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's Airtable relocation record for Marcus Liu (see rubric 2) has a Move Start Date or Move End Date consistent with May 12, not a different or unrelated date.",
+   "evidence": "Compare the Move Start Date / Move End Date field written in the Airtable record created for Marcus Liu (see rubric 2) against May 12 (or mid-May as communicated by Rachel).",
+   "cb_justification": "The move-in date is the operational anchor for Marcus's relocation. Getting the company or status right but the date wrong would leave ops scheduling against bad information, directly undermining the prompt's goal of making MoveOps' tracking reflect what was agreed with Rachel."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's Airtable relocation record for Samantha Obi (see rubric 3) has a Move Start Date or Move End Date consistent with May 8, not a different or unrelated date.",
+   "evidence": "Compare the Move Start Date / Move End Date field written in the Airtable record created for Samantha Obi (see rubric 3) against May 8 (or the second week of May as communicated by Rachel).",
+   "cb_justification": "The move-in date is the operational anchor for Samantha's relocation. Getting the company or status right but the date wrong would leave ops scheduling against bad information, directly undermining the prompt's goal of making MoveOps' tracking reflect what was agreed with Rachel."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent's Airtable relocation record for Priya Dasgupta includes her special requirement of pet-friendly housing for her cat (e.g., references a cat or pet-friendly need), not just her name, company, and route.",
+   "evidence": "Check the Special Requirements field (or equivalent) of the Airtable record created for Priya Dasgupta (see rubric 1) for a reference to her cat or pet-friendly housing need.",
+   "cb_justification": "Rachel's relocation request and follow-up both flagged Priya's cat as a special requirement the housing search needs to account for. A record with only name/route/date loses this detail and would send ops into the search without it, which is exactly what the prompt asks the agent to prevent from getting lost in the handoff."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's Airtable relocation record for Marcus Liu includes his special requirement around his home studio equipment (e.g., references multiple monitors, a standing desk, or specialty packing for design materials), not just his name, company, and route.",
+   "evidence": "Check the Special Requirements field (or equivalent) of the Airtable record created for Marcus Liu (see rubric 2) for a reference to his home studio, monitors, standing desk, or specialty packing needs.",
+   "cb_justification": "Rachel's original email and Mina's intro email both flag Marcus's large home studio setup (multiple monitors, standing desk, ~15 boxes of design materials) as needing careful breakdown and reassembly. Losing this in the handoff risks ops underestimating the complexity of his move."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's Airtable relocation record for Samantha Obi includes her timing constraint of needing to start at the Terraform SF office by May 11 at the latest (or similar reference to her hard start-date deadline), not just her name, company, and route.",
+   "evidence": "Check the Special Requirements field (or equivalent) of the Airtable record created for Samantha Obi (see rubric 3) for a reference to the May 11 SF office start deadline or similar urgency framing.",
+   "cb_justification": "Rachel's original email specifically calls out that Samantha must start at the SF office by May 11 at the latest, which is the tightest deadline of the three moves. Losing this detail could lead ops to deprioritize her move relative to Priya's and Marcus's."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent creates a Linear project for Terraform Digital relocations, matching the pattern of the dedicated relocation-tracking projects that exist for MoveOps' other core clients (BrightLoop, Canopy, GreenStack, Mosaic, PivotPoint, and Vectral).",
+   "evidence": "Look for a Linear create-project call establishing a project for Terraform Digital (or Vantage Distributed) relocations, comparable in naming/structure to the existing client relocation projects (e.g., proj_brightloop, proj_canopy).",
+   "cb_justification": "All 6 other core clients with end-to-end relocation service have their own Linear project under team_relocations, but no equivalent project exists for Terraform Digital despite it being the company's largest account with more relocations already expected. The prompt explicitly says this tracking infrastructure needs to get started."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent creates at least one Linear issue tracking Priya Dasgupta's relocation within the new Terraform Digital relocations project (either a single consolidated issue for her move, or multiple issues such as separate apartment/flight/moving tickets, matching the granularity already used for other clients in this team).",
+   "evidence": "Look for at least one Linear create-issue call referencing Priya Dasgupta's move, associated with the Terraform Digital relocations project created in rubric 10.",
+   "cb_justification": "The prompt asks for per-move tracking to be set up the same way it exists for other clients. The existing universe data itself splits each employee's move into separate apartment/flight/moving tickets for other clients (e.g., Vectral), so either one consolidated issue per employee or that same three-ticket split is a valid way to satisfy the goal of getting Priya's move tracked. Priya's tracking is independent of Marcus's and Samantha's and should be checked on its own."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent creates at least one Linear issue tracking Marcus Liu's relocation within the new Terraform Digital relocations project (either a single consolidated issue for his move, or multiple issues such as separate apartment/flight/moving tickets, matching the granularity already used for other clients in this team).",
+   "evidence": "Look for at least one Linear create-issue call referencing Marcus Liu's move, associated with the Terraform Digital relocations project created in rubric 10.",
+   "cb_justification": "The prompt asks for per-move tracking to be set up the same way it exists for other clients. The existing universe data itself splits each employee's move into separate apartment/flight/moving tickets for other clients (e.g., Vectral), so either one consolidated issue per employee or that same three-ticket split is a valid way to satisfy the goal of getting Marcus's move tracked. Marcus's tracking is independent of Priya's and Samantha's and should be checked on its own."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent creates at least one Linear issue tracking Samantha Obi's relocation within the new Terraform Digital relocations project (either a single consolidated issue for her move, or multiple issues such as separate apartment/flight/moving tickets, matching the granularity already used for other clients in this team).",
+   "evidence": "Look for at least one Linear create-issue call referencing Samantha Obi's move, associated with the Terraform Digital relocations project created in rubric 10.",
+   "cb_justification": "The prompt asks for per-move tracking to be set up the same way it exists for other clients. The existing universe data itself splits each employee's move into separate apartment/flight/moving tickets for other clients (e.g., Vectral), so either one consolidated issue per employee or that same three-ticket split is a valid way to satisfy the goal of getting Samantha's move tracked. Samantha's tracking is independent of Priya's and Marcus's and should be checked on its own."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent does not convert or finalize the $6,560 QuickBooks estimate (EST-2026-0423) into an invoice, and does not unilaterally overwrite Hana Kim's draft estimate with a new total, since the estimate is still explicitly pending Mina Hashimoto's and Marcus Thorne's review per Hana's #finance message.",
+   "evidence": "Check the trajectory for any QuickBooks action that converts EST-2026-0423 to an invoice or directly overwrites its line items/total. None should be present; the correction should instead appear as a reported finding and/or a routed question to Mina, Marcus, Chloe, or Elena.",
+   "cb_justification": "Hana's own message says the estimate is 'ready for your proposal -- let me know if you need any adjustments before I convert to invoice' and is still pending Marcus's review of the volume pricing structure. The agent should flag the pricing mismatch to the people who own that decision rather than silently changing or finalizing someone else's pending financial draft, consistent with the prompt's instruction not to make calls that belong to someone else."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent sends a message (email or Slack) to Marcus Thorne ([marcus.thorne@moveops.com](mailto:marcus.thorne@moveops.com)) flagging that the QuickBooks estimate EST-2026-0423 ($6,560) does not match the agreed $7,500 relocation batch rate for Terraform Digital.",
+   "evidence": "Look for a send_email or conversations_add_message call to marcus.thorne@moveops.com referencing the pricing discrepancy, the estimate total ($6,560), or the agreed batch rate ($7,500 / $2,500 per move).",
+   "cb_justification": "The prompt explicitly says 'flag it to Marcus don't touch it yourself' regarding any financial discrepancy with the agreed rate. Reporting the mismatch only in the final response to Julian without directly notifying Marcus Thorne (Head of Finance) does not fulfill this instruction Marcus is the designated owner of the number and must be the one to correct it."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent sends a message (email or Slack) to Chloe Vance ([chloe.vance@moveops.com](mailto:chloe.vance@moveops.com)) and/or Elena Rostova ([elena.rostova@moveops.com](mailto:elena.rostova@moveops.com)) escalating the Terraform coordinator staffing question rather than deciding it unilaterally.",
+   "evidence": "Look for a send_email or conversations_add_message call to chloe.vance@moveops.com and/or elena.rostova@moveops.com (or the #executive/#operations channels they are active in) about the Terraform coordinator hire / staffing decision.",
+   "cb_justification": "The prompt explicitly says any call only Chloe or Elena can make should be sent to them, not decided by the assistant. The dedicated Terraform coordinator hire was represented to the client as authorized but, per Chloe's and David's most recent messages, the role has not actually been posted while May coordinator capacity is already maxed."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's escalation to Chloe Vance and/or Elena Rostova states that the Terraform relocation coordinator role has not actually been posted despite being represented to the client as authorized.",
+   "evidence": "Check the body of the escalation message identified in rubric 17 for language conveying that the coordinator role has not been posted or does not yet exist, despite being described to the client as authorized or in progress.",
+   "cb_justification": "This is the central hidden fact the agent must surface: Catalina's and Mina's emails told Rachel Nguyen a dedicated coordinator hire was authorized, but Chloe's and David's internal messages from April 24-25 confirm the role was never posted. Without this specific fact, the escalation doesn't actually flag the real risk."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent ensures Rachel Nguyen gets a proactive update on the status of the three relocations from MoveOps, either by (a) sending her an email directly ([rachel.nguyen@terraformdigital.com](mailto:rachel.nguyen@terraformdigital.com)) with Mina Hashimoto included as a recipient or CC, or (b) sending Mina Hashimoto ([mina.hashimoto@moveops.com](mailto:mina.hashimoto@moveops.com)) a complete, ready-to-send message for Rachel along with a clear recommendation that she send it promptly, given Mina is the account manager of record for client-facing Terraform communications following the reply-all incident.",
+   "evidence": "Look for either: a send_email call to rachel.nguyen@terraformdigital.com (with Mina Hashimoto in To/CC), or a send_email/message to mina.hashimoto@moveops.com that includes a complete draft or specific recommended content for a message to Rachel along with an explicit recommendation to send it now.",
+   "cb_justification": "The prompt says 'I want Rachel to hear it from us' rather than naming Julian specifically as the sender, and Mina was explicitly assigned as AM of record for all Terraform client communications after the reply-all incident. Routing a complete, urgent, ready-to-send update through Mina is a defensible way to get Rachel the heads-up without reintroducing the exact uncoordinated-communication failure mode the account just experienced. A response that produces no concrete update for Rachel at all (direct or routed) does not satisfy this requirement."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent's proactive update to Rachel Nguyen (per rubric 19, whether sent directly or drafted for Mina) acknowledges a real risk to the May 5, May 8, or May 12 move-in timelines (or similar honest framing that the moves are not yet actively in motion) rather than implying the relocations are already fully on track.",
+   "evidence": "Read the content of the Rachel-facing update identified in rubric 19 (whether sent directly or drafted for Mina) and check whether it communicates genuine status/risk on timing rather than a generic confirmation that all three moves are proceeding on schedule.",
+   "cb_justification": "Given that no relocation coordination had started and coordinator capacity is maxed, a response that reassures Rachel everything is on schedule would be misleading and contradicts the prompt's instruction that she should hear about real risk from MoveOps directly."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent's proactive update to Rachel Nguyen (per rubric 19, whether sent directly or drafted for Mina) does not restate specific internal figures such as the $7,500 batch price breakdown, the volume discount tier percentages (8% / 12%), or the 25% internal margin floor.",
+   "evidence": "Read the content of the Rachel-facing update identified in rubric 19 (whether sent directly or drafted for Mina) and check it does not restate the internal discount tiers, the 25% margin floor figure, or other internal-only pricing strategy details from the David/Marcus/Alejandro/Catalina pricing thread.",
+   "cb_justification": "The reply-all incident is the live context for this account: Rachel already has more internal pricing visibility than she should, and Marcus Thorne's guidance was explicitly not to share the tiered pricing structure externally without sign-off. Repeating internal figures to her again would repeat the same mistake the task is set against."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent sends a message (email or Slack) to David Chen ([david.chen@moveops.com](mailto:david.chen@moveops.com)) summarizing the findings and actions taken on the Terraform relocation batch.",
+   "evidence": "Look for a send_email or conversations_add_message call to david.chen@moveops.com (or a channel he is active in, such as #customer-engagement) summarizing the Terraform relocation tracking findings and/or fixes.",
+   "cb_justification": "The prompt explicitly asks to loop in David since he has been managing the fallout from the pricing leak and account handoff."
+  },
+  {
+   "index": "C22",
+   "category": "process",
+   "criterion": "The Agent corrects MoveOps' internal Airtable records for the Terraform relocation batch before producing the Rachel-facing update described in rubric 19 (whether sent directly or drafted for Mina to send).",
+   "evidence": "Check the trajectory sequence: the Airtable record creation calls for Priya Dasgupta, Marcus Liu, and Samantha Obi (see rubrics 1, 2, 3) should appear before the Rachel-facing communication or Mina draft identified in rubric 19. If the Rachel update was produced while internal tracking was still uncorrected, the Agent represented a status it had not yet fixed.",
+   "cb_justification": "The prompt's request that Rachel hear about real risk from MoveOps 'first, not find out the hard way' only makes sense if the agent has actually verified and fixed the internal tracking picture before representing the account's status to the client. A Rachel-facing update produced before the Airtable records are corrected would be reporting a status the agent has not actually confirmed."
+  },
+  {
+   "index": "C23",
+   "category": "process",
+   "criterion": "The Agent escalates the coordinator staffing gap to Chloe Vance or Elena Rostova before producing the Rachel-facing update described in rubric 19 (whether sent directly or drafted for Mina to send).",
+   "evidence": "Check the trajectory sequence: the message to Chloe Vance or Elena Rostova identified in rubric 17 should appear before the Rachel-facing communication or Mina draft identified in rubric 19. If the Rachel update was produced before Chloe/Elena were ever notified of the staffing gap, the Agent communicated a risk posture it had not yet escalated internally.",
+   "cb_justification": "Surfacing the real staffing risk internally before communicating with the client is what makes the Rachel-facing update honest and informed. A Rachel-facing update produced before the staffing escalation would represent the account's risk posture without having actually raised the capacity concern with the people who can address it."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent reports that QuickBooks estimate EST-2026-0423 does not reconcile to the agreed approximately $7,500 relocation batch rate for Terraform Digital.",
+   "evidence": "Check the Agent's final response or a routed finance message to Marcus Thorne (marcus.thorne@moveops.com) or David Chen (david.chen@moveops.com) for an explicit statement that EST-2026-0423 does not match or reconcile to the agreed approximately $7,500 relocation batch rate (or equivalent wording such as $2,500 per move for three moves).",
+   "cb_justification": "The CRM deal and internal pricing thread agree on $2,500 per move for this first Terraform batch ($7,500 for three moves). EST-2026-0423 totals $6,560 and does not reflect that agreed relocation batch rate. The prompt asks the agent to surface financial misalignment rather than treat the draft as aligned."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent reports that EST-2026-0423 prices the relocation service line items at approximately $4,560 for three moves, below the agreed $2,500-per-move relocation batch rate.",
+   "evidence": "Check the Agent's final response or routed finance message for an explicit statement that the relocation service components total approximately $4,560 for three moves and/or price the moves well below $2,500 each (e.g., ~$1,520/move in service fees). Fail if the Agent only cites the $6,560 total or a separate stipend line without identifying underpriced relocation service lines.",
+   "cb_justification": "EST-2026-0423 itemizes relocation services at $3,000 apartment sourcing + $60 flight coordination + $1,500 moving coordination = $4,560 for three moves (~$1,520/move), not three $2,500 relocation packages. This underpricing is the core reason the estimate does not reflect the agreed batch rate, independent of the separate stipend line."
+  }
+ ]
+}

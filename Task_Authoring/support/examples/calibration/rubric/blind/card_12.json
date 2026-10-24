@@ -1,0 +1,175 @@
+{
+ "card_index": 12,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "I have been trying to close out the numbers for the vendor strategy memo and the board prep, and the more I dig the worse it gets. When I published my Q1 margin analysis, every active client account was clean and the AM performance figures reconciled across the board. Now, barely a month later, I cannot get a single client's books to balance. Revenue figures in our ledger do not match what the account teams have been quoting, there are accruals and holds that appeared after my analysis went out but were never reconciled against the original margins, and I keep finding references in internal discussions to financial exposure items that have no corresponding entries in our books at all. I also built that vendor margin compression model a couple weeks ago, but it was based on the numbers we had at the time, and I am not confident those inputs were right either because things have clearly moved since then.\n\nHere is what I need. For every active client relationship, I need the true net financial position: total invoiced revenue minus total incurred costs and vendor charges, minus any outstanding accruals, holds, credits, surcharges, liability provisions, or pending claims that touch that account, and the resulting margin. For every vendor we work with, I need the same: what we owe them, what is in dispute, and what their new rate structure would do to each outstanding and future amount. Where our books show one number but the teams have been saying something different internally, I need to know which is correct and why they diverged, because Marcus is going to ask and I need real answers, not estimates.\n\nOnce you have the reconciled picture across all clients and vendors, correct anything in our books that is clearly stale or misbooked. For every client where the financial position has materially changed since my Q1 figures, log a note on their account in the CRM so the account managers have visibility before they walk into any client conversation unprepared. For any open financial item, whether it is a dispute, a claim, a compliance exposure, or a billing hold, that does not have a formal tracking ticket, create one so nothing slips through before the board review. Then send Elena and Marcus one consolidated email that lays out the full exposure by client and by vendor, calls out the specific items that need executive decisions before Friday, and gives them the total consolidated liability number. Post a version in the finance channel for Hana to validate, and make sure you specifically call out anywhere our books directly contradict what the operational teams have been reporting, because those are the reconciliation gaps Marcus is going to want to dig into first.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends one consolidated email to [elena.rostova@moveops.com](mailto:elena.rostova@moveops.com) and [marcus.thorne@moveops.com](mailto:marcus.thorne@moveops.com).",
+   "evidence": "Look for a single email send in the trajectory whose recipients include both elena.rostova@moveops.com and marcus.thorne@moveops.com, returning a success response.",
+   "cb_justification": "The prompt explicitly asks the agent to 'send Elena and Marcus one consolidated email.' Elena Rostova (CEO) is elena.rostova@moveops.com and Marcus Thorne (Head of Finance) is marcus.thorne@moveops.com per Contacts; both are on the same email, so this is one write action."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent posts a message in the #finance Slack channel.",
+   "evidence": "Look for a Slack message posted to the #finance channel (name 'finance', channel_id C005) in the trajectory, returning a success response.",
+   "cb_justification": "The prompt explicitly asks the agent to 'Post a version in the finance channel for Hana to validate.' The finance channel is #finance (identified by channel_id C005 in the workspace)."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent logs a note on the Mosaic Robotics CRM account recording the approximately $90,000 damage-claim exposure (or similar).",
+   "evidence": "Look for a CRM engagement/note created on the Mosaic Robotics company (company_mosaic) whose body references the ~$90,000 damage-claim exposure; confirm the action returned success.",
+   "cb_justification": "The prompt asks the agent to 'log a note on their account in the CRM' for every client whose financial position materially changed. Mosaic Robotics (company_mosaic) carries a $90,000 contingent damage-claim liability (account acct_contingent_liability_claims and credit memo CM-2026-0415), a clear material change since Q1."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent logs a note on the NorthWind Technologies CRM account recording its changed financial position (approximately $60,000 outstanding and/or the INV-2026-0412 non-standard surcharges) (or similar).",
+   "evidence": "Look for a CRM engagement/note created on the NorthWind Technologies company (company_northwind) referencing the ~$60,000 outstanding balance and/or the INV-2026-0412 surcharges; confirm success.",
+   "cb_justification": "The prompt asks for a CRM note on every materially-changed client. NorthWind Technologies (company_northwind) has a $60,000 outstanding balance and new non-standard surcharges on INV-2026-0412 (a $14,700 invoice that includes roughly $5,700 of non-standard surcharges), a material change since Q1."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent logs a note on the Vectral Systems CRM account recording the Preferred Partner renewal / approximately $58,400 estimate change (or similar).",
+   "evidence": "Look for a CRM engagement/note created on the Vectral Systems company (company_vectral) referencing the Preferred Partner renewal and/or the ~$58,400 estimate; confirm success.",
+   "cb_justification": "The prompt asks for a CRM note on every materially-changed client. Vectral Systems (company_vectral) is mid Preferred-Partner renewal with estimate EST-2026-0419 at $58,400, a material change since Q1."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent logs a note on the BrightLoop Analytics CRM account recording that its April relocations are not actually complete (housing and/or vehicle shipment unresolved) (or similar).",
+   "evidence": "Look for a CRM engagement/note created on the BrightLoop Analytics company (company_brightloop) whose body references the unresolved April relocations, open housing, and/or vehicle issues; confirm success. Read the FULL note body, not just the title. The note passes if it names the open service failures in any words - e.g. 'Two April service failures remain OPEN: Simone Richter housing miss and Marcus Webb vehicle-delivery delay', or 'prior April batch had open items (apartment placement, auto-transport delay) despite CRM showing complete'. Mentioning either Simone Richter's housing OR Marcus Webb's vehicle shipment as unresolved is sufficient; do not require both, and do not fail the note just because it also covers surcharges, stipend holds, or AR staleness.",
+   "cb_justification": "The prompt asks for a CRM note on every materially-changed client. BrightLoop Analytics (company_brightloop) reads as complete in the books ($0 balance) while housing (Simone Richter) and vehicle shipment (Marcus Webb) remain unresolved, a material books-vs-reality change since Q1."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent logs a note on the StormCloud Analytics CRM account recording that the $500 goodwill credit never reached the client's live invoice (or similar).",
+   "evidence": "Look for a CRM engagement/note created on the StormCloud Analytics company (company_stormcloud) referencing the misapplied $500 goodwill credit / the credit not reaching the live invoice; confirm success.",
+   "cb_justification": "The prompt asks for a CRM note on every materially-changed client. StormCloud Analytics (company_stormcloud) has a $500 goodwill credit that was posted to a cancelled estimate instead of the live invoice, changing the client's effective bill since Q1, so account managers need visibility before client conversations."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent creates a tracking issue for the Mosaic Robotics approximately $90,000 damage-claim exposure (or similar).",
+   "evidence": "Look for an issue creation in the trajectory whose title OR description relates to the Mosaic Robotics $90,000 damage claim; confirm the action returned success. The criterion is satisfied whether this is a standalone Mosaic ticket OR a clearly-described line item inside a broader finance/GL-correction ticket - as long as the ~$90,000 Mosaic damage-claim exposure (e.g. the Okoye prototype claim / CM-2026-0415) is named in the ticket. Do not require a dedicated single-purpose ticket.",
+   "cb_justification": "The prompt asks the agent to create a tracking ticket for 'any open financial item ... that does not have a formal tracking ticket.' The $90,000 Mosaic damage claim (reference HM-WO-04142026-OKOYE) has no existing Linear ticket, so a new one is required."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent creates a tracking issue for the approximately $50,000 DOT/PHMSA penalty accrual (or similar).",
+   "evidence": "Look for an issue creation in the trajectory whose title OR description relates to the DOT/PHMSA $50,000 penalty accrual; confirm the action returned success. The criterion is satisfied whether this is a standalone DOT ticket OR a clearly-described line item inside a broader finance/GL-correction ticket - as long as the ~$50,000 DOT/PHMSA penalty accrual (e.g. ACCRUAL-DOT-2026-001) is named in the ticket. A run that only mentions the DOT accrual in the email/Slack but creates NO ticket referencing it does not satisfy the criterion.",
+   "cb_justification": "The prompt asks the agent to create a tracking ticket for any open financial item lacking one. The $50,000 DOT penalty accrual (ACCRUAL-DOT-2026-001) has no existing Linear ticket, so a new one is required."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's email to Elena and Marcus states a single total consolidated liability figure that combines the vendor/trade payables, the $50,000 DOT/PHMSA penalty accrual, and the $90,000 Mosaic contingent damage claim.",
+   "evidence": "Check the email for a single stated total consolidated liability/exposure figure that visibly rolls up the vendor/trade payables together with the $50,000 DOT penalty accrual and the $90,000 Mosaic contingent claim (a total in the approximate range of $166,000-$210,000 depending on AWS treatment and Mosaic netting). A run that reports these components only as separate, un-summed figures does not satisfy the criterion.",
+   "cb_justification": "The prompt explicitly requires the email to give 'the total consolidated liability number.' The gradeable behavior is that the agent assembles ONE consolidated total spanning all three liability buckets: trade/vendor payables, the $50,000 DOT penalty accrual, and the $90,000 Mosaic contingent claim. The exact value is intentionally not pinned: excluding vs. including the AWS $42,870 payable and netting the Mosaic claim to its $40,000 uninsured gap are both defensible, so the total legitimately ranges from ~$166,000 (Heartland $12,800 + Swift $11,010 + Atlas $1,226 + KeyMove $1,200 = $26,236 trade AP + $50,000 DOT + $90,000 Mosaic) up to ~$210,000 (with AWS included). Do NOT fail a run for including the AWS payable or for netting the Mosaic claim."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's email to Elena and Marcus lays out the exposure broken down by client.",
+   "evidence": "Check the email content for an exposure breakdown organized by client.",
+   "cb_justification": "The prompt explicitly requires the email to lay out 'the full exposure by client and by vendor.' This criterion covers the by-client breakdown."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's email to Elena and Marcus lays out the exposure broken down by vendor.",
+   "evidence": "Check the email content for an exposure breakdown organized by vendor.",
+   "cb_justification": "The prompt explicitly requires the email to lay out 'the full exposure by client and by vendor.' This criterion covers the by-vendor breakdown."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's email to Elena and Marcus flags at least one specific item requiring an executive decision before Friday, May 1, 2026 (such as the vendor rate strategy or the Heartland/Mosaic exposures) (or similar).",
+   "evidence": "Check the email content for at least one item flagged as needing an executive decision before Friday (May 1, 2026), such as the vendor rate negotiation strategy or the Heartland/Mosaic exposures.",
+   "cb_justification": "The prompt explicitly requires the email to 'call out the specific items that need executive decisions before Friday.' From the fixed date of Sunday April 26, 2026, the next Friday is May 1, 2026. The prompt leaves the exact items open, so at least one concrete decision item is required."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's #finance Slack post, for Hana Kim to validate, calls out where the books contradict what the operational teams have been reporting (or similar).",
+   "evidence": "Check the #finance Slack post content for a call-out of the books-vs-operations contradictions (the reconciliation gaps) framed for Hana to validate.",
+   "cb_justification": "The prompt asks the agent to 'Post a version in the finance channel for Hana to validate, and make sure you specifically call out anywhere our books directly contradict what the operational teams have been reporting.' This pins the prompt's explicit Slack-post content (the books-vs-operations contradiction call-out) to the #finance deliverable; the specific contradictions themselves are graded by the finding rubrics."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent reports the outstanding amounts owed by vendor: Heartland approximately $12,800, Swift approximately $11,010, Atlas (approximately $439 open bill or approximately $1,226 vendor balance), and KeyMove approximately $1,200 (with the $50,000 DOT/PHMSA amount being the separate penalty accrual).",
+   "evidence": "Check the Agent's reconciliation deliverable for the per-vendor amounts owed: Heartland (accept ~$12,800 gross Q1 balance OR the reconciled ~$10,150 net-of-duplicate/dispute figure, as long as the $12,800 figure is referenced anywhere - e.g. as the double-booked/duplicate Q1 bill), Swift ~$11,010, Atlas (accept either ~$439 from the open bill or ~$1,226 from the vendor balance), KeyMove ~$1,200, and the $50,000 DOT penalty accrual identified as such. Grade each vendor on whether its figure appears anywhere in the deliverables; do not fail Heartland for netting out the duplicate/disputed lines so long as $12,800 is surfaced.",
+   "cb_justification": "The prompt asks, for every vendor, 'what we owe them.' The QuickBooks vendor balances are Heartland $12,800, Swift $11,010, KeyMove $1,200 (UrbanNest and AWS are $0 at the vendor level); the $50,000 DOT balance is the regulatory penalty accrual. Atlas is internally inconsistent in the universe: its vendor Balance field reads $1,226 but its only open bill (bill_atlas_washington) is $439.40, with no bill supporting the extra $786.60. Both figures are correct-by-source, so either is accepted for Atlas."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent identifies that Heartland overbilled the Q1 invoice (HM-2026-Q1-0042) by approximately $4,800 for 3 cancelled/invalid moves (billed $12,800 vs verified $8,000).",
+   "evidence": "Check the Agent's reconciliation deliverable (email, Slack post, or final response) for identification of the ~$4,800 Heartland Q1 overbilling on invoice HM-2026-Q1-0042 (billed $12,800 vs verified $8,000).",
+   "cb_justification": "The prompt asks the agent to determine 'which is correct and why they diverged' where the books and teams disagree. The Heartland Q1 dispute is a confirmed divergence: invoice HM-2026-Q1-0042 billed $12,800 but only $8,000 (5 of 8 moves) is legitimate, a $4,800 overbill on 3 cancelled/invalid moves."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the Sunbelt and Palmetto QuickBooks invoices are correct (Sunbelt commercial $4,800 on INV-2026-0398; Palmetto nonprofit $2,400 on INV-2026-0399) but the outbound invoice PDFs sent to the two clients were swapped.",
+   "evidence": "Check the Agent's reconciliation deliverable for a statement that the Sunbelt ($4,800, INV-2026-0398) and Palmetto ($2,400, INV-2026-0399) QuickBooks records are correct but the outbound PDF invoices were swapped.",
+   "cb_justification": "The prompt asks the agent to call out where the books contradict what teams report. The Sunbelt/Palmetto case is a documented divergence: QuickBooks is correct, but the emailed PDFs were swapped (Sunbelt received Palmetto's nonprofit PDF and vice versa), per Marcus Thorne's April 15 email. These facts come from the same source record."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent identifies that BrightLoop Analytics' April relocations read as complete in the books/CRM while operational housing and vehicle-shipment issues remain unresolved.",
+   "evidence": "Check ALL deliverables - email, #finance Slack post, the CRM note on company_brightloop, Linear tickets, and the final response - for a statement that BrightLoop's relocations appear complete in the books/CRM but operational housing and/or vehicle-shipment issues remain unresolved. The statement passes if it appears in ANY one of them, including a CRM note (e.g. 'open items (apartment placement, auto-transport delay) despite CRM showing complete', or 'service failures remain OPEN: Simone Richter housing / Marcus Webb vehicle-delivery' alongside the $0 GL / understated-AR signal). Do not restrict the check to the email or Slack post.",
+   "cb_justification": "The prompt asks the agent to call out where the books contradict operational reporting. BrightLoop is a documented books-vs-operations contradiction: the CRM/books show the April relocations as effectively complete while Simone Richter's housing and Marcus Webb's vehicle shipment are still open."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent identifies that StormCloud's $500 goodwill credit was posted against cancelled estimate EST-2026-0287 instead of the live invoice INV-2026-0319, so it never reached the client's bill.",
+   "evidence": "Check the Agent's reconciliation deliverable for identification that StormCloud's $500 goodwill credit was posted to cancelled estimate EST-2026-0287 instead of live invoice INV-2026-0319.",
+   "cb_justification": "The prompt asks the agent to call out where the books contradict operational reporting and to identify misbookings. The StormCloud $500 goodwill credit was misposted to cancelled estimate EST-2026-0287 rather than the live invoice INV-2026-0319 (Marcus Thorne, #finance), a confirmed accounting error."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent reports Heartland's Q3 2026 rate increase of 20%.",
+   "evidence": "Check the Agent's reconciliation deliverable for a report of Heartland's 20% rate increase taking effect in Q3 2026.",
+   "cb_justification": "The prompt asks, for every vendor, 'what their new rate structure would do.' Heartland's Formal Notice (jake.loomis@heartlandmovers.com, April 13) sets a 20% increase effective Q3 2026 (July 1, 2026)."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent reports Swift's 15% rate increase plus a $500-per-shipment DOT documentation surcharge.",
+   "evidence": "Check the Agent's reconciliation deliverable for a report of Swift's 15% increase and the $500-per-shipment DOT documentation surcharge.",
+   "cb_justification": "The prompt asks, for every vendor, 'what their new rate structure would do.' Swift's Pricing Update (greg.pallone@swiftrelocations.com, April 11) sets a 15% increase on new bookings plus a $500 DOT documentation surcharge per shipment."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent reports that Heartland's rate increase applies to new/future bookings and does not retroactively change Heartland's current outstanding balance.",
+   "evidence": "Check the Agent's reconciliation deliverable for a statement that Heartland's rate increase applies to future/new bookings only and does not change its current outstanding balance. Labeling the increase as taking effect in Q3 2026 / July 1 (prospective) while presenting Heartland's current outstanding balance separately and unchanged satisfies this criterion - an explicit 'does not affect current payables' clause is sufficient but not required.",
+   "cb_justification": "The prompt asks what the new rate structure 'would do to each outstanding and future amount.' Heartland's notice is prospective (effective Q3 2026), so the correct answer is no change to Heartland's current outstanding balance and an uplift on forward volume."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent reports that Swift's 15% increase (on new bookings) and its $500-per-shipment DOT surcharge do not retroactively change Swift's current outstanding (already-invoiced) balance.",
+   "evidence": "Check the Agent's reconciliation deliverable for a statement that Swift's rate increase and $500-per-shipment surcharge do not change its current outstanding (already-invoiced) balance - e.g., presenting Swift's current balance as 'pre-increase'/unchanged. Note that the $500 surcharge landing on in-flight or in-progress (not-yet-invoiced) shipments is forward-looking new-work cost and does NOT constitute a retroactive change to the already-invoiced balance; do not fail a run for describing surcharge impact on in-progress moves as long as the already-invoiced balance is shown unchanged.",
+   "cb_justification": "The prompt asks what the new rate structure 'would do to each outstanding and future amount.' Swift's 15% increase applies to new bookings and the $500 surcharge applies per shipment going forward, so the correct answer is no change to Swift's already-invoiced outstanding balance and an uplift on forward volume."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent reports that a precise client-by-client margin cannot be fully reconciled because the vendor bills are not tagged to specific client accounts (or similar).",
+   "evidence": "Check the Agent's reconciliation deliverable for an acknowledgement that a precise client-by-client margin cannot be fully reconciled because vendor bills/costs are not tagged to client accounts.",
+   "cb_justification": "The prompt asks for the true net financial position and margin for every active client. The universe cannot support a precise per-client margin because QuickBooks bills carry no customer reference (client attribution is only free-text), so the correct, honest finding is that a precise per-client margin cannot be fully reconciled."
+  }
+ ]
+}

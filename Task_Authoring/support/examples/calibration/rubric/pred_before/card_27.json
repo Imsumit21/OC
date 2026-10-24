@@ -1,0 +1,215 @@
+{
+ "id": "card_27",
+ "n_criteria": 26,
+ "requirements": [
+  "R1: out-of-policy GreenStack auto-approvals identified",
+  "R2: full approved total of those items",
+  "R3: each pulled back to review with a short note",
+  "R4: flagged people confirmed as current GreenStack relocations",
+  "R5: categorizer live only for GreenStack (other clients untouched)",
+  "R6: canary ticket write-up (what/why, expenses & people, total)",
+  "R7: underlying cause tracked as its own work item",
+  "R8: reminder to check the fix shipped before widening",
+  "R9: team heads-up",
+  "R10: Marcus has what finance needs",
+  "R11: internal only, no GreenStack contact"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "excludes coworking, and identifies the four coworking charges ... recStipGS0000001 ($350), recStipGS0000004 ($180), recStipGS0000008 ($260), and recStipGS0000011 ($140)",
+   "why": "policy rule + four independently variable items"
+  },
+  {
+   "c": "C2",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "ergonomic category limit is $500 ... and identifies the five ergonomic charges",
+   "why": "limit + five independently variable items"
+  },
+  {
+   "c": "C3",
+   "defect": "duplicate / unstated final-response row",
+   "severity": "Moderate",
+   "quote": "reports the total ... as $4,210",
+   "why": "total's requested destination is the ticket (C18)"
+  },
+  {
+   "c": "C6",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... into a not-approved review state ... and records a note",
+   "why": "state change + note independently variable"
+  },
+  {
+   "c": "C7",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C8",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C9",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C10",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C11",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C12",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C13",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C24",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "moves ... and records a note",
+   "why": "state change + note"
+  },
+  {
+   "c": "C16",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "The Agent's write-up on the canary ticket",
+   "why": "C16/C17/C18 all fail if the ticket write-up is missing"
+  },
+  {
+   "c": "C17",
+   "defect": "not self-contained / non-atomic",
+   "severity": "Major",
+   "quote": "identifies the affected expenses and the affected employees",
+   "why": "the nine expense IDs only in evidence; expenses + people bundled"
+  },
+  {
+   "c": "C18",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "$4,210",
+   "why": "C3/C18/C21 all fail on one total error"
+  },
+  {
+   "c": "C20",
+   "defect": "unauthorized / non-atomic",
+   "severity": "Major",
+   "quote": "that the GreenStack canary auto-approved out-of-policy expenses, that the affected submissions have been pulled back for review, and that a fix is being tracked",
+   "why": "heads-up content not prompt-set; three claims"
+  },
+  {
+   "c": "C21",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "including the $4,210 improperly auto-approved and that the affected submissions have been pulled back",
+   "why": "delivery + two contents"
+  },
+  {
+   "c": "C23",
+   "defect": "prohibition-only / absence-only",
+   "severity": "dimension-only",
+   "quote": "does not contact GreenStack Energy externally",
+   "why": "acceptance is absence of contact"
+  },
+  {
+   "c": "C25",
+   "defect": "grades the distractor",
+   "severity": "Major",
+   "quote": "treats the claim ... ENG-215 ... as a false lead and rules it out",
+   "why": "ignoring the false lead is valid; requires disclosure"
+  },
+  {
+   "c": "C26",
+   "defect": "overly specific",
+   "severity": "Major",
+   "quote": "cloned from the older Mosaic configuration",
+   "why": "evidence rejects a correct config-mismatch explanation; duplicates C16 cause"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C16",
+    "C17",
+    "C18"
+   ],
+   "condition": "canary ticket write-up exists"
+  },
+  {
+   "rows": [
+    "C3",
+    "C18",
+    "C21"
+   ],
+   "condition": "$4,210 total"
+  },
+  {
+   "rows": [
+    "C2",
+    "C24",
+    "C3",
+    "C18"
+   ],
+   "condition": "monitor arm classed as ergonomic"
+  }
+ ],
+ "predicted_all_fail_rows": [
+  {
+   "c": "C25",
+   "basis": "a correct run that ignores the ENG-215 lead fails"
+  }
+ ],
+ "tally": {
+  "rows_major": 6,
+  "rows_moderate": 13,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 23.1,
+  "pct_moderate_or_worse": 73.1,
+  "pct_any": 73.1
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. C3/C18/C21 evidence carries stray 'ΩΩΩΩΩ' (cosmetic). C14 accepted as preserved state."
+}

@@ -1,0 +1,161 @@
+{
+ "card_index": 1,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "Daniel flagged that the Brookfield May close is way behind schedule. The BD3 lock target was over a week ago and the period's still sitting open. He wants me to figure out what's actually holding things up before he takes it to Andrea.\n\nBlue has a CPE amortization entry that stalled out. Hannah raised the prepaid CPE balance during the April review, Blue sized the amortization and drafted the entry, and George was going to fold it into his BD1 batch, but somewhere it never got pushed through. Can you check whether it's still sitting there and get it submitted if it needs to go? George already ran the BD1 batch and I want to make sure the CPE line didn't get covered in what he posted, so check his entries before pushing Blue's through. I think there was an email thread between Hannah and George about the prepaid CPE balance around that time, pull that so I can see what was actually discussed and whether anything shifted after Blue drafted the entry. Also check if there's anything else stuck in draft or submitted under Blue's name that's blocking the lock so I know what to flag.\n\nPull what George said in the close coordination thread when he posted the BD1 entries and make sure he filed the supporting docs for those postings in the vault, because Daniel is going to want to see the close chain is clean. I think George mentioned the payroll reconciliation was still in progress when he handed off, can you check whether that's cleared or if it's still sitting there? I also want to know where we actually stand on the close task checklist and the open reconciliations, because if there are sign-offs or recon items sitting in someone else's queue that's holding up the lock, we need to surface that too. Check if there are any overdue reminders or SLA flags tied to the May close that we might have let slip.\n\nPut a short status memo together covering what you found, what's clear, what's still open, and what needs someone else to move before we can lock. File it in the vault as close support so we have a paper trail on the hold-up, then post a heads-up in the close coordination channel so the rest of the team knows where things stand. Email Daniel the full memo so he has it before the next sync.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent does not submit Blue Evans's draft CPE amortization journal entry (je_1c8efc7c281547a8).",
+   "evidence": "No journal entry submission action in the trajectory targets entry_id je_1c8efc7c281547a8. If a submission action for this entry appears, the rubric fails.",
+   "cb_justification": "The prompt says to get the entry submitted only if it still needs to go. George McAdam already posted the standard May prepaid CPE amortization release (je_35e2bfa7562441e8, $8,425, DR 535000 / CR 133000) in his BD1 batch, so Blue's draft would double-count the same May CPE line. The correct action after investigation is to leave it unsubmitted."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent uploads a status memo to the Records Vault as close support for the Brookfield May close.",
+   "evidence": "A document upload action in the trajectory targeting the Records Vault, returning a successful response with a new document ID.",
+   "cb_justification": "The prompt instructs the agent to file the status memo in the vault as close support to create a paper trail on the hold-up. Without the upload, there is no auditable record of the investigation findings."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent titles the uploaded status memo with a reference to the Brookfield May close or FP-2026-05.",
+   "evidence": "The title parameter of the vault upload action includes a reference to \"Brookfield,\" \"May close,\" \"FP-2026-05,\" or an equivalent period identifier. A title that omits the period context does not pass.",
+   "cb_justification": "A status memo filed without identifying the period or close context in its title cannot be reliably retrieved during a future close review. The title anchors the document to the correct close period."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent documents in the uploaded status memo that the payroll reconciliation is still in progress or uncleared, or conveys the same finding in similar terms.",
+   "evidence": "The content parameter of the vault upload includes a reference to the payroll reconciliation (or payroll tax account) remaining in progress, open, or not yet submitted. Accept \"in progress,\" \"still open,\" \"uncleared,\" or equivalent.",
+   "cb_justification": "The payroll reconciliation is a key blocker George flagged as still open. Documenting its status in the memo ensures the paper trail captures this outstanding item for follow-up."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent documents in the uploaded status memo that George McAdam did not file supporting documentation for the BD1 postings, or conveys the same finding in similar terms.",
+   "evidence": "The content parameter of the vault upload includes a reference to missing, absent, or unfiled supporting documents for George's BD1 journal entries. Accept \"no supporting documents,\" \"documentation gap,\" \"docs not filed,\" or equivalent.",
+   "cb_justification": "The prompt asks the agent to \"make sure he filed the supporting docs for those postings in the vault, because Daniel is going to want to see the close chain is clean.\" The absence of supporting docs is a material finding that must appear in the memo."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent documents in the uploaded status memo the close task checklist status for the Brookfield May period, or conveys the same finding in similar terms.",
+   "evidence": "The content parameter of the vault upload references close tasks and their status, such as tasks still pending, not started, blocked, or in review. Accept any phrasing that conveys close task pipeline status.",
+   "cb_justification": "The prompt says \"I also want to know where we actually stand on the close task checklist.\" The memo should cover this so the team knows which tasks are done and which are still pending, blocked, or not started."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent documents in the uploaded status memo the open reconciliation status for the Brookfield May period, or conveys the same finding in similar terms.",
+   "evidence": "The content parameter of the vault upload references reconciliations that remain open or in progress and have not been submitted or certified. Accept any phrasing that conveys reconciliation pipeline status.",
+   "cb_justification": "The prompt says \"I also want to know where we actually stand on the open reconciliations.\" The memo should cover the reconciliation pipeline so the team knows what recon items are sitting in someone's queue."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent posts a message in the #monthly-close-coordination Slack channel (C005).",
+   "evidence": "A Slack message posting action in the trajectory targeting channel_id C005, returning a successful response.",
+   "cb_justification": "The prompt instructs the agent to \"post a heads-up in the close coordination channel so the rest of the team knows where things stand.\" This requires posting in the specific channel used for close coordination."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent mentions at least one open blocker for the May close lock in the Slack message posted to the close coordination channel.",
+   "evidence": "The message content posted to C005 mentions at least one specific blocker such as payroll reconciliation, open reconciliations, close tasks, CPE entry, or missing documentation. A message that only says \"check the memo\" without any substance does not pass.",
+   "cb_justification": "A heads-up that does not mention what is actually blocking the close provides no actionable information to the team. The message must convey enough context for team members to know what needs attention."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent sends an email from [edith.banda@brookfieldcpas.com](mailto:edith.banda@brookfieldcpas.com) to [daniel.jones@brookfieldcpas.com](mailto:daniel.jones@brookfieldcpas.com).",
+   "evidence": "An email send action in the trajectory with sender edith.banda@brookfieldcpas.com and daniel.jones@brookfieldcpas.com in the recipients list, returning a successful response.",
+   "cb_justification": "The prompt instructs the agent to \"Email Daniel the full memo so he has it before the next sync.\" Daniel Jones is the Accounts Manager who flagged the issue. Edith Banda is the assigned persona."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent includes in the email to Daniel Jones ([daniel.jones@brookfieldcpas.com](mailto:daniel.jones@brookfieldcpas.com)) the Brookfield May close status findings documented in the uploaded vault memo, or conveys equivalent content in similar terms.",
+   "evidence": "The email body covers the same topic areas as the vault memo: Blue's CPE entry status (including that George's BD1 release already covered the May CPE line and Blue's draft should not be submitted), George's BD1 entries, payroll reconciliation, George's missing supporting docs, close task checklist status, open reconciliations, and overdue reminders or SLA flags. A one-line email or one that omits most memo sections does not pass.",
+   "cb_justification": "The prompt says \"Email Daniel the full memo.\" The email must carry the same investigation findings as the vault memo, not a partial summary."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that Blue Evans's CPE amortization entry was sitting in draft at $4,717.59, or conveys the same finding in similar terms.",
+   "evidence": "The final response text includes a reference to Blue's CPE entry being in draft and states the amount as $4,717.59 or a close rounding thereof (e.g., $4,718 or $4,717). Accept any phrasing that conveys the entry was in draft with the correct amount.",
+   "cb_justification": "The user asked the agent to check whether the CPE entry is \"still sitting there.\" The specific dollar amount proves the agent actually retrieved and inspected the entry from Oracle GL rather than fabricating a response from the prompt context alone."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that George McAdam's posted May prepaid CPE release (je_35e2bfa7562441e8, $8,425) already covers the May CPE amortization line on accounts 535000 and 133000, or conveys the same finding in similar terms.",
+   "evidence": "The final response references George's posted CPE release (je_35e2bfa7562441e8 or $8,425 on DR 535000 / CR 133000) and states the May CPE amortization was already covered, already posted, or would double-count if Blue's draft were submitted. Accept \"already covered,\" \"George posted the May release,\" \"do not submit Blue's draft,\" or equivalent.",
+   "cb_justification": "The user asked the agent to check whether the CPE line got covered in George's BD1 batch. George's posted standard release hits the same prepaid-CPE accounts as Blue's draft; submitting Blue's entry would double-count. The correct finding is that the May CPE line was already covered, not that a second entry is still needed."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that Blue Evans has no other entries stuck in draft or submitted for the Brookfield May close period, or conveys the same finding in similar terms.",
+   "evidence": "The final response text includes a statement that Blue has no other entries stuck in draft or submitted for the May close, or that her other entry is approved or clear. Accept \"nothing else stuck,\" \"no other entries blocking,\" \"only other entry is approved,\" or equivalent.",
+   "cb_justification": "The user asked \"check if there's anything else stuck in draft or submitted under Blue's name that's blocking the lock so I know what to flag.\" Blue's only other brookfield_FP-2026-05 entry (je_d93edde443b34f38, Travel & engagement, $4,639.25) is in approved status. Reporting this confirms the agent checked and found nothing else blocking."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the payroll tax reconciliation (account 235000) is still in progress, or conveys the same finding in similar terms.",
+   "evidence": "The final response text includes a reference to the payroll reconciliation or payroll tax account (235000 or BL-32EDC5791080) and states it is still in progress, open, or uncleared. Accept \"in progress,\" \"not cleared,\" \"still sitting,\" \"not submitted,\" or equivalent.",
+   "cb_justification": "The user asked \"check whether that's cleared or if it's still sitting there\" about the payroll reconciliation George mentioned. The specific account number (235000) or recon ID (BL-32EDC5791080) proves the agent located the correct reconciliation in BlackLine."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that George McAdam did not file supporting documents in the Records Vault for his BD1 postings, or conveys the same finding in similar terms.",
+   "evidence": "The final response text includes a statement that George's BD1 postings have no supporting documents in the vault, or that the supporting documentation is missing. Accept \"no supporting documents found,\" \"docs not filed,\" \"documentation gap,\" or equivalent.",
+   "cb_justification": "The user instructed the agent to \"make sure he filed the supporting docs for those postings in the vault.\" The finding that no supporting documents exist is the investigation result the user needs to flag to Daniel."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that none of the Brookfield May reconciliations have been submitted or certified, or conveys the same finding in similar terms.",
+   "evidence": "The final response text includes a statement that the Brookfield May reconciliations are all open or in progress, or that none have been submitted or certified. Accept \"all open,\" \"none certified,\" \"reconciliation pipeline stalled,\" or equivalent.",
+   "cb_justification": "The user asked \"where we actually stand on the open reconciliations.\" The finding that all 21 reconciliations are still in open or in-progress status proves the agent checked BlackLine and found a systemic pipeline stall."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that there are overdue reminders or SLA flags tied to the Brookfield May close, or conveys the same finding in similar terms.",
+   "evidence": "The final response text includes a reference to overdue reminders, missed SLA deadlines, or deadline flags connected to the May close. Accept \"overdue reminders,\" \"SLA flags,\" \"missed deadlines,\" or equivalent.",
+   "cb_justification": "The user asked the agent to \"check if there are any overdue reminders or SLA flags tied to the May close that we might have let slip.\" Reporting their existence is the direct answer to this question."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the Hannah Grant and George McAdam email about the prepaid CPE balance concerned a separate April variance issue (BL-390E6284EC1D), distinct from Blue's May CPE entry, or conveys the same finding in similar terms.",
+   "evidence": "The final response text references the Hannah-George email and indicates it was about a separate issue from Blue's May CPE entry. The specific reconciliation ID BL-390E6284EC1D, the phrase \"partial-batch residual,\" or \"April variance\" confirms the agent read the actual email.",
+   "cb_justification": "The user asked the agent to \"pull that so I can see what was actually discussed and whether anything shifted after Blue drafted the entry.\" The key finding is that the Hannah-George thread was about a separate April issue and did not affect Blue's May entry. The reconciliation reference BL-390E6284EC1D is unguessable without reading the actual email."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent reports what George McAdam said in the close coordination channel when he posted the Brookfield May BD1 entries - in its final response, the vault memo, or the email to Daniel - or conveys the same finding in similar terms.",
+   "evidence": "In the final response, the vault memo, or the email to Daniel, the agent conveys what George announced in #monthly-close-coordination (C005) when he posted the brookfield_FP-2026-05 BD1 entries: the BD1 batch with the ~$52,185 accrual together with George's channel narrative that Anaya's payroll tax reconciliation was still in progress at handoff, and/or that CPE and depreciation were flat to prior cadence, that the accrual was elevated by the still-running Q2 wrap, or that he handed the package to Margaret for review. A response that never references George's BD1 channel post in any deliverable does not pass.",
+   "cb_justification": "The user asked the agent to 'pull what George said in the close coordination thread when he posted the BD1 entries.' Reporting George's BD1 channel announcement anywhere in the agent's deliverables (final response, vault memo, or email to Daniel) confirms the agent read C005 rather than inferring George's batch from Oracle GL. This finding is intentionally not channel-locked to the final response: the prompt routes the close findings into the memo and the email to Daniel, so surfacing it in any of those satisfies the ask."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response the close task checklist status for the Brookfield May period, or conveys the same finding in similar terms.",
+   "evidence": "The final response references close tasks for the May period and their status mix, such as tasks done, pending, blocked, not started, or in review. Accept any phrasing that conveys close task pipeline status.",
+   "cb_justification": "The user asked \"where we actually stand on the close task checklist.\" Reporting task pipeline status in the final response answers this ask directly, separate from the vault memo."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the Brookfield May period is not actually locked, even though it is being treated as locked - Oracle GL still shows brookfield_FP-2026-05 open while the BD3 GL-lock close task is blocked, contradicting George's downstream assumption that the period is already locked - or conveys the same finding in similar terms.",
+   "evidence": "The final response flags that the period is being treated as locked while it is not actually locked: it states that Oracle GL shows brookfield_FP-2026-05 still open and/or that the BD3 GL-lock close task is blocked or never executed, AND that this contradicts a believed or assumed locked state - George's management-accounts email assuming the period is locked, or a dashboard or close view implying the lock happened. A final response that only reports the period is open or the BD3 lock is overdue, without flagging the contradiction against the assumed-locked state, does not pass.",
+   "cb_justification": "The user asked the agent to 'figure out what's actually holding things up before he takes it to Andrea.' The central root cause is a lock-status contradiction that only surfaces by cross-reading three services: Oracle GL shows brookfield_FP-2026-05 still open (locked_at is null), the BlackLine close task BD3 GL lock - disable manual JE posting is blocked (the lock never executed), yet George's FP-2026-05 management-accounts email to Margaret states the period is already locked and proceeds with downstream work on that false assumption. Surfacing this contradiction to the requester is the highest-value finding for the Andrea conversation; merely noting the period is open misses it."
+  }
+ ]
+}

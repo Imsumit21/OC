@@ -1,0 +1,107 @@
+{
+ "id": "card_60",
+ "n_criteria": 17,
+ "requirements": [
+  "R1: pass-through to Robert clean and right amount (overbilling found)",
+  "R2: anything off / duplicated / double-counted on the trail flagged",
+  "R3: correct final figure settled",
+  "R4: closing summary with that figure sent to Robert as he asked",
+  "R5: repair tracking moved off 'scheduled'",
+  "R6: owner-relations heads-up: closed out and billed back",
+  "R7: Pete contacted to confirm walk-through on the 13th"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "charged $8,700 on the owner invoice versus the true job cost of $8,400",
+   "why": "C1/C2/C9 all fail on one $8,400 error"
+  },
+  {
+   "c": "C2",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "the correct amount to bill Robert Finley ... is $8,400 - not the $8,700",
+   "why": "same $8,400-vs-$8,700 fact as C1"
+  },
+  {
+   "c": "C5",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "a second $8,400 charge from Big Bend Restoration",
+   "why": "C5/C6/C7/C17 all fail on missing the vendor duplicate"
+  },
+  {
+   "c": "C6",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "only one $8,400 is legitimately owed ... not $16,800",
+   "why": "restates the C5 duplicate finding"
+  },
+  {
+   "c": "C7",
+   "defect": "duplicate / disjunctive",
+   "severity": "Moderate",
+   "quote": "held, voided, or corrected rather than paid",
+   "why": "restates C5/C6; or-list of routes"
+  },
+  {
+   "c": "C8",
+   "defect": "disjunctive",
+   "severity": "Moderate",
+   "quote": "sends or drafts an email",
+   "why": "enumerates routes; precision-only"
+  },
+  {
+   "c": "C17",
+   "defect": "Process fails three-condition test",
+   "severity": "Major",
+   "quote": "identifies the duplicate $8,400 vendor bill ... before sending Robert Finley the final closing summary",
+   "why": "discovery-timing trace (cond. 3); C9's $8,400 is a stricter Outcome (cond. 2); justification quotes text not in the prompt"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C1",
+    "C2",
+    "C9"
+   ],
+   "condition": "$8,400 final figure"
+  },
+  {
+   "rows": [
+    "C5",
+    "C6",
+    "C7",
+    "C17"
+   ],
+   "condition": "vendor duplicate found"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 1,
+  "rows_moderate": 6,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 5.9,
+  "pct_moderate_or_worse": 41.2,
+  "pct_any": 41.2
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "NON-FAIL",
+  "agent_centric": "PASS",
+  "negative": "PASS",
+  "predicted_all_fail": "PASS",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. Justifications for C5-C7/C17 quote 'before we bill the owner a cent', absent from the prompt."
+}

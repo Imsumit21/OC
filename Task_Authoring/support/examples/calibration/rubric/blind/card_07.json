@@ -1,0 +1,105 @@
+{
+ "card_index": 7,
+ "universe": "mortgage-broker-01-keystone",
+ "prompt": "So Grace had me come in early and shadow processing for a couple days before my official start next month, and this is basically my first real day doing file scanning/data entry for Elena's team, and I just hit something I don't know how to handle. I was filing a signed letter from a borrower, Destiny Pham, explaining a cash deposit on her bank statement, and honestly the letter doesn't say much, just that it was from selling furniture, no receipts or anything backing it up. I don't want to just file it like the condition's satisfied if that's not actually going to fly with underwriting, but I also don't want to sit on it if her rate lock situation is already worse than I realize, since I have no idea how any of that actually gets tracked, or whether the lock desk already caught it on their end. Can you look into whatever's actually going on with her loan, whether the lender's asked for anything more than just the letter, whether anyone's already told her it isn't enough, and where things actually stand with the rate lock at this point, not just whether it's been flagged somewhere but what that actually means for the file right now. I'm new enough that I don't know who's supposed to be looped in on something like this, so whoever actually needs to know that this is stuck, please make sure they hear it, and let Elena know too since it's her team. I don't think I'm supposed to be the one deciding whether this passes or not, so I just want to make sure it lands with the right people instead of sitting in my inbox. Before you send anything though, someone mentioned this got escalated once already a while back and they weren't sure if it actually got seen or just sat there, so can you actually check that instead of assuming either way, since it changes whether this is a new heads up or a \"hey, this is still sitting\" nudge. Also, however this shakes out, can you make sure there's an actual note on the loan itself saying the letter came in and what's still unresolved about it, I don't want it to look like nobody ever saw this if it comes up later.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent identifies loan LN-2026-00610 (Destiny Pham, 3369 Idlewild Rd, Charlotte NC, conventional purchase, Pennymac Wholesale) as the loan tied to the $14,000 cash deposit letter of explanation, distinguishing it from Destiny Pham's other loans.",
+   "evidence": "Look for a mortgage LOS loan/borrower lookup and reasoning in the trajectory or final response that narrows to LN-2026-00610 (los_loan_3662f4616df5), not a different Pham loan.",
+   "cb_justification": "Destiny Pham has multiple loans in the system (LN-2026-00522, LN-2026-00602, LN-2026-00605, LN-2026-00610, LN-2026-00616, LN-2026-00624, LN-2026-00630); the prompt gives no loan number, so correctly disambiguating to LN-2026-00610 is the first required step and a common failure point if the agent guesses wrong."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent reports that the underwriting condition requires more than the signed letter alone, and its explanation of what additional support is needed names at least two of the following three specific items: screenshots (of the Facebook Marketplace listing or messages), buyer messages/message history, or a withdrawal/deposit trail connecting the sale proceeds to the deposit. A response that only says something generic like \"more documentation\" or \"proof of the sale\" without naming at least two of these three specific items does not satisfy this rubric.",
+   "evidence": "Look for the agent citing at least two of: screenshots/listing screenshots, buyer messages/message history, withdrawal or deposit trail, drawn from the email/Slack evidence around the $14,000 deposit condition. A generic statement that documentation is missing, without naming at least two specific item types, fails this rubric.",
+   "cb_justification": "This covers the prompt's question about whether the lender asked for anything more than just the letter. Sofia Reyes's 2026-03-24 request/escalation evidence identifies the missing support types, so a correct final response should be more specific than a generic statement that more documentation is needed."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent reports that the rate lock on LN-2026-00610 is already expired as of April 28, 2026, not merely at risk or approaching expiration, and that no extension or relock has been recorded.",
+   "evidence": "Look for the agent explicitly stating that the lock is expired or past due and that no extension or relock is recorded. Citing the LOS values (6.939%, locked 2026-02-28, expiration 2026-03-30) or the lock-sweep timing is acceptable, but the required finding is the operational status: expired with no active lock action.",
+   "cb_justification": "The prompt asks where things actually stand with the lock, not just whether it has been flagged. The lock has already lapsed, which materially changes the urgency and next steps because a relock or extension decision is required."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent reports that a prior escalation or internal flag was found and still has no documented resolution or follow-up, so the file is still sitting/unresolved rather than a brand-new issue.",
+   "evidence": "Look at the final response for a statement that a prior escalation or internal flag existed and that there is no documented resolution or follow-up afterward, such as no borrower follow-up, no loan note/condition update, or no lock action. A response claiming no prior escalation existed fails this rubric.",
+   "cb_justification": "The prompt asks the agent to check whether the earlier escalation was seen or just sat, because that changes the framing of the outreach. This criterion checks the user-facing conclusion without requiring an over-specific statement that Carlos Rivera personally never communicated in any form."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent adds an LOS activity note to loan LN-2026-00610 documenting that the signed deposit-explanation letter was received and that the underwriting condition remains unresolved.",
+   "evidence": "Look for a successful mortgage LOS activity-note write targeting los_loan_3662f4616df5 with content documenting both the letter's arrival and the unresolved deposit/source-of-funds condition. A condition record may be additional support, but a condition record alone does not satisfy this rubric if no loan activity note is added.",
+   "cb_justification": "The prompt explicitly asks for an actual note on the loan itself saying the letter came in and what is still unresolved, so there must be a durable loan-file record rather than only a notification or a separate tracking artifact."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's note or any related tracking update on LN-2026-00610 does not state or imply that the deposit condition has been cleared, satisfied, or approved.",
+   "evidence": "Look at the content of any loan note and, if a condition record is created or updated, the condition status. The content/status must remain non-cleared, such as outstanding, under review, received but not cleared, or similar; it must not be cleared, approved, satisfied, or equivalent.",
+   "cb_justification": "The prompt is explicit that Zoe does not want to file the letter as if the condition is satisfied and does not believe she is the person who should decide whether it passes. A note or status implying resolution would misrepresent the file."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent notifies Elena Marchetti ([elena.marchetti@keystonemortgage.com](mailto:elena.marchetti@keystonemortgage.com)) that the LN-2026-00610 deposit condition is unresolved and the rate lock has expired.",
+   "evidence": "Look for an email or Slack/message notification addressed to Elena Marchetti, or clearly directed to her in a channel, covering both the unresolved deposit condition and the expired lock.",
+   "cb_justification": "The prompt explicitly says to let Elena know since it is her team; she is also the assigned processor and Zoe's immediate processing contact for this file."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent notifies at least one additional operational owner or escalation recipient for LN-2026-00610 beyond Elena Marchetti from this set: Priya Desai ([priya.desai@keystonemortgage.com](mailto:priya.desai@keystonemortgage.com)), Carlos Rivera ([carlos.rivera@keystonemortgage.com](mailto:carlos.rivera@keystonemortgage.com)), Sofia Reyes ([sofia.reyes@keystonemortgage.com](mailto:sofia.reyes@keystonemortgage.com)), Camille Foster / the lock desk ([camille.foster@keystonemortgage.com](mailto:camille.foster@keystonemortgage.com)), Robert Calloway ([r.calloway@keystonemortgage.com](mailto:r.calloway@keystonemortgage.com)), or Grace Yamamoto ([grace.yamamoto@keystonemortgage.com](mailto:grace.yamamoto@keystonemortgage.com)). If Robert Calloway or Grace Yamamoto is the additional recipient, the notification must clearly ask for escalation or help unblocking the stalled file, not merely provide an FYI.",
+   "evidence": "Look for an email, Slack message, or equivalent internal notification that includes at least one of the listed recipients beyond Elena and concerns the stuck condition and/or expired rate lock. Priya, Carlos, Sofia, and Camille/the lock desk satisfy this criterion as file or lock-action owners. Robert or Grace satisfy it only if the message asks them to escalate or help unblock the unresolved file.",
+   "cb_justification": "The prompt hard-names Elena but otherwise says whoever actually needs to know should hear it. Because ownership evidence is split across LOS, email, Slack, and lock-desk records, a single fixed recipient would be too narrow; however, the additional recipient must still be someone who can act on, escalate, or unblock the file rather than a purely contextual contact."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's outward notification about LN-2026-00610 frames the issue as unresolved after a prior escalation or internal flag, rather than as a brand-new discovery.",
+   "evidence": "Look at the content of the notification to Elena and/or another notified recipient for language conveying that the issue had already been raised or flagged before and still lacks documented resolution or follow-up. Naming Carlos Rivera or giving the exact March 24 date is acceptable but not required.",
+   "cb_justification": "The prompt explicitly says the escalation check should change whether the message is framed as a new heads-up or a still-sitting nudge. The verified finding must therefore appear in the outward notification itself, not only in the agent's internal reasoning or final response."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's final response to Zoe does not itself decide or state that the deposit condition passes or fails underwriting review; it presents the findings and explains that the decision belongs to the processor, loan owner, or underwriting.",
+   "evidence": "Look at the final response for language deferring the pass/fail underwriting call to Elena, Priya, the responsible loan owner, or underwriting, and for the absence of a definitive agent-made decision that the condition passes or fails.",
+   "cb_justification": "The prompt states that Zoe does not think she is supposed to decide whether the letter passes and wants the matter routed to the right people instead. The agent must preserve that boundary in the final response."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent reports that the lock desk, specifically Camille Foster or a lock-sweep/internal flag, had already flagged LN-2026-00610's rate-lock problem while the file was still stuck or unresolved.",
+   "evidence": "Look for the final response to mention Camille Foster, the lock desk, or a lock-sweep/internal flag, and to connect it to the file still sitting, unresolved, in conditional approval, or lacking a lock action. A response that only states the raw expiration date without addressing whether the lock desk had already caught it fails this rubric.",
+   "cb_justification": "The prompt specifically asks whether the lock desk already caught the lock issue and what that means for the file now. Camille Foster's lock-sweep evidence answers that question, while the current operational meaning is that the lock is expired and needs action."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent reports that Destiny Pham was told up front in the March 24 letter-of-explanation request that supporting documentation was needed, but that no one appears to have followed up with her after she submitted the thin furniture-sale letter to explain that the letter alone was still insufficient.",
+   "evidence": "Look in the final response for both parts of the finding: Destiny was warned in advance that support would be needed, and there is no post-submission borrower-facing follow-up telling her the submitted letter alone remains insufficient.",
+   "cb_justification": "The prompt explicitly asks whether anyone already told Destiny the letter is not enough. The correct finding is nuanced: Sofia Reyes's initial request warned that supporting documentation was required, but after Destiny submitted the unsupported furniture-sale letter, the issue was escalated internally rather than followed up with the borrower."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's internal notification to Elena Marchetti and/or the additional operational owner or escalation recipient conveys that Destiny Pham's LN-2026-00610 file is stuck, specifically that the signed furniture-sale letter alone does not resolve the source-of-funds/deposit condition and that the condition remains unresolved, so the recipient understands the file needs ownership or action.",
+   "evidence": "Look at the email, Slack message, or equivalent internal notification sent by the Agent. It must convey that the signed letter alone is insufficient, that the source-of-funds/deposit condition remains unresolved, and that the file needs attention or ownership. Naming a concrete missing support type is acceptable but not required. A notification that only says the letter was received, or implies the condition is resolved/cleared, does not satisfy this rubric.",
+   "cb_justification": "The prompt asks the Agent to make sure the right people hear that the file is stuck and that it lands with someone who can act on it. It does not require the notification to itemize every missing evidence type; that specificity is covered by the final-response rubric to Zoe."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's LOS activity note for LN-2026-00610 documents that the source-of-funds/deposit condition remains unresolved after Destiny Pham's signed furniture-sale letter and states at least one concrete reason it is still open, such as missing receipts/proof of the sale, no supporting backup, Facebook Marketplace listing/screenshots, buyer messages/message history, or a withdrawal/deposit trail.",
+   "evidence": "Look at the LOS activity note added to loan los_loan_3662f4616df5. The note must document that the source-of-funds/deposit condition remains unresolved and state at least one concrete reason or gap. Generic backup language such as \"no receipts,\" \"no proof of the furniture sale,\" or \"no supporting documentation,\" as well as more specific items like Facebook Marketplace listing/screenshots, buyer messages/message history, or withdrawal/deposit trail, satisfies this rubric. A note that only says the letter was received, that the condition is unresolved, or that the rate lock is expired without stating what is still missing does not satisfy this rubric.",
+   "cb_justification": "The prompt explicitly asks for a note on the loan saying the letter came in and what is still unresolved about it. A note that only says \"letter received\" or \"condition unresolved\" is weaker because it does not preserve the actionable reason the file is still stuck."
+  }
+ ]
+}

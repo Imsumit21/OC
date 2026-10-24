@@ -1,0 +1,187 @@
+{
+ "id": "card_26",
+ "n_criteria": 27,
+ "requirements": [
+  "R1: Hartley final figure confirmed and sent to him",
+  "R2: Quinn second-extension amount confirmed and told before charge",
+  "R3: Maddox fees reconciled / anything owed back",
+  "R4: no shortchanging / no overcharging",
+  "R5: activity note on each file with final figure",
+  "R6: final three figures in closings channel"
+ ],
+ "findings": [
+  {
+   "c": "C4",
+   "defect": "disjunctive",
+   "severity": "Moderate",
+   "quote": "by refund or by a credit applied for the borrower",
+   "why": "enumerates routes; precision-only"
+  },
+  {
+   "c": "C5",
+   "defect": "disjunctive",
+   "severity": "Moderate",
+   "quote": "by refund or by a credit applied for the borrower",
+   "why": "enumerates routes; precision-only"
+  },
+  {
+   "c": "C6",
+   "defect": "disjunctive",
+   "severity": "Moderate",
+   "quote": "by refund or by a credit applied for the borrower",
+   "why": "enumerates routes; precision-only"
+  },
+  {
+   "c": "C7",
+   "defect": "disjunctive",
+   "severity": "Moderate",
+   "quote": "by refund or by a credit applied for the borrower",
+   "why": "enumerates routes; precision-only"
+  },
+  {
+   "c": "C11",
+   "defect": "names a tool (evidence field)",
+   "severity": "Major",
+   "quote": "conversations_add_message call",
+   "why": "catalog tool name in a field; Agent-Centric FAIL"
+  },
+  {
+   "c": "C12",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "cash to close is $2,805",
+   "why": "C12/C16/C20/C24 all fail on one Hartley calc error"
+  },
+  {
+   "c": "C13",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "owes $800 for the second rate lock extension",
+   "why": "C13/C17/C21/C25 all fail on one Quinn calc error"
+  },
+  {
+   "c": "C14",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "duplicate first rate lock extension charge of $550",
+   "why": "C4/C14/C18/C22/C26 all fail on missing the duplicate"
+  },
+  {
+   "c": "C15",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "$440 is owed back",
+   "why": "C15/C19/C23/C27 all fail on one Maddox error"
+  },
+  {
+   "c": "C20",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "The Agent's message in the closings channel states",
+   "why": "C20-C23 all fail if the closings post is missing"
+  },
+  {
+   "c": "C24",
+   "defect": "duplicate / unstated final-response row",
+   "severity": "Moderate",
+   "quote": "reports that Hartley's cash to close is $2,805",
+   "why": "user did not ask to be told; fact graded in C12/C16/C20"
+  },
+  {
+   "c": "C25",
+   "defect": "duplicate / unstated final-response row",
+   "severity": "Moderate",
+   "quote": "reports that Quinn owes $800",
+   "why": "fact graded in C13/C17/C21"
+  },
+  {
+   "c": "C26",
+   "defect": "duplicate / unstated final-response row",
+   "severity": "Moderate",
+   "quote": "reports that Quinn is owed $550 back",
+   "why": "fact graded in C14/C18/C22"
+  },
+  {
+   "c": "C27",
+   "defect": "duplicate / unstated final-response row",
+   "severity": "Moderate",
+   "quote": "reports that Maddox is owed $440 back",
+   "why": "fact graded in C15/C19/C23"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C12",
+    "C16",
+    "C20",
+    "C24"
+   ],
+   "condition": "Hartley $2,805"
+  },
+  {
+   "rows": [
+    "C13",
+    "C17",
+    "C21",
+    "C25"
+   ],
+   "condition": "Quinn $800"
+  },
+  {
+   "rows": [
+    "C4",
+    "C14",
+    "C18",
+    "C22",
+    "C26"
+   ],
+   "condition": "Quinn duplicate $550"
+  },
+  {
+   "rows": [
+    "C5",
+    "C6",
+    "C7",
+    "C15",
+    "C19",
+    "C23",
+    "C27"
+   ],
+   "condition": "Maddox $440 components"
+  },
+  {
+   "rows": [
+    "C20",
+    "C21",
+    "C22",
+    "C23"
+   ],
+   "condition": "closings post exists"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 1,
+  "rows_moderate": 13,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 3.7,
+  "pct_moderate_or_worse": 51.9,
+  "pct_any": 51.9
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "FAIL",
+  "negative": "PASS",
+  "predicted_all_fail": "PASS",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. Whether the persona may issue refunds (C4-C7) not verifiable; note/channel/email figure rows treated as prompt-set contents, not duplicates."
+}

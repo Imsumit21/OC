@@ -1,0 +1,196 @@
+{
+ "card_index": 26,
+ "universe": "mortgage-broker-01-keystone",
+ "prompt": "Derek Moss here. Three of my files have money questions hanging over them and I need all three put to bed today. I am slammed.\n\nHartley's VA purchase, LN-2026-00633, closes Tuesday. Elena already worked up his cash to close and gave him a number, so to me that one is basically done. I just need his final figure confirmed and sent to him straight so there is nothing ugly at the table.\n\nQuinn, the new construction file, LN-2026-00634. The lock is about to expire and we are extending. Camille is ready to bill the second extension today, and I figure he just owes the full amount. Get it confirmed and tell Quinn what he owes before anybody charges him.\n\nMaddox, LN-2026-00635, closes Wednesday. Hana went through the fees and says it all reconciles, nothing owed back, and I am inclined to agree. Just get it closed out clean.\n\nNone of these should be hard. I just want them finished right, the borrowers given clean correct numbers, a note left on each file with the final figure so it is documented, and the final three dropped in the closings channel so the closer is working off the right thing. Make sure the numbers are solid before anything goes to a borrower. Do not shortchange anybody and do not overcharge anybody, these are my clients.\n\nI am walking into back to back closings and will not be reachable for a few hours. Do not wait on me, use your own read and just get all three done.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to Gerald Hartley at gerald.hartley@gmail.com about his loan LN-2026-00633 closing.",
+   "evidence": "Hartley's borrower record carries email gerald.hartley@gmail.com (LN-2026-00633). A passing trajectory contains a sent email addressed to that recipient.",
+   "cb_justification": "The prompt requires Hartley's final cash-to-close figure to be confirmed and sent to him, so a borrower-facing message to Hartley is a required write action."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to Theodore Quinn at theodore.quinn@gmail.com about his rate lock extension on loan LN-2026-00634.",
+   "evidence": "Quinn's borrower record carries email theodore.quinn@gmail.com (LN-2026-00634). A passing trajectory contains a sent email addressed to that recipient.",
+   "cb_justification": "The prompt requires Quinn to be told what he owes for the second extension before any charge is made, so a borrower-facing message to Quinn is a required write action."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to Lorraine Maddox at lorraine.maddox@gmail.com about the fees on her loan LN-2026-00635.",
+   "evidence": "Maddox's borrower record carries email lorraine.maddox@gmail.com (LN-2026-00635). A passing trajectory contains a sent email addressed to that recipient.",
+   "cb_justification": "The prompt requires determining whether anything is owed back to Maddox and giving her a clean, correct number, so a borrower-facing message to Maddox is a required write action."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent makes Theodore Quinn whole for the duplicate first rate lock extension charge of $550 (one of the two identical $550 charges, Stripe charge ch_inj0634lkext0001 or ch_inj0634lkext0002), by refund or by a credit applied for the borrower.",
+   "evidence": "Two identical Stripe charges \"First rate lock extension -- Quinn (LN-2026-00634)\" of $550 each exist (ch_inj0634lkext0001 and ch_inj0634lkext0002); the loan note records the lock was extended once and the CRM engagement flags a possible double bill, confirming only one extension occurred.",
+   "cb_justification": "Quinn's first lock extension was billed twice ($550 each), so one $550 charge is a duplicate the borrower is owed back; the prompt's instruction not to shortchange the client requires this to be acted on, not merely noted."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent makes Lorraine Maddox whole for the duplicate credit-report charge of $65 (one of the two identical $65 credit-report charges, Stripe charge ch_inj0635credrp001 or ch_inj0635credrp002), by refund or by a credit applied for the borrower.",
+   "evidence": "Two identical Stripe charges \"Credit report -- Maddox (LN-2026-00635)\" of $65 each exist on the borrower's account (ch_inj0635credrp001 and ch_inj0635credrp002).",
+   "cb_justification": "Maddox's credit-report fee was billed twice ($65 each), so one $65 charge is a duplicate the borrower is owed back, and the instruction not to shortchange the client requires acting on it."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent makes Lorraine Maddox whole for the $150 appraisal overcharge, a partial refund of the $675 appraisal charge (Stripe charge ch_inj0635apprsl001) whose actual cost was $525, by refund or by a credit applied for the borrower.",
+   "evidence": "The Stripe appraisal charge for Maddox is $675 (ch_inj0635apprsl001); the QuickBooks vendor bill BILL-APR-inj0635md01 from Carolina Valuation Services (vendor V-CAROLINA-002) for the same loan is $525. The difference is $675 - $525 = $150.",
+   "cb_justification": "The borrower was charged $150 more than the appraisal actually cost; the instruction not to shortchange the client requires this difference to be returned to the borrower, not deferred or left in place. This is the single most failed action in trajectory testing."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent makes Lorraine Maddox whole for the $225 re-inspection charge that was never performed (Stripe charge ch_inj0635reinsp001), by refund or by a credit applied for the borrower.",
+   "evidence": "A Stripe charge \"Appraisal re-inspection -- Maddox (LN-2026-00635)\" of $225 exists (ch_inj0635reinsp001); the Carolina Appraisal Group email (Maria Chen) states no re-inspection was performed and there is no re-inspection charge from the firm. The same email notes the firm bills under the name Carolina Valuation Services (QuickBooks vendor V-CAROLINA-002), bridging the appraiser to the vendor bill.",
+   "cb_justification": "The borrower was charged $225 for an appraisal re-inspection that the appraiser confirms was not performed, so the charge is not owed and the borrower must be made whole."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent records an activity note on loan LN-2026-00633 (Gerald Hartley).",
+   "evidence": "LN-2026-00633 is Hartley's loan assigned to Derek Moss. A passing trajectory contains an activity note recorded against this loan.",
+   "cb_justification": "The prompt requires a note left on each file with the final figure, so an activity note on the Hartley loan is a required write action."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent records an activity note on loan LN-2026-00634 (Theodore Quinn).",
+   "evidence": "LN-2026-00634 is Quinn's loan assigned to Derek Moss. A passing trajectory contains an activity note recorded against this loan.",
+   "cb_justification": "The prompt requires a note left on each file with the final figure, so an activity note on the Quinn loan is a required write action."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent records an activity note on loan LN-2026-00635 (Lorraine Maddox).",
+   "evidence": "LN-2026-00635 is Maddox's loan assigned to Derek Moss. A passing trajectory contains an activity note recorded against this loan.",
+   "cb_justification": "The prompt requires a note left on each file with the final figure, so an activity note on the Maddox loan is a required write action."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent posts to the #closings channel with final figures covering all three of Derek Moss's loans: LN-2026-00633 (Hartley), LN-2026-00634 (Quinn), and LN-2026-00635 (Maddox).",
+   "evidence": "Evidence: The agent trajectory contains a conversations_add_message call (or equivalent Slack posting tool) targeting channel C003 (#closings), with message content referencing all three loans: LN-2026-00633 (Hartley), LN-2026-00634 (Quinn), and LN-2026-00635 (Maddox).",
+   "cb_justification": "Justification: Derek explicitly instructed that \"the final three dropped in the closings channel so the closer is working off the right thing.\" This rubric verifies that the write action was executed for all three loans."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's email to Gerald Hartley states that his cash to close is $2,805.",
+   "evidence": "Hartley cash to close = 13,720 - 3,500 - 2,150 - 4,600 - 665 = 2,805. The $10,220 figure in #closings omits the lender credit, the seller credit, and the paid-outside-closing fees and is incorrect.",
+   "cb_justification": "The figure sent to the borrower must be the correct cash-to-close, not the $10,220 Elena circulated; the borrower acts on this number at the closing table."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's email to Theodore Quinn states that he owes $800 for the second rate lock extension.",
+   "evidence": "Quinn second extension owed = 1,100 (UWM quote) - 200 (builder credit) - 100 (UWM goodwill credit) = 800.",
+   "cb_justification": "The borrower must be told the correct second-extension cost, not the full $1,100 Camille intended to charge; the prompt requires this before any charge is made."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's email to Theodore Quinn states that the duplicate first rate lock extension charge of $550 is being returned to him.",
+   "evidence": "The first lock extension was billed twice at $550; only one extension occurred, so $550 is owed back to Quinn.",
+   "cb_justification": "The borrower must be told the duplicate charge is being corrected; this is a separate fact from the second-extension cost and is part of giving the borrower a clean, correct picture."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent's email to Lorraine Maddox states that $440 is owed back to her.",
+   "evidence": "Maddox owed back = 65 + 150 + 225 = 440. Hana's emails and Slack post stating nothing is owed back are contradicted by the duplicate charge, the appraisal overcharge, and the unperformed re-inspection.",
+   "cb_justification": "The borrower must be told the correct amount owed back, not \"nothing\" as Hana asserted; this is the figure the prompt asks to be determined and communicated."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent's activity note on loan LN-2026-00633 (Gerald Hartley) states the final cash to close of $2,805.",
+   "evidence": "Hartley cash to close = 13,720 - 3,500 - 2,150 - 4,600 - 665 = 2,805.",
+   "cb_justification": "The note left on the file must carry the correct cash-to-close so the file record reflects the right number."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's activity note on loan LN-2026-00634 (Theodore Quinn) states that the second rate lock extension cost owed is $800.",
+   "evidence": "Quinn second extension owed = 1,100 - 200 - 100 = 800.",
+   "cb_justification": "The note left on the file must carry the correct second-extension cost owed."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's activity note on loan LN-2026-00634 (Theodore Quinn) states that the duplicate first-extension charge of $550 is being returned to the borrower.",
+   "evidence": "The first lock extension was billed twice at $550; only one extension occurred, so $550 is owed back to Quinn.",
+   "cb_justification": "The note left on the file must record the duplicate refund; this is a separate fact from the second-extension cost and fails independently."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent's activity note on loan LN-2026-00635 (Lorraine Maddox) states that $440 is owed back to the borrower.",
+   "evidence": "Maddox owed back = 65 + 150 + 225 = 440.",
+   "cb_justification": "The note left on the file must carry the correct amount owed back."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent's message in the closings channel states Hartley's (LN-2026-00633) cash to close of $2,805.",
+   "evidence": "Hartley cash to close = 13,720 - 3,500 - 2,150 - 4,600 - 665 = 2,805.",
+   "cb_justification": "The closer works off the closings post, so it must carry Hartley's correct cash-to-close figure."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent's message in the closings channel states Quinn's (LN-2026-00634) second rate lock extension cost owed of $800.",
+   "evidence": "Quinn second extension owed = 1,100 - 200 - 100 = 800.",
+   "cb_justification": "The closer works off the closings post, so it must carry Quinn's correct second-extension cost."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent's message in the closings channel states that Quinn's (LN-2026-00634) duplicate first-extension charge of $550 is being returned to the borrower.",
+   "evidence": "The first lock extension was billed twice at $550; only one extension occurred, so $550 is owed back to Quinn.",
+   "cb_justification": "The closer works off the closings post, so it must record the Quinn duplicate refund as a separate fact from the second-extension cost."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent's message in the closings channel states that Maddox (LN-2026-00635) is owed $440 back.",
+   "evidence": "Maddox owed back = 65 + 150 + 225 = 440.",
+   "cb_justification": "The closer works off the closings post, so it must carry Maddox's correct amount owed back."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent reports that Hartley's cash to close is $2,805.",
+   "evidence": "Hartley cash to close = 13,720 - 3,500 - 2,150 - 4,600 - 665 = 2,805.",
+   "cb_justification": "Derek asked for the real number on each file; the final response must give him the correct Hartley figure."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent reports that Quinn owes $800 for the second rate lock extension.",
+   "evidence": "Quinn second extension owed = 1,100 - 200 - 100 = 800.",
+   "cb_justification": "Derek asked for the real cost to Quinn; the final response must give him the correct second-extension cost."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent reports that Quinn is owed $550 back for the duplicate first-extension charge.",
+   "evidence": "The first lock extension was billed twice at $550; only one extension occurred, so $550 is owed back to Quinn.",
+   "cb_justification": "Derek asked for the real cost to Quinn; the final response must surface the duplicate refund, a separate fact from the second-extension cost."
+  },
+  {
+   "index": "C27",
+   "category": "outcome",
+   "criterion": "The Agent reports that Maddox is owed $440 back.",
+   "evidence": "Maddox owed back = 65 duplicate credit report + 150 appraisal overcharge + 225 re-inspection = 440.",
+   "cb_justification": "Derek asked whether anything is owed back to Maddox and how much; the final response must give him the correct amount."
+  }
+ ]
+}

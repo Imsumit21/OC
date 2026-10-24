@@ -1,0 +1,73 @@
+{
+ "id": "card_17",
+ "n_criteria": 14,
+ "requirements": [
+  "R1: where each of this week's turns landed",
+  "R2: real fridge count (excluding handled / already-delivered)",
+  "R3: final list to Diane, standard top freezers",
+  "R4: drop day booked on calendar",
+  "R5: board set straight on each turn",
+  "R6: rundown to Carlos and Patricia",
+  "R7: real count in make-ready channel"
+ ],
+ "findings": [
+  {
+   "c": "C8",
+   "defect": "not self-contained",
+   "severity": "Major",
+   "quote": "writes back to the Make-Ready Turns board for this week's Las Vistas turns rather than leaving the stale refrigerator-flagged status",
+   "why": "Names no turn or target status; any write passes"
+  },
+  {
+   "c": "C11",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "states that 3 refrigerators are needed",
+   "why": "Count of 3 graded in C5, C11, C12, C14"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R5",
+   "why": "No row grades the corrected per-turn status values written to the board"
+  },
+  {
+   "req": "R1",
+   "why": "No row grades the per-turn landing (where each turn stands) in the rundown"
+  }
+ ],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C5",
+    "C11",
+    "C12",
+    "C14"
+   ],
+   "condition": "fridge count wrong"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 1,
+  "rows_moderate": 1,
+  "rows_minor": 0,
+  "missing_outcomes": 2,
+  "pct_major": 14.3,
+  "pct_moderate_or_worse": 28.6,
+  "pct_any": 28.6
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "PASS",
+  "predicted_all_fail": "PASS",
+  "other": "three_fields_present=PASS; builder_minimum=PASS; spot_checks=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe/ledger access (other universe): values, reachability and tool catalog not verified; no coverage plan, requirements derived from prompt; weights absent."
+}

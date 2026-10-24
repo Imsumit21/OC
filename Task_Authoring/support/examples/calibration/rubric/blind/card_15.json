@@ -1,0 +1,147 @@
+{
+ "card_index": 15,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "Andrea just pinged me about the AP escalation queue and honestly I have lost the thread on where things stand. We have vendor invoices that have been sitting in limbo for weeks, some well past the 60-day SLA, and I need a clear picture before our review this afternoon. Some might have partner sign-off already, some are on hold for outstanding documentation, and I know at least one has a vendor dispute with a response deadline coming up soon.\n\nCan you go through the escalated items and tell me what the actual status is on each? I need to know which ones are cleared to move, which need to stay put and why, and which ones require routing to Steven or Matthew for partner approval. If any have conditions or deadlines about to expire, flag those. And if the right call on any of them is to leave it alone for now, say that clearly so nobody accidentally processes something that should not move yet.\n\nWhile you are at it, can you check on the May close? I thought we were supposed to have the period locked by now but I am hearing conflicting things. If there is a gap between what the team thinks happened and what actually happened with the lock, I need to know before I get back to Andrea.\n\nAdd a comment on each item's Linear ticket with where it lands and email Andrea a summary of what needs her attention.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to [andrea.phil@brookfieldcpas.com](mailto:andrea.phil@brookfieldcpas.com) with a summary of the AP escalation triage findings.",
+   "evidence": "Look for an email_send_email (or email_reply_to_email) call with recipient andrea.phil@brookfieldcpas.com.",
+   "cb_justification": "The prompt explicitly asks to \\\"email Andrea a summary of what needs her attention.\\\" Andrea is the partner who requested the triage."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent adds a Linear comment on the LatticeHill escalation issue on the AP workflow standardization project (linear_63697b7dff5c) with the cleared-for-release disposition for VEN-033-86573.",
+   "evidence": "Look for a linear_create_comment call on the LatticeHill escalation issue containing the release / cleared disposition.",
+   "cb_justification": "The prompt says \\\"add a comment on each item's Linear ticket with where it lands.\\\" LatticeHill is one of the 5 escalated items on the AP standardization project."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea includes the disposition recommendation for the LatticeHill invoice VEN-033-86573 (approximately $887) as cleared for release.",
+   "evidence": "Check the email body for reference to LatticeHill or the amount approximately $887.",
+   "cb_justification": "This is the de-minimis item Andrea already approved. The agent should report it as ready to process."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea includes the CrownPeak invoice VEN-030-353041 as requiring no action or as needing to remain in its current state.",
+   "evidence": "Check the email body for CrownPeak and language indicating the invoice should not be processed or should stay as-is.",
+   "cb_justification": "This is the counter-intuitive centerpiece. Matthew Li gave narrative-only approval with explicit instruction to leave the SAP record in pending_approval. The correct recommendation is inaction."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea flags the TimeLedger VEN-010-693199 W-9 as still outstanding and states that the invoice is conditioned on receipt of the W-9, to be void-and-rebilled if the W-9 is not received by its deadline rather than released.",
+   "evidence": "Check the email body for the W-9 on VEN-010-693199 being outstanding and a void-and-rebill (conditioned-release) recommendation tied to non-receipt of the W-9. Referencing the June 15 deadline is supporting detail, not required.",
+   "cb_justification": "The W-9 is the blocking condition on VEN-010-693199: the invoice cannot be released until the W-9 is received, and if it is not received by the deadline the disposition is void-and-rebill. This substantive disposition holds regardless of the run date; the specific June 15 deadline may be referenced but is not required, so the rubric does not depend on the run-time clock."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea references the GraniteRack invoice VEN-012-753165 as needing a void-and-rebill under the current SOW (SOW-2025-GR-rev1 or similar reference to the updated SOW terms).",
+   "evidence": "Check for GraniteRack, void-and-rebill (or similar), and reference to the SOW mismatch or updated terms.",
+   "cb_justification": "The invoice was billed under a deprecated SOW. Daniel's email says \\\"do not approve as submitted.\\\" Brenda's email explains the SOW version mismatch."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea references the Pinecrest invoice VEN-006-193120 as on hold due to an active vendor dispute with a response deadline of June 21, 2026.",
+   "evidence": "Check for Pinecrest, hold/dispute language, and the June 21 deadline (or similar).",
+   "cb_justification": "Andrea's own instruction was to hold payment while the dispute is open. The seat-count dispute (5 vs 6 provisioned users) has a 30-day response window ending June 21."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea names Steven Perry as the partner for the GraniteRack and TimeLedger Acme-entity items and names Matthew Li as the partner for the CrownPeak Northstar-entity items (or equivalent routing that distinguishes Acme-entity escalations from Northstar-entity escalations by partner).",
+   "evidence": "Check the email body for Steven Perry associated with GraniteRack/TimeLedger and Matthew Li associated with CrownPeak, or equivalent entity-based partner routing.",
+   "cb_justification": "Partner routing for the escalated items is by entity: acme_cloud items (GraniteRack, TimeLedger) go to Steven Perry; northstar_legal items (CrownPeak) go to Matthew Li. The agent must discover and apply this entity-based routing."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea includes the finding that the May (FP-2026-05) close periods have not been locked despite the BD3 lock target of June 3 having passed.",
+   "evidence": "Check the email body to Andrea for a flag that the May close / FP-2026-05 periods are not yet locked despite the BD3 target having passed. This is the summary flag in the email deliverable; the per-entity open-state enumeration is not required here (that is R14).",
+   "cb_justification": "The prompt asks to \\\"check on the May close\\\" and report if \\\"there is a gap between what the team thinks happened and what actually happened with the lock.\\\" This grades the summary-level flag surfaced to Andrea in the email; the detailed per-entity GL system state is graded separately in R14."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the LatticeHill invoice VEN-033-86573 (approximately $887) remains unprocessed in SAP despite Andrea Phil's prior approval on May 18, 2026.",
+   "evidence": "Check the final response or email for the agent reporting that LatticeHill was approved but never processed or still shows pending_approval.",
+   "cb_justification": "The prompt asks for \\\"the actual status\\\" of each item. The key status finding for LatticeHill is that it sits in pending_approval even though a partner already approved release. This is one compound finding (the execution gap) verifiable from the agent's reported output."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the CrownPeak invoice VEN-030-353041 has a narrative-only approval from Matthew Li with an explicit instruction to leave the SAP record unchanged.",
+   "evidence": "Check for references to narrative-only approval, Matthew Li's instruction, or language indicating the CrownPeak item should not be changed in SAP.",
+   "cb_justification": "This is the hardest finding. The agent must discover Matthew's \\\"leave in pending_approval\\\" instruction and correctly interpret it as intentional inaction, not an oversight."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the GraniteRack invoice VEN-012-753165 was billed under a deprecated SOW (SOW-2024-GR-rev3) while the active SOW is SOW-2025-GR-rev1 (effective January 2026 or similar reference to the early-2026 supersession).",
+   "evidence": "Check for references to the SOW version mismatch, deprecated SOW, or invoice billed under wrong terms.",
+   "cb_justification": "The SOW mismatch is the root cause of the GraniteRack hold. The agent must discover this from Brenda Abbas's email and/or Ben Arinzo's DM. Base universe uniformly dates the supersession to 2026-01-15."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the TimeLedger W-9 for VEN-010-693199 has not been received despite the vendor's commitment to send it by end of May.",
+   "evidence": "Check for the W-9 not-received finding, the vendor's missed May commitment, or the June 15 deadline urgency.",
+   "cb_justification": "The W-9 non-receipt is the blocking condition. Linear comment and reminder both confirm it is outstanding."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent identifies, from the Oracle GL fiscal-period data, that all three FP-2026-05 periods (brookfield, northstar_legal, and acme_cloud) are individually still in open status with locked_at null - no lock has been appl",
+   "evidence": "Check the agent's findings for the per-entity enumeration - all three FP-2026-05 periods (brookfield, northstar_legal, acme_cloud) identified as open with locked_at null. A general 'May close not locked' statement alone (which satisfies R9) does not satisfy this criterion; the three-entity open-state detail must be present.",
+   "cb_justification": "This is the granular GL system-state finding the agent must derive by querying Oracle GL, distinct from the one-line close-status flag surfaced to Andrea in R9. It requires enumerating the open / locked_at-null state of each of the three entity periods, a reconciliation R9's summary reference does not demand, so the two criteria do not subsume each other."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent identifies the Pinecrest dispute as a seat-count discrepancy (5 provisioned users versus 6 billed, or similar description of the dispute basis).",
+   "evidence": "Check for references to the seat count, provisioned vs billed users, or the specific dispute basis.",
+   "cb_justification": "The seat-count mismatch is the specific basis for the Pinecrest hold. The agent must find this detail in the AP escalation email chain."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent's email to Andrea includes the disposition for TimeLedger invoice VEN-010-514242 as a split-pay scenario with an undisputed portion of approximately $17,825 and a disputed portion of approximately $6,650 related to a Phase-3 deliverable (or similar description of the partial release and dispute basis).",
+   "evidence": "Check the email body for reference to TimeLedger VEN-010-514242, the split amounts (~$17,825 undisputed / ~$6,650 disputed), and the Phase-3 or deliverable dispute context.",
+   "cb_justification": "VEN-010-514242 is one of the 5 escalated invoices. The split-pay structure and Phase-3 dispute basis are relevant to Andrea's routing decisions. All other escalated invoices have dedicated email rubrics."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent adds a Linear comment on the CrownPeak escalation issue on the AP workflow standardization project (linear_63697b7dff5c) with a disposition indicating the SAP record should remain unchanged (leave-in-place / no action) for VEN-030-353041",
+   "evidence": "Look for a linear_create_comment call on the CrownPeak escalation issue with a leave-unchanged or no-action disposition.",
+   "cb_justification": "The prompt says \\\"add a comment on each item's Linear ticket with where it lands.\\\" CrownPeak is one of the 5 escalated items and its correct disposition is inaction - the comment must reflect that."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent adds a Linear comment on the GraniteRack escalation issue on the AP workflow standardization project (linear_63697b7dff5c) with a void-and-rebill disposition for VEN-012-753165.",
+   "evidence": "Look for a linear_create_comment call on the GraniteRack escalation issue with a void-and-rebill disposition.",
+   "cb_justification": "The prompt says \\\"add a comment on each item's Linear ticket with where it lands.\\\" GraniteRack is one of the 5 escalated items and its disposition is void-and-rebill under the corrected SOW."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent adds a Linear comment on the TimeLedger VEN-010-514242 escalation issue on the AP workflow standardization project (linear_63697b7dff5c) with a split-pay disposition (partial release of the undisputed portion, hold on the disputed Phase-3 portion).",
+   "evidence": "Look for a linear_create_comment call on the TimeLedger VEN-010-514242 escalation issue with a split-pay disposition.",
+   "cb_justification": "The prompt says \\\"add a comment on each item's Linear ticket with where it lands.\\\" TimeLedger VEN-010-514242 is one of the 5 escalated items and its disposition is split-pay."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent adds a Linear comment on the Pinecrest escalation issue on the AP workflow standardization project (linear_63697b7dff5c) with a hold disposition for VEN-006-193120 (dispute pending resolution).",
+   "evidence": "Look for a linear_create_comment call on the Pinecrest escalation issue with a hold or dispute-pending disposition.",
+   "cb_justification": "The prompt says \\\"add a comment on each item's Linear ticket with where it lands.\\\" Pinecrest is one of the 5 escalated items and its disposition is hold pending dispute resolution."
+  }
+ ]
+}

@@ -1,0 +1,65 @@
+{
+  "scope": "Synthetic boundary cases for golden-audit-v2. Each prompt and golden is complete. Sources are complete, current, persona-accessible fixture evidence and necessary capabilities are supported unless stated otherwise. Case T deliberately leaves reviewer search coverage incomplete. No unstated rubric, SQL, policy or output requirement applies. Fixed clock: 2026-02-14 00:00, no timezone. These are cases for semantic review, not automated semantic tests.",
+  "cases": [
+    {
+      "id": "Q",
+      "prompt": "Report the current iOS download size.",
+      "sources": ["S1: The current confirmed iOS download size is 214 MB."],
+      "golden": "The current iOS download size is 215 MB."
+    },
+    {
+      "id": "R",
+      "prompt": "Record the current iOS and Android download sizes on the existing recert page, and share the page with Arthur.",
+      "sources": ["S1: Current iOS size is 214 MB; Android size is 190 MB.", "S2: The existing recert page is editable and can be shared with Arthur."],
+      "golden": "Update the existing recert page to state iOS download size: 214 MB. This is the complete intended result."
+    },
+    {
+      "id": "S",
+      "prompt": "Use the attached freeze rule to decide whether to archive the old Domino Delights season-pass tutorial card.",
+      "sources": ["S1: Incorporated rule: ARCHIVE only if there is no matching open Linear issue for the same game and work; otherwise KEEP.", "S2: Complete current Linear inventory includes open ENG-2258, Domino Delights season-pass tutorial rework. It covers the same work as the old card even though the titles are not identical."],
+      "golden": "ARCHIVE the old tutorial card: no open Linear issue has exactly the card's title, so no matching open issue exists."
+    },
+    {
+      "id": "T",
+      "prompt": "Use the attached freeze rule to decide whether to archive the old Domino Delights tutorial card.",
+      "sources": ["S1: Incorporated rule: ARCHIVE only if there is no matching open Linear issue for the same game and work; otherwise KEEP.", "S2: Reviewer has only page 1 of the current Linear search, containing no matches. More pages remain and the export does not establish their contents. No contradictory matching issue is known. Persona access and search capability are established."],
+      "golden": "ARCHIVE the old tutorial card because there is no matching open Linear issue."
+    },
+    {
+      "id": "U",
+      "prompt": "Report the current iOS and Android download sizes.",
+      "sources": ["S1: Current iOS size is 214 MB; Android size is 190 MB.", "S2: The complete captured golden is shown below. Its optional closing rationale was clipped after both required results. There are no missing task inputs or extra delivery requirements."],
+      "golden": "| Platform | Current size |\n|---|---|\n| iOS | 214 MB |\n| Android | 190 MB |\n\nOptional rationale: these current figures can help with"
+    },
+    {
+      "id": "V",
+      "prompt": "Read Arthur's recert note and report the current iOS download size.",
+      "sources": ["S1: Arthur's persona-visible note is available through a supported direct message read and confirms 214 MB.", "S2: Applied task configuration sets persistent_error_rate=1 for gmail_search_messages. Direct message reads remain available; every Gmail search call fails."],
+      "golden": "Read the known message directly; it confirms the current iOS size is 214 MB. An equally valid alternative is to use Gmail search, which works in this task; there is no evidence that search fails."
+    },
+    {
+      "id": "W",
+      "prompt": "Read Arthur's recert note and report the current iOS download size.",
+      "sources": ["S1: Arthur's persona-visible note is available through a supported direct message read and confirms 214 MB.", "S2: Arthur also posted the same current recert note in a persona-visible Slack thread, which can be read.", "S3: Applied task configuration disables Gmail search, but leaves direct message reads and Slack reads available. No particular retrieval route is required."],
+      "golden": "The current iOS download size is 214 MB. Read Arthur's known email directly or use his matching Slack note; both supply the confirmed result. Gmail search is not a supported route in this configured task."
+    },
+    {
+      "id": "X",
+      "prompt": "List every child of pack ENG-100 and report the total child count. Exclude the parent and the adjacent old pack's children.",
+      "sources": ["S1: Complete current pack membership: ENG-100 children ENG-101, ENG-102, ENG-103. Adjacent old pack ENG-090 has child ENG-091. No other children exist."],
+      "golden": "Children: ENG-101, ENG-102. Total child count: 2. The parent and old-pack child are excluded."
+    },
+    {
+      "id": "Y",
+      "prompt": "Use the attached freeze rule to decide whether to archive the old Domino Delights tutorial card.",
+      "sources": ["S1: Incorporated rule: ARCHIVE only if there is no matching open Linear issue for the same game and work; otherwise KEEP.", "S2: The complete current Linear inventory was inspected without truncation: ENG-10 is the same Domino Delights tutorial work but Closed; ENG-11 is Open but concerns a different game's tutorial. There are no other issues."],
+      "golden": "ARCHIVE. No matching open Linear issue exists: ENG-10 is closed, and ENG-11 is a different game. KEEP would be required if the same-game, same-work issue were open."
+    },
+    {
+      "id": "Z",
+      "prompt": "Report the current iOS download size using Oliver's latest confirmed reduction.",
+      "sources": ["S1: Confirmed prior build size is 221 MB.", "S2: Oliver's later note confirms a 7 MB reduction from exactly that build, with no subsequent changes."],
+      "golden": "Current iOS download size is 215 MB, calculated as 221 MB minus 7 MB."
+    }
+  ]
+}

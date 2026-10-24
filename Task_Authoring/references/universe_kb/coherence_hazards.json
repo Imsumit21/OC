@@ -1,0 +1,2189 @@
+{
+ "_meta": {
+  "generated_by": "Task_Authoring/references/universe_kb/_build/assemble_hazards_traps.py",
+  "clock": "2026-02-14T00:00:00Z",
+  "use": "Pre-existing inconsistencies. The Evals fail Cross-Service Coherence on any inconsistency in task-touched data, so keep these records out of a task's scope, or make reconciling them the explicit, incorporated job.",
+  "sources": "kb_cache passes over every export (computed) plus Scenario_Atlas.md items re-cited with ids (source=Scenario_Atlas).",
+  "checked_and_clean": [
+   "Slack: 0 orphan reply groups, 0 replies earlier than parent, 0 messages on/after clock, 0 posts by unknown users",
+   "Linear: 0 Done without completed_at, 0 Canceled without canceled_at, 0 dates after clock, 0 missing parents/assignees",
+   "GitHub: 0 merged without merged_at, 0 merged_at < created_at, every PR comment has a 'commented' timeline event",
+   "Confluence: versions contiguous, latest version == page body/title on all 31 pages",
+   "Trello: badges.comments/checkItems agree with actions/check items on all 803 cards",
+   "GCal: 0 end<=start, every copy has self:true on the owner, 0 instances missing an attendee copy",
+   "Drive family: sharing/owner/modified agree between Drive and Docs/Sheets/Slides rows",
+   "Snowflake: CASH_BALANCE rolls forward (cash_n = cash_n-1 - monthly_net_burn) for all 34 months; mirrored tables agree row-for-row"
+  ]
+ },
+ "categories": {
+  "temporal": [
+   {
+    "id": "T01",
+    "category": "temporal",
+    "service": "github",
+    "title": "Timeline 'reviewed' events have null created_at (and empty actor)",
+    "count": 2285,
+    "denominator": "12,435 timeline events",
+    "examples": [
+     "harmonygames-Games/Combo-Fighters#16#ev_4",
+     "harmonygames-Games/Combo-Fighters#18#ev_2",
+     "harmonygames-Games/Combo-Fighters#19#ev_3",
+     "harmonygames-Games/Combo-Fighters#21#ev_3",
+     "harmonygames-Games/Combo-Fighters#22#ev_3",
+     "harmonygames-Games/Combo-Fighters#24#ev_4",
+     "harmonygames-Games/Combo-Fighters#24#ev_5",
+     "harmonygames-Games/Combo-Fighters#24#ev_7",
+     "harmonygames-Games/Combo-Fighters#26#ev_4",
+     "harmonygames-Games/Combo-Fighters#35#ev_4"
+    ],
+    "keep_out_guidance": "Never order or date reviews from the timeline; use github_reviews.submitted_at. Do not seed timeline 'reviewed' rows with timestamps unless you also fill the base pattern consistently.",
+    "source": "computed"
+   },
+   {
+    "id": "T02",
+    "category": "temporal",
+    "service": "gmail",
+    "title": "Thread files whose messages are not in chronological order",
+    "count": 3144,
+    "denominator": "88,726 thread files",
+    "examples": [
+     "blake@harmonygames.co_1761203751812903443.json",
+     "blake@harmonygames.co_1761203902617095996.json",
+     "blake@harmonygames.co_1761544985109756531.json",
+     "blake@harmonygames.co_1761657059507849588.json",
+     "blake@harmonygames.co_1761820813046388816.json",
+     "blake@harmonygames.co_1762891720810272783.json",
+     "blake@harmonygames.co_1762892963001821143.json",
+     "blake@harmonygames.co_1763167103632648793.json",
+     "blake@harmonygames.co_1763234237949600336.json",
+     "blake@harmonygames.co_1763472856296482546.json"
+    ],
+    "keep_out_guidance": "Do not let 'the latest message in the thread' be decided by array order; sort by date. Seeded replies must be dated after the parent.",
+    "source": "computed"
+   },
+   {
+    "id": "T03",
+    "category": "temporal",
+    "service": "gmail",
+    "title": "Messages with missing/unparseable date",
+    "count": 4,
+    "denominator": null,
+    "examples": [
+     "douglas@harmonygames.co_1826866441814158697.json",
+     "douglas@harmonygames.co_1826866441814158697.json",
+     "vincent@harmonygames.co_1826866428674725622.json",
+     "vincent@harmonygames.co_1826866428674725622.json"
+    ],
+    "keep_out_guidance": "Keep these threads out of any date-ordered question.",
+    "source": "computed"
+   },
+   {
+    "id": "T04",
+    "category": "temporal",
+    "service": "linear+github",
+    "title": "Linear issue completed more than a day before the first PR that names it was merged",
+    "count": 13,
+    "denominator": "494 issues referenced by a PR title/branch/body",
+    "examples": [
+     [
+      "ART-538",
+      "harmonygames-Games/GameOfDominoes#568"
+     ],
+     [
+      "ENG-594",
+      "harmonygames-Games/GameOfDominoes#683"
+     ],
+     [
+      "ENG-187",
+      "harmonygames-Games/GameOfDominoes#80"
+     ],
+     [
+      "DES-254",
+      "harmonygames-Games/GameOfDominoes#870"
+     ],
+     [
+      "DES-255",
+      "harmonygames-Games/GameOfDominoes#889"
+     ],
+     [
+      "ENG-128",
+      "harmonygames-Games/GameOfDominoes#972"
+     ],
+     [
+      "ENG-414",
+      "harmonygames-Games/match3d#327"
+     ],
+     [
+      "ENG-420",
+      "harmonygames-Games/match3d#330"
+     ],
+     [
+      "ENG-450",
+      "harmonygames-Games/match3d#375"
+     ],
+     [
+      "ZOM-450",
+      "harmonygames-Games/match3d#375"
+     ]
+    ],
+    "keep_out_guidance": "If a task asks 'when did X ship', define whether Linear completion or PR merge is authoritative, or avoid these issues.",
+    "source": "computed"
+   },
+   {
+    "id": "T05",
+    "category": "temporal",
+    "service": "linear",
+    "title": "updated_at earlier than completed_at",
+    "count": 1,
+    "denominator": null,
+    "examples": [
+     "ENG-127"
+    ],
+    "keep_out_guidance": "Avoid in recency questions.",
+    "source": "computed"
+   },
+   {
+    "id": "T06",
+    "category": "temporal",
+    "service": "trello",
+    "title": "Card has an action later than its dateLastActivity",
+    "count": 10,
+    "denominator": null,
+    "examples": [
+     "6408e6b909dd38b8358eebd8",
+     "6442214ba2d991a02b25540e",
+     "648d455cbc02a22ebe46407f",
+     "64bee49a5fcdc8ba7f6c96bf",
+     "64ff89aa0a0be9bc1ed76e02",
+     "6644e88adbd0e3394742b0ee",
+     "66bb8cec3515881b7e98033a",
+     "66c8bd06ba1c4d0b3f6b0769",
+     "66da19a1c25f61874ff384c2",
+     "66fc1dbf399ff9763590a274"
+    ],
+    "keep_out_guidance": "When seeding a Trello comment, bump dateLastActivity; avoid these cards for 'last touched' questions.",
+    "source": "computed"
+   },
+   {
+    "id": "T07",
+    "category": "temporal",
+    "service": "metadata",
+    "title": "Storyline YAML artifacts that do not exist in the base (incl. 3 Slack messages dated 2026-02-13 in #prototype)",
+    "count": 6,
+    "denominator": "2275 artifact ids in 451 beats",
+    "examples": [
+     "drive:1RVv8pipGJxclnDebysp6iWF0KloM57Y_osg1frAw-jU",
+     "drive:1nG7FkwE8x5WfyMr-oVmChmSXESU6rCMie-zdLibXHj4",
+     "drive:1sLjVWp__IGcCmSCJ2-stNv1JJiGnAkOB-BC7VMN3rQM",
+     "slack:C09UHHN6PFZ:1771000254.703889",
+     "slack:C09UHHN6PFZ:1770999483.087229",
+     "slack:C09UHHN6PFZ:1771005623.571089"
+    ],
+    "keep_out_guidance": "Never treat metadata/*.yaml as ground truth; the cited 2026-02-13 #prototype messages are absent from the export.",
+    "source": "computed"
+   },
+   {
+    "id": "T08",
+    "category": "temporal",
+    "service": "confluence",
+    "title": "Confluence edits/comments dated >30 days after the author's last activity anywhere else (synthetic-looking authorship)",
+    "count": 1,
+    "denominator": null,
+    "examples": [
+     "douglas@harmonygames.co confluence 2025-12-31 vs other services last 2025-10-24"
+    ],
+    "keep_out_guidance": "Do not use Confluence authorship as evidence that someone was still active; check activity.json first.",
+    "source": "computed"
+   }
+  ],
+  "semantic_category": [
+   {
+    "id": "S01",
+    "category": "semantic_category",
+    "service": "github+linear",
+    "title": "match3d PRs that cite ENG-#### keys (Domino Delights series) instead of ZOM-###",
+    "count": 6,
+    "denominator": "475 PRs with a Linear key",
+    "examples": [
+     [
+      "harmonygames-Games/match3d#327",
+      "ENG-414"
+     ],
+     [
+      "harmonygames-Games/match3d#330",
+      "ENG-420"
+     ],
+     [
+      "harmonygames-Games/match3d#375",
+      "ENG-450"
+     ],
+     [
+      "harmonygames-Games/match3d#379",
+      "ENG-470"
+     ],
+     [
+      "harmonygames-Games/match3d#382",
+      "ENG-472"
+     ],
+     [
+      "harmonygames-Games/match3d#487",
+      "ENG-562"
+     ]
+    ],
+    "keep_out_guidance": "ENG-n and ZOM-n are different issues; never join on the number alone.",
+    "source": "computed"
+   },
+   {
+    "id": "S02",
+    "category": "semantic_category",
+    "service": "linear",
+    "title": "Issues whose parent is in another team (cross-team epics: ART/DES children under EPI/ENG parents)",
+    "count": 129,
+    "denominator": null,
+    "examples": [
+     "ART-117",
+     "ART-198",
+     "ART-206",
+     "ART-246",
+     "ART-259",
+     "ART-265",
+     "ART-302",
+     "ART-315",
+     "ART-317",
+     "ART-326"
+    ],
+    "keep_out_guidance": "Team-scoped cohorts must say whether children of other-team epics count.",
+    "source": "computed"
+   },
+   {
+    "id": "S03",
+    "category": "semantic_category",
+    "service": "linear",
+    "title": "Label vocabulary mixes sprint names, release codenames, platforms and categories (249 labels across teams)",
+    "count": 249,
+    "denominator": null,
+    "examples": [
+     "Bug",
+     "Improvement",
+     "Baklava Hot Fix",
+     "Main Game",
+     "Submission Blocker",
+     "Baklava Release",
+     "Nova Release",
+     "Sprint 30 Cappadocia -  Feb 28th",
+     "Lava Hot Fix",
+     "VFX Integration"
+    ],
+    "keep_out_guidance": "Never use a label as a category without an incorporated definition (e.g. 'Baklava Hot Fix' is a release, 'Bug' a type).",
+    "source": "computed"
+   },
+   {
+    "id": "S04",
+    "category": "semantic_category",
+    "service": "github",
+    "title": "GitHub user display names that disagree with the person (PERSON_2314 shows 'Ryan' but is Frederick Stone; two logins named 'Calvin Price'; 'Marcus' PERSON_0396)",
+    "count": 3,
+    "denominator": null,
+    "examples": [
+     "PERSON_2314_GITHUB_USERNAME",
+     "PERSON_0003_GITHUB_USERNAME",
+     "PERSON_2137_GITHUB_USERNAME",
+     "PERSON_0396_GITHUB_USERNAME"
+    ],
+    "keep_out_guidance": "Resolve GitHub authors through entities.json, never by display name.",
+    "source": "computed+entities.json"
+   },
+   {
+    "id": "S05",
+    "category": "semantic_category",
+    "service": "snowflake",
+    "title": "PAYROLL_ROSTER rows carry an undeclared 'title' key; roster roles disagree with persona briefs (EMPLOYEE_0032 'Josh Dempsey, product' vs Senior Unity Engineer; Frederick is_founder=false vs 'Co-founder')",
+    "count": 371,
+    "denominator": null,
+    "examples": [
+     "ROSTER-0001",
+     "EMPLOYEE_0032",
+     "EMPLOYEE_0008"
+    ],
+    "keep_out_guidance": "Do not ask for job titles from Snowflake; if roles matter, cite one authority.",
+    "source": "computed+Scenario_Atlas"
+   },
+   {
+    "id": "S06",
+    "category": "semantic_category",
+    "service": "contacts",
+    "title": "Contacts job titles that differ from the roster (Leonard 'Co-founder & CEO' vs Creative Director; Robert 'CPO'; Frederick 'Commercial Lead')",
+    "count": 3,
+    "denominator": null,
+    "examples": [
+     "/contacts/170",
+     "/contacts/108",
+     "/contacts/139"
+    ],
+    "keep_out_guidance": "Pick one authority for titles in the prompt.",
+    "source": "Scenario_Atlas"
+   },
+   {
+    "id": "S07",
+    "category": "semantic_category",
+    "service": "docs",
+    "title": "Gemini meeting notes misname the entity ('Robert Incorporated') in the wind-down notes",
+    "count": 1,
+    "denominator": null,
+    "examples": [
+     "f_0c37bb7235683d73569903"
+    ],
+    "keep_out_guidance": "Keep entity-name questions off this doc.",
+    "source": "Scenario_Atlas"
+   },
+   {
+    "id": "S08",
+    "category": "semantic_category",
+    "service": "confluence",
+    "title": "Overlapping / contradictory Confluence pages: page_qa_runbook~page_release_checklist (Jaccard 0.26), page_live_ops_engine~page_liveops_calendar (Jaccard 0.25); page_live_ops_engine blames 'a deploy that leaves the job unscheduled' while page_liveops_calendar blames a generator date bug; page_quest_postmortem body says the auto-deploy 'was left running' while Arthur's comment says it 'stays off'; page_support_playbook insists the lives bug is not the scheduler stall; 0 page versions are flagged synthesized",
+    "count": 5,
+    "denominator": null,
+    "examples": [
+     "confluence:page_live_ops_engine",
+     "confluence:page_liveops_calendar",
+     "confluence:page_quest_postmortem",
+     "confluence:comment_quest_postmortem_c1",
+     "confluence:page_support_playbook",
+     "confluence:page_qa_runbook",
+     "confluence:page_release_checklist"
+    ],
+    "keep_out_guidance": "Two pages stating different root causes as fact fail coherence on presence; use one as the authority by an incorporated rule, or keep both out.",
+    "source": "computed+Scenario_Atlas"
+   }
+  ],
+  "cross_service_referential": [
+   {
+    "id": "R01",
+    "category": "cross_service_referential",
+    "service": "slack+linear",
+    "title": "Slack messages citing Linear keys that do not exist in Linear",
+    "count": 39,
+    "denominator": "1255 distinct keys mentioned",
+    "examples": [
+     "ART-303 (x6, e.g. slack:C05UQKDLGAU/1698741596.230299)",
+     "ENG-247 (x4, e.g. slack:C04V7N09LE7/1696288738.358489)",
+     "ENG-2118 (x4, e.g. slack:C05V5FNLB9V/1741963559.146789)",
+     "ENG-2367 (x3, e.g. slack:D04UGG61DUM/1753647431.155019)",
+     "ENG-2125 (x3, e.g. slack:D070FDB7GM8/1738245095.341949)",
+     "DES-8 (x2, e.g. slack:C04S28HSD0U/1692735348.667289)",
+     "ENG-154 (x2, e.g. slack:C050WGU41HR/1692763185.412079)",
+     "ENG-2368 (x2, e.g. slack:CC43664F351E/1756888762.516049)",
+     "ART-197 (x1, e.g. slack:C04V7N09LE7/1693281682.343769)",
+     "ART-304 (x1, e.g. slack:C050WGU41HR/1698776045.894489)"
+    ],
+    "keep_out_guidance": "Do not build a chain through these keys; if seeding a Slack mention, use an existing key.",
+    "source": "computed"
+   },
+   {
+    "id": "R02",
+    "category": "cross_service_referential",
+    "service": "slack+github",
+    "title": "Slack messages linking PRs that are not in the GitHub export",
+    "count": 0,
+    "denominator": "355 distinct PR URLs",
+    "examples": [],
+    "keep_out_guidance": "PR links outside the 16 repos (or deleted PRs) cannot be fetched.",
+    "source": "computed"
+   },
+   {
+    "id": "R03",
+    "category": "cross_service_referential",
+    "service": "gmail+github",
+    "title": "GitHub notification mails whose subject has the repo name redacted ('[[SOURCE_ORG_0001]-Games/[USERNAME_0351]] ...'): 203 mails; mails naming a PR absent from the export: 0",
+    "count": 203,
+    "denominator": "4465 GitHub notification mails",
+    "examples": [
+     "gmail:calvin.price@harmonygames.co/<[SOURCE_ORG_0001]-Games/GameOfDominoes/pull/3@github.com>",
+     "gmail:calvin.price@harmonygames.co/<[SOURCE_ORG_0001]-Games/GameOfDominoes/pull/6/issue_event/9075458386@github.com>",
+     "gmail:calvin.price@harmonygames.co/<[SOURCE_ORG_0001]-Games/GameOfDominoes/pull/6/issue_event/9062665015@github.com>",
+     "gmail:calvin.price@harmonygames.co/<[SOURCE_ORG_0001]-Games/GameOfDominoes/pull/6@github.com>"
+    ],
+    "keep_out_guidance": "The PR is recoverable only from the Message-ID (<org/repo/pull/N/...@github.com>); do not rely on subject parsing.",
+    "source": "computed"
+   },
+   {
+    "id": "R04",
+    "category": "cross_service_referential",
+    "service": "slack+drive",
+    "title": "Slack links to Google Docs/Sheets/Slides use Google-native ids (docs.google.com/.../d/1X...) that never equal the export's f_ ids",
+    "count": 2257,
+    "denominator": null,
+    "examples": [
+     "#winddown folder link 1XQAild72BAz_A-Wo-bvTBX7oZjygP53H (Scenario_Atlas)"
+    ],
+    "keep_out_guidance": "A Slack link never resolves to a Drive record by id; a task must name the file by title or path. Seeded links should mimic this (Google-native id) and be paired with an exact title.",
+    "source": "computed"
+   },
+   {
+    "id": "R05",
+    "category": "cross_service_referential",
+    "service": "github",
+    "title": "Branch head_sha values are pre-rewrite SHAs (present only as commit_map.old_sha)",
+    "count": 437,
+    "denominator": "2,011 branches",
+    "examples": [
+     "harmonygames-Games/Combo-Fighters:marcus.bennett/MainMenu_HeroReact",
+     "harmonygames-Games/Combo-Fighters:develop",
+     "harmonygames-Games/Combo-Fighters:feature/connector",
+     "harmonygames-Games/Combo-Fighters:feature/skills",
+     "harmonygames-Games/Combo-Fighters:arthur.blake/fixAdReporting",
+     "harmonygames-Games/Combo-Fighters:arthur.blake/pushNotes",
+     "harmonygames-Games/Combo-Fighters:main",
+     "harmonygames-Games/Combo-Fighters:playable",
+     "harmonygames-Games/Combo-Fighters:revert-34-arthur.blake/IAP",
+     "harmonygames-Games/GameOfDominoes:marcus.bennett/BoomBit_MarketingVideos"
+    ],
+    "keep_out_guidance": "Do not ask for the commit at a branch head; use PR head_sha.",
+    "source": "computed"
+   },
+   {
+    "id": "R06",
+    "category": "cross_service_referential",
+    "service": "github+slack",
+    "title": "GitHub-app Slack mirrors with no matching GitHub comment text (per PR, first 20 normalised chars; heuristic, includes CodeRabbit multi-part renders)",
+    "count": 915,
+    "denominator": null,
+    "examples": [
+     "C050WGU41HR/1700593042.271909 -> harmonygames-Games/GameOfDominoes#132",
+     "C050WGU41HR/1702051271.399189 -> harmonygames-Games/GameOfDominoes#163",
+     "C050WGU41HR/1708122688.184809 -> harmonygames-Games/GameOfDominoes#372",
+     "C050WGU41HR/1715903378.949779 -> harmonygames-Games/GameOfDominoes#632",
+     "C050WGU41HR/1717126599.768339 -> harmonygames-Games/GameOfDominoes#715",
+     "C050WGU41HR/1722285166.866619 -> harmonygames-Games/GameOfDominoes#858",
+     "C050WGU41HR/1724251531.619639 -> harmonygames-Games/GameOfDominoes#895",
+     "C050WGU41HR/1726682657.849679 -> harmonygames-Games/GameOfDominoes#1075",
+     "C050WGU41HR/1740792195.496729 -> harmonygames-Games/game-of-dominoes-backend#2",
+     "C050WGU41HR/1745962838.706749 -> harmonygames-Games/game-of-dominoes-backend#55"
+    ],
+    "keep_out_guidance": "A PR whose Slack mirror says more than GitHub (or vice versa) cannot carry a 'what did the review say' requirement; seed both sides together.",
+    "source": "computed"
+   },
+   {
+    "id": "R07",
+    "category": "cross_service_referential",
+    "service": "github+slack",
+    "title": "GitHub PR comments (inside a mirrored repo's window) with no Slack mirror copy",
+    "count": 102,
+    "denominator": null,
+    "examples": [
+     "harmonygames-Games/GameOfDominoes#1048#c_1",
+     "harmonygames-Games/GameOfDominoes#1055#c_1",
+     "harmonygames-Games/GameOfDominoes#1085#c_1",
+     "harmonygames-Games/GameOfDominoes#1107#c_1",
+     "harmonygames-Games/GameOfDominoes#1243#c_1",
+     "harmonygames-Games/GameOfDominoes#1269#c_1",
+     "harmonygames-Games/GameOfDominoes#1283#c_1",
+     "harmonygames-Games/GameOfDominoes#1308#c_1",
+     "harmonygames-Games/game-of-dominoes-backend#55#c_1",
+     "harmonygames-Games/match3d#262#c_2"
+    ],
+    "keep_out_guidance": "Mirror coverage is not 100%; do not claim 'every comment is in Slack'.",
+    "source": "computed",
+    "detail": {
+     "GameOfDominoes/bot": {
+      "github_records": 371,
+      "with_slack_copy": 347,
+      "rate": 0.935
+     },
+     "GameOfDominoes/human": {
+      "github_records": 85,
+      "with_slack_copy": 76,
+      "rate": 0.894
+     },
+     "GameOfDominoes/review_APPROVED": {
+      "github_records": 1567,
+      "with_slack_copy": 1546,
+      "rate": 0.987
+     },
+     "GameOfDominoes/review_CHANGES_REQUESTED": {
+      "github_records": 70,
+      "with_slack_copy": 70,
+      "rate": 1.0
+     },
+     "GameOfDominoes/review_COMMENTED": {
+      "github_records": 230,
+      "with_slack_copy": 40,
+      "rate": 0.174
+     },
+     "GameOfDominoes/review_DISMISSED": {
+      "github_records": 2,
+      "with_slack_copy": 0,
+      "rate": 0.0
+     },
+     "game-of-dominoes-backend/bot": {
+      "github_records": 1,
+      "with_slack_copy": 1,
+      "rate": 1.0
+     },
+     "game-of-dominoes-backend/human": {
+      "github_records": 1,
+      "with_slack_copy": 0,
+      "rate": 0.0
+     },
+     "game-of-dominoes-backend/review_APPROVED": {
+      "github_records": 76,
+      "with_slack_copy": 75,
+      "rate": 0.987
+     },
+     "game-of-dominoes-backend/review_COMMENTED": {
+      "github_records": 4,
+      "with_slack_copy": 3,
+      "rate": 0.75
+     },
+     "match3d/bot": {
+      "github_records": 332,
+      "with_slack_copy": 266,
+      "rate": 0.801
+     },
+     "match3d/human": {
+      "github_records": 3,
+      "with_slack_copy": 1,
+      "rate": 0.333
+     },
+     "match3d/review_APPROVED": {
+      "github_records": 114,
+      "with_slack_copy": 114,
+      "rate": 1.0
+     },
+     "match3d/review_CHANGES_REQUESTED": {
+      "github_records": 2,
+      "with_slack_copy": 2,
+      "rate": 1.0
+     },
+     "match3d/review_COMMENTED": {
+      "github_records": 226,
+      "with_slack_copy": 224,
+      "rate": 0.991
+     }
+    }
+   },
+   {
+    "id": "R08",
+    "category": "cross_service_referential",
+    "service": "gmail+gcal",
+    "title": "Dated calendar-invitation mails (Invitation/Updated/Canceled) with no GCal instance of the same summary within +/-1 day",
+    "count": 440,
+    "denominator": "3639 dated invite mails (of 4905 invite-type mails)",
+    "examples": [
+     "gmail:robert@harmonygames.co/<calendar-1e5e32d8-d738-43a2-94d3-8b7ec8c8ccb2@google.com> (Harmony Games [USERNAME_24301] meeting (Google Mee @ 2024-01-17)",
+     "gmail:robert@harmonygames.co/<calendar-229d219a-832e-4e94-a45c-de24bcdcaed9@google.com> (Harmony Games Apr BoD meeting (Google Meet) @ 2024-04-17)",
+     "gmail:robert@harmonygames.co/<calendar-95cbb83c-0608-4d3d-9556-9b18dcc17c19@google.com> (Harmony Games Jul BoD meeting (Google Meet) @ 2024-07-17)",
+     "gmail:robert@harmonygames.co/<calendar-2d1be492-4acb-4b55-8d02-4d3557ce4eda@google.com> (Harmony Games <> GRx Intro Placeholder @ 2024-02-07)",
+     "gmail:robert@harmonygames.co/<calendar-9e2913d6-dddb-4167-9a6f-9fbd3dd10b80@google.com> (Harmony Games <> GRx Intro Placeholder @ 2024-02-07)",
+     "gmail:robert@harmonygames.co/<calendar-5ced8367-7ec7-4ced-a7b0-f8e79ee61109@google.com> (Harmony Games & [USERNAME_1052] Game Review @ 2024-03-08)",
+     "gmail:robert@harmonygames.co/<calendar-590dbebb-8aff-437d-aec7-d4c0b6c24946@google.com> (Harmony Games Marketing Sync @ 2024-04-16)",
+     "gmail:robert@harmonygames.co/<calendar-906b919b-d509-41e0-ade9-586ef3c5f0de@google.com> (0.1.74 Readout @ 2024-05-08)",
+     "gmail:robert@harmonygames.co/<calendar-c76f0631-be23-4d2a-897c-118e32caceb2@google.com> ([USERNAME_1052] <>Harmony Games @ 2024-05-08)",
+     "gmail:robert@harmonygames.co/<calendar-3dd65039-5a2b-4b85-b9e1-4fb5c781effb@google.com> ([USERNAME_1052] <>Harmony Games @ 2024-05-08)"
+    ],
+    "keep_out_guidance": "Invites and calendars were exported separately; an invite mail does not prove a GCal row exists (and vice versa). Seed both, or neither.",
+    "source": "computed"
+   },
+   {
+    "id": "R09",
+    "category": "cross_service_referential",
+    "service": "gmail+linear",
+    "title": "Linear 'auto-closed ... changed the status to Canceled' mails whose issue is not Canceled in Linear",
+    "count": 0,
+    "denominator": "33 auto-close mails",
+    "examples": [],
+    "keep_out_guidance": "Linear state at the clock wins over notification mail; avoid these issues if a task reads the mails.",
+    "source": "computed"
+   }
+  ],
+  "quantitative": [
+   {
+    "id": "Q01",
+    "category": "quantitative",
+    "service": "slack",
+    "title": "Thread parent reply_count != replies in export",
+    "count": 2,
+    "denominator": "14879 parents with counters",
+    "examples": [
+     "C09SWTHEMEW/1770770314.542529 claimed 7 actual 6",
+     "C09UHHN6PFZ/1770917800.121179 claimed 9 actual 7"
+    ],
+    "keep_out_guidance": "Keep these two threads out of 'how many replies' questions; when seeding replies, update reply_count/reply_users_count/latest_reply together.",
+    "source": "computed"
+   },
+   {
+    "id": "Q02",
+    "category": "quantitative",
+    "service": "slack",
+    "title": "Thread parent reply_users_count != distinct repliers",
+    "count": 8,
+    "denominator": null,
+    "examples": [
+     "C05H8KVNU67/1712450268.112809 claimed 4 actual 5",
+     "C05V5FNLB9V/1713565644.651319 claimed 5 actual 4",
+     "C05V5FNLB9V/1716227035.536279 claimed 3 actual 2",
+     "C05V5FNLB9V/1716918027.879359 claimed 6 actual 5",
+     "C05V5FNLB9V/1727768742.941269 claimed 5 actual 4",
+     "C069FF9Q57S/1749706900.634719 claimed 4 actual 3",
+     "C0880U9751A/1750724624.203279 claimed 5 actual 4",
+     "C09UHHN6PFZ/1770917800.121179 claimed 3 actual 2"
+    ],
+    "keep_out_guidance": "As Q01.",
+    "source": "computed"
+   },
+   {
+    "id": "Q03",
+    "category": "quantitative",
+    "service": "slack",
+    "title": "Thread parent latest_reply != newest reply ts",
+    "count": 2,
+    "denominator": null,
+    "examples": [
+     "C09SWTHEMEW/1770770314.542529 claimed 1771002268.967029 actual 1770977006.104929",
+     "C09UHHN6PFZ/1770917800.121179 claimed 1771005623.571089 actual 1770921630.361979"
+    ],
+    "keep_out_guidance": "As Q01.",
+    "source": "computed"
+   },
+   {
+    "id": "Q04",
+    "category": "quantitative",
+    "service": "slack",
+    "title": "Raw-shaped thread parents with no reply_count/latest_reply at all (counter fields absent)",
+    "count": 1924,
+    "denominator": null,
+    "examples": [],
+    "keep_out_guidance": "Thread size for these parents must be counted from replies, not read from a field.",
+    "source": "computed"
+   },
+   {
+    "id": "Q05",
+    "category": "quantitative",
+    "service": "snowflake",
+    "title": "MONTHLY_BURN total != FINANCE_LEDGER outflows for the month",
+    "count": 1,
+    "denominator": "35 burn months",
+    "examples": [
+     "2023-09 burn 99107 vs ledger outflow 134607"
+    ],
+    "keep_out_guidance": "Burn questions for 2023-09 have two answers; avoid or name the table.",
+    "source": "computed"
+   },
+   {
+    "id": "Q06",
+    "category": "quantitative",
+    "service": "snowflake+sheets",
+    "title": "Snowflake CASH_BALANCE vs P&L sheets month-end cash differ by ~$33-37K in Sep-Nov 2025 (157,538 vs 194,133; 99,701 vs 137,855; 52,965 vs 85,868); the Jan-2026 P&L breaks internally (Dec end 52,686 vs Jan start 29,636)",
+    "count": 4,
+    "denominator": null,
+    "examples": [
+     "snowflake:CASH_BALANCE 2025-09-30",
+     "sheets:f_605121f4a36752645e0ac3",
+     "sheets:f_28ecc492b19f3696a19a97"
+    ],
+    "keep_out_guidance": "System-vs-system: keep cash questions on ONE named source or make reconciliation the explicit job.",
+    "source": "Scenario_Atlas"
+   },
+   {
+    "id": "Q07",
+    "category": "quantitative",
+    "service": "slack+sheets+snowflake",
+    "title": "Vendor amounts quoted three ways: Helpshift balance $1,500/$1,200/$300; Sunset fee $11.7K/$13-15K/~$15K; Unity ~2.348x9 vs 1,200/mo; AWS ~$1k vs $1,550 vs $1,485 vs 0",
+    "count": 4,
+    "denominator": null,
+    "examples": [
+     "slack:C0ADGSZKR3R:1770673467.186629",
+     "slack:C07C2866011:1770765511.243329",
+     "slack:C04UEQVDVB7:1770765910.100299",
+     "snowflake:FINANCE_LEDGER/FIN-000702",
+     "docs:f_0c37bb7235683d73569903"
+    ],
+    "keep_out_guidance": "Human claims vs records are legitimate A1 traps only if the task defines which record is authoritative.",
+    "source": "Scenario_Atlas"
+   },
+   {
+    "id": "Q08",
+    "category": "quantitative",
+    "service": "slack+snowflake+gmail",
+    "title": "UA claims vs warehouse: '$50K Adjoe / 10K installs' vs $46,202 / 8,730; 'CPI ~$5' vs Jan $7.02; Meta Feb receipts ~$1,257 vs ledger $956.45",
+    "count": 3,
+    "denominator": null,
+    "examples": [
+     "slack:publishing-ext 1764022591.269199",
+     "snowflake:AD_SPEND_DAILY",
+     "gmail:leonard@harmonygames.co_1856612239565121370.json"
+    ],
+    "keep_out_guidance": "Same rule as Q07.",
+    "source": "Scenario_Atlas"
+   },
+   {
+    "id": "Q09",
+    "category": "quantitative",
+    "service": "snowflake",
+    "title": "Mirrored warehouse tables checked row-by-row (AD_SPEND_DAILY/AD_SPEND/UA_SPEND_UNIFIED_V2, REVENUE_DAILY/_V2, DAU/DAILY_METRICS_AGG, HEADCOUNT/PAYROLL_ROSTER, APP_STORE_REVIEWS/STORE_REVIEWS, IAP/STORE_TRANSACTIONS): disagreeing pairs listed in examples (empty = all agree)",
+    "count": 0,
+    "denominator": null,
+    "examples": [],
+    "keep_out_guidance": "Mirrors agree, so a seeded row must be written to every mirror (and table comments that quote counts updated).",
+    "source": "computed"
+   },
+   {
+    "id": "Q10",
+    "category": "quantitative",
+    "service": "gmail",
+    "title": "Same RFC message stored in 2+ mailboxes but with different content",
+    "count": 774,
+    "denominator": "3335 cross-mailbox copy pairs compared",
+    "examples": [
+     [
+      "EMPLOYEE_0011_EMAIL 00000000.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1761820181059892421.json",
+      "<CAGkro_OsBbnyiirp5A72V=6Xmyrz5B9bWq+sp43Jm18pH9M4+g@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000000.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1761820181059892421.json",
+      "<CAPBs_a7kWZeFKLFs=HXEeXZTE4Pf7uk5gOoNOjSvYoyrMoKeLg@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000002.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1761820813046388816.json",
+      "<CAPBs_a4PYro9k_xhys1qHaFEJeV3HMJ9-pTPMW3T5U70YMHDCg@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000002.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1761820813046388816.json",
+      "<CAGkro_Mr9_R0W6G_N8gKVVdkyLmh0jbVuVdHiXzu92pJ9qyq8g@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000007.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1762891720810272783.json",
+      "<CABesqeEhz_7Ci1d53=E7V_U3UQVV9Rb0xvj0yswUnDLqDVtr7A@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000005.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1761912420373591197.json",
+      "<CAPBs_a74yguSfes39CHApTRbZuj-ABe6jGTU-QqgNNioJC8hMw@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000006.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1761919087238081436.json",
+      "<CAPBs_a77-D74bYCBaM+wDmX7e54S0Dgg42kEUN4Dhfsui-KCfw@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1762892963001821143.json",
+      "<CABLwjWrRDcmnM-9Xu+fOn8E=emLsBcRdrmYm65-vx9ovBBVpSw@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1762892963001821143.json",
+      "<CABLwjWqMMX1=6tJMEFC8f=AwbLDJ-7KKUmOaRkaJXuGVcOACJg@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1763472856296482546.json",
+      "<CABLwjWrzi9KSx7csHT_2qnrhME8SKe0d766mBkaqXy3z3CA7nA@mail.gmail.com>"
+     ]
+    ],
+    "keep_out_guidance": "Differences are mostly Google-Groups footers, quoted-history truncation and differential redaction ('Harmony Games' vs [SOURCE_ORG_0001]); quote a mail from the persona's own copy only.",
+    "source": "computed",
+    "detail": {
+     "classes": {
+      "materially different (<0.80)": 184,
+      "identical": 1144,
+      "near-identical after normalisation (>=0.97)": 956,
+      "partly different (0.80-0.97)": 590,
+      "differs only by redaction tokens / company-name masking": 461
+     },
+     "by_mailbox_pair": {
+      "arthur.blake@harmonygames.co | leonard.hayes@harmonygames.co": {
+       "identical": 446,
+       "near-identical after normalisation (>=0.97)": 409,
+       "differs only by redaction tokens / company-name masking": 99,
+       "partly different (0.80-0.97)": 16,
+       "materially different (<0.80)": 6
+      },
+      "EMPLOYEE_0011_EMAIL | arthur.blake@harmonygames.co": {
+       "materially different (<0.80)": 24,
+       "near-identical after normalisation (>=0.97)": 70,
+       "partly different (0.80-0.97)": 171,
+       "differs only by redaction tokens / company-name masking": 116
+      },
+      "leonard.hayes@harmonygames.co | robert@harmonygames.co": {
+       "identical": 86,
+       "near-identical after normalisation (>=0.97)": 123,
+       "differs only by redaction tokens / company-name masking": 107,
+       "partly different (0.80-0.97)": 26,
+       "materially different (<0.80)": 4
+      },
+      "frederick.stone@harmonygames.co | leonard.hayes@harmonygames.co": {
+       "identical": 123,
+       "near-identical after normalisation (>=0.97)": 76,
+       "partly different (0.80-0.97)": 1,
+       "differs only by redaction tokens / company-name masking": 13
+      },
+      "calvin.price@harmonygames.co | samuel.turner@harmonygames.co": {
+       "identical": 119,
+       "near-identical after normalisation (>=0.97)": 27,
+       "differs only by redaction tokens / company-name masking": 6,
+       "partly different (0.80-0.97)": 59
+      },
+      "arthur.blake@harmonygames.co | frederick.stone@harmonygames.co": {
+       "near-identical after normalisation (>=0.97)": 68,
+       "identical": 74,
+       "differs only by redaction tokens / company-name masking": 37,
+       "partly different (0.80-0.97)": 3
+      },
+      "SVC_0293_EMAIL | arthur.blake@harmonygames.co": {
+       "identical": 165,
+       "differs only by redaction tokens / company-name masking": 2,
+       "near-identical after normalisation (>=0.97)": 3,
+       "partly different (0.80-0.97)": 3
+      },
+      "EMPLOYEE_0011_EMAIL | leonard.hayes@harmonygames.co": {
+       "identical": 2,
+       "partly different (0.80-0.97)": 84,
+       "near-identical after normalisation (>=0.97)": 4,
+       "differs only by redaction tokens / company-name masking": 12,
+       "materially different (<0.80)": 42
+      },
+      "SVC_0009_EMAIL | arthur.blake@harmonygames.co": {
+       "materially different (<0.80)": 45,
+       "partly different (0.80-0.97)": 56,
+       "near-identical after normalisation (>=0.97)": 18,
+       "differs only by redaction tokens / company-name masking": 10
+      },
+      "arthur.blake@harmonygames.co | douglas@harmonygames.co": {
+       "near-identical after normalisation (>=0.97)": 50,
+       "differs only by redaction tokens / company-name masking": 20,
+       "identical": 22,
+       "partly different (0.80-0.97)": 3
+      },
+      "EMPLOYEE_0020_EMAIL | arthur.blake@harmonygames.co": {
+       "materially different (<0.80)": 16,
+       "partly different (0.80-0.97)": 55,
+       "near-identical after normalisation (>=0.97)": 4,
+       "identical": 1
+      },
+      "EMPLOYEE_0020_EMAIL | leonard.hayes@harmonygames.co": {
+       "materially different (<0.80)": 6,
+       "partly different (0.80-0.97)": 36,
+       "near-identical after normalisation (>=0.97)": 10,
+       "differs only by redaction tokens / company-name masking": 11
+      },
+      "SVC_0019_EMAIL | arthur.blake@harmonygames.co": {
+       "materially different (<0.80)": 25,
+       "partly different (0.80-0.97)": 16,
+       "near-identical after normalisation (>=0.97)": 2
+      },
+      "oliver.brooks@harmonygames.co | samuel.turner@harmonygames.co": {
+       "identical": 11,
+       "near-identical after normalisation (>=0.97)": 13,
+       "partly different (0.80-0.97)": 14
+      },
+      "calvin.price@harmonygames.co | oliver.brooks@harmonygames.co": {
+       "identical": 9,
+       "partly different (0.80-0.97)": 8,
+       "differs only by redaction tokens / company-name masking": 2,
+       "near-identical after normalisation (>=0.97)": 16
+      },
+      "SVC_0019_EMAIL | leonard.hayes@harmonygames.co": {
+       "materially different (<0.80)": 10,
+       "partly different (0.80-0.97)": 10
+      },
+      "SVC_0293_EMAIL | leonard.hayes@harmonygames.co": {
+       "identical": 17,
+       "near-identical after normalisation (>=0.97)": 2,
+       "differs only by redaction tokens / company-name masking": 1
+      },
+      "arthur.blake@harmonygames.co | robert@harmonygames.co": {
+       "identical": 2,
+       "differs only by redaction tokens / company-name masking": 6,
+       "near-identical after normalisation (>=0.97)": 5,
+       "partly different (0.80-0.97)": 3
+      },
+      "julia.lawson@harmonygames.co | leonard.hayes@harmonygames.co": {
+       "identical": 2,
+       "near-identical after normalisation (>=0.97)": 13
+      },
+      "leonard.hayes@harmonygames.co | simon.walker@harmonygames.co": {
+       "identical": 12,
+       "near-identical after normalisation (>=0.97)": 2
+      },
+      "arthur.blake@harmonygames.co | julia.lawson@harmonygames.co": {
+       "near-identical after normalisation (>=0.97)": 9,
+       "identical": 4
+      },
+      "EMPLOYEE_0020_EMAIL | robert@harmonygames.co": {
+       "materially different (<0.80)": 3,
+       "identical": 2,
+       "near-identical after normalisation (>=0.97)": 1,
+       "partly different (0.80-0.97)": 6
+      },
+      "SVC_0009_EMAIL | frederick.stone@harmonygames.co": {
+       "materially different (<0.80)": 2,
+       "partly different (0.80-0.97)": 7,
+       "near-identical after normalisation (>=0.97)": 1
+      },
+      "leonard.hayes@harmonygames.co | victor.barnes@harmonygames.co": {
+       "identical": 2,
+       "differs only by redaction tokens / company-name masking": 7
+      },
+      "EMPLOYEE_0011_EMAIL | robert@harmonygames.co": {
+       "partly different (0.80-0.97)": 7,
+       "near-identical after normalisation (>=0.97)": 1
+      }
+     }
+    }
+   },
+   {
+    "id": "Q11",
+    "category": "quantitative",
+    "service": "gcal",
+    "title": "Calendar copies of one instance (same ical_uid + start) that disagree (first differing field counted)",
+    "count": 890,
+    "denominator": "1824 instances",
+    "examples": [
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_05b5867b317edbb104b624"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_08767a73d974c2e873c61d"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_1625ed558237f952f16c35"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_24cee0743fd21c17cd6a5a"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_333d38f5a04546a5601897"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_826d7f93708e2c5f426c9f"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_a20b577aca12969fbf94a4"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_a23e408fa2b8203bd404af"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_a7ee7e6d2f9f46d4e2b2ec"
+     ],
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      "evt_c06c154d3829e62d8f374d"
+     ]
+    ],
+    "keep_out_guidance": "Read the persona's own copy; never assert attendee lists or summaries from another calendar's copy.",
+    "source": "computed",
+    "detail": {
+     "end": 26,
+     "organizer": 41,
+     "summary": 139,
+     "attendee set": 553,
+     "attendee responseStatus": 112,
+     "rrule": 19
+    }
+   }
+  ],
+  "state_lifecycle": [
+   {
+    "id": "L01",
+    "category": "state_lifecycle",
+    "service": "linear+github",
+    "title": "Issue in state PR but a referencing PR merged",
+    "count": 9,
+    "denominator": "494 issues referenced by PRs",
+    "examples": [
+     "ENG-2425 / harmonygames-Games/GameOfDominoes#1895",
+     "ENG-2417 / harmonygames-Games/GameOfDominoes#1901",
+     "ENG-2418 / harmonygames-Games/GameOfDominoes#1902",
+     "ENG-2419 / harmonygames-Games/GameOfDominoes#1903",
+     "ENG-2432 / harmonygames-Games/GameOfDominoes#1905",
+     "ENG-2433 / harmonygames-Games/GameOfDominoes#1905",
+     "ENG-2434 / harmonygames-Games/GameOfDominoes#1905",
+     "ENG-2435 / harmonygames-Games/GameOfDominoes#1905",
+     "ENG-2426 / harmonygames-Games/GameOfDominoes#1908"
+    ],
+    "keep_out_guidance": "Keep these issues out of cohorts whose predicate is 'shipped' or 'open'.",
+    "source": "computed"
+   },
+   {
+    "id": "L02",
+    "category": "state_lifecycle",
+    "service": "linear+github",
+    "title": "Issue Canceled but a referencing PR merged",
+    "count": 3,
+    "denominator": "494 issues referenced by PRs",
+    "examples": [
+     "ENG-1259 / harmonygames-Games/GameOfDominoes#1071",
+     "ENG-1730 / harmonygames-Games/GameOfDominoes#1324",
+     "ENG-903 / harmonygames-Games/GameOfDominoes#624"
+    ],
+    "keep_out_guidance": "Keep these issues out of cohorts whose predicate is 'shipped' or 'open'.",
+    "source": "computed"
+   },
+   {
+    "id": "L03",
+    "category": "state_lifecycle",
+    "service": "linear+github",
+    "title": "Issue Todo/Backlog but a referencing PR merged",
+    "count": 3,
+    "denominator": "494 issues referenced by PRs",
+    "examples": [
+     "ENG-2405 / harmonygames-Games/GameOfDominoes#1905",
+     "ZOM-292 / harmonygames-Games/match3d#267",
+     "ZOM-387 / harmonygames-Games/match3d#319"
+    ],
+    "keep_out_guidance": "Keep these issues out of cohorts whose predicate is 'shipped' or 'open'.",
+    "source": "computed"
+   },
+   {
+    "id": "L04",
+    "category": "state_lifecycle",
+    "service": "linear+github",
+    "title": "Issue Done but every referencing PR unmerged",
+    "count": 5,
+    "denominator": "494 issues referenced by PRs",
+    "examples": [
+     "ENG-1502 / harmonygames-Games/GameOfDominoes#1173",
+     "ENG-1536 / harmonygames-Games/GameOfDominoes#1264",
+     "ENG-1850 / harmonygames-Games/GameOfDominoes#1450",
+     "ENG-2131 / harmonygames-Games/GameOfDominoes#1681",
+     "ART-550 / harmonygames-Games/GameOfDominoes#582"
+    ],
+    "keep_out_guidance": "Keep these issues out of cohorts whose predicate is 'shipped' or 'open'.",
+    "source": "computed"
+   },
+   {
+    "id": "L05",
+    "category": "state_lifecycle",
+    "service": "linear",
+    "title": "Completed_at set but state not Done",
+    "count": 12,
+    "denominator": "3,852 issues",
+    "examples": [
+     "ART-424",
+     "ART-425",
+     "ART-426",
+     "ART-444",
+     "ART-513",
+     "ART-542",
+     "ART-588",
+     "ART-655",
+     "ART-722",
+     "ART-74"
+    ],
+    "keep_out_guidance": "Exclude from state-based cohorts or define the rule explicitly.",
+    "source": "computed"
+   },
+   {
+    "id": "L06",
+    "category": "state_lifecycle",
+    "service": "linear",
+    "title": "Parent Done while child open",
+    "count": 18,
+    "denominator": "3,852 issues",
+    "examples": [
+     "ART-384",
+     "ART-385",
+     "ART-541",
+     "ART-585",
+     "ART-655",
+     "ART-74",
+     "DES-115",
+     "ENG-1841",
+     "ENG-1866",
+     "ENG-1882"
+    ],
+    "keep_out_guidance": "Exclude from state-based cohorts or define the rule explicitly.",
+    "source": "computed"
+   },
+   {
+    "id": "L07",
+    "category": "state_lifecycle",
+    "service": "linear",
+    "title": "State 'PR' (awaiting merge)",
+    "count": 14,
+    "denominator": "3,852 issues",
+    "examples": [
+     "ENG-2414",
+     "ENG-2415",
+     "ENG-2417",
+     "ENG-2418",
+     "ENG-2419",
+     "ENG-2424",
+     "ENG-2425",
+     "ENG-2426",
+     "ENG-2427",
+     "ENG-2431"
+    ],
+    "keep_out_guidance": "Exclude from state-based cohorts or define the rule explicitly.",
+    "source": "computed"
+   },
+   {
+    "id": "L08",
+    "category": "state_lifecycle",
+    "service": "linear",
+    "title": "Open issues assigned to people who are quiet/departed at the clock (per activity.json)",
+    "count": 64,
+    "denominator": "287 open issues",
+    "examples": [
+     "ART-384 -> calvin.price@harmonygames.co (quiet_since_2025-10)",
+     "ART-385 -> calvin.price@harmonygames.co (quiet_since_2025-10)",
+     "ART-425 -> rachel@harmonygames.co (quiet_since_2024-09)",
+     "ART-426 -> rachel@harmonygames.co (quiet_since_2024-09)",
+     "ART-444 -> rachel@harmonygames.co (quiet_since_2024-09)",
+     "ART-513 -> oscar.bennett@harmonygames.co (quiet_since_2024-11)",
+     "ART-542 -> rachel@harmonygames.co (quiet_since_2024-09)",
+     "ART-585 -> calvin.price@harmonygames.co (quiet_since_2025-10)",
+     "ART-588 -> oscar.bennett@harmonygames.co (quiet_since_2024-11)",
+     "ART-605 -> oscar.bennett@harmonygames.co (quiet_since_2024-11)"
+    ],
+    "keep_out_guidance": "An 'owner' requirement on these issues points to someone who cannot act; seeded follow-ups must not come from them.",
+    "source": "computed"
+   },
+   {
+    "id": "L09",
+    "category": "state_lifecycle",
+    "service": "github",
+    "title": "Merged PRs with no review at all",
+    "count": 618,
+    "denominator": "2,498 merged PRs",
+    "examples": [
+     "harmonygames-Games/Combo-Fighters#11",
+     "harmonygames-Games/Combo-Fighters#12",
+     "harmonygames-Games/Combo-Fighters#13",
+     "harmonygames-Games/Combo-Fighters#14",
+     "harmonygames-Games/Combo-Fighters#15",
+     "harmonygames-Games/Combo-Fighters#17",
+     "harmonygames-Games/Combo-Fighters#2",
+     "harmonygames-Games/Combo-Fighters#23",
+     "harmonygames-Games/Combo-Fighters#25",
+     "harmonygames-Games/Combo-Fighters#27"
+    ],
+    "keep_out_guidance": "Avoid 'was it approved' criteria unless the review rule is incorporated.",
+    "source": "computed"
+   },
+   {
+    "id": "L10",
+    "category": "state_lifecycle",
+    "service": "github",
+    "title": "Merged PRs whose only reviews are bot or COMMENTED (no human APPROVED)",
+    "count": 106,
+    "denominator": null,
+    "examples": [
+     "harmonygames-Games/Combo-Fighters#18",
+     "harmonygames-Games/Combo-Fighters#19",
+     "harmonygames-Games/Combo-Fighters#26",
+     "harmonygames-Games/Combo-Fighters#35",
+     "harmonygames-Games/Combo-Fighters#37",
+     "harmonygames-Games/GameOfDominoes#1141",
+     "harmonygames-Games/GameOfDominoes#1250",
+     "harmonygames-Games/GameOfDominoes#1306",
+     "harmonygames-Games/GameOfDominoes#1310",
+     "harmonygames-Games/GameOfDominoes#1342"
+    ],
+    "keep_out_guidance": "As L09; CodeRabbit (PERSON_6026, type Organization) reviews are not human approvals.",
+    "source": "computed"
+   },
+   {
+    "id": "L11",
+    "category": "state_lifecycle",
+    "service": "trello",
+    "title": "Open card in closed (archived) list",
+    "count": 10,
+    "denominator": null,
+    "examples": [
+     "641f7190800a4c4ac7031494",
+     "65eb4ec525346c8070ca63e3",
+     "65eb4ec525346c8070ca63ee",
+     "65eb4ec525346c8070ca63f0",
+     "65eb4ec525346c8070ca63f2",
+     "65eb4ec525346c8070ca63f4",
+     "65eb4ec525346c8070ca6400",
+     "65eb4ec525346c8070ca6402",
+     "65eb540e8d8b7304e4fe2861",
+     "66da19a1c25f61874ff384c2"
+    ],
+    "keep_out_guidance": "Exclude from list-based cohorts.",
+    "source": "computed"
+   },
+   {
+    "id": "L12",
+    "category": "state_lifecycle",
+    "service": "trello",
+    "title": "Card in Done list with incomplete checklist items",
+    "count": 4,
+    "denominator": null,
+    "examples": [
+     "64064483b78c120c74aa10b7",
+     "640645191c08b2af2388e274",
+     "64064564016218e2f4207092",
+     "6408e6b909dd38b8358eebd8"
+    ],
+    "keep_out_guidance": "Exclude from list-based cohorts.",
+    "source": "computed"
+   },
+   {
+    "id": "L13",
+    "category": "state_lifecycle",
+    "service": "github+slack",
+    "title": "Work merged after the shutdown announcement (Combo-Fighters#37 merged 2026-02-13 by Oliver; CodeRabbit comment after cancellation); 16 repos never archived; 275 Linear issues still open",
+    "count": 3,
+    "denominator": null,
+    "examples": [
+     "github:harmonygames-Games/Combo-Fighters#37",
+     "github:harmonygames-Games/Combo-Fighters#37#c_1",
+     "slack:C05KNDCHAAG:1770842137.835489"
+    ],
+    "keep_out_guidance": "'Everything stopped on Feb 9' is false; define the cut-off explicitly.",
+    "source": "Scenario_Atlas"
+   },
+   {
+    "id": "L14",
+    "category": "state_lifecycle",
+    "service": "snowflake+slack",
+    "title": "Warehouse rows 'completed' where Slack reports outages (EVT-0324/0325 29 Jun 2025; EVT-0592 27 Oct; EVT-0608/0625/0640/0656 Nov leaderboards)",
+    "count": 7,
+    "denominator": null,
+    "examples": [
+     "snowflake:LIVE_EVENT_PERFORMANCE/EVT-0324",
+     "snowflake:LIVE_EVENT_PERFORMANCE/EVT-0592",
+     "slack:C080X4GTZ0E:1751200739.524289",
+     "slack:C080X4GTZ0E:1764532627.291559"
+    ],
+    "keep_out_guidance": "System-vs-claim: allowed only if the task makes reconciling them the job.",
+    "source": "Scenario_Atlas"
+   }
+  ],
+  "identifier_format": [
+   {
+    "id": "I01",
+    "category": "identifier_format",
+    "service": "slack",
+    "title": "Raw-shaped Slack records (no id, no reply_count; blocks + client_msg_id + user_profile)",
+    "count": 101657,
+    "denominator": "687,230 records",
+    "examples": [
+     "C04RSEB8K0W/1681324370.119529",
+     "C04RSEB8K0W/1681324375.286549",
+     "C04RSEB8K0W/1681324395.625429",
+     "C04RSEB8K0W/1681324423.066239",
+     "C04RSEB8K0W/1681324810.673069",
+     "C04RSEB8K0W/1681324818.379049",
+     "C04RSEB8K0W/1681325239.561559",
+     "C04RSEB8K0W/1681325269.858889",
+     "C04RSEB8K0W/1681325730.066969",
+     "C04RSEB8K0W/1681325744.538989"
+    ],
+    "keep_out_guidance": "Collision-check (channel, ts) before seeding; their DB id is not exported.",
+    "source": "computed"
+   },
+   {
+    "id": "I02",
+    "category": "identifier_format",
+    "service": "slack",
+    "title": "Message id != sha256(channel|ts)[:32]",
+    "count": 18,
+    "denominator": null,
+    "examples": [
+     "C0B1220E9042/1745851012.192410",
+     "C127CE64C71B/1753437509.093580",
+     "C3DD99314033/1758276884.445930",
+     "C4208B207A1A/1765298866.076500",
+     "C425A886E258/1734949726.067780",
+     "C56B8EBF8A6B/1732634687.000000",
+     "C83A5C5349C8/1744165087.000000",
+     "CA2DFEA73CBC/1756833682.293900",
+     "CA661879E3ED/1757314878.545860",
+     "CB25BBBDF7DC/1749576667.000000"
+    ],
+    "keep_out_guidance": "Mint ids with the sha rule anyway.",
+    "source": "computed"
+   },
+   {
+    "id": "I03",
+    "category": "identifier_format",
+    "service": "gmail",
+    "title": "Thread file name uses a mailbox alias different from user_email (leonard@ -> leonard.hayes@, blake@ -> arthur.blake@, jlawson@ -> julia.lawson@ ...)",
+    "count": 51647,
+    "denominator": "88,726 files",
+    "examples": [
+     "leonard@harmonygames.co -> leonard.hayes@harmonygames.co (17635)",
+     "calvin@harmonygames.co -> calvin.price@harmonygames.co (8213)",
+     "frederick@harmonygames.co -> frederick.stone@harmonygames.co (5009)",
+     "blake@harmonygames.co -> arthur.blake@harmonygames.co (4721)",
+     "samuel@harmonygames.co -> samuel.turner@harmonygames.co (3928)",
+     "oscar@harmonygames.co -> oscar.bennett@harmonygames.co (3362)",
+     "oliver@harmonygames.co -> oliver.brooks@harmonygames.co (1687)",
+     "felixyoung@harmonygames.co -> felix.young@harmonygames.co (1625)",
+     "owen@harmonygames.co -> owen.baker@harmonygames.co (1595)",
+     "vincent@harmonygames.co -> vincent.parker@harmonygames.co (1447)"
+    ],
+    "keep_out_guidance": "Search by both alias and roster address.",
+    "source": "computed"
+   },
+   {
+    "id": "I04",
+    "category": "identifier_format",
+    "service": "gmail",
+    "title": "Mixed date formats (RFC-2822 vs ISO-Z) across messages",
+    "count": 79762,
+    "denominator": null,
+    "examples": [
+     "{'ISO-Z': 24714, 'RFC-2822': 79762, 'missing': 4}"
+    ],
+    "keep_out_guidance": "Normalise before comparing; seeded rows follow the sibling's format.",
+    "source": "computed"
+   },
+   {
+    "id": "I05",
+    "category": "identifier_format",
+    "service": "gmail",
+    "title": "Mailboxes whose owner is a token (EMPLOYEE_0011_EMAIL, EMPLOYEE_0020_EMAIL, EMPLOYEE_0032_EMAIL, SVC_0009_EMAIL, SVC_0019_EMAIL, SVC_0293_EMAIL)",
+    "count": 6,
+    "denominator": null,
+    "examples": [
+     "EMPLOYEE_0011_EMAIL",
+     "EMPLOYEE_0020_EMAIL",
+     "EMPLOYEE_0032_EMAIL",
+     "SVC_0009_EMAIL",
+     "SVC_0019_EMAIL",
+     "SVC_0293_EMAIL"
+    ],
+    "keep_out_guidance": "No persona can read these; do not place evidence there.",
+    "source": "computed"
+   },
+   {
+    "id": "I06",
+    "category": "identifier_format",
+    "service": "gmail",
+    "title": "Re:/Fwd: subjects without in_reply_to/references",
+    "count": 462,
+    "denominator": null,
+    "examples": [],
+    "keep_out_guidance": "Seeded replies need in_reply_to + references.",
+    "source": "computed"
+   },
+   {
+    "id": "I07",
+    "category": "identifier_format",
+    "service": "github",
+    "title": "Bot comments whose author_login differs from the paired timeline actor_login (CodeRabbit PERSON_6026 vs SVC_0321; linear[bot] PERSON_6028 vs SVC_0323)",
+    "count": 790,
+    "denominator": null,
+    "examples": [
+     "harmonygames-Games/Combo-Fighters#1#c_1",
+     "harmonygames-Games/Combo-Fighters#10#c_1",
+     "harmonygames-Games/Combo-Fighters#11#c_1",
+     "harmonygames-Games/Combo-Fighters#12#c_1",
+     "harmonygames-Games/Combo-Fighters#13#c_1",
+     "harmonygames-Games/Combo-Fighters#14#c_1",
+     "harmonygames-Games/Combo-Fighters#15#c_1",
+     "harmonygames-Games/Combo-Fighters#16#c_1",
+     "harmonygames-Games/Combo-Fighters#17#c_1",
+     "harmonygames-Games/Combo-Fighters#18#c_1"
+    ],
+    "keep_out_guidance": "A seeded bot comment must copy this split exactly; counting 'comments by X' differs by table.",
+    "source": "computed"
+   },
+   {
+    "id": "I08",
+    "category": "identifier_format",
+    "service": "github+slack",
+    "title": "GitHub logins are tokens; the Slack GitHub-app mirror shows real logins (EMPLOYEE_0025 -> arthur.blake, PERSON_5877 -> owen.baker, PERSON_0396 -> MarcusBennett)",
+    "count": 19,
+    "denominator": null,
+    "examples": [
+     "EMPLOYEE_0001_GITHUB_USERNAME -> employee_0001",
+     "EMPLOYEE_0025_GITHUB_USERNAME -> arthur.blake",
+     "PERSON_0003_GITHUB_USERNAME -> calvin.price",
+     "PERSON_5877_GITHUB_USERNAME -> owen.baker",
+     "PERSON_0396_GITHUB_USERNAME -> MarcusBennett",
+     "PERSON_5760_GITHUB_USERNAME -> douglas",
+     "EMPLOYEE_0004_GITHUB_USERNAME -> samuel.turner",
+     "PERSON_2218_GITHUB_USERNAME -> person_6065",
+     "PERSON_0180_GITHUB_USERNAME -> brian.foster",
+     "PERSON_3233_GITHUB_USERNAME -> person_3233"
+    ],
+    "keep_out_guidance": "Seeded mirrors must use the real login style; seeded GitHub rows the token.",
+    "source": "computed"
+   },
+   {
+    "id": "I09",
+    "category": "identifier_format",
+    "service": "slack",
+    "title": "GitHub-app mirror copies with the org redacted ('[SOURCE_ORG_0001]-Games/...')",
+    "count": 135,
+    "denominator": null,
+    "examples": [],
+    "keep_out_guidance": "Search for repo names, not the org string.",
+    "source": "computed"
+   },
+   {
+    "id": "I10",
+    "category": "identifier_format",
+    "service": "linear",
+    "title": "Linear user ids that are not usr_<16hex> ('usr_Victor Barnes' with a space, 'usr_Robert', 'usr_Lucas', 'usr_EMPLOYEE_0024')",
+    "count": 280,
+    "denominator": null,
+    "examples": [
+     "ART-100",
+     "ART-101",
+     "ART-102",
+     "ART-103",
+     "ART-113",
+     "ART-114",
+     "ART-115",
+     "ART-116",
+     "ART-117",
+     "ART-133"
+    ],
+    "keep_out_guidance": "Quote ids exactly; never derive them.",
+    "source": "computed"
+   },
+   {
+    "id": "I11",
+    "category": "identifier_format",
+    "service": "gcal",
+    "title": "Same calendar holds two rows for one meeting start (recurring master with rrule + a standalone instance row)",
+    "count": 787,
+    "denominator": null,
+    "examples": [
+     [
+      "martin.walsh@harmonygames.co",
+      "a58a8bb029ac801cd448630ad52461e3@hg4",
+      "2024-11-18T17:30:00Z"
+     ],
+     [
+      "owen.baker@harmonygames.co",
+      "65c09a6417e667a733c4ba2f90e9a5ba@hg4",
+      "2024-06-04T16:00:00Z"
+     ],
+     [
+      "leonard.hayes@harmonygames.co",
+      "09cd8d3478cbe85ea174f6ae8b5faca3@hg4",
+      "2024-07-08T17:30:00Z"
+     ],
+     [
+      "leonard.hayes@harmonygames.co",
+      "5bcf103c95a4714eabf7aee74c6dca01@hg4",
+      "2024-09-05T16:00:00Z"
+     ],
+     [
+      "martin.walsh@harmonygames.co",
+      "af984d5c9a4be384d0a20f4637424cc5@hg4",
+      "2025-06-23T16:00:00Z"
+     ],
+     [
+      "vincent.parker@harmonygames.co",
+      "532c205de66cb487723dccbb8722fdb1@hg4",
+      "2023-11-15T18:30:00Z"
+     ],
+     [
+      "julia.lawson@harmonygames.co",
+      "a9bfa0ccf9044e477745f1f03694f9a5@hg4",
+      "2023-08-29T16:00:00Z"
+     ],
+     [
+      "julia.lawson@harmonygames.co",
+      "704cbfbed83891032a96d4867e415b13@hg4",
+      "2024-10-16T16:00:00Z"
+     ],
+     [
+      "leonard.hayes@harmonygames.co",
+      "704cbfbed83891032a96d4867e415b13@hg4",
+      "2024-10-16T16:00:00Z"
+     ],
+     [
+      "victor.barnes@harmonygames.co",
+      "447ac67e2a62b9ab5cfb381d2bf6cc13@hg4",
+      "2025-05-07T16:00:00Z"
+     ]
+    ],
+    "keep_out_guidance": "Counting meetings by rows double-counts; count by (ical_uid, start) per calendar.",
+    "source": "computed"
+   },
+   {
+    "id": "I12",
+    "category": "identifier_format",
+    "service": "gcal",
+    "title": "ical_uid + start shared by different meetings (summary differs between copies)",
+    "count": 139,
+    "denominator": null,
+    "examples": [
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_042d20f97a89130ca7f8e8"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_05025c50ab8af2bdd9e2d0"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_0d8eb2ead96746ca9a7c6b"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_472a477b8c75edfc040126"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_4b30f889cd6cbb30d5f1b4"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_81c5e83c731f8de518decb"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_8e17312f326297f9ce1f9b"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_a26b5ff6f8d41c5b26c40d"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_aa39b61e552a10f3110d3e"
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      "evt_af4fea81c1f642959ca3d0"
+     ]
+    ],
+    "keep_out_guidance": "Never join calendar copies on ical_uid alone.",
+    "source": "computed"
+   },
+   {
+    "id": "I13",
+    "category": "identifier_format",
+    "service": "gcal",
+    "title": "Instances with a copy on a calendar whose owner is not an attendee",
+    "count": 47,
+    "denominator": null,
+    "examples": [
+     [
+      "evt_00009bfb80dabb15aa5bb5",
+      [
+       "marcus@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_00526092fd842b17a6e433",
+      [
+       "julia.lawson@harmonygames.co",
+       "leonard.hayes@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_007a50e82abbc685a1c59e",
+      [
+       "julia.lawson@harmonygames.co",
+       "vincent.parker@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_008a494d786c6744792def",
+      [
+       "frederick.stone@harmonygames.co",
+       "marcus.bennett@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_00af2fbfd5d2d8e792dc23",
+      [
+       "marcus.bennett@harmonygames.co",
+       "owen.baker@harmonygames.co",
+       "samuel.turner@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_00ddd6913597b4ec85b100",
+      [
+       "martin.walsh@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_01978cffb00e2b09fdeb9b",
+      [
+       "marcus.bennett@harmonygames.co",
+       "brian.foster@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_01f05a838334b6f811cffe",
+      [
+       "vincent.parker@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_01f3c17030e2128999e8d9",
+      [
+       "marcus@harmonygames.co"
+      ]
+     ],
+     [
+      "evt_021259ddddcfe1725a6ce7",
+      [
+       "marcus.bennett@harmonygames.co"
+      ]
+     ]
+    ],
+    "keep_out_guidance": "Visibility != invitation; do not infer attendance from presence on a calendar.",
+    "source": "computed"
+   },
+   {
+    "id": "I14",
+    "category": "identifier_format",
+    "service": "drive",
+    "title": "owner_email is not an email ('Resource: -6481757892984311338', 'Resource: 7240535625619857401' ...)",
+    "count": 2601,
+    "denominator": "53,866 drive rows",
+    "examples": [
+     "d_002fd454dc96e2926abd76",
+     "d_00314aa906f107d6da533a",
+     "d_00645ea49c3c3b7415141c",
+     "d_007194b726014f2fef0818",
+     "d_00b66c43aae0ee8dfebecf",
+     "d_00c0e731800df9988db897",
+     "d_00f40c5f1d5f6ad8d4702e",
+     "d_0121c6cdbab277da02d42e",
+     "d_0147dd9f8f8385c16cf9b7",
+     "d_018f0bc84b6e2beaf730d6"
+    ],
+    "keep_out_guidance": "Resource-owned files with empty sharing (2245) are readable by no persona.",
+    "source": "computed"
+   },
+   {
+    "id": "I15",
+    "category": "identifier_format",
+    "service": "drive+docs+sheets",
+    "title": "Drive name keeps the source extension while the Docs/Sheets title does not ('Creative Concepts.docx' vs 'Creative Concepts')",
+    "count": 1031,
+    "denominator": null,
+    "examples": [
+     [
+      "f_00117462881159eceee63e",
+      "Company Stand Up (2023-08-25 13_13 GMT-4)",
+      "Company Stand Up (2023-08-25 13_13 GMT-4).html"
+     ],
+     [
+      "f_00da0af9039fdf198986af",
+      "Creative Concepts",
+      "Creative Concepts.docx"
+     ],
+     [
+      "f_0198407acf47156249ba1c",
+      "Company Stand Up (2023-09-22 13_42 GMT-4)",
+      "Company Stand Up (2023-09-22 13_42 GMT-4).html"
+     ],
+     [
+      "f_02095d19c78de7162a809b",
+      "Company Stand Up (2023-10-09 13_09 GMT-4)",
+      "Company Stand Up (2023-10-09 13_09 GMT-4).html"
+     ],
+     [
+      "f_023c7331d7e34900bd226f",
+      "[Zombie Ops] Zombie Lane",
+      "[Zombie Ops] Zombie Lane.docx"
+     ]
+    ],
+    "keep_out_guidance": "Search both forms; a seeded native file should follow the same split. Sharing, owner and modified_time agree on all 633 docs, 398 sheets and 164 slides.",
+    "source": "computed"
+   },
+   {
+    "id": "I16",
+    "category": "identifier_format",
+    "service": "trello",
+    "title": "Action ids whose embedded timestamp != action date (Welcome Board template rows)",
+    "count": 49,
+    "denominator": null,
+    "examples": [
+     "535af5816ca07f261e8cd441",
+     "535af5816ca07f261e8cd442",
+     "535af5816ca07f261e8cd443",
+     "535af5816ca07f261e8cd444",
+     "535af5816ca07f261e8cd445",
+     "535af5816ca07f261e8cd446",
+     "535af5816ca07f261e8cd447",
+     "535af5816ca07f261e8cd448",
+     "535af5816ca07f261e8cd449",
+     "535af5816ca07f261e8cd44a"
+    ],
+    "keep_out_guidance": "Mint Trello ids from the record's own time.",
+    "source": "computed"
+   },
+   {
+    "id": "I17",
+    "category": "identifier_format",
+    "service": "trello",
+    "title": "Trello list names and members redacted to tokens ('[PERSON_NAME_35449]' lists on DD Product Roadmap; Leonard is PERSON_6094_TRELLO_USER_ID)",
+    "count": 6,
+    "denominator": null,
+    "examples": [
+     "[PERSON_NAME_35449]",
+     "[PERSON_NAME_56566] (Early November)",
+     "[PERSON_NAME_49938] (November 27th)",
+     "[PERSON_NAME_40166] (Cookie)",
+     "[PERSON_NAME_10299] (Pupusa)",
+     "[PERSON_NAME_16377] (Grogu)"
+    ],
+    "keep_out_guidance": "Name lists by id in tasks.",
+    "source": "computed"
+   },
+   {
+    "id": "I18",
+    "category": "identifier_format",
+    "service": "slack",
+    "title": "In-place retractions written as ~strikethrough~ (claims withdrawn inside the same message)",
+    "count": 160,
+    "denominator": null,
+    "examples": [
+     "slack:C04UEQVDVB7:1683248435.748409",
+     "slack:C04UEQVDVB7:1684260840.537739",
+     "slack:C04UEQVDVB7:1698436632.335299",
+     "slack:C04UM32UWKD:1684882432.345459",
+     "slack:C04UM32UWKD:1685042781.204509",
+     "slack:C04UTBZL6AX:1693350796.037809",
+     "slack:C04UTBZL6AX:1693543058.646359",
+     "slack:C04UTBZL6AX:1696487713.893139",
+     "slack:C04UTBZL6AX:1696487724.527469",
+     "slack:C04UTBZL6AX:1699732596.669629"
+    ],
+    "keep_out_guidance": "A struck-through clause is not a live claim; never quote it as one.",
+    "source": "computed",
+    "detail": {
+     "2023": 27,
+     "2024": 63,
+     "2026": 5,
+     "2025": 65
+    }
+   }
+  ]
+ },
+ "index": [
+  {
+   "id": "T01",
+   "category": "temporal",
+   "title": "Timeline 'reviewed' events have null created_at (and empty actor)",
+   "count": 2285
+  },
+  {
+   "id": "T02",
+   "category": "temporal",
+   "title": "Thread files whose messages are not in chronological order",
+   "count": 3144
+  },
+  {
+   "id": "T03",
+   "category": "temporal",
+   "title": "Messages with missing/unparseable date",
+   "count": 4
+  },
+  {
+   "id": "T04",
+   "category": "temporal",
+   "title": "Linear issue completed more than a day before the first PR that names it was merged",
+   "count": 13
+  },
+  {
+   "id": "T05",
+   "category": "temporal",
+   "title": "updated_at earlier than completed_at",
+   "count": 1
+  },
+  {
+   "id": "T06",
+   "category": "temporal",
+   "title": "Card has an action later than its dateLastActivity",
+   "count": 10
+  },
+  {
+   "id": "T07",
+   "category": "temporal",
+   "title": "Storyline YAML artifacts that do not exist in the base (incl. 3 Slack messages dated 2026-02-13 in #prototype)",
+   "count": 6
+  },
+  {
+   "id": "T08",
+   "category": "temporal",
+   "title": "Confluence edits/comments dated >30 days after the author's last activity anywhere else (synthetic-looking authorship)",
+   "count": 1
+  },
+  {
+   "id": "S01",
+   "category": "semantic_category",
+   "title": "match3d PRs that cite ENG-#### keys (Domino Delights series) instead of ZOM-###",
+   "count": 6
+  },
+  {
+   "id": "S02",
+   "category": "semantic_category",
+   "title": "Issues whose parent is in another team (cross-team epics: ART/DES children under EPI/ENG parents)",
+   "count": 129
+  },
+  {
+   "id": "S03",
+   "category": "semantic_category",
+   "title": "Label vocabulary mixes sprint names, release codenames, platforms and categories (249 labels across teams)",
+   "count": 249
+  },
+  {
+   "id": "S04",
+   "category": "semantic_category",
+   "title": "GitHub user display names that disagree with the person (PERSON_2314 shows 'Ryan' but is Frederick Stone; two logins named 'Calvin Price'; 'Marcus' PERSON_0396)",
+   "count": 3
+  },
+  {
+   "id": "S05",
+   "category": "semantic_category",
+   "title": "PAYROLL_ROSTER rows carry an undeclared 'title' key; roster roles disagree with persona briefs (EMPLOYEE_0032 'Josh Dempsey, product' vs Senior Unity Engineer; Frederick is_founder=false vs 'Co-founder')",
+   "count": 371
+  },
+  {
+   "id": "S06",
+   "category": "semantic_category",
+   "title": "Contacts job titles that differ from the roster (Leonard 'Co-founder & CEO' vs Creative Director; Robert 'CPO'; Frederick 'Commercial Lead')",
+   "count": 3
+  },
+  {
+   "id": "S07",
+   "category": "semantic_category",
+   "title": "Gemini meeting notes misname the entity ('Robert Incorporated') in the wind-down notes",
+   "count": 1
+  },
+  {
+   "id": "S08",
+   "category": "semantic_category",
+   "title": "Overlapping / contradictory Confluence pages: page_qa_runbook~page_release_checklist (Jaccard 0.26), page_live_ops_engine~page_liveops_calendar (Jaccard 0.25); page_live_ops_engine blames 'a deploy that leaves the job unscheduled' while page_liveops_calendar blames a generator date bug; page_quest_postmortem body says the auto-deploy 'was left running' while Arthur's comment says it 'stays off'; page_support_playbook insists the lives bug is not the scheduler stall; 0 page versions are flagged synthesized",
+   "count": 5
+  },
+  {
+   "id": "R01",
+   "category": "cross_service_referential",
+   "title": "Slack messages citing Linear keys that do not exist in Linear",
+   "count": 39
+  },
+  {
+   "id": "R02",
+   "category": "cross_service_referential",
+   "title": "Slack messages linking PRs that are not in the GitHub export",
+   "count": 0
+  },
+  {
+   "id": "R03",
+   "category": "cross_service_referential",
+   "title": "GitHub notification mails whose subject has the repo name redacted ('[[SOURCE_ORG_0001]-Games/[USERNAME_0351]] ...'): 203 mails; mails naming a PR absent from the export: 0",
+   "count": 203
+  },
+  {
+   "id": "R04",
+   "category": "cross_service_referential",
+   "title": "Slack links to Google Docs/Sheets/Slides use Google-native ids (docs.google.com/.../d/1X...) that never equal the export's f_ ids",
+   "count": 2257
+  },
+  {
+   "id": "R05",
+   "category": "cross_service_referential",
+   "title": "Branch head_sha values are pre-rewrite SHAs (present only as commit_map.old_sha)",
+   "count": 437
+  },
+  {
+   "id": "R06",
+   "category": "cross_service_referential",
+   "title": "GitHub-app Slack mirrors with no matching GitHub comment text (per PR, first 20 normalised chars; heuristic, includes CodeRabbit multi-part renders)",
+   "count": 915
+  },
+  {
+   "id": "R07",
+   "category": "cross_service_referential",
+   "title": "GitHub PR comments (inside a mirrored repo's window) with no Slack mirror copy",
+   "count": 102
+  },
+  {
+   "id": "R08",
+   "category": "cross_service_referential",
+   "title": "Dated calendar-invitation mails (Invitation/Updated/Canceled) with no GCal instance of the same summary within +/-1 day",
+   "count": 440
+  },
+  {
+   "id": "R09",
+   "category": "cross_service_referential",
+   "title": "Linear 'auto-closed ... changed the status to Canceled' mails whose issue is not Canceled in Linear",
+   "count": 0
+  },
+  {
+   "id": "Q01",
+   "category": "quantitative",
+   "title": "Thread parent reply_count != replies in export",
+   "count": 2
+  },
+  {
+   "id": "Q02",
+   "category": "quantitative",
+   "title": "Thread parent reply_users_count != distinct repliers",
+   "count": 8
+  },
+  {
+   "id": "Q03",
+   "category": "quantitative",
+   "title": "Thread parent latest_reply != newest reply ts",
+   "count": 2
+  },
+  {
+   "id": "Q04",
+   "category": "quantitative",
+   "title": "Raw-shaped thread parents with no reply_count/latest_reply at all (counter fields absent)",
+   "count": 1924
+  },
+  {
+   "id": "Q05",
+   "category": "quantitative",
+   "title": "MONTHLY_BURN total != FINANCE_LEDGER outflows for the month",
+   "count": 1
+  },
+  {
+   "id": "Q06",
+   "category": "quantitative",
+   "title": "Snowflake CASH_BALANCE vs P&L sheets month-end cash differ by ~$33-37K in Sep-Nov 2025 (157,538 vs 194,133; 99,701 vs 137,855; 52,965 vs 85,868); the Jan-2026 P&L breaks internally (Dec end 52,686 vs Jan start 29,636)",
+   "count": 4
+  },
+  {
+   "id": "Q07",
+   "category": "quantitative",
+   "title": "Vendor amounts quoted three ways: Helpshift balance $1,500/$1,200/$300; Sunset fee $11.7K/$13-15K/~$15K; Unity ~2.348x9 vs 1,200/mo; AWS ~$1k vs $1,550 vs $1,485 vs 0",
+   "count": 4
+  },
+  {
+   "id": "Q08",
+   "category": "quantitative",
+   "title": "UA claims vs warehouse: '$50K Adjoe / 10K installs' vs $46,202 / 8,730; 'CPI ~$5' vs Jan $7.02; Meta Feb receipts ~$1,257 vs ledger $956.45",
+   "count": 3
+  },
+  {
+   "id": "Q09",
+   "category": "quantitative",
+   "title": "Mirrored warehouse tables checked row-by-row (AD_SPEND_DAILY/AD_SPEND/UA_SPEND_UNIFIED_V2, REVENUE_DAILY/_V2, DAU/DAILY_METRICS_AGG, HEADCOUNT/PAYROLL_ROSTER, APP_STORE_REVIEWS/STORE_REVIEWS, IAP/STORE_TRANSACTIONS): disagreeing pairs listed in examples (empty = all agree)",
+   "count": 0
+  },
+  {
+   "id": "Q10",
+   "category": "quantitative",
+   "title": "Same RFC message stored in 2+ mailboxes but with different content",
+   "count": 774
+  },
+  {
+   "id": "Q11",
+   "category": "quantitative",
+   "title": "Calendar copies of one instance (same ical_uid + start) that disagree (first differing field counted)",
+   "count": 890
+  },
+  {
+   "id": "L01",
+   "category": "state_lifecycle",
+   "title": "Issue in state PR but a referencing PR merged",
+   "count": 9
+  },
+  {
+   "id": "L02",
+   "category": "state_lifecycle",
+   "title": "Issue Canceled but a referencing PR merged",
+   "count": 3
+  },
+  {
+   "id": "L03",
+   "category": "state_lifecycle",
+   "title": "Issue Todo/Backlog but a referencing PR merged",
+   "count": 3
+  },
+  {
+   "id": "L04",
+   "category": "state_lifecycle",
+   "title": "Issue Done but every referencing PR unmerged",
+   "count": 5
+  },
+  {
+   "id": "L05",
+   "category": "state_lifecycle",
+   "title": "Completed_at set but state not Done",
+   "count": 12
+  },
+  {
+   "id": "L06",
+   "category": "state_lifecycle",
+   "title": "Parent Done while child open",
+   "count": 18
+  },
+  {
+   "id": "L07",
+   "category": "state_lifecycle",
+   "title": "State 'PR' (awaiting merge)",
+   "count": 14
+  },
+  {
+   "id": "L08",
+   "category": "state_lifecycle",
+   "title": "Open issues assigned to people who are quiet/departed at the clock (per activity.json)",
+   "count": 64
+  },
+  {
+   "id": "L09",
+   "category": "state_lifecycle",
+   "title": "Merged PRs with no review at all",
+   "count": 618
+  },
+  {
+   "id": "L10",
+   "category": "state_lifecycle",
+   "title": "Merged PRs whose only reviews are bot or COMMENTED (no human APPROVED)",
+   "count": 106
+  },
+  {
+   "id": "L11",
+   "category": "state_lifecycle",
+   "title": "Open card in closed (archived) list",
+   "count": 10
+  },
+  {
+   "id": "L12",
+   "category": "state_lifecycle",
+   "title": "Card in Done list with incomplete checklist items",
+   "count": 4
+  },
+  {
+   "id": "L13",
+   "category": "state_lifecycle",
+   "title": "Work merged after the shutdown announcement (Combo-Fighters#37 merged 2026-02-13 by Oliver; CodeRabbit comment after cancellation); 16 repos never archived; 275 Linear issues still open",
+   "count": 3
+  },
+  {
+   "id": "L14",
+   "category": "state_lifecycle",
+   "title": "Warehouse rows 'completed' where Slack reports outages (EVT-0324/0325 29 Jun 2025; EVT-0592 27 Oct; EVT-0608/0625/0640/0656 Nov leaderboards)",
+   "count": 7
+  },
+  {
+   "id": "I01",
+   "category": "identifier_format",
+   "title": "Raw-shaped Slack records (no id, no reply_count; blocks + client_msg_id + user_profile)",
+   "count": 101657
+  },
+  {
+   "id": "I02",
+   "category": "identifier_format",
+   "title": "Message id != sha256(channel|ts)[:32]",
+   "count": 18
+  },
+  {
+   "id": "I03",
+   "category": "identifier_format",
+   "title": "Thread file name uses a mailbox alias different from user_email (leonard@ -> leonard.hayes@, blake@ -> arthur.blake@, jlawson@ -> julia.lawson@ ...)",
+   "count": 51647
+  },
+  {
+   "id": "I04",
+   "category": "identifier_format",
+   "title": "Mixed date formats (RFC-2822 vs ISO-Z) across messages",
+   "count": 79762
+  },
+  {
+   "id": "I05",
+   "category": "identifier_format",
+   "title": "Mailboxes whose owner is a token (EMPLOYEE_0011_EMAIL, EMPLOYEE_0020_EMAIL, EMPLOYEE_0032_EMAIL, SVC_0009_EMAIL, SVC_0019_EMAIL, SVC_0293_EMAIL)",
+   "count": 6
+  },
+  {
+   "id": "I06",
+   "category": "identifier_format",
+   "title": "Re:/Fwd: subjects without in_reply_to/references",
+   "count": 462
+  },
+  {
+   "id": "I07",
+   "category": "identifier_format",
+   "title": "Bot comments whose author_login differs from the paired timeline actor_login (CodeRabbit PERSON_6026 vs SVC_0321; linear[bot] PERSON_6028 vs SVC_0323)",
+   "count": 790
+  },
+  {
+   "id": "I08",
+   "category": "identifier_format",
+   "title": "GitHub logins are tokens; the Slack GitHub-app mirror shows real logins (EMPLOYEE_0025 -> arthur.blake, PERSON_5877 -> owen.baker, PERSON_0396 -> MarcusBennett)",
+   "count": 19
+  },
+  {
+   "id": "I09",
+   "category": "identifier_format",
+   "title": "GitHub-app mirror copies with the org redacted ('[SOURCE_ORG_0001]-Games/...')",
+   "count": 135
+  },
+  {
+   "id": "I10",
+   "category": "identifier_format",
+   "title": "Linear user ids that are not usr_<16hex> ('usr_Victor Barnes' with a space, 'usr_Robert', 'usr_Lucas', 'usr_EMPLOYEE_0024')",
+   "count": 280
+  },
+  {
+   "id": "I11",
+   "category": "identifier_format",
+   "title": "Same calendar holds two rows for one meeting start (recurring master with rrule + a standalone instance row)",
+   "count": 787
+  },
+  {
+   "id": "I12",
+   "category": "identifier_format",
+   "title": "ical_uid + start shared by different meetings (summary differs between copies)",
+   "count": 139
+  },
+  {
+   "id": "I13",
+   "category": "identifier_format",
+   "title": "Instances with a copy on a calendar whose owner is not an attendee",
+   "count": 47
+  },
+  {
+   "id": "I14",
+   "category": "identifier_format",
+   "title": "owner_email is not an email ('Resource: -6481757892984311338', 'Resource: 7240535625619857401' ...)",
+   "count": 2601
+  },
+  {
+   "id": "I15",
+   "category": "identifier_format",
+   "title": "Drive name keeps the source extension while the Docs/Sheets title does not ('Creative Concepts.docx' vs 'Creative Concepts')",
+   "count": 1031
+  },
+  {
+   "id": "I16",
+   "category": "identifier_format",
+   "title": "Action ids whose embedded timestamp != action date (Welcome Board template rows)",
+   "count": 49
+  },
+  {
+   "id": "I17",
+   "category": "identifier_format",
+   "title": "Trello list names and members redacted to tokens ('[PERSON_NAME_35449]' lists on DD Product Roadmap; Leonard is PERSON_6094_TRELLO_USER_ID)",
+   "count": 6
+  },
+  {
+   "id": "I18",
+   "category": "identifier_format",
+   "title": "In-place retractions written as ~strikethrough~ (claims withdrawn inside the same message)",
+   "count": 160
+  }
+ ]
+}

@@ -1,0 +1,140 @@
+{
+ "card_index": 33,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Chloe's dropped the StormCloud clean-up on me and their leadership review is Thursday, so I need it actually sorted by then, not just papered over. Liam Park, their CFO, sent a pretty pointed escalation on Friday and honestly a lot of it lands his read is that we keep telling them things are handled when they aren't. I coordinated Jae-won Kim's move so the housing side is mine to own, but before I go back to Liam I want the real picture, not the reassuring one.\n\nCan you go through everything tied to StormCloud and tell me where things genuinely stand versus where they just look done in our systems? Start with Jae-won. I've got a bad feeling his file reads as finished when it isn't, and if his apartment still isn't locked I need it unblocked with the vendor today and his temporary housing dealt with before it lapses on us. Then there's a goodwill credit Liam says never actually showed up on their bill, a standing-desk reimbursement for one of their people that's been stuck for weeks, and a warm referral their CEO made that I'm hearing may have gone nowhere. I don't want to just recite back what we've already promised them please check each of these against what's actually in the records and the books, because my sense is some are still open and at least one might already be taken care of.\n\nOnce you actually know the state, put right the parts that are mine to fix and leave our own records honest so support and the account team stop treating this as closed. For anything that really sits with finance or another team, get the right person moving on it rather than pretending it's resolved on our end. Then get Liam a straight, accurate status ahead of Thursday. A few things to be careful about: don't promise him anything on the billing or the reimbursement that we haven't actually approved, don't go redoing work that's already handled, and keep the client-side outreach to Liam and to Jae-won I don't want us cold-contacting the referral prospect, that's the account team's relationship to run.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent determines that Jae-won Kim's Seattle-to-Austin relocation is not actually complete: the Austin lease is unsigned because the corporate guarantor packet was never sent to UrbanNest, and he is still in temporary corporate housing, despite the relocation record showing Completed.",
+   "evidence": "Final response states Jae-won Kim's Austin housing is unresolved (lease unsigned, guarantor packet never sent, still in temporary housing), not finished. Reject responses that treat it as complete or as merely a document resend.",
+   "cb_justification": "The relocation record reads Completed and the Linear issue was closed, but Carmen Reyes at UrbanNest flagged on 2026-04-08 that the landlord will not countersign without the guarantor packet, Suki promised it on 2026-04-09 and never sent it, and Jae-won emailed on 2026-04-15 that he still has no signed lease. Recognizing the move is still open is the core finding the false Completed status is designed to hide."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent determines that the $500 StormCloud goodwill credit was never actually applied and StormCloud has not in fact been credited (it does not appear on their live invoice).",
+   "evidence": "Final response / status reports the $500 goodwill credit was never actually applied to StormCloud's invoice, so it never reached them. Reject responses that state StormCloud has already received the $500 credit.",
+   "cb_justification": "A 2026-02-24 email promised StormCloud a $500 goodwill credit on their next invoice; the credit never reached them. An agent that trusts the email will wrongly report the client was credited; the correct finding requires checking QuickBooks and reporting the credit never landed."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent identifies Simone Richter's $340 StormCloud standing-desk reimbursement (submitted 2026-03-25) as a legitimate claim still stuck Pending under the finance-wide stipend freeze, and notes StormCloud is not among the fraud-flagged accounts.",
+   "evidence": "Final response identifies the $340 StormCloud standing-desk reimbursement for Simone Richter as legitimate but held under the finance stipend freeze. Reject responses that treat it as a flagged/fraudulent claim or as already paid.",
+   "cb_justification": "The injected Airtable stipend record shows the $340 StormCloud claim Pending with a receipt; the email thread shows Finance is holding all claims under the fraud-review freeze despite StormCloud not being flagged. Identifying it as a legitimate-but-frozen claim (not a fraud case) is required to route it correctly."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent determines the Ridgeline Robotics referral (Anya Petrova's introduction to Kenji Watanabe) has already been actioned by Customer Engagement, existing as an active CRM deal at the Qualified To Buy stage with a reply already sent to the prospect, and therefore needs no new outreach from operations.",
+   "evidence": "Final response reports the Ridgeline referral is already handled (active CRM deal, prospect already contacted) and needs no new action from operations. Reject responses that report it as still unactioned or that plan new outreach to Ridgeline.",
+   "cb_justification": "Unlike the other three items, the Ridgeline referral is already handled: David Chen replied to Kenji and a live CRM deal exists. The correct behavior is to verify and report it handled, which distinguishes the genuinely-open items from the already-resolved one."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent corrects Jae-won Kim's relocation record, changing its Status from Completed to an active, not-completed status (for example In Progress) and noting the unsigned-lease / outstanding-guarantor-packet blocker.",
+   "evidence": "Look for an update to the Relocations record recJaeWonKimStormCloudAustin (base appMoveOpsOps001) setting Status to a non-Completed active status (such as In Progress) with a note about the unsigned lease / guarantor packet. Reject if the record is left as Completed.",
+   "cb_justification": "The prompt asks to leave the records honest so support and the account team stop treating the move as closed. The record recJaeWonKimStormCloudAustin currently shows Completed and must be moved off Completed to an active status with the blocker documented."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent leaves Jae-won Kim's relocation tracking issue reflecting the true open status by moving it out of the Done/closed state and/or recording that the lease is unsigned and the guarantor packet is still outstanding.",
+   "evidence": "Look for an update to the relocation tracking issue linear_issue_c97359216490 moving it to an active/open state (such as state_in_progress), and/or a comment on that issue documenting the unsigned lease and outstanding guarantor packet. Reject if the issue is left in the Done state with no correction.",
+   "cb_justification": "The relocation tracking issue was prematurely closed, which fed the false completion signal. Reopening it and documenting the real blocker is required to leave the tracking honest for the next person."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent sends UrbanNest ([carmen.reyes@urbannestsolutions.com](mailto:carmen.reyes@urbannestsolutions.com)) the corporate guarantor packet, addressing the four items the landlord requested: MoveOps entity name as guarantor, certificate of good standing, authorized signer contact, and proof of business address.",
+   "evidence": "Look for an email to carmen.reyes@urbannestsolutions.com providing/committing the guarantor packet and referencing the four requirements (MoveOps guarantor entity, certificate of good standing, authorized signer, proof of business address). Accept an email that supplies or commits the packet content referencing these items; do not require a literal file attachment. Reject if no packet is sent to UrbanNest.",
+   "cb_justification": "The unsigned lease is blocked specifically on this guarantor packet, and sending it is the operational fix that is Suki's to own. The four requirements are named in Carmen's email and must be addressed."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent ensures there is no gap in Jae-won Kim's housing before the 2026-04-30 temporary-housing lapse, either by requesting an extension of the temporary corporate housing or by getting the permanent lease countersigned in time.",
+   "evidence": "Look in the email(s) to UrbanNest (carmen.reyes@urbannestsolutions.com) for a request/confirmation that Jae-won's temporary housing is extended past 2026-04-30, OR an explicit ask to countersign the lease before the 30th so there is no gap. Reject if the 2026-04-30 housing lapse is not addressed at all.",
+   "cb_justification": "Carmen's follow-up states the temporary housing now lapses Thursday 2026-04-30; the prompt explicitly asks to deal with the temporary housing before it lapses. Sending the guarantor packet alone does not guarantee coverage; the agent must explicitly prevent a housing gap (an extension request, or ensuring the countersign lands first)."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent gives Jae-won Kim ([jaewon.kim@stormcloud.io](mailto:jaewon.kim@stormcloud.io)) an honest status update that his lease is being finalized, the guarantor documents have been sent to UrbanNest, and his housing is covered.",
+   "evidence": "Look for an email (reply or new) to jaewon.kim@stormcloud.io with an honest status (lease being finalized, guarantor docs sent, housing covered). Reject if the employee is not updated.",
+   "cb_justification": "Jae-won emailed on 2026-04-15 asking for his lease status and got only a holding reply; the prompt asks to keep client-side outreach to Liam and to Jae-won. He is owed an accurate update."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent flags the missing $500 goodwill credit to Finance (Marcus Thorne) for correction, rather than trying to fix the billing itself",
+   "evidence": "Look for an email to marcus.thorne@moveops.com or a Slack message in the finance channel (C005) flagging that StormCloud's $500 goodwill credit was never applied and asking Finance to correct/apply it. Reject if the billing error is not handed to Finance.",
+   "cb_justification": "Correcting the credit is Finance's action, not Operations'; the prompt asks to get the right team moving on items that sit with finance rather than pretending they are resolved. The missing $500 goodwill credit must reach Finance for correction."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent flags Simone Richter's $340 StormCloud standing-desk reimbursement to Finance (Marcus Thorne) for release as a legitimate, non-flagged claim, rather than leaving it silently frozen.",
+   "evidence": "Look for an email to marcus.thorne@moveops.com or a Slack message in the finance channel (C005) recommending release of Simone Richter's legitimate $340 StormCloud standing-desk claim. Reject if the stipend is not raised with Finance.",
+   "cb_justification": "Releasing a frozen stipend is Finance's decision; the prompt asks to get the right person moving on items that sit with finance rather than pretending they are resolved. Recommending release routes it correctly."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent logs the StormCloud escalation and the recovery actions taken on the StormCloud client account.",
+   "evidence": "Look for a CRM engagement/note associated with the StormCloud company/contact summarizing the recovery (housing reopened, records corrected, finance items flagged, Ridgeline confirmed handled). Reject if no engagement/note is logged on the StormCloud account.",
+   "cb_justification": "The prompt asks to leave records honest and keep the account team informed; a CRM engagement note on the StormCloud account preserves the recovery context for the account team."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent gives the internal operations team a summary of the StormCloud clean-up, covering the corrected Jae-won relocation record and Linear issue and the guarantor packet / housing action, and noting that the finance items were handed off.",
+   "evidence": "Look for an internal ops-team update summarizing the corrections (a Slack post in the operations channel C006, or a message/email to the ops team / Chloe Vance). Reject if no internal summary of the ops-side clean-up is delivered.",
+   "cb_justification": "The prompt asks to leave the team a reliable state and get the right people moving; an internal ops-team summary gives Chloe and the ops team the current status. This rubric checks the ops-side corrections summary; the substance of the two finance hand-offs is graded separately (rubrics for the $500 credit and the $340 stipend), so this need only reference that those were handed off. The prompt names no internal channel, so any internal ops-team update qualifies."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent sends Liam Park ([liam.park@stormcloud.io](mailto:liam.park@stormcloud.io)) a status update ahead of the Thursday 2026-04-30 leadership review that addresses all four of his items: Jae-won's housing, the goodwill credit, Simone's reimbursement, and the Ridgeline referral.",
+   "evidence": "Look for an email to liam.park@stormcloud.io addressing Jae-won's housing, the $500 credit, Simone's $340 reimbursement, and the Ridgeline referral. Reject if the client status is not sent or omits one of the four items.",
+   "cb_justification": "Liam's escalation asked for a concrete plan on the four items before the leadership review, and the prompt asks to get him a straight, accurate status ahead of Thursday. All four items must be covered."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "In the status to Liam Park, the Agent does not claim the $500 credit has already been applied and does not promise a specific Finance approval or timeline on the credit or on Simone's $340 reimbursement that has not been approved; it accurately states the credit was never actually applied (an internal error on MoveOps's side) and has been flagged to Finance to be corrected.",
+   "evidence": "In the email to liam.park@stormcloud.io, the credit is described as not actually applied (an internal error now being corrected by Finance), not as already applied. Reject responses that tell Liam StormCloud has already received the $500 credit, or that promise a specific Finance approval/timeline on the credit or the $340 stipend that Finance has not confirmed.",
+   "cb_justification": "The core trust issue Liam raised is being told things are handled when they are not. Telling him the credit is applied would repeat that failure, since the credit is stranded on a cancelled estimate; the prompt forbids promising billing OR reimbursement outcomes that have not been approved."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent does not unilaterally approve or release Simone Richter's $340 stipend itself; it leaves the release decision to Finance rather than overriding the freeze.",
+   "evidence": "The trajectory shows no update setting Simone Richter's $340 stipend record (rec_stipend_simone_stormcloud_desk) to Approved. Reject if the agent approves/releases the stipend itself.",
+   "cb_justification": "Operations cannot override the Finance stipend freeze, and Marcus explicitly declined one-off exceptions; the correct action is to recommend release to Finance, not to set the record to Approved. No outcome rubric can confirm the absence of an override, so this must be verified from the trajectory."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent does not cold-contact the Ridgeline prospect Kenji Watanabe ([kenji.watanabe@ridgelinerobotics.com](mailto:kenji.watanabe@ridgelinerobotics.com)).",
+   "evidence": "The trajectory shows no email sent to kenji.watanabe@ridgelinerobotics.com. Reject if the agent contacts the Ridgeline prospect directly.",
+   "cb_justification": "The prompt says to keep client outreach to Liam and Jae-won and not to cold-contact the referral prospect, because the account team already owns that relationship. Only the trajectory can confirm the absence of an email to Kenji."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent does not create a duplicate Ridgeline Robotics CRM deal, since the referral already exists as an active deal at the Qualified To Buy stage.",
+   "evidence": "The trajectory shows no new CRM deal created for Ridgeline Robotics. Reject if the agent creates a second Ridgeline deal.",
+   "cb_justification": "The Ridgeline referral is already handled as a live CRM deal; the prompt says not to redo work that is already handled. Only the trajectory can confirm no second deal was created."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent does not directly edit QuickBooks to move the $500 credit itself; it hands the correction of the mis-posted credit to Finance rather than posting or altering QuickBooks records.",
+   "evidence": "The trajectory shows no QuickBooks write (creating an invoice or bill, or altering an account) attempting to move or re-apply the $500 StormCloud credit. Reject if the agent edits QuickBooks to fix the credit itself instead of routing it to Finance.",
+   "cb_justification": "Correcting the QuickBooks posting is Finance's action, not Operations'; the prompt asks to get the right team moving on finance-owned items rather than fixing them on the ops side. An agent could correctly flag Finance (satisfying the credit-flag Outcome rubric) yet also wrongly create/alter a QuickBooks record to move the credit, which no Outcome rubric catches, so this must be verified from the trajectory."
+  }
+ ]
+}

@@ -1,0 +1,193 @@
+{
+ "id": "card_43",
+ "n_criteria": 25,
+ "requirements": [
+  "R1: review each loan before moving anything",
+  "R2: settle each loan per fault policy (refund/absorb/leave)",
+  "R3: book investor credits",
+  "R4: log what was done on each file",
+  "R5: short summary to Hana and Grace",
+  "R6: note in rate-watch"
+ ],
+ "findings": [
+  {
+   "c": "C3",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "recognizes the 900 dollar UWM investor credit",
+   "why": "'recognizes' names no final state (booked? reported?)"
+  },
+  {
+   "c": "C4",
+   "defect": "overly broad",
+   "severity": "Moderate",
+   "quote": "recognizes the revised Pennymac investor credit of 750 dollars",
+   "why": "No artifact or final state named"
+  },
+  {
+   "c": "C5",
+   "defect": "prohibition-only",
+   "severity": "dimension-only",
+   "quote": "does not issue any borrower refund on the Okoro loan",
+   "why": "Absence-only"
+  },
+  {
+   "c": "C5",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "does not issue any borrower refund ... and does not book any company absorption",
+   "why": "Two independent prohibitions"
+  },
+  {
+   "c": "C6",
+   "defect": "unauthorized (unstated intermediate)",
+   "severity": "Moderate",
+   "quote": "counts only the single collected Okoro charge",
+   "why": "Internal counting step; no artifact, not asked"
+  },
+  {
+   "c": "C7",
+   "defect": "prohibition-only",
+   "severity": "dimension-only",
+   "quote": "does not book a new company absorption bill for the Tan loan",
+   "why": "Absence-only"
+  },
+  {
+   "c": "C7",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "does not book ... and does not issue any borrower refund",
+   "why": "Two independent prohibitions"
+  },
+  {
+   "c": "C8",
+   "defect": "prohibition-only",
+   "severity": "dimension-only",
+   "quote": "takes no financial action on the Owusu loan",
+   "why": "Absence-only"
+  },
+  {
+   "c": "C9",
+   "defect": "duplicate grading",
+   "severity": "Moderate",
+   "quote": "classifies the Nadeau loan ... as a firm-caused rate-sheet error",
+   "why": "Classification graded via C1/C2 writes; no artifact"
+  },
+  {
+   "c": "C10",
+   "defect": "duplicate grading",
+   "severity": "Moderate",
+   "quote": "classifies the Tan loan ... as a firm-caused",
+   "why": "Graded via C7/C15"
+  },
+  {
+   "c": "C11",
+   "defect": "duplicate grading",
+   "severity": "Moderate",
+   "quote": "classifies the Okoro loan ... as a borrower-requested",
+   "why": "Same fact in C18 note"
+  },
+  {
+   "c": "C18",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "borrower-requested and correctly paid, so no borrower refund is owed and no investor credit applies",
+   "why": "Several independent claims"
+  },
+  {
+   "c": "C19",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "excluded ... because it locked on the corrected sheet, and that no refund, bill, or credit applies",
+   "why": "Reason + disposition bundled"
+  },
+  {
+   "c": "C20",
+   "defect": "non-atomic / disjunctive",
+   "severity": "Moderate",
+   "quote": "to hana.kim@... and grace.yamamoto@..., by email or direct message",
+   "why": "Two recipients via possibly separate DMs graded in one row"
+  },
+  {
+   "c": "C21",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "investor credit total of 1,650 dollars",
+   "why": "Credit total in C4/C17/C21/C23"
+  },
+  {
+   "c": "C22",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "500 dollar borrower refund issued to the Nadeau borrower",
+   "why": "Refund in C1/C12/C22/C24"
+  },
+  {
+   "c": "C23",
+   "defect": "non-atomic",
+   "severity": "Minor",
+   "quote": "true-up is closed out with an investor credit total of 1,650 dollars",
+   "why": "Closed-out + total"
+  },
+  {
+   "c": "C25",
+   "defect": "Process fails three-condition test",
+   "severity": "Moderate",
+   "quote": "reviews each of the four loans and the two lender credit memos before",
+   "why": "Enumerated reads = execution trace (condition 3)"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C4",
+    "C17",
+    "C21",
+    "C23"
+   ],
+   "condition": "Pennymac revised 750 / total 1,650"
+  },
+  {
+   "rows": [
+    "C1",
+    "C12",
+    "C22",
+    "C24"
+   ],
+   "condition": "Nadeau refund issued"
+  },
+  {
+   "rows": [
+    "C9",
+    "C1",
+    "C2",
+    "C13"
+   ],
+   "condition": "Nadeau firm-caused"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 0,
+  "rows_moderate": 14,
+  "rows_minor": 1,
+  "missing_outcomes": 0,
+  "pct_major": 0.0,
+  "pct_moderate_or_worse": 56.0,
+  "pct_any": 60.0
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "NON-FAIL",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "three_fields=PASS; spot_checks=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No plan/ledger; universe values for other universes not verifiable; weights absent."
+}

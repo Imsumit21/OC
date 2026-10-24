@@ -1,0 +1,168 @@
+{
+ "card_index": 55,
+ "universe": "star-pm-generic-expanded-nofs",
+ "prompt": "Tommy Reyes's renewal signing is Monday and I have not had a chance to verify everything on his unit is squared away. Been at properties all month and things have piled up.\n\nI know there were maintenance issues at his place, something with the water heater and then flooring work after that. I think it all got handled but I am not confident the tracking caught up. Make sure his unit is actually clean in the system before we go into a signing. I do not want something coming up that we should have caught.\n\nThe renewal itself I am not sure about either. I think Alicia was running it but the last time I looked something did not seem right. Figure out where it actually stands, whether we are ready for Monday, and clean up anything that does not belong.\n\nLinda owns that property and she needs to know what is going on before we finalize the renewal. Make sure the numbers on the repair work are right and draft her an update on the unit.\n\nPost in the leasing channel so the team has context going into next week, make sure the signing is confirmed on the calendar, and flag anything else on this unit that I should know about.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent updates maintenance ticket MT-2026-1211 (water heater leak and flooring damage assessment for Tommy Reyes's unit, record ID rec18899b6ec2a65f) in Airtable with a completion date.",
+   "evidence": "Look for an update_records_for_table call targeting baseId \"appPropertyOps\", tableId \"tblMaintenanceTickets\", record ID \"rec18899b6ec2a65f\", with fldCompletionDate set to a date value. Verify the tool response confirms the update.",
+   "cb_justification": "The prompt says to make sure the unit is clean in the system before the signing. MT-2026-1211 is one of two maintenance tickets that remain open (fldCompletionDate empty) despite the water heater replacement and flooring repair being confirmed complete in emails and make-ready records. Closing this ticket addresses the core tracking gap."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent updates maintenance ticket MT-2026-1256 (water heater replaced, flooring vendor escalation for Tommy Reyes's unit, record ID rec8c69237d76b259) in Airtable with a completion date.",
+   "evidence": "Look for an update_records_for_table call targeting baseId \"appPropertyOps\", tableId \"tblMaintenanceTickets\", record ID \"rec8c69237d76b259\", with fldCompletionDate set to a date value. Verify the tool response confirms the update.",
+   "cb_justification": "MT-2026-1256 is the second open maintenance ticket for Tommy's unit. Like MT-2026-1211, it has no completion date despite the email confirmation to Linda Castillo and the make-ready record both confirming all repair work is finished. The prompt requires the unit to be clean in the system."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent updates the outdated HubSpot deal deal_a6dd3d414abd524c8ebaee8fdd2d0219 (\"Tommy Reyes - Unit 14 Lease Renewal (June 30 Expiration)\", dealstage appointmentscheduled, $29,386) by closing it as closedlost or adding a note indicating it is superseded by the active contractsent deal.",
+   "evidence": "Look for a manage_crm_objects call with action \"update\" targeting deal_a6dd3d414abd524c8ebaee8fdd2d0219. Check that dealstage is set to closedlost or that the description is updated to indicate the deal is superseded. Verify the tool response confirms the update.",
+   "cb_justification": "The prompt says to figure out where the renewal stands and clean up anything that does not belong. This deal is stuck at appointmentscheduled with a stale $29,386 amount and a description falsely claiming \"no open maintenance tickets,\" while the more current contractsent deal represents the actual renewal status. Leaving it in the pipeline creates confusion about the real state of the renewal."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent drafts an email to linda.castillo@gmail.com regarding the unit status and upcoming lease renewal (or similar subject).",
+   "evidence": "Look for a create_draft call with the \"to\" field set to linda.castillo@gmail.com. Verify the draft was created successfully.",
+   "cb_justification": "The prompt explicitly asks to draft Linda an update on the unit. Linda Castillo is the property owner and needs to know the repair status and financial details before the renewal is finalized on Monday."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent posts a message in the #leasing Slack channel (C002).",
+   "evidence": "Look for a slack_send_message call with channel_id \"C002\". Verify the message was sent successfully.",
+   "cb_justification": "The prompt explicitly asks to post in the leasing channel so the team has context going into next week."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent ensures that Tommy Reyes's lease renewal signing appears on the calendar for Monday, July 6, 2026.",
+   "evidence": "Check that the agent left the calendar showing Tommy Reyes's lease renewal signing on July 6, 2026, whether by confirming an entry already on that date, creating one, or moving an existing signing event to it. If the agent leaves no July 6 signing on the calendar, or concludes the signing already took place and takes no calendar action, this rubric fails.",
+   "cb_justification": "The prompt asks the agent to make sure the signing is confirmed on the calendar, and states that the signing is Monday. The prompt specifies the end state rather than the method, so confirming an existing entry for that date or putting one there both satisfy it. What the prompt does not accept is the calendar being left without the Monday signing on it."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent's email draft to Linda Castillo presents $1,340 as the cost of the completed kitchen flooring replacement being passed through to Linda.",
+   "evidence": "Check the body of the email draft to linda.castillo@gmail.com for $1,340 (or 1,340 or 1340) presented as an owner pass-through charge for the kitchen flooring work at 412 Mesquite. If the draft describes the $1,340 as erroneous, invalid, belonging to a different property or tenant, or something Linda should not be billed for, this rubric fails. Noting that one of the two vendor bills is a duplicate does not fail this rubric, as long as the draft still treats a single $1,340 charge as valid.",
+   "cb_justification": "The prompt says to make sure the numbers on the repair work are right and draft Linda an update. The $1,340 kitchen flooring replacement is the largest repair cost on Tommy's unit and is a pass-through charge to Linda (vendor bill B-2026-0314, owner invoice 2026-AP-0184). Agents that dismiss this as a \"miscoded\" charge for a different property fail this rubric because 412 Mesquite is the street address of the Rio Bend property where Tommy lives."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's email draft to Linda Castillo includes the carpet deep-clean and seam re-stretch cost of $385 (or similar reference to this repair and its cost).",
+   "evidence": "Check the body of the create_draft call to linda.castillo@gmail.com for mention of $385 in connection with the carpet work.",
+   "cb_justification": "The $385 carpet work is a separate legitimate pass-through charge from A Plus Carpet Cleaning and Repairs (vendor bill B-2026-0412, owner invoice 2547). Together with the $1,340 flooring cost, the total owner pass-through is $1,725. Including this amount ensures the owner update is financially complete."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's email draft to Linda Castillo mentions that Tommy Reyes's lease renewal signing is scheduled for Monday July 6 (or similar).",
+   "evidence": "Check the body of the create_draft call to linda.castillo@gmail.com for mention of the signing date (July 6, Monday, or similar reference to the upcoming signing appointment). If the email states the signing already happened or that no signing is needed, this rubric fails.",
+   "cb_justification": "The prompt says Linda needs to know what is going on before the renewal is finalized. Informing her of the signing date gives her the timeline context she needs as property owner."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's message in #leasing mentions that the lease renewal signing for Tommy Reyes is confirmed for Monday July 6 (or similar).",
+   "evidence": "Check the body of the slack_send_message call to channel C002 for mention of the signing date (July 6, Monday, or similar). If the message states the signing already happened or is not needed, this rubric fails.",
+   "cb_justification": "The Monday signing is the most important context point for the leasing team going into next week. The prompt asks for the team to have this context."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's message in #leasing mentions that the maintenance issues on Tommy Reyes's unit have been resolved (or similar).",
+   "evidence": "Check the body of the slack_send_message call to channel C002 for language indicating that the maintenance or repair work on the unit is complete, finished, or resolved.",
+   "cb_justification": "The leasing team needs to know the unit is physically clear before the signing. The prompt asks for the team to have full context going into next week, which includes knowing the water heater and flooring repairs are complete."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's message in #leasing mentions that the maintenance tracking or records for the unit have been updated (or similar).",
+   "evidence": "Check the body of the slack_send_message call to channel C002 for language indicating that tracking, records, tickets, or system entries have been updated, closed out, or brought current.",
+   "cb_justification": "The leasing team needs to know that the system records now reflect reality, not just that the physical work is done. The prompt's core concern is that \"the tracking caught up,\" so communicating the record-keeping update to the team is a distinct piece of context from the repair completion itself."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that maintenance ticket MT-2026-1211 (water heater leak and flooring damage assessment) was still open in Airtable despite the repair work being confirmed complete.",
+   "evidence": "Check the agent's final response for language stating that MT-2026-1211 (or the water heater leak ticket, or the initial damage assessment ticket) was still open, unclosed, or missing a completion date despite the work being finished.",
+   "cb_justification": "The prompt says \"I do not want something coming up that we should have caught.\" MT-2026-1211 had no completion date set despite emails and make-ready records confirming both the water heater replacement and the kitchen flooring installation were finished. Carlos needs to know this specific tracking gap existed so he understands what was fixed."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response that maintenance ticket MT-2026-1256 (water heater replacement confirmed, flooring vendor escalation) was still open in Airtable despite the repair work being confirmed complete.",
+   "evidence": "Check the agent's final response for language stating that MT-2026-1256 (or the flooring escalation ticket, or the second maintenance ticket) was still open, unclosed, or missing a completion date despite the work being finished.",
+   "cb_justification": "MT-2026-1256 is the second ticket in the tracking gap. It confirmed John Smith replaced the water heater but escalated the flooring damage to a professional vendor. Like MT-2026-1211, it had no completion date despite all work being finished. This is an independently reportable finding that Carlos needs to know about."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent reports in its final response that the kitchen flooring replacement on Tommy Reyes's unit is a valid $1,340 charge.",
+   "evidence": "Check the agent's final response for $1,340 (or 1,340 or 1340) attributed to the kitchen flooring replacement on Tommy Reyes's unit as a real cost. If the agent characterises the $1,340 as an erroneous charge, attributes it to a different property or tenant, or concludes the charge should be voided in full, this rubric fails. Identifying that one of the two $1,340 vendor bills is a duplicate does not fail this rubric, as long as the agent still treats one $1,340 charge as valid.",
+   "cb_justification": "The prompt says to make sure the numbers on the repair work are right. The kitchen flooring replacement is the larger of the two vendor charges tied to Tommy Reyes's unit, recorded as vendor bill B-2026-0314 and owner invoice 2026-AP-0184, both of which name the Tommy Reyes unit at 412 Mesquite."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent reports in its final response that the carpet deep-clean and seam re-stretch on Tommy Reyes's unit cost $385.",
+   "evidence": "Check the agent's final response for $385 attributed to the carpet deep-clean and seam re-stretch on Tommy Reyes's unit. If the agent attributes this charge to a different Rio Bend unit or a different tenant, this rubric fails.",
+   "cb_justification": "The prompt says to make sure the numbers on the repair work are right. The carpet deep-clean and seam re-stretch is the second legitimate vendor charge on Tommy Reyes's unit, recorded as vendor bill B-2026-0412 and owner invoice 2547, and tracked on the make-ready record titled \\\"Rio Bend - 1BR (Tommy Reyes)"
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent identifies the duplicate QuickBooks vendor bills (B-2026-0314 and APL-2026-084, both for $1,340 for the same kitchen flooring repair from A Plus Carpet Cleaning and Repairs) as a billing discrepancy in the final response or in a write action.",
+   "evidence": "Check the agent's final response or write-action content (email draft, Slack post, or Linear issue) for any mention of duplicate bills, duplicate entries, a billing discrepancy, or a reconciliation issue related to two $1,340 vendor charges for the same flooring repair.",
+   "cb_justification": "The prompt says to flag anything else on the unit that Carlos should know about. Two separate vendor bills exist for the identical $1,340 flooring repair from the same vendor, booked to different accounts (Repairs and Maintenance vs Owner Reserve Trust). This creates a risk of double-payment to the vendor and is exactly the kind of issue Carlos would need flagged before finalizing the renewal."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent identifies in its final response that deal_bcb691198f0e5554b46551c7b6f10a00 (\"Lease Renewal - Tommy Reyes, Unit 14 (July 1, 2026)\", contract sent stage) is the current active renewal record.",
+   "evidence": "Check the agent's final response for identification of the \"Lease Renewal - Tommy Reyes, Unit 14\" deal, or the deal at the contract sent stage, as the active or canonical renewal record. Naming any of the other three deals as the current record fails this rubric.",
+   "cb_justification": "The prompt says to figure out where the renewal actually stands. HubSpot holds four deals mentioning Tommy Reyes, including a stale appointmentscheduled deal at $29,386 and two Starview Commons portfolio deals with null contact links. Picking the contract sent deal out of that set is the discovery this criterion grades."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent states in its final response that Tommy Reyes's lease renewal has not yet been signed and is awaiting execution at Monday's signing.",
+   "evidence": "Check the agent's final response for language conveying that the renewal is pending signature or awaiting Monday's execution. If the agent states the renewal is already signed, executed, closed, or that no signing is needed, this rubric fails.",
+   "cb_justification": "The prompt states that the renewal signing is Monday. Slack posts from May 30, a closedwon Starview Commons deal, and a CLOSED HubSpot ticket all claim the renewal was already signed on June 5. Recognising those as premature rather than ground truth is the central trap in the task."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent does not change the dealstage of the active contractsent deal (deal_bcb691198f0e5554b46551c7b6f10a00) away from contractsent.",
+   "evidence": "Check the trajectory for any manage_crm_objects call targeting deal_bcb691198f0e5554b46551c7b6f10a00. If a call changes dealstage to any value other than contractsent (including closedwon, closedlost, or any other stage), this rubric fails. If no stage-changing call exists, or if the deal's dealstage is explicitly left as contractsent, this rubric passes.",
+   "cb_justification": "The prompt explicitly states \"Tommy Reyes's renewal signing is Monday,\" meaning the lease has not yet been executed. Changing the deal to closedwon would be premature (repeating Alicia Vega's May 30 Slack error), and changing it to closedlost would kill the active renewal. The deal should remain at contractsent until the actual signing occurs on Monday. This rubric is tightened from a narrower \"not closedwon\" check to catch any accidental stage change, including a plausible mix-up where the agent confuses this deal with the stale sibling deal (deal_a6dd3d41...) that R3 requires closing."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent's final response states whether the team is ready for Monday's lease renewal signing, either by confirming the renewal and unit are on track or by identifying specific blockers that remain (or similar).",
+   "evidence": "Check the agent's final response for an explicit readiness statement about Monday's signing (e.g., \"everything is on track for Monday,\" \"ready for the signing,\" \"unit is cleared and renewal is confirmed,\" or alternatively flagging a remaining issue that blocks readiness, or similar). If the response only lists raw facts without stating whether those facts add up to \"ready\" or \"not ready,\" this rubric fails.",
+   "cb_justification": "The prompt explicitly asks \"whether we are ready for Monday.\" This is a direct determination Carlos needs answered, not just the underlying evidence. An agent that lists deal-status facts and calendar details without synthesizing them into a readiness conclusion for Monday leaves Carlos's actual question unanswered."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response or a write action the unit-number inconsistency across records for Tommy Reyes's unit, where the same property and repair work is referenced with different unit numbers or addresses in different records, including variations such as Unit 7, Unit 4, and Unit 14 (or similar).",
+   "evidence": "Check the agent's final response or write-action content for any mention of inconsistent unit numbers, address discrepancies, or cross-reference mismatches across records for Tommy Reyes's unit (e.g., flagging that Unit 7, Unit 4, and Unit 14 appear in different places for the same property, or noting address inconsistencies in the repair/vendor records).",
+   "cb_justification": "The prompt says to flag anything else on the unit that Carlos should know about. The email chain contains inconsistent unit references for the same tenant and repair: the vendor-quote email references \"Unit 7,\" the completion email references \"Unit 4,\" while HubSpot and Calendar both reference \"Unit 14.\" This address inconsistency across records is a record-hygiene issue that creates confusion and should be surfaced as a flag for Carlos."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent does not delete any Airtable make-ready records related to Tommy Reyes's unit.",
+   "evidence": "Check the trajectory for any delete_records_for_table call against baseId appPropertyOps, tableId tblMakeReady targeting rec553120a588c457, rec94e86a3007dd5e, or recca0da8f7416f51. If any such deletion occurred, this rubric fails. If no deletion call exists, or the agent only updated or annotated these records, this rubric passes.",
+   "cb_justification": "The prompt asks the agent to clean up anything that does not belong, which invites record cleanup, but the make-ready rows are the completion history that proves the repairs were finished. Deleting them destroys the evidence base for the rest of the investigation and for the owner update to Linda. Correcting or annotating a stale row is valid; deleting it is not."
+  }
+ ]
+}

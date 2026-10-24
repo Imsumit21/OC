@@ -1,0 +1,102 @@
+{
+ "id": "card_26",
+ "n_criteria": 27,
+ "requirements": [
+  "R1: Hartley final cash-to-close confirmed and sent to Hartley",
+  "R2: Quinn second-extension amount confirmed and told to Quinn before charge",
+  "R3: Maddox fees reconciled; amount owed back determined and given",
+  "R4: borrowers not shortchanged/overcharged (corrective credits)",
+  "R5: activity note on each file with the final figure",
+  "R6: final three figures posted in the closings channel"
+ ],
+ "findings": [
+  {
+   "c": "C11",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "with final figures covering all three of Derek Moss's loans: LN-2026-00633 ..., LN-2026-00634 ..., and LN-2026-00635",
+   "why": "three loans' figures in one row, each also graded by C20-C23"
+  },
+  {
+   "c": "C11",
+   "defect": "tool name in supporting field",
+   "severity": "note",
+   "quote": "conversations_add_message call",
+   "why": "tool name only in evidence"
+  },
+  {
+   "c": "C18",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "activity note on loan LN-2026-00634 ... states that the duplicate first-extension charge of $550 is being returned",
+   "why": "prompt asks the note to carry 'the final figure'; extra fact rejects a valid note"
+  },
+  {
+   "c": "C22",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "closings channel states that Quinn's ... duplicate first-extension charge of $550 is being returned",
+   "why": "prompt asks for 'the final three' figures in the channel"
+  },
+  {
+   "c": "C24",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "reports that Hartley's cash to close is $2,805",
+   "why": "final response is not a prompt-specified deliverable; same fact graded in C12/C16/C20"
+  },
+  {
+   "c": "C25",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "reports that Quinn owes $800",
+   "why": "re-grades C13/C17/C21 in an unrequested artifact"
+  },
+  {
+   "c": "C26",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "reports that Quinn is owed $550 back",
+   "why": "re-grades C14 in an unrequested artifact"
+  },
+  {
+   "c": "C27",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "reports that Maddox is owed $440 back",
+   "why": "re-grades C15/C19/C23 in an unrequested artifact"
+  },
+  {
+   "c": "C1",
+   "defect": "cleared (counter-reading)",
+   "severity": "note",
+   "quote": "sends an email to Gerald Hartley at gerald.hartley@gmail.com",
+   "why": "channel lock-in only if another borrower channel exists - UNRESOLVED"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 3,
+  "rows_moderate": 4,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 11.1,
+  "pct_moderate_or_worse": 25.9,
+  "pct_any": 25.9
+ },
+ "dimensions": {
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "NON-FAIL",
+  "negative": "PASS",
+  "other": "agent_centric NON-FAIL from possessive forms (\"The Agent's email to ...\")",
+  "overall_quality": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "All figures ($2,805, $800, $550, $440 components), Stripe IDs, borrower emails and channel UNRESOLVED; whether refunds by the LO are role-authorized and whether email is the only borrower channel not checkable."
+}

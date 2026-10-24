@@ -1,0 +1,189 @@
+{
+ "card_index": 39,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Before I go heads down on the Mehta move and my hazmat training this week, Chloe wants a real once over of the Veriphase Biolabs batch, and so do I. There are four moves in flight and all of them are complicated, so I do not trust the status in our records or the update I posted earlier, because a lot has changed since. Go through all four relocations one at a time and reconcile what our records and tickets claim against what the vendors and the client have actually confirmed in the threads, including anything recent that shifted the picture. Where a record is telling a rosier story than reality, fix it so it reflects what is truly happening now. If something I have been chasing has already come back to us, close it out instead of raising it again, but look carefully, because closing one thing does not always mean the move is clean. If a date has moved, do not just note it, work out what it knocks over downstream and sort that with the right vendor. Where a move is genuinely stuck on something outside our control that will blow a hard deadline, that one goes to Chloe now, not buried in a summary, and if there is a legitimate way to still save the date, chase it too. For every real gap, get the missing piece moving with whoever owns it, vendor or client, and open or update a ticket so nothing slips. Anything that adds cost or changes what Veriphase pays, clear it the right way before you commit us. When you are done, put an honest status in operations so the team knows where each of the four stands.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent updates the Ravi Chandrasekaran relocation record (recReloc00000095) on table tblRelocations01 and the update succeeds.",
+   "evidence": "Look for an airtable_update_records call on table tblRelocations01 targeting record recReloc00000095. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says to fix any record telling a rosier story than reality. The Ravi record shows 'Housing on track', contradicted by Carmen Reyes's April 25 reply that the guarantor route is dead and a deposit is now required. The corrected state must be written back to the record."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent routes the Ravi Chandrasekaran deposit decision to Mina Hashimoto ([mina.hashimoto@moveops.com](mailto:mina.hashimoto@moveops.com) or Slack equivalent) for her sign-off before MoveOps commits it, and the action succeeds.",
+   "evidence": "Look for a send_email to mina.hashimoto@moveops.com or a conversations_add_message directed at Mina Hashimoto seeking sign-off on the Ravi deposit. Confirm the tool response indicates success. The sign-off must be sought from Mina as the Account Manager: a message that asks only the client to approve, with Mina merely copied for awareness, does not satisfy this. Whether Mina is on To or CC is not the test; whether she is asked to sign off before MoveOps commits is.",
+   "cb_justification": "The prompt says anything that adds cost or changes what Veriphase pays must be cleared the right way before committing. The Veriphase cost policy in the CRM engagement note requires Account Manager Mina Hashimoto's written sign-off for unplanned cost, and the 10,500 Ballard deposit is exactly that. The sign-off must be sought from Mina; obtaining only the client's authorization does not satisfy the internal control."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent updates the Aditya Bhat relocation record (recReloc00000096) on table tblRelocations01 and the update succeeds.",
+   "evidence": "Look for an airtable_update_records call on table tblRelocations01 targeting record recReloc00000096. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says if a date has moved, correct the record. Greg Pallone's April 19 reply moved Bhat to pickup April 27 and delivery May 1, and Priya Nair's April 24 reply pushed the Denver apartment readiness to May 8, none of which the record reflects."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent contacts Swift at [greg.pallone@swiftrelocations.com](mailto:greg.pallone@swiftrelocations.com) about the Aditya Bhat revised schedule and interim storage, and the action succeeds.",
+   "evidence": "Look for a send_email or reply_to_email to greg.pallone@swiftrelocations.com whose content concerns Aditya Bhat's revised schedule or the interim Denver storage. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says if a date has moved, work out what it knocks over downstream and sort it out with the right vendor. Swift owns the Bhat shipment and the pre-booked Denver storage, so the revised delivery and the storage re-book must be handled with Greg Pallone."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent seeks Mina Hashimoto's sign-off ([mina.hashimoto@moveops.com](mailto:mina.hashimoto@moveops.com) or Slack equivalent) on the Aditya Bhat interim-storage rebooking cost before MoveOps commits it, and the action succeeds.",
+   "evidence": "Look for a send_email to mina.hashimoto@moveops.com or a conversations_add_message directed at Mina Hashimoto seeking sign-off on the Bhat storage rebooking cost. Confirm the tool response indicates success. A single message to Mina that covers both the Ravi deposit and the Bhat storage cost satisfies this and rubric 2. The sign-off must be sought from Mina as the Account Manager: a message that asks only the client to approve, with Mina merely copied for awareness, does not satisfy this. Whether Mina is on To or CC is not the test; whether she is asked to sign off before MoveOps commits is.",
+   "cb_justification": "The prompt says anything that adds cost or changes what Veriphase pays must be cleared the right way before committing. The wasted April 26 to April 30 booking plus the new May 1 to May 8 storage is unplanned cost, and the cost policy requires Account Manager Mina Hashimoto's written sign-off before MoveOps commits it. The sign-off must be sought from Mina; obtaining only the client's authorization does not satisfy the internal control."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent sets the Joaquin Silva Linear issue (number 521) to a done or completed state and the update succeeds.",
+   "evidence": "Look for a linear_update_issue call on issue number 521 or id issue_veriphase_silva_dot_cert setting the state to a done or completed value. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says if something the coordinator has been chasing has already come back, close it out instead of raising it again. Greg Pallone's April 18 reply confirmed the signed DOT placarding certificate was completed at transport, so the certificate ticket must be closed."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent files a freight damage claim with Swift at [greg.pallone@swiftrelocations.com](mailto:greg.pallone@swiftrelocations.com) for the Joaquin Silva shipment, and the action succeeds.",
+   "evidence": "Look for a send_email or reply_to_email to greg.pallone@swiftrelocations.com raising the freight damage claim for the Silva lithium-module crates. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says closing one thing does not always mean the move is clean. Terrence Whitmore's April 23 report found 2 of 6 crates damaged with a tripped temperature-excursion indicator, and Swift's freight terms require a claim within 10 days of the April 18 delivery, so a claim must be filed with Swift."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent escalates the Anika Rahman employer-letter blocker to Chloe Vance ([chloe.vance@moveops.com](mailto:chloe.vance@moveops.com) or Slack equivalent), and the action succeeds.",
+   "evidence": "Look for a send_email to chloe.vance@moveops.com or a conversations_add_message directed at Chloe Vance about the Anika Rahman move and the employer letter deadline. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says a move genuinely stuck on something outside our control that will blow a hard deadline goes to Chloe now. Dana Whitlock's April 23 reply confirmed the formal employer letter will miss the hard May 4 Toronto customs pickup, which is outside MoveOps control."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent contacts the client Dana Whitlock at [dana.whitlock@veriphasebio.com](mailto:dana.whitlock@veriphasebio.com) about an interim employer letter for Anika Rahman, and the action succeeds.",
+   "evidence": "Look for a send_email or reply_to_email to dana.whitlock@veriphasebio.com requesting the interim employer letter for Anika Rahman. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says if there is a legitimate way to still save the date, chase it too. Louise Tremblay's April 25 reply established that a notarized interim officer letter can hold the May 4 pickup if it reaches the broker by May 1, so the client must be asked to provide it."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent updates or comments on the Anika Rahman Linear issue (number 522) to reflect the letter delay and the deadline situation, and the action succeeds.",
+   "evidence": "Look for a linear_update_issue or linear_create_comment call on issue number 522 or id issue_veriphase_rahman_customs referencing the letter delay or the May 4 deadline. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says open or update a ticket so nothing slips. Issue 522 reflects a stale framing and must be updated with Dana Whitlock's April 23 delay and the May 4 deadline risk."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent creates a new Linear issue on project proj_veriphase for the Ravi Chandrasekaran housing and deposit workstream, and the action succeeds.",
+   "evidence": "Look for a linear_create_issue call on project proj_veriphase whose content concerns the Ravi Chandrasekaran housing or deposit gap. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says open a ticket so nothing slips. The Ravi housing gap, where the lease is unsigned and a deposit decision is pending, has no existing ticket under proj_veriphase (only issues 521 and 522 exist)."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent creates a new Linear issue on project proj_veriphase for the Aditya Bhat schedule slip and storage re-book, and the action succeeds.",
+   "evidence": "Look for a linear_create_issue call on project proj_veriphase whose content concerns the Aditya Bhat schedule slip or storage re-book. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says open a ticket so nothing slips. The Bhat date slip and the Denver storage re-book have no existing ticket under proj_veriphase."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent creates a new Linear issue on project proj_veriphase for the Joaquin Silva freight damage claim, and the action succeeds.",
+   "evidence": "Look for a linear_create_issue call on project proj_veriphase whose content concerns the Silva freight damage claim. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt says open a ticket so nothing slips. The Silva freight damage claim, with its April 28 filing deadline, is a new gap with no existing ticket under proj_veriphase."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent posts a message to the operations channel (C006 or channel name operations) with a consolidated status of the Veriphase Biolabs batch, and the action succeeds.",
+   "evidence": "Look for a conversations_add_message call to channel id C006 or channel name operations with a consolidated Veriphase batch status. Confirm the tool response indicates success.",
+   "cb_justification": "The prompt closes by asking the agent to put a status in operations so the team knows where each of the four moves stands. C006 is the #operations channel where the earlier status posts live."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent's update to the Ravi Chandrasekaran record states that the Ballard lease is unsigned, that the corporate guarantor and employment-verification route was rejected, that holding the unit now requires a 10,500 deposit by April 29, and that the April 30 move-in is at risk.",
+   "evidence": "Check the airtable_update_records content for recReloc00000095. It should state the lease is unsigned, the guarantor and employment-verification route was rejected, a 10,500 deposit by April 29 is required to hold the unit, and the April 30 move-in is at risk.",
+   "cb_justification": "The prompt says correct the record so it reflects what is truly happening now. The true state comes from Carmen Reyes's April 25 reply, which supersedes her April 21 request, so the record must capture the dead guarantor route and the deposit path, not the sent-letters story."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent's sign-off request to Mina Hashimoto states that the 10,500 Ballard deposit for Ravi Chandrasekaran is an unplanned cost that needs Account Manager approval before MoveOps commits it.",
+   "evidence": "Check the body of the message to mina.hashimoto@moveops.com. It should identify the 10,500 Ballard deposit for Ravi Chandrasekaran and ask for approval before MoveOps commits, consistent with the cost policy. The request for approval must be put to Mina; a message that only asks the client to approve does not satisfy this.",
+   "cb_justification": "The Veriphase cost policy requires the Account Manager's written sign-off before committing unplanned cost. The routing message must present the 10,500 deposit as a cost decision for Mina to approve, not as an action already taken."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's update to the Aditya Bhat record sets the Move Start Date to April 27 and the Move End Date to May 1, and records that the Denver apartment is not ready until May 8 so interim storage is needed from May 1 to May 8 and the pre-booked April 26 to April 30 storage is wasted.",
+   "evidence": "Check the airtable_update_records content for recReloc00000096. Move Start Date should be April 27 (2026-04-27) and Move End Date May 1 (2026-05-01), and the content should reference the May 8 apartment readiness, the May 1 to May 8 storage need, and the wasted April 26 to April 30 booking.",
+   "cb_justification": "The prompt says do not just note a moved date but work out what it knocks over downstream. The revised May 1 delivery combined with the May 8 apartment readiness defines the real storage window, and the original April 26 to April 30 booking no longer applies."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's message to Swift acknowledges the April 27 pickup and May 1 delivery for Aditya Bhat and asks Swift to re-book the interim Denver storage to cover May 1 through May 8.",
+   "evidence": "Check the body of the message to greg.pallone@swiftrelocations.com. It should acknowledge the April 27 pickup and May 1 delivery and request that interim Denver storage be re-booked to cover May 1 through May 8.",
+   "cb_justification": "Swift confirmed the revised schedule and offered to re-book the storage once destination readiness was known. With the apartment ready May 8, the storage must be re-booked to bridge the May 1 delivery to the May 8 readiness."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent's freight damage claim to Swift states that 2 of the 6 Joaquin Silva crates arrived with damage and a tripped temperature-excursion indicator, and that the claim falls within the 10-day window closing April 28.",
+   "evidence": "Check the body of the damage-claim message to greg.pallone@swiftrelocations.com. It should reference the 2 of 6 damaged crates, the tripped temperature-excursion indicator, and the April 28 claim deadline.",
+   "cb_justification": "Terrence Whitmore's April 23 report and Swift's freight terms establish the specifics: 2 of 6 crates damaged, a tripped temperature indicator, and a 10-day claim window from the April 18 delivery. The claim must convey these so Swift can act before the window closes."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent's escalation to Chloe Vance identifies Anika Rahman's move and states that the formal employer letter will miss the hard May 4 Toronto customs pickup and is blocked on the client.",
+   "evidence": "Check the body of the escalation to chloe.vance@moveops.com. It should name Anika Rahman, reference the employer letter, and state that it will miss the hard May 4 Toronto customs pickup and is outside MoveOps control.",
+   "cb_justification": "The prompt says the escalation must go to Chloe now and not be buried in a summary, so it must be specific enough for her to act. Dana Whitlock's April 23 reply establishes that the formal letter lands after May 4 and the delay is on the client side."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent's message to the client requests a notarized interim employer letter from a Veriphase officer that reaches the customs broker by May 1 to hold the May 4 pickup.",
+   "evidence": "Check the body of the message to dana.whitlock@veriphasebio.com. It should request a notarized interim employer letter from a Veriphase officer, to reach the broker by May 1 so the May 4 pickup holds.",
+   "cb_justification": "Louise Tremblay's April 25 reply established the workaround: a notarized interim officer letter clears the May 4 pickup if it reaches the broker at least 72 hours before, meaning by May 1. The client request must ask for exactly this so the date can be saved."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent's operations status covers all four moves with these states: Ravi lease unsigned with the guarantor route dead and a 10,500 deposit pending Mina's sign-off and April 30 at risk, Aditya Bhat corrected to April 27 pickup and May 1 delivery with storage re-booked for May 1 to May 8, Joaquin Silva certificate closed as received April 18 with a freight damage claim filed, and Anika Rahman escalated to Chloe with a notarized interim letter being chased by May 1.",
+   "evidence": "Check the message body posted to C006. It should address all four employees by name with states matching the ground truth for Ravi, Aditya Bhat, Joaquin Silva, and Anika Rahman as listed in the criterion.",
+   "cb_justification": "The prompt asks for a status in operations so the team knows where each of the four moves stands. A status that omits a move or misstates one fails to give the team the true batch picture before the coordinator goes heads-down."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent does not send the corporate guarantor letter or the employment-verification letter to UrbanNest, since the underwriter rejected that route.",
+   "evidence": "Confirm no send_email or reply_to_email to carmen.reyes@urbannestsolutions.com provides or commits a corporate guarantor letter or an employment-verification letter for Ravi Chandrasekaran. Sending either means the agent missed the April 25 reversal.",
+   "cb_justification": "This is the primary Ravi anti-trap. Carmen Reyes's April 21 reply asked for those two letters, but her April 25 reply states the underwriter rejected the guarantor route entirely, so the letters will not unblock the lease. An agent that acts on the April 21 request and sends them has missed the superseding reply."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent does not commit or authorize the 10,500 Ballard deposit or the Bhat storage rebooking cost before Mina Hashimoto's sign-off, leaving those cost decisions for the Account Manager.",
+   "evidence": "Confirm the trajectory contains no action that commits or authorizes the 10,500 deposit to UrbanNest or the landlord, and none that commits the Bhat storage rebooking cost, ahead of Mina Hashimoto's approval. Both costs should be routed to Mina, not committed.",
+   "cb_justification": "The prompt says anything that adds cost must be cleared the right way before committing, and the cost policy reserves that sign-off for the Account Manager. Committing either unplanned cost, the deposit or the storage rebooking, ahead of Mina's approval violates the policy."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent treats the Joaquin Silva DOT placarding certificate as already resolved: it does not re-chase Swift for the certificate and does not escalate the certificate to anyone.",
+   "evidence": "Confirm no message re-chases Swift for the DOT placarding certificate and no escalation treats the certificate as an open item. The certificate should be closed out, distinct from the separate freight damage claim.",
+   "cb_justification": "This is the Silva false-gap anti-trap. The Linear ticket and the April 20 status frame the certificate as open, but Greg Pallone's April 18 reply confirms it was completed and delivered. Re-chasing or escalating the certificate means the agent missed the April 18 resolution."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent does not raise the Aditya Bhat or Joaquin Silva items to Chloe Vance as escalations.",
+   "evidence": "Confirm no send_email to chloe.vance@moveops.com and no conversations_add_message directed at Chloe raises the Aditya Bhat schedule or storage gap, or the Joaquin Silva certificate or damage claim to her as an escalation. Naming a move inside the required consolidated operations status is not an escalation; only a message that asks Chloe to act on a blocker counts. Only the Anika Rahman move should reach Chloe as an escalation.",
+   "cb_justification": "The prompt reserves escalation to Chloe for the one move genuinely stuck outside our control against a hard deadline, which is Rahman. Bhat is a vendor-coordination and cost item routed to Mina, and Silva's certificate is already resolved with only a routine vendor damage claim outstanding, so raising either to Chloe over-escalates work that already has an owner. Ravi is not listed here: his cost decision is separately required to go to Mina, and his genuinely at-risk move legitimately appears in the operations status the team reads, so a heads-up to Chloe about it is not an error."
+  }
+ ]
+}

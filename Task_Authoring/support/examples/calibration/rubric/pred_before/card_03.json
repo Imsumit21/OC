@@ -1,0 +1,166 @@
+{
+ "id": "card_03",
+ "n_criteria": 21,
+ "requirements": [
+  "R1: status of every deal in Emeka's book",
+  "R2: Sunbelt April billing deal marked won",
+  "R3: Palmetto April billing deal marked won",
+  "R4: mid-move deals left unchanged",
+  "R5: account closest to walking identified (Mosaic)",
+  "R6: risk note on that account, stage untouched",
+  "R7: promised joint call booked (David + Emeka + client side)",
+  "R8: new deal for returning client (Tideway)",
+  "R9: email David account-by-account rundown + changes",
+  "R10: short version posted in team channel"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "non-atomic (write + preserved fields)",
+   "severity": "Moderate",
+   "quote": "without altering its amount, closedate, or other fields",
+   "why": "Bundles unstated preserved-field clause with the stage write"
+  },
+  {
+   "c": "C2",
+   "defect": "non-atomic (write + preserved fields)",
+   "severity": "Moderate",
+   "quote": "without altering its amount, closedate, or other fields",
+   "why": "Same bundling as C1"
+  },
+  {
+   "c": "C3",
+   "defect": "prohibition-only / absence-only acceptance",
+   "severity": "dimension-only",
+   "quote": "does not change the stage of any of Emeka's five mid-move deals",
+   "why": "Absence-only; Negative fails even with explicit prompt prohibition"
+  },
+  {
+   "c": "C4",
+   "defect": "non-atomic / duplicate",
+   "severity": "Moderate",
+   "quote": "without changing any Mosaic deal stage",
+   "why": "Bundles stage preservation (already graded in C3) with the note write"
+  },
+  {
+   "c": "C5",
+   "defect": "overly specific / non-atomic",
+   "severity": "Major",
+   "quote": "including at least the $90,000 ... the $40,000 uncovered insurance gap, and the Tamara Byrd / Rafael Mendes executive escalation",
+   "why": "Three independent basis facts required; a valid note citing two fails"
+  },
+  {
+   "c": "C7",
+   "defect": "unauthorized content",
+   "severity": "Major",
+   "quote": "references the Mosaic Robotics prototype damage claim and the $40K coverage gap",
+   "why": "Prompt sets no event-description content; fails a correct booking"
+  },
+  {
+   "c": "C8",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "with amount $15,000 in an open (non-closed) stage",
+   "why": "Creation, amount and stage vary independently"
+  },
+  {
+   "c": "C9",
+   "defect": "overly specific / non-atomic",
+   "severity": "Major",
+   "quote": "captures the two Q3 relocations ... at $7,500 each, targeting July/August 2026",
+   "why": "Deal name/description content not asked; multiple independent facts"
+  },
+  {
+   "c": "C11",
+   "defect": "unauthorized / non-atomic",
+   "severity": "Major",
+   "quote": "with billing confirmed and May 10 payment dates",
+   "why": "Two deals + invoice numbers + payment dates bundled; payment dates not asked"
+  },
+  {
+   "c": "C13",
+   "defect": "overly specific / non-atomic",
+   "severity": "Major",
+   "quote": "citing the basis (including at least the 90K prototype damage, the 40K insurance gap, and the executive escalation",
+   "why": "Conclusion bundled with three mandatory basis facts"
+  },
+  {
+   "c": "C14",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "risk note has been logged ... and that the previously promised ... call is now booked",
+   "why": "Two independent changes in one row"
+  },
+  {
+   "c": "C15",
+   "defect": "unauthorized / non-atomic",
+   "severity": "Major",
+   "quote": "(two Q3 relocations, Charlotte and Nashville, $15,000) and that a new CRM deal has been teed up",
+   "why": "Expansion detail not asked; bundled with deal confirmation"
+  },
+  {
+   "c": "C18",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "flags Mosaic Robotics as the at-risk account ... and notes the Tideway second-wave expansion",
+   "why": "Two independent facts in one row"
+  },
+  {
+   "c": "C19",
+   "defect": "duplicate grading",
+   "severity": "Moderate",
+   "quote": "identifies Mosaic Robotics as the account closest to walking",
+   "why": "Same conclusion graded in C4, C13, C18 across artifacts"
+  },
+  {
+   "c": "C20",
+   "defect": "Process fails three-condition test / unauthorized",
+   "severity": "Major",
+   "quote": "verifies that the Sunbelt April billing closed out ... before marking",
+   "why": "User already asserts billing settled; verification not required on every valid path; trace"
+  },
+  {
+   "c": "C21",
+   "defect": "Process fails three-condition test / unauthorized",
+   "severity": "Major",
+   "quote": "verifies that the Palmetto April billing closed out ... before marking",
+   "why": "Same as C20"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C4",
+    "C5",
+    "C13",
+    "C18",
+    "C19"
+   ],
+   "condition": "agent picks the wrong at-risk account"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 8,
+  "rows_moderate": 7,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 38.1,
+  "pct_moderate_or_worse": 71.4,
+  "pct_any": 71.4
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "FAIL",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "three_fields_present=PASS; builder_minimum=PASS; spot_checks=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe/ledger access (other universe): values, reachability and tool catalog not verified; no coverage plan, requirements derived from prompt; weights absent."
+}

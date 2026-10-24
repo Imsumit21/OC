@@ -1,0 +1,189 @@
+{
+ "id": "card_03",
+ "n_criteria": 21,
+ "requirements": [
+  "R1: mark Sunbelt April billing deal won",
+  "R2: mark Palmetto April billing deal won",
+  "R3: mid-move deals stay at current stage",
+  "R4: verdict: account closest to walking",
+  "R5: risk note on that account in CRM (content: history on record)",
+  "R6: that account's deal stage untouched",
+  "R7: book the promised call with David, user and client side",
+  "R8: new CRM deal for returning client",
+  "R9: email David account-by-account rundown + what changed",
+  "R10: short status post in team channel"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "as won by setting its stage to closedwon, without altering its amount, closedate, or other fields",
+   "why": "stage write and preservation of other fields fail separately; 'without' clause"
+  },
+  {
+   "c": "C2",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "as won by setting its stage to closedwon, without altering its amount, closedate, or other fields",
+   "why": "same bundling as C1"
+  },
+  {
+   "c": "C3",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "does not change the stage of any of Emeka's five mid-move deals",
+   "why": "five deals' states bundled"
+  },
+  {
+   "c": "C3",
+   "defect": "negative",
+   "severity": "dimension-only",
+   "quote": "The Agent does not change the stage",
+   "why": "prohibition-only title; Negative FAIL"
+  },
+  {
+   "c": "C4",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "logs a new risk note ... without changing any Mosaic deal stage",
+   "why": "note write + preserved stage are independent"
+  },
+  {
+   "c": "C5",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "including at least the $90,000 ... the $40,000 ... and the Tamara Byrd / Rafael Mendes executive escalation",
+   "why": "three independent content items, 'at least'"
+  },
+  {
+   "c": "C6",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "with a near-term (next-week) start/end datetime",
+   "why": "evidence adds a date window the title does not state; narrowing hidden condition"
+  },
+  {
+   "c": "C7",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "calendar event references the Mosaic Robotics prototype damage claim and the $40K coverage gap",
+   "why": "prompt sets no event content; also two items"
+  },
+  {
+   "c": "C8",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "with amount $15,000 in an open (non-closed) stage",
+   "why": "prompt sets no amount/stage for the new deal"
+  },
+  {
+   "c": "C8",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "(e.g., qualifiedtobuy, appointmentscheduled",
+   "why": "exemplar phrase in evidence"
+  },
+  {
+   "c": "C9",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "two Q3 relocations ... (one to Charlotte, one to Nashville) at $7,500 each, targeting July/August 2026",
+   "why": "several independent unrequested deal details"
+  },
+  {
+   "c": "C11",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "the two April billing deals (Sunbelt ...; Palmetto ...) are now marked won, with billing confirmed and May 10 payment dates",
+   "why": "two deals + billing + dates bundled"
+  },
+  {
+   "c": "C12",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "the mid-move deals (Mosaic Okoye, Hartley, Tanaka; GreenStack Zhao + Reyes) remain in progress",
+   "why": "filtered list of several deals"
+  },
+  {
+   "c": "C13",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "identifies Mosaic Robotics as the account closest to walking, citing the basis (including at least",
+   "why": "verdict bundled with 'at least' grounding"
+  },
+  {
+   "c": "C14",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "a risk note has been logged ... and that the ... call is now booked",
+   "why": "two separate actions reported"
+  },
+  {
+   "c": "C15",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "Tideway ... has come back for a second wave (...) and that a new CRM deal has been teed up",
+   "why": "finding + action bundled"
+  },
+  {
+   "c": "C17",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "the two April billing deals (Sunbelt and Palmetto) are closed/won",
+   "why": "filtered list of two deals"
+  },
+  {
+   "c": "C18",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "flags Mosaic Robotics as the at-risk account ... and notes the Tideway second-wave expansion",
+   "why": "two independent items"
+  },
+  {
+   "c": "C19",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "identifies Mosaic Robotics as the account closest to walking and does not select Vectral Systems",
+   "why": "verdict already graded in C4/C13/C18; artifact-agnostic re-grade"
+  },
+  {
+   "c": "C20",
+   "defect": "category",
+   "severity": "Moderate",
+   "quote": "verifies that the Sunbelt April billing closed out ... before marking",
+   "why": "user already states billing settled; trace of reads (fails conditions 1 and 3)"
+  },
+  {
+   "c": "C21",
+   "defect": "category",
+   "severity": "Moderate",
+   "quote": "verifies that the Palmetto April billing closed out ... before marking",
+   "why": "same as C20"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 16,
+  "rows_moderate": 3,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 76.2,
+  "pct_moderate_or_worse": 90.5,
+  "pct_any": 90.5
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "FAIL",
+  "agent_centric": "NON-FAIL",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe access (other universe): entity IDs, amounts, statuses, dates and tool catalog unverified (UNRESOLVED); clock 2026-02-14 not applied to this universe; no weights on cards. Mosaic verdict, deal IDs, Tideway amounts unverified."
+}

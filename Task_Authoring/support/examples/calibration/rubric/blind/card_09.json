@@ -1,0 +1,91 @@
+{
+ "card_index": 9,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "Samira wants to switch ExpenseBot back to making its own approve and deny calls again this week, now that we have had everything going through manual review since the pause back in March. Before she signs off on re-enabling it, she asked me to do a real readiness check instead of us assuming we are fine just because the original bugs got fixed.\n\nCan you work through the expense tool's project board and the team's history around the re-enablement and figure out whether everything we agreed had to be in place before automatic decisions go back on is genuinely finished and live in production. The board has been a mess since the March scramble, with a lot of the expense tool tickets still sitting in todo or backlog even though the work shipped weeks ago, so go by what actually shipped rather than what a ticket says, and take into account what the team and leadership have said about turning it back on.\n\nOnce you have the real picture, get the whole board back in line with where things actually stand, and if anything still has to be finished before we can safely let the system approve and deny on its own, make that blocker clear. Then give Samira and me a straight answer on whether we are clear to re-enable, and if we are not, lay out exactly what is holding it up and why it matters. Put the outcome somewhere the engineering team will see it.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent concludes and communicates to Anh and Samira that ExpenseBot is not ready and that auto-decisions should not be re-enabled yet.",
+   "evidence": "In the agent's final response, and/or the message it posts for the team, look for a no-go conclusion (do not re-enable / keep auto-decisions off / not ready). A conclusion that the system is ready or clear to re-enable is a fail.",
+   "cb_justification": "The prompt asks the agent to 'give Samira and me a straight answer on whether we are clear to re-enable.' The ground truth is NOT READY, because a required launch gate (cross-client duplicate detection) is marked done but is not actually live in production (see the next rubric), so re-enabling would let cross-client duplicate submissions be auto-approved without being caught, the exact gap the March pause was meant to close. A conclusion that the system is ready or clear to re-enable is the naive failure mode."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the cross-client duplicate detection is not actually working, citing the un-flagged duplicate stipend submissions from Naomi Adeyemi (Vectral Systems) and Tobias Lindqvist (GreenStack Energy), the same TechComfort receipt, $89 ergonomic keyboard, both Approved without a duplicate flag.",
+   "evidence": "In the agent's final response, and/or the issue or message it writes, look for the agent naming the Naomi Adeyemi (Vectral Systems) and Tobias Lindqvist (GreenStack Energy) stipend records as the same receipt approved without a duplicate flag, and concluding the live cross-client duplicate detection is not actually working. Grounded in the Airtable Stipend Transactions records rec_a6_dup_adeyemi and rec_a6_dup_lindqvist. Merely noting in the abstract that 'duplicate detection should be verified,' without identifying the actual un-flagged duplicate, does not pass.",
+   "cb_justification": "The prompt asks the agent, if not ready, to 'lay out exactly what is holding it up and why it matters.' The launch-readiness checklist and the ENG-220 comment both claim cross-client duplicate detection is live with 'no other duplicate matches outstanding,' but the Naomi Adeyemi and Tobias Lindqvist submissions are the same receipt (same vendor TechComfort Supply, same $89.00, same item, same PDF template) submitted by different employees at different clients, and both were Approved without being flagged. Both were submitted after the 2026-04-22 backfill, so the point is not that the backfill claim was false; it is that the live detection failed to flag these new post-backfill submissions, proving the control is not genuinely working in production. This is the material, deterministic blocker. Concluding not-ready only on softer / process grounds (a missing ops or finance sign-off, a category-keyword gap) without catching this duplicate-detection failure does not satisfy the criterion."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent explains why the duplicate-detection failure blocks re-enabling: re-enabling auto-decisions while the control is not live would let cross-client duplicate stipend submissions be auto-approved and paid without being caught, re-opening the duplicate-payment gap the March pause was meant to close.",
+   "evidence": "In the agent's final response, and/or the message it posts, look for an explanation of the consequence, that re-enabling while cross-client duplicate detection is not live would auto-approve duplicate stipend submissions without catching them, re-creating the duplicate-payment exposure the pause was meant to prevent. A response that states the blocker but gives no consequence does not satisfy this criterion.",
+   "cb_justification": "The prompt asks the agent, if not ready, to lay out 'what is holding it up and why it matters', a compound ask. The blocker itself is graded by the previous rubric; this criterion grades the 'why it matters' half: that automating on a broken cross-client duplicate control would auto-approve real duplicate payments (the $89 Adeyemi/Lindqvist receipt was already reimbursed on both clients), the exact exposure the pause exists to prevent."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent records the duplicate-detection control failure on the engineering board, either by correcting the launch-readiness checklist, reopening the duplicate-detection ticket (ENG-220), or filing a new Engineering issue for it.",
+   "evidence": "Look for a comment on ENG-219 (issue_launch_readiness_checklist) or ENG-220 (issue_stipend_duplicate_detection), a state change reopening ENG-220 (issue_stipend_duplicate_detection), or a newly created Engineering issue, whose content references the un-flagged Adeyemi/Lindqvist duplicate or the live duplicate-detection control failing to flag these new submissions. Any one of these satisfies the criterion.",
+   "cb_justification": "The prompt says that if anything still has to be finished, the agent should 'make that blocker clear.' Recording the control failure on the board (a corrective comment on ENG-219 or ENG-220, a state change reopening ENG-220, or a new Engineering issue) creates the trail so nobody re-enables on the false all-green checklist."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent posts the readiness go/no-go outcome where the engineering team will see it.",
+   "evidence": "Look for a posted message conveying the readiness verdict (no-go / do not re-enable) to a channel the engineering team monitors, most naturally the #engineering channel (C003). Confirm it was posted successfully.",
+   "cb_justification": "The prompt says to 'put the outcome somewhere the engineering team will see it.' The verdict needs to land in a place the engineering team monitors; the #engineering channel (C003), where Samira raised the re-enablement question, is the natural place, but the prompt names the goal rather than a specific channel."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent updates ENG-201 (Epic: Core Categorization Engine) out of Backlog to a completed state to reflect that the work shipped.",
+   "evidence": "Look for an issue-state update on ENG-201 (issue_core_engine) moving it out of Backlog to Done or another completed/shipped state.",
+   "cb_justification": "The prompt says to 'get the whole board back in line with where things actually stand.' ENG-201 (issue_core_engine) shipped in Feb-March per the team's Slack history and ticket comments but is still sitting in Backlog."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent updates ENG-202 (Epic: Client Policy Configuration & Ingestion) out of Backlog to a completed state to reflect that the work shipped.",
+   "evidence": "Look for an issue-state update on ENG-202 (issue_policy_config) moving it out of Backlog to Done or another completed/shipped state.",
+   "cb_justification": "The prompt says to 'get the whole board back in line with where things actually stand.' ENG-202 (issue_policy_config) shipped in Feb-March per the team's Slack history and ticket comments but is still sitting in Backlog."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent updates ENG-203 (Epic: Admin Dashboard & Manual Review Queue) out of Backlog to a completed state to reflect that the work shipped.",
+   "evidence": "Look for an issue-state update on ENG-203 (issue_admin_dashboard) moving it out of Backlog to Done or another completed/shipped state.",
+   "cb_justification": "The prompt says to 'get the whole board back in line with where things actually stand.' ENG-203 (issue_admin_dashboard) shipped in Feb-March per the team's Slack history and ticket comments but is still sitting in Backlog."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent updates ENG-205 (Implement CategoryMatcher module) out of Todo to a completed state to reflect that the work shipped.",
+   "evidence": "Look for an issue-state update on ENG-205 (issue_category_matcher) moving it out of Todo to Done or another completed/shipped state.",
+   "cb_justification": "The prompt says to 'get the whole board back in line with where things actually stand.' ENG-205 (issue_category_matcher) shipped in Feb-March per the team's Slack history and ticket comments but is still sitting in Todo."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent updates ENG-206 (Implement PolicyValidator) out of Todo to a completed state to reflect that the work shipped.",
+   "evidence": "Look for an issue-state update on ENG-206 (issue_policy_validator) moving it out of Todo to Done or another completed/shipped state.",
+   "cb_justification": "The prompt says to 'get the whole board back in line with where things actually stand.' ENG-206 (issue_policy_validator) shipped in Feb-March per the team's Slack history and ticket comments but is still sitting in Todo."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent updates ENG-207 (Implement DecisionEngine) out of Todo to a completed state to reflect that the work shipped.",
+   "evidence": "Look for an issue-state update on ENG-207 (issue_decision_engine) moving it out of Todo to Done or another completed/shipped state.",
+   "cb_justification": "The prompt says to 'get the whole board back in line with where things actually stand.' ENG-207 (issue_decision_engine) shipped in Feb-March per the team's Slack history and ticket comments but is still sitting in Todo."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent updates ENG-209 (Client policy ingestion pipeline) out of Todo to a completed state to reflect that the work shipped.",
+   "evidence": "Look for an issue-state update on ENG-209 (issue_policy_ingestion), moving it out of Todo to Done or another completed/shipped state.",
+   "cb_justification": "The prompt says to 'get the whole board back in line with where things actually stand.' ENG-209 (issue_policy_ingestion) shipped in Feb-March per the team's Slack history and ticket comments but is still sitting in Todo."
+  }
+ ]
+}

@@ -1,0 +1,126 @@
+{
+ "card_index": 10,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "The GraniteRack situation has gotten messier than I expected and I need it properly untangled before I can sign off on anything going to that vendor.\nHere is where I am. There is a GraniteRack invoice that has been sitting in the AP queue for months now, well past any reasonable approval window, and from what I can tell the reason it cannot move is that it was billed against contract terms that are no longer current. I confirmed from my procurement records that a new SOW went into effect in January of this year and fully supersedes the earlier version, so the billing reference on that invoice is wrong. Before any rebill goes through, I want to make sure the vendor-master entries for GraniteRack are actually correct across all of our entities - if the system still carries the old contract reference in the vendor record, we have a controls gap that will surface on every future GraniteRack invoice, not just this one.\nI also want to make sure there are not other GraniteRack invoices sitting in pending state that I should know about. If there are, I need the same level of visibility on them - what entity they are on, how long they have been sitting, what the issue is, and whether anyone has logged them as exceptions or escalated them through the proper channels. I have not personally been tracking the full AP queue across all entities, so I may be missing something.\nOn the contract side, the active SOW is filed but I want to make sure it is findable and clearly labeled in our document system so that when GraniteRack resubmits, AP can independently verify the governing terms on receipt without having to come back to me.\nCan you pull together the full picture on the GraniteRack AP situation across all of our entities, check whether the vendor-master entries are current, and tell me what state each pending invoice is in and whether it has been properly tracked in our project tools? Where things need to be corrected in the vendor-master, log the correction request so there is a formal record of what was requested and what the right reference should be. Any invoice that has been sitting long enough to breach our escalation threshold without being formally logged as an exception needs to be in the system as one. Make sure Priya and Daniel are looped in on whatever requires their action, set a reminder so the vendor-master correction deadline does not slip, and once you have worked through everything, tell me plainly whether we are in a position to proceed with the rebill or whether something on our side still needs to be resolved first.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent creates a Linear issue on the CAO team board (linear_5477c0808ac2) as a formal vendor-master correction request covering all three entities - brookfield, acme_cloud, and northstar_legal.",
+   "evidence": "Look for a Linear issue creation action targeting team linear_5477c0808ac2 (or team label CAO). Confirm the action succeeded and returned an issue ID. The title or description must relate to a GraniteRack vendor-master SOW correction request.",
+   "cb_justification": "The prompt explicitly requires the agent to 'log the correction request so there is a formal record of what was requested and what the right reference should be.' No direct vendor-master update tool exists, so the formal record must be created as a Linear issue on the CAO board. This is the 1.1 write-action rubric for OE 6."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent's vendor-master correction Linear issue specifies that all three entity records - brookfield, acme_cloud, and northstar_legal - must be updated from SOW-2024-GR-rev3 to 'GraniteRack Compute Services - infrastructure services per SOW-2025-GR-rev1 (effective 2026-01-15, supersedes SOW-2024-GR-rev3)' before either invoice is released.",
+   "evidence": "Check the description or body of the Linear issue creation for explicit mention of all three entities (brookfield, acme_cloud, northstar_legal) and the SOW transition from SOW-2024-GR-rev3 to SOW-2025-GR-rev1 (effective 2026-01-15). Both invoices - acme_cloud VEN-012-753165 / apinv_6131b7c637aa4b6e / $39,090.56 and northstar_legal VEN-012-847291 / apinv_gr_ns_b8f2e1a3 / $18,240.00 - must be referenced as blocked pending this correction.",
+   "cb_justification": "The prompt requires that the correction request document 'what was requested and what the right reference should be.' The correction must cover all three stale entities and specify the exact before/after SOW references per Priya Khatri's vendor-master pull (email_priya_002_sow_reply) and Lena's correction-list email (email_lena_003_correction_list). This is the 1.2 content rubric for OE 6."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent creates a record in the AP Workflow Exceptions Airtable table (base airtable_e86eaf439d1d, table airtable_8ee8b6013413) logging the northstar_legal GraniteRack invoice VEN-012-847291 / apinv_gr_ns_b8f2e1a3 as a formal AP exception.",
+   "evidence": "Look for an Airtable record creation action targeting base airtable_e86eaf439d1d and table airtable_8ee8b6013413. Confirm the action succeeded. The record should reference the northstar_legal GraniteRack invoice (VEN-012-847291 or apinv_gr_ns_b8f2e1a3 or $18,240.00).",
+   "cb_justification": "The prompt states 'any invoice that has been sitting long enough to breach our escalation threshold without being formally logged as an exception needs to be in the system as one.' The northstar_legal invoice (VEN-012-847291, $18,240.00, invoice_date 2026-03-20) has been pending for 83+ days as of the task date, breaching the 60-day internal SLA, with no prior exception record. This is the 1.1 write-action rubric for OE 7."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's AP exception record for the northstar_legal GraniteRack invoice includes: invoice VEN-012-847291 (or apinv_gr_ns_b8f2e1a3) in the invoice_id field, gl_account 219000, a severity of High (or similar indicating urgency), status Open, and notes explaining the SOW-2024-GR-rev3 mismatch blocking approval, the 83+ day age exceeding the 60-day SLA threshold, and the absence of prior Linear or exception tracking. The northstar_legal entity and invoice amount ($18,240.00) must be identifiable from the issue_title or notes.",
+   "evidence": "Check the fields of the Airtable record creation for the northstar_legal GraniteRack exception. Verify: invoice_id references VEN-012-847291 or apinv_gr_ns_b8f2e1a3; gl_account is 219000; severity is High or Critical; status is Open; notes describe the SOW mismatch (SOW-2024-GR-rev3 vs SOW-2025-GR-rev1), the duration (83+ days or similar), and the absence of prior escalation tracking.",
+   "cb_justification": "The exception record must contain enough detail to constitute a 'formal' log per the prompt's requirement. The key facts - invoice ID, entity, amount, GL account, severity, SOW mismatch cause, age, and the tracking gap - are what make the record actionable and audit-ready. This is the 1.2 content rubric for OE 7."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent creates a Linear issue on the CAO team board (linear_5477c0808ac2) for the northstar_legal GraniteRack invoice VEN-012-847291 / apinv_gr_ns_b8f2e1a3 / $18,240.00 that has no prior tracking record.",
+   "evidence": "Look for a Linear issue creation action targeting team linear_5477c0808ac2 (CAO) that references the northstar_legal GraniteRack invoice - must mention VEN-012-847291, apinv_gr_ns_b8f2e1a3, $18,240.00, northstar_legal, or the 60-day SLA breach. Confirm the action succeeded. Note: this must be a separate Linear issue from the vendor-master correction issue (OE 6) - two distinct Linear creation actions are expected.",
+   "cb_justification": "The prompt requires that any invoice exceeding the escalation threshold and not formally tracked in project tools be logged. No Linear issue exists for the northstar_legal invoice (unlike the acme_cloud invoice, which has two). This gap is the specific action Lena flagged to Daniel Jones in her 2026-06-10 correction-list email. This is the 1.1 write-action rubric for OE 8."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's Linear issue for the northstar_legal GraniteRack invoice describes: the invoice pending since 2026-03-20 (83+ days as of June 12, 2026), entity northstar_legal, gl_account 219000, the SOW mismatch (references SOW-2024-GR-rev3 instead of active SOW-2025-GR-rev1) blocking approval, the required void-and-rebill path mirroring the acme_cloud decision, and that the 60-day SLA threshold has already been breached with no prior Linear record.",
+   "evidence": "Check the description of the Linear issue created for the northstar_legal GraniteRack invoice. Verify it includes the invoice date (2026-03-20), the 83+ day age or SLA breach reference, the SOW mismatch (SOW-2024-GR-rev3 vs SOW-2025-GR-rev1), the void-and-rebill resolution path, and note that this invoice lacked prior Linear tracking.",
+   "cb_justification": "The Linear issue must be substantive enough to serve as the formal tracking record for the northstar_legal invoice. The content must match the gap Lena flagged - no prior tracking, SOW mismatch, void-and-rebill path required, SLA breach - so that the CAO team can act on it independently. This is the 1.2 content rubric for OE 8."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent sends a notification (email or internal message) from lena.park@brookfieldcpas.com reaching both priya.khatri@brookfieldcpas.com and daniel.jones@brookfieldcpas.com.",
+   "evidence": "Look for an email or internal-messaging send action with sender/originator lena.park@brookfieldcpas.com reaching both priya.khatri@brookfieldcpas.com and daniel.jones@brookfieldcpas.com. Confirm the action succeeded.",
+   "cb_justification": "The prompt explicitly requires looping in Priya and Daniel 'on whatever requires their action' - a goal, not a named channel. Priya Khatri (AP Coordinator) holds both invoices and confirmed the stale vendor-master entries; Daniel Jones (Accounts Manager) needs to coordinate the partner sign-off on the northstar_legal void-and-rebill path. This is the 1.1 write-action rubric for OE 9."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's notification to Priya Khatri and Daniel Jones covers: (a) both GraniteRack invoices remain in pending_approval - acme_cloud VEN-012-753165 / $39,090.56 and northstar_legal VEN-012-847291 / $18,240.00 - and must not be released until the vendor-master update is confirmed; (b) the vendor-master correction request has been formally logged for all three entities (brookfield, acme_cloud, northstar_legal) requiring the SOW reference updated to SOW-2025-GR-rev1; (c) the northstar_legal invoice has now been logged as an AP exception and a Linear tracking issue has been created; (d) the active SOW (SOW-2025-GR-rev1) is filed and clearly labeled in Records Vault for AP's independent use; (e) Priya is asked to hold both invoices pending vendor-master confirmation; (f) Daniel is asked to confirm partner disposition on the northstar_legal void-and-rebill path",
+   "evidence": "Inspect the content of the notification (email or internal message) sent to priya.khatri@brookfieldcpas.com and daniel.jones@brookfieldcpas.com. Verify it covers: both invoice IDs/amounts and their pending status, the three-entity vendor-master correction requirement, the northstar_legal exception log and Linear issue creation, the Records Vault SOW filing confirmation, a hold instruction to Priya, and a partner sign-off request to Daniel regarding the northstar_legal void-and-rebill.",
+   "cb_justification": "The prompt requires that Priya and Daniel be looped in on 'whatever requires their action.' The notification must convey the full AP picture and their specific action items so both recipients can act independently without coming back to Lena. This is the 1.2 content rubric for OE 9."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent sets a reminder with a forward-looking due date to ensure the vendor-master correction deadline does not slip.",
+   "evidence": "Look for a reminder creation action with a due_datetime after the fixed task date (2026-06-12) and before any rebill could be processed - e.g., 2026-06-19 or a similar near-term forward date. The title or description must reference the GraniteRack vendor-master correction or the pending invoices. Confirm the action succeeded.",
+   "cb_justification": "The prompt explicitly states 'set a reminder so the vendor-master correction deadline does not slip.' The prior reminder (reminder_lena_vm_sweep_001, due 2026-06-13) covers the initial sweep but not the confirmed correction deadline after resubmission; a fresh forward-looking reminder is required to ensure the deadline does not slip. This is the 1.1 write-action rubric for OE 10."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's reminder description specifies that all three entity vendor-master entries (brookfield, acme_cloud, northstar_legal) must be updated from SOW-2024-GR-rev3 to SOW-2025-GR-rev1 before either invoice - acme_cloud VEN-012-753165 ($39,090.56) or northstar_legal VEN-012-847291 ($18,240.00) - can be released.",
+   "evidence": "Check the title and/or description of the reminder creation action. Verify it names all three entities (brookfield, acme_cloud, northstar_legal) and references the SOW correction (SOW-2024-GR-rev3 to SOW-2025-GR-rev1) as the prerequisite for releasing either GraniteRack invoice. Both invoice references (VEN-012-753165 / $39,090.56 and VEN-012-847291 / $18,240.00) should appear or be clearly implied.",
+   "cb_justification": "The reminder must be substantive enough to serve its purpose when it fires. The agent cannot simply create a blank or vague reminder - it must encode the exact condition that must be met (three-entity vendor-master correction confirmed) and the stakes (two blocked invoices). This is the 1.2 content rubric for OE 10."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent confirms in the final response that all three entity vendor-master records (brookfield, acme_cloud, northstar_legal) currently carry the deprecated SOW-2024-GR-rev3 reference and that the correction request has been formally logged.",
+   "evidence": "Check the agent's final response for confirmation that brookfield, acme_cloud, and northstar_legal all carry SOW-2024-GR-rev3 (stale) and that a correction request has been formally logged (Linear issue created) requiring all three entities to be updated to SOW-2025-GR-rev1.",
+   "cb_justification": "The prompt asks the agent to 'check whether the vendor-master entries are current' and report the result. The stale state (SOW-2024-GR-rev3 on all three entities) and the logging of the correction request are the key findings the user needs to understand the controls gap. This is a 2.1 key-facts rubric for OE 3 and OE 6."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that at minimum the two SOW-mismatch GraniteRack invoices are pending across entities: (1) VEN-012-753165 / apinv_6131b7c637aa4b6e on acme_cloud, $39,090.56, invoice_date 2026-03-07, approximately 97 days in queue (or similar aging), no approver, blocked by SOW mismatch; and (2) VEN-012-847291 / apinv_gr_ns_b8f2e1a3 on northstar_legal, $18,240.00, invoice_date 2026-03-20, approximately 83+ days in queue (or similar aging), no approver, blocked by SOW mismatch. The agent may also report additional pending GraniteRack invoices discovered via SAP",
+   "evidence": "Check the agent's final response for both core invoice references: VEN-012-753165 (or apinv_6131b7c637aa4b6e), acme_cloud, $39,090.56, and approximately 97 days or similar aging from 2026-03-07; and VEN-012-847291 (or apinv_gr_ns_b8f2e1a3), northstar_legal, $18,240.00, and approximately 83+ days or similar aging from 2026-03-20. Both must be described as blocked due to SOW mismatch. Additional pending invoices in the response do not constitute a failure.",
+   "cb_justification": "The prompt explicitly asks the agent to 'pull together the full picture on the GraniteRack AP situation across all of our entities' and report 'what entity they are on, how long they have been sitting, what the issue is.' The two SOW-mismatch invoices are the core required findings. The SAP universe contains additional pending VEN-012 invoices beyond these two; agents that correctly surface all pending invoices should not be penalized. This is a 2.1 key-facts rubric for OE 2"
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the northstar_legal GraniteRack invoice (VEN-012-847291 / $18,240.00) had not been formally logged as an exception or tracked in Linear prior to this task, and that both gaps have now been closed.",
+   "evidence": "Check the agent's final response for confirmation that the northstar_legal GraniteRack invoice (VEN-012-847291 or apinv_gr_ns_b8f2e1a3 or $18,240.00) had no prior Linear tracking and no prior exception log entry, and that both have now been created as part of this task. Contrast with the acme_cloud invoice, which already had two Linear issues (issue_16b223fecbf14af586d0afa0ce8cc6f4 and issue_e5abbb9af74642eeb10a93426b0bbaa2).",
+   "cb_justification": "The prompt asks whether invoices have 'been properly tracked in our project tools' and requires a report on whether any sitting invoice 'has been properly tracked in our project tools.' The tracking gap on the northstar_legal invoice - no prior exception record and no Linear issue - is a key finding the user needs. This is a 2.1 key-facts rubric for OE 5 and OE 7/8."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the acme_cloud GraniteRack invoice (VEN-012-753165 / apinv_6131b7c637aa4b6e) is already tracked via two existing Linear issues (issue_16b223fecbf14af586d0afa0ce8cc6f4 and issue_e5abbb9af74642eeb10a93426b0bbaa2), in contrast to the northstar_legal invoice which had no prior tracking before this task.",
+   "evidence": "Check the agent's final response for confirmation that the acme_cloud GraniteRack invoice (VEN-012-753165 or apinv_6131b7c637aa4b6e) already has Linear tracking in place (two existing issues), distinguishing its tracking state from the northstar_legal invoice's prior gap.",
+   "cb_justification": "The prompt asks the agent to report, for each pending invoice, 'whether it has been properly tracked in our project tools.' The acme_cloud invoice's tracking status (already logged, unlike northstar_legal) is a distinct key fact the user needs and is not covered by any other rubric. This is a 2.1 key-facts rubric for OE 5"
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response that the active SOW (SOW-2025-GR-rev1, document doc_sow_gr_rev1_2025) is already filed and clearly labeled in Records Vault, and that AP can independently verify the governing terms on receipt without coming back to Lena.",
+   "evidence": "Check the agent's final response for confirmation that the active SOW (SOW-2025-GR-rev1 or doc_sow_gr_rev1_2025) is already present in Records Vault, clearly labeled as active, and accessible for AP's independent use. The superseded version (SOW-2024-GR-rev3 or doc_sow_gr_rev3_2024) may also be mentioned as retained and marked superseded.",
+   "cb_justification": "The prompt asks the agent to 'make sure it is findable and clearly labeled in our document system so that when GraniteRack resubmits, AP can independently verify the governing terms.' The agent must confirm this is already satisfied (OE 4 establishes it is), and report the finding to the user. This is a 2.1 key-facts rubric for OE 4."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent delivers a plain verdict in the final response stating that the firm is NOT yet in a position to proceed with the rebill, and identifies the vendor-master correction across all three entities as the outstanding prerequisite - along with the need for Daniel Jones (Accounts Manager) to confirm the manager disposition on the northstar_legal void-and-rebill path",
+   "evidence": "Check the agent's final response for an explicit statement that the firm is not yet in a position to proceed with the rebill (or equivalent plain-language verdict), citing: (1) the vendor-master correction across all three entities (brookfield, acme_cloud, northstar_legal) must be completed before any corrected invoice can be released, and (2) the northstar_legal void-and-rebill path still needs Daniel Jones (Accounts Manager) to confirm the disposition/hold decision. Do not require the response to name Steven Perry or any partner sign-off for the northstar_legal invoice specifically - the universe data ties partner escalation only to the acme_cloud invoice.",
+   "cb_justification": "The prompt's direct closing ask is: 'tell me plainly whether we are in a position to proceed with the rebill or whether something on our side still needs to be resolved first.' The OE 11 verdict is clear: the firm is NOT ready - the vendor-master correction must be confirmed and Daniel Jones's manager disposition on the northstar_legal invoice is still outstanding. Per Lena's own Slack flag ('this needs a Linear issue or a manager disposition note... the AP-hold decision is yours, @daniel.jones'), the northstar_legal path is explicitly framed as Daniel's own manager-level call, distinct from the acme_cloud invoice's partner escalation to Steven Perry - the rubric must not require the agent to name Steven Perry for the northstar_legal disposition, since no universe record ties him to it. This is a 2.1 key-facts rubric for OE 11"
+  },
+  {
+   "index": "C17",
+   "category": "process",
+   "criterion": "The Agent logs the vendor-master correction request (Linear issue on the CAO board) before sending the notification email to Priya Khatri and Daniel Jones.",
+   "evidence": "Check the trajectory for the ordering of actions: the Linear issue creation for the vendor-master correction (OE 6) must appear before the email send to priya.khatri@brookfieldcpas.com and daniel.jones@brookfieldcpas.com (OE 9). Confirm the Linear creation action's timestamp or sequence position precedes the email send action.",
+   "cb_justification": "The prompt requires the agent to loop in Priya and Daniel on 'whatever requires their action,' which presupposes the correction request has already been formally logged before they are notified. Both the Linear issue creation (OE 6) and the email send (OE 9) have their own 1.1 Outcome rubrics that pass regardless of ordering. No Outcome rubric can verify that the formal record was established before the notification was sent - only a trajectory-level ordering check can confirm this prerequisite was met. All three Process conditions hold: (1) required by every valid path, (2) no Outcome can capture ordering, (3) this is a verification of behavior, not a tool-call trace."
+  }
+ ]
+}

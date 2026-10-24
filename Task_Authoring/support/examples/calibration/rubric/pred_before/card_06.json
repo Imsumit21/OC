@@ -1,0 +1,136 @@
+{
+ "id": "card_06",
+ "n_criteria": 16,
+ "requirements": [
+  "R1: application date confirmed",
+  "R2: UWM status",
+  "R3: Bellamy acknowledgment of corrected LE",
+  "R4: rate-lock charge vs refund vs disclosed, net correct",
+  "R5: borrower payment record tied to this loan",
+  "R6: anything off / anything else holding up closing",
+  "R7: note to Robert Calloway and Denise Holloway on cure status",
+  "R8: closeout update in compliance-alerts channel",
+  "R9: loan activity record updated",
+  "R10: finance has refund confirmed",
+  "R11: UWM follow-up for written acceptance if missing",
+  "R12: short TRID summary"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "not self-contained / unauthorized",
+   "severity": "Major",
+   "quote": "confirms the basic file details",
+   "why": "names no value; 'basic file details' not asked; search trace"
+  },
+  {
+   "c": "C2",
+   "defect": "unauthorized / execution trace",
+   "severity": "Major",
+   "quote": "The agent should look for Nadia's alert",
+   "why": "grades a read step, names no finding; not a prompt ask"
+  },
+  {
+   "c": "C3",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "the application date (2026-06-16), when the original Loan Estimate was sent (2026-06-23), the corrected Loan Estimate issue date (2026-07-01), and that Bellamy acknowledged",
+   "why": "four independently variable facts in one row"
+  },
+  {
+   "c": "C4",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "$750 was charged ... $500 disclosed ... $250 overcharge ... $250 refund ... $500 net retained",
+   "why": "charge, disclosure, refund, net bundled; partial success fails all"
+  },
+  {
+   "c": "C5",
+   "defect": "execution trace / not self-contained",
+   "severity": "Major",
+   "quote": "searches for emails connected to Bellamy",
+   "why": "grades a search, not a result; Process in substance, fails condition 3"
+  },
+  {
+   "c": "C6",
+   "defect": "unauthorized / execution trace",
+   "severity": "Major",
+   "quote": "searches Slack to verify if the issue was taken up with Denise Holloway or Robert Calloway",
+   "why": "prompt never asks whether issue was raised with them; trace"
+  },
+  {
+   "c": "C7",
+   "defect": "not self-contained / execution trace",
+   "severity": "Major",
+   "quote": "compares the loan record, activity history, emails, Stripe, and Slack",
+   "why": "no finding named; trace"
+  },
+  {
+   "c": "C8",
+   "defect": "harmless bundling",
+   "severity": "Minor",
+   "quote": "and states that a follow-up with UWM is still needed",
+   "why": "consequence of the same finding; wording only"
+  },
+  {
+   "c": "C9",
+   "defect": "not self-contained / non-atomic",
+   "severity": "Major",
+   "quote": "adds a concise and concrete update ... cure status, the refund status, and whether anything remains outstanding",
+   "why": "no loan, record or values named; three contents; subjective"
+  },
+  {
+   "c": "C10",
+   "defect": "not self-contained",
+   "severity": "Major",
+   "quote": "sends a message that summarizes what has been done",
+   "why": "recipients (Robert, Denise) only in evidence; no content named"
+  },
+  {
+   "c": "C11",
+   "defect": "not self-contained / non-atomic",
+   "severity": "Major",
+   "quote": "sending Finance the refund amount, the refund ID, and confirmation",
+   "why": "amount and ID only in evidence (OE 11); three claims"
+  },
+  {
+   "c": "C12",
+   "defect": "non-atomic",
+   "severity": "Major",
+   "quote": "covers (a) ... (b) ... (c) ... (or similar)",
+   "why": "three independent contents in one row"
+  },
+  {
+   "c": "C14",
+   "defect": "non-atomic (precision)",
+   "severity": "Moderate",
+   "quote": "stating that the TRID timing issue and the rate-lock fee overcharge have been cured (corrected Loan Estimate issued 2026-07-01 and a $250 refund)",
+   "why": "post + two cured items bundled"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 11,
+  "rows_moderate": 1,
+  "rows_minor": 1,
+  "missing_outcomes": 0,
+  "pct_major": 68.8,
+  "pct_moderate_or_worse": 75.0,
+  "pct_any": 81.2
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "FAIL",
+  "agent_centric": "PASS",
+  "negative": "PASS",
+  "predicted_all_fail": "PASS",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. Process=FAIL because C2/C5/C6/C7 are execution-trace rows labelled Outcome (fail condition 3); C2 'should look for' is off-pattern but agent-subject."
+}

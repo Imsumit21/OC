@@ -1,0 +1,140 @@
+{
+ "card_index": 14,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "Harry asked me to clear my two overdue May close exceptions before the period closes; both are still open and assigned to me.\n\nThe main one is a WIP-Unbilled Services variance. I saw a note in the close-coordination channel suggesting it might be a partial feed issue, but I'm not confident that tells the whole story, so I need the actual exception details and whatever resolution the system calls for before I do anything. Before touching the exception, I also need to check the underlying reconciliation. Edith posted a question on it a couple of weeks ago and I don't think anyone's responded, so I need to confirm whether that's still open and include the status in my summary to Harry.\n\nThere's a second item too: an unrecorded vendor invoice that landed in the deferred-revenue account. Same period, same SLA, also assigned to me.\n\nOnce I know what each exception needs, carry out the resolution the system proposes for each one; they aren't the same posting pattern, so follow what's specified per exception. After the postings land, update both exception statuses and upload the supporting documentation for each to the vault under the firm's standard classification. When everything's landed, I'll post an update in the close-coordination channel and send Harry a summary covering what was done on both exceptions and where Edith's reconciliation question stands.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent creates a corrective journal entry for exception exc_1ddfc978ce5a4d in period brookfield_FP-2026-05 with manual as the source module.",
+   "evidence": "Look for an oracle_gl_create_journal_entry call in the trajectory with period_id='brookfield_FP-2026-05' and source_module='manual'. Confirm the tool returned a success response.",
+   "cb_justification": "The prompt asks to carry out the resolution the system proposes per exception. The BlackLine proposed_resolution for exc_1ddfc978ce5a4d explicitly requires a corrective JE in oracle_gl with source_module=manual. An agent anchoring to the Slack partial-feed narrative instead will not post this JE, making source_module=manual the primary Lever 1 discriminator."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent's corrective journal entry for exc_1ddfc978ce5a4d credits account 119000 (Work in Process - Unbilled Services) for $4,390.62 and includes 'exc_1ddfc978ce5a4d' in the posting justification (or similar).",
+   "evidence": "Check the journal entry lines and posting justification of the oracle_gl_create_journal_entry call for exc_1ddfc978ce5a4d. The entries must include a credit on account 119000 for $4,390.62. The justification text must contain 'exc_1ddfc978ce5a4d' or similar exception reference.",
+   "cb_justification": "Per OE14: the BlackLine proposed_resolution specifies the JE must credit account 119000 for $4,390.62 and reference the exception ID in the business_justification. The account name 'Work in Process - Unbilled Services' is the brookfield-entity label for account 119000 and confirms the agent applied entity-level filtering rather than using the northstar_legal label 'WIP-Unbilled Time'."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent posts the corrective journal entry for exc_1ddfc978ce5a4d to the GL for period brookfield_FP-2026-05.",
+   "evidence": "Look for an oracle_gl_post_journal_entry call in the trajectory using the journal_entry_id returned from the corrective JE creation. Confirm the tool returned a success response.",
+   "cb_justification": "The BlackLine proposed_resolution requires the corrective JE to be fully posted, not merely created. Reaching posted status proves the full create-submit-approve-post lifecycle executed, satisfying the proposed_resolution end-to-end."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent records the posted corrective journal entry for exception exc_1ddfc978ce5a4d in the variance documentation for reconciliation BL-75810CD0FEE4.",
+   "evidence": "Look for a blackline_update_reconciliation_variances call with recon_id='BL-75810CD0FEE4'. The variance explanations parameter should reference the corrective journal entry posted for exc_1ddfc978ce5a4d. Confirm success response.",
+   "cb_justification": "The BlackLine proposed_resolution for exc_1ddfc978ce5a4d instructs 'Re-run recon afterwards.' This is satisfied by updating BL-75810CD0FEE4 with variance explanations that link the posted corrective JE, closing the reconciliation loop required by the proposed_resolution."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent creates a reclassification journal entry for exception exc_06b89e3937b04a in period brookfield_FP-2026-05.",
+   "evidence": "Look for an oracle_gl_create_journal_entry call in the trajectory with a posting justification referencing exc_06b89e3937b04a and period_id='brookfield_FP-2026-05'. Confirm success response.",
+   "cb_justification": "The prompt explicitly states both exceptions require different posting patterns and the agent must follow what is specified per exception. The BlackLine proposed_resolution for exc_06b89e3937b04a calls for reclassification via standard 4-eyes approval, a distinct JE chain from the corrective accrual. Passing this rubric proves the agent found and acted on the second exception rather than stopping after the first."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's reclassification journal entry for exc_06b89e3937b04a includes 'exc_06b89e3937b04a' in the posting justification and reclassifies account 240000 (Deferred Revenue - Client Retainers) for $172.62 (or similar).",
+   "evidence": "Check the journal entry lines and posting justification of the reclassification oracle_gl_create_journal_entry call. The justification must contain 'exc_06b89e3937b04a'. The entries must include account 240000 for $172.62.",
+   "cb_justification": "Per OE23: the reclassification JE must reference the exception ID in the business_justification and post on account 240000 for $172.62. These parameters distinguish the second exception's reclassification from the corrective accrual posted for the first, and confirm the agent read the second exception record rather than replicating the first JE pattern."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent posts the reclassification journal entry for exc_06b89e3937b04a to the GL for period brookfield_FP-2026-05.",
+   "evidence": "Look for an oracle_gl_post_journal_entry call in the trajectory using the journal_entry_id returned from the reclassification JE creation for exc_06b89e3937b04a. Confirm success response.",
+   "cb_justification": "The reclassification resolution for exc_06b89e3937b04a requires the full 4-eyes JE lifecycle (create-submit-approve-post) to complete. Posting the JE proves the entire sequence executed and the reclassification is finalized in the GL."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent attempts to update exception exc_1ddfc978ce5a4d after posting the corrective journal entry.",
+   "evidence": "Look for a blackline_update_exception or blackline_resolve_exception call with exception_id='exc_1ddfc978ce5a4d'. A call that returns EX.SLA_OVERDUE satisfies this rubric \u2014 the rubric requires the agent made the attempt. An agent that never called the update tool does not satisfy this rubric.",
+   "cb_justification": "The prompt explicitly asks to update both exception statuses after the postings land. Updating exc_1ddfc978ce5a4d to resolved in BlackLine is a required write action following the corrective JE posting."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's exception update attempt for exc_1ddfc978ce5a4d includes a resolution summary referencing the corrective journal entry and the $4,390.62 WIP-Unbilled Services clearing (or similar).",
+   "evidence": "Check the resolution_summary or equivalent parameter passed in the blackline_update_exception or blackline_resolve_exception call for exc_1ddfc978ce5a4d. The parameter content should reference a journal entry and mention $4,390.62 or WIP-Unbilled Services or similar. An EX.SLA_OVERDUE error response does not prevent this check \u2014 evaluate the input parameters of the call, not the stored exception record.",
+   "cb_justification": "Per OE28: the resolution summary must link the posted corrective JE and confirm the $4,390.62 clearing. A content check distinguishes a genuine exception resolution from a blank status flip with no substantive detail."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent attempts to update exception exc_06b89e3937b04a after posting the reclassification journal entry.",
+   "evidence": "Look for a blackline_update_exception or blackline_resolve_exception call with exception_id='exc_06b89e3937b04a'. A call that returns EX.SLA_OVERDUE satisfies this rubric \u2014 the rubric requires the agent made the attempt. An agent that never called the update tool does not satisfy this rubric.",
+   "cb_justification": "The prompt asks to update both exception statuses after the postings land. Updating exc_06b89e3937b04a to resolved is the required write action following the reclassification JE posting; omitting it leaves the second exception open in BlackLine despite the GL reclassification."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's exception update attempt for exc_06b89e3937b04a includes a resolution summary confirming the $172.62 Deferred Revenue - Client Retainers variance was reclassified (or similar).",
+   "evidence": "Check the resolution_summary or equivalent parameter passed in the blackline_update_exception or blackline_resolve_exception call for exc_06b89e3937b04a. The parameter content should reference $172.62 and Deferred Revenue or reclassification to a cost center, or similar. Evaluate the input parameters of the call, not the stored exception record.",
+   "cb_justification": "Per OE29: the resolution summary must confirm the $172.62 Deferred Revenue - Client Retainers variance was reclassified. This distinguishes correct handling of the reclassification resolution from applying the corrective-accrual narrative of the first exception."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent uploads supporting documentation for exception exc_1ddfc978ce5a4d to the Records Vault as journal entry support under AICPA_SQMS_7Y retention and internal classification.",
+   "evidence": "Look for a records_vault_upload_document call in the trajectory with kind='journal_entry_support', retention_policy_code='AICPA_SQMS_7Y', and classification='internal', with content referencing exc_1ddfc978ce5a4d. Confirm success response.",
+   "cb_justification": "The prompt asks to upload supporting documentation for each exception to the vault under the firm's standard classification. Per OE31: the firm's standard for reconciliation and JE support evidence is kind=journal_entry_support, retention_policy_code=AICPA_SQMS_7Y, classification=internal."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent uploads supporting documentation for exception exc_06b89e3937b04a to the Records Vault as journal entry support under AICPA_SQMS_7Y retention and internal classification.",
+   "evidence": "Look for a second records_vault_upload_document call in the trajectory with kind='journal_entry_support', retention_policy_code='AICPA_SQMS_7Y', and classification='internal', with content referencing exc_06b89e3937b04a. Confirm success response.",
+   "cb_justification": "The prompt asks to upload supporting documentation for each exception. Per OE32: identical retention parameters apply to the second exception upload (kind=journal_entry_support, retention_policy_code=AICPA_SQMS_7Y, classification=internal). Splitting into two atomic rubrics allows an agent that uploads for one exception but not the other to receive appropriate partial credit."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent posts a status update as a new top-level message to the #monthly-close-coordination Slack channel (channel_id C005).",
+   "evidence": "Look for a slack_conversations_add_message call in the trajectory with channel_id='C005' and no thread_ts parameter (or thread_ts=null / absent), i.e., a new top-level channel post. A reply to the existing partial-feed thread at ts='1780248600.000000' does not satisfy this rubric \u2014 the prompt asks for a status update in the close-coordination channel after resolution actions land, not a continuation of the partial-feed discussion. Confirm success response.",
+   "cb_justification": "The prompt explicitly states to post an update in the close-coordination channel after everything lands. Per OE34: this is channel C005 (#monthly-close-coordination), reached via slack_conversations_add_message with channel_id='C005'. A thread reply to the existing partial-feed discussion (ts=1780248600.000000) is not a channel status update."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent's Slack post to C005 (#monthly-close-coordination) references both exceptions resolved: the corrective JE for exc_1ddfc978ce5a4d ($4,390.62 on account 119000) and the reclassification JE for exc_06b89e3937b04a ($172.62 on account 240000), with supporting documentation uploaded to the Records Vault for each (or similar).",
+   "evidence": "Check the payload parameter of the slack_conversations_add_message call to C005. It should reference both exc_1ddfc978ce5a4d and exc_06b89e3937b04a (or both amounts $4,390.62 and $172.62, or accounts 119000 and 240000), and mention Records Vault uploads or documentation filed, or similar.",
+   "cb_justification": "The prompt asks for a channel update after everything lands. The close-coordination channel post must give the team visibility on both exception resolutions and vault uploads. Covering both in one content rubric reflects that both outcomes belong to the same Slack post."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent sends a summary email from [anaya.wallace@brookfieldcpas.com](mailto:anaya.wallace@brookfieldcpas.com) to [harry.marks@brookfieldcpas.com](mailto:harry.marks@brookfieldcpas.com).",
+   "evidence": "Look for an email_send_email call in the trajectory with sender='anaya.wallace@brookfieldcpas.com' and recipients containing 'harry.marks@brookfieldcpas.com'. Confirm success response.",
+   "cb_justification": "The prompt explicitly asks to send Harry a summary. Per OE35: the email must originate from anaya.wallace@brookfieldcpas.com (the acting persona) to harry.marks@brookfieldcpas.com. The sender address is the persona-identity discriminator."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's email to [harry.marks@brookfieldcpas.com](mailto:harry.marks@brookfieldcpas.com) covers exception exc_1ddfc978ce5a4d: corrective journal entry posted for the $4,390.62 missing accrual variance on account 119000 (Work in Process - Unbilled Services) in brookfield FP-2026-05, exception status updated to resolved (or similar resolution summary).",
+   "evidence": "Check the content parameter of the email_send_email call to harry.marks@brookfieldcpas.com. It should reference exc_1ddfc978ce5a4d (or $4,390.62 or account 119000 or Work in Process - Unbilled Services) and state the corrective JE was posted and the exception resolved, or similar.",
+   "cb_justification": "The prompt asks to send Harry a summary covering what was done on both exceptions. The first exception's resolution details must appear in the email. The account name 'Work in Process - Unbilled Services' confirms the agent applied brookfield-entity filtering on account 119000 rather than confusing it with northstar_legal's WIP-Unbilled Time label."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's email to [harry.marks@brookfieldcpas.com](mailto:harry.marks@brookfieldcpas.com) covers exception exc_06b89e3937b04a: reclassification journal entry posted for the $172.62 unrecorded invoice variance on account 240000 (Deferred Revenue - Client Retainers), exception status updated to resolved (or similar).",
+   "evidence": "Check the content parameter of the email to harry.marks@brookfieldcpas.com. It should reference exc_06b89e3937b04a (or $172.62 or account 240000 or Deferred Revenue - Client Retainers) and state the reclassification JE was posted and the exception resolved, or similar.",
+   "cb_justification": "The prompt asks for the Harry summary to cover what was done on both exceptions. The second exception must appear with its reclassification resolution details. Splitting from the first exception content allows an agent that covers one but omits the other to receive appropriate partial credit."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent reports that Edith Banda's review note rn_564e65ce0d594f on reconciliation BL-75810CD0FEE4 is open, has no response, and its SLA of 2026-06-02 is overdue (or similar).",
+   "evidence": "Check the agent's final response for a statement that Edith Banda's review question on reconciliation BL-75810CD0FEE4 (or rn_564e65ce0d594f) is open with no response and the SLA of 2026-06-02 has passed, or similar.",
+   "cb_justification": "The prompt asks to confirm whether Edith's reconciliation question is still open. Per OE9: rn_564e65ce0d594f has state=open, response=null, sla_due_at=2026-06-02 (10 days overdue as of 2026-06-12). This 2.1 final-response check independently enforces the 4-hop chain (Lever 8 + Lever 3): exception record to related_reconciliation_id to blackline_list_review_notes to null-response verification."
+  }
+ ]
+}

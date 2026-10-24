@@ -1,0 +1,119 @@
+{
+ "card_index": 46,
+ "universe": "star-pm-generic-expanded-nofs",
+ "prompt": "It's the start of the week and before I get buried I want to get properly on top of a few property things that have been nagging me. Three of them in particular.\n\nFirst, the roof on the top-floor unit at our Ridgeview property, the one I flagged back in May for missing shingles with water coming through the ceiling, where I opened a maintenance ticket because it was clearly past a simple patch job. The owner and the vendor went back and forth on it after that and I got copied on some of it, but I've completely lost the thread. Piece together for me where it actually landed: what got approved, the scope and the dollar figure that got signed off, and who the vendor is. And I really need to know whether the work has already happened, because my gut says the repair may have gone ahead weeks ago and yet our maintenance ticket is still sitting there open, and I don't think anyone has the close-out tracked anywhere on our operations board. If there's nothing on the board holding the close-out, put something there so it has a home, since there's a follow-up vendor walk-through coming and I need the resident in that top-floor unit to get proper notice before anyone shows up. While you're at it, confirm the vendor is actually locked in for that walk-through, because if he hasn't confirmed his attendance I need to know today. Drop a note to the maintenance team about coordinating resident access for that walk-through, and send Brooke a short update letting her know the property side has the close-out in hand and asking her to make sure the vendor confirms the walk-through so I can give the resident notice.\n\nSecond, that preventive-maintenance push across my west-cluster properties that I've been running point on as the onsite lead. It was supposed to be wrapped by the end of June and I really don't think it got there. Find out where it actually stands, post an update to the team and pull in our maintenance lead to nail down whatever's still outstanding, and get the tracking on it brought current instead of just sitting stale.\n\nThird, there was a garbage disposal problem at one of my Las Palmas units that one of the techs kicked over to our maintenance lead for a parts approval a couple of weeks back. I want to know whether that's still stuck. If it's still sitting there waiting on the approval, push it forward so the replacement can actually get scheduled and done, and make sure it isn't just quietly dying on the board.\n\nOnce you've worked through all three, give me the full rundown.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent creates a Linear issue to track the close-out of the Ridgeview top-floor unit roof section repair.",
+   "evidence": "See OE 7, OE 8, OE 10. Look for a Linear issue-creation action (save_issue) on the Property Ops project (proj_001, team_001) whose title/subject concerns the Ridgeview top-floor unit roof section repair or its close-out. Confirm the issue was actually created.",
+   "cb_justification": "The prompt says 'if there's nothing on the board holding the close-out, put something there so it has a home.' Zero Linear issues reference Ridgeview/roof/MT-2026-047, so the agent must create one to track the close-out of the approved repair."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent's Ridgeview roof close-out issue references the approved vendor Pete Donovan and the approved $8,400 roof section repair scope (or similar).",
+   "evidence": "See OE 3, OE 4, OE 5, OE 10. Check the created Linear issue's description for the approved vendor Pete Donovan and the approved amount $8,400 (roof section repair). Reference to the originating ticket MT-2026-047 and/or the 2026-07-13 walk-through is a plus.",
+   "cb_justification": "The prompt asks the agent to establish 'what got approved, the scope and the dollar figure that got signed off, and who the vendor is' and then put the close-out on the board. The tracking issue must carry that substance: vendor Pete Donovan and the $8,400 roof section repair, both grounded in the owner-approval email (thread 0133155c8a154ab1) and the Make-Ready record rec8b679d92f30753."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent posts a message in the #maintenance channel (id C001) about the Ridgeview roof repair follow-up.",
+   "evidence": "See OE 6, OE 11. Look for a Slack message sent (slack_send_message) to the #maintenance channel (name '#maintenance' or id 'C001') concerning the Ridgeview roof repair follow-up. Confirm the post was actually sent.",
+   "cb_justification": "The prompt says 'drop a note to the maintenance team about coordinating resident access for that walk-through.' The maintenance team's home channel is #maintenance (C001), where roof-repair coordination belongs."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's #maintenance message asks the team to coordinate resident access/notice for the Ridgeview top-floor unit ahead of the 2026-07-13 walk-through.",
+   "evidence": "See OE 5, OE 11. Check the content of the #maintenance message: it should ask the maintenance team to coordinate resident access / advance notice for the top-floor unit ahead of the 2026-07-13 vendor walk-through.",
+   "cb_justification": "The prompt's stated purpose for the note is that the resident 'get proper notice before anyone shows up' for the follow-up vendor walk-through. The message must actually direct the team to arrange resident access/notice for that top-floor unit, not merely announce the repair."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent creates an email draft to Brooke Phillips ([brooke.phillips@starpm.com](mailto:brooke.phillips@starpm.com)) about the Ridgeview roof repair close-out.",
+   "evidence": "See OE 9, OE 12. Look for an email draft (create_draft) addressed to brooke.phillips@starpm.com regarding the Ridgeview roof repair close-out. Confirm the draft was created.",
+   "cb_justification": "The prompt says 'send Brooke a short update.' Brooke Phillips (brooke.phillips@starpm.com) is the Apartment Property Supervisor who owns the owner-facing side. The Gmail server exposes only draft creation (create_draft), so a draft to Brooke satisfies the send."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's note to Brooke asks her to confirm the vendor for the 2026-07-13 walk-through so the resident can be given notice.",
+   "evidence": "See OE 5, OE 12. Check the content of the note to Brooke: it should ask her to make sure the vendor confirms the 2026-07-13 walk-through (which the vendor has not yet accepted) so the resident can be given proper notice; it may also state the property-side close-out is in hand.",
+   "cb_justification": "The prompt says to ask Brooke 'to make sure the vendor confirms the walk-through so I can give the resident notice.' Pete Donovan's response to the 2026-07-13 walk-through event is needsAction (unconfirmed), so requesting confirmation is the actionable content."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent reports that property owner Robert Finley approved the Ridgeview roof section repair.",
+   "evidence": "See OE 4, OE 20. Check the agent's final response for a statement that owner Robert Finley approved the Ridgeview roof section repair.",
+   "cb_justification": "The prompt asks the agent to establish 'what got approved.' Robert Finley (robert.finley@gmail.com) approved the repair in thread 0133155c8a154ab1 ('approval to proceed with the $8,400 roof section repair at Ridgeview')."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent reports the approved Ridgeview roof repair scope amount as $8,400.",
+   "evidence": "See OE 3, OE 4, OE 20. Check the agent's final response for the approved figure of $8,400 tied to the Ridgeview roof section repair.",
+   "cb_justification": "The prompt asks for 'the dollar figure that got signed off.' The signed-off amount is $8,400 (roof section repair), a stated exact figure confirmed in both Robert Finley's approval email and the Make-Ready record rec8b679d92f30753."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent identifies Pete Donovan as the approved vendor for the Ridgeview roof repair.",
+   "evidence": "See OE 3, OE 4, OE 20. Check the agent's final response for Pete Donovan identified as the approved vendor for the Ridgeview roof repair.",
+   "cb_justification": "The prompt asks 'who the vendor is.' Pete Donovan is the approved vendor, named in the Make-Ready record ('Pete Donovan assigned as approved vendor') and the itemized-estimate email thread a293b24b7f85b0f0."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent reports that the roof repair was already executed on-site while ticket MT-2026-047 remained open and untracked on the operations board.",
+   "evidence": "See OE 2, OE 5, OE 7, OE 20. Check the agent's final response for the reconciliation insight: the roof repair was already carried out on-site (around 2026-06-08) yet the maintenance ticket MT-2026-047 is still open and the close-out was not tracked on the operations board before the agent acted.",
+   "cb_justification": "The prompt says 'my gut says the repair may have gone ahead weeks ago and yet our maintenance ticket is still sitting there open, and I don't think anyone has the close-out tracked anywhere on our operations board.' Ground truth: the 2026-06-08 calendar event shows the repair executed, MT-2026-047 has no completion date (open), and zero Linear issues track it. Surfacing this gap is the core of the matter."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent reports that the vendor has not confirmed the 2026-07-13 Ridgeview roof verification walk-through.",
+   "evidence": "See OE 5, OE 20. Check the agent's final response for a statement that the 2026-07-13 vendor verification walk-through is not yet confirmed by the vendor (Pete Donovan).",
+   "cb_justification": "The prompt says 'confirm the vendor is actually locked in for that walk-through, because if he hasn't confirmed his attendance I need to know today.' Pete Donovan's responseStatus on event fcfcad61ae1924b77f6d480d9813cff8 is needsAction, so the agent must report the walk-through is unconfirmed."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent reports that the West Cluster preventive-maintenance push (OPS-35) is still open and past its end-of-June target.",
+   "evidence": "See OE 13, OE 14, OE 20. Check the agent's final response for a statement that the West Cluster preventive-maintenance push (Linear OPS-35) is still open / past its end-of-June target.",
+   "cb_justification": "The prompt says the west-cluster push 'was supposed to be wrapped by the end of June and I really don't think it got there.' OPS-35 is state_OPS_2 (In Progress) as of 2026-07-01 with an end-of-June goal, so it is overdue and still open."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent posts a #maintenance update on the West Cluster push and loops in maintenance lead John Smith.",
+   "evidence": "See OE 15. Look for a Slack message sent (slack_send_message) to #maintenance (C001) giving a status update on the West Cluster preventive-maintenance push and explicitly looping in maintenance lead John Smith to resolve what is still outstanding.",
+   "cb_justification": "The prompt says 'post an update to the team and pull in our maintenance lead to nail down whatever's still outstanding.' John Smith is the tagged maintenance execution lead on OPS-35, so the update must reach the team and involve him."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent brings the OPS-35 West Cluster issue tracking current by updating the issue or adding a status comment.",
+   "evidence": "See OE 16. Look for a Linear write on OPS-35 (save_issue update, or save_comment on OPS-35) that brings the issue's tracking current, e.g. noting it is past target and being driven to completion.",
+   "cb_justification": "The prompt says 'get the tracking on it brought current instead of just sitting stale.' Updating OPS-35 (or adding a status comment) is the concrete action that satisfies bringing the tracking current."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent reports that the Las Palmas 8D disposal (OPS-227) is still open, blocked on John Smith's parts approval for a full replacement.",
+   "evidence": "See OE 17, OE 18, OE 20. Check the agent's final response for a statement that the Las Palmas 8D garbage disposal (Linear OPS-227) is still open, blocked on maintenance lead John Smith's parts approval for a full replacement unit.",
+   "cb_justification": "The prompt says a disposal problem was 'kicked over to our maintenance lead for a parts approval a couple of weeks back' and asks whether it is still stuck. Ground truth: OPS-227 is open, and the 2026-06-22 Slack messages show the seized 8D disposal was routed to John Smith for parts approval and is still awaiting it."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent pushes the Las Palmas 8D disposal forward by prompting John Smith to approve the replacement part.",
+   "evidence": "See OE 19. Look for a write that pushes the disposal forward: a Slack message (slack_send_message) to #maintenance (C001) directed at maintenance lead John Smith to approve the replacement part for Las Palmas 8D, and/or a linear save_comment on OPS-227 recording the follow-up.",
+   "cb_justification": "The prompt says 'if it's still sitting there waiting on the approval, push it forward so the replacement can actually get scheduled and done.' The concrete action is prompting John Smith for the parts approval so the swap can proceed."
+  }
+ ]
+}

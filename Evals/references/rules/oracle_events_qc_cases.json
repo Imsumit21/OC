@@ -1,0 +1,715 @@
+{
+  "format_version": 1,
+  "reference_id": "oe-qc-examples-v1",
+  "source": {
+    "filename": "ea_advanced_qc_oe_nonfail_2026-09-25.csv",
+    "sha256": "ac3b17b46cc467b803eba5059443dd35ad1f943fd38a0cb50379052e69e7cf97",
+    "extracted_logical_rows": 39
+  },
+  "scope": "Historical QC feedback from other universes. Supplied OE artifacts and underlying universes were not re-audited. These are review examples, not verified ground-truth test labels or current HarmonyGames tool contracts.",
+  "counts": {
+    "tasks": 31,
+    "task_attempt_pairs": 32,
+    "criterion_flags": 39,
+    "accuracy_flags": 30,
+    "completeness_flags": 9,
+    "empty_justifications": 1
+  },
+  "cases": [
+    {
+      "csv_row": 2,
+      "TASK_ID": "6a390e5f7f29b10f1a0354f4",
+      "ATTEMPT_ID": "6a3ac526db5033881f6b872d",
+      "AUDIT_ID": "6a3f6f4298ea00181a403be4",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-06-27",
+      "AUDIT_RUBRIC_VERSION": "V1 - Port from non-SLA",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- OE5 includes a tool call using the id je_6b82ce3a71dc4a83, but there is no prior discovery step that would clarify how this id is obtained",
+      "patterns": [
+        "DISCOVERY_TRACE"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 3,
+      "TASK_ID": "6a390e5f7f29b10f1a035509",
+      "ATTEMPT_ID": "6a3c186031d119019d985086",
+      "AUDIT_ID": "6a436ac59b00c1632c21f59f",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-06-30",
+      "AUDIT_RUBRIC_VERSION": "V1 - Port from non-SLA",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE7/OE14 specify the wrong entry flag. They prescribe is_standard_entry=false. In run 6 that value could not be approved, so the agent had to flip to entry_type=standard before george.mcadam's approval succeeded.  OE17 understates the open items. It says to \"confirm these two items were the open blockers tied to Anaya,\" but BL-516B536953DA (210000 AP, $6,328.86, open) is also Anaya's and over threshold.",
+      "patterns": [
+        "TOOL_CONTRACT",
+        "SCOPE_AND_JOIN",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 4,
+      "TASK_ID": "6a3d22eccf483c3bcf1beaed",
+      "ATTEMPT_ID": "6a40cc3f5c2db5cbdd04a52d",
+      "AUDIT_ID": "6a41f277b5987b83ea2e5d83",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-06-29",
+      "AUDIT_RUBRIC_VERSION": "V1 - Port from non-SLA",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "Non-failing issues: - OE4 states \"Hannah's 2026-05-14 email\", but the emails was sent on 2026-05-13.",
+      "patterns": [
+        "TIME_AND_STATE",
+        "CLAIM_IMPACT"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 5,
+      "TASK_ID": "6a4d503ccfd8e279aa9e4cb1",
+      "ATTEMPT_ID": "6a516ba5ef7a6280486e58d8",
+      "AUDIT_ID": "6a525c8059c3955419f5500b",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-07-11",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 1 lists George McAdam's email among identities to resolve \"for the later communications and calendar event,\" but George is not a recipient of any message or the calendar hold — his identity is needed only to identify the departing employee; trivial imprecision, and OE issues are non-failing.",
+      "patterns": [
+        "CLAIM_IMPACT"
+      ],
+      "interpretation_note": "Reported Inaccurate, but narrative calls the issue trivial. Determine actual impact from original OEs; do not copy the severity blindly."
+    },
+    {
+      "csv_row": 6,
+      "TASK_ID": "6a4e9c2abc503da0a402ecb4",
+      "ATTEMPT_ID": "6a50820676052ffb4acb16d4",
+      "AUDIT_ID": "6a50c83d1ecaa3966a654652",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- OE 12 names airtable_update_records, while the tool is airtable_update_record. - OE 5 slightly overstates the tracker notes: the record does contain the matching title and In progress status, but its existing notes describe generic documentation gaps and an insurance-amortizationJE, not the May sales-tax cycle specifically.",
+      "patterns": [
+        "TOOL_CONTRACT",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 7,
+      "TASK_ID": "6a4f1912fa59bab0d3710ace",
+      "ATTEMPT_ID": "6a54f25b60ea68bdba2ae3ce",
+      "AUDIT_ID": "6a55bc454c98abfbd5ae8ca8",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-07-14",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE5: The private Blue-to-Daniel email (email_search_emails; email_scen_009_orphan_exception_0006 request and email_scen_009_orphan_exception_0007 reply \"Approved. Accept-timing for FP-2026-05 is fine ... leave exc_aade06f6129e43 in logged state\") corroborates it. In the parentheses, OE5 mentions \"email_search_emails; email_scen_009_orphan_exception_0006\", but email_scen_009_orphan_exception_0006 is an email ID, not a search query. Looking at the tool signatures: \"email_get_email_by_id\": { \"email_id\": \"required\" } \"email_search_emails\": { \"query\": \"required\" } OE5 asks to use email_search_emails, but provides an email ID. The correct tool should be email_get_email_by_id.",
+      "patterns": [
+        "TOOL_CONTRACT"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 8,
+      "TASK_ID": "6a4f1912fa59bab0d3710ad6",
+      "ATTEMPT_ID": "6a516239c3a895ad513315c8",
+      "AUDIT_ID": "6a517deebb895b8d3c7e8bbb",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-07-11",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "[Non-Fail - Inaccurate Oracle Events] - In OE 11 slack_conversations_add_message requires channel_id and payload The OE instead names content, which is not a supported parameter.",
+      "patterns": [
+        "TOOL_CONTRACT"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 9,
+      "TASK_ID": "6a4f1912fa59bab0d3710aed",
+      "ATTEMPT_ID": "6a5179cde26da2c28ff9e496",
+      "AUDIT_ID": "6a52e80e6deee68d6c395887",
+      "UNIVERSE": "brookfield-cpas-v3-remediated",
+      "AUDITED_AT": "2026-07-12",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- OEs 12, 13, 21 and 22 reference invoices that don't seem to exist in the database. There are no entries for gl_account_number  - 119000 or 240000 at all in ap_invoices table and there don't seem to be any invoices whatsoever that would match the amounts ($4,390.62 and $172.62). The OEs also don't specify the exact invoices the agent is supposed to find, but just states that \"the agent identifies the specific invoice_id that most closely matches the unaccrued amount\" (OE 13) and \"The output returns candidate invoices; the agent identifies the specific invoice_id matching the -$172.62 variance.\" (OE 22) - OE34 + OE35: Both expect actions that are not aligned with the prompt - the prompt explicitly says \"When everything's landed, I'll post an update in the close-coordination channel and send Harry a summary covering what was done on both exceptions and where Edith's reconciliation question stands.\" which is not an ask for the agent to post the update and to send the email. See Overall Rubric Quality dimension for more comments on the issue",
+      "patterns": [
+        "EXPECTED_DATA",
+        "ABSENCE_AND_DESIGN",
+        "ACTION_AUTHORITY"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 10,
+      "TASK_ID": "6a42ec5f65aea9f4523d7b97",
+      "ATTEMPT_ID": "6a4520ff8bbf6b45d889d3f1",
+      "AUDIT_ID": "6a4680da53a565dcae0436ad",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-02",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "Oracle events 4, 5, 6 and 13 use incorrect parameters names for the tools, OE4 `quickbooks_search_invoices (query: \"Terraform\" or \"Vantage\" or \"EST-2026-0423\" or similar)` but the correct parameter name for `quickbooks_search_invoices` is `criteria`. Same for OE5, it says `crm_search_companies (query: \"Terraform\" or \"Vantage\" or company-terraform-digital)`, but the parameter is `name` instead of `query`. Also for OE6 the parameter name for `crm_list_engagements` is `company_ids` instead of `company_id`.",
+      "patterns": [
+        "TOOL_CONTRACT",
+        "CLAIM_IMPACT"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 11,
+      "TASK_ID": "6a42ec5f65aea9f4523d7b9f",
+      "ATTEMPT_ID": "6a449aaeb180b39997d34a98",
+      "AUDIT_ID": "6a4680d753a565dcae0432cb",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-02",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": " OE5/OE8 characterize the backfill \"no other matches\" claim as false, when the duplicates post-date the backfill. The accurate framing is that the live detection failed on new submissions ",
+      "patterns": [
+        "TIME_AND_STATE"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 12,
+      "TASK_ID": "6a42ec5f65aea9f4523d7b9f",
+      "ATTEMPT_ID": "6a4c96a6650fb462cf1b73eb",
+      "AUDIT_ID": "6a5018c97f1f95e401340bf9",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": " OE 2 is incorrect.  ENG-214 state_id is null, not state_done. linear.linear_issues,\"{\"\"id\"\": \"\"linear_issue_c8cd5f52b170\"\", \"\"title\"\": \"\"Build consolidated Q3 vendor margin dataset across Airtable, QuickBooks, and CRM\"\", \"\"number\"\": 214, \"\"team_id\"\": \"\"team_operations\"\", \"\"cycle_id\"\": null, \"\"due_date\"\": \"\"2026-04-16\"\", \"\"estimate\"\": 5, \"\"priority\"\": 1, \"\"state_id\"\": null, ",
+      "patterns": [
+        "TIME_AND_STATE",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 13,
+      "TASK_ID": "6a42ec5f65aea9f4523d7b9f",
+      "ATTEMPT_ID": "6a4c96a6650fb462cf1b73eb",
+      "AUDIT_ID": "6a5018c97f1f95e401340bf9",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "Several OE miss the id of the item it is referring to. OE5 doesn't mention rec_a6_dup_lindqvist and rec_a6_dup_lindqvist. OE4 doesn't mention the id of the emails it refers to. OE7 doesn't mention the linear comment ids.",
+      "patterns": [
+        "DISCOVERY_TRACE"
+      ],
+      "interpretation_note": "The feedback repeats one ID. Missing a literal ID alone is not an error if a supported lookup disambiguates it; original OEs are needed."
+    },
+    {
+      "csv_row": 14,
+      "TASK_ID": "6a44223e9b26707c9994f0bb",
+      "ATTEMPT_ID": "6a4d26c7dfe35269d3c0e1f2",
+      "AUDIT_ID": "6a5161d5eb88d8c712708a4d",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-11",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- There is no OE for updating the Silva record (recReloc00000097) even though the current status \"paints a rosier picture\" of the situation as it only has the (stale) mention of the pending certificate and doesn't mention the crate damage",
+      "patterns": [
+        "REQUIRED_ACTION"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 15,
+      "TASK_ID": "6a44223e9b26707c9994f0d2",
+      "ATTEMPT_ID": "6a46e8714be6ea5846ca5adf",
+      "AUDIT_ID": "6a47512edbe79584ebb378ab",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-03",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE1 says \"Call quickbooks_search_invoices (or quickbooks_show_data) filtered to customer GreenStack Energy (cust_greenstack)\", but while `quickbooks_search_invoices` accepts `criteria` parameter to for filtering, `quickbooks_show_data` doesn't have filter parameter, it only accepts optional `offset` and `limit`, so the claim that `quickbooks_show_data` can be called filtered to customer GreenStack Energy is not accurate.",
+      "patterns": [
+        "TOOL_CONTRACT",
+        "DEFAULT_SCOPE",
+        "BRANCH_COMPLETION"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 16,
+      "TASK_ID": "6a44223e9b26707c9994f0ee",
+      "ATTEMPT_ID": "6a49859d6c74970c30655faa",
+      "AUDIT_ID": "6a4a4ab6fe8db10c37faf2b7",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-06",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE6 expects Heartland and Swift mover bills for Okoye and Tanaka in QuickBooks. In universe, the QuickBooks bills do not contain those direct mover bills however.",
+      "patterns": [
+        "EXPECTED_DATA",
+        "ABSENCE_AND_DESIGN"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 17,
+      "TASK_ID": "6a4689cc90f6b540198dfc7f",
+      "ATTEMPT_ID": "6a4f61b4c4dd93fd015096c8",
+      "AUDIT_ID": "6a5018c67f1f95e4013403a3",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "Most OEs match the data. The minor issue is OE 5's CRM-record discovery being attached to email/Slack search rather than explicit CRM tools.",
+      "patterns": [
+        "TOOL_CONTRACT"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 18,
+      "TASK_ID": "6a4689cc90f6b540198dfc7f",
+      "ATTEMPT_ID": "6a4f61b4c4dd93fd015096c8",
+      "AUDIT_ID": "6a5018c67f1f95e4013403a3",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OEs cover the core discovery and write actions. OE 5 should add a CRM lookup step for the claim that Ridgeline Robotics company/lead/deal records now exist.",
+      "patterns": [
+        "DISCOVERY_TRACE",
+        "REQUIRED_ACTION"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 19,
+      "TASK_ID": "6a4e9c2abc503da0a402ec97",
+      "ATTEMPT_ID": "6a4f7016dc519926e61841a2",
+      "AUDIT_ID": "6a5018c67f1f95e4013405bb",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 7 expects `email_stormcloud_hana_credit_not_moved_20260425` with `search_emails` tool, but the tool defaults to the INBOX folder, but the expected email lives in the SENT folder, so without defining `\"folder_name\": \"SENT\"`, the email will not be found. The same issue applies for OE 3 as it expects emails from the SENT and INBOX folder but it doesn't name the folder alongside the search parameters, and since the `search_emails` tool defaults to the INBOX folder, the SENT emails will not be found.",
+      "patterns": [
+        "DEFAULT_SCOPE"
+      ],
+      "interpretation_note": "Reported Minor although narrative says the target cannot be retrieved. Verify actual defaults and all supplied lookup steps before selecting current category."
+    },
+    {
+      "csv_row": 20,
+      "TASK_ID": "6a4e9c2abc503da0a402ec9b",
+      "ATTEMPT_ID": "6a4f4a28f143f2207378fa98",
+      "AUDIT_ID": "6a5018c57f1f95e40134012b",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- OE1 requires \"get_email_by_id on Samira’s overnight note to Lena\" but there's no such email in database. - OE3 states that \"Dmitri's #engineering audit post (3/19)\" and \"Dmitri's email to Elena 'Expense audit complete — 47 expenses reviewed, $885 financial exposure' and spreadsheet to Marcus\", but the email is sent by Samira and not Dmitri, email_id `email_samira_audit_summary` and sender is `samira.tariq@moveops.com`. Also Dmitri's engineering post date is April 7 and not March 19. - OE 7 lists incorrect tool names  `quickbooks_get_invoice` or `quickbooks_search_invoices` instead of `quickbooks_read_invoice` - Also OE 5b says `crm_search` instead of `crm_search_deals`. - OE8 states that \"Elena and Marcus comments demand reactivation\", but there's no Elna comment exist.",
+      "patterns": [
+        "EXPECTED_DATA",
+        "TIME_AND_STATE",
+        "TOOL_CONTRACT",
+        "ABSENCE_AND_DESIGN"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 21,
+      "TASK_ID": "6a4e9c2abc503da0a402ec9e",
+      "ATTEMPT_ID": "6a4fa0015889615ecaa26c56",
+      "AUDIT_ID": "6a50268bc45631eeb62a0499",
+      "UNIVERSE": "mcp-advanced-3-20-moveops-metadata",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "[Non-Fail - Minor OE Inaccuracies] In OE1, the DOT-documentation Linear ticket for Joaquin Reyes is mentioned as \"DOT Docs - Joaquin Reyes / Oversize Rig\", however the correct name is \"DOT Docs — Joaquin Reyes / GreenStack / Oversize Rig\". OE3 mentions tool 'slack_conversations_search_messages'. However, the slack tool name is 'conversations_search_messages'. OE7 mentions tool 'email_send_email'.However, the email tool name is 'send_email'. OE7 mentions tool 'slack_conversations_add_message'. However, the slack tool name is 'conversations_add_message'. OE8 mentions tool 'email_reply_to_email'. However, the slack tool name is 'reply_to_email'. OE8 mentions tool 'email_send_email'. However, the slack tool name is 'send_email'. [Non-Fail - Inaccurate Oracle Events] OE5 has an imprecision. The information related to the GreenStack $2,000/month stipend platform fee  is present only on Airtable, not CRM. So checking only one of the two platforms instinctively is not the correct move. OE6 described steps are not entirely correct. Step (b) \"revert Noah Fitzgerald's Airtable status from \"Completed\" to \"In Progress\" (his move is not yet complete), or add a correction note;\" has two possible outcomes. Both are correct and should be performed, as the status should be changed in order to reflect the current status quo of the move, and the note should be added in order to explain the change from \"Completed\" to \"In Progress\".",
+      "patterns": [
+        "TOOL_CONTRACT",
+        "BRANCH_COMPLETION",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 22,
+      "TASK_ID": "4c7195382220e7798eb1fbba",
+      "ATTEMPT_ID": "6a86b17b051ba448995c133a",
+      "AUDIT_ID": "6a877dfca5be837f55cfa115",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-08-21",
+      "AUDIT_RUBRIC_VERSION": "V8 - Universe Data Consistency Update",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "Non-failing issues: - In OE15 the CB references \"Expected findings: 16 bills totalling $21,000.00\" and \"BILL-CRTR-0016 dated 2026-03-20\", but the quickbooks bills only has 5 bills showing the totals of the 5 people which totals to $19,500. All of the runs also confirm only $19,500. Not sure if CB changes did not save or something, but as far as I can see, this information is hallucinated. - OE18 is also made up, no such customers exist. - OE19 is also made up, non of the invoices exist. - OE21 states \"actual pilot spend was $21,000 rather than the $19,500\", which is incorrect since the actual number is $19,500 as explained above. - OE26 states \"her true pilot cost was $7,500 rather than the $6,000\", which is also not correct as proved above\".",
+      "patterns": [
+        "EXPECTED_DATA",
+        "ABSENCE_AND_DESIGN"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 23,
+      "TASK_ID": "4c7195382220e7798eb1fbbd",
+      "ATTEMPT_ID": "6a8742a360e54ece182a88b0",
+      "AUDIT_ID": "6a877dfca5be837f55cfa117",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-08-21",
+      "AUDIT_RUBRIC_VERSION": "V8 - Universe Data Consistency Update",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 12 states that a CRM-only reading gives \"2,850.00, 600.00 and 487.50, and two of those three are wrong\" when only 600.00 is wrong, since 2,850.00 and 487.50 are correct either way. Every other tool, service, identifier, parameter and expected value across the 24 events checks out against the live universe, including the two Stripe amounts in cents, the 39 / 47 / 34 raw against 34 / 41 / 29 windowed tallies, the nine loan statuses, and OE 1's claim that \"Tarheel\" appears only in the sender domain, verified across all 7,294 emails. The slip misstates the size of the trap but changes no step, parameter or expected value, so it does not rise to an inaccurate event.",
+      "patterns": [
+        "CLAIM_IMPACT"
+      ],
+      "interpretation_note": "A side explanation can be inaccurate while execution remains valid. Preserve a distinct Minor option for harmless imprecision."
+    },
+    {
+      "csv_row": 24,
+      "TASK_ID": "6a4421e0772a6e4e4069cb35",
+      "ATTEMPT_ID": "6a47de67a0ddc51ba2481696",
+      "AUDIT_ID": "6a4bf59bd9f81e153c7dad3e",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-07",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- OE 6 and OE 16 treat `LN-2026-00620` as part of the `James Nakamura` borrower path, but the matching email evidence on that same loan number names `Erica Sutton`. - OE 6, OE 7, and OE 16 treat `LN-2026-00626` as part of the `Daniel Osborne` borrower path, but the matching email and Slack artifacts on that same loan number reference `Destiny`. - Because of those expected-data mismatches, following the OEs literally would not produce a fully clean grounded path on those loans.",
+      "patterns": [
+        "ID_NAMESPACE",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 25,
+      "TASK_ID": "6a4421e0772a6e4e4069cb35",
+      "ATTEMPT_ID": "6a47de67a0ddc51ba2481696",
+      "AUDIT_ID": "6a4bf59bd9f81e153c7dad3e",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-07",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "The prompt asks the agent to \"go through every active loan\" and use email and Slack to figure out which files have had no communication in the past three weeks. But OE 6 and OE 7 only search communication on loans already identified as having problems. That leaves out the full active-loan communication pass needed to support the full \"still moving\" versus \"gone cold\" picture for Grace.",
+      "patterns": [
+        "SCOPE_AND_JOIN"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 26,
+      "TASK_ID": "6a4421e0772a6e4e4069cb45",
+      "ATTEMPT_ID": "6a4797781c205e00777a3d3d",
+      "AUDIT_ID": "6a47bf69fb749817137c2652",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-03",
+      "AUDIT_RUBRIC_VERSION": "V2 - Adding error descriptor to Overall Rubric Quality",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 3 and OE 6 treat LOCK-EXT-00184 as a Mercer stale/empty-line placeholder while OE 9 treats the same single bill (via Hana's Slack note) as the Rivera hold, and OE 9 / OE 9b sanction conflicting end states instead of specifying one required action; the OEs never reconcile that only one such bill exists.",
+      "patterns": [
+        "ID_NAMESPACE",
+        "TIME_AND_STATE",
+        "BRANCH_COMPLETION"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 27,
+      "TASK_ID": "6a4e9c2abc503da0a402ec79",
+      "ATTEMPT_ID": "6a5032bed44f04c30e771d78",
+      "AUDIT_ID": "6a513fca1088256657b94c9f",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-10",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE9 should state the amount that needs to be wired is 17,240, not 'about' 17,240. OE10 Lisa Tran should be informed of the calculated figure, not just informed the amount is lower than expected. ",
+      "patterns": [
+        "CLAIM_IMPACT",
+        "EXPECTED_FINDING"
+      ],
+      "interpretation_note": "Exactness depends on the action and task precision. A transaction needs an exact instructed value; approximate descriptive prose is not universally forbidden."
+    },
+    {
+      "csv_row": 28,
+      "TASK_ID": "6a4e9c2abc503da0a402ec89",
+      "ATTEMPT_ID": "6a5021d76b1ca7d45011847c",
+      "AUDIT_ID": "6a51568460ff7ee8bb3d328d",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-11",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 3 says “four” named files have terminated processors, but all six do (with Rivera 00612’s active processor offset by the second Rivera loan 00619). OE 12 falsely states there is no conversation-creation tool, although slack_create_conversation is enabled. The prescribed email fallback remains executable.",
+      "patterns": [
+        "EXPECTED_DATA",
+        "CLAIM_IMPACT"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 29,
+      "TASK_ID": "6a4f1912fa59bab0d3710af3",
+      "ATTEMPT_ID": "6a517995aace8fabb332a266",
+      "AUDIT_ID": "6a53e2ae2716ba66edab046d",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-13",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "A newly booked unpaid QuickBooks bill ordinarily has a $500 balance. The existing Tan bill is zero because it was already settled. The rubric correctly requires creation, not a zero balance, so the error is localized. OE 1 also loosely calls all four files “tied” to the error before identifying two exclusions.",
+      "patterns": [
+        "TIME_AND_STATE",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 30,
+      "TASK_ID": "6a5120738efde9622852ef42",
+      "ATTEMPT_ID": "6a526acd414b40ac36b60846",
+      "AUDIT_ID": "6a53bf86b9f10197c85cbc1e",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-12",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 8 says Charles Jenkins has \"No dispute, no open compliance item\", but the universe has a CRM engagement on Charles Jenkins that says: \"Charles Jenkins repeated Carlos said DeLuca was the only one who could take it. Alternate appraiser options were open at time of order.\" This does not affect treating Charles as ordinary in this task, but the OE text does not fully match the actual universe state.",
+      "patterns": [
+        "CLAIM_IMPACT",
+        "ABSENCE_AND_DESIGN"
+      ],
+      "interpretation_note": "Reported Inaccurate while narrative says the treatment is unchanged; assess impact against original source and OE context."
+    },
+    {
+      "csv_row": 31,
+      "TASK_ID": "6a5120738efde9622852ef42",
+      "ATTEMPT_ID": "6a526acd414b40ac36b60846",
+      "AUDIT_ID": "6a52eef04c6d5fab8bdbe2df",
+      "UNIVERSE": "mortgage-broker-01-keystone",
+      "AUDITED_AT": "2026-07-12",
+      "AUDIT_RUBRIC_VERSION": "V3 (fix score on C15)",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "",
+      "patterns": [
+        "MISSING_JUSTIFICATION"
+      ],
+      "interpretation_note": "Empty justification. Retain the historical flag but do not invent a defect, expected result or regression assertion."
+    },
+    {
+      "csv_row": 32,
+      "TASK_ID": "6a583b15de8b59869eb86e1b",
+      "ATTEMPT_ID": "6a5fb952b3de9b670969e6b4",
+      "AUDIT_ID": "6a60aa9e087947df2d1cff65",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-22",
+      "AUDIT_RUBRIC_VERSION": "V4",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "[Non-Fail - Minor OE Inaccuracies]  - OE9 name assignee_id, but the save_issue tool parameter is actually assignee (assignee_id is the DB column, not the tool input). ",
+      "patterns": [
+        "TOOL_CONTRACT",
+        "CLAIM_IMPACT"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 33,
+      "TASK_ID": "6a5edd8f8ff3d52983052957",
+      "ATTEMPT_ID": "6a638d8e73df02cd0674033c",
+      "AUDIT_ID": "6a63da3f087b7c396637b642",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-25",
+      "AUDIT_RUBRIC_VERSION": "V5 - Agent Failure Rate",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OEs 7, 13-15, and 18-20 contain material imprecision or unsupported conclusions. Most notably, OE 15 calls Linda’s completed turnover work open, and OE 7 treats internal-only events as confirmed owner reviews.",
+      "patterns": [
+        "TIME_AND_STATE",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Reported Minor while feedback describes material status/verification errors. Original evidence is needed to settle category."
+    },
+    {
+      "csv_row": 34,
+      "TASK_ID": "6a5edd8f8ff3d52983052957",
+      "ATTEMPT_ID": "6a638d8e73df02cd0674033c",
+      "AUDIT_ID": "6a63da3f087b7c396637b642",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-25",
+      "AUDIT_RUBRIC_VERSION": "V5 - Agent Failure Rate",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OEs omit the critical method for mapping each Airtable maintenance/make-ready row to an owner, do not supply Harris/Shea leasing evidence, and do not explain how to deduplicate status-history rows into Aurora’s metrics.",
+      "patterns": [
+        "SCOPE_AND_JOIN",
+        "DISCOVERY_TRACE"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 35,
+      "TASK_ID": "6a5edd8f8ff3d52983052977",
+      "ATTEMPT_ID": "6a61a8f4eca63013e865f9d2",
+      "AUDIT_ID": "6a61aee5854a0960f68b0fa0",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-23",
+      "AUDIT_RUBRIC_VERSION": "V5 - Agent Failure Rate",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 17 has a small defect, it defines `create_draft` call as an alternative valid delivery path. Although sending an email is an alternative valid delivery path, `create_draft` will only create a draft, not send the actual email. Following this path would mean the \"send Brooke a short rundown of what slipped\" would remain unresolved.",
+      "patterns": [
+        "BRANCH_COMPLETION"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 36,
+      "TASK_ID": "6a5edd8f8ff3d52983052977",
+      "ATTEMPT_ID": "6a61a8f4eca63013e865f9d2",
+      "AUDIT_ID": "6a61aee5854a0960f68b0fa0",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-23",
+      "AUDIT_RUBRIC_VERSION": "V5 - Agent Failure Rate",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 16 minimum valid action is one pool-gate calendar block, and a optional Shea/Castillo block. The prompt asks to find anything that landed on Patricia without close-out, then \"block time on my calendar for what still needs finishing\". There is a request by Brooke that is not mentioned at all. In slack on May 15th: \"Lisa, Carlos, Patricia, can you each pull together your property-level cost breakdowns by end of week\", and a follow-up on May 25th \"the property-level cost breakdowns I asked for on 5/15 never actually came in from Patricia or Carlos... those breakdowns are still owed for the Q3 planning file\". This requires a calendar block as per prompt requirements, but is not mentioned in the OE at all. The cost breakdown request is mentioned in OE 5 and 17, but the deliverable calendar block is not covered.",
+      "patterns": [
+        "REQUIRED_ACTION"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 37,
+      "TASK_ID": "6a601ed7c6008d15eb965fa7",
+      "ATTEMPT_ID": "6a67b963561bb2bcbbb6052b",
+      "AUDIT_ID": "6a682b48b7fbf0553314c59c",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-28",
+      "AUDIT_RUBRIC_VERSION": "V6 New V4 date",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Minor OE Inaccuracies]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- OE21: The claim that Tasha exists only in Hubspot contacts is inaccurate - Tasha and her email exist also in the contacts db. However the Hubspot path is also a valid way to find the email so this is a minor issue.",
+      "patterns": [
+        "ABSENCE_AND_DESIGN",
+        "CLAIM_IMPACT"
+      ],
+      "interpretation_note": "A supported alternative lookup can remain usable even when an exclusivity claim is false. Verify absence scope before judging that claim."
+    },
+    {
+      "csv_row": 38,
+      "TASK_ID": "6a601ed7c6008d15eb965fa7",
+      "ATTEMPT_ID": "6a67b963561bb2bcbbb6052b",
+      "AUDIT_ID": "6a682b48b7fbf0553314c59c",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-28",
+      "AUDIT_RUBRIC_VERSION": "V6 New V4 date",
+      "CRITERION": "OE Completeness",
+      "NON_FAIL_OPTION": "[Non-Fail - Incomplete Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "- The clean pass bar per the guidelines: \"OEs describe the full critical path: key discovery steps + dependency chain(s) + required write action(s).\" OE14–17 never state the conclusion the agent should reach which is that no billing exists anywhere for any of the four deals. OE14–17 should have said so instead of just saying e.g. \"cross-reference the amounts.\" Most other OEs (e.g. 4, 6, 8, 10, 20) all flag the expected findings explicitly. ",
+      "patterns": [
+        "EXPECTED_FINDING",
+        "ABSENCE_AND_DESIGN"
+      ],
+      "interpretation_note": "Expected retrieval/derivation data belongs in OEs. This does not require writing a final response or accepting unverified global absence."
+    },
+    {
+      "csv_row": 39,
+      "TASK_ID": "6a601ed7c6008d15eb965fae",
+      "ATTEMPT_ID": "6a6703d01228d876ac18b636",
+      "AUDIT_ID": "6a682b49b7fbf0553314c702",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-28",
+      "AUDIT_RUBRIC_VERSION": "V6 New V4 date",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 6 states the missing 3C deal is \"a second tracking gap\" and OE 8 prescribes a write action. Same as the C12 flag. No ready unit in tblMakeReady has a HubSpot deal, so the absence is the design and not a gap.",
+      "patterns": [
+        "ABSENCE_AND_DESIGN",
+        "ACTION_AUTHORITY"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    },
+    {
+      "csv_row": 40,
+      "TASK_ID": "6a6525cd79712508d8dafd9f",
+      "ATTEMPT_ID": "6a67a0762879787330de82f8",
+      "AUDIT_ID": "6a682b4fb7fbf0553314d026",
+      "UNIVERSE": "star-pm-generic-expanded-nofs",
+      "AUDITED_AT": "2026-07-28",
+      "AUDIT_RUBRIC_VERSION": "V6 New V4 date",
+      "CRITERION": "OE Accuracy",
+      "NON_FAIL_OPTION": "[Non-Fail - Inaccurate Oracle Events]",
+      "CRITERION_SCORE": "3.0",
+      "JUSTIFICATION": "OE 3 directs `contacts_search_contacts` and lists HubSpot object IDs as the expected discovery (e.g. \"Gregory Vance gregory.vance@gmail.com (contact*9a1b2c3d4e5f60718293a4b5c6d7e8f9)\"). The contacts service carries entirely separate IDs — Vance `1a2b3c4d5e6f70819a0b1c2d3e4f5061`, Okonkwo `2b3c4d5e6f708192a0b1c2d3e4f50617`, Salazar `3c4d5e6f708192a3b0c1d2e3f4051627`, Prieto `4d5e6f708192a3b4c5d6e7f809102132`, Whitfield `5e6f708192a3b4c5d6e7f80910213243`. The `contact*\\*` IDs come from the HubSpot CRM lookup, not this tool. Wrong expected data for the named service, the rest of the OE critical path (OE 1–2, 4–15) verified accurate and complete against the universe",
+      "patterns": [
+        "ID_NAMESPACE",
+        "EXPECTED_DATA"
+      ],
+      "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+ "card_index": 57,
+ "universe": "star-pm-generic-expanded-nofs",
+ "prompt": "hey, wrapping up for the day and I need to get the board straight before Brooke pulls everything for Robert Finley's mid-year maintenance review. Bunch of stuff is out of sync and I dont want her working off stale records.\n\nStart with the Ridgeview roof. Pete Donovan's crew already finished that repair but the maintenance ticket and the make-ready record still look like nothing happened. Update both to show the work is done but do not set a completion date on the ticket, there is a follow-up walkthrough on the calendar before we can sign it off. Check my calendar for the details.\n\nMy filter ticket for the PM push got moved to review but thats wrong. Sunridge is done but Im out of 20x25 stock and cant finish the rest of the run. Pull it back to active and log the actual status. Put the same update on Brooke's umbrella ticket for the West cluster push.\n\nThe West cluster condenser ticket got closed out as done when it is not actually complete. Fix that and make sure Brooke's umbrella ticket notes the correction.\n\nCarlos says he already moved his plumbing issue along but confirm that against the board before touching anything. If what he says doesnt match, note the discrepancy and fix it. He also flagged two water heaters for replacement and those need their own records in the maintenance tracker not just comments on his ticket. Cross-reference the new ticket numbers back on his issue once they exist.\n\nDo not touch the portfolio-wide filter-and-battery preventive maintenance tickets. Those are a separate sweep not my West cluster work.\n\nLisa asked me about coil cleaner and filter stock a while back and I never answered. Draft her an email with where things stand. Also draft Brooke an email she can use for Robert Finley's review with the ticket numbers and the roof timeline.\n\nPut the remaining West cluster PM visits on my calendar, invite Lisa, and note they depend on the 20x25 filter and coil cleaner restock landing first.\n\nPost a close-out in the maintenance channel walking each thread you reconciled.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent updates the Ridgeview roof maintenance ticket MT-2026-047 to reflect that Pete Donovan\u2019s crew completed the structural roof section repair on 2026-06-08, with a follow-up vendor walkthrough on 2026-07-13 pending before sign-off.",
+   "evidence": "Look for an update action on the Airtable maintenance ticket record recb4aeaed326f156 (MT-2026-047) where the description field is updated to reflect the completed repair and pending walkthrough. Confirm the update returned success.",
+   "cb_justification": "The prompt says \u2018Pete Donovan\u2019s crew already finished that repair but the maintenance ticket\u2026 still look like nothing happened. Update both to show the work is done.\u2019 The repair date (2026-06-08) and walkthrough date (2026-07-13) come from John Smith\u2019s calendar events. The rubric uses exact dates because they are discrete calendar values."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent does not set a completion date on the Ridgeview roof maintenance ticket MT-2026-047.",
+   "evidence": "In the trajectory, check all update actions on MT-2026-047 (record recb4aeaed326f156). The completion date field (fldCompletionDate) must remain unset or null. FAIL if any update sets a completion date value on this record.",
+   "cb_justification": "The prompt explicitly says \u2018do not set a completion date on the ticket, there is a follow-up walkthrough on the calendar before we can sign it off.\u2019 This negative constraint must be verified because the agent might logically set a completion date when recording that the repair is done."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent updates the Ridgeview roof make-ready record (fldUnit \u2018Ridgeview - Roof Section (Common/Structural)\u2019) to reflect that the repair work is complete, pending the July 13 walkthrough sign-off with Pete Donovan.",
+   "evidence": "Look for an update action on the Airtable make-ready record rec8b679d92f30753 in table tblMakeReady. Confirm the status and/or notes fields are updated to reflect repair completed with walkthrough pending, and the update returned success.",
+   "cb_justification": "The prompt says \u2018the make-ready record still look like nothing happened. Update both to show the work is done.\u2019 The make-ready record rec8b679d92f30753 in tblMakeReady currently shows status \u2018selSched\u2019 and needs updating to reflect completed work pending walkthrough."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent moves OPS-79 (\u2018HVAC filter replacements across portfolio - Preventive Maintenance Push\u2019) from In Review back to In Progress (or a similar active, non-review state).",
+   "evidence": "Look for a state change action on issue OPS-79 moving it from In Review to In Progress or another active state. Confirm the action returned success. FAIL if OPS-79 remains in In Review or is moved to a terminal/done state.",
+   "cb_justification": "The prompt says \u2018My filter ticket for the PM push got moved to review but thats wrong\u2026 Pull it back to active.\u2019 OPS-79 is currently in In Review (state_OPS_3) and needs to be moved back to an active state like In Progress (state_OPS_2) to reflect that the work is ongoing, not ready for review."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s comment on OPS-79 logs the actual status: Sunridge filters are complete, and the remaining West Cluster filter run is blocked on 20x25 filter stock shortage.",
+   "evidence": "Look for a comment creation action on issue OPS-79. The comment body should mention Sunridge filters being complete and the 20x25 filter stock shortage blocking the rest of the West Cluster properties. Confirm the action returned success.",
+   "cb_justification": "The prompt says \u2018Sunridge is done but Im out of 20x25 stock and cant finish the rest of the run. Pull it back to active and log the actual status.\u2019 The comment must reflect both facts: Sunridge completion and the 20x25 stock blocker preventing the rest of the filter run."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s update to OPS-35 (\u2018Preventive Maintenance Push - West Cluster Properties\u2019) covers the filter status: Sunridge filters complete and the remaining West Cluster filter run blocked on 20x25 filter restock.",
+   "evidence": "Look for a comment creation action on issue OPS-35. The comment body should mention Sunridge complete and 20x25 stock blocking the remainder of the filter run, matching the OPS-79 status update. Confirm the action returned success.",
+   "cb_justification": "The prompt says \u2018Put the same update on Brooke\u2019s umbrella ticket for the West cluster push.\u2019 OPS-35 is Brooke Phillips\u2019s umbrella ticket for the West Cluster PM push, and it must receive the same filter status update logged on OPS-79."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s update to OPS-35 notes the correction made to the OPS-91 condenser ticket, which was prematurely closed as Done when the work is not actually complete.",
+   "evidence": "Look for a comment on OPS-35 that references the OPS-91 condenser ticket being corrected from Done status. The comment should note that the condenser work was not complete and the ticket has been reopened or moved to an active state. Confirm the action returned success.",
+   "cb_justification": "The prompt says \u2018The West cluster condenser ticket got closed out as done when it is not actually complete. Fix that and make sure Brooke\u2019s umbrella ticket notes the correction.\u2019 A separate comment or update on OPS-35 must document that OPS-91 was incorrectly marked Done and has been corrected."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent moves OPS-91 (\u2018HVAC condenser cleaning and filter replacements - West Cluster\u2019) from Done to a non-Done active state such as In Progress (or similar).",
+   "evidence": "Look for a state change action on issue OPS-91 moving it from Done to In Progress or another non-Done active state. Confirm the action returned success. FAIL if OPS-91 remains in Done.",
+   "cb_justification": "The prompt says \u2018The West cluster condenser ticket got closed out as done when it is not actually complete. Fix that.\u2019 OPS-91 is currently in Done (state_OPS_4) but the West Cluster condenser work is not finished, so it must be reopened."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent moves OPS-97 (\u2018Plumbing inspection complete - water heaters and hose bibs flagged\u2019) from Todo to In Progress.",
+   "evidence": "Look for a state change action on issue OPS-97 moving it from Todo to In Progress. Confirm the action returned success. FAIL if OPS-97 remains in Todo or is moved to an incorrect state.",
+   "cb_justification": "The prompt says \u2018Carlos says he already moved his plumbing issue along but confirm that against the board before touching anything. If what he says doesnt match, note the discrepancy and fix it.\u2019 OPS-97 is actually in Todo (state_OPS_1), not In Progress as Carlos claimed. The agent must fix this to In Progress (state_OPS_2)."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent notes the discrepancy between Carlos Mendez\u2019s claim that he moved OPS-97 to In Progress and the actual board state of Todo.",
+   "evidence": "Look for a comment on OPS-97 or in the agent\u2019s close-out message that explicitly notes the discrepancy: Carlos said In Progress, but the board shows Todo. The discrepancy must be documented, not just silently fixed.",
+   "cb_justification": "The prompt says \u2018confirm that against the board before touching anything. If what he says doesnt match, note the discrepancy and fix it.\u2019 Carlos states in both Slack (#maintenance, 2026-05-31) and a Linear comment on OPS-97 that he moved it to In Progress, but the actual state is Todo. The agent must note this mismatch."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent creates a new maintenance ticket in the Airtable tracker for one of the two water heater replacements flagged by Carlos Mendez\u2019s plumbing inspection on OPS-97.",
+   "evidence": "Look for a record creation action on the Airtable Maintenance Tickets table (tblMaintenanceTickets, baseId appPropertyOps). The new record description should reference Carlos Mendez\u2019s plumbing inspection findings and a water heater replacement. Confirm the creation returned a new record ID or ticket number.",
+   "cb_justification": "The prompt says \u2018He also flagged two water heaters for replacement and those need their own records in the maintenance tracker not just comments on his ticket.\u2019 Carlos\u2019s OPS-97 comments note two water heaters past serviceable life that need replacement. Each must get its own maintenance ticket."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent creates a second, separate maintenance ticket in the Airtable tracker for the other water heater replacement flagged by Carlos Mendez\u2019s plumbing inspection on OPS-97.",
+   "evidence": "Look for a second, distinct record creation action on the Airtable Maintenance Tickets table (tblMaintenanceTickets). This record must be separate from the first water heater ticket (different record ID) and reference the second water heater replacement. Confirm the creation returned a new record ID or ticket number. FAIL if only one water heater ticket was created.",
+   "cb_justification": "The prompt says \u2018those need their own records in the maintenance tracker.\u2019 Two water heaters were flagged, so two separate tickets are required, not one bundled ticket for both replacements."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent adds a comment to OPS-97 cross-referencing the new water heater maintenance ticket numbers created in the Airtable tracker.",
+   "evidence": "Look for a comment creation action on issue OPS-97 after the two water heater maintenance tickets have been created. The comment body should include the new ticket numbers (auto-generated fldTicketNumber values from the Airtable creates). Confirm the comment action returned success.",
+   "cb_justification": "The prompt says \u2018Cross-reference the new ticket numbers back on his issue once they exist.\u2019 After creating the two water heater maintenance tickets, the agent must add their ticket numbers back to OPS-97 so the plumbing inspection issue links to its downstream maintenance records."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent does not modify OPS-51 (\u2018HVAC filter replacements and smoke detector battery checks - portfolio-wide\u2019), which is one of the portfolio-wide preventive maintenance tickets the prompt explicitly excludes.",
+   "evidence": "Search the entire trajectory for any state change, comment, or update action targeting OPS-51. FAIL if any modification action is found on this ticket. It should remain completely untouched.",
+   "cb_justification": "The prompt says \u2018Do not touch the portfolio-wide filter-and-battery preventive maintenance tickets. Those are a separate sweep not my West cluster work.\u2019 OPS-51 is currently in In Review (state_OPS_3) and is the portfolio-wide filter-and-battery sweep, distinct from John\u2019s West Cluster filter work on OPS-79."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent does not modify OPS-71 (\u2018HVAC filter replacements and smoke detector battery checks - portfolio-wide\u2019), which is the other portfolio-wide preventive maintenance ticket the prompt explicitly excludes.",
+   "evidence": "Search the entire trajectory for any state change, comment, or update action targeting OPS-71. FAIL if any modification action is found on this ticket. It should remain completely untouched.",
+   "cb_justification": "The prompt says \u2018Do not touch the portfolio-wide filter-and-battery preventive maintenance tickets.\u2019 OPS-71 is currently in Backlog (state_OPS_0) and shares the same title as OPS-51. Both are portfolio-wide sweep tickets, not West Cluster work. The agent must not confuse either with OPS-79."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent creates a draft email to [lisa.smith@starpm.com](mailto:lisa.smith@starpm.com) (Lisa Smith, Onsite Property Manager).",
+   "evidence": "Look for a draft email creation action with recipient lisa.smith@starpm.com. Confirm the action returned success. The prompt says \u2018draft\u2019 so a sent email also satisfies this, but a draft is the explicitly requested action.",
+   "cb_justification": "The prompt says \u2018Lisa asked me about coil cleaner and filter stock a while back and I never answered. Draft her an email with where things stand.\u2019 The agent must create a draft (not send) to Lisa\u2019s verified email address."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s draft to Lisa addresses her question about coil cleaner and filter stock, covering that Sunridge filters are done and the supply closet is out of 20x25 filters, which is blocking the remaining West Cluster filter run.",
+   "evidence": "Check the draft email body to lisa.smith@starpm.com. It should address the filter and coil cleaner stock question, specifically mentioning Sunridge filters done and 20x25 stock shortage blocking the rest of the West Cluster properties. FAIL if the email does not address Lisa\u2019s stock question or omits the 20x25 blocker.",
+   "cb_justification": "The prompt says \u2018Draft her an email with where things stand.\u2019 Lisa\u2019s May 27 Slack message asked whether coil cleaner and filters are stocked up. The agent must answer with the current status: Sunridge filters complete, 20x25 stock depleted blocking the rest of the run."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent creates a draft email to [brooke.phillips@starpm.com](mailto:brooke.phillips@starpm.com) (Brooke Phillips, Apartment Property Supervisor) for Robert Finley\u2019s mid-year maintenance review.",
+   "evidence": "Look for a draft email creation action with recipient brooke.phillips@starpm.com. The subject or body should relate to Robert Finley\u2019s mid-year maintenance review (or similar). Confirm the action returned success.",
+   "cb_justification": "The prompt says \u2018draft Brooke an email she can use for Robert Finley\u2019s review with the ticket numbers and the roof timeline.\u2019 Brooke\u2019s verified email is brooke.phillips@starpm.com. The email is intended for Brooke to use in Robert Finley\u2019s mid-year maintenance review."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s draft to Brooke includes the Ridgeview roof repair timeline: Pete Donovan\u2019s crew completed the repair on 2026-06-08 with the July 13 follow-up walkthrough pending sign-off.",
+   "evidence": "Check the draft email body to brooke.phillips@starpm.com. It should include the Ridgeview roof repair timeline with the repair date (June 8) and the pending July 13 walkthrough with Pete Donovan. FAIL if the roof timeline is missing or the key dates are absent.",
+   "cb_justification": "The prompt says \u2018with the ticket numbers and the roof timeline.\u2019 The roof timeline consists of the 2026-06-08 repair completion and the 2026-07-13 vendor walkthrough. These dates come from calendar events and are critical for Finley\u2019s mid-year review."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s draft to Brooke references ticket and issue numbers from the reconciled work so Brooke can use them for Robert Finley\u2019s review.",
+   "evidence": "Check the draft email body to brooke.phillips@starpm.com. It should include ticket or issue numbers from the reconciled work (e.g., MT-2026-047, OPS-79, OPS-91, OPS-97, new water heater ticket numbers, or similar identifiers). FAIL if the email contains no ticket or issue references.",
+   "cb_justification": "The prompt says \u2018with the ticket numbers and the roof timeline.\u2019 Beyond the roof timeline, Brooke needs ticket/issue numbers to reference in the mid-year review. These would include MT-2026-047, OPS-79, OPS-91, OPS-97, and/or the new water heater maintenance ticket numbers."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent creates a calendar event for the remaining West Cluster PM visits on John Smith\u2019s calendar, scheduled on or after 2026-07-01.",
+   "evidence": "Look for a calendar event creation action on john.smith@starpm.com\u2019s calendar (or default calendar). The event summary should relate to West Cluster PM visits or HVAC maintenance, and the date should be on or after July 1, 2026. Confirm the creation returned success.",
+   "cb_justification": "The prompt says \u2018Put the remaining West cluster PM visits on my calendar.\u2019 John Smith is the persona (john.smith@starpm.com, Lead Maintenance Technician) and the event should be for future PM visits that could not be completed after Sunridge due to the 20x25 stock shortage."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s calendar event for the West Cluster PM visits includes [lisa.smith@starpm.com](mailto:lisa.smith@starpm.com) as an attendee.",
+   "evidence": "Check the calendar event creation parameters. The attendee list should include lisa.smith@starpm.com. FAIL if Lisa is not invited to the event.",
+   "cb_justification": "The prompt says \u2018invite Lisa\u2019 for the remaining PM visits. Lisa Smith (lisa.smith@starpm.com) is the Onsite Property Manager responsible for some West Cluster properties and must be invited to the PM visit event."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s calendar event description or notes state that the remaining PM visits depend on the 20x25 filter and coil cleaner restock landing first.",
+   "evidence": "Check the calendar event description or body. It should mention the dependency on 20x25 filter restock and/or coil cleaner availability. FAIL if the restock dependency is not noted in the event details.",
+   "cb_justification": "The prompt says \u2018note they depend on the 20x25 filter and coil cleaner restock landing first.\u2019 The calendar event must document this dependency so anyone viewing the event understands the visits cannot proceed until supplies arrive."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent posts a close-out message in the #maintenance Slack channel.",
+   "evidence": "Look for a message posting action to the #maintenance channel (C001). Confirm the action returned success. FAIL if no message is posted to #maintenance.",
+   "cb_justification": "The prompt says \u2018Post a close-out in the maintenance channel walking each thread you reconciled.\u2019 The #maintenance channel (channel_id C001) is where the maintenance team communicates. The agent must post a summary there."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s close-out message in #maintenance covers the Ridgeview roof repair: MT-2026-047 updated to reflect the repair is complete, pending the July 13 walkthrough with Pete Donovan.",
+   "evidence": "Check the Slack message body posted to #maintenance. It should mention the Ridgeview roof repair, MT-2026-047, and the pending July 13 walkthrough with Pete Donovan. FAIL if the roof repair thread is not covered in the close-out.",
+   "cb_justification": "The prompt says \u2018walking each thread you reconciled.\u2019 The Ridgeview roof repair is a major reconciled thread: the maintenance ticket and make-ready record were updated to reflect completed work pending walkthrough sign-off."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s close-out message in #maintenance covers the OPS-79 filter ticket: pulled back to an active state with Sunridge done and 20x25 restock blocking the remaining West Cluster filter run.",
+   "evidence": "Check the Slack message body posted to #maintenance. It should mention OPS-79 being pulled back from Review, Sunridge filters done, and the 20x25 stock shortage blocking the rest. FAIL if the filter ticket reconciliation is not covered.",
+   "cb_justification": "The prompt says \u2018walking each thread you reconciled.\u2019 The filter ticket reconciliation is a key thread: OPS-79 was incorrectly in Review and has been corrected to active with the actual completion status logged."
+  },
+  {
+   "index": "C27",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s close-out message in #maintenance covers the OPS-91 condenser ticket: corrected from Done to an active state because the West Cluster condenser work is not actually complete.",
+   "evidence": "Check the Slack message body posted to #maintenance. It should mention OPS-91 being corrected from Done and that the condenser work is not complete. FAIL if the condenser correction thread is not covered.",
+   "cb_justification": "The prompt says \u2018walking each thread you reconciled.\u2019 The condenser ticket correction is a distinct reconciled thread: OPS-91 was prematurely marked Done and has been reopened."
+  },
+  {
+   "index": "C28",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s close-out message in #maintenance covers the OPS-97 plumbing issue: the state discrepancy between Carlos Mendez\u2019s claim and the actual board state was noted, and the state was corrected to In Progress.",
+   "evidence": "Check the Slack message body posted to #maintenance. It should mention the OPS-97 state discrepancy (Carlos said In Progress but it was actually Todo), and the correction to In Progress. FAIL if the plumbing discrepancy is not covered.",
+   "cb_justification": "The prompt says \u2018walking each thread you reconciled.\u2019 The OPS-97 plumbing thread includes a status discrepancy where Carlos claimed In Progress but the board showed Todo. The close-out should document the discrepancy and the fix."
+  },
+  {
+   "index": "C29",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s close-out message in #maintenance references the new water heater maintenance ticket numbers created from Carlos Mendez\u2019s plumbing inspection findings.",
+   "evidence": "Check the Slack message body posted to #maintenance. It should reference the new water heater maintenance ticket numbers. FAIL if the new water heater tickets are not mentioned in the close-out.",
+   "cb_justification": "The prompt says \u2018walking each thread you reconciled.\u2019 The creation of dedicated water heater maintenance tickets is a key reconciliation outcome: items that were previously only comments on OPS-97 now have their own tracker records. The close-out should include these new ticket numbers."
+  },
+  {
+   "index": "C30",
+   "category": "outcome",
+   "criterion": "The Agent\u2019s close-out message in #maintenance mentions that OPS-35 (Brooke\u2019s umbrella ticket for the West Cluster push) has been updated with the filter and condenser status.",
+   "evidence": "Check the Slack message body posted to #maintenance. It should mention OPS-35 or Brooke\u2019s umbrella ticket being updated with the filter and condenser status. FAIL if the OPS-35 update is not mentioned in the close-out.",
+   "cb_justification": "The prompt instructs the agent to \u2018Put the same update on Brooke\u2019s umbrella ticket\u2019 and \u2018make sure Brooke\u2019s umbrella ticket notes the correction.\u2019 Since these updates were part of the reconciliation, the close-out should note that OPS-35 was also updated."
+  }
+ ]
+}

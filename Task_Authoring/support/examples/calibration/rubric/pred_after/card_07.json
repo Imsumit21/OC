@@ -1,0 +1,182 @@
+{
+ "id": "card_07",
+ "n_criteria": 14,
+ "requirements": [
+  "R1: identify Destiny Pham's loan and what is going on",
+  "R2: whether lender asked for more than the letter",
+  "R3: whether anyone told Destiny the letter is not enough",
+  "R4: rate lock status and what it means for the file now",
+  "R5: whether lock desk already caught it",
+  "R6: check prior escalation seen-or-sat before sending",
+  "R7: notify whoever needs to know the file is stuck",
+  "R8: let Elena know",
+  "R9: framing as new heads-up vs still-sitting nudge",
+  "R10: loan note: letter came in",
+  "R11: loan note: what is still unresolved"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "identifies loan LN-2026-00610 (...) as the loan tied to the $14,000 cash deposit letter",
+   "why": "discovery already proven by note/notification rows on LN-2026-00610; evidence grades trajectory reasoning"
+  },
+  {
+   "c": "C2",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "names at least two of the following three specific items",
+   "why": "'at least two of three' acceptance"
+  },
+  {
+   "c": "C3",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "already expired as of April 28, 2026 ... and that no extension or relock has been recorded",
+   "why": "expiry and no-relock are separate claims"
+  },
+  {
+   "c": "C4",
+   "defect": "overly_broad",
+   "severity": "Moderate",
+   "quote": "a prior escalation or internal flag was found",
+   "why": "'or internal flag' admits the lock-sweep flag as the escalation"
+  },
+  {
+   "c": "C4",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "such as no borrower follow-up",
+   "why": "exemplar phrase in evidence"
+  },
+  {
+   "c": "C5",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "documenting that the signed deposit-explanation letter was received and that the underwriting condition remains unresolved",
+   "why": "two independent note contents"
+  },
+  {
+   "c": "C6",
+   "defect": "negative",
+   "severity": "dimension-only",
+   "quote": "does not state or imply that the deposit condition has been cleared",
+   "why": "prohibition-only title"
+  },
+  {
+   "c": "C6",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "such as outstanding, under review",
+   "why": "exemplar phrase in evidence"
+  },
+  {
+   "c": "C7",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "the LN-2026-00610 deposit condition is unresolved and the rate lock has expired",
+   "why": "two independent content items"
+  },
+  {
+   "c": "C8",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "at least one additional operational owner or escalation recipient ... from this set",
+   "why": "any-one acceptance with conditional sub-rule"
+  },
+  {
+   "c": "C10",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "does not itself decide ...; it presents the findings and explains that the decision belongs to",
+   "why": "abstention + deferral explanation bundled"
+  },
+  {
+   "c": "C10",
+   "defect": "negative",
+   "severity": "dimension-only",
+   "quote": "does not itself decide or state",
+   "why": "prohibition-first; positive second clause does not cure"
+  },
+  {
+   "c": "C11",
+   "defect": "overly_broad",
+   "severity": "Moderate",
+   "quote": "specifically Camille Foster or a lock-sweep/internal flag",
+   "why": "'internal flag' admits a non-lock-desk flag"
+  },
+  {
+   "c": "C12",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "was told up front ... but that no one appears to have followed up with her after",
+   "why": "two findings, justification itself says both parts"
+  },
+  {
+   "c": "C13",
+   "defect": "duplicate",
+   "severity": "Moderate",
+   "quote": "conveys that ... the condition remains unresolved",
+   "why": "same unresolved-condition content to Elena graded in C7"
+  },
+  {
+   "c": "C14",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "states at least one concrete reason it is still open, such as",
+   "why": "'at least one' + overlaps C5 unresolved claim"
+  },
+  {
+   "c": "C14",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "such as missing receipts",
+   "why": "exemplar phrase in title"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R4",
+   "why": "no row grades what the expired lock means for the file now (e.g. relock/extension decision needed)"
+  }
+ ],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C5",
+    "C14"
+   ],
+   "condition": "note states condition unresolved; both Major so group adds 0"
+  },
+  {
+   "rows": [
+    "C7",
+    "C13"
+   ],
+   "condition": "notification to Elena states condition unresolved; counted once on C13"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 8,
+  "rows_moderate": 5,
+  "rows_minor": 0,
+  "missing_outcomes": 1,
+  "pct_major": 64.3,
+  "pct_moderate_or_worse": 100.0,
+  "pct_any": 100.0
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "NON-FAIL",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe access (other universe): entity IDs, amounts, statuses, dates and tool catalog unverified (UNRESOLVED); clock 2026-02-14 not applied to this universe; no weights on cards. Lock dates (expired as of 2026-04-28) and escalation records unverified; C1 duplicate call is low-confidence."
+}

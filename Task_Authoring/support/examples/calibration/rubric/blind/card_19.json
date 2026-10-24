@@ -1,0 +1,189 @@
+{
+ "card_index": 19,
+ "universe": "brookfield-cpas-v3-remediated",
+ "prompt": "I'm doing a sweep of our open compliance monitoring items ahead of the partner review and want to make sure the Acme Cloud AML file is properly wrapped up.\n\nEarlier this quarter, a settlement receipt from Acme's largest enterprise SaaS customer tripped our standing FinCEN wire-monitoring threshold. Farah ran the analyst pass and I coordinated the CDD package through to clearance with Anita and Steven. The clearance is done, but I want to confirm all the compliance housekeeping on our end is properly closed out before the next review cycle.\n\nCan you pull up the ledger entry and check that the cash posting lines are consistent with the documented CDD rationale, then review whether the compliance file is actually fully closed out on our end? If anything is still sitting open, reminders, documentation gaps, anything that hasn't been properly put to bed, please take care of it with whatever retention and classification treatment is appropriate for this type of AML file, anchored to the firm's existing AML precedent for this client.\n\nOnce that's done, post a brief recap under the case thread in #compliance-and-registrations covering what you found and what was actioned, and drop Matthew and Steven a quick email tagging the JE in the subject so they can correlate it against the original alert, confirming the file is fully closed on the compliance side, CC Farah since she did the analyst work. Thanks.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent documents the GL/CDD consistency finding in the uploaded disposition memo, confirming that the April Acme Cloud cash posting is consistent with the documented CDD rationale.",
+   "evidence": "The content parameter of the records_vault_upload_document call includes a statement that references both the ledger entry or cash posting and the CDD clearance rationale, and concludes they are consistent, aligned, or matching. A memo that records only the approval chain without stating the consistency finding does not pass.",
+   "cb_justification": "The prompt's primary investigative ask is to verify consistency between the ledger posting and the documented CDD rationale. This finding must be recorded in the disposition memo so the audit trail includes the substantive verification outcome, not just the approval chain."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent deletes the overdue AML wire-monitoring reminder for the April Acme Cloud file.",
+   "evidence": "A reminder_delete_reminder tool call with reminder_id set exactly to reminder_scen_041_audit_compliance_0000, returning a successful deletion response.",
+   "cb_justification": "The prompt instructs the agent to review whether the compliance file is fully closed and take care of anything still sitting open. The stale monitoring reminder (overdue since May 2026) is an open item that must be formally dismissed to close the file."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent uploads a new AML clearance disposition memo for Acme Cloud to the Records Vault.",
+   "evidence": "A records_vault_upload_document tool call returning a successful upload response with a new document ID.",
+   "cb_justification": "The prompt instructs the agent to take care of any documentation gaps with appropriate retention and classification treatment. No disposition memo for this JE exists in the vault, making the upload a required write action to close the documentation gap."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's disposition memo title identifies both the client (Acme Cloud) and the AML or compliance subject matter.",
+   "evidence": "The title parameter of the records_vault_upload_document call includes the client identifier 'Acme Cloud' (or an unambiguous variation such as 'Acme Cloud Solutions' or 'Acme Cloud Inc.') AND a term that identifies the AML or compliance subject (e.g., 'AML', 'compliance', 'wire-monitoring', 'disposition', 'CDD', or equivalent). A title that omits the client name entirely, or that names the client without any compliance subject term, does not pass.",
+   "cb_justification": "A disposition memo filed without identifying both the client and the compliance subject in its title cannot be reliably retrieved during a future audit sweep. The client name anchors the document to the correct engagement and the subject reference makes its purpose self-evident, enabling filtering by both axes."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's compliance close-out email subject line includes the relevant journal entry identifier for the underlying AML case.",
+   "evidence": "The subject parameter of the email_send_email call to Matthew Li and Steven Perry contains the JE identifier JE-acme_cloud-FP-2026-04-0052 or an unambiguous equivalent (e.g., je_b2c2b939a1244823 or 'JE 0052'). A subject line that references only 'Acme Cloud AML close-out' without the JE id does not pass.",
+   "cb_justification": "Subject-line inclusion of the JE identifier makes the close-out email immediately filterable and traceable to the underlying compliance case. Matthew and Steven are sweeping their inboxes ahead of the partner review cycle; the JE id in the subject line allows them to correlate the close-out against the original alert without opening the message."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent applies the seven-year AICPA quality-management retention policy (retention_policy_code AICPA_SQMS_7Y) to the uploaded disposition memo.",
+   "evidence": "The records_vault_upload_document call contains the parameter retention_policy_code set exactly to AICPA_SQMS_7Y.",
+   "cb_justification": "The prompt delegates the retention determination to the agent. The correct retention code for AML compliance disposition memos under firm guidelines is AICPA_SQMS_7Y. Any other retention code, or omitting the parameter entirely, is a fail."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent sets the classification of the uploaded disposition memo to restricted.",
+   "evidence": "The records_vault_upload_document call contains the parameter classification set to restricted.",
+   "cb_justification": "The prompt delegates the classification determination to the agent. AML disposition memos must carry restricted access to protect beneficial ownership records. A different classification value, or omitting the parameter entirely, is a fail."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent includes a reference to the verified ledger entry in the uploaded disposition memo, using the Acme Cloud wire receipt or any equivalent identifying description of the underlying transaction.",
+   "evidence": "The content parameter of the records_vault_upload_document call includes at least two of the following identifiers: the wire amount ($57,077.69), the April 2026 period, the Acme Cloud entity, or the journal entry ID. A single generic identifier such as 'April' alone is not sufficient; the combination must unambiguously point to this specific transaction.",
+   "cb_justification": "A disposition memo that does not identify the underlying transaction is not an authenticated audit trail. The specific transaction details anchor the document to the correct JE and make it defensible in a future compliance review."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent includes the CDD clearance rationale in the uploaded disposition memo, referencing the due-diligence review conducted as part of the AML clearance, or any equivalent description of the substantive compliance basis for clearing the wire flag.",
+   "evidence": "The content parameter of the records_vault_upload_document call includes an explicit reference to at least one of the following: beneficial ownership review, source-of-funds analysis, customer due diligence, or AML review findings. A generic phrase such as 'compliance review completed' without any reference to what was specifically reviewed does not pass.",
+   "cb_justification": "The substantive finding that justified clearing the wire flag must appear in the memo. Without the CDD rationale, the memo records the approval chain but not the basis for clearance, leaving the compliance record incomplete."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent identifies the analyst stage of the AML clearance in the uploaded disposition memo, specifically Farah's review, or an equivalent description of the compliance analyst role.",
+   "evidence": "The content parameter of the records_vault_upload_document call identifies the analyst or initial reviewer by name (Farah) or by a role description that clearly corresponds to the analyst stage (e.g., 'compliance analyst,' 'initial reviewer,' 'AML analyst'). A description of 'the team' or similar collective reference that does not distinguish the analyst stage does not pass.",
+   "cb_justification": "An authenticated AML disposition memo must record who conducted the initial analytical review. Without this stage, the approval chain is incomplete and the document cannot serve as a defensible compliance record."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent identifies the supervisory sign-off stage of the AML clearance in the uploaded disposition memo, specifically Anita Knowles's review, or an equivalent description of the supervisory officer role.",
+   "evidence": "The content parameter of the records_vault_upload_document call identifies the supervisory reviewer by name (Anita Knowles) or by a role description that clearly corresponds to the supervisory stage (e.g., 'supervisory officer,' 'AML supervisor,' 'compliance supervisor'). A collective reference that does not distinguish this stage does not pass.",
+   "cb_justification": "An authenticated AML disposition memo must record who provided supervisory sign-off. Supervisory review is a mandatory control gate in the firm's AML clearance protocol, and its absence from the record leaves the clearance chain unverifiable."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent identifies the final partner clearance stage of the AML clearance in the uploaded disposition memo, specifically Steven Perry's sign-off, or an equivalent description of the engagement partner role.",
+   "evidence": "The content parameter of the records_vault_upload_document call identifies the final approver by name (Steven Perry) or by a role description that clearly corresponds to the partner clearance stage (e.g., 'engagement partner,' 'managing partner,' 'final partner sign-off'). A collective reference that does not distinguish this stage does not pass.",
+   "cb_justification": "An authenticated AML disposition memo must record who provided final partner-level clearance. Partner sign-off is the highest approval level in the firm's clearance workflow and its presence in the record is required to demonstrate that the wire-monitoring flag was resolved at the appropriate authority level."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent identifies the CDD package coordination stage of the AML clearance in the uploaded disposition memo, specifically Marina Soko's assembly and routing of the clearance package, or an equivalent description of the coordinating officer role.",
+   "evidence": "The memo content submitted via records_vault_upload_document identifies Marina Soko by name, or by a role description that clearly corresponds to the coordination stage (e.g., 'compliance coordinator,' 'CDD coordinator,' 'coordinating officer'), as a participant in the clearance chain between the analyst review and supervisory sign-off. Merely listing Marina as the memo author or preparer without identifying her active clearance role does not pass. Pass examples: 'Marina Soko (CDD coordinator)', 'CDD package routed by Marina', 'Coordinated by: Marina Soko (Compliance Officer)', 'Marina Soko assembled and routed the CDD package'. Fail examples: 'Prepared by: Marina Soko', 'Author: Marina Soko', 'uploaded_by: marina.soko@brookfieldcpas.com', or any header field that only records authorship without a coordination role.",
+   "cb_justification": "The prompt identifies four named participants in the clearance workflow: 'Farah ran the analyst pass and I coordinated the CDD package through to clearance with Anita and Steven.' A complete disposition memo records the full clearance chain."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent posts a message as a threaded reply under the existing AML case thread in the #compliance-and-registrations Slack channel (channel_id C008).",
+   "evidence": "A slack_conversations_add_message tool call with channel_id set to C008 and thread_ts set to 1776969000.000000, returning a successful post response.",
+   "cb_justification": "The prompt explicitly instructs the agent to post a brief recap under the case thread in #compliance-and-registrations. The original AML case thread for JE-acme_cloud-FP-2026-04-0052 was opened by Marina Soko in C008 with timestamp 1776969000.000000. Posting as a new top-level message rather than a threaded reply fails to follow the explicit instruction."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent confirms in the #compliance-and-registrations Slack post that the GL or ledger verification produced a positive outcome, or uses similar language indicating the cash posting check passed.",
+   "evidence": "The payload parameter of the slack_conversations_add_message call to C008 includes a statement confirming the ledger check produced a positive result. 'Verified,' 'reconciled,' 'consistent,' 'confirmed clean,' 'no discrepancies,' or equivalent all qualify. A statement that only mentions the check was performed without indicating the outcome does not pass. Exact phrasing is not required.",
+   "cb_justification": "The prompt asks for a recap covering 'what you found.' The GL-versus-CDD consistency check is the investigative finding of the task and must appear in the channel post so the compliance team has visibility on the verification result."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent references the dismissal of the stale AML monitoring reminder in the #compliance-and-registrations Slack post, or uses similar language indicating the open monitoring flag was resolved.",
+   "evidence": "The payload parameter of the slack_conversations_add_message call to C008 includes any language indicating the monitoring reminder or open flag was resolved. 'Dismissed,' 'deleted,' 'cleared,' 'closed out,' or equivalent all qualify. Exact phrasing is not required.",
+   "cb_justification": "The prompt asks for a recap covering 'what was actioned.' Reporting the reminder dismissal informs the compliance team that the overdue monitoring flag has been formally closed and will no longer appear in workflow reports."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent references the filing of the AML clearance disposition memo in the #compliance-and-registrations Slack post, or uses similar language indicating the compliance document was stored.",
+   "evidence": "The payload parameter of the slack_conversations_add_message call to C008 includes any language indicating a compliance document was stored. 'Filed,' 'uploaded,' 'archived,' 'added to the vault,' or equivalent all qualify. Exact phrasing is not required.",
+   "cb_justification": "The prompt asks for a recap covering 'what was actioned.' Reporting the memo filing confirms to the compliance team that the documentation gap has been remediated and the audit trail is now complete."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to Matthew Li ([matthew.li@brookfieldcpas.com](mailto:matthew.li@brookfieldcpas.com)).",
+   "evidence": "An email_send_email tool call in the trajectory with matthew.li@brookfieldcpas.com present in the recipients list, returning a successful send response.",
+   "cb_justification": "The prompt explicitly names Matthew Li as a recipient of the close-out confirmation email. Matthew Li is the engagement partner with direct oversight of the Acme Cloud file and must be notified that the compliance side is resolved before the partner review cycle."
+  },
+  {
+   "index": "C19",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to Steven Perry ([steven.perry@brookfieldcpas.com](mailto:steven.perry@brookfieldcpas.com)).",
+   "evidence": "An email_send_email tool call in the trajectory with steven.perry@brookfieldcpas.com present in the recipients list, returning a successful send response.",
+   "cb_justification": "The prompt explicitly names Steven Perry as a recipient of the close-out confirmation email. Steven Perry provided final partner clearance on the AML file and, as managing partner, must be formally notified that the compliance housekeeping has been completed."
+  },
+  {
+   "index": "C20",
+   "category": "outcome",
+   "criterion": "The Agent sends the compliance close-out email with Farah Dlamini ([farah.dlamini@brookfieldcpas.com](mailto:farah.dlamini@brookfieldcpas.com)) as a CC recipient.",
+   "evidence": "An email_send_email tool call with farah.dlamini@brookfieldcpas.com present in the cc list, returning a successful send response.",
+   "cb_justification": "The prompt explicitly instructs the agent to CC Farah on the confirmation email since she did the analyst work on this case."
+  },
+  {
+   "index": "C21",
+   "category": "outcome",
+   "criterion": "The Agent addresses the Acme Cloud compliance close-out in the body of the email sent to the engagement partners, or conveys a similar close-out message in equivalent terms.",
+   "evidence": "The content parameter of the email_send_email call references the Acme Cloud compliance file and conveys a close-out or confirmation message. An email content that is unrelated to the Acme Cloud compliance matter does not pass. Exact wording is not required; any content that clearly pertains to the compliance file close-out qualifies.",
+   "cb_justification": "The prompt instructs the agent to confirm to Matthew and Steven that the file is fully closed on the compliance side. The partners need substantive confirmation in order to act on this information ahead of the partner review."
+  },
+  {
+   "index": "C22",
+   "category": "outcome",
+   "criterion": "The Agent confirms in the final response that the Acme Cloud cash posting lines were verified as consistent with the documented CDD clearance rationale, or conveys an equivalent finding in similar terms.",
+   "evidence": "The final response text includes a statement that references both the ledger entry or GL check and the CDD or clearance documentation, and states or implies they are consistent. A statement such as 'the file looks clean' without referencing both the GL and the CDD check does not pass. Accept any phrasing where both elements and a positive outcome are identifiable.",
+   "cb_justification": "The user asked for a recap of 'what you found.' The GL-versus-CDD verification is the core investigative outcome of the task. Without this confirmation in the final response, the user cannot assess whether the compliance review was substantively completed and cannot mark the file off with confidence."
+  },
+  {
+   "index": "C23",
+   "category": "outcome",
+   "criterion": "The Agent confirms in the final response that the overdue AML monitoring reminder was dismissed, or conveys the same outcome in similar terms.",
+   "evidence": "The final response text includes any statement conveying that the monitoring reminder or open flag was resolved. Accept 'dismissed,' 'deleted,' 'cleared,' 'closed,' or any equivalent phrasing. Exact wording is not required.",
+   "cb_justification": "The user asked for a recap of 'what was actioned.' Confirming the reminder was dismissed closes the loop on an overdue open item the user was monitoring. Without this confirmation, the user cannot verify the monitoring workflow is fully resolved."
+  },
+  {
+   "index": "C24",
+   "category": "outcome",
+   "criterion": "The Agent confirms in the final response that the AML clearance disposition memo was filed in the Records Vault, or conveys the same outcome in similar terms.",
+   "evidence": "The final response text includes any statement conveying that a compliance document was stored in the repository. Accept 'filed,' 'uploaded,' 'archived,' 'added to the vault,' 'placed on record,' or equivalent. Exact wording is not required.",
+   "cb_justification": "The user asked for a recap of 'what was actioned.' Filing the disposition memo is the most consequential write action of the task. It is the output that closes the documentation gap in the compliance record. Confirming it was completed allows the user to mark the file as fully wrapped up."
+  },
+  {
+   "index": "C25",
+   "category": "outcome",
+   "criterion": "The Agent attempts to retrieve the content of an existing Acme Cloud AML precedent memo (either the Beneficial Owner Refresh or the AML Risk Assessment) from the Records Vault.",
+   "evidence": "A records_vault_download_document_content tool call in the trajectory with document_id set to doc_38a8236a0c4546e2 (FY2026 AML Risk Assessment Memo) or doc_fb028c9124e146c5 (FY2026 Beneficial Owner Refresh). The platform's content layer may return either a successful payload or an IMG.VERSION_NOT_FOUND error for these seeded documents; both responses satisfy the rubric provided the agent's call is well-formed (correct tool, correct document_id, role authorised to read restricted AML memos). Listing the documents via records_vault_list_documents alone does not satisfy this rubric.",
+   "cb_justification": "The prompt instructs the agent to anchor the retention and classification treatment to the firm's existing AML precedent for this client. Attempting to download the content of at least one prior AML memo is the substantive precedent-discovery step that distinguishes a defensible new disposition memo from one that simply records the new clearance chain in isolation. The Acme Cloud entity already has two relevant precedent memos in the Records Vault (FY2026 Beneficial Owner Refresh, FY2026 AML Risk Assessment Memo); calling the content endpoint on either is the precedent-discovery signal that anchors the new memo to the firm's existing compliance posture."
+  },
+  {
+   "index": "C26",
+   "category": "outcome",
+   "criterion": "The Agent's disposition memo references the firm's existing AML compliance precedent for Acme Cloud, naming a prior memo or quoting its substantive conclusion.",
+   "evidence": "The content parameter of the records_vault_upload_document call includes a reference to at least one of the following: the FY2026 Beneficial Owner Refresh memo (by title or doc id), the FY2026 AML Risk Assessment memo (by title or doc id), the cleared beneficial-ownership outcome from the BO Refresh, or the prior risk-tier or counterparty risk-score determination from the AML Risk Assessment. A memo that records only the new clearance chain (analyst, supervisor, partner sign-off) without any reference to the firm's existing AML precedent for this client does not pass.",
+   "cb_justification": "Anchoring the new disposition memo to the firm's existing AML precedent for this client is what makes the memo a defensible compliance record rather than a stand-alone artifact. The precedent linkage closes the audit trail across the firm's full AML history for Acme Cloud and demonstrates that the wire-monitoring clearance was assessed against the firm's prior beneficial-ownership and risk-tier work for the same client."
+  }
+ ]
+}

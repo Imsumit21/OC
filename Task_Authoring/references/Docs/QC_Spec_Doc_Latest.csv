@@ -1,0 +1,319 @@
+"id","title","questionText","questionDescription","required","useAllSteps","stepIds","useAllErrorCategories","errorCategories","rubricFailureType","answerOptionText","answerOptionScore","answerOptionRequiresJustification"
+"cc8675c9-1fee-4452-8dc6-6bf0f94a6d7a","Prompt - Unique Ground Truth (UGT)","Rate the Prompt's UGT","The prompts are open-ended in this project, so there cannot be one possible response to the user (For example, wording can differ), BUT it should not be the case that the prompt leads to distinct outcomes. It’s okay if there’s multiple possible paths the agent could take to arrive at the answer, but the key points in the answer, as requested in the prompt, should be the same.
+
+Please be extra vigilant in checking this dimension as we want to provide more visibility regarding these potential issues! (That’s not to say to apply this more liberally, per se, but rather a reminder to keep this possibility in mind.)
+
+ Note: Conflicting information related to a prompt request does not necessarily mean that [Multiple Valid Answers] applies. If one source is clearly more authoritative or up to date, it should be considered the fixed choice for consideration/inclusion in the answer. If both sources are equally credible and nothing resolves the conflict, then it should fail for [Multiple Valid Answers]. 
+
+ Note: Disagreement between models is not definitive proof of [Multiple Valid Answers] - the determination should be made on the basis of evidence in the prompt and environment. 
+
+
+CHECK THE SPEC FOR ADDITIONAL NOTES","true","true","","false","[All] [All] [Fail - Multiple Valid Answers]","","[Fail - Multiple Valid Answers] 
+- The prompt can reasonably produce two or more different correct answers (even if a leading interpretation exists), and the prompt does not clearly indicate which answer is intended and the ambiguity cannot be resolved by referencing the environment for additional context (e.g., a documented convention exists clarifying an unclear instruction).","2","true"
+"","","","","","","","","","","The prompt has a unique ground truth answer. All the experts on the subject would come to the same conclusion","5","false"
+"11cdab69-6c44-46d3-bd6d-c2a510220a0c","Prompt - Feasibility","Rate the Prompt's Feasibility","The project now has a Persona ACL (Access control list). For some services, the agent can ONLY access records that are owned by, shared with, or otherwise visible to the assigned persona. 
+
+Note that the universe explorer by default shows ALL records (even those that shouldn't be seen by the current persona) - make your determination of whether the current user has access to a particular record by examining its details based on the service in question (e.g., for an email, see if they're the sender, recipient, or cc'd, for slack, see if they're in the channel in question, and so on).
+
+Read actions are persona-scoped in 7 services - Gmail, Slack, GCal, and the Drive-family (GDrive/GDocs/GSheets/GSlides, which inherit Drive's file ACL). The agent only sees records owned by / shared with / visible to that persona. 
+Reads are unscoped in the other 6 - Contacts, GitHub, Snowflake, Trello, Linear, Confluence (shared across personas).
+
+Write actions are not blocked by ACL at all.","true","true","","false","[Prompt] [Feasibility] [Fail - Prompt Impractical Request]; [Prompt] [Feasibility] [Non-Fail - Prompt Impractical Secondary Request]; [All] [All] [Fail - Prompt Feasibility with Tools]; [All] [All] [Fail - Prompt Conflicting Instructions]","","[Fail - Prompt Impractical Request] 
+- Prompt contains an impractical request that can't be answered by an LLM in a single response","2","true"
+"","","","","","","","","","","[Fail - Prompt Impossible Request] 
+- Prompt has at least one request that can't be fulfilled at all","2","true"
+"","","","","","","","","","","[Fail - Prompt Conflicting Instructions] 
+- Prompt gives instructions that conflict/contradict with itself that can't be fulfilled simultaneously","2","true"
+"","","","","","","","","","","[Fail - Prompt Feasibility with Tools] 
+- Prompt contains an impractical or impossible request that can't be answered by the tools available or enabled for the task. This includes when prompt requests would require an agent to read an element not available to the assigned persona due to access control restrictions. See the notes for this dimension for which services are subject to access control restrictions.","2","true"
+"","","","","","","","","","","[Non-Fail - Prompt Impractical Secondary Request] 
+- There are multiple requests in the prompt and it's verging on being impractical for a model to answer it in a single response, but the core request of the prompt can be fulfilled with minor concessions on the secondary requests","3","true"
+"","","","","","","","","","","The prompt is completely actionable by an LLM agent; AND
+The prompt contains no conflicting instructions/statements","5","false"
+"579551e8-3e97-4bc8-b45e-2d9a41a5cba4","Prompt - Explicit Tool Mention","Rate if the Prompt has any Explicit Tool Mentions","","true","true","","false","[All] [All] [Fail - Explicit Tool Mention]; [All] [All] [Non-Fail - Tool/MCP Server Mentioned]","","[Fail - Explicit Tool Mention] 
+- The prompt explicitly mentions an MCP tool name (e.g., linear_create_issue, crm_search_contacts, quickbooks_create_bill)","2","true"
+"","","","","","","","","","","[Non-Fail - Tool/MCP Server Mentioned] 
+- The prompt references an MCP server by name (e.g., ""use the Linear MCP server"", ""via the Gmail MCP server"")","3","true"
+"","","","","","","","","","","[Non-Fail - Tool/MCP Server Mentioned] 
+- The prompt refers to any system as a ""tool"" (e.g., ""use the QuickBooks tool"", ""use the CRM tool"")","3","true"
+"","","","","","","","","","","- The prompt does not explicitly state the use of tools","5","false"
+"c1b646d2-6b4e-4435-83f1-f9badbd9ead1","Prompt - Prompt Clarity and Specificity","Rate the Prompt's Clarity and Specificity","Clarity FAIL — Action Decision Ambiguity: The prompt is open to file-now vs. defer interpretations leading to different write actions. Triggers [Fail - Action Decision Ambiguity] .","true","true","","false","[Prompt] [Prompt Clarity/ Specificity] [Fail - Major Clarity / Specificity Issues]; [Prompt] [Prompt Clarity/ Specificity] [Non-Fail Minor Clarity / Specificity Issues]","","[Fail - Major Clarity / Specificity Issues] 
+- It's not clear what is being asked, the prompt is extremely difficult to follow, or is overly vague; the user intent cannot be reasonably understood from the prompt and the ambiguity cannot be resolved by referencing the environment for additional context (e.g., a documented convention exists clarifying an unclear instruction).","2","true"
+"","","","","","","","","","","[Fail - Major Clarity / Specificity Issues] Major details are missing that are needed to answer the prompt and cannot be reasonably assumed and the ambiguity cannot be resolved by referencing the environment for additional context (e.g., a documented convention exists clarifying an unclear instruction).","2","true"
+"","","","","","","","","","","[Fail - Action Decision Ambiguity] 
+- The prompt is open to two or more reasonable interpretations that lead to different write actions (or to write vs. no-write / act vs. defer), the prompt does not clearly indicate which is intended, and the ambiguity cannot be resolved by referencing the environment for additional context (e.g., a documented convention exists clarifying an unclear instruction). See corresponding non-failing error for exceptions/examples.","2","true"
+"","","","","","","","","","","[Non-Fail Minor Clarity / Specificity Issues] 
+- The prompt is open to multiple reasonable interpretations, but all reasonable interpretations lead to the same set of write actions / external side effects; only wording, framing, channel-of-delivery to the same recipient, or non-action details vary (e.g., ""send a quick note to Daniel"" — email vs. Slack DM to the same person; ""the partner"" — minor referent ambiguity that doesn't change the action taken).","3","true"
+"","","","","","","","","","","- There is little to no room for misinterpretation of the specific request; OR
+
+- Prompt has a specific request that doesn't require more than one minor assumption to answer it","5","false"
+"d476a5b5-90b6-4a52-a63c-7280371f886f","Prompt - Contrived / Unnatural Prompts","Rate the Prompt's Naturalness","This should check for artificial difficulty vs. natural complexity.
+
+Prompts should read as realistic human workplace requests.
+Exact titles and values are fine when they are naturally human-readable (e.g., ""GEOGAMES_SPEC.docx"").
+Penalize the mention of unnatural opaque IDs, generated filenames, full agent IDs, or similar references when they're not actually necessary. (E.g., ""geogames_spec_23mf2ldf02lfasdlov23rmfmmfmm234.docx"")
+
+Contrived examples include:
+- demanding exact timestamps (""Find the email from January 15th at 3:47 PM"")
+- requiring arbitrary format constraints (""Respond in exactly 3 sentences using passive voice"")
+- asking the agent to do something no real employee would do (""Intentionally send an incorrect email to test error handling"").
+
+Natural difficulty comes from entity confusion, scattered information, conflicting data across services, and hidden root causes. Prompts written as step-by-step command lists (""First search emails, then check CRM…"") should also be considered contrived.
+
+Prompts such as riddles that are intentionally constraints/details laden should not be considered contrived.","true","true","","false","[Prompt] [Contrived / Unnatural Prompts] [[Fail - Contrived / Unnatural Prompt]; [Prompt] [Contrived / Unnatural Prompts] [Non-Fail - Somewhat Contrived / Unnatural Prompt]","","[Fail - Contrived / Unnatural Prompt] 
+- Prompt is contrived or otherwise unnatural
+- Prompt unnecessarily contains direct references to unnatural IDs, filenames, etc.","2","true"
+"","","","","","","","","","","[Non-Fail - Somewhat Contrived / Unnatural Prompt] 
+- Prompt is somewhat contrived or is somewhat unnatural","3","true"
+"","","","","","","","","","","- The prompt is neither contrived or unnatural","5","false"
+"62615d66-6a1d-410c-8e35-58fe366d3b27","Prompt - Truthfulness","Rate the Prompt's Truthfulness","How to classify a naming/identifier error as major or minor:
+- Major: errors in tight identifiers—channel names, document IDs, JE IDs, vendor or company entity names, account numbers, dollar amounts, dates, fiscal periods, ticket/issue IDs. These are passed literally into tool calls and don't tolerate near-matches.
+
+
+
+- Minor: errors in loose descriptors—person first-name only references where the universe context disambiguates, role titles, casual entity references. These tolerate natural language.
+
+
+
+- Escalation rule: a ""minor"" error escalates to ""major"" if it actually causes agent failure (e.g., wrong first name in a universe where two people share it).","true","true","","false","[All] [All] [Fail - Major Factual Errors]; [All] [All] [Fail - Minor Factual Errors]; [All] [All] [Non-Fail - Minor Factual Errors]","","[Fail - Major Factual Errors] 
+- The prompt contains 1 or more major factual errors","2","true"
+"","","","","","","","","","","[Fail - Minor Factual Errors] 
+- The prompt contains 2 or more minor factual errors (e.g., statements irrelevant to the fulfillment of the prompt's request)","2","true"
+"","","","","","","","","","","[Non-Fail - Minor Factual Errors] 
+- The prompt contains 1 minor factual error.","3","true"
+"","","","","","","","","","","- The prompt has no factual errors or misleading statements","5","false"
+"f9648bba-a564-4c49-bd33-fb15154caef6","Prompt Tool Use and Cross-Service Requirement","Prompt Tool Use and Cross-Service Requirement","","true","true","","false","[All] [All] [Fail - Tool Dependence]; [All] [All] [Fail - Cross-service Requirement]","","[Fail - Tool Dependence] 
+- The prompt can be answered without having to make any tool calls (either through basic reasoning or general knowledge)","2","true"
+"","","","","","","","","","","[Fail - Cross-service Requirement] 
+- Prompt can be fully resolved within a single service (e.g., just email or just CRM), or only trivially touches a second service.","2","true"
+"","","","","","","","","","","- Prompt requires investigation across 2+ services to answer correctly (e.g., facts needed are scattered and must be reconciled).","5","false"
+"bc66d604-91ab-47b7-b172-acafb246f06f","Prompt - Investigation","Rate the Prompt's Detail for Investigation","","true","true","","false","[All] [All] [Fail - Pre-solved]","","[Fail - Pre-solved] 
+- Prompt tells agent the root cause and no investigation is needed.","2","true"
+"","","","","","","","","","","- Prompt clearly requires investigation and it logically follows from investigation.","5","false"
+"ca996430-fca3-4798-8ff7-68472ac8b64f","Prompt - Coherence","Rate the Prompt's Coherence","See spec for examples of bolt-on requests.","true","true","","false","[All] [All] [Fail - Bolt-on requests]","","[Fail - Bolt-on requests] 
+- Contains unrelated bolt-on requests; removing a sentence doesn’t change the rest.","2","true"
+"","","","","","","","","","","One cohesive situation; stacked asks all tie back to the same purpose.","5","false"
+"03df4909-bd95-4e69-8791-1639f13525fe","Prompt - Persona","Rate the Prompt's Persona","See the list of personas in the instructions doc or in the summary doc listed in the spec and additional notes.","true","true","","false","[All] [All] [Fail - Persona Mismatch]; [All] [All] [Non-Fail - Persona Mismatch]","","[Fail - Persona Mismatch]  
+The prompt written by the CB does not read like it could have been written by the persona selected.
+
+
+
+Do not penalize with a failure if the prompt aligns with multiple Personas, so long as the assigned Persona is also applicable for the prompt.","2","true"
+"","","","","","","","","","","[Non-Fail - Persona Mismatch]  
+The prompt written by the CB is plausible for the persona selected, but fits a different persona better","3","true"
+"","","","","","","","","","","The prompt written by the CB aligns with the persona selected","5","false"
+"a002023d-7a09-4504-809c-972715785aa6","Prompt - Business Function","Rate the Prompt's Business Function","The scenario must fit the assigned business function. Business function is a separate axis from competency (see Prompt - Competency); the two need not be the obvious pairing.
+//
+SEE THE SPEC FOR UNIVERSE REFERENCES - IT'S IMPORTANT THAT YOU USE THE CORRECT UNIVERSE FOR YOUR TASK","true","true","","false","[All] [All] [Non-Fail - Business Function Mismatch]","","[Non-Fail - Business Function Mismatch] Scenario is ambiguous between the assigned function and another.","3","true"
+"","","","","","","","","","","Clearly a realistic scenario within the assigned business function.","5","false"
+"2ed74281-234c-41a5-b1ea-1ab4f4052543","Prompt - Competency","Rate the Prompt's Competancy","The task must exercise the assigned competency: Product Management, Engineering Ops, Marketing and GTM, Corporate Ops, or Finance. Let the competency drive the kind of work (not the persona's job title).","true","true","","false","[All] [All] [Non-Fail - Competency Mismatch]","","[Non-Fail - Competency Mismatch] Ambiguous between the assigned competency and another.","3","true"
+"","","","","","","","","","","Clearly exercises the assigned competency.","5","false"
+"0fdc06ba-dc51-4074-aa6e-07e4966d018e","Prompt - Task Skill","Rate the Prompt's Task Skill","The assigned task skill must be clearly present: Retrieval, Analysis and Synthesis, Planning and Decision Support, Authoring, or Actions. Stacking extra skills is encouraged.","true","true","","false","[All] [All] [Non-Fail - Task Skill Weak]","","[Non-Fail - Task Skill Weak] The assigned task skill is not clearly represented. Or the assigned skill present but only marginally exercised.","3","true"
+"","","","","","","","","","","Assigned task skill is clearly represented.","5","false"
+"90c0a00d-d5ec-4131-ae6d-39f9fbb31a26","Trajectory - Task Type & Horizon","Rate the Trajectory Task Type & Horizon","Applies to the first set of baseline trajectories in the task.
+
+Derive the tool call count based on the following rules:
+- If a 100% passing run exists, use the tool call count from that run.
+- If not, use the average # of tool calls between the 6 baseline rollouts.
+
+Tool call count requirements (based on task type):
+- Normal 50-100
+- Long-Horizon 100-500+
+
+Volume must come from necessary work, not padding; blocked/repeated calls don't count.","true","true","","false","[All] [All] [Fail - Wrong Horizon]; [All] [All] [Non-Fail - Borderline Horizon]","","[Fail - Wrong Horizon]
+The tool call count is below the relevant threshold (see notes)","2","true"
+"","","","","","","","","","","[Non-Fail - Borderline Horizon]
+The tool call count is above the relevant threshold (see notes)","3","true"
+"","","","","","","","","","","The tool call count falls inside of the relevant threshold (see notes)","5","false"
+"fc53c2a6-8454-4b2c-8858-d0fb269c6f00","Prompt - Alignment with Today’s Date","Rate the Date Alignment","The universe now has a fixed date for “today”: February 28, 2026
+The prompt should make sense in the context of this date (for universe date misalignments, see the Universe - Internal Data Consistency dimension)
+
+READ SPEC FOR ADDITIONAL NOTES","true","true","","false","[All] [All] [Non-Fail - Prompt Misaligned with Today]","","[Non-Fail - Prompt Misaligned with Today] 
+- The prompt’s request does not make sense or can’t be fulfilled, given “today’s” date
+E.g., “What happened in May 2027 that the sales are down 30% month over month?” is nonsensical because it’s asking about the future","3","true"
+"","","","","","","","","","","Prompt does not contradict “today’s” date","5","false"
+"a8d84f48-1520-4e92-8c7f-3ed5e9822bad","Universe - Universe Feasibility (Data Exists)","Rate the Universe's Feasibility","Auditors should check the Universe Explorer or Sandbox to verify that key data needed for the prompt exists.","true","true","","false","[All] [All] [Fail - Missing Universe Data]","","[Fail - Missing Universe Data] 
+- Task depends on key facts/entities/events that do not exist in the universe (or cannot be retrieved with available tools), making the task unsolvable.","2","true"
+"","","","","","","","","","","All core facts required to solve the task exist in the universe and are retrievable via tools.","5","false"
+"d162a469-309c-43c7-bb33-e65c68d0c0cd","Universe - Cross-service Coherence","Rate the Universe's Cross-service Coherence","See the table in Appendix - Universe Inconsistency Examples for examples of each error, and see the Examples & Notes section for this error for further guidance. 
+Note: This error applies to synthetic data - consult the list below for what data in the universe(s) used in this project are synthetic:
+HarmonyGames: snowflake and confluence data
+This dimension flags universe inconsistencies directly, independent of whether they caused an agent failure. Note that this dimension does not require that the inconsistency leads to an agent failure, nor is it focused specifically on cb-introduced changes — it fails based on the presence of the inconsistency itself, because these defects silently corrupt the storyline and often surface only after tasking is complete. If you notice knock-on effects to other universe data, or that a specific inconsistency is part of a larger pattern, please also note this in your feedback (alongside any relevant evidence).
+
+Auditors must perform a VISUAL, per-artifact review of the universe data touched by the task (Universe Explorer / Sandbox). Check within each artifact and across the fields of related artifacts and services for the following:
+TEMPORAL CONSISTENCY — Do date-bearing fields agree with each other within the same artifact and with 'today's' date? (e.g., an invoice booked with TxnDate 2026-05-13 whose description/memo references 'October 2026', or a May invoice assessing an October late fee.)
+SEMANTIC / CATEGORY CONSISTENCY — Do categorical fields match the described work or entity, including naming? (e.g., a line item described as 'Roof repair' categorized as 'Drywall / Water-Damage Repair'; a single 'Monthly management fee' charge mapping to three different items; overlapping names that create ambiguity within the universe.)
+CROSS-SERVICE REFERENTIAL CONSISTENCY — Is the same entity/fact represented consistently across services, and do references resolve? (e.g., a name spelled/keyed differently in email vs CRM; a Linear ticket referencing an Airtable record that does not exist; a foreign key with no matching entity.)
+QUANTITATIVE / RECONCILIATION CONSISTENCY — Do numeric fields reconcile? (e.g., line items that do not sum to the stated invoice total; balances/aggregates that do not match the underlying transactions.)
+STATE / LIFECYCLE CONSISTENCY — Do status/lifecycle fields agree with the record's activity? (e.g., a ticket marked 'Closed' that has later activity; a lease marked 'Terminated' that still collects rent; an invoice marked 'Paid' with no payment record.)
+IDENTIFIER / UNIQUENESS / FORMAT CONSISTENCY — Are identifiers well-formed, non-null, unique where required, and following a single consistent scheme within a service? (e.g., DocNumber mixing INV-RM-0001, 2026-WO-114, BILL-2026-119, plain '2254', and a null value; BILL- prefixes on customer invoices; two records sharing an ID that should be unique; customer IDs mixing numeric '101' and 'proj-<hash>'.)
+OTHER — Any other internal inconsistency that does not fit the categories above; the auditor must describe it in the justification.","true","true","","false","[All] [All] [Fail – Temporal Field Inconsistency]; [All] [All] [Fail – Semantic / Category Inconsistency]; [All] [All] [Fail – Cross-service Referential Inconsistency]; [All] [All] [Fail – Quantitative / Reconciliation Inconsistency]; [All] [All] [Fail – State / Lifecycle Inconsistency]; [All] [All] [Fail – Identifier / Uniqueness / Format Inconsistency]; [All] [All] [Fail – Other Universe Inconsistency]; [All] [All] [Non-Fail – Minor Universe Inconsistency]","","[Fail – Temporal Field Inconsistency] — One or more date-bearing fields within an artifact contradict each other or ""today's"" date (e.g., description/memo period does not match TxnDate; a booking assesses a charge for a future period).
+• The fixed date for the v2.1 universe is Apr 26, 2026
+• The fixed date for the v2.2 universe is Apr 28, 2026
+• The fixed date for the v3 universe is Jun 12, 2026
+• The fixed date for the v4 universe is July 01, 2026","2","true"
+"","","","","","","","","","","[Fail – Semantic / Category Inconsistency] — A categorical or descriptive field does not match the underlying work/entity, the same real-world charge/entity is categorized inconsistently across artifacts, or names overlap in a way that creates ambiguity.","2","true"
+"","","","","","","","","","","[Fail – Cross-service Referential Inconsistency] — The same entity/fact is represented inconsistently across services, or a reference does not resolve (e.g., a name keyed differently in email vs CRM; an entity referenced in one service but absent in another when required; a broken/dangling foreign key).","2","true"
+"","","","","","","","","","","[Fail – Quantitative / Reconciliation Inconsistency] — Numeric fields do not reconcile (e.g., line items do not sum to the stated total; balances or aggregate figures do not match the underlying transactions/records).","2","true"
+"","","","","","","","","","","[Fail – State / Lifecycle Inconsistency] — A status/lifecycle field contradicts the record's activity or related records (e.g., a ticket marked ""Closed"" with later activity; a lease marked ""Terminated"" that still collects rent; an invoice marked ""Paid"" with no payment record).","2","true"
+"","","","","","","","","","","[Fail – Identifier / Uniqueness / Format Inconsistency] — Identifiers are malformed, null, non-unique where uniqueness is required, or follow multiple inconsistent schemes within a single service (e.g., inconsistent DocNumber formats, wrong-type prefixes, null IDs, duplicate IDs).","2","true"
+"","","","","","","","","","","[Fail – Other Universe Inconsistency] — Any other internal inconsistency that does not fit the categories above. Describe the inconsistency, the artifacts/fields involved, and why it breaks consistency in the justification.","2","true"
+"","","","","","","","","","","[Non-Fail – Minor Universe Inconsistency] — A single, low-impact inconsistency that does not affect solvability or storyline coherence (e.g., a purely cosmetic ID-format variation that is plausibly intentional and consistently applied).","3","true"
+"","","","","","","","","","","The universe data is internally consistent: dates agree with each other and with ""today's"" date; categorical fields match the described work/entities; the same entity is represented consistently across services and all references resolve; numeric fields reconcile; status/lifecycle fields match activity; and identifiers are well-formed, unique, and follow a consistent scheme within each service.","5","false"
+"b2d5e70c-cffe-45f3-a526-b07f1b7b0e87","Oracle Events - Completeness","Rate the Completeness of the Oracle Events","The Oracle Events (OEs) are the critical expected outcomes path (key discovery steps + dependency chains + required write actions).
+
+OEs should describe the steps needed to solve the task, not what the final response should say.","true","true","","false","[All] [All] [Non-Fail - Incomplete Oracle Events]","","[Non-Fail - Incomplete Oracle Events]
+Critical steps are missing, e.g. how important information is retrieved or how a required action is executed","3","true"
+"","","","","","","","","","","Describes the full critical path: discovery + dependencies + required writes.","5","false"
+"2026f2d5-454c-4570-86d0-278d27437e49","Oracle Events - Accuracy","Rate the Completeness of the Oracle Events","Each Oracle Event (OE) should contain correct:
+- service / tool for the step
+- important parameters or identifiers
+- expected data / result
+
+What matters most are materially important execution details, not exact low-level tool syntax.
+
+Example OE:
+◦ Action: Look up Chloe's contact information
+◦ Information: Identify the correct Chloe and confirm her email address
+◦ Service: Contacts
+◦ Important inputs: Chloe's name and relevant company/team context if disambiguation is needed
+◦ Expected result: Chloe's correct email address","true","true","","false","[All] [All] [Non-Fail - Minor Oracle Event Inaccuracies]; [All] [All] [Non-Fail - Inaccurate Oracle Event]","","[Non-Fail - Minor Oracle Event Inaccuracies] Substantially correct with minor imprecisions that don't change the outcome.","3","true"
+"","","","","","","","","","","[Non-Fail - Inaccurate Oracle Event]
+At least one OE points to the wrong service/tool, important parameters, identifiers, or expected data; such that it wouldn't produce the correct result","3","true"
+"","","","","","","","","","","All steps accurate; following them yields a correct trajectory.","5","false"
+"37c86376-4ba9-4ba1-a8a2-566b6c8fc89d","Rubrics - Overall Rubric Quality","Rate the Overall Rubric Quality","Use the number of criteria that the CB wrote as the denominator while calculating % values. See the additional notes section for the numerator. Do NOT double count criteria while tallying even if it has multiple issues.
+
+
+
+Check the appendix in the spec for Rubric Quality Definitions","true","true","","false","[All] [All] [Fail - 10%+ Major Rubric Errors]; [All] [All] [Fail - 15%+ Moderate Rubric Errors]; [All] [All] [Fail - 20%+ Minor Rubric Errors]; [All] [All] [Non-Fail - Up to 10% Major Errors]; [All] [All] [Non-Fail - Up to 15% Moderate Errors]; [All] [All] [Non-Fail - 5-20% Minor Errors]","","[Fail - 10%+ Major Rubric Errors] More than 10% (>10%) of the criteria contain major issues","2","true"
+"","","","","","","","","","","[Fail - 15%+ Moderate Rubric Errors] 
+More than 15% (>15%) of the criteria contain moderate or major issues","2","true"
+"","","","","","","","","","","[Fail - 20%+ Minor Rubric Errors] 
+More than 20% (>20%) of the criteria contain minor or moderate or major issues","2","true"
+"","","","","","","","","","","[Non-Fail - Up to 10% Major Errors] 
+Up to 10% (<=10%) of the criteria contain major issues","3","true"
+"","","","","","","","","","","[Non-Fail - Up to 15% Moderate Errors] 
+Up to 15% (<=15%) of criteria contain moderate or major issues (with major issues contributing lower than 10%)","3","true"
+"","","","","","","","","","","[Non-Fail - 5-20% Minor Errors] 
+Between 5 and 20% (>=5% and <=20%) of criteria contain minor or moderate or major issues (with major issues contributing lower than 10% and moderate issues contributing lower than 15%)","3","true"
+"","","","","","","","","","","- Less than 5% (<5%) of the rubrics have minor issues; AND
+- No major or moderate issues","5","false"
+"442a932f-3c81-4d8d-9761-b908210333cf","Rubrics - Criteria Weights","Rate the Criteria Weights","Weights are assigned based on how difficult it would be for a model to satisfy the criterion (using a 1, 3, or 5).
+
+Weight definitions:
+1 (Low) - Direct lookup or literal verification from a single source. One mechanical outcome.
+3 (Medium) - Interpretation, calculation, comparison, or limited reconciliation. One reasoned outcome
+5 (High) - Multi-source reconciliation, deeper reasoning, cross-modal evidence, or tracing. One complex outcome.
+
+See Appendix - Criteria Error Definitions in spec for examples","true","true","","false","[All] [All] [Fail - Major Criteria Weight Disagreement]; [All] [All] [Non-Fail - Minor Criteria Weight Disagreement]","","[Fail - Major Criteria Weight Disagreement]
+15% or more of the criteria weights are off by two levels (1 vs 5 or vice versa) OR 
+30% or more of the criteria weights are off by one level (1 vs 3, 3 vs 5, etc.)","2","true"
+"","","","","","","","","","","[Non-Fail - Minor Criteria Weight Disagreement]
+Less than 15% of the criteria weights are off by two levels (1 vs 5 or vice versa) OR 
+Less than 30% of the criteria weights are off by one level (1 vs 3, 3 vs 5, etc.)","4","true"
+"","","","","","","","","","","All the criteria are weighted correctly.","5","false"
+"24827410-91f1-4ab8-a832-fbd3efda9b7d","Rubrics - All-Failing Rubrics","Rate any ""All-Failing"" Rubrics","After rubric verifiers run, CBs are required to review any rubric that failed all completed runs (namely “All-failing” rubrics or AF rubrics) and add a 1–2 line justification confirming the failure is a genuine model failure and not a rubric quality issue. ""All completed runs"" means only runs that finished without an error — if 4 of 6 completed, the rubric must have failed all 4. If none of the rubrics failed all completed runs, this step is empty and no justification is needed.
+
+
+
+In some tasks, this will be in a text box at the end of the rubric run step and in most new tasks (this is the format we're backfilling tasks to), this will be in the rubric rating step at the end of the verifier runs. 
+
+
+
+IMPORTANT: If no AF rubrics exist, this dimension doesn't need to be audited.","true","true","","false","[All] [All] [Fail - 2+ Invalid All-Fail Rubrics]; [All] [All] [Non-Fail - Poor All-Fail Rubric Justification]; [All] [All] [Non-Fail - One Invalid All-Fail Rubric]","","[Fail - 2+ Invalid All-Fail Rubrics] 
+Two or more all-failing rubrics have a quality issue that causes the failure — e.g., fictional tool name, overly specific wording, beyond prompt scope, unfairly penalizes a valid agent approach, or not grounded in GT. The CB either did not notice the rubric problem or provided a justification that inadvertently reveals it. This indicates a false negative — the task may appear harder than it is due to a bad rubric.","2","true"
+"","","","","","","","","","","[Non-Fail - Poor All-Fail Rubric Justification] 
+The all-fail rubric is good quality (i.e., the model failures for that rubric in all the runs are genuine fails), but the explanation provided by the CB is either unfactual, irrelevant or doesn’t support the validity of the all-failing rubric.","3","true"
+"","","","","","","","","","","[Non-Fail - One Invalid All-Fail Rubric] 
+Exactly one all-failing rubric has a quality issue that causes the failure — e.g., fictional tool name, overly specific wording, beyond prompt scope, unfairly penalizes a valid agent approach, or not grounded in GT. The CB either did not notice the rubric problem or provided a justification that inadvertently reveals it. This indicates a false negative — the task may appear harder than it is due to a bad rubric.
+
+
+
+(Note: There may be more all-failing rubrics, but only one of them has to have a quality issue for the non-fail to apply. If more all-failing rubrics have quality issues that cause failure, then the task fails)","3","true"
+"","","","","","","","","","","All rubrics that failed all completed runs are valid — self-contained, grounded in GT, within prompt scope, and using real tools. The CB's justifications confirm the failures reflect genuine model reasoning or execution gaps, not rubric artifacts. If no rubrics failed all completed runs, this dimension is automatically a 5.","5","false"
+"1b28be03-3f02-4043-9eea-a14fb4f85edc","Rubrics - Rubric Category Balance","Rate the Category Balance of the Rubric","Outcome rubrics check final correctness—was the result right?
+
+Process rubrics = Whether the agent did necessary work that outcomes alone cannot prove.","true","true","","false","[All] [All] [Fail - No Outcome Rubrics]","","[Fail - No Outcome Rubrics]  
+- The rubric set contains zero Outcome rubrics.","2","true"
+"","","","","","","","","","","There is at least one Outcome criterion in the rubric.","5","false"
+"dde16fd7-6901-4dc6-b996-fa62ca22e5af","Rubrics - Process Criteria","Rate the Process Rubrics/Criteria","READ THE ADDITIONAL NOTES IN THE SPEC FOR DEFINITIONS
+
+Process criteria evaluate behaviors that are required for a trustworthy completion but invisible from the final state. They are framed as behavioral expectations (what the agent verified, confirmed, or did), not as checklists of specific tool calls or execution traces. 
+
+If there are process criteria, they must follow the guidelines listed in the Failing category.","true","true","","false","[All] [All] [Fail - Process Rubric Not Needed]; [All] [All] [Non-Fail - Missing Process Rubric]","","[Fail - Process Rubric Not Needed] 
+Two or more process criteria fail one of the three conditions:
+
+(1) Required by every valid path;
+
+(2) Outcome rubric can't cover it; 
+
+(3) Describes a verification, not an execution trace","2","true"
+"","","","","","","","","","","[Non-Fail - Missing Process Rubric] 
+Any number of process criteria are missing.
+
+Note: Only count a process criteria as missing when the prompt contains a sequential or causal dependency related to it (staged steps, an earlier step gating a later one, etc.).","3","true"
+"","","","","","","","","","","Any process criteria pass the three conditions test","5","false"
+"9d505da6-61b2-4cdf-928e-244c219f9ced","Rubrics - Agent Centric Phrasing","Rate the criteria's phrasing","Despite being an Outcome or a Process rubric, the new writing style revolves around actions performed by the agents, following the structure [“Agent” + action + necessary context]. MCP tools must not be mentioned either.
+
+
+
+SEE ADDITIONAL NOTES IN SPEC","true","true","","false","[All] [All] [Fail - Rubric is not written as an action performed by the agent]; [All] [All] [Non-Fail - Rubric is agent-centric but does not follow the pattern]","","[Fail - Rubric is not written as an action performed by the agent] 
+- 1+ criteria are not written as an action performed by an agent (see notes) and/or mentions a tool name explicitly.","2","true"
+"","","","","","","","","","","[Non-Fail - Rubric is agent-centric but does not follow the pattern] 
+In some cases, rubrics will be written differently from the pattern but still depicting an action performed by the Agent. In such cases the rubric does not follow the pattern, but is still valid. 
+
+
+
+Example: Reasoning is [ ""Agent sends a status update covering X"" which is the same as ""The Agent's status update covers X"" ]","3","true"
+"","","","","","","","","","","Rubric is an action performed by the agent","5","false"
+"61c1d0b6-0051-455d-a69e-4eb18e86c3cd","Rubrics – Negative Criteria","Rate the criteria's phrasing","Check that rubrics are affirmatively framed unless the prompt explicitly requires a prohibition or non-action.
+
+ Bad example: “The Agent does not omit the ENG-1797 link.”
+
+ Negative indicators to review: “does not,” “must not,” “never,” “no,” “without,” “fails to,” and “avoids.”
+
+ Note: Presence of the negative indicators listed above are not sufficient by themselves for a criterion to fail in this dimension, e.g., ""The Agent reports that PR #438 had no human-submitted review"" contains ""no"" but the criteria remains affirmatively framed: ""The agent reports..."" is the affirmative portion and ""no human-submitted review"" is just a description of the content being checked for within the report.","true","true","","false","[All] [All] [Fail - Criteria Framing]","","[Fail - Criteria Framing]: One or more rubric criteria that do not correspond to an explicit ""non-action""/""prohibition""-type prompt instruction (i.e., a negative instruction or constraint) is not framed affirmatively.","2","true"
+"","","","","","","","","","","All rubric criteria corresponding to prompt instructions that aren't of the ""non-action""/""prohibition""-type (i.e., a negative instruction or constraint) are framed affirmatively.","5","false"
+"37890a9f-7388-4cfe-94a8-d1047ef4cb64","Trajectory - Agent Failure Rate (pass@1)","Rate pass@1","Applies to the rubric-graded set of trajectories in the task.
+
+At most 3 of 6 completed runs may pass all valid rubrics (pass@1 <= 50%). 4+ passing = too easy.
+
+SEE ADDITIONAL NOTES IN SPEC","true","true","","false","[All] [All] [Fail - Too Easy]","","[Fail - Too Easy] 4+ of 6 runs pass all rubrics (pass@1 > 50%).","2","true"
+"","","","","","","","","","","<=3 of 6 runs pass all rubrics (pass@1 <= 50%).","5","false"
+"d645e79d-7315-4411-8f7c-d7129b05a757","Trajectory - Average Weighted Rubric Pass Rate","Rate Avg Weighted Pass Rate","Applies to the rubric-graded set of trajectories in the task.
+
+Mean across completed rollouts of passed-rubric weight over total rubric weight must be <90% (the Easy floor).","true","true","","false","[All] [All] [Fail - Avg Pass Rate Too High]","","[Fail - Avg Pass Rate Too High] Average weighted rubric pass rate is >=90%.","2","true"
+"","","","","","","","","","","Average weighted rubric pass rate is <90%.","5","false"
+"5edc861d-2a46-4f7d-95b8-cd2221be2899","Trajectory - Failure Signature Concentration","Rate Failure Concentration","A failure signature = the exact set of rubrics a rollout failed. Need >=2 distinct signatures and no single signature >50% of failing rollouts (exactly 50% OK).
+
+Two failing rollouts count as different patterns only when they differ on at least 2 rubric results.
+
+Example:
+R1 fails: 2, 4, 6
+R2 fails: 4, 6, 8
+R3 fails: 2, 4, 6
+R4 fails: 4, 6, 8
+R5 fails: 4, 6, 8
+R6 fails: 2, 4, 6
+There are two distinct patterns here since these rollouts differ on both C2 and C8.
+
+R1 fails: 2, 4, 6
+R2 fails: 4, 6
+R3 fails: 2, 4, 6
+R4 fails: 4, 6
+R5 fails: 4, 6
+R6 fails: 2, 4, 6
+There's only a single distinct pattern here as the difference only revolves around a single criterion: C2.
+
+Additionally, no set of failing criteria should be over-represented in the runs (even if ultimately there are enough distinct sets) - this is checked against a 50% threshold. So if R1-4 all missed only C1, even if R5-6 are distinct, this is still failing.","true","true","","false","[All] [All] [Fail - Too Few Signatures]; [All] [All] [Fail - Signature Over-Concentrated]","","[Fail - Too Few Signatures]
+Fewer than 2 distinct patterns across failing rollouts.","2","true"
+"","","","","","","","","","","[Fail - Signature Over-Concentrated]
+One signature accounts for >50% of failing rollouts.","2","true"
+"","","","","","","","","","",">=2 distinct signatures and none exceeds 50%.","5","false"
+"4e1ddc3a-4490-4204-bacf-84f0ed76ca58","Trajectory - Error Rate","Rate the trajectories' error rates","Sometimes, runs may error out. CBs are allowed to continue as long as there are at least 4 successful runs (i.e., max of 2 erroneous runs). This is not the same as a “run with rubric failures”.
+
+
+
+SEE ADDITIONAL NOTES IN SPEC FOR A REFERENCE IMAGE","true","true","","false","[All] [All] [Fail - Too Many Erroneous Runs]","","[Fail - Too Many Erroneous Runs] 
+At least 3 runs were not successfully completed (resulted in an Error).","2","true"
+"","","","","","","","","","","Fewer than 3 runs were not successfully completed (resulted in an Error).","5","false"

@@ -1,0 +1,119 @@
+{
+ "card_index": 6,
+ "universe": "mortgage-broker-01-keystone",
+ "prompt": "I need to get loan LN-2026-00119 (Bellamy) closed out on the compliance side- I flagged a TRID timing problem on it and I want to be sure the whole thing is actually cured before it moves forward. Can you dig through the activity history, the loan record, Stripe, the compliance discussion in Slack, and the emails, and confirm the application date, where things stand with UWM, and whether Bellamy has acknowledged the corrected estimate? I also want the payment side to line up- check that the original rate-lock charge and the refund match what we disclosed and that the net comes out right, and make sure the borrower's payment record is actually tied to this loan and not crossed with another file. If anything's missing or doesn't add up- or if there's anything else that could still hold up the closing- tell me what's off. Once you've got the full picture, send Robert Calloway and Denise Holloway a note on where the cure stands, and post a closeout update in the compliance-alerts channel where I first raised this so the team knows it's resolved. Update the activity record on the loan, and make sure finance has the refund confirmed on their end. If UWM's written acceptance still isn't in, go ahead and send them a follow-up asking for it. I'll also need a short TRID summary of what happened.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The agent finds the Bellamy loan record and confirms the basic file details.",
+   "evidence": "See oracle event 1. The loan should be searched for.",
+   "cb_justification": "This rubric exist to find the LN-2026-00119 number which is the first step of resolving this prompt."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The agent should look for Nadia's alert showing TRID timing issue.",
+   "evidence": "Check oracle event 2. The agent finds the activity showing that Nadia identified a TRID violation.",
+   "cb_justification": "The activity history shows the traces of why this exists."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The agent confirms the LN-2026-00119 disclosure timeline: the application date (2026-06-16), when the original Loan Estimate was sent (2026-06-23), the corrected Loan Estimate issue date (2026-07-01), and that Bellamy acknowledged/e-signed the corrected estimate on 2026-07-01.",
+   "evidence": "The agent reports the 2026-06-16 application date, the 2026-06-23 original LE send date, the 2026-07-01 corrected LE, and Bellamy's 2026-07-01 acknowledgment. See oracle events 2 and 3.",
+   "cb_justification": "The prompt asks the agent to confirm the application date and whether Bellamy acknowledged the corrected estimate; the application date is the anchor for the 3-business-day TRID deadline."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The agent confirms the Stripe rate-lock fee reconciliation for LN-2026-00119: $750 was charged (charge ch_nbu0k8lkc9vq3e, succeeded) versus $500 disclosed on the Loan Estimate- a $250 overcharge- cured by a $250 refund (re_f225g3nbgfvexy, succeeded), leaving $500 net retained that matches the disclosed amount (consistent with the balance transactions).",
+   "evidence": "The agent reports the $750 charge, the $500 disclosed amount, the $250 overcharge, the $250 refund (succeeded), and the $500 net retained matching the disclosure, citing the Stripe charge/refund/balance-transaction records. See oracle event 4.",
+   "cb_justification": "The prompt asks the agent to confirm the refund and check that the charge and refund match what was disclosed and that the net comes out right. These figures all come from the same Stripe records for the fee and prove the overcharge was cured."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The agent searches for emails connected to Bellamy, Nadia Osman, the LN-2026-00119 loan, and the refund.",
+   "evidence": "The agent finds emails confirming the refund, and the corrected loan estimate status.",
+   "cb_justification": "This shows the communication evidence which gives information about what everyone was told."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The agent searches Slack to verify if the issue was taken up with Denise Holloway or Robert Calloway.",
+   "evidence": "The agents verifies whether the issue was escalated in Slack, and specifically, if it was taken up with Denise Holloway or Robert Calloway.",
+   "cb_justification": "This exists because it proves internal awareness. The prompt asks for Slack discussions, and the agent should not rely only on email and loan records."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The agent compares the loan record, activity history, emails, Stripe, and Slack.",
+   "evidence": "The agent should look across systems and states whether the corrected loan estimate, refund, and acknowledgment from Bellamy are complete or incomplete.",
+   "cb_justification": "This exists for the agent to connect the facts and decide whether the issue is resolved."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The agent identifies that UWM's written acceptance/confirmation for the corrected submission has not yet arrived (only verbal/informal confirmation exists) and states that a follow-up with UWM is still needed.",
+   "evidence": "In the agent's final response and/or activity note, it reports that UWM has only given verbal/expedited-review confirmation and that the written acceptance/confirmation of the corrected LE submission is still outstanding, therefore a UWM follow-up is needed. See oracle event 8 (reframed to the UWM follow-up ask).",
+   "cb_justification": "The prompt asks the agent to confirm UWM status and 'check if a follow-up is needed with UWM.' The correct end-state is that UWM's written acceptance is still outstanding, so a follow-up is required. The original criterion instead graded a 'proceed with / put the closing disclosure on hold' decision that the prompt never requested."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The agent adds a concise and concrete update in which it explains the cure status, the refund status, and whether anything remains outstanding.",
+   "evidence": "The agent updates the activity record with a concrete and concise compliance note that includes all information done.",
+   "cb_justification": "This rubric exists because it creates a record of the closeout in the activity record."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The agent sends a message that summarizes what has been done.",
+   "evidence": "The agents sends a message to Robert Calloway and Denise Holloway summarizing the information.",
+   "cb_justification": "This is needed because it proves that the agent communicated the issue to the decision makers Robert and Denise."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The agent confirms the refund by sending Finance the refund amount, the refund ID, and confirmation that the refund cured the overcharge.",
+   "evidence": "The agent sends the information in OE 11 to Finance.",
+   "cb_justification": "This is needed for the Stripe part of the prompt to be complete. Finance needs this information for accounting and billing."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The agent prepares a brief TRID summary of the LN-2026-00119 issue that covers (a) the Loan Estimate timing violation (LE sent 2026-06-23 vs. the 2026-06-19 three-business-day deadline for the 2026-06-16 application), (b) the rate-lock fee discrepancy ($750 charged vs. $500 disclosed), and (c) how it was cured (corrected LE issued 2026-07-01 and a $250 refund) (or similar).",
+   "evidence": "The TRID summary the agent writes (e.g., to the filesystem) states the LE was delivered late relative to the 3-business-day TRID deadline, the $750-vs-$500 rate-lock fee discrepancy, and the cure via corrected LE (2026-07-01) plus the $250 refund. See oracle event 12 (anonymization requirement removed).",
+   "cb_justification": "The prompt asks the agent to 'prepare a TRID summary.' The summary must convey the disclosure-timing problem, the fee/payment problem, and how it was resolved. The original criterion required the summary to be anonymized ('without identifying details about the borrower'), a constraint absent from the prompt and universe, which failed every run for correct behavior."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the borrower's Stripe customer record (cus_x34n65rka09tfc) is mislabeled, its description references loan LN-2026-00701, whereas the rate-lock fee payment intent (pi_ok95fxntujcsew) and charge (ch_nbu0k8lkc9vq3e) correctly reference LN-2026-00119, and flags this discrepancy.",
+   "evidence": "The agent's findings/response flags that the Stripe customer record's loan reference (LN-2026-00701) does not match the loan under review (LN-2026-00119), even though the payment objects reference the correct loan. See oracle event 13.",
+   "cb_justification": "The prompt asks the agent to make sure the borrower's payment record is tied to this loan and not mislabeled. The customer description carries the wrong loan number, so a correct agent must surface the mislink."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent posts a closeout update for LN-2026-00119 in the #compliance-alerts Slack channel, stating that the TRID timing issue and the rate-lock fee overcharge have been cured (corrected Loan Estimate issued 2026-07-01 and a $250 refund).",
+   "evidence": "The agent posts a message in the #compliance-alerts channel summarizing that the LN-2026-00119 TRID/rate-lock-fee issue is cured (corrected LE + $250 refund). See oracle event 14.",
+   "cb_justification": "The prompt asks the agent to post a closeout update in the compliance-alerts channel where the issue was first raised, so the compliance team sees the resolution."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent sends a follow-up email to UWM at [uwm.submissions@uwm.com](mailto:uwm.submissions@uwm.com) requesting the written acceptance/confirmation of the corrected LN-2026-00119 submission.",
+   "evidence": "The agent sends an email to uwm.submissions@uwm.com asking UWM to provide written acceptance/confirmation of the corrected LN-2026-00119 submission. See oracle event 15.",
+   "cb_justification": "The prompt asks the agent to follow up with UWM if the written acceptance still isn't in; the universe shows only verbal confirmation, so the agent should send the follow-up."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent identifies that the LN-2026-00119 rate lock expires 2026-07-20, before the scheduled 2026-07-25 closing date, and flags that a rate-lock extension (or re-lock) is needed before the loan can close.",
+   "evidence": "The agent's findings/response notes the rate-lock expiration of 2026-07-20 falls before the 2026-07-25 closing date and flags that a rate-lock extension or re-lock is required. See oracle event 16.",
+   "cb_justification": "The prompt asks the agent to flag anything that could hold up the closing; the rate lock expiring five days before the closing date is a material risk that must be surfaced."
+  }
+ ]
+}

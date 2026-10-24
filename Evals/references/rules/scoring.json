@@ -1,0 +1,374 @@
+[
+  {
+    "Dimension": "Authority and Thresholds",
+    "Sub-Dimensions": [
+      {
+        "Sub- Dimension": "Authority Order",
+        "Notes for Auditors": "Use Evals/ENVIRONMENT.md and Evals/WORKFLOW.md for current environment, evidence and reporting contracts. Evals/references/tools/catalog.json lists supplied tools and parameters; verify capabilities through actual runtime schemas and reads. Evals/references/persona/acl.md and roster.json control existing identity and read-access rules. Prompt inputs, applicable reference attachments, deployed records and optional static injection SQL establish task requirements and facts. Evals/references/schema/injection.json is an unverified injection database snapshot; follow its README before applying any column or constraint finding. This file supplies scored dimension definitions, subject to explicit current numbered-Eval overrides. Historical examples are optional calibration, not policy. WORKFLOW.md stage-evidence-v1 governs scope and reuse: verified facts may be reused only with matching source/input/rule dependencies and complete evidence; final verdicts are never inherited. Each stage inspects its actual artifact.",
+        "Fail (1/2 Rating)": "[Fail - Wrong Authority] A task or audit relies on a legacy example, authoring guide, or assumed product capability to override the prompt, live universe, schema, tool catalogs, or current Evals.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "All claims and decisions follow the repository authority order."
+      },
+      {
+        "Sub- Dimension": "Complexity Threshold Layers",
+        "Notes for Auditors": "Tool-call requirements are handled only under Trajectory - Task Type & Horizon (2026-09-26 update). Count calls from a baseline rollout that scored 100% on the rubric when one exists; otherwise use the average across the six baseline rollouts. Normal Horizon is 50-100 tool calls; Long Horizon is 100-500+. The Oracle Events set never enters this count. There is no separate average >=15 rule and no prompt-stage call-count gate. ACL-denied reads, repeated retries and set_acting_user configuration are not necessary Agent work. /prompt checks design (investigation, cross-service friction, meaningful writes) without estimating a call count.",
+        "Fail (1/2 Rating)": "[Fail - Wrong Horizon] The counted tool calls fall under the assigned tier's range (Trajectory - Task Type & Horizon).",
+        "Non-Fail (3/4 Rating)": "[Non-Fail - Borderline Horizon] The counted tool calls sit at the edge of the assigned tier.",
+        "Pass (5 Rating)": "The counted tool calls match the assigned tier."
+      }
+    ]
+  },
+  {
+    "Dimension": "Injection",
+    "Review version": "injection-static-v2",
+    "Scoring": "Unscored. Use PASS / NON-FAIL / FAIL under Eval 0; no numeric rating or difficulty composite.",
+    "Sub-Dimensions": [
+      {
+        "Sub- Dimension": "Records, references and IDs",
+        "Notes for Auditors": "Resolve affected records and references against the local base plus proposed SQL; inspect operation order, history, supported uniqueness scope and valid upsert handling. Preserve existing IDs and mixed representations.",
+        "FAIL": "A demonstrated broken reference, unintended collision or violation of a supported ID contract.",
+        "NON-FAIL": "Required static reference/collision coverage remains unresolved without a demonstrated failure; use PARTIAL/BLOCKED.",
+        "PASS": "All applicable reference and ID checks pass within the reviewed local state."
+      },
+      {
+        "Sub- Dimension": "SQL structure and supported schema rules",
+        "Notes for Auditors": "Inspect statically determinable SQL structure and constraints from supplied authoritative version-matched definitions. Bundled schema comparisons are provisional; missing verified definitions and undocumented runtime constraints are disclosed limits, not mandatory PENDING gates.",
+        "FAIL": "A demonstrated SQL structural error or violation of a supported schema definition.",
+        "NON-FAIL": "A required static determination remains unresolved without a proven failure; use PARTIAL/BLOCKED.",
+        "PASS": "Applicable static structure and supported schema checks pass; this is not live compatibility certification."
+      },
+      {
+        "Sub- Dimension": "Dates, relationships and data consistency",
+        "Notes for Auditors": "Compare affected facts, references and chronology across SQL and base records. Injected and base records may predate January 1, 2026; there is no global earliest allowed date. Use the fixed 2026-02-14 00:00 UTC clock: records presented as already existing or completed must be chronologically consistent, while future deadlines and scheduled events may be represented as future. Preserve valid historical context; distinguish introduced contradictions from pre-existing discrepancies. Derived calculations require supported semantics. Weekends, unusual hours and historical age alone are not integrity defects.",
+        "FAIL": "A demonstrated introduced contradiction, broken relationship or impossible chronology, including an event after the fixed clock incorrectly represented as already completed.",
+        "NON-FAIL": "A required material consistency check remains unresolved without a proven defect; use PARTIAL/BLOCKED.",
+        "PASS": "All applicable date, relationship and consistency checks pass within the static scope."
+      }
+    ]
+  },
+  {
+    "Dimension": "Prompt",
+    "Sub-Dimensions": [
+      {
+        "Sub- Dimension": "Unique Ground Truth",
+        "Notes for Auditors": "Use the prompt, authorized-source requirements under WORKFLOW.md Task requirement authority, and assignment to establish material outcomes and acceptable alternatives. Under prompt-incorporation-v1, only the prompt and instructions it clearly incorporates establish requirements. Unmentioned handbooks, onboarding documents and policies add no grading obligations, even when official or injected. Cite the incorporating prompt passage and verify applicability, Agent access and version; factual research does not incorporate source instructions. Reassess older requirement maps before reuse. Before every PASS or FAIL, complete the two-reading table, test the strongest plausible alternative and account for every explicit option. Apply five checks to each material difference: newer source, authority, source identity, scope and same material result. Use the latest applicable source for the same issue and scope; a later update can resolve an earlier conflicting statement without explicitly announcing replacement. Respect the task cutoff date and prompt-specified source priority. Apply a governing source only to the decisions it covers, identify the named source, and retain unaffected requirements after partial updates. Compare concrete decisions, writes, destinations and required contents; the same destination alone does not establish the same result. Equivalent wording or paths do not fail; materially incompatible required outcomes without a resolving rule do. Open-ended requests need objective acceptance boundaries rather than one exact string. Do not request or load later Oracle Events, rubrics, verifier results or agent runs; no run-convergence prerequisite applies.",
+        "Fail (1/2 Rating)": "[Fail - Multiple Valid Answers] Two supported reasonable readings produce materially incompatible required outcomes, and the prompt or applicable sources do not resolve the choice under Eval 1 section 2.1.",
+        "Non-Fail (3/4 Rating)": "N/A; the QC form offers no middle band on this dimension.",
+        "Pass (5 Rating)": "The completed two-reading table names the strongest plausible alternative and shows that it is ruled out by cited evidence, produces the same required material result, or falls within explicitly authorized alternatives or cited objective acceptance boundaries. One coherent procedure, a leading reading, or resolving only one part of the task is insufficient."
+      },
+      {
+        "Sub- Dimension": "Feasibility",
+        "Notes for Auditors": "Check every explicit ask against applicable task attachments, deployed records, Evals/references/tools/catalog.json, and actual runtime capability and precision. The catalog contains 13 service exports plus the gateway tool; it does not by itself prove every runtime behavior. Apply Evals/references/persona/acl.md as written. Apply service-availability-v1 in Evals/ENVIRONMENT.md: Snowflake and Confluence are live and usable through cataloged operations; their reads are unscoped per acl.md (QC Rating Form V12, 2026-09-27). Assess concrete task-specific restrictions from evidence. Verify requested dimensions, exact values, and derivation inputs through the assigned Agent's observable path. Raw export visibility does not establish scoped visibility.",
+        "Fail (1/2 Rating)": "[Fail - Prompt Impractical Request] An explicit ask cannot be answered by an LLM agent in a single response. OR [Fail - Prompt Impossible Request] An explicit ask cannot be fulfilled at all, including a missing entity, absent dimension for a requested breakdown, or precision unavailable through the tool-visible environment. OR [Fail - Prompt Conflicting Instructions] The prompt gives instructions that contradict each other and cannot be satisfied simultaneously. OR [Fail - Prompt Feasibility with Tools] An explicit ask is unsupported by the enabled tools, or depends on required Gmail, Slack, GCal, or Drive-family (GDrive/GDocs/GSheets/GSlides) evidence inaccessible to the assigned persona. The persona-scoped read rule does not fail a task whose intended outcome is an affirmative access-denial finding plus reporting, escalation, or an authorized alternative.",
+        "Non-Fail (3/4 Rating)": "N/A (local override of the QC form): any explicit ask that cannot be fully fulfilled fails; there is no secondary-request middle band.",
+        "Pass (5 Rating)": "Every explicit ask is actionable, discoverable, dimensionally supported, and numerically observable."
+      },
+      {
+        "Sub- Dimension": "Persona ACL Reachability",
+        "Notes for Auditors": "Persona ACL is active: scoped services return only records owned by, shared with, or visible to the assigned roster persona. Universe Explorer shows all records regardless of persona, so judge reachability from record details \u2014 Gmail sender/recipient/cc, Slack channel/DM membership, and Drive-family file ownership or share. Persona-scoped reads: Gmail, Slack, GCal, and the Drive-family (GDrive, GDocs, GSheets, GSlides, which inherit Drive's file ACL). Unscoped reads: Contacts, GitHub, Trello, and Linear. Writes are never ACL-blocked.",
+        "Fail (1/2 Rating)": "[Fail - Prompt Feasibility with Tools] A required read targets an element inaccessible to the assigned persona in a scoped service (Gmail, Slack, GCal, or the Drive-family), and the intended outcome is not an affirmative access-denial finding plus reporting, escalation, or an authorized alternative.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "Every required scoped-service read is reachable by the assigned persona, or the prompt's intended outcome is an authorized access-denial finding."
+      },
+      {
+        "Sub- Dimension": "Explicit Tool Mention",
+        "Notes for Auditors": "Prompts may use natural product language (\"check my email\", \"the Linear ticket\") but must not read like tool documentation. Local override of the QC form: this dimension is pass/fail. Prompt Writing's checklist requires naming no tool, no MCP server and no parameter.",
+        "Fail (1/2 Rating)": "[Fail - Explicit Tool Mention] The prompt names an MCP function or parameter, names an MCP server (\"use the Linear MCP server\"), or calls an enabled system a tool (\"use the GitHub tool\").",
+        "Non-Fail (3/4 Rating)": "N/A (local override of the QC form's Tool/MCP Server Mentioned band).",
+        "Pass (5 Rating)": "The prompt describes business work without tool or parameter instructions."
+      },
+      {
+        "Sub- Dimension": "Prompt Clarity and Specificity",
+        "Notes for Auditors": "Enumerate write actions under each reasonable reading. Scan first-person statements such as I'll do X beside Agent imperatives; an unresolved user-self-action versus delegation split is action-decision ambiguity.",
+        "Fail (1/2 Rating)": "[Fail - Major Clarity / Specificity Issues] Intent is unclear or critical details cannot be reasonably inferred. OR [Fail - Action Decision Ambiguity] Two reasonable readings lead to different writes, write versus no-write, or act versus defer.",
+        "Non-Fail (3/4 Rating)": "[Non-Fail Minor Clarity / Specificity Issues] Interpretations vary only in wording, framing, channel of delivery to the same recipient, or another non-material detail while all writes and external effects remain the same.",
+        "Pass (5 Rating)": "The request is clear and requires no more than one minor assumption."
+      },
+      {
+        "Sub- Dimension": "Contrived or Unnatural Prompt",
+        "Notes for Auditors": "Natural difficulty comes from scattered information, entity confusion, state conflicts, hidden causes, and related work. Exact timestamps, arbitrary response constraints, scripted search order, repeated reads, or unnecessary writes added only to inflate calls are contrived. Prompts must read like realistic human workplace requests (2026-09-26 update). Exact titles and values are fine when they are naturally human-readable; unnatural opaque IDs, generated filenames, full agent IDs or similar references are contrived unless actually necessary. An LLM-sounding prompt (uniform capitalisation and punctuation, document formatting, enumerated deliverable specs) is scored here.",
+        "Fail (1/2 Rating)": "[Fail - Contrived / Unnatural Prompt] The task's difficulty substantially depends on artificial constraints or call inflation, the prompt carries an opaque ID, generated filename, full agent ID or exact timestamp the task does not need (common errors checklist, 2026-10-04), or the prompt sounds like a spec or a polished draft even when the situation itself is real.",
+        "Non-Fail (3/4 Rating)": "N/A (2026-10-05). A limited artificial element, spec-like voice, or polished LLM-sounding draft fails.",
+        "Pass (5 Rating)": "The request reads like realistic HarmonyGames work and derives difficulty from the situation."
+      },
+      {
+        "Sub- Dimension": "Truthfulness",
+        "Notes for Auditors": "Tight identifiers include channel names, file paths, document and repository names, contact emails, dates, fiscal periods, and ticket or issue IDs. One wrong tight identifier is major. Loose descriptors include a disambiguated first name, role title, or casual entity reference. A loose error escalates when it causes failure.",
+        "Fail (1/2 Rating)": "[Fail - Major Factual Errors] One or more tight identifiers or other major facts are wrong or phantom. OR [Fail - Minor Factual Errors] One or more loose descriptors are wrong, including one slip that does not change what has to be done.",
+        "Non-Fail (3/4 Rating)": "N/A (2026-10-05). One loose descriptor error fails.",
+        "Pass (5 Rating)": "The prompt has no factual errors or misleading claims."
+      },
+      {
+        "Sub- Dimension": "Tool Use and Cross-Service Requirement",
+        "Notes for Auditors": "This QC form sub-dimension scores tool dependence and genuine cross-service reach. There is no prompt-stage call-count gate (removed 2026-09-26); tool-call requirements live in Trajectory - Task Type & Horizon. Do not map a prompt design estimate to trajectory pass rates or /hardness observed difficulty. No later run artifacts are required for /prompt.",
+        "Fail (1/2 Rating)": "[Fail - Tool Dependence] The task can be answered without tools, through basic reasoning or general knowledge. OR [Fail - Cross-service Requirement] It can be fully resolved in one enabled service, or a second service changes no graded fact (common errors checklist, 2026-10-04).",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "Correct completion requires genuine investigation across 2+ enabled services, with the needed facts scattered and requiring reconciliation.",
+        "Internal Authoring Target": "Author for real information friction across 3+ services and investigation that feeds meaningful writes. Call counts are judged at Trajectory - Task Type & Horizon (Normal 50-100, Long 100-500+), not here."
+      },
+      {
+        "Sub- Dimension": "Investigation",
+        "Notes for Auditors": "The requested actions must depend on findings the Agent has to discover.",
+        "Fail (1/2 Rating)": "[Fail - Pre-solved] The prompt gives away the root cause or makes investigation unnecessary.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "The prompt requires investigation and the requested actions follow from it."
+      },
+      {
+        "Sub- Dimension": "Coherence",
+        "Notes for Auditors": "Every ask must causally support the same situation. Removing an unrelated sentence without affecting the rest signals a bolt-on.",
+        "Fail (1/2 Rating)": "[Fail - Bolt-on requests] One or more asks are unrelated to the task's central purpose; removing a sentence does not change the rest.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "All asks form one coherent workflow."
+      },
+      {
+        "Sub- Dimension": "Persona",
+        "Notes for Auditors": "Use Evals/references/persona/roster.json for the exact 17 authorized persona bindings and Evals/references/persona/acl.md for access rules. Use supplied assignment details and current deployed records for role and relationship context. The roster covers Design, Engineering, Executive and Product; it has no Finance persona or CFO. Keep the taxonomy-selected identity unchanged; do not expand the roster from export contacts or override it with the AMV dropdown.",
+        "Fail (1/2 Rating)": "[Fail - Persona Mismatch] The request is not plausible for the exact assigned roster persona's role, authority, voice, or required scoped-read access.",
+        "Non-Fail (3/4 Rating)": "[Non-Fail - Persona Mismatch] The request is plausible for the assigned persona but fits another persona better.",
+        "Pass (5 Rating)": "The prompt aligns with the exact assigned roster persona in role, identity, and required scoped-read reachability."
+      },
+      {
+        "Sub- Dimension": "Business Function",
+        "Notes for Auditors": "Use Evals/references/rules/task_categories.md for the six current categories. The QC form has no failing option on this dimension; the worst available score is a 3.",
+        "Fail (1/2 Rating)": "N/A; the QC form offers no failing option on this dimension.",
+        "Non-Fail (3/4 Rating)": "[Non-Fail - Business Function Mismatch] The scenario is ambiguous and could reasonably belong to either the assigned function or a different one, or it fits a different function better.",
+        "Pass (5 Rating)": "The scenario clearly reflects a realistic scenario within the assigned business function.",
+        "Internal Authoring Target": "Author every task to a clear 5 on the assigned function. A scenario that clearly belongs outside its assigned function cannot be failed on the form, so treat it as a rework item at authoring and record it as [Non-Fail - Business Function Mismatch] at audit."
+      },
+      {
+        "Sub- Dimension": "Assigned Competency",
+        "Notes for Auditors": "HARD GATE (Phase 1.5). The assigned competency is one of Product Management, Engineering Ops, Marketing-GTM, Corporate Ops, Finance. Check that the scenario and the prompt's asks fall inside it, using Evals/references/rules/task_categories.md for the business-function mapping. A supplied label that is not verbatim one of the taxonomy categories maps to its nearest category; record the mapping. PENDING when the assignment field was never supplied.",
+        "Fail (1/2 Rating)": "[Fail - Assigned Competency Mismatch] The scenario or the prompt's asks fall outside the assigned competency, or the assigned competency was supplied but is not exercised by the work the prompt requires.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "The scenario and every explicit ask fall inside the assigned competency, and the competency is the one the work actually exercises.",
+        "Internal Authoring Target": "Author the scenario inside the assigned competency before writing the prompt, so the competency is a description of the work rather than a label on it."
+      },
+      {
+        "Sub- Dimension": "Assigned Task Skill",
+        "Notes for Auditors": "HARD GATE (Phase 1.5). The assigned primary skill is one of Retrieval, Analysis and Synthesis, Planning and Decision Support, Authoring, Actions. The bar is that the assigned skill is genuinely exercised and central, not nodded at; stacking additional skills on top is fine. Chat messages are the terminal action of nearly every task in this taxonomy and do not by themselves establish Authoring, which needs an authored artifact. PENDING when the assignment field was never supplied.",
+        "Fail (1/2 Rating)": "[Fail - Assigned Task Skill Mismatch] The assigned primary skill is absent, or is only incidentally present while a different skill carries the work. A skill that is nodded at rather than exercised fails.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "The assigned primary skill is clearly and centrally exercised by the work the prompt requires.",
+        "Internal Authoring Target": "Pick the skill that the work actually turns on, then make it the spine of the task. If Authoring is assigned, require a real authored artifact, not a chat message."
+      },
+      {
+        "Sub- Dimension": "Complexity Dimensions and Data Seeding",
+        "Notes for Auditors": "HARD GATE (Phase 1.5), scored as one row. Complexity: at least one of Ambiguity, Dynamic Change, Multi-Source must be load-bearing, meaning the task cannot be completed correctly without resolving it; record which. Data seeding: the operating details live in deployed records the agent must discover, not in a long recipe prompt.",
+        "Fail (1/2 Rating)": "[Fail - No Load-Bearing Complexity] None of Ambiguity, Dynamic Change or Multi-Source is load-bearing; removing all three would still leave the task completable. OR [Fail - Prompt Carries the Recipe] The prompt itself supplies the operating details that should have been seeded in the environment, so little discovery is required.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "At least one complexity dimension is load-bearing and recorded, and the operating details live in the environment so the prompt reads as a short trigger over seeded context.",
+        "Internal Authoring Target": "Seed the details into records and keep the prompt a short trigger. Make at least one of the three dimensions genuinely load-bearing rather than decorative."
+      },
+      {
+        "Sub- Dimension": "Alignment with Today's Date",
+        "Notes for Auditors": "The fixed current date and time is 2026-02-14 00:00 UTC. Follow Evals/ENVIRONMENT.md for timestamp comparisons. Verify the stated window contains the needed data. Future scheduled events are valid when treated as future. The scored form requires an actual agent failure for universe-side misalignment; Eval 1's explicit authoring override additionally rejects material scenario misalignment before runs. Do not let a legacy form rule relax that override.",
+        "Fail (1/2 Rating)": "[Fail - Prompt Misaligned with Today] The request does not make sense or cannot be fulfilled given February 14, 2026 at 00:00 UTC, for example asking what already happened in a window that is still in the future. OR [Fail - Universe Misaligned with Today] The contributor modified the universe incoherently with today's date AND it caused an agent failure. OR [Fail - Universe Misaligned with Today] The default universe data is not aligned with today's date AND it caused an agent failure.",
+        "Non-Fail (3/4 Rating)": "N/A; the QC form offers no middle band on this dimension.",
+        "Pass (5 Rating)": "The prompt does not contradict February 14, 2026 at 00:00 UTC; OR the default universe data is not aligned with today's date but it did not cause an agent failure.",
+        "Internal Authoring Target": "Relative dates such as Friday, today, yesterday and last week are allowed when task context and the fixed universe clock resolve them clearly. Eval 1 section 2.8 checks material ambiguity and temporal contradictions, not explicit-date formatting. Material scenario contradictions can require rework before a run; relative wording or proximity to a data boundary alone never causes a failure."
+      },
+      {
+        "Sub- Dimension": "Originality / Sample Similarity",
+        "Notes for Auditors": "STRONG HARD GATE (Phase 2.9), non-waivable when it fires. Compare the candidate only against explicitly supplied samples. N/A when no samples are supplied; an N/A here is excluded from aggregation and is neither an unsupported PASS nor a blocker. Never claim corpus-wide originality from an empty comparison set.",
+        "Fail (1/2 Rating)": "[Fail - Sample Clone] The candidate duplicates an explicitly supplied sample: same scenario and entities, four or more of the seven fingerprint elements shared, a persona-plus-scenario-plus-ask lift, or verbatim or near-verbatim sentences.",
+        "Non-Fail (3/4 Rating)": "The candidate shares a recognisable scenario shape or several phrasings with a supplied sample without reaching clone or light-paraphrase territory.",
+        "Pass (5 Rating)": "The candidate is independently constructed against every supplied sample across scenario, persona, entities, asks, services, writes and phrasing.",
+        "Internal Authoring Target": "Write against the samples, not from them. Change the scenario and the entities, not just the names."
+      }
+    ]
+  },
+  {
+    "Dimension": "Universe",
+    "Sub-Dimensions": [
+      {
+        "Sub- Dimension": "Universe Feasibility (Data Exists)",
+        "Notes for Auditors": "Use the selected setup instance, applicable task reference files and optional static injection SQL for task-specific facts, additions, changes, rendering, pagination and tool-visible precision. Proposed SQL records are not proven executed. Raw exports show global existence, not assigned-persona visibility. Apply Evals/references/persona/acl.md as written; leave access rules absent from that matrix unverified. Missing reviewer evidence is not proof of absent task data.",
+        "Fail (1/2 Rating)": "[Fail - Missing Universe Data] A core fact, entity, event, dimension, or value required by the prompt is absent or unreachable to the assigned persona. Required Gmail, Slack, GCal, or Drive-family (GDrive/GDocs/GSheets/GSlides) evidence visible only to another persona fails unless the intended outcome is an affirmative access-denial finding plus reporting, escalation, or an authorized alternative.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "All core facts exist and are retrievable through enabled tools under the applicable assigned-persona read scope."
+      },
+      {
+        "Sub- Dimension": "Cross-Service Coherence",
+        "Notes for Auditors": "QC form rule adopted for /prompt: review the universe data the task touches, visually and per artifact, within each artifact and across related artifacts and services. The dimension fails on the presence of an inconsistency itself, whether or not it caused an agent failure and whether or not the contributor introduced it. Synthetic data in HarmonyGames: Snowflake and Confluence. Note knock-on effects or larger patterns with evidence. Reuse static integrity checks from a matching injection-static-v2 PASS / COMPLETE ledger under WORKFLOW.md stage-evidence-v1.",
+        "Fail (1/2 Rating)": "[Fail - Temporal Field Inconsistency] Date-bearing fields contradict each other or the 2026-02-14 00:00 UTC clock. OR [Fail - Semantic / Category Inconsistency] A categorical or descriptive field does not match the underlying work or entity. OR [Fail - Cross-service Referential Inconsistency] The same entity or fact is represented inconsistently across services, or a required reference does not resolve. OR [Fail - Quantitative / Reconciliation Inconsistency] Numeric fields do not reconcile. OR [Fail - State / Lifecycle Inconsistency] A status contradicts the record's activity or related records. OR [Fail - Identifier / Uniqueness / Format Inconsistency] Identifiers are malformed, null, duplicated or follow inconsistent schemes within a service. OR [Fail - Other Universe Inconsistency] Any other internal inconsistency.",
+        "Non-Fail (3/4 Rating)": "[Non-Fail - Minor Universe Inconsistency] A single, low-impact inconsistency that does not affect solvability or storyline coherence. A State / Lifecycle or Quantitative / Reconciliation inconsistency never qualifies (common errors checklist, 2026-10-04).",
+        "Pass (5 Rating)": "The task-touched universe data is internally consistent in dates, categories, cross-service references, numbers, lifecycle states and identifiers."
+      }
+    ]
+  },
+  {
+    "Dimension": "Rubric",
+    "Sub-Dimensions": [
+      {
+        "Sub- Dimension": "Overall Rubric Quality",
+        "Notes for Auditors": "Use the authored criterion count as denominator. Count each row at most once at its highest severity; add distinct missing outcomes only to the numerator. Count each completely redundant row once, but each canonical disjoint overlap group once, after higher-severity deduplication (qc_rubric_v10.md). Any Major, any Moderate, or Minor issues on 5% or more of rows fails. No absolute three-row override. Actual vague exemplar use is Moderate; verified literal-name phrase collisions remain unresolved, not automatically failed. Local hg-strict-overrides-v1: Overly Specific that rejects a valid answer is Major, Overly Broad is Moderate, harmless specificity is Minor, and rows that would all fail on one Agent error because each embeds the same acceptance condition form one Moderate overlap group. Two or more predicted all-fail rows force FAIL.",
+        "Fail (1/2 Rating)": "[Fail - Rubric Errors] Any Major issue, any Moderate issue, or Minor issues on 5% or more of criteria.",
+        "Non-Fail (3/4 Rating)": "N/A (2026-10-05). The former within-threshold band fails. Unresolved evidence stays provisional NON-FAIL with no score.",
+        "Pass (5 Rating)": "No Major or Moderate issues and fewer than 5% of criteria have Minor issues."
+      },
+      {
+        "Sub- Dimension": "Criteria Weights",
+        "Notes for Auditors": "Mandatory row-wise expected weight and work-kind/source evidence. 1 direct lookup; 3 interpretation/calculation/comparison; 5 reconciliation/deep reasoning/cross-modal/tracing.",
+        "Fail (1/2 Rating)": "Any weight disagreement.",
+        "Non-Fail (3/4 Rating)": "N/A (2026-10-05). Any disagreement fails.",
+        "Pass (5 Rating)": "All weights correct."
+      },
+      {
+        "Sub- Dimension": "Rubric Category Balance",
+        "Notes for Auditors": "Outcome is required; Process is optional and used only when an Outcome criterion cannot verify the requirement. The fixed ratio rules (Process >50% fails; Outcome must outnumber Process) and the former 40% cap are removed (2026-09-26 update). Invalid Process rows are scored under Process Criteria. Writes are Outcome.",
+        "Fail (1/2 Rating)": "[Fail - No Outcome Rubrics] The rubric set contains zero Outcome rubrics.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "At least one Outcome rubric."
+      },
+      {
+        "Sub- Dimension": "Process Rubrics",
+        "Notes for Auditors": "Every Process criterion must pass all three conditions: required by every valid path or broad enough to accept all valid paths; cannot be captured by a stricter Outcome; and describes an observable verification or behavioral property rather than a tool, query, parameter, call order, or thought trace. Write actions are always Outcome.",
+        "Fail (1/2 Rating)": "[Fail - Process Rubric Not Needed] One or more Process criteria fail one of the three conditions, name a tool or query path, or grade a write as Process. OR a genuinely missing Process check for a sequential/causal dependency that Outcome cannot verify. Do not report missing Process absent such a dependency.",
+        "Non-Fail (3/4 Rating)": "N/A (2026-10-05). One invalid Process row, or a genuinely missing ordering check, fails.",
+        "Pass (5 Rating)": "Any Process criteria present pass the three-condition test."
+      },
+      {
+        "Sub- Dimension": "Agent-Centric Affirmative Phrasing",
+        "Notes for Auditors": "Titles grade actions or states attributable to The Agent and must not name an MCP tool. The reply/report/write-up as grammatical subject fails even with an affirmative verb. Valid Agent possessives and implicit Agent actions fail Agent-Centric. Judge negative framing separately under Negative Criteria: affirmative reported negative facts are allowed; prohibition-only acceptance fails even with prompt authority (hg-strict-overrides-v1). Do not treat a negative word alone as failure. Both AUDIT and CREATE must reconcile exact-title checks with the dimension score under rubric_checks.md.",
+        "Fail (1/2 Rating)": "[Fail - Rubric is not written as an action performed by the agent] One or more titles use an artifact or model as actor, name an MCP tool explicitly, or use a nonstandard Agent form such as The Agent's status update covers X.",
+        "Non-Fail (3/4 Rating)": "N/A (2026-10-05). A nonstandard Agent form fails.",
+        "Pass (5 Rating)": "Every title uses the standard Agent + action + necessary context construction, is natural and avoids MCP tool names. Prohibition-only acceptance is scored under Negative Criteria, not here."
+      },
+      {
+        "Sub- Dimension": "Negative Criteria",
+        "Notes for Auditors": "Frame every criterion affirmatively. Under hg-strict-overrides-v1, prohibition-only or absence-only acceptance syntax fails even when the prompt or clearly incorporated instructions explicitly forbid the action; rewrite it as a preserved state (The Agent leaves ENG-123 open) or scope boundary, and keep the exclusion covered. The Agent reports that PR #438 had no human-submitted review is affirmative: no describes the reported fact. The Agent does not treat X as proof grades a prohibition, even if an affirmative clause follows. Judge the actual acceptance rule, not keyword presence; run the lexical pre-scan in Eval 3.",
+        "Fail (1/2 Rating)": "[Fail - Criteria Framing] One or more titles grade a negatively framed action (prohibition-only or absence-only acceptance), regardless of prompt authority.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "Every title is affirmatively framed. Descriptive negative facts and immutable titles are allowed."
+      }
+    ],
+    "Supporting Gates": [
+      {
+        "Sub- Dimension": "Five-Field JSON Schema and Blank Fields",
+        "Notes for Auditors": "Each object in 09_Rubrics.json must have exactly the task-rubric fields title, category, weight, justification, and evidence. The title value is the criterion text; evaluator prose may call it the Criterion field. Valid category values are exactly Outcome and Process. Use these same two category names in reports and coverage maps; do not introduce numbered subtypes. Valid weight values are 1, 3, and 5 only. All five values must be non-blank. The platform rubric builder stores weight inline beside each criterion, so it is a rubric field and not a separate ledger artifact. Text fields must be strings; weight must be an integer, not a Boolean.",
+        "Repair result: FAIL": "[Fail - Invalid Rubric Schema] Any object uses criterion instead of title, omits a required key, adds an unsupported rubric field, has a blank value, uses an invalid category, or carries a weight other than 1, 3, or 5.",
+        "Boundary or unresolved result": "N/A",
+        "Repair result: PASS": "Every rubric object uses non-blank title, category, weight, justification, and evidence fields with a valid category and a weight of 1, 3, or 5."
+      },
+      {
+        "Sub- Dimension": "Self-Containment and Verifiability",
+        "Notes for Auditors": "Title-only under hg-strict-overrides-v1: the prompt, sibling criteria, justification, evidence and external data cannot supply acceptance values. See qc_rubric_v10.md.",
+        "Repair result: FAIL": "A required acceptance value (ID, value, status, destination, recipient or finding) is not stated in the title itself; the prompt, sibling titles, private universe/persona/schema/annotation facts and supporting fields cannot define acceptance. Apply the documented Process intent exception when multiple tools can validly answer the prompt.",
+        "Boundary or unresolved result": "N/A",
+        "Repair result: PASS": "Every title is self-contained and verifiable from judge-visible evidence."
+      },
+      {
+        "Sub- Dimension": "Atomicity",
+        "Notes for Auditors": "Apply QC same-record, same-tool-output and shared-content exceptions before splitting. Separate actions stay separate; a whole source export is not one observed tool output.",
+        "Repair result: FAIL": "[Fail - Criterion Not Atomic] Any title bundles independently verifiable actions, facts, content requirements, recipients, records, or quantifier-compressed items outside an exception.",
+        "Boundary or unresolved result": "N/A",
+        "Repair result: PASS": "Every criterion tests one atomic condition or a documented atomic exception."
+      },
+      {
+        "Sub- Dimension": "Requirement Coverage and Destination",
+        "Notes for Auditors": "Map every authorized action, requested fact or conclusion, content item, recipient, destination, condition, qualifier, timing or order rule, format, and exclusion from the prompt or incorporated instructions under WORKFLOW.md Task requirement authority (prompt-incorporation-v1). Exclude unmentioned handbook/policy rules; they are not missing coverage. Record the incorporating prompt passage, source instruction, applicability, availability and current version; generate atomic criteria in create mode and flag missing coverage in audit mode. Each requirement must be graded on the correct artifact. Required exclusions remain covered through affirmative criteria.",
+        "Repair result: FAIL": "[Fail - Missing Criteria] Any authorized requirement lacks coverage. OR [Fail - Wrong Destination] A criterion checks a different artifact from the prompt. OR [Fail - Missing Exclusion] A qualifying filter or prohibited action has no affirmative coverage.",
+        "Boundary or unresolved result": "[Fail - Missing Process Rubric] A sequential or causal dependency lacks a Process check even though Outcomes cannot verify the ordering. Do not report missing Process when no such dependency exists.",
+        "Repair result: PASS": "All authorized requirements and exclusions are covered on the correct artifacts, with dependency Process checks only where needed."
+      },
+      {
+        "Sub- Dimension": "Specificity, Accuracy, and Acceptance",
+        "Notes for Auditors": "Prompt plus authorized sources under WORKFLOW.md Task requirement authority set the specificity ceiling. Under prompt-incorporation-v1, unmentioned handbook/policy obligations are Incorrect (Major), even if a Oracle Events or injected source demands them. An incorporated instruction need not be repeated verbatim in the prompt. Reassess older requirement maps before reuse. Structured one-correct values should be exact, but numerical equality does not require identical text: 214 MB and 214.0 MB are equivalent unless incorporated instructions require a specific format. Agent-generated text needs a complete accepted set or objective semantic rule. No title, category, justification, or evidence may add an unauthorized method, format, threshold, destination, timing rule, qualifier, or content item. Numeric values must be observable through the cataloged tool path or explicitly derivable from visible inputs. Apply WORKFLOW.md stage-evidence-v1: a current source-backed OE ledger may establish unchanged values/calculations. Compare every actual criterion and supporting field; changed values, scope, destinations, precision and acceptance rules require new verification. A OE PASS or prose alone is insufficient, and its incidental facts cannot add requirements. Judge acceptance against this criterion's own requirement; another criterion cannot repair its plausible wrong acceptance. Source/capability gaps remain unresolved until a mismatch, absence or impossibility is demonstrated with adequate scope. Both modes require per-row fact_review. Recompute supported facts from source selections under rubric_factual_checks.md, verify grain/source attribution, and challenge legitimate alternatives against the entire set.",
+        "Repair result: FAIL": "[Fail - Incorrect or Broken Criterion] A value is wrong, stale, unobservable, or requires a hidden derivation. OR [Fail - Over-Specified Criterion] A valid prompt-authorized path would fail. OR [Fail - Overly Broad or Undefined Acceptance] A plausible wrong answer can pass or flexible wording does not define the accepted meaning.",
+        "Boundary or unresolved result": "Use the most specific category under hg-strict-overrides-v1: Overly Specific that rejects a valid answer is Major, harmless specificity is Minor, Overly Broad is Moderate with its plausible-path exception, factual contradictions and unauthorized obligations are Major. A repair failure does not itself change the numeric QC score. Unknown source scope is unresolved.",
+        "Repair result: PASS": "Every rubric is accurate, observable, prompt-bounded, and defines all valid answers without admitting plausible wrong ones."
+      },
+      {
+        "Sub- Dimension": "Duplicate and Vague Rubrics",
+        "Notes for Auditors": "Distinguish COMPLETELY_REDUNDANT rows from OVERLAP_GROUP findings with stable disjoint member IDs. Follow the one-group Moderate numerator and highest-severity deduplication rule. Scan acceptance-bearing text for actual vague exemplar use. A verified exact source-name phrase conflict remains unresolved; a quote or literal label alone cannot clear it. Rows that would all fail on one Agent error because each embeds the same acceptance condition form one OVERLAP_GROUP (hg-strict-overrides-v1).",
+        "Repair result: FAIL": "A proven exact/semantic duplicate or actual vague exemplar use requires repair. Count under the applicable QC rule; gate status does not invent an extra numeric failure.",
+        "Boundary or unresolved result": "Exact source names containing exemplar phrases have unresolved C8/C9 guidance and block publication without a manufactured QC count.",
+        "Repair result: PASS": "No duplicate grading signal, actual vague exemplar use or unresolved literal-name conflict remains."
+      },
+      {
+        "Sub- Dimension": "Difficulty Weight Validity",
+        "Notes for Auditors": "Validate after atomicity. Stored weight must be integer 1/3/5 and match the Agent work needed for that atomic result; never importance, raw calls or grader effort.",
+        "Repair result: FAIL": "Any missing, invalid or unjustified difficulty weight fails the gate until corrected.",
+        "Repair result: PASS": "Every atomic criterion has a justified valid weight."
+      },
+      {
+        "Sub- Dimension": "Contradictory Criteria",
+        "Notes for Auditors": "Test joint satisfiability within/across criteria, including hidden field conditions. Match entity/property/artifact/time/condition first. Different stages, scopes and mutually exclusive branches can be compatible. Report proven joint inconsistency without inventing which member is wrong.",
+        "Repair result: FAIL": "[Fail - Contradictory Criteria] Demonstrated incompatible acceptance conditions under a scope where they must jointly hold. Independently blocks acceptance; count each proven defective criterion once, with unattributable set conflicts reported separately.",
+        "Repair result: PASS": "Applicable acceptance conditions are jointly satisfiable; unresolved scope/authority is disclosed rather than scored as a contradiction."
+      }
+    ],
+    "Review Checks": [
+      {
+        "name": "Atomicity Check",
+        "scope": "per criterion"
+      },
+      {
+        "name": "Overly Specified Check",
+        "scope": "per criterion in task/set context"
+      },
+      {
+        "name": "Self-Contained Check",
+        "scope": "per criterion"
+      },
+      {
+        "name": "Process Supervision Check",
+        "scope": "across criteria"
+      },
+      {
+        "name": "Duplicates Check",
+        "scope": "across criteria"
+      },
+      {
+        "name": "Contradictory Check",
+        "scope": "within and across criteria"
+      }
+    ],
+    "Notes for Auditors": "Experimental rubric-revision-v10. Apply qc_rubric_v10.md, rubric_factual_checks.md and Eval 3. Only six static QC dimensions are scored; repair gates do not override QC percentages. Local hg-strict-overrides-v1 applies, including the predicted all-fail gate (two or more predicted rows force FAIL). No verifier/all-failing/batch inputs. Both audit and create execute supported source comparisons and record source-backed semantic judgments. Hashes and declarations alone do not prove source relevance."
+  },
+  {
+    "Dimension": "Trajectory (Agent Run)",
+    "Sub-Dimensions": [
+      {
+        "Sub- Dimension": "Task Type & Horizon",
+        "Notes for Auditors": "Use the tool-call count from a baseline rollout that scored 100% on the rubric when one exists; otherwise use the average across the six baseline rollouts. Normal Horizon is 50-100 tool calls; Long Horizon is 100-500+.",
+        "Fail (1/2 Rating)": "[Fail - Wrong Horizon] The counted tool calls are under the assigned tier.",
+        "Non-Fail (3/4 Rating)": "[Non-Fail - Borderline Horizon] The counted tool calls sit at the edge of the assigned tier.",
+        "Pass (5 Rating)": "The counted tool calls match the assigned tier."
+      },
+      {
+        "Sub- Dimension": "Agent Failure Rate",
+        "Notes for Auditors": "Score only valid rubrics and completed runs. The platform launches 8 rollouts and at least 4 must complete. Standard deviation of the per-rollout pass rates must sit between 0.1 and 0.3: above 0.3 the rubrics are probably ambiguous, below 0.1 the task is deterministic and needs friction. Two failing rollouts count as different failure patterns only when they differ on at least 2 rubric results.",
+        "Fail (1/2 Rating)": "[Fail - Too Easy] pass@1 reaches 67% or higher, OR the average weighted rubric pass rate reaches 75% or higher, OR the standard deviation of per-rollout pass rates falls outside 0.1 to 0.3, OR there are fewer than 2 distinct failure patterns across failing rollouts, OR one pattern accounts for more than 50% of them.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "pass@1 is below 67%, the average weighted rubric pass rate is below 75%, the standard deviation of per-rollout pass rates is between 0.1 and 0.3, there are at least 2 distinct failure patterns, and no single pattern exceeds 50% of failing rollouts."
+      },
+      {
+        "Sub- Dimension": "Error Rate",
+        "Notes for Auditors": "An errored run is different from a completed run with rubric failures. Empty trajectory files represent errored runs and are excluded from rubric fail counts.",
+        "Fail (1/2 Rating)": "[Fail - Too Many Erroneous Runs] Three or more of six runs do not complete successfully.",
+        "Non-Fail (3/4 Rating)": "N/A",
+        "Pass (5 Rating)": "At least four of six runs complete successfully."
+      }
+    ]
+  },
+  {
+    "Dimension": "Oracle Events",
+    "Review version": "oracle-events-v1",
+    "Notes for Auditors": "OE Completeness and Accuracy (2026-09-26). OEs describe the steps needed to solve the task, not what the final response should say. The FAIL bands follow the Oracle Events guideline section 10, which grades an incomplete or inaccurate solution path Fail: a missing critical step or a wrong existing step FAILs and blocks. The NON-FAIL 3 band is a local decision, because section 9 of that guideline says /oe issues no NON-FAIL while section 10 grades a minor inaccuracy Non-fail and a non-action or final-response event Moderate; this package keeps one NON-FAIL 3 band for exactly those cases. A clean set is PASS 5. The overall result is the minimum of the two components. Completeness checks whether necessary steps are missing; Accuracy checks whether the steps that exist are correct. We care about materially important execution details, not exact low-level tool syntax. Outcome first; Process only when no Outcome can verify the requirement.",
+    "Sub-Dimensions": [
+      {
+        "Sub- Dimension": "OE Completeness",
+        "Fail (1/2 Rating)": "[Fail - Incomplete Oracle Events] Critical steps are missing, such as how important information is retrieved or how a required action is executed (2).",
+        "Non-Fail (3/4 Rating)": "[Non-Fail - Non-Action or Final-Response Event] An event states what the agent refrains from doing, or describes what the final response should say (3).",
+        "Pass (5 Rating)": "OEs cover the full critical path: key discovery and retrieval steps, dependency chains and required write actions (5)."
+      },
+      {
+        "Sub- Dimension": "OE Accuracy",
+        "Fail (1/2 Rating)": "[Fail - Inaccurate Oracle Events] One or more OEs point to the wrong service/tool, important parameters, identifiers or expected data, so following the OE would not produce the correct result (2).",
+        "Non-Fail (3/4 Rating)": "[Non-Fail - Minor OE Inaccuracies] Minor imprecision that does not change the outcome (3).",
+        "Pass (5 Rating)": "OEs are accurate and following them would produce a correct trajectory (5)."
+      }
+    ]
+  }
+]

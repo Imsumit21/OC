@@ -1,0 +1,539 @@
+{
+  "version": "prompt-rubric-qc-examples-v1",
+  "dimension": "prompt",
+  "source_role": "AUDIT_REPORT",
+  "sources": [
+    {
+      "filename": "qc-audit-rubric-and-prompt-failures.csv",
+      "sha256": "abc836a9c9dd04624d220fbc64284bc8c917e1e76ff8689815d391619f318dac"
+    },
+    {
+      "filename": "qc-audit-rubric-and-prompt-failures.html",
+      "sha256": "43564054a982c9ac3420c94696b1b2d744952c5dd2baa716c95e0c7698d340f0"
+    }
+  ],
+  "scope": "Local user-supplied QC audit exports for project 69a74e16c6538223558b70f6; no independent database or universe re-audit.",
+  "use": "Historical review examples, not task authority, primary universe evidence or independently established regression labels. Read the matching guide first and select relevant cases only.",
+  "limitations": [
+    "Exported categories, scores and explanations may disagree; all are preserved as exported.",
+    "Empty and N/A explanations remain unexplained. HTML placeholders for empty explanations are not auditor text.",
+    "Current policy supersedes historical scoring, atomicity, context, sampling and Process guidance.",
+    "Historical All-Failing flags are retained only as provenance and are outside the current rubric evaluator.",
+    "Full task universes and submitted OEs are not included. Facts alleged by auditors require independent source verification."
+  ],
+  "counts": {
+    "cards": 25,
+    "tasks": 24,
+    "criterion_flags": 29,
+    "fail_flags": 10
+  },
+  "cases": [
+    {
+      "card_index": 64,
+      "task_id": "6a4011e28c908bd98cb54441",
+      "attempt_id": "6a42b88519e4014e94302351",
+      "universe": "mortgage-broker-01-keystone",
+      "audit_date": "2026-06-29",
+      "prompt": "I'm wrapping things up at Keystone and heading out before long, and there's one thing I won't leave undone: the agents who've fed me business all these years deserve to hear it from me, not just go quiet.\n\nTrouble is, I've never kept a tidy tally of who's sent me what. I can name a couple off the top of my head, but don't go by that, dig in and work out who's really kept my pipeline full over the years and what they've brought in. And before you reach out, check whether any of their buyers still have a file in motion with me, because if someone's mid-deal I don't want it dropped on my way out.\n\nFor the ones who've mattered most, send a warm, personal note from me thanking them and letting them know Jordan Blake will look after them from here, log each one so it's on record, and see that the relationship is handed to Jordan properly. When it's done, drop a summary in the sales channel so the team knows who I've reached out to and who still needs a follow-up.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 90,
+          "verdict": "FAIL",
+          "error_category": "Fail - Multiple Valid Answers",
+          "qc_criterion": "Prompt has a single valid answer",
+          "score": "2",
+          "auditor_reason": "The prompt requests that \"For the ones who've mattered most, send a warm, personal note\" but it's not clear what \"mattered most\" means. The different trajectories use different interpretations of it, for example:\n1) The 9 agents that account for half of closed volume\n2) The 8 who sent over $1M\n3) The 4 who referred 2 or more buyers\n\nThere's no single expected list of agents for that request, especially since there was no limit like \"3 agents who mattered most\"."
+        }
+      ]
+    },
+    {
+      "card_index": 65,
+      "task_id": "6a42ec5f65aea9f4523d7b8e",
+      "attempt_id": "6a449f70bd4c743f4951bb18",
+      "universe": "mcp-advanced-3-20-moveops-metadata",
+      "audit_date": "2026-07-02",
+      "prompt": "David's Customer Engagement portfolio review is first thing Monday, and he wants my whole book walked in clean before it. It's been a rough few weeks, between the Sunbelt and Palmetto invoice mix-up, the Mosaic damage claim, and the coverage gap I flagged earlier that we never properly closed out, and I'd rather none of that land as a surprise in front of the team.\n\nTake a pass through every deal I'm still carrying so we know exactly where each one stands and the CRM is telling the truth. The two April billing deals wrapped last week once the corrected invoices went out to the clients and the payment dates were confirmed, so they're settled and should be marked won rather than left open. Anything still genuinely mid-move stays exactly where it is; don't advance or close a deal just to make the list look tidier.\n\nWhat David really wants is which account is closest to walking, and he's after the honest read, based on what actually happened to my book this month rather than a hunch. Once you've landed on it, add a clear risk note to that account in the CRM so the history's on record for whoever picks it up later, but leave the deal stage untouched and just add the note. Then lock in the call I already promised that client and never got onto the calendar, the one where I said David and I would both join alongside their side to walk it through, before it slips any further.\n\nOne of my clients also came back to me this week wanting to do more with us after how their first moves went, and I haven't set anything up for it yet. Tee it up as a new deal in the CRM so we don't lose that momentum.\n\nOnce all of that's done, email David the account-by-account rundown of where every deal stands and what I changed. Then post a short version in the team channel so the coordinators can see where each of my accounts sits going into Monday.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 91,
+          "verdict": "FAIL",
+          "error_category": "Fail - Multiple Valid Answers",
+          "qc_criterion": "Prompt has a single valid answer",
+          "score": "2",
+          "auditor_reason": "[Fail - Multiple Valid Answers]\n- The prompt and the environment didn’t specify the specific date and time when the calendar call should be scheduled. Multiple agents could choose different valid meeting times, so the prompt can reasonably produce distinct correct outcomes."
+        }
+      ]
+    },
+    {
+      "card_index": 66,
+      "task_id": "6a4421e0772a6e4e4069cb35",
+      "attempt_id": "6a47de67a0ddc51ba2481696",
+      "universe": "mortgage-broker-01-keystone",
+      "audit_date": "2026-07-06",
+      "prompt": "Grace pulled me into a quick call about an hour ago and asked me to scrub my pipeline before the ops review on Friday. She wants to know which of my files are still being actively worked and which ones have gone cold. I told her I'd have a full picture by end of day, but as soon as I started pulling things up I realized I've got a bigger problem than I expected. Some of my loans are still showing loan officers who I'm pretty sure left the company months ago, and I've got files sitting in processing and underwriting where I can't tell whether anyone on the origination side has talked to the borrower recently. On top of that, I know I have documents that are still marked as needed but haven't come in.\n\nI need you to go through every active loan in my pipeline and build me a status picture. For each file, check who the assigned loan officer is and whether that person is still with the company, because if they're gone then nobody is managing the borrower relationship and that loan needs reassignment. Check the document checklist and flag anything still in a required or requested state. Then search email and Slack to figure out which files have had no communication with the borrower or the assigned LO in the past three weeks, because those are the ones Grace will want to focus on. For the loans that have any of those problems, a departed LO, missing documents, or no recent communication, also pull the borrower's fee history and compare it against what's been billed to our vendors for appraisals and credit reports on that same file, because if a file fell through the cracks on the origination side the fee side might have gaps too.\n\nEmail Grace with a summary organized by urgency: which files are still moving, which need LO reassignment, and which have document or fee gaps. For every loan where the assigned LO is no longer active, send Elena an email asking her to help coordinate reassignment with Grace. Post in the processing channel that I'm running a pipeline scrub ahead of Friday's review. And log an activity note on every loan where the LO has left, a document is missing, or a fee discrepancy was found, so there's a record of what was flagged today.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 92,
+          "verdict": "FAIL",
+          "error_category": "Fail - Multiple Valid Answers",
+          "qc_criterion": "Prompt has a single valid answer",
+          "score": "2",
+          "auditor_reason": "The task depends on reliable per-loan entity resolution across services in order to determine stale communication, summarize borrower-specific issues, and compare fees for the same file. However, the presented universe does not maintain that reliability on multiple task-critical loans. For example:\n- LN-2026-00626: loan record says `Daniel Osborne`; email/Slack activity is about `Destiny`.\n- LN-2026-00620: loan record says `James Nakamura`; email/Slack activity is about `Erica Sutton`.\n\nThese contradictions directly affect the solvability of this task."
+        }
+      ]
+    },
+    {
+      "card_index": 67,
+      "task_id": "6a4421e0772a6e4e4069cb3d",
+      "attempt_id": "6a4ebb78d23253966f8937a6",
+      "universe": "mortgage-broker-01-keystone",
+      "audit_date": "2026-07-10",
+      "prompt": "Marcus Webb left for another brokerage a few weeks back, and before I close the review I opened into a disclosure question on his files, I want the compliance side of it to hold up on the record rather than on hallway talk. I have been working it with Grace and Robert, and a lot of what is circulating about him is secondhand, so I would rather build this from what the files actually show and verify it before I sign off.\n\nThe concern people keep raising is a possible undisclosed relationship between a borrower and the agent of record on one file, and the same two or three loans get named next to it. I do not want it to stop there. Before I can certify these files as clean, I need you to find out whether anything improper is still tied to Marcus across the wider set he worked, not just the one relationship that got flagged. Anything our records do not actually support, anything still pointed at him that should not be, or anything of ours still paying out or routing to him now that he has left, I want caught before this review closes.\n\nSo go file by file and check who the actual loan officer of record is against what is being claimed, who the borrower is, and who is listed as the agent. Pull the condition and checklist documentation for the files that end up in scope so we can confirm the record is genuinely supported and not just marked that way. Where our records do not back a claim, state it plainly rather than assume it. Where a name is being passed around that the file itself does not line up with, show the mismatch instead of treating it as settled.\n\nOnce it holds together, get it documented so the review has a clear trail. Add a note to each file that turns out to be in scope for the review, log the finding as a risk note against Marcus's contact in our CRM so there is a durable account of it there, and post a short finding in the compliance channel flagging that a review is open on his files. Then email the full picture to Grace and Robert. What we do about Marcus and these files is a call the three of us make together, not one I close out on my own.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 93,
+          "verdict": "FAIL",
+          "error_category": "Fail - Multiple Valid Answers",
+          "qc_criterion": "Prompt has a single valid answer",
+          "score": "5",
+          "auditor_reason": ""
+        }
+      ]
+    },
+    {
+      "card_index": 68,
+      "task_id": "6a4e9c2abc503da0a402ec9b",
+      "attempt_id": "6a4f4a28f143f2207378fa98",
+      "universe": "mcp-advanced-3-20-moveops-metadata",
+      "audit_date": "2026-07-10",
+      "prompt": "Samira emailed me last night — Elena wants a straight engineering read before Thursday's sync on two problems leadership keeps treating like separate fires: whether ExpenseBot is actually ready to come off human-review-only mode, and whether we finally closed the loop on the Sunbelt/Palmetto invoice attachment mess that blew up after we kept deferring the safeguard work from the Terraform pricing leak.\n\nI know where my own pipeline and config fixes landed, but I have not reconciled that against the Linear board, Dmitri's audit threads, or whatever Marcus and David already escalated by email. I don't want to walk in with ticket statuses that lie about what shipped — and I don't want to just repeat Slack summaries when the stipend platform, the CRM, or QuickBooks may tell a different story than the threads.\n\nCan you reconstruct where we really stand?\n\nFor the ExpenseBot track, go through the open pilot tickets and cross-check each against Slack, email, and the stipend records in Airtable so we know which fixes actually deployed and which of the validation gaps Dmitri flagged are still open. Surface every stipend record his post-pause review flagged that's still unresolved — and be careful here: check whether any of those flags turned out to be wrong, because a bad flag that pushed friction onto a client matters as much as a missed one. Also confirm whether the false rejections the team promised to fix manually actually got reconciled, or whether people are still sitting rejected. If a ticket says in progress but the work clearly shipped, correct it with a brief resolution note. If something still blocks turning automated decisions back on safely, say so plainly and reprioritize anything on my plate that shouldn't still be idle.\n\nFor the invoice attachment incident, trace it from the April batch send through the client complaints and finance reconstruction. Pull the Sunbelt and Palmetto records straight from QuickBooks to confirm the billed amounts and invoice numbers against what actually left our outboxes, and flag anywhere this has already spilled past the original billing question into a broader client-relationship or commercial exposure. Then check whether the attachment-safety ticket Samira opened after Terraform is still parked in backlog despite Elena ordering it reopened — that work needs an active owner and a realistic stopgap, not another deprioritized item.\n\nWhen you have the picture, post a concise combined status in engineering so the team has one thread, correct the tickets that are out of date, and email Samira a summary she can forward to Elena — loop in whoever else finance already had on the escalation thread — covering what's done, what still blocks ExpenseBot relaunch, and what we owe finance on the attachment control.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 94,
+          "verdict": "FAIL",
+          "error_category": "Fail - Minor Factual Errors",
+          "qc_criterion": "Prompt factual grounding in the universe",
+          "score": "2",
+          "auditor_reason": "- The prompt starts with \"Samira emailed me last night\", but this detail is not grounded in the universe data, there's no email from Samira to Lena at all with any date, there're only three emails from Samira where Lena is involved in the CC and the latest one topic is \"Engineering context: dormant invoice attachment safeguard after Terraform\" there's no email from Samira to Lena that involves \"Thursday's sync/ExpenseBot\".\n- The prompt also states that \"Then check whether the attachment-safety ticket Samira opened after Terraform is still parked in backlog despite Elena ordering it reopened\" but there's no email, slack message or comment that supports that Elena ordered to reopen `ENG-187`.\n- The prompt stated \"the attachment-safety ticket Samira opened\", but the `ENG-187**`** entry shows `\"creator_id\": null`, and the assignee for this ticket is `moveops_lena_bjorkstrom` and the very first comment is made by Lena. so the claim that Samira opened the ticket is not grounded."
+        }
+      ]
+    },
+    {
+      "card_index": 69,
+      "task_id": "6a5aa17ee981ea15ce909270",
+      "attempt_id": "6a5fcb194986b75489735a8a",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-22",
+      "prompt": "It's the start of the week and before I get buried I want to get properly on top of a few property things that have been nagging me. Three of them in particular.\n\nFirst, the roof on the top-floor unit at our Ridgeview property, the one I flagged back in May for missing shingles with water coming through the ceiling, where I opened a maintenance ticket because it was clearly past a simple patch job. The owner and the vendor went back and forth on it after that and I got copied on some of it, but I've completely lost the thread. Piece together for me where it actually landed: what got approved, the scope and the dollar figure that got signed off, and who the vendor is. And I really need to know whether the work has already happened, because my gut says the repair may have gone ahead weeks ago and yet our maintenance ticket is still sitting there open, and I don't think anyone has the close-out tracked anywhere on our operations board. If there's nothing on the board holding the close-out, put something there so it has a home, since there's a follow-up vendor walk-through coming and I need the resident in that top-floor unit to get proper notice before anyone shows up. While you're at it, confirm the vendor is actually locked in for that walk-through, because if he hasn't confirmed his attendance I need to know today. Drop a note to the maintenance team about coordinating resident access for that walk-through, and send Brooke a short update letting her know the property side has the close-out in hand and asking her to make sure the vendor confirms the walk-through so I can give the resident notice.\n\nSecond, that preventive-maintenance push across my west-cluster properties that I've been running point on as the onsite lead. It was supposed to be wrapped by the end of June and I really don't think it got there. Find out where it actually stands, post an update to the team and pull in our maintenance lead to nail down whatever's still outstanding, and get the tracking on it brought current instead of just sitting stale.\n\nThird, there was a garbage disposal problem at one of my Las Palmas units that one of the techs kicked over to our maintenance lead for a parts approval a couple of weeks back. I want to know whether that's still stuck. If it's still sitting there waiting on the approval, push it forward so the replacement can actually get scheduled and done, and make sure it isn't just quietly dying on the board.\n\nOnce you've worked through all three, give me the full rundown.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 95,
+          "verdict": "FAIL",
+          "error_category": "Fail - Action Decision Ambiguity",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "2",
+          "auditor_reason": "The prompt states \"If there's nothing on the board holding the close-out, put something there so it has a home\", which is open to 2 different actions (1. a record in the Airtable base literally named 'Property Operations' or 2. an issue in the Linear 'Property Ops' project). The roof ticket lives in Airtable and the prompt discusses it in Airtable terms while items 2 and 3 use 'the board' for Linear OPS issues. All five Opus runs created the tracking in Airtable and not Linear which shows the ambiguity."
+        }
+      ]
+    },
+    {
+      "card_index": 70,
+      "task_id": "6a5edd8f8ff3d52983052957",
+      "attempt_id": "6a638d8e73df02cd0674033c",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-24",
+      "prompt": "Our four owners' mid-year portfolio reviews were supposed to be finished and out the door by the end of June, and I am not convinced they actually are. Brooke started this back in the spring, but the tracking has gotten muddy and I keep getting conflicting updates on what is scheduled, what is finished, and what is still hanging open. Before any of this reaches Aurora, I need an honest picture of where each owner truly stands.\n\nCan you go through everything and rebuild each owner's review properly, working from the actual numbers and records rather than what someone said in passing. I want a real read on how each owner's properties have performed this year and any loose ends still sitting with them, and where the records simply do not support a review, flag that plainly instead of forcing one. Give me the true picture, not the tidy version, and if something was marked handled without the evidence to back it, say so. Aurora has been clear about what she expects to see in these packets, so make sure that is reflected.\n\nOnce it is solid, get everything staged for Aurora's final approval, and understand that nothing goes to any owner until she has approved it. After that, make our own tracking reflect what is actually true and get the rest of the team aligned on what is genuinely still open versus closed, because we cannot keep working off conflicting versions. I would rather this be right than quick.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 96,
+          "verdict": "FAIL",
+          "error_category": "Fail - Action Decision Ambiguity",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "2",
+          "auditor_reason": "\"Get everything staged for Aurora’s final approval... After that, make our own tracking...\" can mean update tracking immediately after staging or wait until Aurora approves. Those readings lead to write-now versus defer behaviour."
+        }
+      ]
+    },
+    {
+      "card_index": 71,
+      "task_id": "6a601ed7c6008d15eb965fa0",
+      "attempt_id": "6a64ee9b855f6067081abb96",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-26",
+      "prompt": "I've got the owner reviews and the Q3 make-ready review coming up, and I need our books actually reconciled, not just closed, starting with the vendor side. Big Bend's roof job over at Ridgeview turned into a paperwork mess, and I'm fairly sure it's landing us somewhere around seventeen grand once their invoicing clears, all of which is supposed to pass straight through to Finley, so I want that whole thing squared away so that what we're paying out and what he's being billed finally line up. While you're in the A Plus account, there's a credit of theirs that's been sitting unapplied for weeks; get it applied and settled so it stops hanging over the account. And I've been telling the managers all quarter that we came in around eighteen percent over on make-ready, but the summer turns blew up on us and I honestly want the real spend in front of me for the review, not my rough guess.\n\nOn the Ridgeview owner side, that's where I really care about getting it right. There are a handful of repair estimates still pending on that property and I'm pretty sure the reserve covers them comfortably, so release whatever we're truly clear to spend and hold back anything that would push us where we shouldn't be. I don't want the crews sitting idle, but I want zero surprises hitting Finley's account. Once that's sorted, finalize his June statement so everything that's his is on it and nothing that isn't. I'm in and out of meetings all day and on the road tomorrow, so please don't wait on me to sign off on anything. Go with your own read, and if the numbers don't come out the way I'm expecting, trust what the records show over my gut and just get it right before it all goes out.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 97,
+          "verdict": "FAIL",
+          "error_category": "Fail - Multiple Valid Answers",
+          "qc_criterion": "Prompt has a single valid answer",
+          "score": "2",
+          "auditor_reason": "The prompt leads to two different correct answers because the data contains conflicting evidence about Big Bend's roof billing. Some of the data indicates that the total bill is $8,400 (linear issue, Finley's invoice, reserve records), other parts of the data suggests that the total is $16,800 (\"Teressa\" slack messages, two $8400 quickbooks bills). Since there is no clear indicator that one of the two $8,400 bills is duplicate (and not a separate bill), interpreting the total as $16,800 remains a reasonable interpretation of the data.\n\nNote: While the leading interpretation is most likely that the total bill is $8,400, there is still another valid interpretation that leads to a different answer ($16,800), and the description of this error category explicitly includes the cases for when there is a \"leading interpretation\" (\"(even if a leading interpretation exists)\")."
+        }
+      ]
+    },
+    {
+      "card_index": 72,
+      "task_id": "6a601ed7c6008d15eb965faf",
+      "attempt_id": "6a6636f64e68e47dc86aa986",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-28",
+      "prompt": "hey, wrapping up for the day and I need to get the board straight before Brooke pulls everything for Robert Finley's mid-year maintenance review. Bunch of stuff is out of sync and I dont want her working off stale records.\n\nStart with the Ridgeview roof. Pete Donovan's crew already finished that repair but the maintenance ticket and the make-ready record still look like nothing happened. Update both to show the work is done but do not set a completion date on the ticket, there is a follow-up walkthrough on the calendar before we can sign it off. Check my calendar for the details.\n\nMy filter ticket for the PM push got moved to review but thats wrong. Sunridge is done but Im out of 20x25 stock and cant finish the rest of the run. Pull it back to active and log the actual status. Put the same update on Brooke's umbrella ticket for the West cluster push.\n\nThe West cluster condenser ticket got closed out as done when it is not actually complete. Fix that and make sure Brooke's umbrella ticket notes the correction.\n\nCarlos says he already moved his plumbing issue along but confirm that against the board before touching anything. If what he says doesnt match, note the discrepancy and fix it. He also flagged two water heaters for replacement and those need their own records in the maintenance tracker not just comments on his ticket. Cross-reference the new ticket numbers back on his issue once they exist.\n\nDo not touch the portfolio-wide filter-and-battery preventive maintenance tickets. Those are a separate sweep not my West cluster work.\n\nLisa asked me about coil cleaner and filter stock a while back and I never answered. Draft her an email with where things stand. Also draft Brooke an email she can use for Robert Finley's review with the ticket numbers and the roof timeline.\n\nPut the remaining West cluster PM visits on my calendar, invite Lisa, and note they depend on the 20x25 filter and coil cleaner restock landing first.\n\nPost a close-out in the maintenance channel walking each thread you reconciled.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 98,
+          "verdict": "FAIL",
+          "error_category": "Fail - Prompt Feasibility with Tools",
+          "qc_criterion": "Prompt actionability / feasibility with the tools",
+          "score": "5",
+          "auditor_reason": "N/A"
+        }
+      ]
+    },
+    {
+      "card_index": 73,
+      "task_id": "6a5edd8f8ff3d52983052966",
+      "attempt_id": "6a639e099b82bf70c24e4b94",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-28",
+      "prompt": "I need Las Vistas 9D live for showings this week, Wednesday and Thursday, 2–4pm. Brooke cleared it and handed it to leasing a while back; I dropped the ball while buried in other applicants and it's been dark since. Before we put anyone on it, make sure it's actually Ready on the make-ready side. Treat that record as our source of truth unless the turn was formally reopened there, and make sure we're not stepping on a deal or applicant already on that unit. I don't think the handoff story is clean in one place, her email to me still reads like mid-May even though I'm pretty sure it didn't hit my inbox until later. Reconcile what Brooke originally told us, when she actually handed it off, and who signed off QC on the make-ready side before you write anything up. Once it's clear, get 9D showing in the pipeline, open a placeholder with no applicant if nothing's there yet, but if something's already sitting on that unit figure out the right move instead of doubling up. Block those tour windows on my calendar; I don't think both afternoons are completely clean, so check before you assume you can hold both. Wednesday still matters, if that owner call is the only problem, compare the other leasing agents' calendars and have whoever's clear cover just that overlap so we can keep the full 2–4 window. Brooke needs a straight update she can trust with that reconciled picture, not just \"it's live now.\" The make-ready record, onsite, and leasing should all show we've actually picked this up.",
+      "exported_card_verdict": "FAIL",
+      "flags": [
+        {
+          "csv_row": 99,
+          "verdict": "FAIL",
+          "error_category": "Fail - Action Decision Ambiguity",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "2",
+          "auditor_reason": "The prompt states \"figure out the right move instead of doubling up\" and the coverage instruction admit two different write patterns. Most runs had a teammate cover the showing overlap, but Opus run 4 read it the other way and had Kevin cover the owner call while Sandra ran the showing, producing a different set of calendar writes."
+        }
+      ]
+    },
+    {
+      "card_index": 74,
+      "task_id": "6a3d4689ed87ca7119b64d51",
+      "attempt_id": "6a3f46791e96aafebeb22810",
+      "universe": "brookfield-cpas-v3-remediated",
+      "audit_date": "2026-06-29",
+      "prompt": "Sofia pulled together the Q2 estimated tax projection for Acme Cloud and Hannah has already been through it, so the work is largely done. I am fairly confident it lands around $612K, and it mostly just needs finalizing and booking before the federal estimate goes out Monday the 15th. Can you carry it the rest of the way for me: finalize the Q2 figure, get the accrual booked to Income Tax Payable for the period we have open, and file the finalized projection in the vault under our usual tax retention. Then send the package over to Ming for partner sign-off so he can authorize before the wire leaves, put a short note in the tax channel so the team knows where it landed, and set a reminder for the Q3 cycle in September. Hannah is comfortable with the number, so I do not expect any issues here. I am tied up the rest of today and out Monday morning, so do not wait on me, just take it all the way through so we do not miss the wire.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 100,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "Then send the package over to Ming for partner sign-off so he can authorize before the wire leaves, put a short note in the tax channel so the team knows where it landed, The request in the prompt \"and set a reminder for the Q3 cycle in September\" is too vague and does not specify a date."
+        }
+      ]
+    },
+    {
+      "card_index": 75,
+      "task_id": "6a42ec5f65aea9f4523d7b91",
+      "attempt_id": "6a44beadf308d31a7a92a8a1",
+      "universe": "mcp-advanced-3-20-moveops-metadata",
+      "audit_date": "2026-07-02",
+      "prompt": "Hey, I want to get ahead of the Terraform relocations before they blow up on us. Rachel sent over the first three employees a few days ago and I forwarded it along, and I know it's gotten a little messy internally since then with the account changing hands and that whole reply-all situation. Mina's running point now, which is fine, but I closed this deal and I still feel like I own making sure it doesn't fall apart, especially after the AWS thing where I didn't flag something I should have.\n\nCan you check where things actually stand on Priya, Marcus, and Samantha's moves? I want to know if ops is actually tracking these three the way we told Rachel we would, so make sure each of them has a real relocation record set up on our side reflecting what she sent us, not just the account-level note. Rachel gave us real specifics on each of them when she followed up, not just names and cities, so make sure none of that got lost in the handoff mess and that it actually shows up in their records, not just buried in an email thread somewhere. We also don't have anything set up to actually track this account the way we do for our other clients, so get that started too, every other client we run end-to-end relocations for has their own project with tickets for the individual moves, and Terraform doesn't have that yet even though Rachel's already expecting dozens more of these. If anything in our financials doesn't line up with the rate we agreed on with her, flag it to Marcus — don't touch it yourself. And if there's a staffing concern that only Chloe or Elena can actually decide, send it straight to them. If there's a real risk these moves slip before her people are supposed to start, I want Rachel to hear it from us first. Loop in David too since he's been managing the fallout from the pricing leak.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 101,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Factual Errors",
+          "qc_criterion": "Prompt factual grounding in the universe",
+          "score": "3",
+          "auditor_reason": "The prompt mentions \"Marcus\" without a last name. Marcus is the first name of one of the Terraform employees relocating and also the head of finance at MoveOps. There are also two other Marcuses in the contacts list. However, the agent should easily be able to disambiguate this."
+        }
+      ]
+    },
+    {
+      "card_index": 76,
+      "task_id": "6a44223e9b26707c9994f0d9",
+      "attempt_id": "6a467c950781772b878cd976",
+      "universe": "mcp-advanced-3-20-moveops-metadata",
+      "audit_date": "2026-07-02",
+      "prompt": "Can you help me get GreenStack cleared off my plate before I clock out tonight? Their reimbursements have been piling up in the queue ever since we went back to reviewing them by hand and I just want it dealt with.\n\nPriyanka Rao is the loud one, she's been chasing me about it, says she's owed about $3,090 and it's all pretty standard desk and monitor stuff, so I'd really like her to finally get an answer, and honestly the rest of their people are sitting in there too. Julian keeps telling me to just approve it all and stop making them wait since they're about to grow, but I also can't have Marcus on me about the margins again.\n\nSame account, Derek Hollis is chasing a credit on their last invoice, thinks it's about $1,500 and says Julian already promised it, and he's asked about Sana Malik's move too. Can you get all of it straightened out and make sure everyone hears back? Heading into handoff and then offline in a few, so don't wait on me, just take it as far as you can.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 102,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "5",
+          "auditor_reason": ""
+        }
+      ]
+    },
+    {
+      "card_index": 77,
+      "task_id": "6a44223e9b26707c9994f0ed",
+      "attempt_id": "6a4574fdb08cb730cdd4e79e",
+      "universe": "mcp-advanced-3-20-moveops-metadata",
+      "audit_date": "2026-07-02",
+      "prompt": "Elena's vendor memo is due Wednesday and I've been putting out fires all week on the Mosaic damage claim and the DOT extension. I haven't given this the time it needs.\n\nThe Heartland piece is the more pressing one. Jake came back with a specific response to our dispute. I've only skimmed it, but I think he's conceding part of it while still fighting the rest. Before I reply or adjust anything in QuickBooks, I want someone to go through his email carefully and compare his claims against our actual records. For the moves he's still disputing, pull whatever documentation we have and tell me what we can legitimately push back on. Once we have a defensible position, reply to him with our counter, update the QuickBooks hold to reflect where we actually stand, and bring the Heartland Linear tracking ticket current.\n\nOn the Swift side, Greg wrote back to me directly with more specific terms on the DOT documentation surcharge, there's apparently a condition that could reduce it. Check what he said and flag the relevant detail for the memo.\n\nAlejandro's been working a per-client margin model in #finance. Check what he's posted and use it as the backbone for the client-by-client section Elena asked for.\n\nOnce you have all of that: write the memo. Cover each vendor's current position, the per-client margin exposure, and a concrete recommendation on how we move forward with each. Send it to Elena and copy Alejandro and Chloe. Drop a note in #finance once it's out.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 103,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Tool/MCP Server Mentioned",
+          "qc_criterion": "Prompt leaks tool / MCP server names",
+          "score": "3",
+          "auditor_reason": "The prompt references an MCP servers by name: \"Before I reply or adjust anything in QuickBooks\", \" update the QuickBooks hold to reflect where we actually stand\", \"and bring the Heartland Linear tracking ticket current\""
+        }
+      ]
+    },
+    {
+      "card_index": 78,
+      "task_id": "6a4689cc90f6b540198dfc7e",
+      "attempt_id": "6a477f04c226399669bb5d44",
+      "universe": "mcp-advanced-3-20-moveops-metadata",
+      "audit_date": "2026-07-07",
+      "prompt": "Chloe's dropped the StormCloud clean-up on me and their leadership review is Thursday, so I need it actually sorted by then, not just papered over. Liam Park, their CFO, sent a pretty pointed escalation on Friday and honestly a lot of it lands his read is that we keep telling them things are handled when they aren't. I coordinated Jae-won Kim's move so the housing side is mine to own, but before I go back to Liam I want the real picture, not the reassuring one.\n\nCan you go through everything tied to StormCloud and tell me where things genuinely stand versus where they just look done in our systems? Start with Jae-won. I've got a bad feeling his file reads as finished when it isn't, and if his apartment still isn't locked I need it unblocked with the vendor today and his temporary housing dealt with before it lapses on us. Then there's a goodwill credit Liam says never actually showed up on their bill, a standing-desk reimbursement for one of their people that's been stuck for weeks, and a warm referral their CEO made that I'm hearing may have gone nowhere. I don't want to just recite back what we've already promised them please check each of these against what's actually in the records and the books, because my sense is some are still open and at least one might already be taken care of.\n\nOnce you actually know the state, put right the parts that are mine to fix and leave our own records honest so support and the account team stop treating this as closed. For anything that really sits with finance or another team, get the right person moving on it rather than pretending it's resolved on our end. Then get Liam a straight, accurate status ahead of Thursday. A few things to be careful about: don't promise him anything on the billing or the reimbursement that we haven't actually approved, don't go redoing work that's already handled, and keep the client-side outreach to Liam and to Jae-won I don't want us cold-contacting the referral prospect, that's the account team's relationship to run.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 104,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "The prompt is open to multiple reasonable interpretations, but all reasonable interpretations lead to the same set of write actions / external side effects.\nThe prompt aks to update the issue related to the uncompleted move in the records (\"Once you actually know the state, put right the parts that are mine to fix and leave our own records honest so support and the account team stop treating this as closed.\").Even if the phrasing is not explicit on which tools should be used, the request to log the current status is unambiguous and it covers both the operational records (Airtable, Linear) and the account team's system of record (CRM).\nThe CRM is the account team's system of record for client relationships. A StormCloud Analytics account already exists in the CRM, and its existence is itself a reason to update it with the recovery status: any reasonable actor in Operations recognizing the account team as a named stakeholder would include this.\nNote that the write action with crm_create_engagement is also present in the description of the \"Operations\" Business Function under \"Service Recovery\". \n**Service Recovery:**\n   - ***General guidance for this category:***\n     - *Typical write actions:* [...] `crm_create_engagement` (log the escalation and resolution on the client's account)\nThis connects directly onto what the prompt requires. The ambiguity in \"our records\" is therefore not major. Note that this is also related to all-failing rubric criterion 12."
+        }
+      ]
+    },
+    {
+      "card_index": 79,
+      "task_id": "6a4e9c2abc503da0a402ec89",
+      "attempt_id": "6a5021d76b1ca7d45011847c",
+      "universe": "mortgage-broker-01-keystone",
+      "audit_date": "2026-07-10",
+      "prompt": "Hey, Grace asked me for a clean read on where my pipeline really stands, and I do not want to tell her something that does not hold up. I have six files in my working view right now: Marcus Reyes, Harrison Brooks, Marcus Rivera, Crystal Parker, Vanessa Cook, and Kevin Richardson. Can you look across the actual loan records and the recent internal notes before I answer her? I need to know which ones are really moving, which ones look stale or do not belong with me anymore, which ones only need normal document follow up, and which ones I should not talk to borrowers about yet because the record does not line up cleanly.\n\nPlease leave a plain internal note on each file with the current read, written so the next person can understand what is safe to do next. For the ones that only need normal document follow up, send the right processor a short note with the borrower name and what is missing. If anything looks like it has a fee issue, a borrower mix up, or anything else that could make me say the wrong thing on a call, send that to Grace and Denise instead of contacting the borrower.\n\nAlso check whether my borrower or pipeline tracking would give Grace the wrong idea about my ownership, file status, or next step on any of these files, and clean up what you can without making a new assumption. If anything is still unresolved after you look through it, flag it somewhere the team will see with the borrower name, who owns the next step, and what still needs to be confirmed. If any of these files should make me hold off on a borrower call tomorrow, put a short hold with me, Grace, and Denise so we can sort out what I should not say yet. After you handle it, send me a short summary I can use when Grace asks where my pipeline really stands.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 105,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "“Put a short hold with me, Grace, and Denise” could mean a meeting hold or group message. Both interpretations involve the same people and safety purpose."
+        }
+      ]
+    },
+    {
+      "card_index": 80,
+      "task_id": "6a4f1912fa59bab0d3710aea",
+      "attempt_id": "6a5167c3070cdae747303446",
+      "universe": "brookfield-cpas-v3-remediated",
+      "audit_date": "2026-07-12",
+      "prompt": "The Northstar FY2026 kickoff is behind us, and I want to pull together a pre-fieldwork readout before we move into the field. Can you reconcile Julia's follow-up email with the kickoff thread in audit-engagements - what she signed off on, which working-file notes are still open, and where the workstreams landed?\n\nPlease make sure the executed engagement letter, planning memo, and both FY2026 client-consent letters (audit-to-tax and audit-to-accounting-services) are all there and active in Records Vault under Northstar Legal, and tell me how each is classified. For the planning memo specifically, confirm the restricted classification and that I am listed as the uploader.\n\nFor IOLTA account 105000, build out the posted-only roll-forward for March through May 2026. For every withdrawal posted in May, tell me who prepared it, the amount, and whether active support is in Records Vault.\n\nPull the full open BlackLine exception picture for Northstar Legal. For each exception, I need the account and period, the variance, the current owner and state, whether an approver is actually on the record, and where it stands against SLA; flag anything on Cash - Operating and any prior-period item still waiting on approval. When you make the fieldwork-readiness call, go with what Julia said in her follow-up email as the final word and report the operational exceptions separately.\n\nOnce you have the full picture, send Julia and Daniel a complete status email. Put the IOLTA result, the May withdrawal-support findings, and the complete open-exception summary in audit-engagements so Mia and Devon are in the loop, and just give me a quick summary here with the fieldwork-readiness call, the roll-forward verdict, and whatever exceptions are still open.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 106,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "It slightly ambiguous what exactly is required to be included in the final response to the user - the last paragraph includes the ask \"just give me a quick summary here ...\", but earlier on in the prompt there are phrases like \"tell me how each is classified\", \"tell me who prepared it, the amount, and whether active support is in Records Vault\" which could imply including these in the final response too. However this doesn't affect any write actions since this is only about the final response and all other deliverables have explicit enough instructions (email, slack message etc.)"
+        },
+        {
+          "csv_row": 107,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Factual Errors",
+          "qc_criterion": "Prompt factual grounding in the universe",
+          "score": "3",
+          "auditor_reason": "The \"so Mia and Devon are in the loop\" part in the ask for posting in audit-engagements in Slack is somewhat confusing and inaccurate, as there are no people named Mia or Devon in the channel or actually in the Slack users altogether. However this is irrelevant to the fulfillment of the prompt's request (\"Put the IOLTA result, the May withdrawal-support findings, and the complete open-exception summary in audit-engagements\") so counts as one minor misleading statement"
+        }
+      ]
+    },
+    {
+      "card_index": 81,
+      "task_id": "6a4f1912fa59bab0d3710aed",
+      "attempt_id": "6a5179cde26da2c28ff9e496",
+      "universe": "brookfield-cpas-v3-remediated",
+      "audit_date": "2026-07-12",
+      "prompt": "Harry asked me to clear my two overdue May close exceptions before the period closes; both are still open and assigned to me.\n\nThe main one is a WIP-Unbilled Services variance. I saw a note in the close-coordination channel suggesting it might be a partial feed issue, but I'm not confident that tells the whole story, so I need the actual exception details and whatever resolution the system calls for before I do anything. Before touching the exception, I also need to check the underlying reconciliation. Edith posted a question on it a couple of weeks ago and I don't think anyone's responded, so I need to confirm whether that's still open and include the status in my summary to Harry.\n\nThere's a second item too: an unrecorded vendor invoice that landed in the deferred-revenue account. Same period, same SLA, also assigned to me.\n\nOnce I know what each exception needs, carry out the resolution the system proposes for each one; they aren't the same posting pattern, so follow what's specified per exception. After the postings land, update both exception statuses and upload the supporting documentation for each to the vault under the firm's standard classification. When everything's landed, I'll post an update in the close-coordination channel and send Harry a summary covering what was done on both exceptions and where Edith's reconciliation question stands.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 108,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "- The part \"Once I know what each exception needs, carry out the resolution the system proposes for each one\" is somewhat ambiguous - it asks to carry out the resolutions only after the user knows what is needed, which would require a multi-turn flow where the agent first informs the user and only then carries on with the actions. The wording would be more clean with \"Once you know what each exception needs ...\"). This doesn't affect the actions taken so it's a minor issue \n- Note: see Overall Rubric Quality dimension for further comments on the last sentence which is also problematic"
+        }
+      ]
+    },
+    {
+      "card_index": 82,
+      "task_id": "6a4f1912fa59bab0d3710af3",
+      "attempt_id": "6a517995aace8fabb332a266",
+      "universe": "mortgage-broker-01-keystone",
+      "audit_date": "2026-07-12",
+      "prompt": "Hi, it's Camille on the lock desk. I need to get the March rate-sheet mess closed out today so accounting can lock the quarter. Quick background in case you need it: for a few days back in March our 9:15 rate sheet went out on a stale grid, so a handful of files ended up locked or extended at the wrong price, and the investors have been sorting out credits back to us since. You know how we treat these: when the extension was on us we make it right on the company side and don't leave the borrower carrying it, and when it wasn't our fault it stays where it belongs.\n\nHana and I went back and forth on it and it nets to fifteen hundred coming back to us from the investors, and Hana's read is that there's nothing to give back to any of the borrowers either, so honestly I think it's mostly just booking the credit and closing it. Can you take it the rest of the way and get it done loan by loan, and make every account right so nothing is left hanging on these? Give each one a real look before you move anything, and settle up each one correctly. Log what you did on each file, send Hana and Grace in ops a short summary, and drop a note in rate-watch so the team sees it landed.\n\nI'm buried in lock reviews the rest of the day and heading into back to backs, so please just work it end to end and finish it, don't wait on me to confirm anything. Thanks.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 109,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Factual Errors",
+          "qc_criterion": "Prompt factual grounding in the universe",
+          "score": "3",
+          "auditor_reason": "Email em_inject_hana_ratesheet_1 and Slack messages sm_inject_hana_rs_1/2 directly show Hana telling Camille the result is $1,500 and nothing should be refunded. Camille's separate Slack message sm_inject_camille_rs_ctx states the governing policy and her plan to verify the loans and memos, but no reply chain or direct exchange establishes that Camille and Hana actually “went back and forth.” This is one loose narrative error and does not affect solvability."
+        }
+      ]
+    },
+    {
+      "card_index": 83,
+      "task_id": "6a4f1912fa59bab0d3710ad5",
+      "attempt_id": "6a518d5473347febea6bf16a",
+      "universe": "brookfield-cpas-v3-remediated",
+      "audit_date": "2026-07-13",
+      "prompt": "I have been buried in the employee file cleanup for two weeks and a few things on our own May books have been sitting on me longer than they should. Our May period still is not locked and I do not want to be the reason it slips further, but I also do not want to touch anything I should not.\n\nThere is one reconciliation item on our external-vendors payables that has been flagged as breached and keeps nagging me. Different people have said different things about what it actually is, and honestly I am not sure anymore whether it is what it was first written up as. I need someone to actually pin down what that variance is, because I think the story changed somewhere along the way and I do not want to correct it the wrong way or correct something that does not need correcting yet. Whatever the right next step is, get it in front of the person who has to sign off, and make sure the trail is clean. I am not comfortable posting anything into the ledger until that is settled.\n\nSeparately, there is a compute vendor invoice that has been stuck in approval for months. I looked at the paperwork a while back and something was off with the contract it was billed against, and I know the account manager was working with their side on a fix. I have lost the thread on where that landed and whether our own records got cleaned up afterward, because I have a feeling the same stale reference is still sitting somewhere it should not be.\n\nAnd our quarterly aged payables tie-out never got closed because of a duplicate that was the only thing holding it up. I have a nagging suspicion it is the same thing that is behind the payables reconciliation mess, but I never confirmed it.\n\nCan you go through everything that has come my way on all of this, work out what is really going on with each piece, do whatever actually needs doing to move them forward the right way, and make sure the people who need to know are looped in? Then tell me where each one stands so I can stop worrying about it over the weekend.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 110,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Factual Errors",
+          "qc_criterion": "Prompt factual grounding in the universe",
+          "score": "3",
+          "auditor_reason": "The prompt says Ben Arinzo has spent two weeks on employee-file cleanup. Ben’s assigned work is bookkeeping, transaction coding, reconciliations, AP context, and AML support; he does not work on employee-record cleanup."
+        },
+        {
+          "csv_row": 111,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Business Function Mismatch",
+          "qc_criterion": "Business-function fit",
+          "score": "3",
+          "auditor_reason": "The \"employee file cleanup\" does not align with the \"Ben Arinzo - Bookkeeper\" persona. The task realted to the employee file cleanup is mentioned in the email From: ↩marina.soko@brookfieldcpas.com To: peter.sanchez@brookfieldcpas.com Date: UTC Apr 28, 05:58 PM. \"Hello Peter,Quick status check on the HR-only employee file cleanup [...]\"\nThe prompt says Ben Arinzo has spent two weeks on employee-file cleanup. Ben’s assigned work is bookkeeping, transaction coding, reconciliations, AP context, and AML support; he does not work on employee-record cleanup. The employee file cleanup activity, in the universe records, belong to HR/compliance workflows and do not involve Ben. Under the HR reading, it points at Rachel Green's workstream, which Ben can't access."
+        },
+        {
+          "csv_row": 112,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Persona Mismatch",
+          "qc_criterion": "Persona fit",
+          "score": "5",
+          "auditor_reason": "N/A"
+        }
+      ]
+    },
+    {
+      "card_index": 84,
+      "task_id": "6a54b8db00932e7d8d3abc43",
+      "attempt_id": "6a569bc73ade679b61ea0a78",
+      "universe": "brookfield-cpas-v3-remediated",
+      "audit_date": "2026-07-17",
+      "prompt": "Andrea just pinged me about the AP escalation queue and honestly I have lost the thread on where things stand. We have vendor invoices that have been sitting in limbo for weeks, some well past the 60-day SLA, and I need a clear picture before our review this afternoon. Some might have partner sign-off already, some are on hold for outstanding documentation, and I know at least one has a vendor dispute with a response deadline coming up soon.\n\nCan you go through the escalated items and tell me what the actual status is on each? I need to know which ones are cleared to move, which need to stay put and why, and which ones require routing to Steven or Matthew for partner approval. If any have conditions or deadlines about to expire, flag those. And if the right call on any of them is to leave it alone for now, say that clearly so nobody accidentally processes something that should not move yet.\n\nWhile you are at it, can you check on the May close? I thought we were supposed to have the period locked by now but I am hearing conflicting things. If there is a gap between what the team thinks happened and what actually happened with the lock, I need to know before I get back to Andrea.\n\nAdd a comment on each item's Linear ticket with where it lands and email Andrea a summary of what needs her attention.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 113,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Persona Mismatch",
+          "qc_criterion": "Persona fit",
+          "score": "3",
+          "auditor_reason": "[Non-Fail - Persona Mismatch]\n- The prompt is plausible for Ben Arinzo because he supports AP escalations. However, it fits Daniel Jones better because reviewing the full escalation queue, determining partner routing, checking the May-period lock, updating every Linear ticket, and reporting directly to Andrea are manager-level coordination responsibilities."
+        }
+      ]
+    },
+    {
+      "card_index": 85,
+      "task_id": "6a5edd8f8ff3d52983052977",
+      "attempt_id": "6a61a8f4eca63013e865f9d2",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-23",
+      "prompt": "The eviction packet is done, the owner has signed off, and the filing appointment is on the calendar, so I can finally catch up on my own work. Two things I know I still owe from May. The first is the occupancy, maintenance backlog, and make ready counts Brooke asked me to pull for the Shea and Castillo reviews. The second is the pool gate access procedures I flagged for Las Palmas and Rio Bend before pool season. Before I tell Brooke I am caught up, I want to be sure those are really the only things that went quiet on my side.\n\nGo back through the team channels and my board since the start of May, and flag anything that landed on me with nothing closed out from my end. For the numbers I owe, pull what our records actually support and tell me straight where they will not give a clean figure. Leave the eviction case itself alone.\n\nThen get the board caught up on where both items I owe really stand, meaning the pool gate issue and the Shea and Castillo review data, updating the pool gate issue itself and logging the review data status on the owner review tracking. Block time on my calendar for what still needs finishing, and send Brooke a short rundown of what slipped, what is handled now, and what is still coming.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 114,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "The prompt states \"send Brooke a short rundown of what slipped\" is open to interpration, it allows using either Slack or email, but they lead to the same write actions / external side effects. Only channel of delivery differs."
+        }
+      ]
+    },
+    {
+      "card_index": 86,
+      "task_id": "6a5edd8f8ff3d5298305296f",
+      "attempt_id": "6a62861b7e7559624315912d",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-25",
+      "prompt": "Quick thing before I head out. Diane at Lone Star needs my final fridge count for the Las Vistas turns this week so she can load the truck, and I keep meaning to get back to her.\n\nCarlos said seven, one per turn, and that's what I was gonna tell her, but a bunch of those turns have moved this week and I haven't kept up. Carlos and Patricia were both in the board changing things around, and the crew's been logging their own notes as they go, so I've lost the thread on where half of them actually stand now. I need you to go through this week's turns one by one and get me straight on where each one landed, and off that work out what genuinely still needs a fridge from Lone Star. Don't count anything that's already been handled another way or that Lone Star already dropped on an earlier run, I'm not paying to put the same fridge on the truck twice.\n\nOnce you've got it, get Diane that final list, standard top freezers, and find a day on my calendar to book the drop so the crew knows when the truck's coming. And the board's out of date on half these turns from Carlos and Patricia flipping things around all week, so once you've worked out where each one really landed, set it straight on the turn itself so the crew's reading off the right thing and not the old status. Then put a rundown for Carlos and Patricia on where it all stands instead of the old seven, and drop the real count in the make-ready channel too.\n\nOut at Mesa Vista all day and mostly off my phone, so don't wait on me, just sort it.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 115,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "3 small assumptions: (a) which weekday to book, (b) field update vs. record comment for \"set it straight on the turn itself\", (c) email vs. Slack for the Carlos/Patricia rundown. Per the spec's exception, all reasonable readings produce the same set of write actions to the same recipients, only channel and wording vary. \"This week's turns\" is also slightly loose (move-out dates span 6/17–6/29), but the candidate set is unambiguous on the board and every candidate is resolved."
+        }
+      ]
+    },
+    {
+      "card_index": 87,
+      "task_id": "6a5aa17ee981ea15ce909270",
+      "attempt_id": "6a65048109c0c0bdebfc5a05",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-26",
+      "prompt": "We finally got the go-ahead on Tanya Mitchell's Unit 14, and I want it turned around and off my open list this week. The owner signed off and my read is that the nonpayment side is cleared and the filing is squared away, so as far as I am concerned we are past the holdup and it is time to get that unit back in shape and ready to re-rent.\n\nHere is what I need. Start by pulling up the current make-ready record on Unit 14 and confirm where it genuinely stands today before you touch anything. I do not want it marked further along than it really is, so keep your update tight and true to the actual state, and move it forward only as far as the facts support. Keep everything tied to Tanya Mitchell's unit specifically.\n\nI also want the team current on where her account really landed. The crew and the front office have been hearing bits and pieces for weeks, and I would rather everyone work off the same thing. Figure out where that account stands as of now, then post a clean status in the make-ready channel so we are all aligned.\n\nThen draft me an email to Brooke that walks through where Unit 14 sits end to end, the account, the turn, and anything still open on it, so she is not caught off guard when it comes up in her owner review. Do not send it. Just get it ready for me to review.\n\nLast thing, set a reminder on my Google Calendar to come back to Unit 14 early next week, and update the ticket we have open on it so it is not sitting there stale. I like to be sure before I escalate anything, so lay it all out in that email for me and I will take it from there.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 116,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Factual Errors",
+          "qc_criterion": "Prompt factual grounding in the universe",
+          "score": "5",
+          "auditor_reason": ""
+        },
+        {
+          "csv_row": 117,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "The prompt reads as if they are fully ready on the eviction, however they are still preparing for a hearing, not the actual eviction. The statement \"the nonpayment side is cleared and squared away\" is also poor wording, as it suggests the eviction is no longer needed (the payment plan was followed) but that is not the case judging from universe. It is also unclear which ticket is correct, there are 4 contending tickets on the eviction: OPS-32, OPS-38, OPS-54 and Airtable `EVF-2026-014`. \nHowever, all these ambiguities are fairly clearable after reading through the universe, and do not leave multiple interpratations open."
+        }
+      ]
+    },
+    {
+      "card_index": 88,
+      "task_id": "6a62cca28baa8e61615012bc",
+      "attempt_id": "6a65ddf8376ddc1233931a34",
+      "universe": "star-pm-generic-expanded-nofs",
+      "audit_date": "2026-07-28",
+      "prompt": "Tommy Reyes's renewal signing is Monday and I have not had a chance to verify everything on his unit is squared away. Been at properties all month and things have piled up.\n\nI know there were maintenance issues at his place, something with the water heater and then flooring work after that. I think it all got handled but I am not confident the tracking caught up. Make sure his unit is actually clean in the system before we go into a signing. I do not want something coming up that we should have caught.\n\nThe renewal itself I am not sure about either. I think Alicia was running it but the last time I looked something did not seem right. Figure out where it actually stands, whether we are ready for Monday, and clean up anything that does not belong.\n\nLinda owns that property and she needs to know what is going on before we finalize the renewal. Make sure the numbers on the repair work are right and draft her an update on the unit.\n\nPost in the leasing channel so the team has context going into next week, make sure the signing is confirmed on the calendar, and flag anything else on this unit that I should know about.",
+      "exported_card_verdict": "flagged-non-fail",
+      "flags": [
+        {
+          "csv_row": 118,
+          "verdict": "flagged-non-fail",
+          "error_category": "Non-Fail - Minor Clarity / Specificity Issues",
+          "qc_criterion": "Prompt clarity / specificity / action-decision ambiguity",
+          "score": "3",
+          "auditor_reason": "Most of the actions in the prompt are somewhat ambiguous; 'make sure' is fairly easy to interpret - the model should read and report to the user without writing."
+        }
+      ]
+    }
+  ]
+}

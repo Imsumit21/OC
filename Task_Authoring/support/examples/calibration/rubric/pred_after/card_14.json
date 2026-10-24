@@ -1,0 +1,131 @@
+{
+ "id": "card_14",
+ "n_criteria": 19,
+ "requirements": [
+  "R1: exception details and proposed resolution reviewed",
+  "R2: underlying reconciliation / Edith question status checked (before touching exception)",
+  "R3: exc_1ddfc978ce5a4d proposed resolution executed",
+  "R4: exc_06b89e3937b04a proposed resolution executed",
+  "R5: both exception statuses updated after postings",
+  "R6: supporting docs uploaded per exception under standard classification",
+  "R7: Edith question status reported for user's summary (user posts update and sends Harry summary)"
+ ],
+ "findings": [
+  {
+   "c": "C2",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "includes 'exc_1ddfc978ce5a4d' in the posting justification (or similar)",
+   "why": "catch-all"
+  },
+  {
+   "c": "C4",
+   "defect": "overly_specific",
+   "severity": "Major",
+   "quote": "records the posted corrective journal entry ... in the variance documentation for reconciliation BL-75810CD0FEE4",
+   "why": "proposed resolution says 're-run recon'; row locks one method (variance-explanation update)"
+  },
+  {
+   "c": "C6",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "reclassifies account 240000 ... for $172.62 (or similar)",
+   "why": "catch-all"
+  },
+  {
+   "c": "C8",
+   "defect": "overly_broad",
+   "severity": "Moderate",
+   "quote": "attempts to update exception exc_1ddfc978ce5a4d",
+   "why": "no target status; any update attempt, incl. wrong status or failed call, passes"
+  },
+  {
+   "c": "C9",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "referencing the corrective journal entry and the $4,390.62 WIP-Unbilled Services clearing (or similar)",
+   "why": "catch-all; evidence 'or' widens"
+  },
+  {
+   "c": "C10",
+   "defect": "overly_broad",
+   "severity": "Moderate",
+   "quote": "attempts to update exception exc_06b89e3937b04a",
+   "why": "no target status; any attempt passes"
+  },
+  {
+   "c": "C11",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "confirming the $172.62 ... variance was reclassified (or similar)",
+   "why": "catch-all"
+  },
+  {
+   "c": "C14",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "posts a status update as a new top-level message to the #monthly-close-coordination",
+   "why": "prompt: 'I'll post an update in the close-coordination channel' (user-owned)"
+  },
+  {
+   "c": "C15",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "Slack post to C005 references both exceptions resolved ...",
+   "why": "user-owned post; also bundles two exceptions + vault uploads, '(or similar)'"
+  },
+  {
+   "c": "C16",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "sends a summary email from anaya.wallace@... to harry.marks@...",
+   "why": "prompt: 'I'll ... send Harry a summary' (user-owned)"
+  },
+  {
+   "c": "C17",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "email to harry.marks ... covers exception exc_1ddfc978ce5a4d",
+   "why": "content of a user-owned email; also '(or similar)'"
+  },
+  {
+   "c": "C18",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "email to harry.marks ... covers exception exc_06b89e3937b04a",
+   "why": "content of a user-owned email; also '(or similar)'"
+  },
+  {
+   "c": "C19",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "is open, has no response, and its SLA of 2026-06-02 is overdue (or similar)",
+   "why": "catch-all; also bundles open + no response + SLA overdue"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 11,
+  "rows_moderate": 2,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 57.9,
+  "pct_moderate_or_worse": 68.4,
+  "pct_any": 68.4
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "NON-FAIL",
+  "agent_centric": "NON-FAIL",
+  "negative": "PASS",
+  "predicted_all_fail": "PASS",
+  "other": "none"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe access (other universe): all literal values UNRESOLVED; no weights on card (N/A); channel/tool availability not verifiable. Process NON-FAIL: prompt orders reconciliation check before touching the exception; no Process row. Whether EX.SLA_OVERDUE is rate-1.0 not verifiable."
+}

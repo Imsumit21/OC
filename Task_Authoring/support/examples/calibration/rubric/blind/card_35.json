@@ -1,0 +1,119 @@
+{
+ "card_index": 35,
+ "universe": "mcp-advanced-3-20-moveops-metadata",
+ "prompt": "My manager, Julian, just forwarded me a massive escalation from Derek Hollis at GreenStack Energy. Julian is completely underwater with the Vantage rollout and the BrightLoop crisis, so he asked me to step up and handle this.\n\nDerek is threatening to pause their contract. He\u2019s complaining that half of their active relocations are stuck in limbo, that he's getting payment reminders for an invoice blocked by an unauthorized interim storage charge, and he mentioned some rumor about a completely botched Seattle move involving a mix-up with another company's employee.\n\nSince I don't have any history on this account, I really need your help. Please dig through our entire infrastructure billing, tracking records, internal chats, and open tickets to find the actual ground truth. Figure out exactly which moves are stalled and why, what's happening with that storage charge, and the reality behind this mix-up rumor. Also, Julian asked me to audit their recurring platform fees for the last year to ensure our overall billing for them is actually accurate and up-to-date.\n\nOnce you have the full picture, please fix whatever internal tracking records are broken, ping the specific internal owners to get these items unblocked, and reply directly to Derek's email with a clear status update.\n\nCrucial rule: Julian is trusting me with this, so DO NOT promise Derek any refunds, waived fees, or financial concessions in your email. Just give him the facts and tell him we are untangling the mess. Any financial hits have to be reviewed by Finance first.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent sends an email to [derek.hollis@greenstackenergy.com](mailto:derek.hollis@greenstackenergy.com).",
+   "evidence": "See OE 8. Look for a send_email tool call. Check the 'to' field for derek.hollis@greenstackenergy.com and confirm the tool returned success.",
+   "cb_justification": "This rubric exists because the prompt explicitly asks the agent to \"reply directly to Derek's email with a clear status update\"."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent's email to Derek Hollis mentions the building shutdown or electrical grid upgrades at the Seattle HQ as the reason for Joaqu\u00edn Reyes's delay (or similar).",
+   "evidence": "See OE 1 and OE 8. Check the body parameter of the send_email call to Derek Hollis. Look for references to Joaqu\u00edn Reyes and the building shutdown, electrical upgrades, or facility closure.",
+   "cb_justification": "This rubric exists to verify that the agent discovered the ground truth behind the first stalled move and communicated it to the client as requested."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent's email to Derek Hollis clarifies that the $1,650 blocked charge is for Mei-Lin Zhao's required hazmat interim storage (or similar).",
+   "evidence": "See OE 2 and OE 8. Check the body parameter of the send_email call to Derek Hollis. Look for references to the $1,650 charge and its connection to Mei-Lin Zhao, hazmat, or interim storage.",
+   "cb_justification": "The prompt asks the agent to figure out \"what's happening with that storage charge\". The agent must find the invoice and explain to Derek what the $1,650 actually covers."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent's email to Derek Hollis clarifies the Seattle move rumor by stating it was just a name-similarity risk with another company's employee (Noah Fitzpatrick of Axiom) and that Noah Fitzgerald's own relocation is proceeding normally and was not botched (or similar).",
+   "evidence": "See OE 3, OE 4, and OE 8. Check the body parameter of the send_email call to Derek Hollis. Look for an explanation clarifying the Noah Fitzgerald / Noah Fitzpatrick name-similarity risk and confirming the move was not botched.",
+   "cb_justification": "The prompt asks the agent to find \"the reality behind this mix-up rumor\". The agent must discover the Slack discussion about the two Noahs and reassure the client. Ground truth: Fitzgerald's move is still in progress (dates 2026-04-28/29 are upcoming), so the reassurance is that the move was NOT botched and is on track - not that it is already completed."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's email to Derek Hollis does not promise any refunds, does not waive the $1,650 fee, and makes no financial concessions.",
+   "evidence": "See OE 8. Read the full body parameter of the send_email call to Derek Hollis. The rubric fails if the agent offers to waive the storage fee, issue a credit, or promises a refund.",
+   "cb_justification": "This rubric enforces the strict negative constraint in the prompt: \"DO NOT promise Derek any refunds, waived fees, or financial concessions in your email. Any financial hits have to be reviewed by Finance first.\""
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent notifies Emeka Diallo, Marcus Thorne, or Hana Kim mentioning the approximately $22,000 in unbilled recurring platform fees, the 11 missed months, or the missing invoices since May 2025.",
+   "evidence": "See OE 5 and OE 7. Look for an email or message (e.g., Slack) directed to Emeka Diallo, Marcus Thorne, or Hana Kim. Check the content for mentions of $22,000, 11 months, or the unbilled platform fees spanning back to 2025.",
+   "cb_justification": "The prompt requires the agent to \"ping the specific internal owners\" regarding the audited platform fees. Alerting the Account Manager or the Finance team about the billing gap is a valid resolution path."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent notifies Chloe Vance, Fatimah Al-Rashidi, or Javier Morales regarding the logistical blockers for Joaqu\u00edn Reyes.",
+   "evidence": "See OE 7. Look for a message directed to Operations personnel (Chloe Vance, Fatimah Al-Rashidi, or Javier Morales). Check the content for requests to unblock, coordinate, or confirm the closeout of Joaqu\u00edn Reyes's rig delivery.",
+   "cb_justification": "The prompt instructs the agent to \"ping the specific internal owners to get these items unblocked\". Operations must be notified specifically about Joaqu\u00edn Reyes's blocked rig delivery to fulfill the prompt."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent notifies an operations owner (Chloe Vance, Fatimah Al-Rashidi, or Emeka Diallo) about Mei-Lin Zhao's interim hazmat-storage status.",
+   "evidence": "See OE 7. Look for a message directed to Operations personnel. Check the content for a reference to Mei-Lin Zhao and her hazmat interim-storage status.",
+   "cb_justification": "The prompt instructs the agent to \"ping the specific internal owners\". Mei-Lin Zhao's move is on-track (the 11-day interim hazmat storage bridges her lease gap until the Portland lab opens April 28), so this rubric checks that the agent surfaces her storage status to Operations rather than requiring an \"unblock\" she does not need."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent corrects Noah Fitzgerald's Airtable relocation record, which is prematurely marked 'Completed' even though his move dates (2026-04-28/29) are still upcoming, by reverting the status to 'In Progress' or adding a correction note.",
+   "evidence": "See OE 4 and OE 6. Look for an airtable_update_records call modifying Noah Fitzgerald's record - changing the Status from 'Completed' to 'In Progress' or adding a correction note explaining the status is premature.",
+   "cb_justification": "The prompt explicitly demands to \"fix whatever internal tracking records are broken\". Fitzgerald's record is broken: it shows 'Completed' before his move has occurred. This evaluates whether the agent identified and corrected that specific record error."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent reconciles Joaqu\u00edn Reyes's Airtable relocation record given that his move window (April 11-19, 2026) has already passed as of the current date - either updating the stale 'In Progress' status to reflect the move's completion or adding a note that final rig-delivery confirmation is still pending.",
+   "evidence": "Look for an airtable_update_records call modifying Joaqu\u00edn Reyes's record (recJoaquinReyesPhoenixSeattle). The universe shows Status 'In Progress' with Move Start 2026-04-11 / Move End 2026-04-19, a Seattle HQ shutdown April 14-18 with the rig delivery slot at April 19 10:00 AM or later, and the DOT documentation ticket marked done on April 21. No record confirms or denies the physical delivery. Accept either an update to a completed status or a note that final delivery confirmation is pending; do NOT require a claim that the shutdown is currently blocking delivery, since the shutdown ended April 18.",
+   "cb_justification": "The prompt demands the agent \"fix whatever internal tracking records are broken\". Reyes's record still reads 'In Progress' although his move window (April 11-19) closed before the current date (April 26). The universe does not record a final rig-delivery outcome, so a valid fix either marks the move complete or flags that final delivery confirmation is pending - both reconcile the stale status."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent updates Tom\u00e1s Herrera's internal tracking record to reflect the correct move-in date of August 29, 2026 (or similar).",
+   "evidence": "See OE 1 and OE 6. Look for an airtable_update_records call modifying Tom\u00e1s Herrera's record with the corrected date (August 29, 2026, or 2026-08-29).",
+   "cb_justification": "The prompt explicitly demands to \"fix whatever internal tracking records are broken\". Herrera's record contained incorrect April dates in Airtable. This evaluates if the agent updated the record with the correct August 2026 timeframe discovered in the client emails."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response to the user that there is approximately $22,000 in unbilled recurring platform fees, 11 missed months, or explicitly outlines the gap (e.g., only one $2,000 fee billed since May 2025).",
+   "evidence": "See OE 5. Read the final response text provided to the user. Look for the identification of the missing $22,000, the 11 months of unbilled stipend/platform fees, or the explanation that fees haven't been billed since May 2025.",
+   "cb_justification": "The prompt asks the agent to audit the platform fees and provide the ground truth to Zara. Reporting this billing gap back to the user is a critical deliverable."
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent identifies in the final response to the user that the blocked invoice (INV-2026-0418) contains a $1,650 charge for hazmat interim storage that is pending client approval.",
+   "evidence": "See OE 2. Read the final response text provided to the user. Look for the mention of invoice INV-2026-0418, the $1,650 amount, and its status as pending client approval for interim storage.",
+   "cb_justification": "The prompt asks to figure out \"what's happening with that storage charge\". The agent must report the exact invoice ID and the specific reason it is blocked back to Zara."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response to the user the status of Mei-Lin Zhao's move - her 11-day hazmat interim storage bridging her lease gap until the Portland lab opens (April 28).",
+   "evidence": "See OE 1. Read the final response text provided to the user. Look for Mei-Lin Zhao's interim hazmat storage bridging her lease gap until the Portland lab opens April 28. Grounded in the deal and Airtable records.",
+   "cb_justification": "The prompt asks Zara (who has no account history) to find the ground truth and figure out the situation with the complex GreenStack moves. Reporting Mei-Lin Zhao's status to the user is a distinct deliverable from the client email to Derek, so it needs its own outcome rubric."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response to the user the status of Joaqu\u00edn Reyes's move - his oversize-rig delivery, which had to be scheduled around the April 14-18 Seattle HQ building shutdown (move window April 11-19).",
+   "evidence": "See OE 1. Read the final response text provided to the user. Look for Joaqu\u00edn Reyes's oversize solar rig whose delivery had to work around the April 14-18 Seattle HQ shutdown (window April 11-19). Grounded in the deal and Airtable records; do NOT require framing Reyes as 'stalled', since the universe does not record his final delivery outcome.",
+   "cb_justification": "The prompt asks Zara (who has no account history) to find the ground truth and figure out the situation with the complex GreenStack moves. Reporting Joaqu\u00edn Reyes's status to the user is a distinct deliverable from the client email to Derek, so it needs its own outcome rubric."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent reports in the final response to the user that the 'botched Seattle move' rumor was a name-similarity risk between Noah Fitzgerald (GreenStack) and Noah Fitzpatrick (Axiom), not an actual botched move.",
+   "evidence": "See OE 3 and OE 4. Read the final response text provided to the user. Look for an explanation that the rumor stemmed from the two-Noah name collision (Fitzgerald / GreenStack vs. Fitzpatrick / Axiom) and that Fitzgerald's move was not botched.",
+   "cb_justification": "The prompt asks the agent to find \"the reality behind this mix-up rumor\" and report the ground truth to the user. This is a distinct user-facing deliverable from the reassurance sent to Derek."
+  }
+ ]
+}

@@ -1,0 +1,133 @@
+{
+ "card_index": 48,
+ "universe": "star-pm-generic-expanded-nofs",
+ "prompt": "We finally got the go-ahead on Tanya Mitchell's Unit 14, and I want it turned around and off my open list this week. The owner signed off and my read is that the nonpayment side is cleared and the filing is squared away, so as far as I am concerned we are past the holdup and it is time to get that unit back in shape and ready to re-rent.\n\nHere is what I need. Start by pulling up the current make-ready record on Unit 14 and confirm where it genuinely stands today before you touch anything. I do not want it marked further along than it really is, so keep your update tight and true to the actual state, and move it forward only as far as the facts support. Keep everything tied to Tanya Mitchell's unit specifically.\n\nI also want the team current on where her account really landed. The crew and the front office have been hearing bits and pieces for weeks, and I would rather everyone work off the same thing. Figure out where that account stands as of now, then post a clean status in the make-ready channel so we are all aligned.\n\nThen draft me an email to Brooke that walks through where Unit 14 sits end to end, the account, the turn, and anything still open on it, so she is not caught off guard when it comes up in her owner review. Do not send it. Just get it ready for me to review.\n\nLast thing, set a reminder on my Google Calendar to come back to Unit 14 early next week, and update the ticket we have open on it so it is not sitting there stale. I like to be sure before I escalate anything, so lay it all out in that email for me and I will take it from there.",
+ "criteria": [
+  {
+   "index": "C1",
+   "category": "outcome",
+   "criterion": "The Agent updates a Tanya Mitchell Unit 14 make-ready turn record (receee45491536859, recc83c05d889b354, or reca8230a8fd9ff51), not the Rio Bend Unit 14 record (rec94e86a3007dd5e).",
+   "evidence": "Look for a make-ready record update whose target id is receee45491536859 ('Unit 14 - Tanya Mitchell Eviction'), recc83c05d889b354 ('Unit 14'), or reca8230a8fd9ff51 ('Sunset Ridge Unit 14') - all are valid Tanya Mitchell Unit 14 turn records. FAIL if the update targets rec94e86a3007dd5e (Rio Bend Unit 14).",
+   "cb_justification": "The prompt says to keep everything 'tied to Tanya Mitchell's unit specifically.' Unit 14 exists at multiple properties, so the update must land on one of Tanya's make-ready turn records and never the already rent-ready Rio Bend Unit 14."
+  },
+  {
+   "index": "C2",
+   "category": "outcome",
+   "criterion": "The Agent keeps the Unit 14 make-ready turn status at Scheduled and does not advance it to In Progress or Ready.",
+   "evidence": "Confirm the turn status is not advanced beyond Scheduled: it remains selSched (Scheduled), whether left unchanged or explicitly set. FAIL only if the Agent advances it to In Progress (selProg) or Ready (selReady).",
+   "cb_justification": "The prompt says 'I do not want it marked further along than it really is' and to move it forward 'only as far as the facts support.' Possession has not been returned, so the turn must stay at Scheduled."
+  },
+  {
+   "index": "C3",
+   "category": "outcome",
+   "criterion": "The Agent's update to the Unit 14 make-ready record documents that the turn is held because possession has not been returned and that work and marketing cannot begin until possession is formally returned.",
+   "evidence": "Check the notes field of the make-ready update for language that the turn is on hold pending possession return and eviction resolution, and must not begin or be marketed until possession is formally returned.",
+   "cb_justification": "The prompt asks the Agent to keep the update 'tight and true to the actual state.' The true state is a hold pending the eviction and possession return, which must be recorded on the turn."
+  },
+  {
+   "index": "C4",
+   "category": "outcome",
+   "criterion": "The Agent posts a status update in the make-ready channel (#make-ready).",
+   "evidence": "Look for a Slack message posted to the make-ready channel (channel id C004). Confirm the post returns success.",
+   "cb_justification": "The prompt says to 'post a clean status in the make-ready channel so we are all aligned' on where Tanya Mitchell's account landed."
+  },
+  {
+   "index": "C5",
+   "category": "outcome",
+   "criterion": "The Agent's make-ready channel message states that Tanya Mitchell's account is in active eviction with the payment plan breached and is not on an active payment plan.",
+   "evidence": "Check the Slack message content for a statement that the account is in active eviction with the payment plan breached and not on an active plan. FAIL if it reports the account as cleared, current, or resolved.",
+   "cb_justification": "The prompt wants the team current on 'where her account really landed.' The account is not cleared: the payment plan was breached and the matter is in active eviction, correcting the assumption that the nonpayment side is resolved."
+  },
+  {
+   "index": "C6",
+   "category": "outcome",
+   "criterion": "The Agent's make-ready channel message states that the Unit 14 turn is held at Scheduled and cannot begin until possession is formally returned.",
+   "evidence": "Check the Slack message content for a statement that the turn is on hold (stays Scheduled) and cannot begin until possession is returned.",
+   "cb_justification": "The make-ready channel status must reflect that the turn cannot proceed. Possession has not been returned, so the turn is held rather than moving toward re-rent."
+  },
+  {
+   "index": "C7",
+   "category": "outcome",
+   "criterion": "The Agent drafts an email, without sending it, to [brooke.phillips@starpm.com](mailto:brooke.phillips@starpm.com) regarding Tanya Mitchell's Sunset Ridge Unit 14 status ahead of the owner review.",
+   "evidence": "Look for an email draft addressed to brooke.phillips@starpm.com about Tanya Mitchell's Unit 14. Confirm it is created as a draft and not sent (StarPM email is draft-only).",
+   "cb_justification": "The prompt says 'draft me an email to Brooke... Do not send it.' Brooke Phillips is the supervisor who runs the owner review."
+  },
+  {
+   "index": "C8",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke identifies the unit as Tanya Mitchell's Sunset Ridge Unit 14, distinct from the already rent-ready Rio Bend Unit 14.",
+   "evidence": "Check the email body for identification of Tanya Mitchell's Sunset Ridge Unit 14 as the subject unit, not Rio Bend Unit 14.",
+   "cb_justification": "The prompt asks the email to walk through 'where Unit 14 sits end to end.' Because Unit 14 exists at multiple properties, the email must name the correct Sunset Ridge unit and not conflate it with the rent-ready Rio Bend Unit 14."
+  },
+  {
+   "index": "C9",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke states that the account is delinquent and in active eviction.",
+   "evidence": "Check the email body for a statement that the account is delinquent and in active eviction. FAIL if it reports the account as paid, current, or cleared.",
+   "cb_justification": "The prompt asks the email to cover 'the account.' The account is delinquent and in active eviction; the nonpayment side is not resolved."
+  },
+  {
+   "index": "C10",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke includes the outstanding rent arrears balance of $2,132.00 on bill QR-2026-0441.",
+   "evidence": "Check the email body for the rent arrears balance of $2,132.00 tied to bill QR-2026-0441 (Tanya Mitchell, Unit 14). Grade on the amount and tenant, not the bill's vendor label.",
+   "cb_justification": "The prompt asks the email to cover 'the account.' Bill QR-2026-0441 carries $2,132.00 in Tanya Mitchell's rent arrears, the concrete figure the owner review needs."
+  },
+  {
+   "index": "C11",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke states that the make-ready turn is held at Scheduled and cannot begin or be marketed until possession is formally returned.",
+   "evidence": "Check the email body for a statement that the turn is held (stays Scheduled) and cannot begin or be marketed until possession is returned.",
+   "cb_justification": "The prompt asks the email to cover 'the turn.' The turn is on hold pending possession return, so the email must not present it as ready to re-rent."
+  },
+  {
+   "index": "C12",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke states that the eviction filing is owner-approved.",
+   "evidence": "Check the email body for a statement that the eviction filing is owner-approved or owner-authorized to proceed. The filing reference EVF-2026-014 is acceptable supporting detail but is not required verbatim; grade on the owner-approval fact.",
+   "cb_justification": "The prompt asks the email to cover 'anything still open on it.' The owner review needs to know the eviction filing has owner authorization to proceed.\""
+  },
+  {
+   "index": "C13",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke states that the eviction is still in Justice of the Peace coordination and the matter is not yet closed.",
+   "evidence": "Check the email body for a statement that the eviction remains in Justice of the Peace coordination and is not yet resolved or closed.",
+   "cb_justification": "The prompt asks the email to cover 'anything still open on it.' Owner approval of the filing is not the same as the eviction being concluded; it remains in Justice of the Peace coordination and unresolved, so the matter is not closed."
+  },
+  {
+   "index": "C14",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke notes that an approved reasonable-accommodation (emotional support animal) is on record for the tenant as a fair-housing consideration before any turnover or adverse action.",
+   "evidence": "Check the email body for mention of an approved reasonable-accommodation or emotional support animal on record for the tenant as a fair-housing consideration.",
+   "cb_justification": "The prompt asks the email to cover 'anything still open on it.' An approved reasonable-accommodation (ESA) is on record for Tanya Mitchell, a fair-housing consideration the owner review should weigh before turnover or adverse action."
+  },
+  {
+   "index": "C15",
+   "category": "outcome",
+   "criterion": "The Agent sets a reminder on the user's calendar for early next week, 2026-07-06 or 2026-07-07, to revisit Tanya Mitchell's Unit 14 turn and eviction status.",
+   "evidence": "Look for a calendar event created for 2026-07-06 or 2026-07-07 (early the following week) about revisiting Unit 14. Confirm it is created on the user's calendar.",
+   "cb_justification": "The prompt says 'set a reminder on my Google Calendar to come back to Unit 14 early next week.' From today, 2026-07-01, early next week resolves to 2026-07-06 or 2026-07-07 (Monday or Tuesday)."
+  },
+  {
+   "index": "C16",
+   "category": "outcome",
+   "criterion": "The Agent adds a comment to the open Unit 14 eviction tracking ticket OPS-32 rather than creating a new issue.",
+   "evidence": "Look for a comment added to issue OPS-32. FAIL if the Agent creates a new Linear issue instead of commenting on OPS-32.",
+   "cb_justification": "The prompt says to 'update the ticket we have open on it so it is not sitting there stale.' OPS-32 is the open eviction ticket for this matter, so the Agent should comment on it, not open a new one."
+  },
+  {
+   "index": "C17",
+   "category": "outcome",
+   "criterion": "The Agent's comment on OPS-32 reflects that the Unit 14 turn is held and not advanced because possession has not been returned.",
+   "evidence": "Check the OPS-32 comment content for a statement that the turn is held (not advanced) because possession has not been returned. The comment must bring the ticket current rather than repeat a stale status.",
+   "cb_justification": "The prompt wants the ticket brought current 'so it is not sitting there stale.' OPS-32 is the open eviction ticket, so the comment should reflect that the turn is held pending possession return."
+  },
+  {
+   "index": "C18",
+   "category": "outcome",
+   "criterion": "The Agent's email to Brooke does not treat invoice 7214's zero balance as evidence that the account is resolved.",
+   "evidence": "Check the email body. FAIL if it cites invoice 7214's zero balance as evidence the account is paid, cleared, or resolved. PASS if the email either omits invoice 7214, contextualizes the zero balance correctly, or explicitly notes the credit offset.",
+   "cb_justification": "Invoice 7214 nets to a zero balance only through an applied payment credit, not because the debt is settled. The email must not present this zero balance as proof the account is current."
+  }
+ ]
+}

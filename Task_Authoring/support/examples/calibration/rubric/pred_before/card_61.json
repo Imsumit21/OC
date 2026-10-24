@@ -1,0 +1,210 @@
+{
+ "id": "card_61",
+ "n_criteria": 25,
+ "requirements": [
+  "R1: full account: paid, outstanding, exact rent owed today",
+  "R2: where the arrangement landed / whether held",
+  "R3: correct next procedural step",
+  "R4: scope limited to Renee / 212B",
+  "R5: straight read to user: owed + next move",
+  "R6: to Brooke: balance, notice history, recommendation",
+  "R7: tenant-facing notice drafted",
+  "R8: delinquency record updated",
+  "R9: flag anything that does not add up"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "names a tool (evidence field)",
+   "severity": "Major",
+   "quote": "slack_send_message ... a create_draft",
+   "why": "catalog tool names in a field; Agent-Centric FAIL"
+  },
+  {
+   "c": "C2",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "The Agent's escalation to Brooke states",
+   "why": "C2-C6 all fail if the Brooke message is missing"
+  },
+  {
+   "c": "C3",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "$240 drywall/water-damage charge is disputed",
+   "why": "C3/C11/C19/C20 fail on one $240 miss"
+  },
+  {
+   "c": "C5",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "did not hold to the informal payment arrangement",
+   "why": "C5/C14/C21 fail on one miss"
+  },
+  {
+   "c": "C6",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "three-day notice to pay or quit",
+   "why": "C6/C9/C16/C22 fail on one wrong ladder step"
+  },
+  {
+   "c": "C7",
+   "defect": "names a tool (evidence field)",
+   "severity": "Major",
+   "quote": "create_draft action",
+   "why": "catalog tool name in a field"
+  },
+  {
+   "c": "C8",
+   "defect": "prohibition-only / absence-only",
+   "severity": "dimension-only",
+   "quote": "does not send or serve the tenant-facing notice",
+   "why": "acceptance is absence of sending"
+  },
+  {
+   "c": "C9",
+   "defect": "names a tool (evidence field)",
+   "severity": "Major",
+   "quote": "create_draft body",
+   "why": "catalog tool name in a field"
+  },
+  {
+   "c": "C10",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "The Agent's tenant-notice draft",
+   "why": "C9-C11 all fail if the draft is missing"
+  },
+  {
+   "c": "C11",
+   "defect": "prohibition-only / absence-only",
+   "severity": "dimension-only",
+   "quote": "excludes the disputed $240 drywall/water-damage charge",
+   "why": "acceptance is absence of the $240"
+  },
+  {
+   "c": "C12",
+   "defect": "names a tool (evidence field)",
+   "severity": "Major",
+   "quote": "update_records_for_table action",
+   "why": "catalog tool name in a field"
+  },
+  {
+   "c": "C13",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "The Agent's update to the delinquency record",
+   "why": "C13-C16 all fail if the record update is missing"
+  },
+  {
+   "c": "C17",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "$1,025",
+   "why": "C2/C10/C13/C17 fail on one balance error"
+  },
+  {
+   "c": "C20",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "identifies the $240 charge as building-caused, traced to the upstairs unit's supply-line leak",
+   "why": "cause not asked; fails a correct run that flags the dispute only"
+  },
+  {
+   "c": "C23",
+   "defect": "prohibition-only / absence-only",
+   "severity": "dimension-only",
+   "quote": "does not recommend an eviction filing",
+   "why": "acceptance is absence"
+  }
+ ],
+ "missing_coverage": [],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6"
+   ],
+   "condition": "Brooke message exists"
+  },
+  {
+   "rows": [
+    "C9",
+    "C10",
+    "C11"
+   ],
+   "condition": "notice draft exists"
+  },
+  {
+   "rows": [
+    "C13",
+    "C14",
+    "C15",
+    "C16"
+   ],
+   "condition": "record updated"
+  },
+  {
+   "rows": [
+    "C2",
+    "C10",
+    "C13",
+    "C17"
+   ],
+   "condition": "$1,025 balance"
+  },
+  {
+   "rows": [
+    "C5",
+    "C14",
+    "C21"
+   ],
+   "condition": "arrangement broken"
+  },
+  {
+   "rows": [
+    "C6",
+    "C9",
+    "C16",
+    "C22"
+   ],
+   "condition": "three-day notice step"
+  },
+  {
+   "rows": [
+    "C3",
+    "C11",
+    "C19",
+    "C20"
+   ],
+   "condition": "$240 disputed"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 5,
+  "rows_moderate": 7,
+  "rows_minor": 0,
+  "missing_outcomes": 0,
+  "pct_major": 20.0,
+  "pct_moderate_or_worse": 48.0,
+  "pct_any": 48.0
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "FAIL",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "spot_checks=PASS;three_fields=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No coverage plan/ledger/universe for other universes; values not verified; weights absent (N/A); severity per playbook table as written. C25 accepted as a scope-boundary row. Cannot verify Gmail lacks send (C1 Slack-only)."
+}

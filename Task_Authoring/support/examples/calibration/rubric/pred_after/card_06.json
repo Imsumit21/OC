@@ -1,0 +1,159 @@
+{
+ "id": "card_06",
+ "n_criteria": 16,
+ "requirements": [
+  "R1: application date confirmed to user",
+  "R2: UWM status (written acceptance outstanding)",
+  "R3: Bellamy acknowledgment of corrected estimate",
+  "R4: rate-lock charge and refund vs disclosed amount, and net",
+  "R5: borrower payment record tied to this loan, not crossed",
+  "R6: anything else off / holding up closing",
+  "R7: note to Robert Calloway and Denise Holloway on cure status",
+  "R8: closeout update in #compliance-alerts",
+  "R9: activity record update on LN-2026-00119",
+  "R10: finance confirmation of the refund",
+  "R11: conditional follow-up to UWM requesting written acceptance",
+  "R12: short TRID summary"
+ ],
+ "findings": [
+  {
+   "c": "C1",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "confirms the basic file details",
+   "why": "title names no details; acceptance undefined (also a discovery trace)"
+  },
+  {
+   "c": "C2",
+   "defect": "category",
+   "severity": "Moderate",
+   "quote": "The agent should look for Nadia's alert",
+   "why": "search/execution trace graded as a result; fails condition 3, and a stricter Outcome captures it"
+  },
+  {
+   "c": "C3",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "the application date (2026-06-16), ... original Loan Estimate was sent (2026-06-23), the corrected Loan Estimate issue date (2026-07-01), and that Bellamy acknowledged/e-signed",
+   "why": "four independently failable facts; application date and acknowledgment are separate asks"
+  },
+  {
+   "c": "C4",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "$750 was charged (charge ch_..., succeeded) versus $500 disclosed ... cured by a $250 refund (re_..., succeeded), leaving $500 net",
+   "why": "charge, refund and net come from separate Stripe objects; 'same Stripe records' is a rejected bundling rationale"
+  },
+  {
+   "c": "C5",
+   "defect": "category",
+   "severity": "Moderate",
+   "quote": "The agent searches for emails connected to Bellamy, Nadia Osman, the LN-2026-00119 loan, and the refund",
+   "why": "execution trace, not an outcome"
+  },
+  {
+   "c": "C6",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "verify if the issue was taken up with Denise Holloway or Robert Calloway",
+   "why": "prompt never asks whether the issue was escalated to them; trace row"
+  },
+  {
+   "c": "C7",
+   "defect": "category",
+   "severity": "Moderate",
+   "quote": "The agent compares the loan record, activity history, emails, Stripe, and Slack",
+   "why": "execution trace; no observable result in the title"
+  },
+  {
+   "c": "C8",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "written acceptance ... has not yet arrived ... and states that a follow-up with UWM is still needed",
+   "why": "status finding and follow-up recommendation fail separately; evidence also accepts final response and/or activity note"
+  },
+  {
+   "c": "C9",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "adds a concise and concrete update in which it explains the cure status, the refund status, and whether anything remains outstanding",
+   "why": "no destination (activity record/loan) in title; subjective 'concise and concrete'; also bundles three content items"
+  },
+  {
+   "c": "C10",
+   "defect": "not_self_contained",
+   "severity": "Major",
+   "quote": "sends a message that summarizes what has been done",
+   "why": "recipients (Robert Calloway, Denise Holloway) and content only in evidence"
+  },
+  {
+   "c": "C11",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "sending Finance the refund amount, the refund ID, and confirmation that the refund cured the overcharge",
+   "why": "three content items; amount/ID values and Finance address not named in title (also not_self_contained)"
+  },
+  {
+   "c": "C12",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "covers (a) ... (b) ... and (c) ... (or similar)",
+   "why": "three independent content items; '(or similar)' catch-all also not_self_contained"
+  },
+  {
+   "c": "C12",
+   "defect": "vague_exemplar",
+   "severity": "Moderate",
+   "quote": "(e.g., to the filesystem)",
+   "why": "exemplar in evidence"
+  },
+  {
+   "c": "C14",
+   "defect": "non_atomic",
+   "severity": "Major",
+   "quote": "stating that the TRID timing issue and the rate-lock fee overcharge have been cured (corrected Loan Estimate issued 2026-07-01 and a $250 refund)",
+   "why": "two cured issues plus two cure details in one post row; prompt only sets 'so the team knows it's resolved'"
+  },
+  {
+   "c": "C13",
+   "defect": "cleared (counter-reading)",
+   "severity": "note",
+   "quote": "customer record ... references loan LN-2026-00701, whereas ... pi_... and ch_... correctly reference LN-2026-00119",
+   "why": "operands of one mislink finding"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R7",
+   "why": "no title names Robert Calloway/Denise Holloway as recipients; C10 title rejects no wrong recipient"
+  },
+  {
+   "req": "R9",
+   "why": "no title names the LN-2026-00119 activity record as destination; C9 title accepts any update"
+  }
+ ],
+ "overlap_groups": [],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 10,
+  "rows_moderate": 3,
+  "rows_minor": 0,
+  "missing_outcomes": 2,
+  "pct_major": 75.0,
+  "pct_moderate_or_worse": 93.8,
+  "pct_any": 93.8
+ },
+ "dimensions": {
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "PASS",
+  "other": "repair gates: atomicity, self-containment, coverage fail",
+  "overall_quality": "FAIL",
+  "predicted_all_fail": "PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "All dates/amounts/IDs/UWM address UNRESOLVED (other universe). Trace rows labeled outcome counted as category; process dimension left PASS since no row is labeled Process. Missing-coverage for R7/R9 is a title-only reading (rows exist but name no destination)."
+}

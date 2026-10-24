@@ -1,0 +1,211 @@
+{
+ "id": "card_05",
+ "n_criteria": 27,
+ "requirements": [
+  "R1: Carlos Mendez complaint tied to right loan/borrower/owner/status",
+  "R2: Tiffany Brooks complaint tied correctly",
+  "R3: Taylor Morgan gift funds issue",
+  "R4: finished basement appraisal issue tied correctly",
+  "R5: loan records show blocker, what was tried, next owner (each item)",
+  "R6: client records cleaned up (each item)",
+  "R7: no external contact",
+  "R8: action plan email to Grace and Elena in Amy's voice"
+ ],
+ "findings": [
+  {
+   "c": "C2",
+   "defect": "prohibition-only / absence-only acceptance",
+   "severity": "dimension-only",
+   "quote": "does not send any outbound message or email to borrowers, agents, title companies, lenders",
+   "why": "Absence-only; Negative fails even with explicit prohibition"
+  },
+  {
+   "c": "C3",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "identifies Carlos Mendez as the complaint sender and Terrence Whitfield as the LOS borrower",
+   "why": "Mismatch graded in C3, C7, C23"
+  },
+  {
+   "c": "C5",
+   "defect": "not self-contained",
+   "severity": "Moderate",
+   "quote": "assigns the next step to an internal owner (including but not limited to ...)",
+   "why": "Does not name the owner"
+  },
+  {
+   "c": "C8",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "identifies Tiffany Brooks as the complaint sender and Elizabeth Gray",
+   "why": "Mismatch graded in C8, C12, C24"
+  },
+  {
+   "c": "C10",
+   "defect": "not self-contained",
+   "severity": "Moderate",
+   "quote": "assigns the next step to an internal owner (including but not limited to ...)",
+   "why": "Does not name the owner"
+  },
+  {
+   "c": "C13",
+   "defect": "overly specific",
+   "severity": "Major",
+   "quote": "adds a gift funds condition to loan LN-2026-00631",
+   "why": "Prompt asks records to show the blocker; a note alone is a valid route"
+  },
+  {
+   "c": "C14",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "signed $20,000 gift letter is already received",
+   "why": "Gift facts graded in C14, C15, C25"
+  },
+  {
+   "c": "C16",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "parents had a privacy concern and Amy had already offered redaction",
+   "why": "Concern and prior attempt vary independently"
+  },
+  {
+   "c": "C17",
+   "defect": "disjunctive",
+   "severity": "Moderate",
+   "quote": "either as a CRM engagement on her contact record or as a note on her LOS borrower record",
+   "why": "Enumerates routes for the judge"
+  },
+  {
+   "c": "C18",
+   "defect": "cascading-overlap group",
+   "severity": "Moderate",
+   "quote": "correspondence describes 6923 Sharon Rd while the LOS record ... is Christine Wallace",
+   "why": "Basement mismatch graded in C18, C20, C21, C26"
+  },
+  {
+   "c": "C20",
+   "defect": "overly specific / conclusion on ambiguous evidence",
+   "severity": "Major",
+   "quote": "LN-2026-00184 loan note states that the LOS ties 6923 Sharon Rd to LN-2026-00184",
+   "why": "Requires a write on a file whose tie-out C21 calls unresolved; rejects a valid run that holds 00184 untouched"
+  },
+  {
+   "c": "C21",
+   "defect": "overly specific",
+   "severity": "Major",
+   "quote": "LN-2026-00184 loan note states that the true borrower or file tie out is unresolved",
+   "why": "Same forced write to 00184"
+  },
+  {
+   "c": "C22",
+   "defect": "non-atomic / disjunctive",
+   "severity": "Moderate",
+   "quote": "unpermitted finished basement or county record mismatch ... with permits or a price or contract adjustment needed",
+   "why": "Blocker and remedy bundled with alternatives"
+  },
+  {
+   "c": "C23",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "describes the Carlos Mendez complaint, the LN-2026-00609 mismatch ..., and the internal next step owner",
+   "why": "Three independent contents"
+  },
+  {
+   "c": "C24",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "the LN-2026-00211 mismatch with Elizabeth Gray, and the withdrawn loan status",
+   "why": "Mismatch and status vary independently"
+  },
+  {
+   "c": "C25",
+   "defect": "non-atomic",
+   "severity": "Moderate",
+   "quote": "gift letter is already in the file but donor withdrawal evidence and borrower deposit evidence are still needed",
+   "why": "Received vs outstanding items bundled"
+  },
+  {
+   "c": "C27",
+   "defect": "unauthorized",
+   "severity": "Major",
+   "quote": "states that borrowers, agents, title, lenders ... have not been contacted yet",
+   "why": "Prompt never asks the plan to report the hold; fails a correct plan"
+  }
+ ],
+ "missing_coverage": [
+  {
+   "req": "R5",
+   "why": "No row grades 'what has already been tried' on the Carlos LN-2026-00609 record"
+  },
+  {
+   "req": "R5",
+   "why": "No row grades the current blocker / what was tried on the Tiffany LN-2026-00211 record"
+  },
+  {
+   "req": "R5",
+   "why": "No row grades the next-step owner on the Taylor Morgan LN-2026-00631 record"
+  },
+  {
+   "req": "R5",
+   "why": "No row grades next-step owner / what was tried on the finished-basement records"
+  }
+ ],
+ "overlap_groups": [
+  {
+   "rows": [
+    "C3",
+    "C7",
+    "C23"
+   ],
+   "condition": "Carlos/Terrence mismatch missed"
+  },
+  {
+   "rows": [
+    "C8",
+    "C12",
+    "C24"
+   ],
+   "condition": "Tiffany/Elizabeth mismatch missed"
+  },
+  {
+   "rows": [
+    "C14",
+    "C15",
+    "C25"
+   ],
+   "condition": "gift letter vs money-trail distinction missed"
+  },
+  {
+   "rows": [
+    "C18",
+    "C20",
+    "C21",
+    "C26"
+   ],
+   "condition": "Sharon Rd / 00632-00184 mismatch missed"
+  }
+ ],
+ "predicted_all_fail_rows": [],
+ "tally": {
+  "rows_major": 4,
+  "rows_moderate": 12,
+  "rows_minor": 0,
+  "missing_outcomes": 4,
+  "pct_major": 29.6,
+  "pct_moderate_or_worse": 74.1,
+  "pct_any": 74.1
+ },
+ "dimensions": {
+  "overall_quality": "FAIL",
+  "criteria_weights": "N/A",
+  "category_balance": "PASS",
+  "process": "PASS",
+  "agent_centric": "PASS",
+  "negative": "FAIL",
+  "predicted_all_fail": "PASS",
+  "other": "three_fields_present=PASS; builder_minimum=PASS; spot_checks=PASS"
+ },
+ "readiness": "FAIL-RISK",
+ "confidence": "medium",
+ "limits": "No universe/ledger access (other universe): values, reachability and tool catalog not verified; no coverage plan, requirements derived from prompt; weights absent."
+}
