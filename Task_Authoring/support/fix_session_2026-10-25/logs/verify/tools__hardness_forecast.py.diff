@@ -1,0 +1,1199 @@
+--- a/tools/hardness_forecast.py
++++ b/tools/hardness_forecast.py
+@@ -11,15 +11,31 @@
+                (10,000 per scenario by default) are graded by tools/difficulty_stats.compute() under the task's gate
+                views; horizon and model provenance are not difficulty gates and are left out.
+                Per draw: each mechanism's landing rate from its Beta posterior, then six runs. In a run a mechanism
+-               lands when its latent uniform falls below that rate. Scenarios, never bounds (outcomes are
+-               non-monotone):
++               lands when its latent uniform falls below that rate; every unordered pair of mechanisms is also
++               reported from those per-run landings (landing_pairs: P(both land), P(either lands)). Scenarios, never
++               bounds (outcomes are non-monotone):
+                  dependence  independent · source (mechanisms whose rules share a source share the latent) ·
+                              correlated (one latent for all)
+                  extent      whole (every record the rule acts on) · shard:N (one worker batch of N consecutive
+-                             records) · slip (one record)
+-               Reports E[average] with its 10-90 % band, P(each difficulty gate), P(all four) and the value of
+-               information: how far P(all) moves between draws below and above each mechanism's median landing rate.
+-               Probe the budget-critical mechanisms first.
++                             records) · slip (one record) · batches (M6: every brief batch misses independently at
++                             b = 1 - (1 - theta)^(1/B), so the per-run landing rate stays theta; batches from
++                             --briefs trajectory_ledger briefs.json, else consecutive slices)
++               Complexity channels (F1): every channel the solver declares (oracle_kit CHANNELS, and every control
++               rule's over-application) fails member by member at a per-member rate e drawn per baseline from its
++               Beta (so P(any of N) is 1 - E[(1 - e)^N], reported beside the plug-in); sampled members go through
++               the solver as the channel's degrade (aggregates compound, opposing count errors cancel); latents
++               member · batch · run. Rates come from the model's ledger records, pooled across tasks like the
++               mechanism priors: channel records of the channel's family (default: its kind) and control records of
++               the rule's family (runs of a task share a design effect); else an explicit, disclosed --channel-rate;
++               a channel with neither is reported
++               UNPARAMETERIZED and not simulated. Each channel is reported apart from the mechanisms, with its
++               parameters, records and expected loss alone. --mechanism-rate overrides a mechanism's ledger prior
++               for a conditional design (labelled CONDITIONAL).
++               Reports E[average] with its 10-90 % band, the 10-90 % band of single run scores, P(each difficulty
++               gate), P(all four), E[failure patterns], each slot's P(fail) and P(fails all six runs) (all-fail
++               justification workload, never a block) and the value of information: how far P(all) moves between
++               draws below and above each mechanism's median landing rate. Probe the budget-critical mechanisms
++               first.
+   exhaustive   whole-rule landings only: every six-run multiset of the 2^k per-run outcomes through compute(); passing
+                multisets per view; P(pass) as a function of a common per-rule miss rate p; E[average](p) and its
+                break-even rates; the structure behind them (plan §13, §14.2, §15.5).
+@@ -42,7 +58,8 @@
+       [--revision R] [--surface S | --slots SLOTS.json | --layout coverage_*.json [--with-cases]] [--mechanisms a,b]
+       [--from-model M2] [--exclude-task T] [--exclude-revision R] [--include-mixed] [--family ELEMENT=FAMILY]
+       [--views auto|v2|v3|both] [--mode hard] [--task-type long-horizon] [--calls 550] [--draws 10000] [--seed 0]
+-      [--dependence D ...] [--extent E ...] [--design] [--freeze FILE ...]
++      [--dependence D ...] [--extent E ...] [--design] [--freeze FILE ...] [--briefs briefs.json ...]
++      [--channel-rate CID=E|ALPHA,BETA ...] [--mechanism-rate ELEMENT=E|ALPHA,BETA ...] [--no-channels]
+       [--preregister [--retrospective] [--harness NAME@VERSION]]
+       [--ledger L] [--out OUT.json] [--json]
+   python3 -B Task_Authoring/tools/hardness_forecast.py exhaustive --task-dir DIR [same layout / views options]
+@@ -91,8 +108,18 @@
+ VERSION = "hardness_forecast/1"
+ DIFFICULTY_GATES = ("pass_at_1", "avg_weighted_pass_rate", "per_rollout_sd", "failure_patterns")
+ DEPENDENCE = ("independent", "source", "correlated")
+-EXTENT = ("whole", "shard:32", "shard:14", "slip")
++EXTENT = ("whole", "shard:32", "shard:14", "slip", "batches")
++CHANNEL_LATENT = {"delegation": "batch", "tool_surface": "run"}       # the default latent per kind; else "member"
++ALONE_DRAWS = 400
+ RUNS = 6
++MAX_BATCHES = 5000        # refuse a batch latent above this: the inverse CDF is O(B) and the weights are log-space
++# CPython's betavariate computes 2*alpha internally; a finite but enormous shape overflows that product and the rejection
++# loop never accepts (it HANGS, it does not raise). Real Beta priors here have n_eff <= a few hundred, so a generous
++# bound closes the hang without limiting any real prior.
++MAX_BETA_PARAM = 1e9
++# ... and below this the Gamma sampler underflows (a symmetric 1e-300,1e-300 draws 0.0 every time, and 1e-3 gives a
++# mean of 0.38 instead of 0.5); 0.01 is the smallest shape whose sampler is sound here. Real priors have alpha, beta >= 1.
++MIN_BETA_PARAM = 0.01
+ LABEL = "UNCALIBRATED · advisory"
+ TRANSFER_LABEL = "TRANSFERRED · UNCALIBRATED"
+ NOTE = "model outputs, not measurements; the Season Pass backtests are development fixtures, not validation"
+@@ -138,8 +165,8 @@
+         if k in overrides:
+             return overrides[k]
+     for p in portfolio:
+-        if p.get("id") == e[1] and p.get("family"):
+-            return p["family"]
++        if p.get("id") == e[1] and (p.get("prior_family") or p.get("family")):
++            return p.get("prior_family") or p["family"]           # family: the legacy spelling of prior_family
+     m = meta(mod, e, portfolio)
+     return m.get("family") or m.get("mechanism") or dm._label(e)
+ 
+@@ -180,8 +207,12 @@
+         self.base = slots.values(engine.truth) if engine else None
+         self.cache = {}
+ 
+-    def of(self, failing: dict) -> tuple:
++    def of(self, failing: dict, cache: bool = True) -> tuple:
+         key = tuple(sorted((dm._label(e), tuple(sorted(ks)) if ks is not None else None) for e, ks in failing.items()))
++        if not cache and key not in self.cache:          # sampled member subsets rarely repeat: solve, keep nothing
++            rows = self.engine.rows(failing)
++            failed = frozenset(self.slots.flipped(self.slots.values(rows), self.base))
++            return failed, sum(self.slots.weight[i] for i in failed)
+         if key not in self.cache:
+             if self.design:
+                 names = {dm._label(e) for e in failing} | {e[1] for e in failing}
+@@ -229,6 +260,347 @@
+     return {v: {"cap": float(c["cap"]), "mode": c["mode"]} for v, c in caps.items()}
+ 
+ 
++# ------------------------------------------------------------------ complexity channels (F1) and batches (M6)
++# A declared channel (oracle_kit CHANNELS, and every control rule with an over-application operator) fails member by
++# member at a per-member rate e. Sampled members go through the solver as the channel's degrade on that key set
++# (Engine.rows): a sampled member fails at about e, aggregates compound, and opposing count errors can cancel. Shared
++# causes are the latent: member (independent slips) · batch (one latent per brief batch: delegation) · run (one latent
++# for every member and the declared slots). e is drawn per simulated baseline from its Beta, so P(any of N fails) is
++# 1 - E[(1 - e)^N], not the plug-in. Rates: the model's ledger records, pooled across tasks like the mechanism priors:
++# channel records of the channel's family (default: its kind, so a scale channel learns a per-member error rate per
++# model), control records of the rule's family (runs of one task share a design effect, H2); else an explicit,
++# disclosed --channel-rate override, else UNPARAMETERIZED (reported, not simulated). A fallback is a validity flag,
++# never a channel.
++
++def _rate_from_records(recs: list, rho: float, unit: str = "member"):
++    """Beta(1 + sum f / deff, 1 + sum (n - f) / deff) over [(task, revision, run, n, f, id)], where n and f count the
++    unit the simulator draws (Q2: member, batch or run). The design effect is 1 + (R - 1) rho per task over its
++    distinct (revision, run) pairs: two revisions both numbered run-1 are two runs, not one."""
++    if not recs:
++        return None
++    a = b = 0.0
++    tasks = {}
++    for task in sorted({x[0] for x in recs}):
++        xs = [x for x in recs if x[0] == task]
++        deff = hl.design_effect(len({(x[1], x[2]) for x in xs}), rho)
++        tasks[task] = {"runs": len({(x[1], x[2]) for x in xs}), "deff": round(deff, 4), "n": sum(x[3] for x in xs),
++                       "f": sum(x[4] for x in xs), "n_eff": round(sum(x[3] for x in xs) / deff, 4)}
++        a += sum(x[4] for x in xs) / deff
++        b += sum(x[3] - x[4] for x in xs) / deff
++    out = {"alpha": round(1 + a, 4), "beta": round(1 + b, 4), "mean": round((1 + a) / (2 + a + b), 6),
++           "records": [x[5] for x in recs], "unit": unit, "n": sum(x[3] for x in recs), "f": sum(x[4] for x in recs),
++           "tasks": tasks, "at_rho": {}, "basis": f"ledger records, {unit} trials (runs of a task share a design "
++           f"effect, H2)", "label": "UNCALIBRATED"}
++    for r in (0.0, 0.5, 1.0):
++        aa = bb = 0.0
++        for task in sorted({x[0] for x in recs}):
++            xs = [x for x in recs if x[0] == task]
++            deff = hl.design_effect(len({(x[1], x[2]) for x in xs}), r)
++            aa += sum(x[4] for x in xs) / deff
++            bb += sum(x[3] - x[4] for x in xs) / deff
++        out["at_rho"][str(r)] = {"alpha": round(1 + aa, 4), "beta": round(1 + bb, 4),
++                                 "mean": round((1 + aa) / (2 + aa + bb), 6)}
++    return out
++
++
++def channel_rate(led, model: str, cid: str, kind: str, family: str, overrides: dict, *, exclude_tasks=(),
++                 exclude_revisions=(), include_mixed=False, rho: float = hl.RHO):
++    """A channel's rate: a disclosed override, else the model's ledger records of its family, pooled across tasks
++    (channel records: the channel's family; control trials: the rule's family), else None. Trials are counted in the
++    unit the simulator draws (member / batch / run, recorded in counts.unit; a control defaults to its member)."""
++    if cid in overrides:
++        return overrides[cid]
++    recs, dropped = [], []            # (task, revision, run, n, f, id, unit)
++    excluded = lambda r: (r["task"] in exclude_tasks or r["revision"] in exclude_revisions  # noqa: E731
++                          or f"{r['task']}:{r['revision']}" in exclude_revisions)
++    for r in led.current():
++        if hl.model_family(r.get("model")) != hl.model_family(model):
++            continue
++        if kind == "control" and r["kind"] == "control" and r.get("family") == family:
++            if excluded(r):
++                dropped.append([r["id"], "excluded task/revision"])   # a real record, deliberately excluded
++                continue
++            # F1 residual b: only a record that would otherwise be THIS channel's trial is reported as dropped, and
++            # every exclusion keeps its reason (an all-dropped channel is UNPARAMETERIZED, never silently absent).
++            if (r.get("features") or {}).get("mixed_model") and not include_mixed:
++                dropped.append([r["id"], f"mixed-model run: deciding model(s) "
++                                         f"{(r.get('features') or {}).get('deciding_models') or [r.get('model')]}"])
++                continue
++            if r.get("verdict") not in ("OVER-APPLIED", "HELD"):
++                dropped.append([r["id"], f"{r.get('verdict')} is not a control trial (nothing was written)"])
++                continue
++            recs.append((r["task"], r.get("revision"), r.get("run"), 1, int(r["verdict"] == "OVER-APPLIED"), r["id"],
++                         "member"))
++        elif kind != "control" and r["kind"] == "channel" and r.get("family") == family \
++                and (r.get("counts") or {}):
++            if excluded(r):
++                dropped.append([r["id"], "excluded task/revision"])
++                continue
++            if (r.get("features") or {}).get("mixed_model") and not include_mixed:
++                dropped.append([r["id"], f"mixed-model run: deciding model(s) "
++                                         f"{(r.get('features') or {}).get('deciding_models') or [r.get('model')]}"])
++                continue
++            if r.get("verdict") not in ("FAILED", "HELD"):
++                dropped.append([r["id"], f"{r.get('verdict')} is not a channel trial"])
++                continue
++            c = r["counts"]
++            unit = c.get("unit") or ("member" if c.get("members") else "run")
++            n = c.get("n") if c.get("n") is not None else (c.get("members") if c.get("members") is not None else 1)
++            def _count(x):
++                # ints are validated AS ints: a float round-trip loses precision above 2**53 and can hide failed > n
++                if isinstance(x, bool) or not isinstance(x, (int, float)):
++                    raise ValueError(f"channel {cid}: record {r['id']} has non-numeric counts {c!r}")
++                if isinstance(x, int):
++                    return x
++                if not (math.isfinite(x) and float(x).is_integer()):
++                    raise ValueError(f"channel {cid}: record {r['id']} has non-integral counts {c!r}")
++                return int(x)
++            n_, f_ = _count(n), _count(c.get("failed", 0))
++            if n_ < 0 or f_ < 0 or f_ > n_:
++                raise ValueError(f"channel {cid}: record {r['id']} has invalid counts {c!r}: need n >= 0 and "
++                                 f"0 <= failed <= n")
++            recs.append((r["task"], r.get("revision"), r.get("run"), n_, f_, r["id"], unit))
++    if not recs:
++        return {"alpha": None, "beta": None, "mean": None, "records": [], "unit": None, "n": 0, "f": 0,
++                "tasks": {}, "at_rho": {}, "dropped": dropped,
++                "basis": "no eligible record after exclusions", "label": "UNPARAMETERIZED · no eligible record"}
++    units = {x[6] for x in recs}
++    converted = None
++    if units == {"member", "run"}:
++        # Q2: the units must match what the simulator draws. A member-latent record converts to a run trial (a run is
++        # one trial, failed if any member failed); only this conversion is defined.
++        runs = {}
++        for task, rev, run, n, f, rid, u in recs:
++            x = runs.setdefault((task, rev, run), {"f": 0, "ids": []})
++            x["f"] = max(x["f"], int(f > 0))
++            x["ids"].append(rid)
++        recs = [(k[0], k[1], k[2], 1, v["f"], ",".join(v["ids"]), "run") for k, v in sorted(runs.items())]
++        units = {"run"}
++        converted = "member"          # from here on the trials are runs: a run failed when any member did
++    if len(units) != 1:
++        raise ValueError(f"channel {cid}: trial records carry mixed units {sorted(units)}; a batch record cannot be "
++                         f"pooled with member or run trials")
++    rate = _rate_from_records([x[:6] for x in recs], rho, units.pop())
++    rate["dropped"] = dropped
++    if converted:
++        rate["converted_from"] = converted
++    return rate
++
++
++def parse_rate(spec: str) -> tuple:
++    """--channel-rate CID=E@SOURCE or CID=ALPHA,BETA@SOURCE: an explicit, disclosed override and its independent
++    source. A missing source is recorded as UNSPECIFIED; the forecast CLI refuses that."""
++    body, _, source = spec.rpartition("@") if "@" in spec else (spec, "", "")
++    cid, _, v = body.partition("=")
++    try:
++        parts = [float(x) for x in v.split(",") if x.strip()]
++    except ValueError:
++        parts = []
++    if len(parts) == 1 and 0 <= parts[0] <= 1:
++        rate = {"point": parts[0], "mean": parts[0]}
++    elif len(parts) == 2 and all(math.isfinite(x) for x in parts) and min(parts) >= MIN_BETA_PARAM \
++            and math.isfinite(parts[0] + parts[1]) and max(parts) <= MAX_BETA_PARAM:
++        rate = {"alpha": parts[0], "beta": parts[1], "mean": round(parts[0] / sum(parts), 6)}
++    else:
++        raise ValueError(f"--channel-rate {spec!r}: CID=E (0..1) or CID=ALPHA,BETA (both finite and in "
++                         f"[{MIN_BETA_PARAM:g}, {MAX_BETA_PARAM:g}])")
++    return cid.strip(), dict(rate, records=[], source=source.strip() or "UNSPECIFIED",
++                             basis=f"OVERRIDE (disclosed, no ledger record): --channel-rate {body}"
++                                   f" (source: {source.strip() or 'UNSPECIFIED'})",
++                             label="UNCALIBRATED · OVERRIDE")
++
++
++def refuse_channel_elements(engine, mechs) -> None:
++    """F1-2: a complexity channel (a channel degrade or an over-application operator) is never a mechanism."""
++    ops = getattr(engine, "channel_ops", set())
++    bad = [m for m in mechs if m[0] == "degrade" and m[1] in ops]
++    if bad:
++        raise ValueError(f"--mechanisms names complexity channel(s) {[dm._label(m) for m in bad]}: a channel is reported "
++                         f"and simulated as a channel (F1), never as a designed mechanism")
++
++
++def channel_specs(engine, mod, slots: dm.Slots, led, model: str, overrides: dict, briefs=None, **excl) -> tuple:
++    """(specs, unparameterized): every declared channel and control over-application, with its members (those the
++    degrade moves), latent, batches and rate. A rate's unit and the channel's latent are cross-checked: a declared
++    latent (or a kind default) must equal the unit the records are counted in after the supported member -> run
++    conversion; a channel that declares no latent adopts the rate's unit (`latent_from` records which)."""
++    decl = [(cid, c.get("kind"), c, None) for cid, c in ok.channels_of(mod).items()]
++    decl += [(f"control:{r}", "control", {"degrade": c["over_application"], "members": c["members"],
++                                          "source": (mod.RULES.get(r) or {}).get("source"),
++                                          "description": f"{r} over-applied to its control members"}, r)
++             for r, c in ok.controls_of(mod, engine.revision).items() if c["over_application"]]
++    specs, missing = [], []
++    for cid, kind, c, rule in decl:
++        el = ("degrade", c["degrade"]) if c.get("degrade") else None
++        declared = set(c.get("members") or [])
++        members = [k for k in engine.keys if el and k in declared and k in engine.touched.get(el, set())]
++        fam = c.get("family") or (((mod.RULES.get(rule) or {}).get("family") or rule) if kind == "control" else kind)
++        declared_latent = c.get("latent")
++        latent = declared_latent or CHANNEL_LATENT.get(kind, "member")
++        rate = channel_rate(led, model, cid, kind, fam, overrides, **excl)
++        latent_from = "declared" if declared_latent else "kind default"
++        if rate and rate.get("unit"):                      # an explicit unit is checked even on a point rate
++            if declared_latent and rate["unit"] != latent:
++                raise ValueError(f"channel {cid}: its rate is counted in {rate['unit']!r} but the channel declares "
++                                 f"the {latent!r} latent ({rate.get('basis')}); convert the record basis or correct "
++                                 f"the declaration")
++            if not declared_latent:
++                if rate["unit"] != latent and members:
++                    raise ValueError(f"channel {cid}: its rate is counted in {rate['unit']!r} but it has {len(members)} "
++                                     f"member(s) and declares no latent; a run-unit trial means 'at least one member "
++                                     f"failed' and cannot be applied member by member (declare the latent or convert "
++                                     f"the records)")
++                latent, latent_from = rate["unit"], "rate unit"
++        if rate and "point" in rate:
++            latent_from += " (unit-free point)" if not rate.get("unit") else " (point with an explicit unit)"
++        batches = None
++        if latent == "batch":
++            batches = [b for b in ([k for k in shard if k in set(members)] for shard in
++                                   dm.shards_for(engine, briefs, int(c.get("batch_size") or dm.SHARD_SIZE))) if b]
++            if members and not batches:
++                keys = sorted({k for b in briefs or [] for k in (b.get("keys") or [])})
++                raise ValueError(f"channel {cid}: a batch latent over {len(members)} member(s), but no brief batch "
++                                 f"intersects them (brief keys {keys[:10]}{'...' if len(keys) > 10 else ''}); every "
++                                 f"draw would miss no batch and the channel could never fail")
++        spec = {"id": cid, "kind": kind, "element": el, "members": members, "inert_members": len(declared) - len(members),
++                "slots": [s for s in c.get("slots") or [] if s in slots.weight], "latent": latent,
++                "latent_from": latent_from, "batches": batches,
++                "source": c.get("source") or cid, "preregistered": bool(c.get("preregistered", True)),
++                "description": c.get("description"), "family": fam, "rate": rate}
++        usable = bool(rate) and ("point" in rate or rate.get("alpha") is not None)
++        (specs if usable else missing).append(spec)
++    return specs, missing
++
++
++def _rate_draw(rate: dict, rng) -> float:
++    if "point" in rate:
++        pt = rate["point"]
++        if isinstance(pt, bool) or not isinstance(pt, (int, float)) or not math.isfinite(pt) or not 0 <= pt <= 1:
++            raise ValueError(f"a point rate must be a finite probability in [0, 1] (got {pt!r})")
++        return pt
++    a, b = rate.get("alpha"), rate.get("beta")
++    if not (isinstance(a, (int, float)) and isinstance(b, (int, float)) and math.isfinite(a) and math.isfinite(b)
++            and MIN_BETA_PARAM <= a <= MAX_BETA_PARAM and MIN_BETA_PARAM <= b <= MAX_BETA_PARAM
++            and math.isfinite(a + b)):
++        raise ValueError(f"a Beta rate needs finite alpha, beta in [{MIN_BETA_PARAM:g}, {MAX_BETA_PARAM:g}] "
++                         f"(got {a!r}, {b!r}); a non-finite or out-of-range shape would hang, return nan or collapse "
++                         f"to zero")
++    return rng.betavariate(a, b)
++
++
++def _sample_channel(c: dict, e: float, rng) -> tuple:
++    """(members failed, slots failed) of one channel in one run."""
++    if c["latent"] == "batch":
++        hit = set().union(*[set(b) for b in c["batches"] if rng.random() < e]) if c["batches"] else set()
++        return hit, set(c["slots"]) if hit else set()
++    if c["latent"] == "member" and c["members"]:
++        hit = {k for k in c["members"] if rng.random() < e}
++        return hit, set(c["slots"]) if hit else set()
++    on = rng.random() < e                                 # run latent, or a slots-only channel
++    return (set(c["members"]) if on else set()), (set(c["slots"]) if on else set())
++
++
++def p_any(rate: dict, n: int) -> dict:
++    """P(at least one of n independent units fails): integrated over the rate's Beta, 1 - E[(1 - e)^n], and the
++    plug-in 1 - (1 - mean)^n."""
++    if "point" in rate:
++        v = 1 - (1 - rate["point"]) ** n
++        return {"integrated": round(v, 6), "plug_in": round(v, 6)}
++    prod = 1.0
++    for i in range(n):
++        prod *= (rate["beta"] + i) / (rate["alpha"] + rate["beta"] + i)
++    return {"integrated": round(1 - prod, 6), "plug_in": round(1 - (1 - rate["mean"]) ** n, 6)}
++
++
++def channel_report(outcomes: Outcomes, slots: dm.Slots, channels: list, *, draws: int, seed: int) -> list:
++    """Per channel: parameters, records, P(any unit fails) integrated and plug-in, and its expected loss alone (the
++    channel by itself, mechanisms off), every number UNCALIBRATED."""
++    out = []
++    for c in channels:
++        units = {"member": len(c["members"]), "batch": len(c["batches"] or [])}.get(c["latent"], 1)
++        rng, lost, n = random.Random(seed), 0.0, max(ALONE_DRAWS, draws // 5)
++        for _ in range(n):
++            e = _rate_draw(c["rate"], rng)
++            for _r in range(RUNS):
++                hit, sl = _sample_channel(c, e, rng)
++                failed = (outcomes.of({c["element"]: hit}, cache=False)[0] if hit and c["element"] else frozenset()) | sl
++                lost += sum(slots.weight[i] for i in failed) / slots.total
++        out.append({"id": c["id"], "kind": c["kind"], "latent": c["latent"], "latent_from": c.get("latent_from"),
++                    "members": len(c["members"]),
++                    "family": c["family"], "inert_members": c["inert_members"], "slots": c["slots"],
++                    "unit": c["rate"].get("unit"), "converted_from": c["rate"].get("converted_from"),
++                    "n": c["rate"].get("n"), "f": c["rate"].get("f"),
++                    "n_eff": round(sum(x["n_eff"] for x in (c["rate"].get("tasks") or {}).values()), 4),
++                    "rate_tasks": c["rate"].get("tasks"), "at_rho": c["rate"].get("at_rho"),
++                    "batch_sizes": [len(b) for b in c["batches"]] if c["batches"] else None,
++                    "source": c["source"], "override_source": c["rate"].get("source"),
++                    "dropped": c["rate"].get("dropped") or [], "preregistered": c["preregistered"], "rate": c["rate"],
++                    "P_any_unit_fails": dict(p_any(c["rate"], units), units=units,
++                                             rule="1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"),
++                    "expected_loss_alone": round(lost / (n * RUNS), 6), "label": c["rate"]["label"]})
++    return out
++
++
++def pair_key(a, b) -> str:
++    """A landing-pair key that cannot collide when a mechanism label contains the separator: every '|' is escaped."""
++    esc = lambda m: dm._label(m).replace("\\", "\\\\").replace("|", "\\|")  # noqa: E731
++    return f"{esc(a)}|{esc(b)}"
++
++
++def briefs_content_digest(briefs) -> str | None:
++    """A digest of the briefs ACTUALLY simulated (the loaded object), so the key is bound to the inputs used, not to a
++    later re-read of a mutable file."""
++    return hashlib.sha256(json.dumps(briefs, sort_keys=True, default=str).encode()).hexdigest() if briefs else None
++
++
++def briefs_digest(paths) -> dict:
++    """The briefs' fingerprint: their paths, each file's sha256, and one aggregate digest (part of the pre-registration
++    key, so changing a brief's keys changes the forecast's identity)."""
++    paths = list(paths or [])
++    return {"files": [tl._rel(f) for f in paths],
++            "sha256": {tl._rel(f): tl.sha256_file(f) for f in paths},
++            "digest": hashlib.sha256(json.dumps([[tl._rel(f), tl.sha256_file(f)] for f in paths],
++                                                separators=(",", ":")).encode()).hexdigest() if paths else None}
++
++
++def _missed_batches(batches: list, theta: float, rng) -> set:
++    """M6: the batches one landing hits, exact. Each batch misses at b = 1 - (1 - theta)^(1/B); the run has landed, so
++    the number of missed batches is a zero-truncated Binomial(B, b) (inverse-CDF, O(B), no rejection loop), and the
++    missed batches are a uniform choice of that many. P(at least one) is 1 by construction.
++
++    Degenerate cases are short-circuited: no batches misses nothing; theta >= 1 misses every batch; theta <= 0 misses
++    none. The weights are computed in log space (math.lgamma), so a large B cannot overflow int->float, and the
++    inverse CDF never selects a zero-weight k (the u == 0 quantile)."""
++    B = len(batches)
++    if not B or theta <= 0:
++        return set()
++    if theta >= 1:
++        return set().union(*batches)
++    if B > MAX_BATCHES:
++        raise ValueError(f"{B} batches exceeds MAX_BATCHES={MAX_BATCHES}: refuse rather than overflow or approximate")
++    # -expm1(log1p(-theta)/B) keeps precision for a tiny theta where 1-(1-theta)**(1/B) would round b to 0
++    b = -math.expm1(math.log1p(-theta) / B)
++    if b <= 0:                                            # a positive landing must miss at least one batch
++        return set(rng.choice(batches)) if theta > 0 else set()
++    if b >= 1:
++        return set().union(*batches)
++    lb, l1b = math.log(b), math.log1p(-b)
++    logw = [math.lgamma(B + 1) - math.lgamma(k + 1) - math.lgamma(B - k + 1) + k * lb + (B - k) * l1b
++            for k in range(1, B + 1)]                     # k = 1..B (zero misses is truncated away)
++    m = max(logw)
++    w = [math.exp(x - m) for x in logw]                   # normalised below; sums to theta / (1 - (1-b)^B)
++    u, acc, k = rng.random() * sum(w), 0.0, None
++    for i, wi in enumerate(w, 1):
++        acc += wi
++        if u <= acc and wi > 0:
++            k = i
++            break
++    if k is None:
++        k = next(i for i, wi in enumerate(w, 1) if wi > 0)
++    idx = rng.sample(range(B), k)
++    return set().union(*(batches[i] for i in idx)) if idx else set()
++
++
+ # ------------------------------------------------------------------ simulation
+ 
+ def shards_of(engine, e, size: int) -> list:
+@@ -238,46 +610,96 @@
+ 
+ 
+ def simulate(engine, outcomes: Outcomes, gates: Gates, mechs: list, priors: dict, fam: dict, src: dict, *,
+-             draws: int, seed: int, dependence: str, extent: str) -> dict:
++             draws: int, seed: int, dependence: str, extent: str, channels=(), briefs=None) -> dict:
+     rng = random.Random(seed)
+     if extent.startswith("shard:"):
+         size = int(extent.split(":")[1])
+         shards = {m: shards_of(engine, m, size) for m in mechs} if engine else {m: [None] for m in mechs}
++    if extent == "batches":                               # M6: brief batches (trajectory_ledger briefs), else slices
++        shards = {m: [s for s in (set(b) & engine.touched[m] for b in dm.shards_for(engine, briefs)) if s] or
++                  [set(engine.touched[m])] for m in mechs} if engine else {m: [None] for m in mechs}
+     views = list(gates.views)
+     avgs = {v: [] for v in views}
+     passes = {v: collections.Counter() for v in views}
+     allp = {v: [] for v in views}
++    pats = {v: [] for v in views}
+     thetas = {m: [] for m in mechs}
+-    landed_runs = collections.Counter()
++    landed_runs, channel_runs, slot_fail, slot_all = (collections.Counter() for _ in range(4))
++    pair_both, pair_either = collections.Counter(), collections.Counter()
++    pairs = list(itertools.combinations(mechs, 2))
++    run_scores = []
+     for _ in range(draws):
+-        theta = {m: rng.betavariate(priors[fam[m]]["alpha"], priors[fam[m]]["beta"]) for m in mechs}
++        theta = {m: _rate_draw(priors[fam[m]], rng) for m in mechs}
++        rates = {c["id"]: _rate_draw(c["rate"], rng) for c in channels}
+         for m in mechs:
+             thetas[m].append(theta[m])
+         failed_sets = []
+         for _r in range(RUNS):
+             shared, one = {}, rng.random()
+-            failing = {}
++            failing, landed_here = {}, set()
+             for m in mechs:
+                 u = rng.random() if dependence == "independent" else (
+                     shared.setdefault(src[m], rng.random()) if dependence == "source" else one)
+                 if u < theta[m]:
+                     landed_runs[m] += 1
++                    landed_here.add(m)
+                     if extent == "whole" or engine is None:
+                         failing[m] = None
+                     elif extent == "slip":
+                         failing[m] = {rng.choice(sorted(engine.touched[m]))}
++                    elif extent == "batches":
++                        failing[m] = _missed_batches(shards[m], theta[m], rng)
+                     else:
+                         failing[m] = set(rng.choice(shards[m]))
+-            failed_sets.append(outcomes.of(failing)[0])
++            for a, b in pairs:
++                kb = (dm._label(a), dm._label(b))
++                if a in landed_here and b in landed_here:
++                    pair_both[kb] += 1
++                if a in landed_here or b in landed_here:
++                    pair_either[kb] += 1
++            forced = set()
++            for c in channels:
++                hit, sl = _sample_channel(c, rates[c["id"]], rng)
++                if hit and c["element"] and failing.get(c["element"], set()) is not None:
++                    failing[c["element"]] = set(failing.get(c["element"]) or set()) | hit
++                forced |= sl
++                channel_runs[c["id"]] += bool(hit or sl)
++            failed = outcomes.of(failing, cache=not channels)[0] | forced
++            failed_sets.append(failed)
++            run_scores.append(1 - sum(outcomes.slots.weight[i] for i in failed) / outcomes.slots.total)
++            slot_fail.update(failed)
++        slot_all.update(set.intersection(*map(set, failed_sets)))
+         res = gates.of(failed_sets)
+         for v in views:
+             avgs[v].append(res[v]["avg"])
++            pats[v].append(res[v]["patterns"])
+             for g, ok_ in res[v]["gates"].items():
+                 passes[v][g] += ok_
+             passes[v]["all"] += res[v]["all"]
+             allp[v].append(res[v]["all"])
++    rs = sorted(run_scores)
++    qr = lambda p: rs[min(len(rs) - 1, max(0, int(round(p * (len(rs) - 1)))))]  # noqa: E731
++    order = sorted(slot_fail, key=lambda s: (-slot_fail[s], outcomes.slots.ids.index(s)))
++    top = order[:25]
++    slot_cell = lambda s: {"P_fail": round(slot_fail[s] / (draws * RUNS), 4),  # noqa: E731
++                           "P_fails_all_six": round(slot_all[s] / draws, 4)}
+     out = {"dependence": dependence, "extent": extent, "draws": draws, "seed": seed, "views": {},
+-           "landing_rate_simulated": {dm._label(m): round(landed_runs[m] / (draws * RUNS), 4) for m in mechs}}
++           "landing_rate_simulated": {dm._label(m): round(landed_runs[m] / (draws * RUNS), 4) for m in mechs},
++           "landing_pair_counts": {pair_key(a, b): {"both": pair_both[(dm._label(a), dm._label(b))],
++                                                    "either": pair_either[(dm._label(a), dm._label(b))],
++                                                    "runs": draws * RUNS}
++                                   for a, b in itertools.combinations(mechs, 2)},
++           "landing_pairs": {pair_key(a, b): {
++                                 "both": round(pair_both[(dm._label(a), dm._label(b))] / (draws * RUNS), 4),
++                                 "either": round(pair_either[(dm._label(a), dm._label(b))] / (draws * RUNS), 4)}
++                             for a, b in itertools.combinations(mechs, 2)},
++           "run_score_band_10_90": [round(qr(0.1), 4), round(qr(0.9), 4)] if rs else None,
++           "channels_hit_rate": {c["id"]: round(channel_runs[c["id"]] / (draws * RUNS), 4) for c in channels},
++           "slots": {s: slot_cell(s) for s in (order + [x for x in outcomes.slots.ids if x not in slot_fail])},
++           "slots_top_25": {s: slot_cell(s) for s in top},
++           "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written "
++                         "justification), never a block; slots reports every slot, slots_top_25 is the presentation "
++                         "short list"}
+     for v in views:
+         xs = sorted(avgs[v])
+         q = lambda p: xs[min(len(xs) - 1, max(0, int(round(p * (len(xs) - 1)))))]  # noqa: E731
+@@ -292,7 +714,8 @@
+         voi.sort(key=lambda x: -x["spread"])
+         out["views"][v] = {"E_average": round(sum(xs) / len(xs), 4), "band_10_90": [round(q(0.1), 4), round(q(0.9), 4)],
+                            "P_gate": {g: round(passes[v][g] / draws, 4) for g in DIFFICULTY_GATES},
+-                           "P_all": round(passes[v]["all"] / draws, 4), "value_of_information": voi}
++                           "P_all": round(passes[v]["all"] / draws, 4), "value_of_information": voi,
++                           "E_patterns": round(sum(pats[v]) / len(pats[v]), 4)}
+     return out
+ 
+ 
+@@ -715,8 +1138,9 @@
+     lines = [f"HARDNESS FORECAST · {rep['label']} · model {rep['model']} · {rep['revision']} · {NOTE}"]
+     for m in rep["mechanisms"]:
+         p = m["prior"]
+-        lines.append(f"  {m['id']:44} family {m['family'][:40]:40} Beta({p['alpha']}, {p['beta']}) mean {p['mean']:.2f} "
+-                     f"n_eff {p['n_eff']} records {len(p['record_ids'])}")
++        rate = f"e = {p['point']}" if "point" in p else f"Beta({p['alpha']}, {p['beta']})"
++        lines.append(f"  {m['id']:44} family {m['family'][:40]:40} {rate} mean {p['mean']:.2f} "
++                     f"n_eff {p['n_eff']} records {len(p['record_ids'])}" + (f" [{p['basis'][:50]}]" if p.get("basis") else ""))
+     for s in rep.get("scenarios") or []:
+         cells = " · ".join(f"{v} E[avg] {x['E_average']:.3f} [{x['band_10_90'][0]:.3f}, {x['band_10_90'][1]:.3f}] "
+                            f"P(all) {x['P_all']:.3f}" for v, x in s["views"].items())
+@@ -724,6 +1148,24 @@
+     for v, r in (rep.get("summary") or {}).items():
+         lines.append(f"  {v}: P(all four difficulty gates) {r['P_all_min']:.3f}-{r['P_all_max']:.3f} across scenarios; "
+                      f"value of information (first scenario): {r['voi'][:3]}")
++    for c in rep.get("channels") or []:
++        r, pa = c["rate"], c["P_any_unit_fails"]
++        rate = f"e = {r['point']}" if "point" in r else f"e ~ Beta({r['alpha']}, {r['beta']})"
++        lines.append(f"  channel {c['id']} ({c['kind']}, {c['latent']} latent [{c.get('latent_from')}], "
++                     f"{c['members']} member(s)"
++                     + (f", slots {c['slots']}" if c["slots"] else "")
++                     + (f", {c['unit']} trials" if c.get("unit") else "")
++                     + (f" (converted from {c['converted_from']})" if c.get("converted_from") else "")
++                     + f"): {rate} [{r['basis'][:60]}] · P(any of "
++                     f"{pa['units']} fails) {pa['integrated']:.3f} integrated vs {pa['plug_in']:.3f} plug-in · expected "
++                     f"loss alone {c['expected_loss_alone']:.4f} · {c['label']}")
++    for c in rep.get("unparameterized_channels") or []:
++        lines.append(f"  channel {c['id']} ({c['kind']}): UNPARAMETERIZED - {c['why']}")
++    s0 = (rep.get("scenarios") or [{}])[0]
++    if s0.get("slots"):
++        lines.append(f"  slots most at risk ({s0['dependence']} {s0['extent']}; P(fail) / P(fails all six) - all-fail "
++                     f"justification workload, never a block): " + ", ".join(
++                         f"{s} {x['P_fail']:.2f}/{x['P_fails_all_six']:.2f}" for s, x in list(s0["slots"].items())[:8]))
+     e = rep.get("exhaustive")
+     if e:
+         lines.append(f"  exhaustive over {e['multisets']} six-run multisets of {len(e['outcomes'])} outcomes:")
+@@ -743,11 +1185,457 @@
+ 
+ # ------------------------------------------------------------------ self-test
+ 
++_CHANNEL_SOLVER = """
++import collections
++KEY_REGEX = r"[ABK]-\\d{2}"
++CLASS_FIELD, GROUPS_FIELD = "class", "groups"
++A = [f"A-{n:02d}" for n in range(1, 41)]
++RULES = {"late_a": {"mechanism": "A15", "family": "F", "requirement": "R1", "natural_reading": "x", "nodes": ["T1"],
++                    "decides": ["status"]},
++         "rule_k": {"mechanism": "A15", "family": "F", "requirement": "R1", "natural_reading": "y", "nodes": ["T2"],
++                    "decides": ["status"], "controls": ["K-01"], "over_application": "over:k"}}
++CHANNELS = {"scale:a": {"kind": "scale", "degrade": "slip:a", "members": A},
++            "linked:a": {"kind": "scale", "latent": "run", "degrade": "slip:a", "members": A},
++            "deleg:a": {"kind": "delegation", "degrade": "slip:a", "members": A},
++            "pair:b": {"kind": "scale", "degrade": "slip:b", "members": ["B-01", "B-02"]},
++            "duo:ind": {"kind": "scale", "degrade": "slip:duo", "members": ["A-01", "A-02"]},
++            "duo:link": {"kind": "scale", "latent": "run", "degrade": "slip:duo", "members": ["A-01", "A-02"]},
++            "surface:deck": {"kind": "tool_surface", "slots": ["D1"]},
++            "ghost": {"kind": "scale", "degrade": "slip:a", "members": ["A-03"]}}
++def load_state(sql_text, revision=None):
++    return {"revision": revision or "r1"}
++def keys():
++    return A + ["B-01", "B-02", "K-01"]
++def _on(spec, name, k):
++    return any(d == name or (isinstance(d, tuple) and d[0] == name and k in d[1]) for d in spec)
++def solve(state, disable=frozenset(), degrade=frozenset(), keys_=None):
++    out = {}
++    for k in keys_ or keys():
++        s = "bad" if k in ("B-02", "K-01") else "ok"
++        if k.startswith("A") and (_on(disable, "late_a", k) or _on(degrade, "slip:a", k) or _on(degrade, "slip:duo", k)):
++            s = "bad"
++        if k.startswith("B") and _on(degrade, "slip:b", k):
++            s = "bad" if s == "ok" else "ok"
++        if k == "K-01" and (_on(disable, "rule_k", k) or _on(degrade, "over:k", k)):
++            s = "ok"
++        g = (["ok_a"] if k.startswith("A") else ["ok_b"] if k.startswith("B") else []) if s == "ok" else []
++        out[k] = {"key": k, "status": s, "class": "READY" if s == "ok" else "HOLD", "groups": g, "evidence": {}}
++    return out
++def aggregates(rows):
++    return {"classes": dict(collections.Counter(v["class"] for v in rows.values())), "groups": {}}
++def evidence(rows, key, field):
++    return []
++"""
++_CHAIN_SOLVER = """
++KEY_REGEX = r"C-\\d{2}"
++CLASS_FIELD, GROUPS_FIELD = "class", "groups"
++RULES = {"noop": {"mechanism": "A9", "requirement": "R1", "natural_reading": "z", "nodes": ["T1"], "decides": ["value"]}}
++CHANNELS = {f"chain:{i}": {"kind": "chain", "degrade": f"break:{i}", "members": [f"C-0{i}"]} for i in (1, 2, 3)}
++def load_state(sql_text, revision=None):
++    return {"revision": "r1"}
++def keys():
++    return ["C-01", "C-02", "C-03"]
++def solve(state, disable=frozenset(), degrade=frozenset(), keys_=None):
++    on = lambda i: any(d == f"break:{i}" or (isinstance(d, tuple) and d[0] == f"break:{i}" and f"C-0{i}" in d[1])
++                       for d in degrade)
++    broken = [i for i in (1, 2, 3) if on(i)]
++    return {f"C-0{n}": {"key": f"C-0{n}", "value": "bad" if any(i <= n for i in broken) else "ok", "class": "READY",
++                        "groups": [], "evidence": {}} for n in (1, 2, 3) if not keys_ or f"C-0{n}" in keys_}
++def aggregates(rows):
++    return {"classes": {}, "groups": {}}
++def evidence(rows, key, field):
++    return []
++"""
++
++
++def _self_test_channels(tmp) -> str:
++    """F1 + M6 planted cases (each Monte Carlo figure within a stated tolerance of its exact value)."""
++    sp = Path(tmp) / "channel_solver.py"
++    sp.write_text(_CHANNEL_SOLVER)
++    mod = ok.load_solver(sp)
++    eng = dm.Engine(mod, "")
++    surface = {"truth_fields": {"class": "class", "groups": "groups"},
++               "slots": [{"id": "SA", "weight": 5, "class": "aggregate", "selector": ["group_count", "ok_a"]},
++                         {"id": "SB", "weight": 3, "class": "aggregate", "selector": ["group_count", "ok_b"]},
++                         {"id": "SB1", "weight": 1, "class": "direct", "selector": ["field", "B-01", "status"]},
++                         {"id": "SB2", "weight": 1, "class": "direct", "selector": ["field", "B-02", "status"]},
++                         {"id": "S1", "weight": 3, "class": "direct", "selector": ["field", "A-01", "status"]},
++                         {"id": "S2", "weight": 3, "class": "direct", "selector": ["field", "A-02", "status"]},
++                         {"id": "SK", "weight": 1, "class": "direct", "selector": ["field", "K-01", "class"]},
++                         {"id": "D1", "weight": 5, "class": "delivery", "selector": ["delivery", "slide_updated"]}]}
++    slots = dm.Slots(surface["slots"], surface)
++    outs, gates = Outcomes(eng, slots), Gates(slots, {"V2": {"cap": 0.75, "mode": None}}, "long-horizon", 550)
++    assert ("degrade", "slip:a") in eng.elements and all(m[0] == "rule" for m in eng.mechanisms()), eng.mechanisms()
++    led = hl.Ledger(Path(tmp) / "channel_ledger.jsonl")
++    over = dict(parse_rate(x) for x in ("scale:a=0.02", "linked:a=0.02", "deleg:a=0.3", "pair:b=0.5", "duo:ind=0.3",
++                                        "duo:link=0.3", "surface:deck=0.4"))
++    specs, missing = channel_specs(eng, mod, slots, led, "claude-opus-4-8", over, briefs=[
++        {"keys": [f"A-{n:02d}" for n in range(1, 17)]}, {"keys": [f"A-{n:02d}" for n in range(17, 33)]},
++        {"keys": [f"A-{n:02d}" for n in range(33, 41)]}])
++    by = {c["id"]: c for c in specs}
++    assert sorted(c["id"] for c in missing) == ["control:rule_k", "ghost"], missing     # no record, no override
++
++    def run(ids, draws=1500, rate=None):
++        chs = [dict(by[i], rate=rate or by[i]["rate"]) for i in ids]
++        return simulate(eng, outs, gates, [], {}, {}, {}, draws=draws, seed=3, dependence="independent",
++                        extent="whole", channels=chs)
++
++    def pf(s, sid):
++        return (s["slots"].get(sid) or {}).get("P_fail", 0.0)
++    ind, lnk = run(["scale:a"]), run(["linked:a"])
++    assert abs(p_any(by["scale:a"]["rate"], 40)["integrated"] - 0.5543) < 1e-3
++    assert abs(pf(ind, "SA") - 0.5543) < 0.03 and abs(pf(lnk, "SA") - 0.02) < 0.01, (pf(ind, "SA"), pf(lnk, "SA"))
++    unc = {"alpha": 2.0, "beta": 98.0, "mean": 0.02, "records": [], "basis": "test", "label": "test"}
++    pa = p_any(unc, 40)                                  # integrating over e: 1 - E[(1 - e)^40] < the plug-in
++    assert pa["integrated"] < pa["plug_in"] - 0.05 and abs(pf(run(["scale:a"], rate=unc), "SA") - pa["integrated"]) < 0.03, pa
++    failed, _ = outs.of({("degrade", "slip:b"): {"B-01", "B-02"}})   # one false exclusion + one false inclusion
++    assert failed == {"SB1", "SB2"}, failed                           # the count cancels; both members fail
++    di, dl = run(["duo:ind"], 800), run(["duo:link"], 800)
++    assert dl["views"]["V2"]["E_patterns"] < di["views"]["V2"]["E_patterns"], (dl["views"], di["views"])
++    assert abs(pf(run(["surface:deck"]), "D1") - 0.4) < 0.03
++    assert [len(b) for b in by["deleg:a"]["batches"]] == [16, 16, 8]
++    th, B = 0.3, 3                                        # M6: per-batch misses keep the per-run landing rate theta
++    b = 1 - (1 - th) ** (1 / B)
++    assert abs(1 - (1 - b) ** B - th) < 1e-12
++    rng = random.Random(5)
++    sizes = {len(_missed_batches(by["deleg:a"]["batches"], th, rng)) for _ in range(300)}
++    assert sizes <= {8, 16, 24, 32, 40} and len(sizes) > 2, sizes
++    mech = [element_of(eng, "late_a")]
++    sm = simulate(eng, outs, gates, mech, {"F": {"alpha": 3, "beta": 7}}, {mech[0]: "F"}, {mech[0]: "x"}, draws=800,
++                  seed=4, dependence="independent", extent="batches", briefs=[{"keys": x} for x in by["deleg:a"]["batches"]])
++    assert abs(sm["landing_rate_simulated"]["rule:late_a"] - 0.3) < 0.04, sm["landing_rate_simulated"]
++    # rates from ledger records, pooled across tasks by family like the mechanism priors: another task's scale channel
++    # feeds every scale channel here (a per-member error rate per model), its chain record feeds none of them, and a
++    # control trial feeds its rule's family; each record id kept
++    base = {"task": "t", "revision": "r1", "source": "platform-baseline", "model": "claude-opus-4-8",
++            "harness": {"name": "h", "version": "1"}, "epistemic": "derived"}
++    other = dict(base, task="another_task")
++    provenance = {"deciding_model_unknown": True}      # the ledger refuses a channel/control trial without provenance
++    led.append([dict(other, kind="channel", run=f"run-{i}", node="scale:elsewhere", family="scale",
++                     verdict="FAILED" if i == 1 else "HELD", features=provenance,
++                     counts={"members": 40, "failed": 2 if i == 1 else 0})
++                for i in (1, 2)] +
++               [dict(other, kind="channel", run="run-1", node="chain:elsewhere", family="chain", verdict="FAILED",
++                     features=provenance, counts={"members": 1, "failed": 1}),
++                dict(base, kind="control", run="run-1", node="rule_k", key="K-01", family="F", verdict="OVER-APPLIED",
++                     features=provenance)])
++    # fix 1: a member-unit rate never silently feeds a run-latent channel (linked:a declares "run"); the pooling
++    # assertions are made on channel_rate, and channel_specs is asked again with the scale family excluded
++    try:
++        channel_specs(eng, mod, slots, hl.Ledger(led.path), "claude-opus-4-8", {})
++    except ValueError as error:
++        assert "linked:a" in str(error) and "'member'" in str(error) and "ledger records" in str(error), error
++    else:
++        raise AssertionError("a member-unit rate silently fed the run-latent channel linked:a")
++    r2 = {cid: channel_rate(hl.Ledger(led.path), "claude-opus-4-8", cid, "scale", "scale", {})
++          for cid in ("scale:a", "linked:a")}
++    assert r2["scale:a"]["alpha"] == round(1 + 2 / 1.5, 4) and len(r2["scale:a"]["records"]) == 2, r2["scale:a"]
++    assert r2["scale:a"]["unit"] == "member" and r2["linked:a"] == r2["scale:a"], r2
++    _, missing2 = channel_specs(eng, mod, slots, hl.Ledger(led.path), "claude-opus-4-8", {},
++                                exclude_tasks=("another_task",))
++    assert {"deleg:a", "surface:deck"} <= {c["id"] for c in missing2}, missing2
++    assert channel_rate(hl.Ledger(led.path), "claude-opus-4-8", "control:rule_k", "control", "F", {})["mean"] > 0.5
++    # Q2: member and run units of one family convert member -> run; a batch/member mix is refused, never pooled
++    led.append([dict(other, kind="channel", run="run-1", node="scale:mixed", family="mixfam", verdict="FAILED",
++                     features=provenance, counts={"unit": "member", "members": 40, "n": 40, "failed": 2}),
++                dict(other, kind="channel", run="run-2", node="scale:mixed", family="mixfam", verdict="HELD",
++                     features=provenance, counts={"unit": "member", "members": 40, "n": 40, "failed": 0}),
++                dict(other, kind="channel", run="run-3", node="scale:mixed", family="mixfam", verdict="FAILED",
++                     features=provenance, counts={"unit": "run", "n": 1, "failed": 1})])
++    led.append([dict(other, kind="channel", run="run-9", node="scale:mixed", family="mixfam", verdict="HELD",
++                     features=provenance, counts={"unit": "member", "n": 1, "failed": 0}),
++                dict(other, kind="channel", run="run-10", node="scale:mixed", family="mixfam", verdict="FAILED",
++                     counts={"unit": "member", "n": 1, "failed": 1},
++                     features={"mixed_model": True, "deciding_models": ["claude-opus-5"]})])
++    mx = channel_rate(hl.Ledger(led.path), "claude-opus-4-8", "scale:mixed", "scale", "mixfam", {})
++    assert any(x[0] for x in mx["dropped"]) and "mixed-model" in mx["dropped"][0][1], mx
++    assert mx["unit"] == "run" and mx["n"] == 4 and mx["f"] == 2 and (mx["alpha"], mx["beta"]) == (1.8, 1.8), mx
++    led.append([dict(other, kind="channel", run="run-4", node="scale:batch", family="batchfam", verdict="FAILED",
++                     features=provenance, counts={"unit": "batch", "n": 8, "failed": 2}),
++                dict(other, kind="channel", run="run-4", node="scale:batchm", family="batchfam", verdict="HELD",
++                     features=provenance, counts={"unit": "member", "n": 16, "failed": 0})])
++    try:
++        channel_rate(hl.Ledger(led.path), "claude-opus-4-8", "scale:batch", "scale", "batchfam", {})
++    except ValueError as e:
++        assert "mixed units" in str(e), e
++    else:
++        raise AssertionError("a batch/member mix was pooled")
++    # Q2/F1-1: the run key is (revision, run): two revisions both numbered run-1 are two runs, not one
++    two = _rate_from_records([("t", "r1", "run-1", 1, 0, "a"), ("t", "r2", "run-1", 1, 1, "b")], 0.5)
++    assert two["tasks"]["t"]["runs"] == 2 and two["tasks"]["t"]["deff"] == 1.5, two
++    same = _rate_from_records([("t", "r1", "run-1", 1, 0, "a"), ("t", "r1", "run-1", 1, 1, "b")], 0.5)
++    assert same["tasks"]["t"]["deff"] == 1.0, same
++    # Q4/M6: the exact conditional sampler: every draw misses at least one batch, E[K] = B b / theta, each marginal b/theta
++    B = 34
++    rng2, n2 = random.Random(11), 4000
++    for theta in (0.3, 0.005):                       # Q4: zero-truncated Binomial(B, b) at both rates
++        b = 1 - (1 - theta) ** (1 / B)
++        ks, hits = [], [0] * B
++        for _ in range(n2):
++            got = _missed_batches([{f"k{i}"} for i in range(B)], theta, rng2)
++            ks.append(len(got))
++            for i in range(B):
++                hits[i] += int(f"k{i}" in got)
++        want, marg = B * b / theta, b / theta
++        assert all(k >= 1 for k in ks), min(ks)
++        assert abs(sum(ks) / n2 - want) < 0.05, (theta, sum(ks) / n2, want)
++        assert all(abs(h / n2 - marg) < 0.01 for h in hits), (theta, min(hits), max(hits), marg)
++    # F1-2: a channel op is refused as a mechanism, a rule is accepted
++    try:
++        refuse_channel_elements(eng, [("degrade", "slip:a")])
++    except ValueError:
++        pass
++    else:
++        raise AssertionError("a channel degrade was accepted as a mechanism")
++    refuse_channel_elements(eng, [("rule", "late_a")])
++    rep = channel_report(outs, slots, [by["scale:a"], by["surface:deck"]], draws=400, seed=1)
++    assert 0 < rep[0]["expected_loss_alone"] < 0.3 and abs(rep[1]["expected_loss_alone"] - 0.4 * 5 / 22) < 0.03, rep
++    # a three-step chain through a solver that is not key-local compounds as 1 - prod(1 - q)
++    cp = Path(tmp) / "chain_solver.py"
++    cp.write_text(_CHAIN_SOLVER)
++    cmod = ok.load_solver(cp)
++    ceng = dm.Engine(cmod, "")
++    cs = {"truth_fields": {}, "slots": [{"id": "SC", "weight": 5, "class": "direct", "selector": ["field", "C-03", "value"]},
++                                        {"id": "SX", "weight": 1, "class": "delivery", "selector": ["delivery", "x"]}]}
++    cslots = dm.Slots(cs["slots"], cs)
++    q = {"chain:1": 0.1, "chain:2": 0.2, "chain:3": 0.3}
++    cspecs, _ = channel_specs(ceng, cmod, cslots, led, "claude-opus-4-8", dict(parse_rate(f"{k}={v}") for k, v in q.items()))
++    assert not ceng.locality()["key_local"]
++    sc = simulate(ceng, Outcomes(ceng, cslots), Gates(cslots, {"V2": {"cap": 0.75, "mode": None}}, "long-horizon", 550),
++                  [], {}, {}, {}, draws=1500, seed=6, dependence="independent", extent="whole", channels=cspecs)
++    want = 1 - math.prod(1 - x for x in q.values())
++    assert abs(sc["slots"]["SC"]["P_fail"] - want) < 0.03, (sc["slots"]["SC"], want)
++    # F1 residual b: an all-dropped channel keeps its drop reasons and stays UNPARAMETERIZED (never simulated at 0),
++    # and a record of another family is never attached to this channel's dropped list
++    dpath = Path(tmp) / "drop_ledger.jsonl"
++    dled = hl.Ledger(dpath)
++    dled.append([{"kind": "channel", "task": "drop", "revision": "r1", "source": "platform-baseline",
++                  "model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}, "run": "run-1",
++                  "node": "scale:drop", "family": "dropfam", "verdict": "HELD", "epistemic": "derived",
++                  "counts": {"unit": "member", "n": 2, "failed": 0},
++                  "features": {"mixed_model": True, "deciding_models": ["claude-opus-5"]}},
++                 {"kind": "channel", "task": "drop", "revision": "r1", "source": "platform-baseline",
++                  "model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}, "run": "run-2",
++                  "node": "scale:other", "family": "otherfam", "verdict": "HELD", "epistemic": "derived",
++                  "counts": {"unit": "member", "n": 2, "failed": 0},
++                  "features": {"mixed_model": True, "deciding_models": ["claude-opus-5"]}}])
++    dr = channel_rate(hl.Ledger(dpath), "claude-opus-4-8", "scale:drop", "scale", "dropfam", {})
++    assert dr["alpha"] is None and dr["dropped"] and "mixed-model" in dr["dropped"][0][1], dr
++    dr2 = channel_rate(hl.Ledger(dpath), "claude-opus-4-8", "scale:drop2", "scale", "dropfam2", {})
++    assert dr2["alpha"] is None and dr2["dropped"] == [], dr2        # another family's record is not this one's drop
++    # a task/revision exclusion is a real record, deliberately excluded: its provenance is kept, not reported as
++    # "no ledger record"; and invalid counts are refused, and a run-unit rate is never applied member by member
++    dex = channel_rate(hl.Ledger(dpath), "claude-opus-4-8", "scale:other", "scale", "otherfam", {},
++                       exclude_tasks=("drop",))
++    assert dex["alpha"] is None and dex["dropped"] and dex["dropped"][0][1] == "excluded task/revision", dex
++    bad_path = Path(tmp) / "bad_ledger.jsonl"
++    bl = hl.Ledger(bad_path)
++    bl.append([{"kind": "channel", "task": "bad", "revision": "r1", "source": "platform-baseline",
++                "model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}, "run": "run-1",
++                "node": "scale:bad", "family": "badfam", "verdict": "FAILED", "epistemic": "derived",
++                "counts": {"unit": "member", "n": 2, "failed": 3},
++                "features": {"deciding_model_unknown": True}}])
++    try:
++        channel_rate(hl.Ledger(bad_path), "claude-opus-4-8", "scale:bad", "scale", "badfam", {})
++    except ValueError as e:
++        assert "invalid counts" in str(e), e
++    else:
++        raise AssertionError("counts with failed > n were accepted")
++    # fractional counts are refused BEFORE int() can truncate 2.1 / 2.9 into a valid-looking 2 / 2
++    frac_path = Path(tmp) / "frac_ledger.jsonl"
++    fll = hl.Ledger(frac_path)
++    fll.append([{"kind": "channel", "task": "frac", "revision": "r1", "source": "platform-baseline",
++                 "model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}, "run": "run-1",
++                 "node": "scale:frac", "family": "fracfam", "verdict": "FAILED", "epistemic": "derived",
++                 "counts": {"unit": "member", "n": 2.1, "failed": 2.9},
++                 "features": {"deciding_model_unknown": True}}])
++    try:
++        channel_rate(hl.Ledger(frac_path), "claude-opus-4-8", "scale:frac", "scale", "fracfam", {})
++    except ValueError as e:
++        assert "non-integral" in str(e), e
++    else:
++        raise AssertionError("fractional counts were truncated into a valid integer pair")
++    # integers above 2**53 must not be rounded through a float: this pair is invalid (failed > n) and must be caught
++    big_path = Path(tmp) / "big_ledger.jsonl"
++    bgl = hl.Ledger(big_path)
++    bgl.append([{"kind": "channel", "task": "big", "revision": "r1", "source": "platform-baseline",
++                 "model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}, "run": "run-1",
++                 "node": "scale:big", "family": "bigfam", "verdict": "FAILED", "epistemic": "derived",
++                 "counts": {"unit": "member", "n": 2 ** 53 + 1, "failed": 2 ** 53 + 2},
++                 "features": {"deciding_model_unknown": True}}])
++    try:
++        channel_rate(hl.Ledger(big_path), "claude-opus-4-8", "scale:big", "scale", "bigfam", {})
++    except ValueError as e:
++        assert "invalid counts" in str(e), e
++    else:
++        raise AssertionError("a large-integer failed > n pair was rounded through float and accepted")
++    run_path = Path(tmp) / "run_ledger.jsonl"
++    rl = hl.Ledger(run_path)
++    rl.append([{"kind": "channel", "task": "run", "revision": "r1", "source": "platform-baseline",
++                "model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}, "run": "run-1",
++                "node": "scale:a", "family": "scale", "verdict": "FAILED", "epistemic": "derived",
++                "counts": {"unit": "run", "n": 1, "failed": 1},
++                "features": {"deciding_model_unknown": True}}])
++    try:
++        channel_specs(eng, mod, slots, rl, "claude-opus-4-8", {k: v for k, v in over.items() if k != "scale:a"})
++    except ValueError as e:
++        assert "member by member" in str(e), e
++    else:
++        raise AssertionError("a run-unit rate was adopted for a member-bearing channel")
++    # F1 residual c: inf / nan / 1e400 Beta parameters are refused (they hang or return nan)
++    for bad in ("x=inf,1", "x=1,inf", "x=1,nan", "x=1e400,1", "x=-1", "x=0,1"):
++        try:
++            parse_rate(bad)
++        except ValueError:
++            pass
++        else:
++            raise AssertionError(f"--channel-rate {bad!r} was accepted")
++    for bad in ({"alpha": float("inf"), "beta": 1.0}, {"alpha": 1.0, "beta": float("nan")}):
++        try:
++            _rate_draw(bad, random.Random(0))
++        except ValueError:
++            pass
++        else:
++            raise AssertionError(f"a non-finite Beta {bad!r} was drawn")
++    # F1 residual d: a batch channel whose briefs intersect none of its members raises instead of staying inert
++    try:
++        channel_specs(eng, mod, slots, led, "claude-opus-4-8", over, briefs=[{"keys": ["B-01"]}])
++    except ValueError as e:
++        assert "deleg:a" in str(e), e
++    else:
++        raise AssertionError("an inert batch channel was accepted")
++    # M6 boundaries: theta = 1 misses every batch at any RNG value (the zero quantile included), theta = 0 none
++    class _Zero(random.Random):
++        def random(self_inner):
++            return 0.0
++    three = [{0}, {1}, {2}]
++    assert _missed_batches(three, 1.0, _Zero(0)) == {0, 1, 2}, _missed_batches(three, 1.0, _Zero(0))
++    assert _missed_batches(three, 0.0, _Zero(0)) == set() and _missed_batches([], 0.5, _Zero(0)) == set()
++    # large B: log-space weights, no int->float overflow, and a documented refusal above MAX_BATCHES
++    big = [{i} for i in range(2000)]
++    got = _missed_batches(big, 0.3, random.Random(3))
++    assert 1 <= len(got) <= 2000, len(got)
++    try:
++        _missed_batches([{i} for i in range(MAX_BATCHES + 1)], 0.3, random.Random(3))
++    except ValueError:
++        pass
++    else:
++        raise AssertionError("a batch set above MAX_BATCHES was accepted")
++    # F1 residual g: every slot is reported; the top-25 dict is the presentation short list
++    wide = {"truth_fields": {"class": "class", "groups": "groups"},
++            "slots": [{"id": f"W{n:02d}", "weight": 1, "class": "direct",
++                       "selector": ["field", f"A-{n:02d}", "status"]} for n in range(1, 31)]}
++    wslots = dm.Slots(wide["slots"], wide)
++    wouts = Outcomes(eng, wslots)
++    wgates = Gates(wslots, {"V2": {"cap": 0.75, "mode": None}}, "long-horizon", 550)
++    wall = {"id": "all", "kind": "scale", "element": ("degrade", "slip:a"), "members": [f"A-{n:02d}" for n in range(1, 31)],
++            "inert_members": 0, "slots": [], "latent": "run", "latent_from": "declared", "batches": None,
++            "source": "all", "preregistered": True, "description": None, "family": "scale",
++            "rate": {"point": 1.0, "mean": 1.0, "unit": None, "records": [], "source": "test", "basis": "test",
++                     "label": "test"}}
++    sw = simulate(eng, wouts, wgates, [], {}, {}, {}, draws=3, seed=1, dependence="independent", extent="whole",
++                  channels=[wall])
++    assert len(sw["slots"]) == 30 and len(sw["slots_top_25"]) == 25 and set(sw["slots_top_25"]) <= set(sw["slots"]), \
++        (len(sw["slots"]), len(sw.get("slots_top_25") or {}))
++    # F1 residual 9: landing_pairs from the per-run landings: independent P(both) = 1/4, correlated E[min] = 1/3
++    m2 = [element_of(eng, "late_a"), element_of(eng, "rule_k")]
++    fl = {m: "PAIR" for m in m2}
++    psrc = {m: dm._label(m) for m in m2}
++    flat = {"PAIR": {"alpha": 1.0, "beta": 1.0}}
++    pair_out = {}
++    for dep in ("independent", "correlated"):
++        pr = simulate(eng, outs, gates, m2, flat, fl, psrc, draws=2000, seed=5, dependence=dep, extent="whole")
++        pair_out[dep] = pr["landing_pairs"]
++    key = next(iter(pair_out["independent"]))
++    assert abs(pair_out["independent"][key]["both"] - 0.25) < 0.03, pair_out["independent"]
++    assert abs(pair_out["correlated"][key]["both"] - 1 / 3) < 0.03, pair_out["correlated"]
++    assert pair_out["independent"][key]["either"] >= pair_out["independent"][key]["both"], pair_out
++    # F1 residual 8: the briefs digest follows the CONTENT at the same path (a paths-only digest would pass the old
++    # two-files test); the pre-registration inputs carry that digest
++    bp = Path(tmp) / "briefs_one.json"
++    bp.write_text(json.dumps([{"keys": ["A-01"]}]))
++    d1 = briefs_digest([bp])["digest"]
++    bp.write_text(json.dumps([{"keys": ["A-02"]}]))       # same path, different keys
++    assert briefs_digest([bp])["digest"] != d1, briefs_digest([bp])
++    # the aggregate digest is UNAMBIGUOUS: a two-file set cannot collide with one file named "a:<hash>b"
++    d1p, d2p = Path(tmp) / "a.json", Path(tmp) / "b.json"
++    d1p.write_text(json.dumps([{"keys": ["A-01"]}]))
++    d2p.write_text(json.dumps([{"keys": ["A-02"]}]))
++    ha = hashlib.sha256(d1p.read_bytes()).hexdigest()
++    odd = Path(tmp) / f"a.json:{ha}b.json"
++    odd.write_text(d2p.read_text())
++    assert briefs_digest([d1p, d2p])["digest"] != briefs_digest([odd])["digest"], "ambiguous briefs digest"
++    # landing_pairs keys escape the separator, so two different pairs cannot serialize alike
++    assert pair_key(("rule", "a"), ("rule", "b|rule:c")) != pair_key(("rule", "a|rule:b"), ("rule", "c"))
++    # a backslash before a pipe must not alias either: backslashes are escaped FIRST
++    assert pair_key(("rule", "a\\"), ("rule", "b|rule:c")) != pair_key(("rule", "a|rule:b\\"), ("rule", "c"))
++    # a POINT override that carries an explicit unit is still checked against the declared latent
++    try:
++        channel_specs(eng, mod, slots, led, "claude-opus-4-8",
++                      dict(over, **{"linked:a": {"point": 0.02, "mean": 0.02, "unit": "member"}}))
++    except ValueError as e:
++        assert "linked:a" in str(e), e
++    else:
++        raise AssertionError("a point override with a member unit fed the run-latent linked:a")
++    # the key is bound to the briefs object actually simulated, not to a later re-read of the file
++    assert briefs_content_digest([{"keys": ["A-01"]}]) != briefs_content_digest([{"keys": ["A-02"]}])
++    # a slot that never fails is still reported (0 probability), never omitted
++    never = {"truth_fields": {"class": "class", "groups": "groups"},
++             "slots": [{"id": "S1", "weight": 1, "class": "direct", "selector": ["field", "A-01", "status"]},
++                       {"id": "S2", "weight": 1, "class": "direct", "selector": ["field", "A-02", "status"]}]}
++    nslots = dm.Slots(never["slots"], never)
++    sn = simulate(eng, Outcomes(eng, nslots), Gates(nslots, {"V2": {"cap": 0.75, "mode": None}}, "long-horizon", 550),
++                  [], {}, {}, {}, draws=2, seed=1, dependence="independent", extent="whole")
++    assert set(sn["slots"]) == {"S1", "S2"} and all(v["P_fail"] == 0 for v in sn["slots"].values()), sn["slots"]
++    # a finite but enormous Beta shape is refused: betavariate(1e308, .) overflows 2*alpha internally and hangs
++    for bad in ("x=1e308,1", "x=1,1e308"):
++        try:
++            parse_rate(bad)
++        except ValueError:
++            pass
++        else:
++            raise AssertionError(f"--channel-rate {bad!r} was accepted")
++    # ... and a tiny symmetric shape is refused: 1e-300,1e-300 draws 0.0 every time (mean 0.5 expected), and even
++    # 1e-3 gives a mean of 0.38; 0.01 is the smallest sound shape here
++    for bad in ("x=1e-300,1e-300", "x=0.001,0.001"):
++        try:
++            parse_rate(bad)
++        except ValueError:
++            pass
++        else:
++            raise AssertionError(f"--channel-rate {bad!r} was accepted")
++    try:
++        _rate_draw({"alpha": 1e308, "beta": 1.0}, random.Random(0))
++    except ValueError:
++        pass
++    else:
++        raise AssertionError("a 1e308 Beta shape was drawn")
++    try:
++        _rate_draw({"alpha": 1e-300, "beta": 1e-300}, random.Random(0))
++    except ValueError:
++        pass
++    else:
++        raise AssertionError("a 1e-300 Beta shape was drawn")
++    # a tiny positive theta still misses at least one batch (the naive 1-(1-theta)**(1/B) rounds b to 0)
++    assert len(_missed_batches([{0}, {1}, {2}], 1e-16, random.Random(0))) >= 1
++    # and at the smallest positive float the b <= 0 fallback must return one batch's MEMBERS (not a set of a set)
++    smallest = _missed_batches([{0}, {1}, {2}], 5e-324, random.Random(0))
++    assert smallest in ({0}, {1}, {2}), smallest
++    return (f"F1: 40 members at e = 0.02 fail {pf(ind, 'SA'):.3f} independent (exact 0.554) and {pf(lnk, 'SA'):.3f} "
++            f"linked; 1 - E[(1 - e)^40] {pa['integrated']:.3f} < plug-in {pa['plug_in']:.3f}; a cancelling count passes "
++            f"while both members fail; a shared cause {dl['views']['V2']['E_patterns']:.2f} vs "
++            f"{di['views']['V2']['E_patterns']:.2f} patterns; a three-step chain {sc['slots']['SC']['P_fail']:.3f} "
++            f"(exact {want:.3f}); rates pooled across tasks by family from channel and control records, an "
++            "unrecorded kind UNPARAMETERIZED; M6 "
++            f"per-batch misses keep the landing rate ({sm['landing_rate_simulated']['rule:late_a']:.3f} vs 0.3)")
++
++
+ def _self_test() -> None:
+     import io
+     import contextlib
+     import selftest_sandbox
+     with selftest_sandbox.scratch_tmp("hardness_forecast_selftest_") as tmp:
++        f1 = _self_test_channels(tmp)
+         sp = Path(tmp) / "solver.py"
+         sp.write_text(dm._SOLVER)
+         mod = ok.load_solver(sp)
+@@ -777,7 +1665,7 @@
+         # a certain landing (rate ~1) makes every run identical: SD 0, the spread gate fails, P(all) = 0
+         fam = {m: "F" for m in mechs}
+         src = {m: dm._label(m) for m in mechs}
+-        sure = {"F": {"alpha": 1e6, "beta": 1e-6}}
++        sure = {"F": {"alpha": 1e6, "beta": 1.0}}
+         s = simulate(eng, outs, gates, mechs, sure, fam, src, draws=50, seed=1, dependence="independent", extent="whole")
+         assert s["views"]["V3"]["P_all"] == 0.0 and s["views"]["V3"]["P_gate"]["per_rollout_sd"] == 0.0, s
+         s2 = simulate(eng, outs, gates, mechs, {"F": {"alpha": 2, "beta": 2}}, fam, src, draws=300, seed=1,
+@@ -835,7 +1723,7 @@
+         # comparison: Beta(1, 1) over 6 runs is uniform (1/7 each) -> [0, 6]; a near-certain landing -> [n, n]
+         pmf = beta_binomial(6, 1.0, 1.0)
+         assert all(abs(p - 1 / 7) < 1e-12 for p in pmf) and central_interval(pmf) == [0, 6], pmf
+-        assert central_interval(beta_binomial(3, 1e6, 1e-6)) == [3, 3]
++        assert central_interval(beta_binomial(3, 1e6, 1.0)) == [3, 3]   # a near-certain prior (the sampler needs beta >= .01)
+         assert abs(sum(beta_binomial(7, 14.0, 6.0)) - 1) < 1e-12
+         rule = lambda vd, keys=(): {"verdict": vd, "landed_keys": list(keys), "citations": {"e": [1]} if vd == "LANDED"  # noqa: E731
+                                      else {}, "brief_transmission": {"covering_briefs": 2, "carry_in_text": 1,
+@@ -860,7 +1748,7 @@
+                   "gates": {"V2": {"difficulty_gates": gate_rows(False),
+                                    "per_rollout": [{"weighted_pass_rate": 0.6}, {"weighted_pass_rate": 0.8}]}}}
+         fc_doc = {"label": LABEL, "model": "claude-opus-4-8", "mechanisms": [
+-            {"id": "rule:late", "family": "F", "prior": {"alpha": 1e6, "beta": 1e-6}}],
++            {"id": "rule:late", "family": "F", "prior": {"alpha": 1e6, "beta": 1.0}}],
+             "scenarios": [{"dependence": "independent", "extent": "whole", "views": {"V2": {
+                 "band_10_90": [0.5, 0.9], "E_average": 0.7, "P_all": 0.95, "P_gate": {g: 0.9 for g in DIFFICULTY_GATES}}}}]}
+         cmp_ = compare({"prior": fc_doc}, verdicts, grades, precheck_call="go", old_band=2, class_field="class",
+@@ -900,7 +1788,7 @@
+           "transfer record and labelled with one, flat prior when the model has no evidence, DESIGN mode, scorer "
+           "hash check and Brier, gates_fail on surface grades and on difficulty_stats output, comparison: Beta-Binomial "
+           "intervals, NOT-REACHED runs not counted as trials, mixed-model runs shown apart, band and P(observed verdict), "
+-          "screens, per-run causes)")
++          f"screens, per-run causes; {f1})")
+ 
+ 
+ # ------------------------------------------------------------------ main
+@@ -950,6 +1838,14 @@
+     p.add_argument("--freeze", type=Path, action="append", default=[],
+                    help="a file whose sha256 the forecast records and pre-registers (prompt, manifest, truth.json)")
+     p.add_argument("--harness", default="platform@unrecorded")
++    p.add_argument("--channel-rate", action="append", default=[], metavar="CID=E|ALPHA,BETA",
++                   help="an explicit, disclosed rate for a channel without a ledger record (F1)")
++    p.add_argument("--no-channels", action="store_true", help="leave the declared complexity channels out")
++    p.add_argument("--mechanism-rate", action="append", default=[], metavar="ELEMENT=E|ALPHA,BETA",
++                   help="an explicit, disclosed landing rate for a mechanism instead of its ledger prior (a "
++                        "conditional design, e.g. a posterior variant); labelled OVERRIDE")
++    p.add_argument("--briefs", type=Path, action="append", default=[],
++                   help="trajectory_ledger briefs.json: brief batches for the batches extent and delegation channels (M6)")
+     p = sub.add_parser("exhaustive")
+     _common(p)
+     p.add_argument("--p-grid", type=float, default=0.01)
+@@ -1074,6 +1970,7 @@
+         engine = dm.Engine(mod, sql_path.read_text(), a.revision, a.max_k)
+         names = [x.strip() for x in (a.mechanisms or "").split(",") if x.strip()]
+         mechs = [element_of(engine, n) for n in names] if names else engine.mechanisms()
++        refuse_channel_elements(engine, mechs)
+         sql_sha, revision, solver_sha = engine.sql_sha256, engine.revision, tl.sha256_file(solver_path)
+         if not engine.composable():
+             loc = engine.locality()
+@@ -1103,20 +2000,47 @@
+         overrides = dict(x.split("=", 1) for x in a.family)
+         fam = {m: family_of(mod, m, portfolio, overrides) for m in mechs}
+         src = {m: source_of(mod, m, portfolio) for m in mechs}
++        mech_over = dict(parse_rate(x) for x in a.mechanism_rate)
++        unknown_m = sorted(set(mech_over) - {dm._label(m) for m in mechs} - {m[1] for m in mechs})
++        if unknown_m:
++            raise ValueError(f"--mechanism-rate for element(s) outside the forecast {unknown_m}")
++        for m in mechs:
++            if dm._label(m) in mech_over or m[1] in mech_over:
++                fam[m] = f"override:{dm._label(m)}"
+         try:
+-            priors = mechanism_priors(hl.Ledger(a.ledger), a.model, sorted(set(fam.values())), from_model=a.from_model,
+-                                      exclude_tasks=a.exclude_task, exclude_revisions=a.exclude_revision,
+-                                      include_mixed=a.include_mixed)
++            priors = mechanism_priors(hl.Ledger(a.ledger), a.model, sorted({f for f in fam.values()
++                                                                            if not f.startswith("override:")}),
++                                      from_model=a.from_model, exclude_tasks=a.exclude_task,
++                                      exclude_revisions=a.exclude_revision, include_mixed=a.include_mixed)
+         except RefuseMix as error:
+             print(f"hardness_forecast: {error}", file=sys.stderr)
+             return 2
++        for m in mechs:
++            if fam[m].startswith("override:"):
++                r = mech_over.get(dm._label(m)) or mech_over[m[1]]
++                priors[fam[m]] = dict(r, model=hl.model_family(a.model), n_eff=None, record_ids=[], excluded=[],
++                                      basis=r["basis"].replace("--channel-rate", "--mechanism-rate"))
+         transferred = any(p.get("label") == TRANSFER_LABEL for p in priors.values())
+-        label = (TRANSFER_LABEL if transferred else LABEL) + (" · DESIGN (declared attributions)" if design else "")
++        label = (TRANSFER_LABEL if transferred else LABEL) + (" · DESIGN (declared attributions)" if design else "") \
++            + (" · CONDITIONAL (mechanism rates overridden)" if any(f.startswith("override:") for f in fam.values()) else "")
++        briefs = [b for f in a.briefs for b in json.loads(f.read_text())]
++        overrides = dict(parse_rate(x) for x in a.channel_rate)
++        bad_src = [cid for cid, r in overrides.items() if r.get("source") == "UNSPECIFIED"]
++        bad_src += [e for e, r in mech_over.items() if r.get("source") == "UNSPECIFIED"]
++        if bad_src:
++            raise ValueError(f"overrides need an independent source: give CID=VALUE@SOURCE; missing for {bad_src}")
++        channels, unparameterized = ([], []) if design or a.no_channels else channel_specs(
++            engine, mod, slots, hl.Ledger(a.ledger), a.model, overrides, briefs, exclude_tasks=a.exclude_task,
++            exclude_revisions=a.exclude_revision, include_mixed=a.include_mixed)
++        unknown = sorted(set(overrides) - {c["id"] for c in channels})
++        if unknown:
++            raise ValueError(f"--channel-rate for undeclared channel(s) {unknown}")
+         scenarios = []
+         for dep in a.dependence or list(DEPENDENCE):
+             for ext in a.extent or list(EXTENT):
+                 scenarios.append(simulate(engine, outcomes, gates, mechs, priors, fam, src, draws=a.draws, seed=a.seed,
+-                                          dependence=dep, extent=ext if engine else "whole"))
++                                          dependence=dep, extent=ext if engine else "whole", channels=channels,
++                                          briefs=briefs))
+         summary = {v: {"P_all_min": min(s["views"][v]["P_all"] for s in scenarios),
+                        "P_all_max": max(s["views"][v]["P_all"] for s in scenarios),
+                        "E_average_range": [min(s["views"][v]["E_average"] for s in scenarios),
+@@ -1129,6 +2053,18 @@
+                    mechanisms=[{"id": dm._label(m), "family": fam[m], "source": src[m],
+                                 "touched": len(engine.touched[m]) if engine else None, "prior": priors[fam[m]]}
+                                for m in mechs],
++                   channels=channel_report(outcomes, slots, channels, draws=a.draws, seed=a.seed) if channels else [],
++                   unparameterized_channels=[{"id": c["id"], "kind": c["kind"], "members": len(c["members"]),
++                                              "why": (f"all {len(c['rate'].get('dropped') or [])} eligible record(s) "
++                                                      f"excluded: " + "; ".join(f"{i}: {w}" for i, w in
++                                                                                (c["rate"].get("dropped") or [])))
++                                              if (c.get("rate") or {}).get("dropped") else
++                                              "no ledger record and no --channel-rate override: not simulated",
++                                              "dropped": (c.get("rate") or {}).get("dropped") or [],
++                                              "basis": (c.get("rate") or {}).get("basis")}
++                                             for c in unparameterized],
++                   briefs=dict(briefs_digest(a.briefs), content_digest=briefs_content_digest(briefs),
++                               batches=len(dm.shards_for(engine, briefs)) if engine and briefs else None),
+                    scenarios=scenarios, summary=summary)
+         if a.freeze:
+             missing = [str(f) for f in a.freeze if not f.is_file()]
+@@ -1140,9 +2076,13 @@
+                                                 "task_type", "calls")}
+             if rep.get("frozen"):
+                 inputs["frozen"] = rep["frozen"]
+-            inputs.update(mechanisms={m["id"]: [m["family"], m["prior"]["alpha"], m["prior"]["beta"]]
+-                                      for m in rep["mechanisms"]}, draws=a.draws, seed=a.seed, tool=VERSION,
+-                          exclusions=rep["exclusions"])
++            inputs.update(mechanisms={m["id"]: [m["family"], m["prior"].get("alpha"), m["prior"].get("beta"),
++                                                m["prior"].get("point")] for m in rep["mechanisms"]},
++                          draws=a.draws, seed=a.seed, tool=VERSION,
++                          exclusions=rep["exclusions"],
++                          briefs=(rep.get("briefs") or {}).get("content_digest"),
++                          channels={c["id"]: [c["latent"], c["rate"].get("point"), c["rate"].get("alpha"),
++                                              c["rate"].get("beta"), c["rate"]["basis"]] for c in rep["channels"]})
+             key = hashlib.sha256(json.dumps(inputs, sort_keys=True, default=str).encode()).hexdigest()[:16]
+             hname, _, hver = a.harness.partition("@")
+             rec = {"kind": "forecast", "task": a.task or (td.name if td else "task"), "revision": str(revision),

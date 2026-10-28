@@ -11,7 +11,7 @@ Evals key) is in `setup/GEN_EXECUTION.md` §5.
 
 | Slot | Filled by |
 |---|---|
-| `00_Assigments.md` | You — transcribe the assignment (all five fields, incl. horizon) |
+| `00_Assigments.md` | You — paste the platform assignment exactly (all eight V3 fields, incl. role, difficulty mode and universe date); `task_context.py --write` resolves the rest |
 | `01_Universe_Inject.sql` | `/create-injection` (after `/create-scenario`) |
 | `02_Reference_Files/` | `/create-reference-files` (optional) |
 | `03_Error_Async_Config.txt` | `/create-error-async` (optional) |

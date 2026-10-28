@@ -12,7 +12,8 @@ Usage:
       Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.json \
       Task_Authoring/task_inputs/01_Universe_Inject.sql [--profile extreme|normal] [--json]
   python3 Task_Authoring/tools/hardness_gate.py Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.draft.json --design
-  python3 Task_Authoring/tools/hardness_gate.py --self-test
+  python3 Task_Authoring/tools/hardness_gate.py --self-test     (reruns itself inside a tools/selftest_sandbox.py
+              workspace: the hg.py and persona_view caches it reaches are written only there)
 
 The profile is the manifest's `effective_profile` (a task property, resolved once). `--profile` is only a
 cross-check: a value that disagrees with the manifest FAILs check `effective_profile`.
@@ -31,6 +32,13 @@ Red team A (2026-10-05, support/examples/calibration/harness_redteam/A_scenario_
                            or is an older entry of a trap's version_records (time-ordered supersession)
   supersession_chronology  version_records timestamps read from the SQL rows / base records, strictly increasing
   independent_chains       root_cause from the Hardness_Mastery.md mechanism enum; distinct = distinct ids
+
+Fold-hardening plan §8 (fields optional, so legacy manifests stay valid; malformed entries FAIL):
+  mechanism_portfolio      one entry per solver rule: unique id, mechanism from the enum (A22/A23 are library
+                           hypotheses), nodes that are trap or chain ids, requirement, natural_reading, prior_family
+                           (legacy: family) and prior_family_reason (why that family's ledger evidence applies)
+  artifact_fields          gradable_surface (path), solver {path, digest}, preflight {report, digest}: relative paths
+                           and 64-hex sha256 digests (tools/stage_gate.py verifies the digests against the files)
 
 Full mode (manifest + SQL) also runs the integrity layer:
   persona_reach     every seeded id cited by ask_fragments, authorities, traps, chains and cohort
@@ -97,7 +105,13 @@ RARELY_OPENED = {"gmail", "gsheets", "trello", "snowflake", "gslides", "gcal"}
 AUTHORITY_HOMES = RARELY_OPENED | {"gdocs"}
 # Mechanism ids for chains[].root_cause (references/Hardness_Mastery.md "Mechanism id enum"): A1-A21 (§0) and the
 # §2.6 red-team items 2.6.1-2.6.14. Distinct root causes = distinct ids (harness red team A, R2 #6).
-MECHANISM_IDS = {f"A{i}" for i in range(1, 22)} | {f"2.6.{i}" for i in range(1, 15)}
+# A22 (cross-shard dependency: a record's value depends on evidence attached to another cohort member) and A23
+# (brief-transmission loss: an exception rule homed outside the main instructions, applying to an unpredictable
+# subset) are hypotheses in the library (plans/Fold_Hardening_Into_Scenario_And_Injection.md §6, §8): usable ids, not
+# yet measured mechanisms.
+MECHANISM_IDS = {f"A{i}" for i in range(1, 24)} | {f"2.6.{i}" for i in range(1, 15)}
+HYPOTHESIS_IDS = {"A22", "A23"}
+RX_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 DECOY_DIMENSIONS = {"lot", "team", "game", "issuer"}
 DISTRACTOR_TYPES = {"lookalike_entity", "near_duplicate_record", "non_authoritative_instruction",
                     "stale_summary", "partial_listing", "keyword_collision", "scope_adjacent",
@@ -151,6 +165,76 @@ def _declared(manifest: dict) -> dict:
 
 def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", str(s or "").replace("\\n", "\n")).strip()
+
+
+def portfolio_check(manifest: dict, traps: list, chains: list, check) -> None:
+    """mechanism_portfolio[]: one entry per solver rule (tools/oracle_kit.py matches the rules one-to-one)."""
+    port = manifest.get("mechanism_portfolio")
+    if port is None:
+        check("mechanism_portfolio", True, "not declared (legacy manifest; /create-scenario S5a writes it for new tasks)")
+        return
+    nodes = {t.get("id") for t in traps} | {c.get("id") for c in chains}
+    bad = []
+    if not isinstance(port, list) or not port:
+        bad.append("must be a non-empty list")
+        port = []
+    ids = [p.get("id") if isinstance(p, dict) else None for p in port]
+    dup = sorted({i for i in ids if i and ids.count(i) > 1})
+    if dup:
+        bad.append(f"duplicate ids {dup}")
+    for p in port:
+        if not isinstance(p, dict) or not p.get("id"):
+            bad.append("an entry without an id")
+            continue
+        pid = p["id"]
+        if p.get("mechanism") not in MECHANISM_IDS:
+            bad.append(f"{pid}: mechanism {p.get('mechanism')!r} not in the mechanism enum")
+        unknown = [n for n in p.get("nodes") or [] if n not in nodes]
+        if not p.get("nodes") or unknown:
+            bad.append(f"{pid}: nodes {unknown or 'missing'} are not trap or chain ids")
+        for f in ("requirement", "natural_reading"):
+            if not str(p.get(f) or "").strip():
+                bad.append(f"{pid}: {f} missing")
+        if not str(p.get("prior_family") or p.get("family") or "").strip():
+            bad.append(f"{pid}: prior_family missing (the ledger family the forecast takes the rule's prior from)")
+        if not str(p.get("prior_family_reason") or "").strip():
+            bad.append(f"{pid}: prior_family_reason missing (why that family's evidence applies to this rule)")
+    hyp = sorted({p.get("mechanism") for p in port if isinstance(p, dict) and p.get("mechanism") in HYPOTHESIS_IDS})
+    check("mechanism_portfolio", not bad,
+          f"{len(port)} portfolio entr{'y' if len(port) == 1 else 'ies'}, each a mechanism-enum id with trap/chain nodes, "
+          f"a requirement, a natural-reading fallback and a prior family with its reason"
+          + (f"; hypothesis ids {hyp} (library hypotheses)" if hyp else "")
+          + (f"; bad: {bad[:6]}" if bad else ""))
+
+
+def artifact_fields_check(manifest: dict, check) -> None:
+    """gradable_surface / solver / preflight: paths and digests (stage_gate.py verifies them against the files)."""
+    bad, seen = [], []
+
+    def path_ok(v, where):
+        if not isinstance(v, str) or not v.strip() or v.startswith("/") or ".." in Path(v).parts:
+            bad.append(f"{where}: path {v!r} must be relative to the manifest's folder")
+
+    if "gradable_surface" in manifest:
+        seen.append("gradable_surface")
+        g = manifest["gradable_surface"]
+        path_ok(g.get("path") if isinstance(g, dict) else g, "gradable_surface")
+        if isinstance(g, dict) and g.get("digest") is not None and not RX_SHA256.match(str(g["digest"])):
+            bad.append("gradable_surface: digest must be a 64-hex sha256")
+    for field, pkey in (("solver", "path"), ("preflight", "report")):
+        if field not in manifest:
+            continue
+        seen.append(field)
+        v = manifest[field]
+        if not isinstance(v, dict):
+            bad.append(f"{field}: must be {{{pkey}, digest}}")
+            continue
+        path_ok(v.get(pkey), field)
+        if not RX_SHA256.match(str(v.get("digest") or "")):
+            bad.append(f"{field}: digest must be a 64-hex sha256")
+    check("artifact_fields", not bad, (f"declared {seen}: paths relative, digests sha256" if seen else
+                                       "none declared (legacy manifest; /create-injection writes them)")
+          + (f"; bad: {bad}" if bad else ""))
 
 
 def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: bool = False, records=None,
@@ -473,6 +557,9 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
           f"{len(chains)} chains with {len(roots)} distinct mechanism ids (Hardness_Mastery.md enum; chains sharing a mechanism "
           f"count once); need ≥ {p['chains']}, each ≥ {p['chain_hops']} hops over ≥ 2 services ending in a graded fact; "
           f"thin: {thin or 'none'}; root_cause not a mechanism id: {bad_root[:5] or 'none'}")
+
+    portfolio_check(manifest, traps, chains, check)
+    artifact_fields_check(manifest, check)
 
     auths = manifest.get("authorities", [])
     bad_auth = [a.get("id") for a in auths
@@ -967,8 +1054,62 @@ def _self_test() -> None:
         assert n in names, (n, names)
     n = _self_test_redteam_a()
     _self_test_integrity()
+    k = _self_test_portfolio()
     print(f"self-test: ok ({n} red-team-A planted defects each fail their own check; integrity layer incl. denied probes, "
-          "hazard resolutions and no-leak)")
+          f"hazard resolutions and no-leak; {k} mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted)")
+
+
+def _self_test_portfolio() -> int:
+    """Fold-hardening plan §8 fields on the red-team-A fixture (SQL overlay only, no base data)."""
+    man, sql, _ = _fixture_a()
+    rt = RecordText(sql)
+
+    def run(m):
+        return {c["check"]: c for c in evaluate(m, sql, None, records=rt, integrity=False)["checks"]}
+    by = run(man)
+    assert by["mechanism_portfolio"]["ok"] and by["artifact_fields"]["ok"], (by["mechanism_portfolio"], by["artifact_fields"])
+    good_port = [{"id": "late_rule", "mechanism": "A15", "nodes": ["T1"], "requirement": "R1", "natural_reading": "x",
+                  "prior_family": "A15", "prior_family_reason": "same mechanism id"},
+                 {"id": "brief_loss", "mechanism": "A23", "nodes": ["C1"], "requirement": "R1", "natural_reading": "y",
+                  "family": "brief-transmission loss (A23)", "prior_family_reason": "the library hypothesis family"}]
+    fields = {"gradable_surface": {"path": "01_Gradable_Surface.json", "digest": "a" * 64},
+              "solver": {"path": "solver/solver.py", "digest": "b" * 64},
+              "preflight": {"report": "01c_Preflight_Report.json", "digest": "c" * 64}}
+    ok = run(dict(man, mechanism_portfolio=good_port, **fields))
+    assert ok["mechanism_portfolio"]["ok"] and "A23" in ok["mechanism_portfolio"]["detail"], ok["mechanism_portfolio"]
+    assert ok["artifact_fields"]["ok"], ok["artifact_fields"]
+    hyp = json.loads(json.dumps(man))
+    for c, rc in zip(hyp["chains"], ("A22", "A23", "A1")):
+        c["root_cause"] = rc
+    assert run(hyp)["independent_chains"]["ok"], run(hyp)["independent_chains"]       # hypothesis ids are valid roots
+
+    def bad_port(f):
+        p = json.loads(json.dumps(good_port))
+        f(p)
+        return p
+    cases = [("mechanism outside the enum", dict(man, mechanism_portfolio=bad_port(lambda p: p[0].update(mechanism="A99"))),
+              "mechanism_portfolio"),
+             ("no prior family", dict(man, mechanism_portfolio=bad_port(lambda p: p[0].pop("prior_family"))),
+              "mechanism_portfolio"),
+             ("no prior-family reason", dict(man, mechanism_portfolio=bad_port(lambda p: p[1].pop("prior_family_reason"))),
+              "mechanism_portfolio"),
+             ("node that is no trap or chain", dict(man, mechanism_portfolio=bad_port(lambda p: p[0].update(nodes=["T9"]))),
+              "mechanism_portfolio"),
+             ("duplicate rule id", dict(man, mechanism_portfolio=bad_port(lambda p: p[1].update(id="late_rule"))),
+              "mechanism_portfolio"),
+             ("no natural-reading fallback", dict(man, mechanism_portfolio=bad_port(lambda p: p[0].pop("natural_reading"))),
+              "mechanism_portfolio"),
+             ("empty portfolio", dict(man, mechanism_portfolio=[]), "mechanism_portfolio"),
+             ("solver digest not sha256", dict(man, **dict(fields, solver={"path": "solver/solver.py", "digest": "abc"})),
+              "artifact_fields"),
+             ("absolute preflight path", dict(man, **dict(fields, preflight={"report": "/tmp/x.json", "digest": "c" * 64})),
+              "artifact_fields")]
+    for name, m, want in cases:
+        got = run(m)
+        assert not got[want]["ok"], (name, got[want])
+        others = [c for c in ("mechanism_portfolio", "artifact_fields") if c != want and not got[c]["ok"]]
+        assert not others, (name, others)
+    return len(cases)
 
 
 def _fixture_a():
@@ -1142,6 +1283,12 @@ INSERT INTO gmail.gmail_messages (id, thread_id, user_email, label_ids_json, sub
 
 def main(argv: list[str]) -> int:
     if "--self-test" in argv:
+        # base records come through tools/hg.py and persona_view, which write caches: outside a sandbox, rerun inside
+        # one (tools/selftest_sandbox.py) so no shared file is written
+        import selftest_sandbox as sb
+        bundle = Path(__file__).resolve().parent.parent
+        if not sb.in_sandbox(bundle):
+            return sb.run_isolated(["hardness_gate.py", "--self-test"], source=bundle)
         _self_test()
         return 0
     profile = None

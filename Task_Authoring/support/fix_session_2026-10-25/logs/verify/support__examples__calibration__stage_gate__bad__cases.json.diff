@@ -1,0 +1,175 @@
+--- a/support/examples/calibration/stage_gate/bad/cases.json
++++ b/support/examples/calibration/stage_gate/bad/cases.json
+@@ -1458,6 +1458,172 @@
+    "expect": [
+     "surface.coverage"
+    ]
++  },
++  {
++   "name": "injection-output-older-than-surface",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01_Grounding_Dossier.md",
++     "older_than": "01_Gradable_Surface.json"
++    }
++   ],
++   "expect": [
++    "structure.fresh"
++   ],
++   "expect_detail": [
++    "older than its input 01_Gradable_Surface.json"
++   ]
++  },
++  {
++   "name": "scenario-raised-self-review-minimum",
++   "stage": "scenario",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "create": "01a_Hardening_Report.md",
++     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
++    },
++    {
++     "create": "run_forensics/rev2/node_verdicts.json",
++     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
++    },
++    {
++     "file": "01_Scenario_Design.md",
++     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2; both exports bound to revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n\nEarlier exports read for comparison: rev1 run-1 LEAKED, rev1 run-2 LEAKED, rev1 run-3 LEAKED, rev1 run-4 LEAKED, rev1 run-5 LEAKED, rev1 run-6 LEAKED, rev1 run-7 LEAKED, rev1 run-8 LEAKED, rev1 run-9 LEAKED, rev1 run-10 LEAKED, rev1 run-11 LEAKED, rev1 run-12 LEAKED, rev1 run-13 LEAKED, rev1 run-14 LEAKED, rev1 run-15 LEAKED, rev1 run-16 LEAKED, rev1 run-17 LEAKED, rev1 run-18 LEAKED, rev1 run-19 LEAKED, rev1 run-20 LEAKED, rev1 run-21 LEAKED, rev1 run-22 LEAKED, rev1 run-23 LEAKED, rev1 run-24 LEAKED, rev1 run-25 LEAKED, rev1 run-26 LEAKED, rev1 run-27 LEAKED, rev1 run-28 LEAKED, rev1 run-29 LEAKED.\n"
++    }
++   ],
++   "expect": [
++    "review.counter_readings"
++   ],
++   "expect_detail": [
++    "need ≥ 33"
++   ]
++  },
++  {
++   "name": "injection-preflight-lists-no-mutation-results",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "\"dispositions\": {\n   \"required\": [\n    \"rule:stale_count\",\n    \"intervention:rule:stale_count\"\n   ],",
++     "replace": "\"dispositions\": {\n   \"required\": [],"
++    }
++   ],
++   "expect": [
++    "mutation.dispositions"
++   ],
++   "expect_detail": [
++    "lists no mutation results"
++   ]
++  },
++  {
++   "name": "injection-geometry-margin-warns",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "\"L_max\": {\n     \"verdict\": \"OK\",",
++     "replace": "\"L_max\": {\n     \"verdict\": \"WARN\","
++    }
++   ],
++   "expect": [],
++   "expect_warn": [
++    "geometry.margin"
++   ]
++  },
++  {
++   "name": "injection-liveness-flag-undispositioned",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "\"dispositions\": {\n   \"required\": [],\n   \"recorded\": {},\n   \"missing\": [],\n   \"rule\": \"every flag needs",
++     "replace": "\"dispositions\": {\n   \"required\": [\"T1:breadcrumb collision\"],\n   \"recorded\": {},\n   \"missing\": [],\n   \"rule\": \"every flag needs"
++    }
++   ],
++   "expect": [],
++   "expect_warn": [
++    "liveness.dispositions"
++   ]
++  },
++  {
++   "name": "injection-forecast-preregistered-control",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "\"forecast\": {\n  \"status\": \"not run\",",
++     "replace": "\"forecast\": {\n  \"status\": \"recorded\",\n  \"preregistration\": {\"id\": \"hev_52b022ea60c70fc4\"},"
++    }
++   ],
++   "expect": [],
++   "expect_pass": [
++    "forecast.preregistered"
++   ]
++  },
++  {
++   "name": "injection-forecast-not-in-ledger",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "\"forecast\": {\n  \"status\": \"not run\",",
++     "replace": "\"forecast\": {\n  \"status\": \"recorded\",\n  \"preregistration\": {\"id\": \"hev_0000000000000000\"},"
++    }
++   ],
++   "expect": [],
++   "expect_warn": [
++    "forecast.preregistered"
++   ],
++   "baseline": "injection-forecast-preregistered-control"
++  },
++  {
++   "name": "injection-geometry-unverified-without-disposition",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "\"U\": {\n     \"verdict\": \"PASS\"",
++     "replace": "\"U\": {\n     \"verdict\": \"UNVERIFIED\""
++    }
++   ],
++   "expect": [
++    "geometry.upper_bound"
++   ]
++  },
++  {
++   "name": "injection-geometry-unverified-with-disposition-control",
++   "stage": "injection",
++   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
++   "mutate": [
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "\"U\": {\n     \"verdict\": \"PASS\"",
++     "replace": "\"U\": {\n     \"verdict\": \"UNVERIFIED\""
++    },
++    {
++     "file": "01c_Dispositions.json",
++     "find": " \"liveness\": {}\n}",
++     "replace": " \"liveness\": {},\n \"geometry\": {\"geometry.U\": {\"disposition\": \"accepted-unverified\", \"reason\": \"a cross-record link the solver declares; U enumerated per record\"}}\n}"
++    },
++    {
++     "file": "01c_Preflight_Report.json",
++     "find": "c605e21e6a873125e5fac208793153c581bd90d5c38ee3b68ceedf3ce55cbeab",
++     "replace": "90c9285521312efc1da047d440360ec68b13e7ddc50a91641de629a412ecadb7"
++    }
++   ],
++   "expect": [],
++   "expect_pass": [
++    "geometry.upper_bound"
++   ]
+   }
+  ]
+ }

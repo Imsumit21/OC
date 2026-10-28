@@ -1,6 +1,6 @@
 # 01 — Scenario Design (Playbook) — HarmonyGames · Spec V2 · effective profile (extreme by default)
 
-> Command: `/create-scenario` · Writes: `task_inputs/Working_Files/01_Scenario_Design.md` + the draft manifest `task_inputs/Working_Files/01_Hardness_Manifest.draft.json` · Checks: `tools/hardness_gate.py --design`, `tools/redteam_review.py --mode redteam --dual`, **`tools/stage_gate.py scenario` (blocking)** · Next: `/create-injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`
+> Command: `/create-scenario` (`--revise` after a `/create-hardening` MODE B report) · Writes: `task_inputs/Working_Files/01_Scenario_Design.md` + the draft manifest `task_inputs/Working_Files/01_Hardness_Manifest.draft.json` + the gradable surface `task_inputs/Working_Files/01_Gradable_Surface.json` · Checks: `tools/hardness_gate.py --design`, `tools/gradable_surface.py validate`, `tools/redteam_review.py --mode redteam --dual`, **`tools/stage_gate.py scenario` (blocking)**; advisory (UNCALIBRATED): `tools/trap_liveness.py --design`, `tools/hardness_forecast.py forecast --design --preregister` · Next: `/create-injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §4.4
 
 **Profile.** S0 resolves the task's `effective_profile` once and writes it into the draft manifest
 (Long Horizon → `extreme`; Normal Horizon → `normal`, or `extreme` only with a recorded
@@ -50,6 +50,10 @@ Output
 - `task_inputs/Working_Files/01_Hardness_Manifest.draft.json` — the draft manifest (`references/Hardness_Manifest_Spec.md`),
   with ids minted in S2 (no placeholders: the stage gate rejects template slots). `/create-injection` writes
   the final `01_Hardness_Manifest.json`, keeping every draft id or recording the change in `design_delta`.
+  It carries `mechanism_portfolio[]` (S5a): one entry per solver rule.
+- `task_inputs/Working_Files/01_Gradable_Surface.json` — the fact slots the deliverables make gradable (S6b). This
+  stage owns the file; `/create-injection` never rewrites it (it records expected values and `flipped_by` in its
+  preflight report instead, so this stage's certificate stays current).
 
 ## Hard gates
 
@@ -74,12 +78,53 @@ Output
 8. **Call budget ≥ 500** necessary calls counting only unconditional rows (plan ~600 for headroom; normal: 60–100), ≥ 10 services, no service > 50% outside the per-record phase; every row carries a necessity reason.
 9. **`hardness_gate.py --design` PASS** on the draft manifest, at its `effective_profile`.
 10. **`stage_gate.py scenario` PASS** (structure, evidence, persona reach, universe-KB use, self-review, boundary); handoff is blocked until it passes.
+11. **Gradable surface valid** (`tools/gradable_surface.py validate`, gate check `surface.valid`): work-kind
+    weights, ≤ 5 samples per group plus a volume slot, exception slots only for members an incorporated authority
+    singles out, no fact in ≥ 3 slots.
+    - Every V3 rubric rule blocks, with its basis printed: structure, weights, duplicates, sampling, exceptions,
+      mechanisms. `surface_grader` and the forecast score this surface, so a broken rule would count losses the real
+      rubric can't have.
+    - The geometry (mechanism share, always-pass share) is reported and never gated.
+12. **Red team ran, or an explicit fallback is recorded** (`tool.redteam_dual`, blocking): a tool-error stub such as
+    `set REDTEAM_MODEL` is not a review.
+13. **Revision intake dispositioned** (`--revise` only; `revise.*`, blocking): every proposed node verdict kept, purged
+    or rebuilt, every export bound on evidence to the revision it ran on, or marked `historical`.
+
+Advisory and UNCALIBRATED (each liveness flag still needs a written disposition): liveness flags (S5b) and the prior
+forecast (S9b). They inform the design; they never block it.
 
 ## Procedure
+
+### S0r — Revision intake (`--revise`; only when a `/create-hardening` MODE B report exists for this task)
+`/create-hardening` MODE B owns the forensics (decision 3): it binds each export to the revision it ran on, runs
+`tools/trajectory_ledger.py` and `tools/node_verdicts.py` against **that revision's** solver, reviews every call that
+touches a node's deciding records, briefs or writes, and appends the results to `support/hardness_ledger/ledger.jsonl`.
+This step consumes that output and owns the decisions:
+- [ ] Name the verdicts file the intake consumes (`run_forensics/<revision>/node_verdicts.json`) in section 14.
+- [ ] **Disposition every proposed verdict** in a table (node · runs · proposed verdict · disposition · evidence):
+      `keep`, `purge` (a FALSE or BYPASSED node leaves the design, recorded in `design_delta`) or `rebuild`. Confirm or
+      assign CONFOUNDED (tool, fairness, verifier, run) for every flagged candidate — the tools only flag it.
+- [ ] Every evidence cell cites a run and an event (`run-3 event 987`); every export stays bound to the revision it
+      ran on. Historical evidence never certifies a new revision, and an old export never blocks a repair: mark such
+      a run `historical`.
+      - Bound means BOUND on evidence in `node_verdicts.json`: a basis (discriminating content, or the sole revision
+        with its reason) and seen needles (`revise.revision_binding`). INSUFFICIENT, AMBIGUOUS, UNBOUND and a legacy
+        `SINGLE` never certify; such a run was not evaluated, and only a `historical` line lets the intake pass.
+      - INSUFFICIENT usually means a revision was not passed: MODE B binds against every stored revision
+        (`Working_Files/run_forensics/*/01_Universe_Inject.sql`).
+- [ ] Route each finding: verifier defects → `/create-allfail` and `/create-rubric-writing check`; OE defects →
+      `/create-oe-writing check`; prompt-side defects → `/create-prompt-writing check`; universe-side changes → S5a
+      onward.
+- [ ] The Self-review then needs at least (LANDED + LEAKED rows in the intake) + 1 evidenced counter-readings.
 
 ### S0 — Assignment and persona reach
 - [ ] Copy all eight V3 assignment fields from the shared context. Map `business_function` to the Evals category
       (`Evals/references/rules/task_categories.md`).
+- [ ] **Loss budget from the mode.** Record the cap and the design target E[average] ≤ cap − 8 points: Easy ≤ 82 %,
+      Medium ≤ 77 %, Hard ≤ 62 % (`plans/V3_Opus55_Difficulty_Plan.md` §3). S5a sizes the portfolio to it.
+- [ ] **Theme screen.** No bio-adjacent theme (zombies, infection, outbreaks, contamination) in the storyline or the
+      seeded text. A safety false positive switched the model in 8 of 12 Season Pass runs, and under V3 any non-Opus-5.5
+      run is invalid (`Hardness_Mastery.md` §12).
 - [ ] Persona reach census: `python3 Task_Authoring/tools/persona_view.py reach <persona> --top 10`. Paste the
       output verbatim in section 0; the gate re-runs it and compares the channel and thread counts. Add the
       Linear/GitHub/Trello identities from `python3 Task_Authoring/tools/entity.py resolve <persona name>`
@@ -145,6 +190,11 @@ Output
         so keep it out); `dated_claim` — an attributed, dated text claim a later record overturns,
         never a system field the SQL modifies. An acknowledgement without a verified resolution fails.
 
+- [ ] **Coupling seams** (moved from `/create-hardening` MODE A A2): list the under-used couplings between the
+      storyline's services — a rule homed in one service that changes a value read in another, a record whose meaning
+      depends on another cohort member (A22 hypothesis), an exception the main instructions do not carry (A23
+      hypothesis). They are the raw material for S5a.
+
 ### S2 — The cohort spine (A2/A3; ≥ 500 calls)
 - [ ] Define the cohort **by a rule** the agent must reconstruct (window × state × label ×
       owner × service), not by a list. Size 40–150.
@@ -206,6 +256,12 @@ Output
       `Anchor · Anchor name (noun phrase, ≤ 6 words) · Record` table, and the same phrase as the
       manifest's `prompt_reference`; `stage_gate.py` blocks any other shape (`boundary.anchor_naming`).
 - [ ] A **hub** in the owner's voice that explicitly delegates to spokes.
+- [ ] **Delegate by role, not by location.**
+      - The hub names *what* governs ("the refund policy", "the vendor's latest reply").
+      - It never lists every document, link or location.
+      - S3's authorities are found by search, not by a hub link.
+      - When Season Pass's hub named every source, Opus 4.8 read them all and every rule leaked as a checklist
+        (`Hardness_Mastery.md` §12).
 - [ ] **≥ 12 ask fragments** across **≥ 7 services** and **≥ 10 containers** (channels,
       threads, tickets, cards, docs, pages, events, decks, sheets, mail threads). Each carries
       exactly one requirement (rule clause · destination · recipient subset · format · deadline
@@ -239,11 +295,100 @@ Output
       the others can still fail it; merge traps that fall to the same rule. No record states a
       chain's conclusion (item 5).
 
+### S5a — Mechanism portfolio (the design driver; the S5 counts stay as floors)
+- [ ] Generate **10–15 grounded candidates** (moved from `/create-hardening` MODE A A3), each cited to real records:
+
+| # | Anchor storyline (cited) | Coupling (finding → what it changes next) | Characteristic | Discovery-order proof | Reach | Findability term | Gradable fact (a fact, not criterion text) | Services carrying weight | Walk Δ vs tier | Risks |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+      Each also carries: its ledger prior with record ids
+      (`python3 Task_Authoring/tools/hardness_ledger.py priors --model <assigned baseline model> --family <family>`; priors
+      are per model and never pooled; another model's evidence needs a transfer record), the step that stays hard
+      **after complete retrieval**, the natural call that returns the deciding record, its incorporation chain, and the
+      gradable slots it affects.
+- [ ] Select by expected loss and independence (moved from MODE A A4, depth over breadth). Prefer A1/A15/A16/A17/A19:
+      a wrong reading at one node that corrupts the next; one authoritative-but-wrong claim met before the evidence that
+      overturns it; reading past an apparent conclusion; a deciding fact held only in a structured system; day-level
+      data that must be aggregated. Reject, with a reason: independent lookups, bolt-on writes, unreachable or unfindable
+      evidence, an unfairly rejected alternative outcome, an unauthorized requirement, a walk pushed outside the tier.
+      Also reject what leaked on Season Pass (`Hardness_Mastery.md` §9, §12):
+      - rules listed in a hub-named document;
+      - a plain-words pointer to the deciding record, in a record every run reads;
+      - a list whose membership rule is stated explicitly;
+      - a claim contradicted by per-item records the agent reads anyway.
+- [ ] **Size the portfolio to the S0 budget: the target, not the cap.**
+      - Use at least 3 independent loss channels on separate outputs; Hard needs at least 4. A channel is a designed
+        mechanism or a declared complexity channel (a cohort's exact derived values, a dependency chain, delegated
+        synthesis). No unit of discovery may decide more than half the weight (`playbooks/09_Rubric_Writing.md`
+        gate 12), so Hard's at-risk weight needs at least two independent cohorts or chains.
+      - **Budget arithmetic.** With weight W at risk, failing at a weighted mean rate p̄, and the rest passing at r
+        (0.95 unless measured), E[average] = r(1 − W) + (1 − p̄)W. Hard's 62 % target needs W ≥ 73 % at p̄ = 0.5
+        (76 % at r = 1). Two-thirds of the weight at p̄ = 0.5 gives 66.7 % (65.0 % at r = 95 %): it clears the 70 %
+        cap but misses the 62 % target by 4.7 points with a perfect remainder, or 3.0 with a 95 % remainder: that
+        is the whole margin.
+      - **Spread.** Near-certain rows lower the mean but add no spread. The gate reads the population SD of the six
+        runs. For six independent normal runs, a design σ of 0.10 lands in 0.10–0.30 only about 30 % of the time
+        (normal approximation), and σ alone does not determine the six-run SD: mixtures and correlated channels can
+        pass or fail at the same σ. Compute the six-run SD distribution from the forecast's joint outcome model on
+        the actual rubric rows, with covariance — channels can be dependent, or each flip several rows at once.
+        An interior σ around 0.15–0.20 is a model-motivated candidate, not a validated requirement; equal independent
+        channels at p̄ = 0.5 illustrate it (W_v ≈ 0.32√k), but never transfer a channel count. Read the forecast's
+        P(SD in band) and P(patterns) (at least 2 patterns, the largest at most 50 %). Run an attainable-variance
+        check on the legal rubric before fixing a target: if the work can only earn weight-1 rows, the variance may be
+        out of reach, and then change the work or the scenario, never the weights.
+      - **Scale rows.** Only aggregate rows (a volume row, a derived total) compound over a cohort; a sampled member
+        fails at about the per-member rate e. Independent members give 1 − (1 − e)^N; shared causes (one rule, source
+        or format) give less, and opposing count errors can cancel. Use the forecast's per-slot P(fail) (F1).
+        Evidence: the A2 PR residue register, 133 PRs, averaged 70.2 % with 0/6 runs right on its two derived totals
+        (`Hardness_Mastery.md` §0, A2; model unstated).
+      - **All-fail rows.** A row that fails all six runs is legal when VALID, with a step-14 justification
+        (`playbooks/11_AllFail_Analysis.md`); the forecast reports each slot's P(fails all six) as that workload.
+        A predicted all-fail is different: a value the persona can't reach, which blocks at any count (09 gate 11).
+      - **Populations are workload, not rows:** at most 5 samples per group, a volume row, and direct rows for
+        singled-out exceptions.
+      - Expected loss is Σ weight × failure rate over the mechanisms and complexity channels, plus slips. It must
+        reach the budget (`plans/V3_Opus55_Difficulty_Plan.md` §3).
+      - **Landing rates.** Use Opus 5.5 ledger priors (calibration battery, `source: probe`) where they exist. Otherwise
+        use Opus 4.8 priors, transferred at quarter weight and halved, labelled TRANSFERRED · UNCALIBRATED.
+      - A design that misses the budget is redesigned before any SQL, never built.
+- [ ] Per selected node, one line on the four A5b checks: **incorporated** (the chain from a named anchor); **survives
+      complete retrieval** (a node that is hard only because nobody searches is a call multiplier, not the engine);
+      **tool-surface proof** (the decisive record is returned by the natural call — a node that lands only because a
+      search misses, a result spills or an endpoint errors is CONFOUNDED by design); **graded weight** (the S6b slots
+      it can flip). Retrieval traps, decoys and authorities every run reaches leak (`Hardness_Mastery.md:98`); put the
+      difficulty in the judgment that remains after the correct target is found.
+- [ ] **Never resolve a liveness flag by removing an incorporation or UGT link.**
+- [ ] **Solver rules.** One rule per mechanism node, each with an explicit natural-reading fallback, written as the
+      draft manifest's `mechanism_portfolio` (`references/Hardness_Manifest_Spec.md`): `id` = the future rule id in
+      `Working_Files/solver/solver.py`, `mechanism`, `prior_family` with its `prior_family_reason` (the ledger family
+      whose prior the forecast uses, and why it applies), `nodes`, `requirement`, `natural_reading`, `decides`,
+      `source`, `signature`. `/create-injection` S4b writes the solver itself (`tools/oracle_kit.py` contract).
+
+### S5b — Design liveness flags (advisory, UNCALIBRATED)
+- [ ] `python3 Task_Authoring/tools/trap_liveness.py --design --task-dir Task_Authoring/task_inputs` (plan §7.3):
+      breadcrumb collision, self-advertising decoy, order (the correction sits in the hub thread), rule placement. No
+      SQL exists yet, so only the manifest-structure flags can fire; injection S5c re-runs it on the SQL.
+- [ ] Write a disposition for every flag in section 5. Lexical warnings, not proof: redesign the difficulty, never
+      remove a fairness link.
+
 ### S6 — Deliverables and writes
 - [ ] One register/record (exact totals, checked-absence states) + 3–6 dependent writes over
       ≥ 3 services. Destination and recipients pinned by an authority or the hub.
 - [ ] A reuse-vs-create write (A8) where the storyline has an existing record.
 - [ ] Every write's content depends on findings (`depends_on`). No bolt-ons.
+
+### S6b — Gradable surface (`Working_Files/01_Gradable_Surface.json`)
+- [ ] Write the fact slots the deliverables make gradable, before any rubric exists (`tools/gradable_surface.py`
+      docstring for the shape): each slot's selector, weight by kind of work (lookup 1; interpretation, calculation,
+      comparison, limited reconciliation 3; multi-source reconciliation, deeper reasoning, cross-modal, tracing 5) with
+      a `work_reason`, class (direct · aggregate · write_content · delivery), role (sample · exception · volume ·
+      core) and the mechanisms that can flip it.
+- [ ] Validate it against the V3 rubric rules:
+      `python3 Task_Authoring/tools/gradable_surface.py validate --task-dir Task_Authoring/task_inputs` → PASS
+      (work-kind weights; ≤ 5 samples per group plus a volume slot; exception slots only for members an incorporated
+      authority singles out — `singled_out_by`; no fact in ≥ 3 slots). The mechanism share is reported, never gated.
+- [ ] Geometry needs room: the slots the designed mechanisms can flip must carry more than 1 − cap of the weight
+      (`/create-injection` S5b′ proves it with the solver). Delivery slots fail only at a base rate and never count.
 
 ### S7 — Call budget
 - [ ] Table by phase × service (discovery · rules · enumeration · per-record · reconciliation ·
@@ -328,8 +473,15 @@ Output
 - [ ] **Dual red team (required):**
       `python3 Task_Authoring/tools/redteam_review.py --mode redteam --dual --in Task_Authoring/task_inputs/Working_Files/01_Scenario_Design.md --in Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.draft.json --out Task_Authoring/task_inputs/Working_Files/01b_Redteam_Review.md`
       (two independent reviewers → `01b_Redteam_Review.md` and `01b_Redteam_Review.second.md`). Address every finding of both
-      (fix, or rebut with a record pointer) in section 13. If the proxy fails, record
-      `RED TEAM UNAVAILABLE: <error line>` in section 13; the gate then warns instead of blocking.
+      (fix, or rebut with a record pointer) in section 13. `REDTEAM_*` is a precondition: a reviews file that only holds
+      the tool's error (`set REDTEAM_MODEL or pass --model`, an HTTP error) is not a review. If the proxy cannot run,
+      record `RED TEAM UNAVAILABLE: <error line>` **and** an explicit fallback,
+      `RED TEAM FALLBACK: <who reviewed the design instead, how, and why>`, in section 13. Without one of the two the
+      gate blocks (`tool.redteam_dual`): no silent skip.
+- [ ] **S9b Prior forecast (advisory, UNCALIBRATED, pre-registered):**
+      `python3 Task_Authoring/tools/hardness_forecast.py forecast --design --task-dir Task_Authoring/task_inputs --model <baseline model> --mechanisms <portfolio ids> --preregister`
+      (the surface's declared `mechanisms` stand in for the solver). Paste the ledger id (`hev_…`) and the reported
+      P(all gates) range in section 12. It informs S5a; it never blocks.
 - [ ] **Stage gate (blocking):** `python3 Task_Authoring/tools/stage_gate.py scenario Task_Authoring/task_inputs --paste`.
       Handoff is blocked until it prints `STAGE GATE scenario: PASS`; `--paste` writes that output into the
       Self-review, where `/create-injection`'s gate looks for it (its digests go stale on any later edit).
@@ -357,18 +509,22 @@ record id or pointer):
 ## 10 QC rails   (### Two-reading table · ### Reach table (load-bearing records) · feasibility, precedence,
                   naturalness constraints, grading devices)
 ## 11 Record plan for /create-injection   (+ ### Integrations and companions: service · INT id · companion · decision)
-## 12 Self-test results   (gate output verbatim, lazy-solver leaks fixed) + ### Self-review
-## 13 Red team (dual)   (finding · source file · disposition with evidence)
+## 12 Self-test results   (gate output verbatim, lazy-solver leaks fixed; gradable_surface validate; S9b forecast id) + ### Self-review
+## 13 Red team (dual)   (finding · source file · disposition with evidence; or RED TEAM FALLBACK)
+## 14 Revision intake (S0r)   (--revise only: verdicts file · node · runs · proposed verdict · disposition · run-N event M)
 ```
+Section 5 also carries `### Mechanism portfolio (S5a)` and `### Liveness flags (S5b)` with a disposition per flag.
 
 **Self-review** (gate minimum): one evidenced counter-reading per QC coherence category (temporal, semantic,
 cross-service referential, quantitative, state/lifecycle, identifier/format, other) plus one per decision point
 in the two-reading table, in a table with a "counter-reading" column; the `hardness_gate.py --design` output
-verbatim; an `Unresolved:` line.
+verbatim; an `Unresolved:` line. Under `--revise` the minimum rises to (LANDED + LEAKED rows in section 14) + 1.
 
 ## Deliver
 
 Run `python3 Task_Authoring/tools/stage_gate.py scenario Task_Authoring/task_inputs --paste`; handoff is blocked
 until it prints PASS, and its output sits in the Self-review. Report the storyline, services (natural vs
-injected), cohort × surfaces, authorities, chains, budget total, the `hardness_gate` and `stage_gate` verdicts
-verbatim and the dual red-team dispositions. Next: `/create-injection`.
+injected), cohort × surfaces, authorities, chains, the mechanism portfolio with each prior's record ids, the
+gradable surface's mechanism share (reported, not gated), budget total, the `hardness_gate` and `stage_gate` verdicts
+verbatim, the dual red-team dispositions (or the recorded fallback) and the pre-registered forecast id, labelled
+UNCALIBRATED. Next: `/create-injection`.

@@ -1,0 +1,55 @@
+--- a/playbooks/01a_Hardening.md
++++ b/playbooks/01a_Hardening.md
+@@ -134,10 +134,12 @@
+ - [ ] **B3 Give each designed difficulty a verdict**, citing rollout and step. `node_verdicts.py` proposes one per node ×
+       run (was the deciding record in a result the responsible agent saw; did the briefs for the affected records carry
+       the rule, in their text or in a file the worker read; does the written value match the solver for that run's
+-      revision) and classifies every register difference once (mechanism · slip · representation · cascade). It never
+-      assigns CONFOUNDED; it flags candidates. You disposition every proposal, then append the dispositioned records:
+-      `python3 Task_Authoring/tools/hardness_ledger.py append <dispositioned.jsonl>` (each record keeps model, harness
+-      and source; a correction supersedes, never overwrites):
++      revision) and classifies every register difference once (mechanism · `mechanism?` · slip · representation ·
++      cascade). `mechanism?` is an error inside a rule's cohort that no ablation reproduces; it is pending your review.
++      It never assigns CONFOUNDED; it flags candidates. You disposition every proposal, then append the dispositioned
++      records: `python3 Task_Authoring/tools/hardness_ledger.py append <dispositioned.jsonl>`. Each record keeps model,
++      harness and source; a correction supersedes, never overwrites. A verdict with `mechanism?` errors is refused
++      until `features.disposed_by` records their disposition. Control and channel records never enter the priors:
+ 
+ | Verdict | Meaning |
+ |---|---|
+@@ -212,6 +214,13 @@
+       not evidence for this revision.
+       **V3 run validity.** Every message must come from Opus 5.5. Any other model, for example after a
+       `model_refusal_fallback`, makes the run invalid for V3: report it and re-run it.
++      - `trajectory_ledger` reads the model of every message through one owner (`difficulty_stats.model_provenance`,
++        also behind the six-run model gate). It compares labels exactly after stripping a bracketed suffix:
++        `claude-opus-5-5[1m]` is Opus 5.5; `claude-opus-5` is not.
++      - `<synthetic>` is a harness message: it is counted, never checked. An unrecognised label is UNKNOWN, never
++        valid.
++      - It reports `mixed_model` (two or more models) and `v3_valid` apart. An off-model message with no fallback
++        event before it still flags the run, and each one is listed with its source (main thread or subagent).
+       - When diagnosing such a run, attribute each failure to the model that decided it: the writer of the brief, and
+         the thread that wrote the row.
+       - In Season Pass revision 14, every traced failure in the four fallback runs was the fallback model's
+@@ -242,7 +251,9 @@
+       runs yet, so the §11 rule that a revision's priors never use its own platform runs holds); forecast the six-run
+       gates and pre-register the result before anything else changes:
+       `python3 -B Task_Authoring/tools/hardness_forecast.py forecast --task-dir Task_Authoring/task_inputs --model <model> --task <task> --preregister --harness <harness> --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.posterior_forecast.json`
+-      Another model's evidence enters only through a transfer record (printed TRANSFERRED · UNCALIBRATED).
++      Another model's evidence enters only through a transfer record (printed TRANSFERRED · UNCALIBRATED). Declared
++      channels need ledger records of their family or a disclosed `--channel-rate`. Pass this run's `briefs.json`
++      (`--briefs`, from the `trajectory_ledger` output) so the batches scenario uses the run's real brief batches.
+ - [ ] **6. Decision** (advisory until calibrated). Spend the six-run baseline only if both hold: at least one
+       consequential, fair failure exists (the `/hardness`-style test, B3c), and the posterior P(all gates pass) clears
+       the provisional threshold (plan §5 starting candidates: P(all gates) ≥ 0.8 and E[average] ≤ cap − 0.05; not
+@@ -255,6 +266,10 @@
+         that LANDED, or declared complexity channels (scale, chain, delegation) that failed. Control errors and
+         unattributed slips count for neither;
+       - the run is valid.
++
++      `node_verdicts` reports this tally per run (`go_rule`): the landed mechanisms and failed channels whose deciding
++      models are all the expected model, merged when they share a landed key or a source. It lists apart what it didn't
++      count: other models' decisions, control over-applications, slips and `mechanism?` errors pending review.
+ 
+       **Stop rule:** at most two platform pre-checks per scenario. After two misses, change the scenario.
+ 

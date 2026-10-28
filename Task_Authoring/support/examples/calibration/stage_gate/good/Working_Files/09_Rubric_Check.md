@@ -15,6 +15,15 @@ Readiness for /rubric: NON-FAIL-RISK — a prediction only; /rubric gives the ve
 
 Unauthorized criteria: none
 
+## Coverage — gradable surface
+
+| Surface slot | Stable fact ID | Criteria | Covered / dispositioned / gap | Disposition reason (evidence) |
+|---|---|---|---|---|
+| S1 | S1 | C2 | covered | — |
+| S2 | S2 | — | dispositioned | duplicate fact: C4 and C5 grade the open set; a row-volume criterion would grade it a third time (gate 6), plan §G re-checked |
+
+Mechanism share of the criteria weight: C2 = 5 of 17 (reported, never gated).
+
 ## Findings
 
 | # | Criterion | Quoted span | Rule (source §) | What is wrong | Plan row / ledger fact | `/rubric` type | Severity |
@@ -52,11 +61,11 @@ Unauthorized criteria: none
 Unresolved: none.
 
 ```
-STAGE GATE rubric-check: PASS — Task_Authoring/support/local_search/cache/stage_gate_selftest/gen · 09_Rubric_Check.md#6c86c1af6201 · 09_Rubrics.json#6784183f92d6 · blocking 0 · warnings 0 · checks 17
+STAGE GATE rubric-check: PASS — Task_Authoring/support/local_search/cache/stage_gate_selftest/gen · 09_Rubric_Check.md#c3be20bddac9 · 09_Rubrics.json#6784183f92d6 · blocking 0 · warnings 0 · checks 17
 [PASS] structure.outputs: 1 output(s) present: 09_Rubric_Check.md
 [PASS] structure.inputs: 2 input(s) present: 09_Rubrics.json, 09_Rubric_Writing_Plan.md
 [PASS] structure.fresh: every output newer than its inputs (09_Rubrics.json, 09_Rubric_Writing_Plan.md)
-[PASS] chain.rubric-writing: upstream 'rubric-writing' PASS pasted and current (09_Rubric_Writing_Plan.md#1685f5279950)
+[PASS] chain.rubric-writing: upstream 'rubric-writing' PASS pasted and current (09_Rubric_Writing_Plan.md#42231d21cd87)
 [PASS] structure.sections: 5 required sections present and non-empty (09_Rubric_Check.md)
 [PASS] structure.placeholders: no placeholders in 09_Rubric_Check.md
 [PASS] structure.criteria_count: header Criteria 5 vs 09_Rubrics.json 5

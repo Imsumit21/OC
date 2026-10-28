@@ -1,0 +1,596 @@
+{
+ "protocol": "F1 acceptance protocol, fourth revision (2026-10-28)",
+ "seed": 3,
+ "draws": 20000,
+ "runs_per_baseline": 6,
+ "model": "claude-opus-4-8",
+ "gate": {
+  "m": 39,
+  "alpha": 0.01,
+  "z_crit": 3.6557709171862522,
+  "rule": "Bonferroni: z assertion passes iff |z| <= z_crit; exact binomial iff n*p0 < 5 and p >= alpha/m"
+ },
+ "assertions": {
+  "f1_independent": {
+   "id": "f1_independent",
+   "status": "PASS",
+   "statistic": 0.55285,
+   "hits": 11057,
+   "target": 0.5542995960043573,
+   "n": 20000,
+   "z": -0.4124,
+   "se": 0.003515,
+   "se_rule": "binomial at n (one independent baseline per draw)",
+   "var": null,
+   "baselines": null,
+   "exact_p": null,
+   "pass": true,
+   "reason": null,
+   "unit": "baseline"
+  },
+  "f1_linked": {
+   "id": "f1_linked",
+   "status": "PASS",
+   "statistic": 0.0221,
+   "hits": 442,
+   "target": 0.02,
+   "n": 20000,
+   "z": 2.1213,
+   "se": 0.00099,
+   "se_rule": "binomial at n (one independent baseline per draw)",
+   "var": null,
+   "baselines": null,
+   "exact_p": null,
+   "pass": true,
+   "reason": null,
+   "unit": "baseline"
+  },
+  "f2_beta_n2": {
+   "id": "f2_beta_n2",
+   "status": "PASS",
+   "statistic": 0.6664,
+   "hits": 13328,
+   "target": 0.6666666666666666,
+   "n": 20000,
+   "z": -0.08,
+   "se": 0.003333,
+   "se_rule": "binomial at n (one independent baseline per draw)",
+   "var": null,
+   "baselines": null,
+   "exact_p": null,
+   "pass": true,
+   "reason": null,
+   "unit": "baseline",
+   "plug_in": 0.75,
+   "linked": 0.5
+  },
+  "f3_scope": {
+   "id": "f3_scope",
+   "status": "PASS",
+   "statistic": 0.33595,
+   "hits": 6719,
+   "target": 0.3333333333333333,
+   "n": 20000,
+   "z": 0.785,
+   "se": 0.003333,
+   "se_rule": "binomial at n (one independent baseline per draw)",
+   "var": null,
+   "baselines": null,
+   "exact_p": null,
+   "pass": true,
+   "reason": null,
+   "unit": "baseline",
+   "per_run_control": 5072,
+   "per_run_target": 0.25
+  },
+  "f4_cancel": {
+   "id": "f4_cancel",
+   "status": "PASS",
+   "statistic": {
+    "B-01": [
+     "SB",
+     "SB1"
+    ],
+    "B-01,B-02": [
+     "SB1",
+     "SB2"
+    ]
+   },
+   "target": {
+    "B-01": [
+     "SB",
+     "SB1"
+    ],
+    "B-01,B-02": [
+     "SB1",
+     "SB2"
+    ]
+   },
+   "n": 1,
+   "z": null,
+   "exact_p": null,
+   "pass": true,
+   "tolerance": "exact failed sets",
+   "reason": null,
+   "count_slot_passes": true
+  },
+  "f5_joint": {
+   "id": "f5_joint",
+   "status": "PASS",
+   "statistic": 0.70215,
+   "target": 0.7,
+   "n": 20000,
+   "z": 0.6635,
+   "exact_p": null,
+   "pass": true,
+   "cells": {
+    "00": {
+     "statistic": 0.70215,
+     "hits": 14043,
+     "target": 0.7,
+     "n": 20000,
+     "z": 0.6635,
+     "exact_p": null,
+     "pass": true,
+     "tolerance": "two-sided normal z"
+    },
+    "11": {
+     "statistic": 0.29785,
+     "hits": 5957,
+     "target": 0.3,
+     "n": 20000,
+     "z": -0.6635,
+     "exact_p": null,
+     "pass": true,
+     "tolerance": "two-sided normal z"
+    },
+    "01": {
+     "statistic": 0.0,
+     "hits": 0,
+     "target": 0.0,
+     "n": 20000,
+     "z": null,
+     "exact_p": 1.0,
+     "pass": true,
+     "tolerance": "exact binomial"
+    },
+    "10": {
+     "statistic": 0.0,
+     "hits": 0,
+     "target": 0.0,
+     "n": 20000,
+     "z": null,
+     "exact_p": 1.0,
+     "pass": true,
+     "tolerance": "exact binomial"
+    }
+   },
+   "counts": {
+    "00": 14043,
+    "01": 0,
+    "10": 0,
+    "11": 5957
+   },
+   "independent": {
+    "00": 0.49,
+    "11": 0.09,
+    "01": 0.21,
+    "10": 0.21
+   },
+   "marginal_cross_check": {
+    "simulate_S1": 0.2987,
+    "joint_table_S1": 0.29785,
+    "pass": true,
+    "rule": "simulate()'s own marginal for S1 equals the joint table's (tie the composition to the tool)"
+   },
+   "rule": "P00/P11 normal z; P01/P10 exact binomial (n*p0 = 0 < 5)",
+   "marginal_note": "the marginal cross-check agrees with simulate()",
+   "reason": null
+  },
+  "f6_chain": {
+   "id": "f6_chain",
+   "status": "ABSENT",
+   "statistic": null,
+   "target": 0.488,
+   "n": 0,
+   "z": null,
+   "exact_p": null,
+   "pass": false,
+   "reason": "no chain channel ships in any solver (oracle_kit supports the kind; the rev14 wrapper declares only scale:groups and tool_surface:register)"
+  },
+  "f7_e2e": {
+   "id": "f7_e2e",
+   "status": "PASS",
+   "statistic": 0.8762,
+   "hits": 17524,
+   "target": 0.875,
+   "n": 20000,
+   "z": 1.92,
+   "se": 0.000625,
+   "se_rule": "analytic variance of the per-baseline statistic (six correlated runs share the rate)",
+   "var": 0.0078125,
+   "baselines": 20000,
+   "exact_p": null,
+   "pass": true,
+   "reason": null,
+   "unit": "baseline"
+  },
+  "f7_sd": {
+   "id": "f7_sd",
+   "status": "PASS",
+   "statistic": 0.8171,
+   "hits": 16342,
+   "target": 0.8218,
+   "n": 20000,
+   "z": -1.7369,
+   "se": 0.002706,
+   "se_rule": "binomial at n (one independent baseline per draw)",
+   "var": null,
+   "baselines": null,
+   "exact_p": null,
+   "pass": true,
+   "reason": null,
+   "unit": "baseline",
+   "exact_target": 0.82177734375,
+   "P_gate": {
+    "pass_at_1": 0.1666,
+    "avg_weighted_pass_rate": 0.0357,
+    "per_rollout_sd": 0.8171,
+    "failure_patterns": 0.0
+   }
+  },
+  "f7_shared": {
+   "id": "f7_shared",
+   "status": "PASS",
+   "statistic": 0.7531,
+   "hits": 15062,
+   "target": 0.75,
+   "n": 20000,
+   "z": 2.6304,
+   "se": 0.001179,
+   "se_rule": "analytic variance of the per-baseline statistic (six correlated runs share the rate)",
+   "var": 0.027777777777777776,
+   "baselines": 20000,
+   "exact_p": null,
+   "pass": true,
+   "reason": null,
+   "unit": "baseline",
+   "power_note": "the E[average] mean is the same whether q is drawn once per baseline or per run (both 0.75), so this mean does NOT test the per-run defect; no gated spread statistic exists for this shared-uniform construction (f7_sd tests the SD gate under a POINT rate and does not cover q-per-run)"
+  },
+  "f8_geometry": {
+   "id": "f8_geometry",
+   "status": "PASS",
+   "statistic": {
+    "declared": {
+     "u_exact": "2/3",
+     "verdict": "PASS",
+     "mechanisms": [
+      "rule:tidy"
+     ],
+     "flippable": [
+      "S1",
+      "S2"
+     ]
+    },
+    "blanked": {
+     "u_exact": "0/1",
+     "verdict": "BLOCK",
+     "mechanisms": [
+      "rule:tidy"
+     ],
+     "flippable": []
+    }
+   },
+   "target": {
+    "declared": "2/3 PASS",
+    "blanked": "0/1 BLOCK"
+   },
+   "n": 1,
+   "z": null,
+   "exact_p": null,
+   "pass": true,
+   "tolerance": "exact",
+   "reason": null
+  },
+  "f9_mechanisms": {
+   "id": "f9_mechanisms",
+   "status": "PASS",
+   "statistic": 0.2465,
+   "target": 0.25,
+   "n": 120000,
+   "z": -1.8214,
+   "exact_p": null,
+   "pass": true,
+   "cells": {
+    "independent": {
+     "statistic": 0.24655,
+     "target": 0.25,
+     "n": 120000,
+     "hits": 29586,
+     "z": -1.8214,
+     "se": 0.001894,
+     "se_rule": "analytic variance of the per-baseline statistic (six correlated runs share the rate)",
+     "var_per_baseline": 0.07175925925925926,
+     "baselines": 20000,
+     "either": 0.7462,
+     "exact_p": null,
+     "pass": true
+    },
+    "correlated": {
+     "statistic": 0.330517,
+     "target": 0.3333333333333333,
+     "n": 120000,
+     "hits": 39662,
+     "z": -1.3799,
+     "se": 0.002041,
+     "se_rule": "analytic variance of the per-baseline statistic (six correlated runs share the rate)",
+     "var_per_baseline": 0.08333333333333333,
+     "baselines": 20000,
+     "either": 0.6629,
+     "exact_p": null,
+     "pass": true
+    }
+   },
+   "n_unit": "one run of six per baseline",
+   "sources": {
+    "rule:late": "rule:late",
+    "rule:quiet": "rule:quiet"
+   },
+   "independent_expected": {
+    "both": 0.25,
+    "either": 0.75
+   },
+   "correlated_expected": {
+    "both": 0.3333333333333333,
+    "either": 0.6666666666666666
+   },
+   "reason": null
+  },
+  "f10_fail_closed": {
+   "id": "f10_fail_closed",
+   "status": "PASS",
+   "statistic": 22,
+   "target": 22,
+   "n": 1,
+   "z": null,
+   "exact_p": null,
+   "pass": true,
+   "tolerance": "exact",
+   "checks": {
+    "parse_rate('x=-1') raises ValueError": true,
+    "parse_rate('x=-1,2') raises ValueError": true,
+    "parse_rate('x=nan') raises ValueError": true,
+    "parse_rate('x=nan,1') raises ValueError": true,
+    "parse_rate('x=1,nan') raises ValueError": true,
+    "parse_rate('x=inf') raises ValueError": true,
+    "parse_rate('x=inf,1') raises ValueError": true,
+    "parse_rate('x=1,inf') raises ValueError": true,
+    "parse_rate('x=1e400') raises ValueError": true,
+    "parse_rate('x=1e400,1') raises ValueError": true,
+    "parse_rate('x=1,1e400') raises ValueError": true,
+    "parse_rate('x=1e400,1e400') raises ValueError": true,
+    "parse_rate('x=1e308,1') raises ValueError": true,
+    "parse_rate('x=1,1e308') raises ValueError": true,
+    "parse_rate('x=1000000001,1') raises ValueError": true,
+    "parse_rate('x=0,0') raises ValueError": true,
+    "parse_rate('x=0,1') raises ValueError": true,
+    "parse_rate('x=1,0') raises ValueError": true,
+    "parse_rate('x=abc') raises ValueError": true,
+    "parse_rate('x=') raises ValueError": true,
+    "undeclared-rate 'ghost' is UNPARAMETERIZED, never zero": true,
+    "all simulated outputs finite": true
+   },
+   "missing_rate": "UNPARAMETERIZED (channel_specs reports it; never zero)",
+   "reason": null
+  }
+ },
+ "production_path": {
+  "rate_draw_once_per_baseline": {
+   "pass": true,
+   "calls": 14,
+   "want": 14,
+   "wrong_if_per_run": 84,
+   "draws": 7,
+   "channels": 2,
+   "rule": "simulate() draws rates once per baseline, outside the six-run loop"
+  },
+  "sampled_members_reach_solver": {
+   "pass": true,
+   "one_member": [
+    "S1"
+   ],
+   "full_set": [
+    "S1",
+    "S2"
+   ],
+   "want_one_member": [
+    "S1"
+   ],
+   "want_full_set": [
+    "S1",
+    "S2"
+   ],
+   "rule": "Outcomes.of({('degrade','slip:a'): subset}) fails exactly the slots the sampled members move"
+  },
+  "sampled_subset_reaches_solver_through_simulate": {
+   "pass": true,
+   "subset_member_latent": [
+    "A-01"
+   ],
+   "subset_run_latent": [
+    "A-01"
+   ],
+   "member": {
+    "S1": {
+     "P_fail": 1.0,
+     "P_fails_all_six": 1.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "run": {
+    "S1": {
+     "P_fail": 1.0,
+     "P_fails_all_six": 1.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "one_in_six": {
+    "P_fail": 0.1667,
+    "P_fails_all_six": 0.0
+   },
+   "rule": "the sampled singleton arrives unchanged for both latents (a run-latent expansion fails S2), and the slot report's P(fail) and P(fails all six) are distinct"
+  }
+ },
+ "provenance": [
+  {
+   "channel": "control:process_findings",
+   "kind": "control",
+   "family": "A15",
+   "ledger": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "mean": 0.2,
+    "n": 3,
+    "f": 0,
+    "unit": "member",
+    "records": [
+     "f1aud_1221c5c5b256f5b8",
+     "f1aud_59f991c3f36006cd",
+     "f1aud_a8edf3ae79b920bc"
+    ],
+    "dropped": []
+   },
+   "former_override": {
+    "alpha": 1.0,
+    "beta": 13.0,
+    "mean": 0.071429,
+    "n": null,
+    "f": null,
+    "unit": null,
+    "records": [],
+    "dropped": []
+   },
+   "used": "ledger",
+   "used_beta": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "mean": 0.2,
+    "n": 3,
+    "f": 0,
+    "unit": "member",
+    "records": [
+     "f1aud_1221c5c5b256f5b8",
+     "f1aud_59f991c3f36006cd",
+     "f1aud_a8edf3ae79b920bc"
+    ],
+    "dropped": []
+   }
+  },
+  {
+   "channel": "tool_surface:register",
+   "kind": "tool_surface",
+   "family": "tool_surface",
+   "ledger": {
+    "alpha": 2.0,
+    "beta": 1.0,
+    "mean": 0.666667,
+    "n": 1,
+    "f": 1,
+    "unit": "run",
+    "records": [
+     "f1aud_64fc4e72c41aa46d"
+    ],
+    "dropped": [
+     [
+      "f1aud_b52e4e5d73821dc1",
+      "mixed-model run: deciding model(s) ['claude-opus-4-8']"
+     ],
+     [
+      "f1aud_853e739909e39723",
+      "mixed-model run: deciding model(s) ['claude-opus-4-8']"
+     ],
+     [
+      "f1aud_6ada2ac5789d64a1",
+      "mixed-model run: deciding model(s) ['claude-opus-4-8']"
+     ]
+    ]
+   },
+   "former_override": {
+    "alpha": 3.0,
+    "beta": 3.0,
+    "mean": 0.5,
+    "n": null,
+    "f": null,
+    "unit": null,
+    "records": [],
+    "dropped": []
+   },
+   "used": "ledger",
+   "used_beta": {
+    "alpha": 2.0,
+    "beta": 1.0,
+    "mean": 0.666667,
+    "n": 1,
+    "f": 1,
+    "unit": "run",
+    "records": [
+     "f1aud_64fc4e72c41aa46d"
+    ],
+    "dropped": [
+     [
+      "f1aud_b52e4e5d73821dc1",
+      "mixed-model run: deciding model(s) ['claude-opus-4-8']"
+     ],
+     [
+      "f1aud_853e739909e39723",
+      "mixed-model run: deciding model(s) ['claude-opus-4-8']"
+     ],
+     [
+      "f1aud_6ada2ac5789d64a1",
+      "mixed-model run: deciding model(s) ['claude-opus-4-8']"
+     ]
+    ]
+   }
+  },
+  {
+   "channel": "scale:groups",
+   "kind": "scale",
+   "family": "scale",
+   "ledger": null,
+   "former_override": {
+    "alpha": 4.0,
+    "beta": 266.0,
+    "mean": 0.014815,
+    "n": null,
+    "f": null,
+    "unit": null,
+    "records": [],
+    "dropped": []
+   },
+   "used": "former override",
+   "used_beta": {
+    "alpha": 4.0,
+    "beta": 266.0,
+    "mean": 0.014815,
+    "n": null,
+    "f": null,
+    "unit": null,
+    "records": [],
+    "dropped": []
+   }
+  }
+ ],
+ "status_counts": {
+  "PASS": 12,
+  "FAIL": 0,
+  "STUB": 0,
+  "ABSENT": 1
+ },
+ "draws_preregistered": 20000
+}

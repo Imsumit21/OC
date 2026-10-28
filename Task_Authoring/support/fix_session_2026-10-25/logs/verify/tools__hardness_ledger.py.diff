@@ -1,0 +1,426 @@
+--- a/tools/hardness_ledger.py
++++ b/tools/hardness_ledger.py
+@@ -14,16 +14,29 @@
+   payload   verdict, family, keys, counts, value, confidence, outcome, evidence, features, weight, epistemic
+   kind      verdict (node x run) · observation (aggregate counts, e.g. library tables) · slip (an unattributed
+             error) · reach (a deciding record read or not) · forecast (pre-registered forecast) · prediction
+-            (yes/no with confidence) · outcome (a scored prediction) · probe · transfer (model bridge)
++            (yes/no with confidence) · outcome (a scored prediction) · probe · transfer (model bridge) ·
++            control (a control trial: OVER-APPLIED / HELD, per member; F1's control-channel evidence) · channel (a
++            complexity channel per run: FAILED / HELD). Control and channel records never enter the priors.
++            A verdict whose features.pending_review lists in-cohort errors no ablation reproduces (node_verdicts'
++            mechanism?) is refused until features.disposed_by records their disposition.
+   source    platform-precheck · platform-baseline · independent-harness · probe · forecast
+   epistemic observed · derived · inferred
+   verdict   LANDED · LEAKED · NOT-REACHED · BYPASSED · FALSE · CONFOUNDED (CONFOUNDED only as a recorded human
+             disposition, never proposed by a tool)
+ 
+-Priors: Beta(1, 1) plus weighted counts per family (mechanism family label). LANDED counts as a landing; LEAKED,
+-FALSE and BYPASSED as non-landings; NOT-REACHED and CONFOUNDED are never counted. Weights: per-run verdicts 1,
+-library aggregates 0.5 (set on the record), transfers 0.25. Mixed-model runs are excluded from a model's priors
+-unless --include-mixed. --exclude-task / --exclude-revision keep a revision's own runs out of its forecast.
++Priors: Beta(1, 1) plus effective counts per family (mechanism family label). One trial per (task, revision, run,
++family) (H2, 2026-10-25): a run whose verdicts of the family include a LANDED is one landing, otherwise one
++non-landing (LEAKED, FALSE, BYPASSED); NOT-REACHED and CONFOUNDED are never counted. Trials of one task (all its
++revisions) are not independent, so a task's evidence is divided by the Kish design effect 1 + (m - 1) rho over its m
++trials (the effect counts trials; record weights scale the evidence, so at rho = 1 a task is worth one trial times
++its weight), with rho = 0.5 by default: an assumption, not a measurement (--rho overrides it). Each prior lists n_eff
++per task. Aggregate observation records declare no run ids, so the records of one (task, revision, family) collapse to
++one trial set: T = the largest counted outcome total, landed = max(landed), not_landed = T - landed (a lower bound
++under maximal overlap); the upper bound assuming disjoint runs is reported beside it, and records that declare
++different counts.runs are refused rather than merged. Weights: per-run verdicts 1, library aggregates 0.5 (set on the
++record), transfers 0.25. Mixed-model runs are
++excluded from a model's priors unless --include-mixed. --exclude-task / --exclude-revision keep a revision's own runs
++out of its forecast.
+ 
+ Usage:
+   python3 -B Task_Authoring/tools/hardness_ledger.py [--ledger L] append FILE.jsonl|-        (one record per line)
+@@ -41,6 +54,7 @@
+ 
+ import argparse
+ import collections
++import math
+ import hashlib
+ import json
+ import re
+@@ -63,7 +77,10 @@
+         sys.path.insert(0, str(_p))
+ 
+ DEFAULT_LEDGER = BUNDLE / "support" / "hardness_ledger" / "ledger.jsonl"
+-KINDS = ("verdict", "observation", "slip", "reach", "forecast", "prediction", "outcome", "probe", "transfer")
++KINDS = ("verdict", "observation", "slip", "reach", "forecast", "prediction", "outcome", "probe", "transfer", "control",
++         "channel")
++CONTROL_OUTCOMES = ("OVER-APPLIED", "HELD")
++CHANNEL_OUTCOMES = ("FAILED", "HELD")
+ SOURCES = ("platform-precheck", "platform-baseline", "independent-harness", "probe", "forecast")
+ EPISTEMIC = ("observed", "derived", "inferred")
+ VERDICTS = ("LANDED", "LEAKED", "NOT-REACHED", "BYPASSED", "FALSE", "CONFOUNDED")
+@@ -123,10 +140,32 @@
+             raise LedgerError("CONFOUNDED is a human disposition: features.disposed_by must name who assigned it")
+         if not rec.get("run") or not rec.get("node"):
+             raise LedgerError("a verdict needs run and node")
++        f = rec.get("features") or {}
++        if f.get("pending_review") and not f.get("disposed_by"):
++            raise LedgerError(f"in-cohort errors {f['pending_review'][:6]} are pending review (mechanism?): disposition "
++                              f"them and record features.disposed_by before appending")
++    if rec["kind"] == "control":
++        if rec.get("verdict") not in CONTROL_OUTCOMES or not rec.get("run") or not rec.get("node") or not rec.get("key"):
++            raise LedgerError(f"a control trial needs run, node (the rule), key (the member) and a verdict in "
++                              f"{CONTROL_OUTCOMES}")
++    if rec["kind"] == "channel":
++        if rec.get("verdict") not in CHANNEL_OUTCOMES or not rec.get("run") or not rec.get("node"):
++            raise LedgerError(f"a channel record needs run, node (the channel) and a verdict in {CHANNEL_OUTCOMES}")
+     if rec["kind"] == "observation":
+         c = rec.get("counts") or {}
+         if not isinstance(c, dict) or not isinstance(c.get("runs"), (int, float)):
+             raise LedgerError("an observation needs counts {landed, not_landed | leaked, ..., runs}")
++    if rec["kind"] in ("control", "channel"):
++        ev = rec.get("evidence") or {}
++        f = rec.get("features") or {}
++        cov = ev.get("covered") if isinstance(ev.get("covered"), dict) else None
++        covered_ok = bool(cov) and type(cov.get("members")) is int and cov["members"] >= 0
++        event_ok = type(ev.get("deciding_event")) is int and ev["deciding_event"] >= 0
++        dm = f.get("deciding_models")
++        models_ok = isinstance(dm, list) and bool(dm) and all(isinstance(x, str) and x.strip() for x in dm)
++        if not (event_ok or covered_ok or models_ok or f.get("deciding_model_unknown") is True):
++            raise LedgerError(f"a {rec['kind']} record needs provenance: a deciding event, a deciding model, a covered "
++                              f"count, or an explicit features.deciding_model_unknown (never inferred)")
+     if rec["kind"] == "transfer":
+         f = rec.get("features") or {}
+         if not f.get("from_model") or not f.get("to_model") or "offset" not in f:
+@@ -200,10 +239,20 @@
+ 
+ # ------------------------------------------------------------------ priors
+ 
+-def priors(led: Ledger, model: str, *, exclude_tasks=(), exclude_revisions=(), include_mixed=False, families=None) -> dict:
+-    """{family: {alpha, beta, mean, n_eff, record_ids, excluded}} for one model; never pools models."""
+-    fam = collections.defaultdict(lambda: {"landed": 0.0, "not_landed": 0.0, "records": [], "excluded": []})
+-    seen = {}
++RHO = 0.5        # assumed correlation of the trials within one task (Kish design effect): an assumption
++
++
++def design_effect(m: float, rho: float) -> float:
++    return 1 + (m - 1) * rho if m > 1 else 1.0
++
++
++def priors(led: Ledger, model: str, *, exclude_tasks=(), exclude_revisions=(), include_mixed=False, families=None,
++           rho: float = RHO) -> dict:
++    if not isinstance(rho, (int, float)) or not math.isfinite(rho) or not 0 <= rho <= 1:
++        raise ValueError(f"rho must be a finite correlation in [0, 1], got {rho!r}")
++    """{family: {alpha, beta, mean, n_eff, trials, tasks, record_ids, excluded}} for one model; never pools models.
++    One trial per (task, revision, run, family); each task's trials discounted by the design effect (module docstring)."""
++    fam = collections.defaultdict(lambda: {"trials": {}, "obs": [], "records": [], "excluded": []})
+     for r in led.current():
+         if r["kind"] not in ("verdict", "observation"):
+             continue
+@@ -213,39 +262,104 @@
+         if model_family(r["model"]) != model_family(model):
+             continue
+         f = fam[family]
++        if r["kind"] == "verdict":
++            f.setdefault("all_verdict_groups", set()).add((r["task"], r["revision"]))
+         if r["task"] in exclude_tasks or f"{r['task']}:{r['revision']}" in exclude_revisions or r["revision"] in exclude_revisions:
+             f["excluded"].append([r["id"], "excluded task/revision"])
+             continue
+         if (r.get("features") or {}).get("mixed_model") and not include_mixed:
+             f["excluded"].append([r["id"], "mixed-model run"])
+             continue
++        if r["kind"] == "verdict" and (r.get("features") or {}).get("control_explained"):
++            # H1 residual a2: a LANDED verdict whose keys are all control-explained is never a landing, whatever the
++            # record says (a second, independent gate under the classifier and the go rule). A verdict that also
++            # landed an unexplained key stays a trial on that key.
++            kept = set(r.get("keys") or []) - set(r["features"]["control_explained"])
++            if r.get("verdict") == "LANDED" and not kept:
++                f["excluded"].append([r["id"], "control-explained (key, field) evidence: never a landing"])
++                continue
+         w = float(r.get("weight", 1.0))
+         if r["kind"] == "verdict":
+-            dkey = (r["task"], r["revision"], r.get("run"), r.get("node"), family)
+-            if dkey in seen:
+-                f["excluded"].append([r["id"], f"duplicate of {seen[dkey]}"])
+-                continue
+-            seen[dkey] = r["id"]
+-            if r["verdict"] == "LANDED":
+-                f["landed"] += w
+-            elif r["verdict"] in NOT_LANDED:
+-                f["not_landed"] += w
+-            else:
++            if r["verdict"] != "LANDED" and r["verdict"] not in NOT_LANDED:
+                 f["excluded"].append([r["id"], f"{r['verdict']} is never counted"])
+                 continue
++            trial = f["trials"].setdefault((r["task"], r["revision"], r.get("run")),
++                                           {"landed": False, "weight": 0.0, "records": []})
++            trial["landed"] = trial["landed"] or r["verdict"] == "LANDED"
++            trial["weight"] = max(trial["weight"], w)
++            trial["records"].append(r["id"])
+         else:
++            # H1-2: an aggregate observation has no run identity; it contributes its run count as trials, and the
++            # family's overlapping records collapse to one trial set (landed = max, a lower bound under maximal overlap)
+             c = r["counts"]
+             landed = float(c.get("landed", 0))
+             not_landed = float(c.get("not_landed", sum(float(c.get(k, 0)) for k in ("leaked", "false", "bypassed"))))
+-            f["landed"] += w * landed
+-            f["not_landed"] += w * not_landed
++            f["obs"].append({"task": r["task"], "revision": r["revision"],
++                             "runs": int(c.get("runs") or (landed + not_landed)), "counted": landed + not_landed,
++                             "landed": landed, "nl": not_landed, "weight": w, "id": r["id"]})
+         f["records"].append(r["id"])
+     out = {}
+     for family, f in sorted(fam.items()):
+-        a, b = 1 + f["landed"], 1 + f["not_landed"]
++        tasks = collections.defaultdict(lambda: {"trials": 0, "landed": 0.0, "not_landed": 0.0})
++        for (task, _rev, _run), trial in f["trials"].items():
++            x = tasks[task]
++            x["trials"] += 1
++            x["landed" if trial["landed"] else "not_landed"] += trial["weight"]
++        grouped = collections.defaultdict(list)
++        verdict_groups = set(f.get("all_verdict_groups") or ())
++        for o in f["obs"]:
++            grouped[(o["task"], o["revision"])].append(o)
++        obs_up = collections.defaultdict(float)               # the upper bound's extra landed evidence, per task
++        for (task, rev), os_ in sorted(grouped.items()):
++            if (task, rev) in verdict_groups:
++                f["excluded"].extend([[o["id"], f"observation and verdict records coexist for {task}:{rev}; "
++                                                 f"not merged (no declared run ids)"] for o in os_])
++                continue
++            runs = {o["runs"] for o in os_}
++            if len(runs) != 1:
++                f["excluded"].extend([[o["id"], f"observation group {task}:{rev} declares differing counts.runs "
++                                                 f"{sorted(runs)}: not merged"] for o in os_])
++                continue
++            runs.pop()                                   # the declarations must agree; trials are counted outcomes
++            T = int(max(o["counted"] for o in os_))      # confounded runs are neither landing nor trial
++            L = int(max(o["landed"] for o in os_))
++            L_up = min(T, int(sum(o["landed"] for o in os_)))
++            w = max(float(o["weight"]) for o in os_)
++            x = tasks[task]
++            x["trials"] += T
++            x["landed"] += w * L
++            x["not_landed"] += w * (T - L)
++            obs_up[task] += w * (L_up - L)
++        landed = not_landed = n_eff = 0.0
++        per_task, up_landed, up_nl = {}, 0.0, 0.0
++        for task, x in sorted(tasks.items()):
++            m = x["landed"] + x["not_landed"]
++            deff = design_effect(x["trials"], rho)            # the effect counts trials; weights scale the evidence
++            landed += x["landed"] / deff
++            not_landed += x["not_landed"] / deff
++            n_eff += m / deff
++            up_landed += (x["landed"] + obs_up.get(task, 0.0)) / deff
++            up_nl += (x["not_landed"] - obs_up.get(task, 0.0)) / deff
++            per_task[task] = {"trials": x["trials"], "weighted": round(m, 4), "deff": round(deff, 4),
++                              "n_eff": round(m / deff, 4), "landed": round(x["landed"] / deff, 4)}
++        bounds = None
++        if any(obs_up.values()):
++            la, lb, ua, ub = 1 + landed, 1 + not_landed, 1 + up_landed, 1 + up_nl
++            bounds = {"lower": {"alpha": round(la, 4), "beta": round(lb, 4), "mean": round(la / (la + lb), 4),
++                                "rule": "overlapping observation records assumed maximally overlapping (landed = max)"},
++                      "upper": {"alpha": round(ua, 4), "beta": round(ub, 4), "mean": round(ua / (ua + ub), 4),
++                                "rule": "overlapping observation records assumed disjoint (landed = min(runs, sum))"}}
++        a, b = 1 + landed, 1 + not_landed
+         out[family] = {"model": model_family(model), "alpha": round(a, 4), "beta": round(b, 4), "mean": round(a / (a + b), 4),
+-                       "n_eff": round(f["landed"] + f["not_landed"], 4), "record_ids": f["records"],
+-                       "excluded": f["excluded"], "label": "UNCALIBRATED"}
++                       "n_eff": round(n_eff, 4), "trials": sum(x["trials"] for x in tasks.values()), "tasks": per_task,
++                       "rho": rho, "record_ids": f["records"], "excluded": f["excluded"],
++                       **({"observation_bounds": bounds} if bounds else {}),
++                       "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to "
++                       "one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper "
++                       "bound reported); a task's evidence is divided by its Kish "
++                               "design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an "
++                               "assumption)",
++                       "label": "UNCALIBRATED"}
+     return out
+ 
+ 
+@@ -506,11 +620,21 @@
+                 dict(base, run="run-6", model="claude-opus-5-5"), dict(base, task="other", run="run-1")]
+         led.append(more)
+         p = priors(Ledger(path), "claude-opus-4-8")["A15"]
+-        # run-1 corrected to LEAKED, runs 2-3 LEAKED, other task LANDED: Beta(1+1, 1+3); NOT-REACHED / mixed / 5.5 out
+-        assert (p["alpha"], p["beta"]) == (2.0, 4.0), p
++        # run-1 corrected to LEAKED, runs 2-3 LEAKED (task t: 3 trials, design effect 1 + 2 x 0.5 = 2, so 1.5
++        # non-landings), other task LANDED (1 trial): Beta(1 + 1, 1 + 1.5); NOT-REACHED / mixed / 5.5 out
++        assert (p["alpha"], p["beta"]) == (2.0, 2.5) and p["tasks"]["t"]["n_eff"] == 1.5, p
+         assert any("mixed-model" in e[1] for e in p["excluded"]) and any("NOT-REACHED" in e[1] for e in p["excluded"])
++        assert priors(Ledger(path), "claude-opus-4-8", rho=0.0)["A15"]["beta"] == 4.0          # rho 0: independent
++        assert priors(Ledger(path), "claude-opus-4-8", rho=1.0)["A15"]["beta"] == 2.0          # rho 1: one trial
+         p2 = priors(Ledger(path), "claude-opus-4-8", exclude_tasks=("other",))["A15"]
+-        assert (p2["alpha"], p2["beta"]) == (1.0, 4.0), p2
++        assert (p2["alpha"], p2["beta"]) == (1.0, 2.5), p2
++        # H2 planted: three rules of one family in one run are one trial (the old de-duplication counted three)
++        three = [dict(base, task="fam", run="run-1", node=f"N{i}", family="A17", verdict="LEAKED") for i in (1, 2, 3)]
++        Ledger(path).append(three + [dict(three[0], run="run-2", node="N1", verdict="LANDED"),
++                                     dict(three[0], run="run-2", node="N2", verdict="LEAKED")])
++        q17 = priors(Ledger(path), "claude-opus-4-8")["A17"]
++        assert q17["trials"] == 2 and q17["tasks"]["fam"]["weighted"] == 2.0, q17               # run-1, run-2
++        assert (q17["alpha"], q17["beta"]) == (round(1 + 1 / 1.5, 4), round(1 + 1 / 1.5, 4)), q17   # deff 1.5
+         assert priors(Ledger(path), "claude-opus-5-5")["A15"]["alpha"] == 2.0                   # never pooled
+         assert transferred(Ledger(path), "claude-opus-4-8", "claude-opus-5-5", "A15") is None    # no transfer record
+         Ledger(path).append([{"kind": "transfer", "task": "bridge", "revision": "n/a", "source": "forecast",
+@@ -518,15 +642,97 @@
+                               "epistemic": "inferred", "family": "A15",
+                               "features": {"from_model": "claude-opus-4-8", "to_model": "claude-opus-5-5", "offset": -0.1}}])
+         t = transferred(Ledger(path), "claude-opus-4-8", "claude-opus-5-5", "A15")
+-        assert t and t["label"].startswith("TRANSFERRED") and t["n_eff"] == 1.0, t
++        assert t and t["label"].startswith("TRANSFERRED") and t["n_eff"] == 0.625, t          # 0.25 x n_eff 2.5
+         obs = Ledger(path).append([{"kind": "observation", "task": "lib", "revision": "b", "source": "platform-baseline",
+                                     "model": "claude-opus-4-8", "harness": {"name": "x", "version": "y"},
+                                     "epistemic": "derived", "family": "A16", "node": "n", "weight": 0.5,
+                                     "counts": {"landed": 5, "leaked": 1, "runs": 6}}])
+         assert obs["added"]
+         q = priors(Ledger(path), "claude-opus-4-8")["A16"]
+-        assert (q["alpha"], q["beta"]) == (3.5, 1.5) and q["record_ids"] == obs["added"], q
++        # 6 library runs at weight 0.5: 6 trials, design effect 1 + 5 x 0.5 = 3.5: Beta(1 + 2.5 / 3.5, 1 + 0.5 / 3.5)
++        assert (q["alpha"], q["beta"]) == (1.7143, 1.1429) and q["record_ids"] == obs["added"], q
++        # planted (H2): the design effect counts trials, not weighted trials: at rho = 1 the six correlated runs are one
++        # trial times their weight 0.5 (counting weighted trials gave 1.0)
++        assert priors(Ledger(path), "claude-opus-4-8", rho=1.0)["A16"]["n_eff"] == 0.5
++        # planted (H1-2): overlapping observation records are one trial set: trials = max counted outcomes, landed = max
++        # landed (the lower bound under maximal overlap); the upper bound assumes the runs are disjoint
++        def obsrec(**kw):
++            return dict({"kind": "observation", "task": "ov", "revision": "b", "source": "platform-baseline",
++                         "model": "claude-opus-4-8", "harness": {"name": "x", "version": "y"}, "epistemic": "derived",
++                         "node": "n", "weight": 0.5}, **kw)
++        Ledger(path).append([obsrec(family="A19", node="n1", counts={"landed": 4, "leaked": 2, "runs": 6}),
++                             obsrec(family="A19", node="n2", counts={"landed": 2, "leaked": 4, "runs": 6})])
++        q19 = priors(Ledger(path), "claude-opus-4-8")["A19"]
++        assert q19["trials"] == 6 and (q19["alpha"], q19["beta"]) == (1.5714, 1.2857), q19    # 6, not 8 or 12
++        lo, up = q19["observation_bounds"]["lower"], q19["observation_bounds"]["upper"]
++        assert (lo["alpha"], lo["beta"]) == (1.5714, 1.2857), lo
++        assert (up["alpha"], up["beta"]) == (1.8571, 1.0), up                                  # sum(landed) capped at T
++        # planted (H1-2): a confounded run is neither a landing nor a trial (T = landed + not_landed, not counts.runs)
++        Ledger(path).append([dict(obsrec(family="A20", task="cf", weight=1.0),
++                                  counts={"landed": 1, "leaked": 4, "runs": 6, "confounded": 1})])
++        q20 = priors(Ledger(path), "claude-opus-4-8")["A20"]
++        assert q20["trials"] == 5 and (q20["alpha"], q20["beta"]) == (1.3333, 2.3333), q20   # deff 3 at rho 0.5
++        # planted (H1-2): an aggregate and an explicit verdict for the same (task, revision, family) never double-count
++        Ledger(path).append([dict(base, task="mix", run="run-1", family="A22", verdict="LANDED"),
++                             obsrec(family="A22", task="mix", revision="r1", node="agg",
++                                    counts={"landed": 1, "leaked": 0, "runs": 1})])
++        q22 = priors(Ledger(path), "claude-opus-4-8")["A22"]
++        assert q22["trials"] == 1 and any("coexist" in e[1] for e in q22["excluded"]), q22
++        # planted (H1-2): records that declare different run counts are not merged
++        Ledger(path).append([obsrec(family="A21", task="df", node="n1", counts={"landed": 2, "leaked": 4, "runs": 6}),
++                             obsrec(family="A21", task="df", node="n2", counts={"landed": 1, "leaked": 4, "runs": 5})])
++        q21 = priors(Ledger(path), "claude-opus-4-8")["A21"]
++        assert q21["trials"] == 0 and any("differing counts.runs" in e[1] for e in q21["excluded"]), q21
++        # planted (H1-3): rho is a correlation, not any number
++        for bad in (-0.1, 1.5, float("nan")):
++            try:
++                priors(Ledger(path), "claude-opus-4-8", rho=bad)
++            except ValueError:
++                pass
++            else:
++                raise AssertionError(f"rho {bad!r} was accepted")
+         # a seed correction supersedes its original and moves the counts to the corrected family, idempotently
++        # control and channel records are kept but never enter the priors; an unreviewed mechanism? is refused
++        before = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        trial = dict(base, kind="control", run="run-7", key="K-04", verdict="OVER-APPLIED",
++                     evidence={"deciding_event": 91})
++        chan = dict(base, kind="channel", run="run-7", node="scale:count", family="scale", verdict="FAILED",
++                    evidence={"deciding_event": 92})
++        assert len(Ledger(path).append([trial, chan])["added"]) == 2
++        # H1 residual b/f: a control/channel record with no provenance at all is refused, never inferred
++        assert Ledger(path).append([dict(chan, node="scale:noprov", evidence={}, features={})])["rejected"]
++        # H1 residual a2: a verdict whose landing is control-explained never moves a prior
++        ce = dict(base, run="run-10", verdict="LANDED", keys=["K-04"],
++                  features={"control_explained": ["K-04"]})
++        assert Ledger(path).append([ce])["added"]
++        qce = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        assert any("control-explained" in e[1] for e in qce["excluded"]), qce["excluded"]
++        after = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        assert (after["alpha"], after["beta"], after["record_ids"]) == (before["alpha"], before["beta"],
++                                                                        before["record_ids"]), (before, after)
++        # H1 residual b/f: the provenance gate requires a REAL covered count (a truthy dict or a bool/string is not one)
++        for j, bad_cov in enumerate(({"observed": 1}, {"members": None}, {"members": "1"}, {"members": True})):
++            assert Ledger(path).append([dict(chan, node=f"scale:cov{j}", evidence={"covered": bad_cov},
++                                             features={})])["rejected"], bad_cov
++        assert Ledger(path).append([dict(chan, node="scale:covok", evidence={"covered": {"members": 1}},
++                                         features={})])["added"]
++        # an explicit unknown must be a real True, not a truthy string
++        assert Ledger(path).append([dict(chan, node="scale:strunknown", evidence={},
++                                         features={"deciding_model_unknown": "false"})])["rejected"]
++        # H1 residual a2 (preservation): a LANDED verdict that ALSO has an unexplained key stays a trial; only the
++        # control-explained key is removed, never the whole record
++        base_q = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        keep = dict(base, run="run-11", verdict="LANDED", keys=["K-01", "K-04"],
++                    features={"control_explained": ["K-04"]})
++        kid = Ledger(path).append([keep])["added"][0]
++        qk = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        assert kid in qk["record_ids"] and qk["trials"] == base_q["trials"] + 1, (
++            f"the legitimate landing {kid} was removed from the prior with its control-explained key", kid, qk)
++        assert Ledger(path).append([dict(trial, key="K-05", verdict="LANDED")])["rejected"]    # not a trial outcome
++        assert Ledger(path).append([{x: y for x, y in trial.items() if x != "key"}])["rejected"]
++        pend = dict(base, run="run-8", verdict="LEAKED", features={"pending_review": ["K-01"]})
++        assert Ledger(path).append([pend])["rejected"]
++        assert Ledger(path).append([dict(pend, features={"pending_review": ["K-01"], "disposed_by": "author: slip"})])["added"]
+         plan = path.parent / "plan.md"
+         plan.write_text("intro\n| Decoys every run reached | 0/6 | lib (`:9`) |\n")
+         seed = [{"kind": "observation", "task": "lib2", "revision": "b", "source": "platform-baseline",
+@@ -538,7 +744,7 @@
+         again = Ledger(path).append(seed + corrections(seed, plan, table))
+         assert not again["added"] and not again["rejected"], again
+         pr = priors(Ledger(path), "claude-opus-4-8")
+-        assert pr["decoys"]["n_eff"] == 3.0 and pr["A16"]["n_eff"] == 3.0, pr   # the original no longer counts
++        assert pr["decoys"]["n_eff"] == 0.8571 and pr["A16"]["n_eff"] == 0.8571, pr   # the original no longer counts
+         plan.write_text("intro\n| rewritten |\n")
+         try:
+             corrections(seed, plan, table)
+@@ -548,7 +754,10 @@
+             raise AssertionError("a correction whose plan line changed was applied")
+     print("self-test: ok (content ids, idempotent append, conflict rejected, model/harness/source required, CONFOUNDED "
+           "only as a disposition, supersession, per-model Beta priors with record ids, exclusions, weights, transfer, "
+-          "seed corrections guarded by their plan line)")
++          "seed corrections guarded by their plan line, control and channel records kept outside the priors, an "
++          "unreviewed mechanism? refused; H2: one trial per (task, revision, run, family), the Kish design effect per "
++          "task over its trials with rho 0 / 0.5 / 1 (weights scale the evidence: at rho 1 a weighted task is one "
++          "trial times its weight), n_eff per task)")
+ 
+ 
+ # ------------------------------------------------------------------ main
+@@ -579,6 +788,8 @@
+         p.add_argument("--exclude-revision", action="append", default=[])
+         p.add_argument("--include-mixed", action="store_true")
+         p.add_argument("--family", action="append")
++        p.add_argument("--rho", type=float, default=RHO, help=f"within-task trial correlation for the design effect "
++                                                              f"(default {RHO}: an assumption)")
+         p.add_argument("--json", action="store_true")
+     p = sub.add_parser("transfer")
+     p.add_argument("--from-model", required=True)
+@@ -603,10 +814,11 @@
+         return _print_append(led.append(seed_season_pass(a.season_pass)))
+     if a.cmd in ("priors", "write-priors"):
+         pr = priors(led, a.model, exclude_tasks=a.exclude_task, exclude_revisions=a.exclude_revision,
+-                    include_mixed=a.include_mixed, families=a.family)
++                    include_mixed=a.include_mixed, families=a.family, rho=a.rho)
+         doc = {"kind": "MECHANISM_PRIORS", "label": "UNCALIBRATED", "model": model_family(a.model),
+                "ledger": str(a.ledger), "ledger_sha256": hashlib.sha256(a.ledger.read_bytes()).hexdigest() if a.ledger.is_file() else None,
+-               "exclude_task": a.exclude_task, "exclude_revision": a.exclude_revision, "families": pr}
++               "exclude_task": a.exclude_task, "exclude_revision": a.exclude_revision, "rho": a.rho,
++               "rho_basis": "assumed within-task trial correlation (Kish design effect); not measured", "families": pr}
+         if a.cmd == "write-priors":
+             from trajectory_ledger import safe_out
+             out = safe_out(a.out)
+@@ -617,10 +829,18 @@
+         if a.json:
+             print(json.dumps(doc, indent=1, ensure_ascii=False))
+         else:
+-            print(f"PRIORS for {model_family(a.model)} · UNCALIBRATED · Beta(1,1) + weighted counts")
++            print(f"PRIORS for {model_family(a.model)} · UNCALIBRATED · Beta(1,1) + effective counts (one trial per "
++                  f"task, revision, run and family; design effect per task, rho {a.rho}: an assumption)")
+             for fam, v in pr.items():
+-                print(f"  {fam}: Beta({v['alpha']}, {v['beta']}) mean {v['mean']:.2f} n_eff {v['n_eff']} "
+-                      f"records {len(v['record_ids'])} excluded {len(v['excluded'])}")
++                print(f"  {fam}: Beta({v['alpha']}, {v['beta']}) mean {v['mean']:.2f} n_eff {v['n_eff']} from "
++                      f"{v['trials']} trial(s) · per task "
++                      + ", ".join(f"{task} {x['n_eff']} ({x['trials']} trial(s), deff {x['deff']})"
++                                  for task, x in v["tasks"].items())
++                      + f" · records {len(v['record_ids'])} excluded {len(v['excluded'])}")
++                if v.get("observation_bounds"):
++                    lo, up = v["observation_bounds"]["lower"], v["observation_bounds"]["upper"]
++                    print(f"     observation bounds: lower Beta({lo['alpha']}, {lo['beta']}) mean {lo['mean']}; "
++                          f"upper Beta({up['alpha']}, {up['beta']}) mean {up['mean']}")
+         return 0
+     if a.cmd == "transfer":
+         return _print_append(led.append([{"kind": "transfer", "task": "model-bridge", "revision": "n/a", "source": "forecast",

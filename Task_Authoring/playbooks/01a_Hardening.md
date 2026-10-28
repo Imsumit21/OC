@@ -1,14 +1,15 @@
 # 01a — Hardening (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-hardening` · Writes: `task_inputs/Working_Files/01a_Hardening_Report.md` (+ hardened `task_inputs/01_Universe_Inject.sql` and `01_Grounding_Dossier.md`) · Paired eval: `/injection` after any SQL change · Gate: **`tools/stage_gate.py hardening` (blocking)** · Read first: `setup/GEN_EXECUTION.md`, then `playbooks/01_Universe_Injection.md`
+> Command: `/create-hardening` · Writes: `task_inputs/Working_Files/01a_Hardening_Report.md` + `Working_Files/run_forensics/<revision>/` (ledgers, node verdicts) + ledger records in `support/hardness_ledger/ledger.jsonl` · Tools: `tools/trajectory_ledger.py`, `tools/node_verdicts.py`, `tools/surface_grader.py`, `tools/hardness_ledger.py`, `tools/hardness_forecast.py` · Consumed by: `/create-scenario --revise` (S0r), which decides; `/create-injection` makes every universe change · Gate: **`tools/stage_gate.py hardening` (blocking)** · Read first: `setup/GEN_EXECUTION.md`, then `playbooks/01_Universe_Injection.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §2, §7.7, §7.9
 
 ## Purpose
 
-This step makes the universe carry more genuine difficulty and uses trajectory evidence to show whether the designed difficulty landed. It has two modes and writes one report.
-- **MODE A, design (no runs).** Generate grounded scenario candidates, select them for depth, update `01_Scenario_Design.md` + `01_Hardness_Manifest.json`, and harden `01_Universe_Inject.sql` against the `01_Universe_Injection.md` gates.
-- **MODE B, forensics (runs exist).** Read every tool call and give each designed difficulty a verdict with citations. Explain every point Opus scored and purge false difficulty. Route each fix either to the universe, where it is fixed here, or to the prompt, where it is reported with proposed wording.
+This step uses trajectory evidence to show whether the designed difficulty landed, and proposes how the universe can carry more genuine difficulty. It writes one report.
+- **MODE A, design (no runs).** Moved: its steps now live in `/create-scenario` (S1 coupling seams, S5a mechanism portfolio, S5b liveness, S6b gradable surface) and `/create-injection` (S4b solver, S5b mutation, S5b′ geometry, S5c liveness, S5e forecast). For a legacy task that has none of those artifacts, the MODE A section below maps each part to the step that now does it; this skill writes no MODE A report.
+- **MODE B, forensics (runs exist).** This skill stays the single owner of run forensics (plan decision 3). Read every tool call, with the shared tools doing the mechanical part, and give each designed difficulty a verdict with citations. Explain every point Opus scored and propose what to purge and where each fix goes. `/create-scenario --revise` (S0r) consumes the result and decides (plan §2, B5–B6): it dispositions the verdicts and routes each fix — universe changes to S5a onward and then `/create-injection`, prompt-side defects reported with proposed wording.
+- **MODE B (pre-check intake).** One trajectory of your independent harness (`06_PreCheck_Trajectory/trajectory.json`): validity, node verdicts, deliverable diff, ledger, posterior forecast and a go / no-go call before the six-run baseline is spent (§7.9 below).
 
-This step changes the universe only. Prompt, OE and rubric edits belong to their own stages; report their defects with evidence and route them there. Model drafting remains allowed by the explicit repository exception (GEN_EXECUTION §2).
+This step measures and proposes; it changes no other stage's artifact. Universe changes are decided in `/create-scenario --revise` and made by `/create-injection` as the next revision (it *is* the revision, plan §2). Prompt, OE and rubric edits belong to their own stages; report their defects with evidence and route them there. Model drafting remains allowed by the explicit repository exception (GEN_EXECUTION §2).
 
 ## Inputs / Output
 
@@ -37,14 +38,14 @@ Choose the mode from what exists:
 
 | Present | Mode |
 |---|---|
-| No run artifacts | MODE A |
-| `06_PreCheck_Trajectory/` only | MODE B (pre-check): one trajectory, provisional verdicts, a predicted `/hardness` band (B3c), no gate statistics |
+| No run artifacts | none here: MODE A moved to `/create-scenario` and `/create-injection` (the MODE A section maps each part to its step) |
+| `06_PreCheck_Trajectory/` only | MODE B (pre-check): one trajectory, provisional verdicts, a predicted `/hardness` band (B3c), no gate statistics; the pre-check intake below |
 | A Haiku run only | MODE B (pre-check, prediction): apply the `Evals/1B_Haiku_Prediction_Eval.md` transfer checks to every failure (B3c); a Haiku miss is never hardness evidence on its own |
 | `07_Baseline_Trajectories/` + `10` + `12` | MODE B (baseline) |
 
 If an artifact a part needs is missing, name it and skip that part.
 
-Output: `task_inputs/Working_Files/01a_Hardening_Report.md`. When the routing decision is universe-side, also write the hardened SQL and the updated dossier, including Facts for the human.
+Output: `task_inputs/Working_Files/01a_Hardening_Report.md`, the forensics under `Working_Files/run_forensics/<revision>/` and the dispositioned ledger records. A universe-side fix is not made here: `/create-scenario --revise` (S0r) decides it, and `/create-injection` implements it as the next revision with an updated dossier and Facts for the human (plan §2, B5–B6 and gate 7).
 
 ## Hard gates
 
@@ -64,7 +65,7 @@ Output: `task_inputs/Working_Files/01a_Hardening_Report.md`. When the routing de
    - ≥ 2 distinct failure patterns. Two rollouts share a pattern unless they differ on ≥ 2 rubric results, and the largest pattern is ≤ 50% of failing rollouts.
    - Errored runs ≤ 2 of 6.
    - Tier is measured on the golden run if one exists, otherwise on the six-rollout average.
-7. **Every SQL change re-passes 01.** That means all `01_Universe_Injection.md` gates, `tools/sql_lint.py`, `tools/hardness_gate.py` against the updated manifest, and `/injection`. Update the dossier and its Facts for the human. The report lists every fact that changed so the human can re-check their prompt, Oracle Events and criteria.
+7. **Every SQL change re-passes 01** — and is made there: `/create-injection` is the revision (plan §2), so all `01_Universe_Injection.md` gates, `tools/sql_lint.py`, `tools/hardness_gate.py`, the preflight and `/injection` run on it. This report lists every fact a proposed fix would change, so the human can re-check their prompt, Oracle Events and criteria.
 8. **Count only genuine failures, the way `/hardness` does** (`Evals/1A_Hardness_Eval.md` §2–§3). A failure is hardness evidence only if all four hold. Otherwise it is CONFOUNDED; it is reported as a defect and routed, never counted as a landed difficulty.
    - The requirement is incorporated (`prompt-incorporation-v1`): the prompt names the source, or a named source delegates to it.
    - The evidence was reachable for the persona and returned by the tool the agent used or by an ordinary alternative call.
@@ -76,36 +77,50 @@ Output: `task_inputs/Working_Files/01a_Hardening_Report.md`. When the routing de
 
 ## Procedure (checklist)
 
-### MODE A — design (no runs)
+### MODE A — design (no runs): moved to `/create-scenario` and `/create-injection`
 
-- [ ] **A1 Register the design.** From the dossier, list each designed difficulty: node · mechanism · records · expected wrong reading · overturning evidence · discovery-order proof.
-- [ ] **A2 Explore** for coupling seams the design under-uses. Use the `01_Scenario_Design.md` roles, sized to the task, and read inside records, not just metadata.
-- [ ] **A3 Generate a ranked set of grounded candidates.** Scale the count to the tier; about 10–15 is plenty. Each candidate is cited to real records:
+The design steps now run where the design is made (plan §2). For a legacy task without those artifacts, run them there:
 
-| # | Anchor storyline (cited) | Coupling (finding → what it changes next) | Characteristic | Discovery-order proof | Reach | Findability term | Gradable fact (a fact, not criterion text) | Services carrying weight | Walk Δ vs tier | Risks |
-|---|---|---|---|---|---|---|---|---|---|---|
-
-- [ ] **A4 Select depth over breadth.**
-  - Prefer: a wrong reading at one node that corrupts the next; one authoritative-but-wrong claim met before the evidence that overturns it (`Evals/Docs/Original_Conference_Guidelines_Example_Task.pdf` (the ML-selected example task)); reading past an apparent conclusion; a deciding fact held only in a structured system; day-level data that must be aggregated.
-  - Reject, with a reason: independent lookups, bolt-on writes, unreachable or unfindable evidence, an unfairly rejected alternative outcome, an unauthorized requirement, or a walk pushed outside the tier.
-- [ ] **A5 Run the adversarial lazy solver** on the selection. It uses the fewest calls, takes first hits and stops at the first conclusion. Every point it still scores is a leak; fix it before writing SQL.
-- [ ] **A5b Design for `/hardness` 4–5 for the right reasons.** For each selected node, write one line covering four checks. A node that fails any of them is redesigned, not shipped:
-  - **Incorporated.** Show the chain from a named anchor to the rule. A rule only in an unnamed handbook or policy does not count, and its misses are excluded from hardness evidence (V1 recert task, Hardness_Mastery §11).
-  - **Survives complete retrieval.** Name the step that is still hard after every source is opened: a scope or alias call, a house rule against the natural reading, a reported conflict, a finding on a record whose state is already correct, or a per-record derivation. A node that is hard only because nobody searches is a call multiplier, not the engine (§0).
-  - **Tool-surface proof.** The decisive record is returned by the natural call. Record the call, or the `hg.py` pointer it maps to. A node that lands only because a search tool misses, a result spills or an endpoint errors is CONFOUNDED by design.
-  - **Graded weight.** Preserve the local design target: mechanism-dependent criteria carry ≥30% of planned weight across ≥3 independent causes. Report the share; empirical success is still measured against the assigned mode cap after fair regrading.
-- [ ] **A6 Implement** through `01_Universe_Injection.md` S1–S5: dossier blocks, findability and discovery-order proofs, SQL, and the self-validation table.
+| Part | New owner | Made mechanical by |
+|---|---|---|
+| A1 Register the design | `/create-scenario` S5 (traps, chains) + S5a `mechanism_portfolio` | `hardness_gate.py` field checks |
+| A2 Coupling seams | `/create-scenario` S1 | — |
+| A3 Ranked grounded candidates (the candidate table moved too) | `/create-scenario` S5a | ledger priors per candidate (`hardness_ledger.py priors`) |
+| A4 Depth over breadth | `/create-scenario` S5a | advisory forecast ranking |
+| A5 Adversarial lazy solver | `/create-injection` S5b | information-ablation mutants (`difficulty_mutation.py`) |
+| A5b(1) Incorporated | `/create-scenario` S4 | `hardness_gate` incorporation checks |
+| A5b(2) Survives complete retrieval | declared in S5a; diagnosed in `/create-injection` S5d | optional blind probe (advisory) |
+| A5b(3) Tool-surface proof | `/create-injection` S5c | `trap_liveness.py` flags + recorded platform calls |
+| A5b(4) Graded weight | `/create-scenario` S6b + `/create-injection` S5b′ | `01_Gradable_Surface.json`, geometry U / L_max, forecast |
+| A6 Implement | `/create-injection` S1–S5 | existing gates |
 
 ### MODE B — forensics
 
-- [ ] **B0 Run validity and provenance**, per trajectory, before any verdict.
+- [ ] **Run the shared tools first** (they do the mechanical part; the model reviews and dispositions):
+      `python3 Task_Authoring/tools/trajectory_ledger.py --task-dir Task_Authoring/task_inputs --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=Task_Authoring/task_inputs/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql … --out-dir Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>`
+      (B0–B2: validity, provenance per phase and per brief, revision binding by content, decoded writes, briefs, counted
+      calls through `difficulty_stats.count_tool_calls`), then
+      `python3 Task_Authoring/tools/node_verdicts.py --task-dir Task_Authoring/task_inputs --sql <rev>=… --sql <older rev>=… … --ledger-out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/proposals.jsonl --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/node_verdicts.json`
+      (B3 proposals, each run graded with the solver of the revision it is bound to). Event numbers are 0-based indexes
+      into the export array.
+      **Pass every stored revision**, one `--sql` per `Working_Files/run_forensics/*/01_Universe_Inject.sql`
+      (`/create-injection` stores each one). A run binds only on content no other stored revision holds: one SQL alone
+      gives INSUFFICIENT. For the task's first revision use `--sole-revision "<why this is the only revision>"`
+      instead; the tools refuse it while another revision is stored, and it still needs the run to show that SQL's
+      content. A run that is not BOUND (INSUFFICIENT, AMBIGUOUS, UNBOUND) is listed and never evaluated: mark it
+      `historical` in the revision intake, or bind it.
+- [ ] **B0 Run validity and provenance**, per trajectory, before any verdict. `trajectory_ledger.py` reports each item
+      below; confirm it, and add what the tool cannot see.
   - **Model and route.** Record the main-agent model and every subagent model. Subagents on another model, such as a Haiku or Sonnet sweep, make a mixed run. Record it and do not credit its failures to Opus without saying so.
   - **Hint status and source match.** The export carries no user prompt, so match on the content the run touched.
   - **Re-applied injection.** Check that the injected records actually appear in the results.
   - **Completeness.** Look for context compaction, truncation and result events after the final answer, such as background agents still reporting. Calls whose results never reached the deliverable are excluded from the horizon count.
   - **File mapping.** Map each file to its verifier `Run #N` by content, never by file order. Missing or duplicate rollout files are a delivery defect: name them.
   - **Scope of the call.** A truncated export cannot prove an omission (1A §3). A complete export that ends without a required write can.
-- [ ] **B1 Per-rollout tool-call ledger.** Build one for each available trajectory. Read the **write payloads** too: comment bodies, message text, document edits and email bodies. Check every designed per-record flag or report against them. Narration and the final response are not the deliverable (calibration: two mechanisms that failed 5/6 were visible only in comment bodies, Hardness_Mastery §11, V7-T1):
+- [ ] **B1 Per-rollout tool-call ledger.** `trajectory_ledger.py` writes it per run (`calls.jsonl`, `writes.json`,
+      `briefs.json`). You review every call in `node_verdicts.json`'s `review_queue`: every call that touches a node's
+      deciding records, briefs or writes, plus every call the tool cannot classify. List the calls you did not review, and
+      state each verdict's coverage. Read the **write payloads** too: comment bodies, message text, document edits and email bodies. Check every designed per-record flag or report against them. Narration and the final response are not the deliverable (calibration: two mechanisms that failed 5/6 were visible only in comment bodies, Hardness_Mastery §11, V7-T1):
 
 | Step | Tool | Input (query / IDs) | What came back (designed node · decoy · claim met first · nothing) | Agent's decision | Rubric(s) affected (from `10`) |
 |---|---|---|---|---|---|
@@ -116,7 +131,15 @@ Output: `task_inputs/Working_Files/01a_Hardening_Report.md`. When the routing de
   - *Forced errors:* confirm the configured tool actually failed in the trajectory. If the agent never called it, the injection did nothing and any recovery criterion is ungradeable. Report it. A configured error that every run routed around added calls and no difficulty (Hardness_Mastery §11: persistent errors on three tools, 10–24 failed calls per run, no failure caused).
   - *Unconfigured tool defects:* list every error or wrong result that the configuration does not explain, such as an ID collision on a write endpoint or a search that misses a record the index holds. Say whether each changed an outcome. One that changed an outcome makes the affected node CONFOUNDED-tool.
   - *Horizon:* use the count basis from gate 6 and exclude blocked or repeated calls. If the count is under the tier, name the missing necessary work: a source that matters, not a deliverable.
-- [ ] **B3 Give each designed difficulty a verdict**, citing rollout and step:
+- [ ] **B3 Give each designed difficulty a verdict**, citing rollout and step. `node_verdicts.py` proposes one per node ×
+      run (was the deciding record in a result the responsible agent saw; did the briefs for the affected records carry
+      the rule, in their text or in a file the worker read; does the written value match the solver for that run's
+      revision) and classifies every register difference once (mechanism · `mechanism?` · slip · representation ·
+      cascade). `mechanism?` is an error inside a rule's cohort that no ablation reproduces; it is pending your review.
+      It never assigns CONFOUNDED; it flags candidates. You disposition every proposal, then append the dispositioned
+      records: `python3 Task_Authoring/tools/hardness_ledger.py append <dispositioned.jsonl>`. Each record keeps model,
+      harness and source; a correction supersedes, never overwrites. A verdict with `mechanism?` errors is refused
+      until `features.disposed_by` records their disposition. Control and channel records never enter the priors:
 
 | Verdict | Meaning |
 |---|---|
@@ -129,18 +152,8 @@ Output: `task_inputs/Working_Files/01a_Hardening_Report.md`. When the routing de
 
 Give counts per node: runs LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REACHED, out of the completed rollouts. A cascade from one root cause, such as a missed rule repeated in a state, a comment and a summary, is one LANDED cause, not several (1A §3).
 
-- [ ] **B3b Read the score shape** (from `12_Difficulty_Stats.txt`), using the forensics evidence in `references/Hardness_Mastery.md` §0:
-
-| Shape | Usual cause | Fix (universe side) |
-|---|---|---|
-| Bimodal (some runs near 0, some near 100) | one discovery gates most requirements — usually a single hidden authority (A12) | split governance across 2–4 independent authorities in different rarely-searched services |
-| Uniform success (corrected avg ≥ assigned cap) | rules stated in the place Opus reads first; mechanical cohort; no rarely-opened evidence | move rules to hidden authorities with decoys; add A13/A14/A15/A17 chains; never just add volume |
-| Uniform failure, low spread (SD < 0.1) | one choke point everyone misses the same way | make chains partially solvable; give each chain a different root cause |
-| Short runs (< 100 calls) on a cohort task | no cohort mandate reached the agent, or a bulk shortcut exists | make the cohort rule an incorporated requirement; remove the shortcut (`Ask_Carriers.md` §3) |
-| Many calls, high score | volume without judgment (the 0.984 / 816-call case) | add per-record house rules, boundary records, derived figures |
-| Latching early (narration "I have enough") | decoy is the first plausible source | keep — this is the lever; ensure the real authority is findable by its name |
-| Raw average low, clean average (B3d) high | all-fail rows from unincorporated rules, unauthorized criteria or verifier errors | not hardness — route the defects; rebuild the difficulty on incorporated mechanisms (Hardness_Mastery §11, recert task: 48.7% raw, ≈ 80% clean) |
-| Material failures in most runs, corrected average ≥ assigned cap | mechanism-dependent weight is too small (≈ 26% in Hardness_Mastery §11, NF2) | add independent chains whose facts the deliverable must carry; never re-weight to hit the gate |
+- [ ] **B3b Read the score shape** (from `12_Difficulty_Stats.txt`) with the shape → cause → fix table, which moved to
+      `playbooks/12_Difficulty.md` (merged into its table; `/create-difficulty` owns the routing).
 
 - [ ] **B3c Predict the `/hardness` band** (pre-check; on the baseline, for the run closest to the median). Use 1A's own procedure, not the rubric:
   - Build a requirement map from the prompt and incorporated sources. Give each requirement MET, MINOR_GAP, MATERIAL_FAIL or UNASSESSED with a step citation.
@@ -151,7 +164,11 @@ Give counts per node: runs LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REA
     - **4:** material failures needing correction across the result.
     - **5:** the central result or delivery is defeated.
   - For a Haiku run, classify each failure as `CAPABILITY_FLOOR`, `JUDGMENT_AMBIGUITY`, `SCALE_COMPLETENESS` (all four 1B §4 conditions, measured on the tool surface) or `UNDETERMINED`. Only `JUDGMENT_AMBIGUITY` and `SCALE_COMPLETENESS` can carry the prediction. A run that stopped before the governing source gives no score (`INSUFFICIENT_EVIDENCE`). Apply the `enumerated_single_source` cap of 2 unless a qualifying chain exists.
-- [ ] **B3d Baseline projection and clean average** (baseline only).
+- [ ] **B3d Baseline projection and clean average** (baseline only). Before a rubric or verifier exists,
+      `python3 Task_Authoring/tools/surface_grader.py --task-dir Task_Authoring/task_inputs` grades the runs on the
+      gradable surface and runs the four gates through `difficulty_stats.compute()` (a design check, labelled as such;
+      the rubric and verifier remain the grading of record). After them, `difficulty_stats.py`'s corrected view is the
+      number of record.
   - **Clean average.** Recompute the average with every CONFOUNDED criterion removed or corrected, beside the platform numbers from `12`. Never replace them. A pass that holds only on the raw numbers is a defect to route, not hardness.
   - **Mechanism weight share.** Report the share of weight whose result depends on a LANDED node. Compare actual corrected results with the assigned mode cap; the historical ~30% mechanism-share heuristic is not an empirical gate.
   - **Concentration risk.** If one node drives most failures, flag it (B3b bimodal and uniform rows).
@@ -162,9 +179,9 @@ Give counts per node: runs LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REA
   - *Genuine capability.* Out-design it with a deeper node, never by obstructing it.
   - *Universe leak.* The answer was over-findable; the decoy was obviously wrong or never returned by the real query; the correction was met before the claim; the deciding fact was reachable from chat; the ACL did not bind; or the node was off the path.
   - *Prompt leak.* See B6.
-- [ ] **B5 Purge false difficulty.** Remove or rebuild every BYPASSED and FALSE node, and every LEAKED node that cannot be repaired into real coupling. Record each one with its evidence. A leaner, deeper design beats a wide, shallow one.
-- [ ] **B6 Route each fix.**
-  - *Universe-fixable:* regenerate the node through A3–A6 and harden the SQL and dossier here (or hand this report to `/create-injection`, which reads it as a hardening request), then re-run `/injection`.
+- [ ] **B5 Propose the purge** (S0r decides, plan §2). List every BYPASSED and FALSE node, and every LEAKED node that cannot be repaired into real coupling, as purge or rebuild, each with its evidence. A leaner, deeper design beats a wide, shallow one.
+- [ ] **B6 Propose the routing** (S0r decides).
+  - *Universe-fixable:* name the node to rebuild and the facts it would change; `/create-scenario --revise` takes it from S5a onward (`design_delta`), and `/create-injection` implements it as the next revision, then `/injection`.
   - *Prompt-side defect:* report it with proposed wording; the prompt is revised (Claude, Codex or the human) and `/prompt` re-run. If both kinds apply, land the universe change first so the prompt is checked against the final universe. Report each defect in this table; there is no fix column:
 
 | # | Quoted span | Rule (doc §) | Defect | Evidence (rollout · step) |
@@ -178,9 +195,97 @@ Give counts per node: runs LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REA
   - It gives no reason to look for a seeded requirement, which makes the criterion unauthorized (`05` §03).
   - Two readings lead to different writes: decision ambiguity (`05` §07).
 
+### MODE B (pre-check) — intake of your independent-harness trajectory (plan §7.9)
+
+Advisory and UNCALIBRATED, pre-registered. **Trigger:** `06_PreCheck_Trajectory/trajectory.json` appears for the
+current revision, after scenario → injection → prompt. It decides whether to spend the six-run baseline. Write
+everything under `Working_Files/run_forensics/<rev>/` and summarise it in report section 1. `<rev>` is the current
+revision's label; `<harness>` is `NAME@VERSION`; `<model>` is the run's model label.
+
+- [ ] **1. Validity** (`trajectory_ledger.py`): harness identity and model labels, subagents included (from the init
+      event; a `model_refusal_fallback` that hands the main agent to another model is a mixed run); completeness (a
+      final result event, no compaction gap, no background events after the result); **revision binding by content**
+      (the current revision's seeded ids and values appear in the results); prompt match by content (exports may omit the
+      user prompt).
+      `python3 -B Task_Authoring/tools/trajectory_ledger.py --task-dir Task_Authoring/task_inputs --run precheck=Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json --surface Task_Authoring/task_inputs/Working_Files/01_Gradable_Surface.json --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=Task_Authoring/task_inputs/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql … --prompt Task_Authoring/task_inputs/04_Prompt.txt --source independent-harness --harness <harness> --out-dir Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>`
+      (one `--sql` per stored revision; the task's first revision: `--sole-revision "<reason>"` instead, refused while
+      another revision is stored).
+      Anything but BOUND on evidence (INSUFFICIENT, AMBIGUOUS, UNBOUND), or an errored run, stops the intake: the run is
+      not evidence for this revision.
+      **V3 run validity.** Every message must come from Opus 5.5. Any other model, for example after a
+      `model_refusal_fallback`, makes the run invalid for V3: report it and re-run it.
+      - `trajectory_ledger` reads the model of every message through one owner (`difficulty_stats.model_provenance`,
+        also behind the six-run model gate). It compares labels exactly after stripping a bracketed suffix:
+        `claude-opus-5-5[1m]` is Opus 5.5; `claude-opus-5` is not.
+      - `<synthetic>` is a harness message: it is counted, never checked. An unrecognised label is UNKNOWN, never
+        valid.
+      - It reports `mixed_model` (two or more models) and `v3_valid` apart. An off-model message with no fallback
+        event before it still flags the run, and each one is listed with its source (main thread or subagent).
+      - When diagnosing such a run, attribute each failure to the model that decided it: the writer of the brief, and
+        the thread that wrote the row.
+      - In Season Pass revision 14, every traced failure in the four fallback runs was the fallback model's
+        (`Hardness_Mastery.md` §12).
+- [ ] **2. Node verdicts** against **this revision's** solver, with the per-rule brief-transmission check over the
+      subagent inputs:
+      `python3 -B Task_Authoring/tools/node_verdicts.py --task-dir Task_Authoring/task_inputs --run precheck=Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=… … --source independent-harness --task <task> --ledger-out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.proposals.jsonl --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.node_verdicts.json`
+      (the same `--sql` set, or `--sole-revision`, as step 1).
+      Review the queued calls (B1) and disposition each proposal (B3); CONFOUNDED is yours to assign.
+- [ ] **3. Deliverable comparison**: decode the write payloads (CSV, Sheets, comments, slides, mail) and diff them field
+      by field against `truth.json`:
+      `python3 -B Task_Authoring/tools/surface_grader.py --task-dir Task_Authoring/task_inputs --run precheck=Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.surface_grades.json`
+      (a pre-check is graded but never enters the six-run gates; UNGRADED slots are listed with the coverage).
+      **Confirm every failed slot against the write payload before it counts.** On Season Pass revision 14, the proxy's
+      decoder defects failed slots the run had met, and moved one run by 20 points. They included:
+      - headings taken from intro prose;
+      - sections ended by a table header;
+      - JSON-escaped text;
+      - only the last update read;
+      - bullet key lists;
+      - tool aliases;
+      - SHA-prefix length.
+
+      A slot the decoder can't read is UNGRADED, never failed.
+- [ ] **4. Ledger**: append the dispositioned verdicts with `source: independent-harness`, the harness id and the model
+      label: `python3 -B Task_Authoring/tools/hardness_ledger.py append <dispositioned precheck records.jsonl>`.
+- [ ] **5. Posterior forecast**: the priors now include this run's dispositioned verdicts (the revision has no platform
+      runs yet, so the §11 rule that a revision's priors never use its own platform runs holds); forecast the six-run
+      gates and pre-register the result before anything else changes:
+      `python3 -B Task_Authoring/tools/hardness_forecast.py forecast --task-dir Task_Authoring/task_inputs --model <model> --task <task> --preregister --harness <harness> --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.posterior_forecast.json`
+      Another model's evidence enters only through a transfer record (printed TRANSFERRED · UNCALIBRATED). Declared
+      channels need ledger records of their family or a disclosed `--channel-rate`. Pass this run's `briefs.json`
+      (`--briefs`, from the `trajectory_ledger` output) so the batches scenario uses the run's real brief batches.
+- [ ] **6. Decision** (advisory until calibrated). Spend the six-run baseline only if both hold: at least one
+      consequential, fair failure exists (the `/hardness`-style test, B3c), and the posterior P(all gates pass) clears
+      the provisional threshold (plan §5 starting candidates: P(all gates) ≥ 0.8 and E[average] ≤ cap − 0.05; not
+      blocking until §10 Phase 2 calibrates them). Otherwise go to `/create-scenario --revise`.
+      For the platform pre-check, add the V3 plan's go rule (`plans/V3_Opus55_Difficulty_Plan.md` §7 step 5). Go only if
+      all four hold:
+      - `/hardness` is 3 or more;
+      - the corrected proxy is at most cap − 5;
+      - at least 2 independent pre-registered loss channels failed in Opus 5.5's own decisions: designed mechanisms
+        that LANDED, or declared complexity channels (scale, chain, delegation) that failed. Control errors and
+        unattributed slips count for neither;
+      - the run is valid.
+
+      `node_verdicts` reports this tally per run (`go_rule`): the landed mechanisms and failed channels whose deciding
+      models are all the expected model, merged when they share a landed key or a source. It lists apart what it didn't
+      count: other models' decisions, control over-applications, slips and `mechanism?` errors pending review.
+
+      **Stop rule:** at most two platform pre-checks per scenario. After two misses, change the scenario.
+
+**What one run can and cannot show.** The screen is asymmetric. It can reject a design strongly: if success needs k
+mechanisms each landing with p ≥ 0.7, a run in which all k leak has likelihood ≤ 0.3ᵏ (2.7 % for k = 3). It cannot
+confirm one: a run with landings is consistent with a wide range of p, and the six-run gates (SD band, ≥ 2 patterns,
+< 5 full passes) need run-to-run variation one run cannot show.
+
+**Harness fidelity.** An independent harness can differ from the platform tool surface (search ranking, result
+spills, list endpoints). Record the harness; track per-mechanism agreement between harness and platform verdicts over
+time; until it is measured, weigh discovery-type verdicts (A12, A13, A14, A18) below judgment-type verdicts (A1, A15,
+A16 after retrieval).
+
 ### Report skeleton (`01a_Hardening_Report.md`)
 
-1. Mode, inputs read, inputs missing, run validity (B0). Write `MODE A` or `MODE B` here first; the gate takes the first mention as the mode (MODE B: every register row cites a rollout and a step, e.g. `run-3 · event 212`).
+1. Mode, inputs read, inputs missing, run validity (B0). Write `MODE A` or `MODE B` here first; the gate takes the first mention as the mode (MODE B: every register row cites a rollout and a step, e.g. `run-3 · event 212`). MODE B (pre-check): the intake's six results — binding verdict, mixed-model flags, proposals and their dispositions with review coverage, the deliverable diff, the ledger record ids, the pre-registered posterior forecast id with its P(all gates) range (UNCALIBRATED), and the go / no-go call.
 2. Gate status, copied from `12`, beside the clean average and mechanism weight share (B3d) (MODE B baseline only).
 3. Predicted `/hardness` band with its requirement map and neighbour reasoning (B3c).
 4. Designed-difficulty register with verdicts and per-node counts (LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REACHED).
@@ -188,9 +293,9 @@ Give counts per node: runs LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REA
 6. Friction, tool-defect and horizon checks.
 7. Verifier sanity findings (B3e).
 8. Why Opus passed.
-9. Purge list.
-10. Candidates and selection (MODE A, or rebuilds in MODE B).
-11. Routing: universe changes made (statements and facts changed) · prompt-side defects (with proposed wording) · routed OE and rubric observations.
+9. Purge list (proposed; S0r decides).
+10. Proposed rebuilds (candidates for `/create-scenario --revise` S5a).
+11. Routing (proposed; S0r decides): universe changes proposed (the facts they would change) · prompt-side defects (with proposed wording) · routed OE and rubric observations.
 12. Self-review (below).
 13. Next steps.
 
@@ -214,7 +319,7 @@ Run this after the report is drafted and record it as the report's Self-review s
    A trap that was never live is FALSE, not LEAKED, and goes to the purge list.
 3. **Counter-read the band.** Argue for the neighbouring band from the same requirement map. Check that no CONFOUNDED failure is still counted, and that no cascade is counted as several causes. Check, by grepping the write payloads, that a designed flag was not missed.
 4. **Re-verify facts, not notes.** Re-read through `tools/hg.py` every record that decides a LANDED, LEAKED or CONFOUNDED verdict. A value carried over from the dossier, Oracle Events or golden answer is a lead, not evidence. Example from calibration: a "title-only" PR whose merge commit names the ticket.
-5. **Re-run the mechanical checks** after any SQL change (`sql_lint`, `hardness_gate`). Recompute the clean average with `tools/difficulty_stats.py` on the corrected matrix.
+5. **Re-run the mechanical checks.** Recompute the clean average with `tools/difficulty_stats.py` on the corrected matrix, and re-run `trajectory_ledger.py` / `node_verdicts.py` if any input they read changed. (SQL changes, and their `sql_lint` / `hardness_gate` runs, belong to `/create-injection`.)
 6. **Record** each verdict, its counter-reading and its resolution, and anything left unresolved, named (gate minimum: one evidenced counter-reading per LANDED or LEAKED verdict in the register, plus the band). Never soften a CONFOUNDED finding to keep a mechanism looking landed. Never quote replacement wording for the prompt, Oracle Events or criteria.
 
 ## Self-check (QC Spec V2 dimensions this step owns)
@@ -222,22 +327,24 @@ Run this after the report is drafted and record it as the report's Self-review s
 - **Trajectory — Agent Failure Rate, Average Weighted Rubric Pass Rate, Failure Signature Concentration, Task Type & Horizon, Error Rate** (the Trajectory rows of `references/Docs/QC_Spec_Doc_Latest.csv`, which GEN_EXECUTION calls `QC_Spec_Doc_Latest.csv`): this step explains a Fail and routes the fix. It never recomputes these differently from `12`. The clean average (B3d) is reported beside them, never instead of them.
   - Horizon counts exclude calls that never reached the deliverable, such as background subagents reporting after the final answer (B0).
   - An errored run is one without a completed export. A compacted or mixed-model run is complete but flagged.
-- **Universe — Feasibility and Cross-service Coherence:** every SQL change re-passes the `01_Universe_Injection.md` S5 table.
+- **Universe — Feasibility and Cross-service Coherence:** owned by `/create-injection`, where every SQL change re-passes the `01_Universe_Injection.md` S5 table; this step only proposes.
 - **Prompt — Pre-solved, Explicit Tool Mention, Contrived, Unique Ground Truth:** reported only, never fixed here.
 
 ## Deliver
 
-Run `python3 Task_Authoring/tools/stage_gate.py hardening Task_Authoring/task_inputs --paste`; handoff is blocked until it prints `STAGE GATE hardening: PASS`, and `--paste` writes that output into the Self-review of `01a_Hardening_Report.md` (the next stage's gate refuses an upstream artifact without a current PASS block). If the SQL changed, re-run `stage_gate.py injection` too: its pasted digests go stale and every downstream gate blocks until it passes again.
+Run `python3 Task_Authoring/tools/stage_gate.py hardening Task_Authoring/task_inputs --paste`; handoff is blocked until it prints `STAGE GATE hardening: PASS`, and `--paste` writes that output into the Self-review of `01a_Hardening_Report.md` (the next stage's gate refuses an upstream artifact without a current PASS block). The gate also re-runs the injection checks on the current revision (`revision.injection`), so this stage cannot pass while `stage_gate.py injection` fails.
 
 Report:
 - the report path and the mode that ran
 - the predicted `/hardness` band, and on the baseline the raw and clean averages
 - verdict counts (landed / confounded / leaked) and the top leak mechanisms
-- the routing decision
-- any SQL changes, with the facts that changed
+- the proposed purge and routing
+- the proposed universe changes, with the facts they would change
 - the prompt-side defects, with proposed wording
+- MODE B (pre-check): the go / no-go call with the pre-registered posterior forecast id (UNCALIBRATED)
 
 Next:
-- If the SQL changed: re-run `sql_lint.py` and `hardness_gate.py`, then paste it into `/injection`. The user re-applies it before the next run.
+- Universe-side: `/create-scenario --revise` (S0r) dispositions the verdicts and decides the purge and routing; `/create-injection` implements the change as the next revision, then `/injection`. The user re-applies the SQL before the next run.
+- Pre-check intake: go → the six-run baseline; no-go → `/create-scenario --revise`.
 - If there are prompt defects: revise the prompt (Claude, Codex or the human), then run `/prompt`.
 - Then the human repeats the pre-check or baseline as the flow requires.

@@ -1,0 +1,496 @@
+--- a/tools/oracle_kit.py
++++ b/tools/oracle_kit.py
+@@ -17,18 +17,37 @@
+   evidence(rows, key, field) -> [record ids]
+   optional    touched(state, rule) -> keys the rule acts on · deciding(state, rule, key) -> record ids ·
+               DEGRADES {operator: description} · REVISIONS · KEY_REGEX · FIELDS · CLASS_FIELD · GROUPS_FIELD
++              base_route(record_id) -> {service, file, pointer, field} | None   where a base record lives in the
++                          exports, so the golden check can read it through tools/hg.py records (M5)
++              RULES[r] controls[] + over_application   the rule's control members (records it must leave alone) and
++                          the degrade operator that over-applies the rule to them. node_verdicts reports a control
++                          trial per member (OVER-APPLIED when the written value matches the operator's, else HELD),
++                          never a landing
++              CHANNELS {channel: {kind, degrade, members[], latent?, batch_size?, family?, rule?, source?, slots[]?,
++                          preregistered?, description}}   complexity channels (kind scale · chain · delegation ·
++                          synthesis · tool_surface): `degrade` is an operator solve() accepts, whole or as (operator,
++                          key set), giving the values members take when the channel fails on them; a channel the solver
++                          can't express (e.g. a CSV upload replaced by a native Sheet) names surface `slots` instead.
++                          latent member · batch · run (default by kind). node_verdicts reports each per run (FAILED /
++                          HELD); hardness_forecast models them (F1), with rates pooled across tasks by `family`
++                          (default: the kind)
+ 
+ Contract checks (all blocking at /create-injection S4b)
+   interface        the attributes above; every rule names mechanism, requirement and natural_reading
+-  deterministic    two fresh solves (forward and reverse key order) give identical canonical JSON
++  deterministic    two fresh solves (forward and reverse key order) give identical canonical JSON, and so do fresh
++                   processes with PYTHONHASHSEED 1 and 2 (set or hash order must not leak into the output; M5)
+   regression       the previous revision's truth on the previous SQL: the stored file reproduced byte for byte by the
+                    solver at that revision, and the current rules on the previous SQL give the same fields and groups
+   rules_nodes      rules <-> manifest mechanism_portfolio one-to-one, every node a manifest trap or chain; a legacy
+                    manifest without a portfolio: every rule node exists, manifest traps with no rule are listed
+   slots            every direct and aggregate slot of the gradable surface reads a solver value
++  controls         every declared control member is a solver key; every over-application operator and channel
++                   degrade is accepted by solve() and moves a value of at least one of its members (a dead operator
++                   can never record a trial or a failure); a channel's kind is known
+   golden           a deterministic sample of golden values spot-verified against the records that decide them (the
+-                   evidence ids exist in the SQL and the value appears in the record); base records are listed as
+-                   unverified (read them through tools/hg.py)
++                   evidence ids exist in the SQL and the value appears in the record); base records the solver routes
++                   (base_route) are read through tools/hg.py records and checked the same way (an absent record or a
++                   value not in it FAILs); unrouted base records are listed as unverified
+   digest           the manifest's solver {path, digest} matches the file
+ 
+ Usage:
+@@ -44,7 +63,9 @@
+ import hashlib
+ import importlib.util
+ import json
++import os
+ import re
++import subprocess
+ import sys
+ import tempfile
+ from pathlib import Path
+@@ -127,16 +148,133 @@
+     return not miss
+ 
+ 
+-def check_deterministic(mod, sql_text, revision, out) -> dict:
++CHANNEL_KINDS = ("scale", "chain", "delegation", "synthesis", "tool_surface")
++
++
++def controls_of(mod, revision=None) -> dict:
++    """{rule: {"members": [...], "over_application": operator or None}} for the rules that declare control members."""
++    return {r: {"members": list(v.get("controls") or []), "over_application": v.get("over_application")}
++            for r, v in active_rules(mod, revision).items() if v.get("controls")}
++
++
++def channels_of(mod) -> dict:
++    """The declared complexity channels: {channel: {kind, degrade, members, ...}}."""
++    return {c: dict(v) for c, v in (getattr(mod, "CHANNELS", None) or {}).items()}
++
++
++def _moved(base: dict, alt: dict, keys, fields) -> list:
++    return sorted(k for k in keys if k in base and k in alt and any(base[k].get(f) != alt[k].get(f) for f in fields))
++
++
++def check_controls(mod, state, rows, out, revision=None, slot_ids=None) -> None:
++    """contract.controls (see the module docstring). Nothing declared: PASS."""
++    ctl, ch = controls_of(mod, revision), channels_of(mod)
++    if not ctl and not ch:
++        _check(out, "contract.controls", True, "no control members or complexity channels declared")
++        return
++    problems, notes = [], []
++    rules = active_rules(mod, revision)
++    for r, c in ctl.items():
++        missing = [k for k in c["members"] if k not in rows]
++        if missing:
++            problems.append(f"{r}: control members {missing[:6]} are not solver keys")
++        op = c["over_application"]
++        if not op:
++            notes.append(f"{r}: {len(c['members'])} control(s), no over-application operator (every trial HELD)")
++            continue
++        fields = list(rules[r].get("decides") or []) + [class_field(mod)]
++        try:
++            moved = _moved(rows, mod.solve(state, degrade={op}), c["members"], fields)
++        except Exception as error:  # noqa: BLE001 - a refused operator is the finding
++            problems.append(f"{r}: over_application {op!r} refused by solve(): {type(error).__name__}: {error}")
++            continue
++        if moved:
++            # a control whose over-application value is exactly the rule's ablation is not separable from the rule's
++            # own error: it must not become a landing (H1 residual a)
++            abl = mod.solve(state, disable={r})
++            dg = mod.solve(state, degrade={op})
++            same = [k for k in moved if k in abl and k in dg
++                    and all(dg[k].get(f) == abl[k].get(f) for f in fields)]
++            if same:
++                problems.append(f"{r}: over_application {op!r} equals the rule ablation for control member(s) {same[:4]}"
++                                f": the control cannot be separated from a rule error")
++            else:
++                notes.append(f"{r}: {len(c['members'])} control(s); {op} moves {moved}")
++        else:
++            problems.append(f"{r}: over_application {op!r} moves no control member's {fields}")
++    fields = sorted({f for v in rows.values() for f in v if f != "evidence"})
++    for cid, c in ch.items():
++        members, op = list(c.get("members") or []), c.get("degrade")
++        if c.get("kind") not in CHANNEL_KINDS:
++            problems.append(f"channel {cid}: kind {c.get('kind')!r} is not one of {CHANNEL_KINDS}")
++            continue
++        if c.get("latent") not in (None, "member", "batch", "run"):
++            problems.append(f"channel {cid}: latent {c.get('latent')!r} is not member, batch or run")
++            continue
++        if not op and c.get("slots"):
++            unknown = [s for s in c["slots"] if slot_ids is not None and s not in slot_ids]
++            if unknown:
++                problems.append(f"channel {cid}: slots {unknown} are not surface slots")
++            else:
++                notes.append(f"channel {cid} ({c['kind']}): fails surface slots {c['slots']}"
++                             + ("" if slot_ids is not None else " (not checked: no surface)"))
++            continue
++        if not members or not op:
++            problems.append(f"channel {cid}: needs members and a degrade operator, or surface slots")
++            continue
++        try:
++            moved = _moved(rows, mod.solve(state, degrade={op}), members, fields)
++        except Exception as error:  # noqa: BLE001
++            problems.append(f"channel {cid}: degrade {op!r} refused by solve(): {type(error).__name__}: {error}")
++            continue
++        if moved:
++            notes.append(f"channel {cid} ({c['kind']}): {op} moves {len(moved)} of {len(members)} member(s)")
++        elif c.get("slots"):
++            unknown = [s for s in c["slots"] if slot_ids is not None and s not in slot_ids]
++            if unknown:
++                problems.append(f"channel {cid}: slots {unknown} are not surface slots")
++            else:
++                notes.append(f"channel {cid} ({c['kind']}): register-invisible; judged on surface slots {c['slots']}")
++        else:
++            problems.append(f"channel {cid}: degrade {op!r} moves no member's value and it declares no surface slots")
++    _check(out, "contract.controls", not problems, "; ".join(problems or notes))
++
++
++_PROBE = ("import hashlib, sys\n"
++          "sys.path[:0] = [sys.argv[1]]\n"
++          "import oracle_kit as ok\n"
++          "rows = ok.truth(ok.load_solver(sys.argv[2]), sys.stdin.read(), sys.argv[3] or None)\n"
++          "print(hashlib.sha256(ok.canonical(rows).encode()).hexdigest())\n")
++HASH_SEEDS = ("1", "2")
++
++
++def cross_process(solver_path, sql_text: str, revision=None) -> dict:
++    """{PYTHONHASHSEED: sha256 of the canonical truth} from fresh processes (M5)."""
++    out = {}
++    for s in HASH_SEEDS:
++        env = dict(os.environ, PYTHONHASHSEED=s, PYTHONDONTWRITEBYTECODE="1")
++        r = subprocess.run([sys.executable, "-B", "-c", _PROBE, str(HERE), str(solver_path), revision or ""], env=env,
++                           input=sql_text, capture_output=True, text=True, timeout=1800)
++        out[s] = r.stdout.strip() if r.returncode == 0 else "ERROR " + (r.stderr.strip()[-160:] or f"exit {r.returncode}")
++    return out
++
++
++def check_deterministic(mod, sql_text, revision, out, solver_path=None) -> dict:
+     a = mod.solve(mod.load_state(sql_text, revision))
+     st = mod.load_state(sql_text, revision)
+     b_keys = list(reversed(list(a)))
+     b = mod.solve(st, keys_=b_keys)
+     b = {k: b[k] for k in a} if set(b) == set(a) else b
+-    ok = canonical(a) == canonical(b)
+-    _check(out, "contract.deterministic", ok, f"two fresh solves (forward and reverse key order) give identical output "
+-           f"({len(a)} keys, sha {hashlib.sha256(canonical(a).encode()).hexdigest()[:12]})" if ok else
+-           "two fresh solves disagree: the solver depends on order, time or global state")
++    mine = hashlib.sha256(canonical(a).encode()).hexdigest()
++    same = canonical(a) == canonical(b)
++    procs = cross_process(solver_path, sql_text, revision) if solver_path else {}
++    across = all(h == mine for h in procs.values())
++    _check(out, "contract.deterministic", same and across,
++           (f"two fresh solves (forward and reverse key order) give identical output ({len(a)} keys, sha {mine[:12]})"
++            + (f", and so do fresh processes with PYTHONHASHSEED {' and '.join(procs)}" if procs else "")) if same and across
++           else "two fresh solves disagree: the solver depends on order, time or global state" if not same
++           else f"fresh processes disagree ({ {s: h[:12] for s, h in procs.items()} } vs {mine[:12]} in this process): "
++                f"set or hash order leaks into the output")
+     return a
+ 
+ 
+@@ -245,7 +383,43 @@
+     return idx
+ 
+ 
+-def check_golden(mod, rows, sql_text, surface, out) -> None:
++def base_records(routed: list, task_dir=None) -> tuple:
++    """({record id: complete record | None (absent on a complete scan) | "INCOMPLETE"}, error) for base records, read
++    through tools/hg.py records (the Evals record helper; its caches stay in the bundle). routed: [(id, route)].
++    A non-zero hg.py exit or a reply without checks is an error: a routed record that cannot be read must fail the
++    golden check, never pass as "unverified"."""
++    import selftest_sandbox
++    groups = {}
++    for rid, rt in routed:
++        groups.setdefault((rt["service"], rt["file"], rt["pointer"], rt["field"]), set()).add(rid)
++    order = sorted(groups)
++    req = {"checks": [{"id": f"g{i}", "service": s, "file": f, "pointer": p, "field": fld, "values": sorted(groups[k])}
++                      for i, (k, (s, f, p, fld)) in enumerate(zip(order, order))]}
++    with selftest_sandbox.scratch_tmp("oracle_kit_golden_") as tmp:
++        path = Path(tmp) / "record_checks.json"
++        path.write_text(json.dumps(req))
++        cmd = [sys.executable, "-B", str(HERE / "hg.py")] + (["--task-dir", str(task_dir)] if task_dir else []) + \
++            ["records", "--request", str(path)]
++        r = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
++    try:
++        doc = json.loads(r.stdout)
++    except ValueError:
++        return {}, f"tools/hg.py records exit {r.returncode}: {(r.stderr or r.stdout).strip()[-160:]}"
++    if r.returncode != 0:
++        return {}, f"tools/hg.py records exit {r.returncode}: {(r.stderr or r.stdout).strip()[-160:]}"
++    if not (doc.get("checks") or {}):
++        return {}, f"tools/hg.py records returned no checks (exit {r.returncode})"
++    got = {}
++    for i, k in enumerate(order):
++        c = (doc.get("checks") or {}).get(f"g{i}") or {}
++        found = {m.get("value"): m.get("record") for m in c.get("matches") or []}
++        complete = c.get("scan_complete") is True
++        for rid in groups[k]:
++            got[rid] = (found.get(rid) if complete else "INCOMPLETE")
++    return got, None
++
++
++def check_golden(mod, rows, sql_text, surface, out, task_dir=None) -> None:
+     idx = _sql_index(sql_text)
+     keys = []
+     for s in (surface or {}).get("slots", []):
+@@ -255,7 +429,21 @@
+     keys = keys[:GOLDEN_SAMPLE] or list(rows)[:GOLDEN_SAMPLE]
+     fields = [f for f in getattr(mod, "FIELDS", []) if f not in ("component key", class_field(mod))] or \
+         sorted({f for r in rows.values() for f in r if f not in ("evidence", groups_field(mod), class_field(mod))})
+-    strong, weak, presence, unverified, wrong = 0, 0, 0, [], []
++    strong, weak, presence, unverified, wrong, base_q = 0, 0, 0, [], [], []
++
++    def judge(k, f, v, records, ids):
++        nonlocal strong, weak, presence
++        if v in (None, "None", "", "no", "yes") or f in ("issue", "PR", "billing hold at snapshot"):
++            presence += 1               # presence-type value: the deciding records exist
++            return
++        text = json.dumps(records, ensure_ascii=False)
++        if re.search(r"(?<![0-9A-Za-z])" + re.escape(str(v)) + r"(?![0-9A-Za-z])", text):
++            if len(str(v)) >= 6:
++                strong += 1             # an identifier-length value found in its own record
++            else:
++                weak += 1               # a short token (count, ring, state): found, but weak evidence on its own
++        else:
++            wrong.append(f"{k}/{f}={str(v)[:16]} not in {ids[:2]}")
+     for k in keys:
+         for f in fields:
+             v = rows[k].get(f)
+@@ -263,24 +451,37 @@
+             if not ids:
+                 unverified.append(f"{k}/{f}: no evidence ids")
+                 continue
+-            found = [idx[i] for i in ids if i in idx]
+-            if not found:
+-                unverified.append(f"{k}/{f}: base record(s) {ids[:2]} - verify through tools/hg.py")
++            sql_recs = [r for i in ids if i in idx for (_, _, r) in idx[i]]
++            # every routed id is read, even when some evidence ids are also in the SQL index
++            routed = [(i, mod.base_route(i)) for i in ids] if hasattr(mod, "base_route") else []
++            routed = [(i, rt) for i, rt in routed if rt]
++            if not sql_recs and not routed:
++                unverified.append(f"{k}/{f}: base record(s) {ids[:2]} - no base_route; verify through tools/hg.py")
+                 continue
+-            if v in (None, "None", "", "no", "yes") or f in ("issue", "PR", "billing hold at snapshot"):
+-                presence += 1           # presence-type value: the deciding records exist
+-                continue
+-            text = json.dumps([r for group in found for (_, _, r) in group], ensure_ascii=False)
+-            if re.search(r"(?<![0-9A-Za-z])" + re.escape(str(v)) + r"(?![0-9A-Za-z])", text):
+-                if len(str(v)) >= 6:
+-                    strong += 1         # an identifier-length value found in its own record
+-                else:
+-                    weak += 1           # a short token (count, ring, state): found, but weak evidence on its own
+-            else:
+-                wrong.append(f"{k}/{f}={str(v)[:16]} not in {ids[:2]}")
++            base_q.append((k, f, v, sql_recs, routed))
++    based = 0
++    if base_q:
++        got, err = base_records([x for q in base_q for x in q[4]], task_dir) if any(q[4] for q in base_q) else ({}, None)
++        for k, f, v, sql_recs, routed in base_q:
++            ids = [i for i, _ in routed] or None
++            if routed:
++                recs = [got.get(i) for i, _ in routed]
++                if err:
++                    wrong.append(f"{k}/{f}: routed base record(s) {ids[:2]} unread ({err})")   # blocking, never "unverified"
++                    continue
++                if "INCOMPLETE" in recs:
++                    wrong.append(f"{k}/{f}: routed base record(s) {ids[:2]} unread (incomplete scan)")
++                    continue
++                absent = [i for i, x in zip(ids, recs) if not isinstance(x, dict)]
++                if absent:
++                    wrong.append(f"{k}/{f}: routed base record(s) {absent[:2]} absent from the exports")
++                    continue
++                based += 1
++            judge(k, f, v, sql_recs + [x for x in (got.get(i) for i, _ in routed) if isinstance(x, dict)], ids or [])
+     _check(out, "contract.golden", not wrong, f"{strong + weak + presence} golden values checked against their deciding "
+            f"records ({len(keys)} sampled keys x {len(fields)} fields): {strong} identifier values found, {weak} short "
+-           f"tokens found, {presence} presence-type; {len(unverified)} unverified"
++           f"tokens found, {presence} presence-type" + (f" ({based} through tools/hg.py records)" if based else "")
++           + f"; {len(unverified)} unverified"
+            + (f" e.g. {unverified[:2]}" if unverified else "") + (f"; NOT FOUND in their records: {wrong[:4]}" if wrong else ""),
+            extra={"unverified": unverified[:40]})
+ 
+@@ -305,12 +506,14 @@
+     out = []
+     if not check_interface(mod, out):
+         return {"verdict": "FAIL", "checks": out}
+-    rows = check_deterministic(mod, sql_text, revision, out)
++    rows = check_deterministic(mod, sql_text, revision, out, solver_path)
+     check_regression(mod, previous_sql, previous_truth, out, previous_revision)
+     state_revision = revision or getattr(mod.load_state(sql_text, revision), "revision", None)
+     check_rules_nodes(mod, manifest, out, state_revision)
+     check_slots(mod, rows, surface, out)
+-    check_golden(mod, rows, sql_text, surface, out)
++    check_controls(mod, mod.load_state(sql_text, revision), rows, out, state_revision,
++                   {s.get("id") for s in (surface or {}).get("slots") or []} if surface else None)
++    check_golden(mod, rows, sql_text, surface, out, task_dir)
+     check_digest(manifest, solver_path, task_dir, out)
+     return {"verdict": "FAIL" if any(c["status"] == "FAIL" for c in out) else "PASS", "checks": out,
+             "solver": str(solver_path), "solver_sha256": hashlib.sha256(Path(solver_path).read_bytes()).hexdigest(),
+@@ -332,7 +535,9 @@
+ _FIXTURE_SOLVER = '''
+ import collections, json
+ RULES = {"late": {"mechanism": "A15", "requirement": "R1", "natural_reading": "trust the status field",
+-                  "nodes": ["T1"], "decides": ["class"]}}
++                  "nodes": ["T1"], "decides": ["class"], "controls": ["c2"], "over_application": "over:late"}}
++CHANNELS = {"scale:status": {"kind": "scale", "degrade": "slip:status", "members": ["c1", "c2", "c3"],
++                             "description": "a member's status misread"}}
+ FIELDS = ["key", "status", "class"]
+ CLASS_FIELD = "class"
+ REVISIONS = ("r1", "r2")
+@@ -346,8 +551,10 @@
+         if keys_ and r["id"] not in keys_:
+             continue
+         off = "late" in disable or any(isinstance(d, tuple) and d[0] == "late" and r["id"] in d[1] for d in disable)
+-        late = (r["note"] == "late") and not off and state["revision"] == "r2"
+-        out[r["id"]] = {"key": r["id"], "status": r["status"], "class": "HOLD" if late or r["status"] != "ok" else "READY",
++        on = lambda op: op in degrade or any(isinstance(d, tuple) and d[0] == op and r["id"] in d[1] for d in degrade)
++        late = (r["note"] == "late" or (on("over:late") and r["id"] == "c2")) and not off and state["revision"] == "r2"
++        status = {"ok": "bad", "bad": "ok"}[r["status"]] if on("slip:status") else r["status"]
++        out[r["id"]] = {"key": r["id"], "status": status, "class": "HOLD" if late or status != "ok" else "READY",
+                         "groups": ["late"] if late else [], "evidence": {"row": r["id"]}}
+     return out
+ def aggregates(rows):
+@@ -358,6 +565,10 @@
+ 
+ 
+ def _self_test() -> None:
++    import selftest_sandbox as sb
++    if not sb.in_sandbox(BUNDLE):              # its golden check runs tools/hg.py, whose caches are shared
++        raise RuntimeError("oracle_kit's self-test reads base records through tools/hg.py: run it in a sandbox "
++                           "(python3 -B Task_Authoring/tools/oracle_kit.py --self-test does)")
+     sql = ("INSERT INTO linear.linear_comments (id, issue_id, body, status, note) VALUES "
+            "('c1', 'ZOM-1', 'x', 'ok', 'late'), ('c2', 'ZOM-2', 'x', 'ok', 'fine'), ('c3', 'ZOM-3', 'x', 'bad', 'fine');\n")
+     import selftest_sandbox
+@@ -395,6 +606,107 @@
+         bad = Path(tmp) / "bad_solver.py"
+         bad.write_text(_FIXTURE_SOLVER.replace('"natural_reading": "trust the status field",', ""))
+         assert "contract.interface" in [c["check"] for c in contract(bad, sql)["checks"] if c["status"] == "FAIL"]
++        # controls and channels (H1 / F1): declared ones must be live; each planted defect fails contract.controls
++        assert {c["check"]: c["status"] for c in contract(sp, sql, manifest=manifest, surface=surface)["checks"]}[
++            "contract.controls"] == "PASS"
++        assert controls_of(mod) == {"late": {"members": ["c2"], "over_application": "over:late"}}
++        for name, old, new in (("ghost member", '"controls": ["c2"]', '"controls": ["c9"]'),
++                               ("dead over-application", '"over_application": "over:late"', '"over_application": "over:none"'),
++                               ("unknown channel kind", '"kind": "scale"', '"kind": "luck"'),
++                               ("dead channel degrade", '"degrade": "slip:status"', '"degrade": "slip:none"')):
++            planted = Path(tmp) / f"solver_{name.replace(' ', '_')}.py"
++            planted.write_text(_FIXTURE_SOLVER.replace(old, new))
++            assert "contract.controls" in [c["check"] for c in contract(planted, sql, manifest=manifest, surface=surface)
++                                           ["checks"] if c["status"] == "FAIL"], name
++        decl = '"scale:status": {"kind": "scale", "degrade": "slip:status", "members": ["c1", "c2", "c3"],'
++        for slot, want in (("S3", "PASS"), ("S9", "FAIL")):          # a slots-only channel names surface slots
++            planted = Path(tmp) / f"solver_deck_{slot}.py"
++            planted.write_text(_FIXTURE_SOLVER.replace(decl, f'"deck": {{"kind": "tool_surface", "slots": ["{slot}"]}}, ' + decl))
++            st_ = {c["check"]: c["status"] for c in contract(planted, sql, manifest=manifest, surface=surface)["checks"]}
++            assert st_["contract.controls"] == want, (slot, st_)
++        # M5: set order differs between processes (PYTHONHASHSEED): one process can't see it, fresh processes do
++        setord = Path(tmp) / "setorder_solver.py"
++        setord.write_text(_FIXTURE_SOLVER + "\n_orig_s = solve\n"
++                          "def solve(state, disable=frozenset(), degrade=frozenset(), keys_=None):\n"
++                          "    out = _orig_s(state, disable, degrade, keys_)\n"
++                          "    for v in out.values():\n"
++                          "        v['evidence']['order'] = list({'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', "
++                          "'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu'})\n"
++                          "    return out\n")
++        det = {c["check"]: c for c in contract(setord, sql, manifest=manifest, surface=surface)["checks"]}["contract.deterministic"]
++        assert det["status"] == "FAIL" and "fresh processes disagree" in det["detail"], det
++        own = []
++        check_deterministic(load_solver(setord), sql, None, own)                   # no solver path: one process only
++        assert own[0]["status"] == "PASS", own
++        # M5: golden values in base records are read through tools/hg.py records (sandboxed): a value in its record
++        # passes, a wrong value and an absent record fail. The base record: Linear team team_ZOM, "Zombie Match 3D".
++        ctx = BUNDLE / "support" / "fixtures" / "season_pass_rev13"               # a V3 assignment for hg.py
++        assert _FIXTURE_SOLVER.count('"status": status,') == 1
++        base_solver = _FIXTURE_SOLVER.replace('"status": status,', '"status": status, "team": "TEAM",') + (
++            "\n_orig_e = evidence\n"
++            "def evidence(rows, key, field):\n"
++            "    return ['BASE_ID'] if field == 'team' else _orig_e(rows, key, field)\n"
++            "def base_route(record_id):\n"
++            "    return {'service': 'linear', 'file': 'data.json', 'pointer': '/teams', 'field': 'id'} "
++            "if record_id.startswith('team_') else None\n"
++            "FIELDS = ['key', 'status', 'team', 'class']\n")
++        golden = {}
++        for name, team, rid in (("found", "Zombie Match 3D", "team_ZOM"), ("wrong", "Zombie Match 4D", "team_ZOM"),
++                                ("absent", "Zombie Match 3D", "team_NOPE_0000")):
++            gp = Path(tmp) / f"base_{name}.py"
++            gp.write_text(base_solver.replace("TEAM", team).replace("BASE_ID", rid))
++            res = contract(gp, sql, manifest=manifest, surface=surface, task_dir=ctx)
++            golden[name] = {c["check"]: c for c in res["checks"]}["contract.golden"]
++        assert golden["found"]["status"] == "PASS" and "through tools/hg.py records" in golden["found"]["detail"], golden["found"]
++        assert golden["wrong"]["status"] == "FAIL" and "not in" in golden["wrong"]["detail"], golden["wrong"]
++        assert golden["absent"]["status"] == "FAIL" and "absent from the exports" in golden["absent"]["detail"], golden["absent"]
++
++        # M5: every routed id is read and must resolve; a read error or an incomplete scan FAILs the blocking check
++        def routed_solver(ids):
++            return _FIXTURE_SOLVER.replace('"status": status,', '"status": status, "team": "Zombie Match 3D",') + (
++                "\n_orig_e = evidence\n"
++                "def evidence(rows, key, field):\n"
++                f"    return {ids!r} if field == 'team' else _orig_e(rows, key, field)\n"
++                "def base_route(record_id):\n"
++                "    return ({'service': 'linear', 'file': 'data.json', 'pointer': '/teams', 'field': 'id'}"
++                " if str(record_id).startswith('team_') else None)\n"
++                "FIELDS = ['key', 'status', 'team', 'class']\n")
++        orig_base = globals()["base_records"]
++        try:
++            for name, ids, fake, want, why in (
++                    ("mixed", ["c1", "team_ZOM"],
++                     lambda routed, task_dir=None: ({"team_ZOM": {"id": "team_ZOM", "name": "Zombie Match 3D"}}, None),
++                     "PASS", "through tools/hg.py"),
++                    ("one absent", ["team_ZOM", "team_OTHER"],
++                     lambda routed, task_dir=None: ({"team_ZOM": {"id": "team_ZOM", "name": "Zombie Match 3D"}}, None),
++                     "FAIL", "absent from the exports"),
++                    ("read error", ["team_ZOM"], lambda routed, task_dir=None: ({}, "hg.py exit 1: boom"),
++                     "FAIL", "unread (hg.py exit 1"),
++                    ("incomplete", ["team_ZOM"], lambda routed, task_dir=None: ({"team_ZOM": "INCOMPLETE"}, None),
++                     "FAIL", "incomplete scan")):
++                gp = Path(tmp) / f"routed_{name.replace(' ', '_')}.py"
++                gp.write_text(routed_solver(ids))
++                globals()["base_records"] = fake
++                chk = {c["check"]: c for c in contract(gp, sql, manifest=manifest, surface=surface)["checks"]}["contract.golden"]
++                assert chk["status"] == want and why in chk["detail"], (name, chk)
++                if name == "mixed":
++                    assert "1 through tools/hg.py records" in chk["detail"] or "through tools/hg.py records" in chk["detail"], chk
++        finally:
++            globals()["base_records"] = orig_base
++        # planted (code round 2): an exit-0 reply that contains the routed record but says scan_complete false is
++        # incomplete, never verified
++        import unittest.mock as mock
++
++        class _Reply:
++            returncode = 0
++            stderr = ""
++            stdout = json.dumps({"checks": {"g0": {"scan_complete": False, "matches": [
++                {"value": "team_ZOM", "record": {"id": "team_ZOM", "name": "Zombie Match 3D"}}]}}})
++
++        with mock.patch("subprocess.run", return_value=_Reply()):
++            got_inc, err_inc = base_records([("team_ZOM", {"service": "linear", "file": "data.json",
++                                                            "pointer": "/teams", "field": "id"})])
++        assert got_inc == {"team_ZOM": "INCOMPLETE"} and err_inc is None, (got_inc, err_inc)
+         nondet = Path(tmp) / "nondet_solver.py"
+         nondet.write_text(_FIXTURE_SOLVER + "\nimport itertools\n_c = itertools.count()\n_orig = solve\n"
+                           "def solve(state, disable=frozenset(), degrade=frozenset(), keys_=None):\n"
+@@ -403,7 +715,11 @@
+         assert "contract.deterministic" in [c["check"] for c in contract(nondet, sql, manifest=manifest, surface=surface)["checks"]
+                                             if c["status"] == "FAIL"]
+     print("self-test: ok (interface, determinism incl. a counter-driven solver, regression both ways, portfolio one-to-one "
+-          "and unknown nodes, slot production, golden spot-check, solver digest)")
++          "and unknown nodes, slot production, golden spot-check, solver digest, live controls and channels: a ghost "
++          "control member, a dead over-application, an unknown channel kind and a dead channel degrade each fail; a "
++          "slots-only channel passes on surface slots and fails on an unknown one; M5: set order leaking across "
++          "PYTHONHASHSEED fails in fresh processes though one process passes, base-record golden values read through "
++          "tools/hg.py records: found PASS, a wrong value and an absent record FAIL)")
+ 
+ 
+ # ------------------------------------------------------------------ main
+@@ -431,6 +747,9 @@
+     ap.add_argument("--self-test", action="store_true")
+     a = ap.parse_args(argv)
+     if a.self_test:
++        import selftest_sandbox as sb             # the golden check reads base records through tools/hg.py (caches)
++        if not sb.in_sandbox(BUNDLE):
++            return sb.run_isolated(["oracle_kit.py", "--self-test"], source=BUNDLE)
+         _self_test()
+         return 0
+     td, wf = _task_paths(a.task_dir)

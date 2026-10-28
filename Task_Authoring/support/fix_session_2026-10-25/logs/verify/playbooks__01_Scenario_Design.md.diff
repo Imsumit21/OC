@@ -1,0 +1,37 @@
+--- a/playbooks/01_Scenario_Design.md
++++ b/playbooks/01_Scenario_Design.md
+@@ -323,11 +323,19 @@
+         gate 12), so Hard's at-risk weight needs at least two independent cohorts or chains.
+       - **Budget arithmetic.** With weight W at risk, failing at a weighted mean rate p̄, and the rest passing at r
+         (0.95 unless measured), E[average] = r(1 − W) + (1 − p̄)W. Hard's 62 % target needs W ≥ 73 % at p̄ = 0.5
+-        (76 % at r = 1); two-thirds of the weight at p̄ = 0.5 reaches only the cap.
+-      - **Spread.** Near-certain rows lower the mean but add no spread. The SD band (population SD of the six runs,
+-        0.10–0.30, which reads low: E[s²] = 5σ²/6) and the failure-pattern gate (at least 2 patterns, the largest at
+-        most 50 %) need enough weight failing at intermediate rates on independent rows. Read the forecast's
+-        P(SD in band) and P(patterns); don't fix a row count.
++        (76 % at r = 1). Two-thirds of the weight at p̄ = 0.5 gives 66.7 % (65.0 % at r = 95 %): it clears the 70 %
++        cap but misses the 62 % target by 4.7 points with a perfect remainder, or 3.0 with a 95 % remainder: that
++        is the whole margin.
++      - **Spread.** Near-certain rows lower the mean but add no spread. The gate reads the population SD of the six
++        runs. For six independent normal runs, a design σ of 0.10 lands in 0.10–0.30 only about 30 % of the time
++        (normal approximation), and σ alone does not determine the six-run SD: mixtures and correlated channels can
++        pass or fail at the same σ. Compute the six-run SD distribution from the forecast's joint outcome model on
++        the actual rubric rows, with covariance — channels can be dependent, or each flip several rows at once.
++        An interior σ around 0.15–0.20 is a model-motivated candidate, not a validated requirement; equal independent
++        channels at p̄ = 0.5 illustrate it (W_v ≈ 0.32√k), but never transfer a channel count. Read the forecast's
++        P(SD in band) and P(patterns) (at least 2 patterns, the largest at most 50 %). Run an attainable-variance
++        check on the legal rubric before fixing a target: if the work can only earn weight-1 rows, the variance may be
++        out of reach, and then change the work or the scenario, never the weights.
+       - **Scale rows.** Only aggregate rows (a volume row, a derived total) compound over a cohort; a sampled member
+         fails at about the per-member rate e. Independent members give 1 − (1 − e)^N; shared causes (one rule, source
+         or format) give less, and opposing count errors can cancel. Use the forecast's per-slot P(fail) (F1).
+@@ -352,7 +360,8 @@
+ - [ ] **Never resolve a liveness flag by removing an incorporation or UGT link.**
+ - [ ] **Solver rules.** One rule per mechanism node, each with an explicit natural-reading fallback, written as the
+       draft manifest's `mechanism_portfolio` (`references/Hardness_Manifest_Spec.md`): `id` = the future rule id in
+-      `Working_Files/solver/solver.py`, `mechanism`, `family`, `nodes`, `requirement`, `natural_reading`, `decides`,
++      `Working_Files/solver/solver.py`, `mechanism`, `prior_family` with its `prior_family_reason` (the ledger family
++      whose prior the forecast uses, and why it applies), `nodes`, `requirement`, `natural_reading`, `decides`,
+       `source`, `signature`. `/create-injection` S4b writes the solver itself (`tools/oracle_kit.py` contract).
+ 
+ ### S5b — Design liveness flags (advisory, UNCALIBRATED)

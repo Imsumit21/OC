@@ -1,0 +1,583 @@
+CONTEXT
+P1 remediation of Task_Authoring (stdlib-only tools that author/check HarmonyGames V3 tasks). The round-3 independent
+verification failed 8 bundles; this artifact contains the ROUND-4 DELTA against the exact tree that verifier reviewed
+(the pre-round-4 copies are the session's own rollback files, sha256 in each delta header) plus the raw acceptance
+outputs. Rounds 1-3 reviewed the rest of the full P1 diff; nothing outside the deltas below changed in round 4 except
+the new F1 acceptance files (shown in full). Hard rules: SQL is parsed, never executed; the frozen backtests
+(support/backtests/season_pass/rev13|rev14) are read-only and verified by SHA256SUMS; self-tests run in a sandbox and
+write no shared cache; each fix carries a planted case and a falsification undo.
+
+===== ROUND-4 DELTA tools/surface_grader.py (pre-round-4 sha d0d1cc50a6407bb1 -> now 1de435c92d787182) =====
+--- a/tools/surface_grader.py
++++ b/tools/surface_grader.py
+@@ -207,40 +207,115 @@
+     return list(dict.fromkeys(out))
+ 
+ 
++_DELIM_RE = re.compile(r"\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?")
++
++
++def _table_row(s: str) -> bool:
++    """A Markdown table row or header: an UNESCAPED pipe separator, and neither a heading nor a bullet list item (a
++    bullet that carries a pipe is a list item, not a table row; an escaped pipe inside a cell does not unmake a row)."""
++    t = s.lstrip()
++    if re.match(r"#{1,6}(?: |$)", t) or re.match(r"[-*+](?:[ \t]+|$)", t):
++        return False
++    return "|" in s.replace("\\|", "")
++
++
+ def tracker_groups(text: str, spec: dict) -> dict:
+-    """Blocker groups as written: {group: (stated_count, [keys])}. Handles same-line and heading-then-keys."""
++    """Blocker groups as written: {group: (stated_count, [keys])}.
++
++    A group stated with a count ("- Review not approved (2):") opens a *pending* group, and every following
++    continuation line adds its keys: a bullet ('-', '*' or '+'), a bare key line, or a row of a Markdown table that
++    follows its header/delimiter rows. A pending group is only ever opened for a group name the text has not stated
++    yet, and a re-statement of a declared group never merges, so prose that re-mentions an existing group cannot
++    re-open it.
++
++    A table is recognised structurally: a header row whose NEXT non-empty line is a delimiter row, the delimiter row
++    itself, and the data rows after it. A pipe in ordinary prose (or an escaped \\|) is NOT table structure and ends
++    the pending group. A stated count is a number <= 500 (a parenthesised year is not a count).
++
++    Deliberately not handled: a group re-stated later keeps its first statement (never merged); a prose line inside a
++    list ends the pending group; a count in a table's own group row is not read as a pending count."""
+     groups, pending = {}, None
+     krx = _krx(spec)
+-    for line in text.split("\n"):
++    lines = text.split("\n")
++    in_table, prev_header = False, False
++
++    def _add(g0, cnt0, keys0):
++        cur = groups.get(g0)
++        if cur is None:
++            groups[g0] = (cnt0, list(keys0))
++        else:
++            groups[g0] = (cur[0], list(dict.fromkeys(cur[1] + list(keys0))))
++
++    for idx, line in enumerate(lines):
+         s = line.strip()
+         if not s:
++            in_table = False                        # a blank line ends a table (a table is contiguous)
+             continue
++        nxt = next((x.strip() for x in lines[idx + 1:] if x.strip()), "")
++        # a table delimiter must contain a pipe: a bare '---' is a horizontal rule, not a one-column delimiter
++        is_header = _table_row(s) and "|" in nxt and bool(_DELIM_RE.fullmatch(nxt))
++        is_delim = "|" in s and bool(_DELIM_RE.fullmatch(s)) and prev_header
+         keys = _expand_keys(s, krx)
+         first = re.search(krx, s)
+         head = s[:first.start()] if first else s
+         g = _group_of(head, spec.get("groups") or [])
+-        # the count stated for this group: a number ending the head ("- review (3): ", "1. Failed assertions — 28: "),
+-        # else a parenthesised number. A number inside prose (a date) never becomes a count.
+-        tail = re.sub(r"[\s*_:.)\-\u2014\u2013]+$", "", head.strip())
+-        tail_n = re.search(r"(?:^|[\s*_:(\u2014\u2013-])(\d+)$", tail)
+-        nums = [tail_n.group(1)] if tail_n else re.findall(r"\((\d+)\)", head)
+-        if keys and g and nums and g not in groups:
+-            # a line that states a group and a count is a membership list, even when it is one bare range
+-            groups[g] = (int(nums[-1]), keys)
++        tail = re.sub(r"[\s*_:.)\-\u2014\u2013`]+$", "", head.strip())
++        # a tail count is a number ending the head, but not a date or time fragment (2026-10-25, 09:30)
++        tail_n = re.search(r"(?:^|[\s*_(\u2014\u2013])(\d+)$", tail)
++        # a month name (full or abbreviated, optional period) before the number makes it a date phrase, not a count
++        if tail_n and re.search(
++                r"(?i)\b(january|february|march|april|may|june|july|august|september|october|november|december"
++                r"|jan|feb|mar|apr|jun|jul|aug|sept|sep|oct|nov|dec)\.?\s+$", tail[:tail_n.start(1)]):
++            tail_n = None
++        nums = re.findall(r"\((\d+)\)", head) + ([tail_n.group(1)] if tail_n else [])
++        cnt = next((int(x) for x in reversed(nums) if int(x) <= 500), None)   # fall back past an out-of-bound suffix
++
++        # 1) structural rows first: a header never declares or contributes a member; a delimiter is structural
++        if is_header or is_delim:
++            prev_header, in_table = is_header, is_delim
++            continue
++        # 2) a data row of the current table contributes its keys to the pending group ONLY (never a declaration)
++        if in_table and _table_row(s):
++            if keys and pending:
++                _add(pending[0], pending[1], keys)
++            prev_header, in_table = False, True
++            continue
++        # 3) an escaped pipe is prose, even on a line carrying a key — but a BULLET is a list item, so its escaped
++        # pipe is just cell text and the bullet still contributes its member
++        if "\\|" in s and not re.match(r"[-*+](?:[ \t]+|$)", s.lstrip()):
+             pending = None
++            prev_header, in_table = False, False
++            continue
++        # 4) ordinary lines: declaration, re-declaration, range, continuation, heading, prose
++        if keys and g and cnt is not None and g not in groups:
++            groups[g] = (cnt, list(keys))
++            pending = (g, cnt)
++            prev_header, in_table = False, False
++            continue
++        if g and cnt is not None and g in groups:
++            pending = None                              # a re-statement of a declared group is never merged
++            prev_header, in_table = False, False
+             continue
+         if _range_only(s, krx):
+             pending = None
++            prev_header, in_table = False, False
+             continue
+-        elif keys and pending and not head.strip(" *-|:"):
+-            groups.setdefault(pending[0], (pending[1], keys))
+-            pending = None
+-        elif not keys and g and nums and len(s) < 160:
+-            pending = (g, int(nums[-1]))
+-        else:
+-            pending = None
++        # a bullet under a pending group is a member line, whatever punctuation wraps its key (checkbox, backticks,
++        # bold markers): the structural, escaped-pipe and declaration guards have already run
++        bullet = bool(re.match(r"[-*+](?:[ \t]+|$)", s.lstrip()))
++        bare = not head.strip(" \t*+-|:")
++        if keys and pending and (bullet or bare):
++            _add(pending[0], pending[1], keys)
++            prev_header, in_table = False, False
++            continue
++        if not keys and g and cnt is not None and g not in groups and (len(s) < 160 or _headingish(s) or bullet):
++            groups[g] = (cnt, [])                       # the first declaration is recorded at once (zero count too)
++            pending = (g, cnt)
++            prev_header, in_table = False, False
++            continue
++        pending = None
++        prev_header, in_table = False, False
+     return groups
+-
+ 
+ def _headingish(line: str) -> bool:
+     """A section heading is a markdown # line, a fully bold/underlined line, or a short colon-terminated line with no
+@@ -1344,7 +1419,8 @@
+     "deliverables": {"tracker": {"kind": "text", "tool": "linear_update_issue", "issue": "T-1", "key_regex": r"K-\d{2}",
+                                  "groups": [["review", "review"], ["late", "late"]]},
+                      "slack": {"kind": "json_text", "tool": "slack_send_message"},
+-                     "email": {"kind": "json_text", "tool": "gmail_reply_to_message"}},
++                     "email": {"kind": "json_text", "tool": "gmail_reply_to_message"},
++                     "trello": {"kind": "calls", "tool": "trello_add_comment_to_card"}},
+     "slots": []}
+ _PLANTED_REGISTER = {"kind": "table", "name_regex": "register", "key_column": "key", "key_regex": r"K-\d{2}",
+                      "columns": ["key", "class"], "class_column": "class"}
+@@ -1481,6 +1557,242 @@
+     r = _grade_planted({"C": ["group_count", "review"], "S": ["group_size", "review"],
+                         "K": ["group_key", "K-02", "review"]}, _tracker(text), truth)
+     assert r == {"C": True, "S": True, "K": True}, r
++
++
++def _g1_multiline_group():
++    """R8: a group stated once with a count keeps every member of a multi-line list, in all the shapes a run writes:
++    bullets, plain key lines and table rows after the stated count. Before the fix every member after the first line
++    was dropped, so group_size, group_key and groups_of graded False on a correct tracker."""
++    truth = {"K-02": {"class": "HOLD", "groups": ["review"]},
++             "K-03": {"class": "HOLD", "groups": ["review"]}}
++    sel = {"N": ["group_count", "review"], "Z": ["group_size", "review"],
++           "K": ["group_key", "K-03", "review"], "O": ["groups_of", "K-03"]}
++    for shape, text in (("bullets", "### Review findings\n- Review not approved (2):\n- K-02\n- K-03"),
++                        ("plain", "Review not approved (2):\nK-02\nK-03"),
++                        ("table", "Review not approved (2):\n| K-02 | note |\n| K-03 | note |"),
++                        # a full Markdown table: header and delimiter rows between the count and its data rows
++                        ("table_header", "Review not approved (2):\n| Key | Note |\n| --- | --- |\n"
++                                         "| K-02 | first |\n| K-03 | second |"),
++                        # a status column first, and the pipe-optional Markdown table form
++                        ("table_status", "Review not approved (2):\n| Status | Key |\n| --- | --- |\n"
++                                         "| HOLD | K-02 |\n| HOLD | K-03 |"),
++                        ("table_nopipe", "Review not approved (2):\nStatus | Key\n--- | ---\n"
++                                         "HOLD | K-02\nHOLD | K-03"),
++                        ("table_onecol", "Review not approved (2):\n| Key |\n| --- |\n| K-02 |\n| K-03 |"),
++                        ("date_heading", "### Review findings \u2014 2026-10-25\nReview not approved (2):\n- K-02\n- K-03"),
++                        ("date_tail", "Review not approved (2) \u2014 as of 2026-10-25:\n- K-02\n- K-03"),
++                        ("hash_cell", "Review not approved (2):\nTicket | Key\n--- | ---\n#81 | K-02\n#82 | K-03"),
++                        ("esc_bullet", "Review not approved (2):\n- K-02\n- K-03 \u2014 read \\| write access"),
++                        ("tab_members", "Review not approved (2):\n- K-02\n-\tK-03"),
++                        ("tab_header", "Review not approved (2):\n#\t| Key\n--- | ---\n1 | K-02\n2 | K-03"),
++                        ("task_list", "Review not approved (2):\n- [ ] K-02\n- [x] K-03"),
++                        ("task_code", "Review not approved (2):\n- [ ] `K-02`\n- [x] `K-03`"),
++                        ("month_declined", "Review declined 2:\n- K-02\n- K-03"),
++                        ("month_marked", "Review marked 2:\n- K-02\n- K-03"),
++                        ("month_date", "Review not approved (2) \u2014 as of October 25:\n- K-02\n- K-03"),
++                        ("month_abbr", "Review not approved (2) \u2014 as of Oct 25:\n- K-02\n- K-03"),
++                        ("month_abbr_dot", "Review not approved (2) \u2014 as of Oct. 25:\n- K-02\n- K-03"),
++                        ("month_sept", "Review not approved (2) \u2014 as of Sept 25:\n- K-02\n- K-03"),
++                        ("time_tail", "Review not approved (2) \u2014 as of 2026-10-25 09:30:\n- K-02\n- K-03"),
++                        ("year_suffix", "Review not approved (2) \u2014 cycle (2026):\n- K-02\n- K-03"),
++                        # the other standard Markdown bullet marker
++                        ("plus", "Review not approved (2):\n+ K-02\n+ K-03"),
++                        # the first member on the count line, the rest on continuation lines (round-4 finding)
++                        ("mixed", "Review not approved (2): K-02\n- K-03")):
++        r = _grade_planted(sel, _tracker(text), truth)
++        assert r == {"N": True, "Z": True, "K": True, "O": True}, (shape, r)
++
++
++def _g1_multiline_guard():
++    """R8: a group already written is never re-opened by a later prose statement of it, so it cannot absorb a later
++    list (rev14 `pre`: "… changes-requested review … (7):" after `review` was stated; slot S54 would flip)."""
++    truth = {"K-02": {"class": "HOLD", "groups": ["review"]}, "K-03": {"class": "HOLD", "groups": ["review"]},
++             "K-06": {"class": "HOLD", "groups": []}}
++    text = ("### Review findings\n- Review not approved (2):\n- K-02\n- K-03\n"
++            "Approved transfer review preceded by a changes-requested review on the same PR (7):\n- K-06")
++    g = tracker_groups(text, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++    assert g == {"review": (2, ["K-02", "K-03"])}, g
++    # a ZERO-count first declaration is authoritative too: a later prose re-statement must not reopen and absorb
++    zero = ("### Review findings\n- Review not approved (0):\n"
++            "Approved transfer review preceded by a changes-requested review on the same PR (7):\n- K-06")
++    g0 = tracker_groups(zero, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++    assert g0 == {"review": (0, [])}, g0
++    # a re-statement containing a pipe is still a re-statement, never a continuation (keyed and keyless forms)
++    for again in ("- Review not approved (0):\n- Review not approved (7): K-06 | follow-up only",
++                  "- Review not approved (0):\n- Review not approved (7) | note only"):
++        ga = tracker_groups(again, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++        assert ga == {"review": (0, [])}, (again, ga)
++    # a pipe-containing heading that declares a NEW group is a declaration, never a table row
++    multi = "- Review not approved (1): K-02\n### Late | overdue (1):\n- K-03"
++    gm = tracker_groups(multi, {"key_regex": r"K-\d{2}", "groups": [["review", "review"], ["late", "late"]]})
++    assert gm == {"review": (1, ["K-02"]), "late": (1, ["K-03"])}, gm
++    # a heading that mentions a pipe but declares nothing is prose, not a table: it ends the pending group
++    prose = "Review not approved (1): K-02\n### Next steps | owners\n- K-03"
++    gp = tracker_groups(prose, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++    assert gp == {"review": (1, ["K-02"])}, gp
++    # an ESCAPED pipe is prose, never a table row, and ends the group — including on a line that carries a key
++    esc = "Review not approved (1):\n- K-02\nThis paragraph uses an escaped \\| pipe and ends the list.\n- K-03"
++    ge = tracker_groups(esc, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++    assert ge == {"review": (1, ["K-02"])}, ge
++    esc_key = "Review not approved (1):\n- K-02\nK-03 \\| Approved; follow-up is handled separately.\n- K-04"
++    gek = tracker_groups(esc_key, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++    assert gek == {"review": (1, ["K-02"])}, gek
++    # a table header that contains the group word and a parenthesised YEAR is a header, not a re-declaration
++    alias = ("Review not approved (2):\n| Review cycle (2026) | Key |\n| --- | --- |\n"
++             "| HOLD | K-02 |\n| HOLD | K-03 |")
++    gal = tracker_groups(alias, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++    assert gal == {"review": (2, ["K-02", "K-03"])}, gal
++    # a standalone horizontal rule is NOT a table: it ends the group, and pipe prose after it adds nothing
++    spec1 = {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]}
++    hr = "Review not approved (1):\n- K-02\n\n---\n\nFollow-up for K-03 | approved.\n- K-04"
++    assert tracker_groups(hr, spec1) == {"review": (1, ["K-02"])}, tracker_groups(hr, spec1)
++    # a key-shaped example inside a table header is a column label, not a member
++    hdrkey = ("Review not approved (2):\n| Key (example K-99) | Reason |\n| --- | --- |\n"
++              "| K-02 | a |\n| K-03 | b |")
++    assert tracker_groups(hdrkey, spec1) == {"review": (2, ["K-02", "K-03"])}, tracker_groups(hdrkey, spec1)
++    # a table cell that contains the group word and a number is data, not a re-declaration
++    cellword = ("Review not approved (2):\n| Note | Key |\n| --- | --- |\n"
++                "| Review cycle (1) | K-02 |\n| Awaiting sign-off | K-03 |")
++    assert tracker_groups(cellword, spec1) == {"review": (2, ["K-02", "K-03"])}, tracker_groups(cellword, spec1)
++    # a markdown bullet whose whitespace is a TAB is still a bullet, not a table row
++    tab = ("Review not approved (1):\n| Key | Note |\n| --- | --- |\n| K-02 | a |\n"
++           "-\tLate (1): K-03 | overdue")
++    gt = tracker_groups(tab, {"key_regex": r"K-\d{2}", "groups": [["review", "review"], ["late", "late"]]})
++    assert gt == {"review": (1, ["K-02"]), "late": (1, ["K-03"])}, gt
++    # a table DATA CELL that names a DIFFERENT undeclared group must not declare it or hijack the table
++    spec2 = {"key_regex": r"K-\d{2}", "groups": [["review", "review"], ["late", "late"]]}
++    other = ("Late (2):\n| Note | Key |\n| --- | --- |\n"
++             "| Review cycle (1) | K-02 |\n| Awaiting sign-off | K-03 |")
++    assert tracker_groups(other, spec2) == {"late": (2, ["K-02", "K-03"])}, tracker_groups(other, spec2)
++    # a key-shaped header label that names another group adds neither a group nor a member
++    oh = ("Late (2):\n| Review cycle (1) | Key (example K-99) |\n| --- | --- |\n"
++          "| HOLD | K-02 |\n| HOLD | K-03 |")
++    assert tracker_groups(oh, spec2) == {"late": (2, ["K-02", "K-03"])}, tracker_groups(oh, spec2)
++    # a LONG counted heading keeps first-declaration authority (the 160-character prose heuristic is not for headings)
++    long_head = ("### Review not approved \u2014 items awaiting security, service-owner, quality-assurance, operations, "
++                 "or release-management approval for this deployment window, including follow-ups from the preceding "
++                 "review cycle (0):\nReview not approved (1): K-02")
++    glh = tracker_groups(long_head, {"key_regex": r"K-\d{2}", "groups": [["review", "review"]]})
++    assert glh == {"review": (0, [])}, glh
++    r = _grade_planted({"N": ["group_count", "review"], "Z": ["group_size", "review"],
++                        "K": ["group_key", "K-06", "review"], "O": ["groups_of", "K-06"]}, _tracker(text), truth)
++    assert r == {"N": True, "Z": True, "K": True, "O": True}, r
++
++
++def _p1_printed_total():
++    """P1: the totals block's printed class count grades both ways (2 stated for two rows passes, 3 fails)."""
++    s = json.loads(json.dumps(_PLANTED_SURFACE))
++    s["deliverables"]["register"] = json.loads(json.dumps(_PLANTED_REGISTER))
++    s["slots"] = [{"id": "P", "weight": 1, "selector": ["printed_total", "HOLD"]}]
++    truth = {"K-01": {"class": "HOLD", "groups": []}, "K-02": {"class": "HOLD", "groups": []}}
++
++    def calls(stated):
++        return [("gdrive_create_file", {"name": "register.csv",
++                                        "content": f"key,class\nK-01,HOLD\nK-02,HOLD\nHOLD,{stated}\n"}, {"id": "F1"})]
++    assert _grade_on(s, calls(2), truth) == {"P": True}, _grade_on(s, calls(2), truth)
++    assert _grade_on(s, calls(3), truth) == {"P": False}, _grade_on(s, calls(3), truth)
++
++
++def _p1_sole_reason():
++    """P1: a key in exactly the named group passes; in another group too, or in none, it fails."""
++    truth = {"K-01": {"class": "HOLD", "groups": ["review"]}}
++    sel = {"S": ["sole_reason", "K-01", "review"]}
++    ok = _grade_planted(sel, _tracker("### Review findings\n- Review not approved (2):\n- K-01\n- K-02"), truth)
++    assert ok == {"S": True}, ok
++    two = _grade_planted(sel, _tracker("- Review not approved (1): K-01\n- Late (1): K-01"), truth)
++    assert two == {"S": False}, two
++    none = _grade_planted(sel, _tracker("- Review not approved (1): K-02"), truth)
++    assert none == {"S": False}, none
++
++
++def _p1_reason_matches():
++    """P1: reason_matches reads the row's reason column (a match passes, a different reason fails) and is UNGRADED,
++    never false, when the register write cannot be read."""
++    s = json.loads(json.dumps(_PLANTED_SURFACE))
++    reg = json.loads(json.dumps(_PLANTED_REGISTER))
++    reg.update(columns=["key", "class", "reason"], reason_column="reason")
++    s["deliverables"]["register"] = reg
++    s["slots"] = [{"id": "M", "weight": 1, "selector": ["reason_matches", "K-01", r"change[- ]request"]}]
++    truth = {"K-01": {"class": "HOLD", "groups": []}}
++
++    def call(reason):
++        return [("gdrive_create_file", {"name": "register.csv",
++                                        "content": f"key,class,reason\nK-01,HOLD,{reason}\n"}, {"id": "F1"})]
++    assert _grade_on(s, call("open change-request review"), truth) == {"M": True}
++    assert _grade_on(s, call("approved after review"), truth) == {"M": False}
++    bad = [("gdrive_create_file", {"name": "register.csv",
++                                   "content": "key,class,reason\nK-01,HOLD," + "x" * 140000 + "\n"}, {"id": "F1"})]
++    assert _grade_on(s, bad, truth) == {"M": None}, _grade_on(s, bad, truth)
++
++
++def _p1_tracker_state_comment():
++    """P1: tracker_state "comment" needs a comment body, never a card id in a routing field; the 24-hex cardId form
++    needs that exact card and a body."""
++    hexid = "5f8e7d6c9a1b2c3d4e5f6071"
++    sel = {"C": ["delivery", "tracker_state", "comment"], "H": ["delivery", "tracker_state", hexid]}
++    ok = _grade_planted(sel, [("trello_add_comment_to_card", {"cardId": "C1", "text": "comment noted"}),
++                              ("trello_add_comment_to_card", {"cardId": hexid, "text": "noted"})])
++    assert ok == {"C": True, "H": True}, ok
++    routing = _grade_planted(sel, [("trello_add_comment_to_card", {"cardId": "C1", "idList": "L1"}),
++                                   ("trello_add_comment_to_card", {"cardId": hexid, "idList": hexid})])
++    assert routing == {"C": False, "H": False}, routing
++    other = _grade_planted(sel, [("trello_add_comment_to_card", {"cardId": "000000000000000000000000",
++                                                                 "text": "noted"})])
++    assert other == {"C": True, "H": False}, other
++
++
++def _p1_slack_channel_post():
++    """P1: a channel post is the right channel *and* the text as message content; the same text in a routing
++    parameter (thread_ts) or the wrong channel fails."""
++    sel = {"P": ["delivery", "slack_channel_post", "C1", "SHIP 38"]}
++    ok = _grade_planted(sel, [("slack_send_message", {"channel_id": "C1", "text": "SHIP 38 is ready"})])
++    assert ok == {"P": True}, ok
++    ts = _grade_planted(sel, [("slack_send_message", {"channel_id": "C1", "thread_ts": "SHIP 38"})])
++    assert ts == {"P": False}, ts
++    chan = _grade_planted(sel, [("slack_send_message", {"channel_id": "C2", "text": "SHIP 38"})])
++    assert chan == {"P": False}, chan
++
++
++def _p1_trello_card():
++    """P1: trello_card needs the named card and the value on it; a wrong card or a wrong value fails."""
++    sel = {"T": ["delivery", "trello_card", "C1", "hello"]}
++    ok = _grade_planted(sel, [("trello_add_comment_to_card", {"cardId": "C1", "text": "hello there"})])
++    assert ok == {"T": True}, ok
++    card = _grade_planted(sel, [("trello_add_comment_to_card", {"cardId": "C2", "text": "hello there"})])
++    assert card == {"T": False}, card
++    value = _grade_planted(sel, [("trello_add_comment_to_card", {"cardId": "C1", "text": "goodbye"})])
++    assert value == {"T": False}, value
++
++
++def _p1_register_is_csv():
++    """P1: register_is_csv passes on a CSV upload and fails on a native Sheet holding the same rows."""
++    sel = {"V": ["delivery", "register_is_csv"]}
++    truth = {"K-01": {"class": "HOLD", "groups": []}}
++    csv_upload = _grade_planted(sel, [("gdrive_create_file", {"name": "register.csv",
++                                                              "content": "key,class\nK-01,HOLD\n"}, {"id": "F1"})],
++                                truth, register=True)
++    assert csv_upload == {"V": True}, csv_upload
++    sheet = _grade_planted(sel, [("gsheets_values_update", {"spreadsheetId": "S1", "range": "A1:B2",
++                                                            "values": [["key", "class"], ["K-01", "HOLD"]]})],
++                           truth, register=True)
++    assert sheet == {"V": False}, sheet
++
++
++def _p1_register_parent():
++    """P1: the register's final folder is the creation parent plus any later move: a move to the expected folder
++    passes, a move elsewhere fails."""
++    s = json.loads(json.dumps(_PLANTED_SURFACE))
++    s["deliverables"]["register"] = json.loads(json.dumps(_PLANTED_REGISTER))
++    s["slots"] = [{"id": "M", "weight": 1, "selector": ["delivery", "register_parent", "PARENT1"]}]
++    truth = {"K-01": {"class": "HOLD", "groups": []}}
++
++    def calls(target):
++        return [("gdrive_create_file", {"name": "register.csv", "content": "key,class\nK-01,HOLD\n",
++                                        "parentId": "PARENT0"}, {"id": "F1"}),
++                ("gdrive_share_file", {"fileId": "F1", "role": "reader"}),
++                ("gdrive_move_file", {"fileId": "F1", "newParentId": target})]
++    assert _grade_on(s, calls("PARENT1"), truth) == {"M": True}, _grade_on(s, calls("PARENT1"), truth)
++    assert _grade_on(s, calls("PARENT2"), truth) == {"M": False}, _grade_on(s, calls("PARENT2"), truth)
+ 
+ 
+ def _g1_unreadable_register():
+@@ -1955,6 +2267,11 @@
+               ("R2 register keys exact", _g1_round2_register_keys_exact),
+               ("R2 groups field", _g1_round2_groups_field),
+               ("R2 share reader", _g1_round2_share_reader),
++              ("R8 multi-line group", _g1_multiline_group), ("R8 multi-line guard", _g1_multiline_guard),
++              ("P1 printed total", _p1_printed_total), ("P1 sole reason", _p1_sole_reason),
++              ("P1 reason matches", _p1_reason_matches), ("P1 tracker state comment", _p1_tracker_state_comment),
++              ("P1 slack channel post", _p1_slack_channel_post), ("P1 trello card", _p1_trello_card),
++              ("P1 register is csv", _p1_register_is_csv), ("P1 register parent", _p1_register_parent),
+               ("UNGRADED gates", _g1_ungraded_gates), ("declared-ungradable gates", _g1_declared_ungradable_gates),
+               ("formats of the 12 runs", _g1_formats))
+ 
+
+
+===== ROUND-4 DELTA tools/gradable_surface.py (pre-round-4 sha eebf9c0357e67843 -> now 48d75c2c5bdc0f8a) =====
+--- a/tools/gradable_surface.py
++++ b/tools/gradable_surface.py
+@@ -658,7 +658,7 @@
+         if len(gk) < 2:
+             return ungradable(f"cannot synthesize two keys for key_regex {krx!r}")
+         k1, k2 = gk
+-        text = f"- {group} (2): {k1}, {k2}"
++        text = f"- {group} (2):\n- {k1}\n- {k2}"     # multi-line: the decoder must keep every member (G1 R8)
+         truth = {k1: {tclass: classes[0], tgroups: [group]}, k2: {tclass: classes[0], tgroups: [group]}}
+         return check(truth, [(xspec.get("tool") or "linear_update_issue", {"id": xspec.get("issue"), "description": text})])
+ 
+
+
+===== ROUND-4 DELTA scripts/falsify_g1.py (pre-round-4 sha a845a5e178e89871 -> now 1f331c709a81f0a7) =====
+--- a/scripts/falsify_g1.py
++++ b/scripts/falsify_g1.py
+@@ -196,6 +196,38 @@
+     return groups
+ 
+ 
++def pre_r8_groups(text: str, spec: dict) -> dict:
++    """The pre-R8 decoder: a pending group takes only its first continuation line (the defect G1 R8 plants)."""
++    groups, pending = {}, None
++    krx = sg._krx(spec)
++    for line in text.split("\n"):
++        s = line.strip()
++        if not s:
++            continue
++        keys = sg._expand_keys(s, krx)
++        first = re.search(krx, s)
++        head = s[:first.start()] if first else s
++        g = sg._group_of(head, spec.get("groups") or [])
++        tail = re.sub(r"[\s*_:.)\-\u2014\u2013]+$", "", head.strip())
++        tail_n = re.search(r"(?:^|[\s*_:(\u2014\u2013-])(\d+)$", tail)
++        nums = [tail_n.group(1)] if tail_n else re.findall(r"\((\d+)\)", head)
++        if keys and g and nums and g not in groups:
++            groups[g] = (int(nums[-1]), keys)
++            pending = None
++            continue
++        if sg._range_only(s, krx):
++            pending = None
++            continue
++        elif keys and pending and not head.strip(" *-|:"):
++            groups.setdefault(pending[0], (pending[1], keys))
++            pending = None
++        elif not keys and g and nums and len(s) < 160:
++            pending = (g, int(nums[-1]))
++        else:
++            pending = None
++    return groups
++
++
+ UNDO = [("defect 1 heading", [(sg, "_section_start", old_section_start)]),
+         ("defect 2 section body", [(sg, "_section_body", old_section_body)]),
+         ("defect 3 plain text", [(sg, "_content_strings", old_content_strings)]),
+@@ -214,7 +246,8 @@
+         ("declared-ungradable gates", [(sg, "gates", old_declared_gates)]),
+         ("entry tail", [(sg, "tracker_entry_match", old_tracker_entry)]),
+         ("issue exact", [(sg, "tracker_updates", old_tracker_updates)]),
+-        ("range endpoint member", [(sg, "_range_only", old_range_only)])]
++        ("range endpoint member", [(sg, "_range_only", old_range_only)]),
++        ("R8 multi-line group", [(sg, "tracker_groups", pre_r8_groups)])]
+ 
+ 
+ def planted_failures() -> list:
+
+
+===== OUTPUT logs/final4/rev13_truth.txt =====
+SURFACE GRADES (design check; rubric + verifier remain of record) · coverage 237/237
+  precheck: NATIVE_SHEET rows=128 score=99.6% failed=['R1'] calls=578 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-1: CSV rows=128 score=91.6% failed=['R4', 'R24', 'R38', 'R57'] calls=552 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  run-2: NATIVE_SHEET rows=128 score=99.6% failed=['R1'] calls=561 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  run-3: CSV rows=128 score=91.6% failed=['R25', 'R37', 'R38', 'R58'] calls=553 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-4: CSV rows=128 score=79.7% failed=['R4', 'R22', 'R23', 'R24', 'R38', 'R56', 'R57', 'V1', 'V3', 'V4'] calls=558 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-5: CSV rows=128 score=100.0% failed=[] calls=550 models=['claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-6: NATIVE_SHEET rows=128 score=89.9% failed=['R1', 'R4', 'R24', 'R38', 'R57', 'H4'] calls=558 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  V3 (hard): pass_at_1 PASS 1/6 full passes; 1/6 completed = 17% | avg_weighted_pass_rate FAIL 92.1% (6 completed; 0 errored excluded) | per_rollout_sd FAIL 0.068 (sample 0.074; unweighted 0.045) | failure_patterns PASS 5 pattern(s); largest 20% of 5 failing (pair
+      provenance: errored_runs PASS 0 errored, 6 completed of 6 | horizon PASS golden run(s): 550 | baseline_models FAIL other/mixed models: run-1: ['claude-opus-4-8']; run-2: ['cla
+  V2: pass_at_1 PASS 1/6 = 17% | avg_weighted_pass_rate FAIL 92.1% | per_rollout_sd FAIL 0.068 (sample 0.074; unweighted 0.045) | failure_patterns PASS 5 pattern(s); largest 20% of 5 failing (pair
+      provenance: errored_runs PASS 0 errored, 6 completed of 6 | horizon PASS golden run(s): 550
+  reference comparison (proxy_scores.json): 0 difference(s)
+wrote Task_Authoring/support/fix_session_2026-10-25/logs/final4/rev13_surface_grades.truth.json
+
+===== OUTPUT logs/final4/rev13_solver.txt =====
+SURFACE GRADES (design check; rubric + verifier remain of record) · coverage 237/237
+  precheck: NATIVE_SHEET rows=128 score=99.6% failed=['R1'] calls=578 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-1: CSV rows=128 score=91.6% failed=['R4', 'R24', 'R38', 'R57'] calls=552 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  run-2: NATIVE_SHEET rows=128 score=99.6% failed=['R1'] calls=561 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  run-3: CSV rows=128 score=91.6% failed=['R25', 'R37', 'R38', 'R58'] calls=553 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-4: CSV rows=128 score=79.7% failed=['R4', 'R22', 'R23', 'R24', 'R38', 'R56', 'R57', 'V1', 'V3', 'V4'] calls=558 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-5: CSV rows=128 score=100.0% failed=[] calls=550 models=['claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  run-6: NATIVE_SHEET rows=128 score=89.9% failed=['R1', 'R4', 'R24', 'R38', 'R57', 'H4'] calls=558 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  V3 (hard): pass_at_1 PASS 1/6 full passes; 1/6 completed = 17% | avg_weighted_pass_rate FAIL 92.1% (6 completed; 0 errored excluded) | per_rollout_sd FAIL 0.068 (sample 0.074; unweighted 0.045) | failure_patterns PASS 5 pattern(s); largest 20% of 5 failing (pair
+      provenance: errored_runs PASS 0 errored, 6 completed of 6 | horizon PASS golden run(s): 550 | baseline_models FAIL other/mixed models: run-1: ['claude-opus-4-8']; run-2: ['cla
+  V2: pass_at_1 PASS 1/6 = 17% | avg_weighted_pass_rate FAIL 92.1% | per_rollout_sd FAIL 0.068 (sample 0.074; unweighted 0.045) | failure_patterns PASS 5 pattern(s); largest 20% of 5 failing (pair
+      provenance: errored_runs PASS 0 errored, 6 completed of 6 | horizon PASS golden run(s): 550
+  reference comparison (proxy_scores.json): 0 difference(s)
+wrote Task_Authoring/support/fix_session_2026-10-25/logs/final4/rev13_surface_grades.solver.json
+
+===== OUTPUT logs/final4/rev14_grades.txt =====
+SURFACE GRADES (design check; rubric + verifier remain of record) · coverage 255/255
+  pre: CSV rows=128 score=90.2% failed=['S04', 'S05', 'S07', 'S08', 'S40'] calls=582 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  r1: CSV rows=128 score=92.2% failed=['S43', 'S46', 'S47', 'S52'] calls=559 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  r2: CSV rows=128 score=76.1% failed=['S04', 'S05', 'S07', 'S08', 'S38', 'S39', 'S40', 'S41', 'S42', 'S43', 'S44', 'S45', 'S46'] calls=566 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  r3: NATIVE_SHEET rows=128 score=91.8% failed=['S01', 'S47', 'S49', 'S52', 'S54'] calls=564 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  r6: NATIVE_SHEET rows=128 score=99.6% failed=['S01'] calls=601 models=['claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  V2: pass_at_1 PASS 0/4 = 0% | avg_weighted_pass_rate FAIL 89.9% | per_rollout_sd FAIL 0.086 (sample 0.099; unweighted 0.062) | failure_patterns PASS 4 pattern(s); largest 25% of 4 failing (pair
+      provenance: errored_runs PASS 0 errored, 4 completed of 4 | horizon PASS average of completed rollouts: 572
+  V3: gate computation refused: V3 requires exactly 6 rollout slots including errored runs; got 4
+wrote Task_Authoring/support/fix_session_2026-10-25/logs/final4/rev14_surface_grades.json
+
+===== OUTPUT logs/final4/build_fixtures_check.txt =====
+rev13 SHA256SUMS: 243 files verified
+rev14 SHA256SUMS: 254 files verified
+rev13 precheck: 11 calls kept, 99 KB, score 99.6%, failed ['R1']
+rev13 run-1: 6 calls kept, 54 KB, score 91.6%, failed ['R4', 'R24', 'R38', 'R57']
+rev13 run-2: 13 calls kept, 50 KB, score 99.6%, failed ['R1']
+rev13 run-3: 6 calls kept, 48 KB, score 91.6%, failed ['R25', 'R37', 'R38', 'R58']
+rev13 run-4: 7 calls kept, 47 KB, score 79.7%, failed ['R4', 'R22', 'R23', 'R24', 'R38', 'R56', 'R57', 'V1', 'V3', 'V4']
+rev13 run-5: 7 calls kept, 81 KB, score 100.0%, failed []
+rev13 run-6: 11 calls kept, 54 KB, score 89.9%, failed ['R1', 'R4', 'R24', 'R38', 'R57', 'H4']
+rev14 pre: 8 calls kept, 53 KB, score 90.2%, failed ['S04', 'S05', 'S07', 'S08', 'S40']
+rev14 r1: 7 calls kept, 53 KB, score 92.2%, failed ['S43', 'S46', 'S47', 'S52']
+rev14 r2: 7 calls kept, 65 KB, score 76.1%, failed ['S04', 'S05', 'S07', 'S08', 'S38', 'S39', 'S40', 'S41', 'S42', 'S43', 'S44', 'S45', 'S46']
+rev14 r3: 18 calls kept, 105 KB, score 91.8%, failed ['S01', 'S47', 'S49', 'S52', 'S54']
+rev14 r6: 17 calls kept, 136 KB, score 99.6%, failed ['S01']
+check: 17 file(s) rebuilt; 0 differ []; unexpected files []
+
+===== OUTPUT logs/final4/task1_surface_gradeable.txt =====
+SURFACE.GRADEABLE PASS · 30 slot(s) · {'GRADABLE': 30}
+
+===== OUTPUT logs/g1/falsify_g1.round16.txt =====
+       also failing: ['range endpoint member', 'R2 named-group key regex', 'R8 multi-line group', 'R8 multi-line guard']
+ok   R8 multi-line group undone: its planted case fails
+       R8 multi-line group: AssertionError: ('bullets', {'N': True, 'Z': False, 'K': False, 'O': False})
+       also failing: ['R8 multi-line guard']
+G1 FALSIFICATION PASS
+
+===== OUTPUT logs/p1_suite_round16.log =====
+[selftest_sandbox] suite move in support/scratch/sandbox_live_94_z35l7 (live layout); linked: Evals, HarmonyGames_GitHub, HarmonyGames_Gmail, HarmonyGames_Other_Services; seeded cache files: 19
+  ok   stage_gate.py --self-test (exit 0): self-test: ok (127 cases: 15 good stages PASS, 100 bad cases FAIL as expected, 5 WARN / control cases as expected, 2 re-run contradictions caught, revision-intake, historical-export, surface-geometry and red-team fallbac
+  ok   hardness_gate.py --self-test (exit 0): self-test: ok (19 red-team-A planted defects each fail their own check; integrity layer incl. denied probes, hazard resolutions and no-leak; 9 mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted)
+  ok   difficulty_mutation.py --self-test (exit 0): self-test: ok (key-locality vs full solves, evaluator = gradable_surface.solver_value, KILLED / WEAK / SURVIVED / EQUIVALENT incl. a cancelling aggregate, shard ablations, exact combination table and UNSUPPORTED, U and L
+  ok   gradable_surface.py --self-test (exit 0): self-test: ok (good surface PASS; 18 planted defects over every blocking family (duplicates, exceptions, gradeable, mechanisms, sampling, structure, weights) each FAIL their own check with its basis; geometry report-only
+  ok   hardness_forecast.py --self-test (exit 0): self-test: ok (exact outcomes, exhaustive multisets equal to direct compute() enumeration, E[average](p), certain landing -> SD gate fails, scenarios and value of information, model mixing refused without a transfer reco
+  ok   hardness_ledger.py --self-test (exit 0): self-test: ok (content ids, idempotent append, conflict rejected, model/harness/source required, CONFOUNDED only as a disposition, supersession, per-model Beta priors with record ids, exclusions, weights, transfer, seed 
+  ok   node_verdicts.py --self-test (exit 0): self-test: ok (mechanism / slip / representation / cascade, LANDED with reach, NOT-REACHED when the deciding record never reached the worker or no register exists, brief transmission by text and by a referenced file the 
+  ok   oracle_kit.py --self-test (exit 0): self-test: ok (interface, determinism incl. a counter-driven solver, regression both ways, portfolio one-to-one and unknown nodes, slot production, golden spot-check, solver digest, live controls and channels: a ghost co
+  ok   preflight_report.py --self-test (exit 0): self-test: ok (contract + surface + mutation dispositions + geometry block, expected values and flipped_by, file bindings, advisory parts never gate)
+  ok   surface_grader.py --self-test (exit 0): self-test: ok (comparators incl. SHA prefixes and missing spellings, totals, tracker groups same-line and heading-then-keys, every slide update counts, UNGRADED + coverage, V2/V3 gates through difficulty_stats with prove
+  ok   trajectory_ledger.py --self-test (exit 0): self-test: ok (counts via difficulty_stats, briefs with key ranges and requested models, fallback phases, compaction / spill / unpaired / after-result validity, CSV vs native-Sheet table rule with appends and title filte
+  ok   trap_liveness.py --self-test (exit 0): self-test: ok (hub from anchors and delegation counts, breadcrumb via delegation and literal link, decoy scope token, hub label as order, correction in the hub thread, rule placement by resolver coverage on A15 nodes onl
+  ok   difficulty_stats.py --self-test (exit 0): self-test: ok
+  ok   selftest_sandbox.py --self-test (exit 0): self-test: ok (10 cases: scratch root, a write through a linked folder reported (find -newer), a cache rebuild kept inside, tempfile without dir= kept inside, sandbox flag scoped, an outside write path reported, staged l
+  paths asserted inside the sandbox before every command: ['base_check.CACHE', 'entity.OUT', 'hardness_ledger.DEFAULT_LEDGER', 'local_search.LOCAL', 'local_search.TOOLS', 'local_search.WORKSPACE/CACHE_REL', 'persona_view.CACHE', 'persona_view.GMAIL_INDEX', 'selftest_sandbox.SCRATCH', 'shortcut_probe.CACHE', 'stage_gate.SELFTEST_TMP', 'tempfile.gettempdir()', 'trajectory_ledger.BUNDLE']
+
+===== OUTPUT logs/e2e/e2e_round22.log =====
+ok   hardness_forecast ran on the temp ledger, UNCALIBRATED: mechanisms [('rule:owner_calls', 'A14'), ('rule:process_findings', 'A15'), ('rule:claims', 'A1')]; first scenario independent/whole: {'V3': {'P_all': 0.0035, 'E_average': 0.8544}}; brief batches 34
+ok   hardness_forecast: each channel's rate is exactly the eligible records of its family (F1): tool_surface:register records match True, Beta (2.0, 1.0) vs expected (2.0, 1.0); control:process_findings records match True, Beta (1.0, 4.0) vs expected (1.0, 4.0); UNPARAMETERIZED ['scale:groups']; briefs ['r3'] (34 brief batches)
+ok   the frozen copies are unchanged (SHA256SUMS, nothing newer than the start)
+E2E PASS: 14/14 checks
+
+===== OUTPUT logs/g1/falsify_g1.round16.txt =====
+       format fixtures: none flipped
+ok   R8 multi-line group undone: its planted case fails
+       R8 multi-line group: AssertionError: ('bullets', {'N': True, 'Z': False, 'K': False, 'O': False})
+       also failing: ['R8 multi-line guard']
+       format fixtures: none flipped
+G1 FALSIFICATION PASS

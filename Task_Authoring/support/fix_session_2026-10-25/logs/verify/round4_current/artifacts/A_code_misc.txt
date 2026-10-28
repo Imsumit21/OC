@@ -1,0 +1,105 @@
+CONTEXT
+P1 remediation of Task_Authoring (stdlib-only tools that author/check HarmonyGames V3 tasks). The round-3 independent
+verification failed 8 bundles; this artifact contains the ROUND-4 DELTA against the exact tree that verifier reviewed
+(the pre-round-4 copies are the session's own rollback files, sha256 in each delta header) plus the raw acceptance
+outputs. Rounds 1-3 reviewed the rest of the full P1 diff; nothing outside the deltas below changed in round 4 except
+the new F1 acceptance files (shown in full). Hard rules: SQL is parsed, never executed; the frozen backtests
+(support/backtests/season_pass/rev13|rev14) are read-only and verified by SHA256SUMS; self-tests run in a sandbox and
+write no shared cache; each fix carries a planted case and a falsification undo.
+
+===== ROUND-4 DELTA tools/gradable_surface.py (pre-round-4 sha eebf9c0357e67843 -> now 48d75c2c5bdc0f8a) =====
+--- a/tools/gradable_surface.py
++++ b/tools/gradable_surface.py
+@@ -658,7 +658,7 @@
+         if len(gk) < 2:
+             return ungradable(f"cannot synthesize two keys for key_regex {krx!r}")
+         k1, k2 = gk
+-        text = f"- {group} (2): {k1}, {k2}"
++        text = f"- {group} (2):\n- {k1}\n- {k2}"     # multi-line: the decoder must keep every member (G1 R8)
+         truth = {k1: {tclass: classes[0], tgroups: [group]}, k2: {tclass: classes[0], tgroups: [group]}}
+         return check(truth, [(xspec.get("tool") or "linear_update_issue", {"id": xspec.get("issue"), "description": text})])
+ 
+
+
+===== OUTPUT logs/final4/v1_acceptance.txt =====
+default expected model (rev14 working_files/00_Task_Context.json baseline_model): claude-opus-5-5
+ok   pre: models ['claude-opus-4-8', 'claude-opus-5'] · default: v3_valid False (INVALID) · mixed True · expected 4.8: INVALID · synthetic 45 · fallback events [1092]
+       off 4.8: claude-opus-5 · main · 347 message(s), events 1122-6752 · after fallback event 1092
+       off 4.8: claude-opus-5[1m] · init · 12 message(s), events 5484-6498 · after fallback event 1092
+ok   r1: models ['claude-opus-4-8', 'claude-opus-5'] · default: v3_valid False (INVALID) · mixed True · expected 4.8: INVALID · synthetic 29 · fallback events [1843]
+       off 4.8: claude-opus-5 · main · 277 message(s), events 1855-5607 · after fallback event 1843
+ok   r2: models ['claude-opus-4-8', 'claude-opus-5'] · default: v3_valid False (INVALID) · mixed True · expected 4.8: INVALID · synthetic 59 · fallback events [674]
+       off 4.8: claude-opus-5 · main · 659 message(s), events 732-6213 · after fallback event 674
+ok   r3: models ['claude-opus-4-8'] · default: v3_valid False (INVALID) · mixed False · expected 4.8: VALID · synthetic 27 · fallback events []
+ok   r6: models ['claude-opus-4-8', 'claude-opus-5'] · default: v3_valid False (INVALID) · mixed True · expected 4.8: INVALID · synthetic 0 · fallback events [198]
+       off 4.8: claude-opus-5 · main · 686 message(s), events 217-2575 · after fallback event 198
+ok   model gate on the five rev14 runs: FAIL (Model Provenance) - missing provenance: pre, r1, r2, r3, r6; other/mixed models: pre: ['claude-opus-4-8', 'claude-opus-5']; r1: ['claude-opus-4-8', 'claude-opus-5']; r2: ['claude-o
+ok   L4 rev13 pre-check: with the fallback event [5855]: mixed True, off [('claude-opus-5', 'main', 1, 5855)]; fallback event removed: mixed True, valid INVALID, off [('claude-opus-5', 'main', 1)]
+ok   synthetic Opus 5.5 run: v3_valid True · mixed False · models ['claude-opus-5-5'] · synthetic 1
+V1 ACCEPTANCE PASS
+
+===== OUTPUT logs/final4/task1_surface_gradeable.txt =====
+SURFACE.GRADEABLE PASS · 30 slot(s) · {'GRADABLE': 30}
+
+===== OUTPUT logs/final4/rev14_grades.txt =====
+SURFACE GRADES (design check; rubric + verifier remain of record) · coverage 255/255
+  pre: CSV rows=128 score=90.2% failed=['S04', 'S05', 'S07', 'S08', 'S40'] calls=582 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  r1: CSV rows=128 score=92.2% failed=['S43', 'S46', 'S47', 'S52'] calls=559 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  r2: CSV rows=128 score=76.1% failed=['S04', 'S05', 'S07', 'S08', 'S38', 'S39', 'S40', 'S41', 'S42', 'S43', 'S44', 'S45', 'S46'] calls=566 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  r3: NATIVE_SHEET rows=128 score=91.8% failed=['S01', 'S47', 'S49', 'S52', 'S54'] calls=564 models=['<synthetic>', 'claude-opus-4-8', 'claude-opus-4-8[1m]'] V3-INVALID
+  r6: NATIVE_SHEET rows=128 score=99.6% failed=['S01'] calls=601 models=['claude-opus-4-8', 'claude-opus-4-8[1m]', 'claude-opus-5', 'claude-opus-5[1m]'] MIXED-MODEL V3-INVALID
+  V2: pass_at_1 PASS 0/4 = 0% | avg_weighted_pass_rate FAIL 89.9% | per_rollout_sd FAIL 0.086 (sample 0.099; unweighted 0.062) | failure_patterns PASS 4 pattern(s); largest 25% of 4 failing (pair
+      provenance: errored_runs PASS 0 errored, 4 completed of 4 | horizon PASS average of completed rollouts: 572
+  V3: gate computation refused: V3 requires exactly 6 rollout slots including errored runs; got 4
+wrote Task_Authoring/support/fix_session_2026-10-25/logs/final4/rev14_surface_grades.json
+
+===== OUTPUT logs/final4/build_fixtures_check.txt =====
+rev13 SHA256SUMS: 243 files verified
+rev14 SHA256SUMS: 254 files verified
+rev13 precheck: 11 calls kept, 99 KB, score 99.6%, failed ['R1']
+rev13 run-1: 6 calls kept, 54 KB, score 91.6%, failed ['R4', 'R24', 'R38', 'R57']
+rev13 run-2: 13 calls kept, 50 KB, score 99.6%, failed ['R1']
+rev13 run-3: 6 calls kept, 48 KB, score 91.6%, failed ['R25', 'R37', 'R38', 'R58']
+rev13 run-4: 7 calls kept, 47 KB, score 79.7%, failed ['R4', 'R22', 'R23', 'R24', 'R38', 'R56', 'R57', 'V1', 'V3', 'V4']
+rev13 run-5: 7 calls kept, 81 KB, score 100.0%, failed []
+rev13 run-6: 11 calls kept, 54 KB, score 89.9%, failed ['R1', 'R4', 'R24', 'R38', 'R57', 'H4']
+rev14 pre: 8 calls kept, 53 KB, score 90.2%, failed ['S04', 'S05', 'S07', 'S08', 'S40']
+rev14 r1: 7 calls kept, 53 KB, score 92.2%, failed ['S43', 'S46', 'S47', 'S52']
+rev14 r2: 7 calls kept, 65 KB, score 76.1%, failed ['S04', 'S05', 'S07', 'S08', 'S38', 'S39', 'S40', 'S41', 'S42', 'S43', 'S44', 'S45', 'S46']
+rev14 r3: 18 calls kept, 105 KB, score 91.8%, failed ['S01', 'S47', 'S49', 'S52', 'S54']
+rev14 r6: 17 calls kept, 136 KB, score 99.6%, failed ['S01']
+check: 17 file(s) rebuilt; 0 differ []; unexpected files []
+
+===== OUTPUT logs/p1_suite_round16.log =====
+  ok   stage_gate.py --self-test (exit 0): self-test: ok (127 cases: 15 good stages PASS, 100 bad cases FAIL as expected, 5 WARN / control cases as expected, 2 re-run contradictions caught, revision-intake, historical-export, surface-geometry and red-team fallbac
+  ok   hardness_gate.py --self-test (exit 0): self-test: ok (19 red-team-A planted defects each fail their own check; integrity layer incl. denied probes, hazard resolutions and no-leak; 9 mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted)
+  ok   difficulty_mutation.py --self-test (exit 0): self-test: ok (key-locality vs full solves, evaluator = gradable_surface.solver_value, KILLED / WEAK / SURVIVED / EQUIVALENT incl. a cancelling aggregate, shard ablations, exact combination table and UNSUPPORTED, U and L
+  ok   gradable_surface.py --self-test (exit 0): self-test: ok (good surface PASS; 18 planted defects over every blocking family (duplicates, exceptions, gradeable, mechanisms, sampling, structure, weights) each FAIL their own check with its basis; geometry report-only
+  ok   hardness_forecast.py --self-test (exit 0): self-test: ok (exact outcomes, exhaustive multisets equal to direct compute() enumeration, E[average](p), certain landing -> SD gate fails, scenarios and value of information, model mixing refused without a transfer reco
+  ok   hardness_ledger.py --self-test (exit 0): self-test: ok (content ids, idempotent append, conflict rejected, model/harness/source required, CONFOUNDED only as a disposition, supersession, per-model Beta priors with record ids, exclusions, weights, transfer, seed 
+  ok   node_verdicts.py --self-test (exit 0): self-test: ok (mechanism / slip / representation / cascade, LANDED with reach, NOT-REACHED when the deciding record never reached the worker or no register exists, brief transmission by text and by a referenced file the 
+  ok   oracle_kit.py --self-test (exit 0): self-test: ok (interface, determinism incl. a counter-driven solver, regression both ways, portfolio one-to-one and unknown nodes, slot production, golden spot-check, solver digest, live controls and channels: a ghost co
+  ok   preflight_report.py --self-test (exit 0): self-test: ok (contract + surface + mutation dispositions + geometry block, expected values and flipped_by, file bindings, advisory parts never gate)
+  ok   surface_grader.py --self-test (exit 0): self-test: ok (comparators incl. SHA prefixes and missing spellings, totals, tracker groups same-line and heading-then-keys, every slide update counts, UNGRADED + coverage, V2/V3 gates through difficulty_stats with prove
+  ok   trajectory_ledger.py --self-test (exit 0): self-test: ok (counts via difficulty_stats, briefs with key ranges and requested models, fallback phases, compaction / spill / unpaired / after-result validity, CSV vs native-Sheet table rule with appends and title filte
+  ok   trap_liveness.py --self-test (exit 0): self-test: ok (hub from anchors and delegation counts, breadcrumb via delegation and literal link, decoy scope token, hub label as order, correction in the hub thread, rule placement by resolver coverage on A15 nodes onl
+  ok   difficulty_stats.py --self-test (exit 0): self-test: ok
+  ok   selftest_sandbox.py --self-test (exit 0): self-test: ok (10 cases: scratch root, a write through a linked folder reported (find -newer), a cache rebuild kept inside, tempfile without dir= kept inside, sandbox flag scoped, an outside write path reported, staged l
+
+===== OUTPUT logs/e2e/e2e_round22.log =====
+ok   node_verdicts ran
+ok   the pre-check has 0 designed landings: LANDED none; go rule 0 ['process_findings:SP-110']
+ok   SP-110 is an M2 control record from an Opus 5 brief: OVER-APPLIED {'handoff class': 'WATCH'} (truth {'handoff class': 'READY'}), decided by the brief at event 6049 (claude-opus-5); briefs [[632, 'claude-opus-4-8'], [1835, 'claude-opus-5'], [5017, 'claude-opus-5'], [6049, 'claude-opus-5']]
+     r1: LANDED {'fixture_binding': ['SP-016']}; controls over-applied none; pending review none; go rule 0
+     r2: LANDED {'process_findings': ['SP-108', 'SP-114']}; controls over-applied none; pending review {'acceptance': ['SP-101'], 'history': ['SP-101']}; go rule 0
+     r3: LANDED none; controls over-applied none; pending review none; go rule 0
+     r6: LANDED none; controls over-applied none; pending review none; go rule 0
+ok   surface_grader: the failed-slot sets of record: pre 90.2% ['S04', 'S05', 'S07', 'S08', 'S40']; r1 92.2% ['S43', 'S46', 'S47', 'S52']; r2 76.1% ['S04', 'S05', 'S07', 'S08', 'S38', 'S39', 'S40', 'S41', 'S42', 'S43', 'S44', 'S45', 'S46']; r3 91.8% ['S01', 'S47', 'S49', 'S52', 'S54']; r6 99.6% ['S01']
+ok   r3's S43/S44 and S69-S71 pass: {'S43': True, 'S44': True, 'S69': True, 'S70': True, 'S71': True}
+ok   the temp ledger takes the control and channel records; no prior moves: 20 record(s) (15 control, 5 channel); models ['claude-opus-4-8', 'claude-opus-5']; 19 Opus 4.8 families compared
+ok   the verdict proposals append; exactly the pending reviews are refused: 50 verdict(s); accepted 48, pending ['r2:acceptance', 'r2:history'] (known: ['r2:acceptance', 'r2:history']); rejected lines 2 all pending review: True; ledger ids exactly before + accepted: True; append head 'added 48 · already present 0 · rejected 2'
+ok   the verdicts move only the families of the non-mixed run r3 (mixed runs stay out by default): moved {'claude-opus-4-8': {'A1': [(None, None), (1.0, 2.0)], 'A13': [(1.8571, 3.4571), (1.8571, 3.5238)], 'A14': [(1.1429, 3.3143), (1.1429, 3.381)], 'A15': [(2.1429, 3.1714), (2.1429, 3.2381)], 'A17': [(2.5705, 2.8544), (2.5038, 2.9877)], 'A19': [(1.8571, 2.6), (1.8571, 2.6667)]}, 'claude-opus-5': {}}; r3 families ['A1', 'A13', 'A14', 'A15', 'A17', 'A19']
+ok   hardness_forecast ran on the temp ledger, UNCALIBRATED: mechanisms [('rule:owner_calls', 'A14'), ('rule:process_findings', 'A15'), ('rule:claims', 'A1')]; first scenario independent/whole: {'V3': {'P_all': 0.0035, 'E_average': 0.8544}}; brief batches 34
+ok   hardness_forecast: each channel's rate is exactly the eligible records of its family (F1): tool_surface:register records match True, Beta (2.0, 1.0) vs expected (2.0, 1.0); control:process_findings records match True, Beta (1.0, 4.0) vs expected (1.0, 4.0); UNPARAMETERIZED ['scale:groups']; briefs ['r3'] (34 brief batches)
+ok   the frozen copies are unchanged (SHA256SUMS, nothing newer than the start)
+E2E PASS: 14/14 checks

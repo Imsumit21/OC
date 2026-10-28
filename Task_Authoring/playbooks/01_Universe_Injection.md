@@ -1,6 +1,6 @@
 # 01 — Universe Injection (Playbook) — HarmonyGames · Spec V2 · effective profile (extreme by default)
 
-> Command: `/create-injection` · Writes: `task_inputs/01_Universe_Inject.sql` + `task_inputs/Working_Files/01_Grounding_Dossier.md` + final `task_inputs/Working_Files/01_Hardness_Manifest.json` · Checks: `tools/sql_lint.py`, `tools/base_check.py`, `tools/fact_check.py`, `tools/persona_view.py check-sql`, `tools/hardness_gate.py`, **`tools/stage_gate.py injection` (blocking)** · Paired eval: `/injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`, `references/Ask_Carriers.md`
+> Command: `/create-injection` · Writes: `task_inputs/01_Universe_Inject.sql` + `task_inputs/Working_Files/01_Grounding_Dossier.md` + final `task_inputs/Working_Files/01_Hardness_Manifest.json` + `Working_Files/solver/solver.py` + `Working_Files/01c_Dispositions.json` + `Working_Files/01c_Preflight_Report.json` (+ `.md`) · Checks: `tools/sql_lint.py`, `tools/base_check.py`, `tools/fact_check.py`, `tools/persona_view.py check-sql`, `tools/hardness_gate.py`, `tools/oracle_kit.py check`, `tools/difficulty_mutation.py`, `tools/preflight_report.py`, **`tools/stage_gate.py injection` (blocking)**; advisory (UNCALIBRATED): `tools/trap_liveness.py`, `tools/hardness_forecast.py --preregister` · Paired eval: `/injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`, `references/Ask_Carriers.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §4.5
 
 ## Purpose
 
@@ -24,6 +24,10 @@ outputs of later stages (reference files, error/async configuration, the hardeni
 inputs of this stage — their gates need an injection PASS, so consuming them would make a freshness
 cycle (red team A, R1 #18).
 
+**Loop.** An SQL-level fix stays here: re-run S4b–S5e and the gate. A design-level fix returns to `/create-scenario`
+with a `design_delta`. Revision N+1 is this stage run again, against the previous revision's SQL and truth
+(`oracle_kit.py check --previous-sql --previous-truth`).
+
 This stage never drafts prompt, Oracle Event or criterion text (GEN_EXECUTION §2). What the
 human needs goes into the dossier as structured facts.
 
@@ -39,7 +43,8 @@ precedence over older Evals/V2 references; local authorship and hardness-profile
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs
-- `task_inputs/00_Assigments.md`, `01_Scenario_Design.md`, the draft `01_Hardness_Manifest.draft.json`.
+- `task_inputs/00_Assigments.md`, `01_Scenario_Design.md`, the draft `01_Hardness_Manifest.draft.json`, the gradable
+  surface `01_Gradable_Surface.json` (read only: this stage never rewrites it).
   Nothing else from `task_inputs/`: reference files, error/async configuration and hardening outputs come later.
 - `references/Ask_Carriers.md` — carriers, companion-field integrity, ID derivation, quoting, SQL skeletons.
 - `references/Native_Artifact_Anatomy.md` — voice, length, naming per service.
@@ -51,7 +56,17 @@ Output
 - `task_inputs/Working_Files/01_Grounding_Dossier.md` — grounding blocks 1.A–1.F · record ledger · findability and discovery-order proofs · self-validation table · integrations and companions · touched-data census and coherence hazards · intended disagreements · constraints for the prompt brief · **Facts for the human** · fact sheet · platform follow-ups · Self-review (tool outputs verbatim). The gate looks these headings up by name.
 - `task_inputs/Working_Files/01_Hardness_Manifest.json` — the final manifest: the draft's ids (any change listed in
   `design_delta`), the same `effective_profile`, plus everything only the SQL can settle (delegation quotes,
-  version timestamps, `facts` with `home_ids`).
+  version timestamps, `facts` with `home_ids`), the `mechanism_portfolio`, and `solver {path, digest}`,
+  `gradable_surface` and `preflight {report, digest}`.
+- `task_inputs/Working_Files/solver/solver.py` (S4b) — the task's solver (`tools/oracle_kit.py` contract); it owns
+  truth: `solver/truth.json`, every total in the dossier and in Facts for the human, and later the OE / rubric
+  expected values come from it (`Hardness_Mastery.md` §2.6 item 14).
+- `task_inputs/Working_Files/01c_Dispositions.json` (S5b, S5c) — your written disposition for every mutation result
+  and every liveness flag.
+- `task_inputs/Working_Files/01c_Preflight_Report.json` (+ `.md`, S5e) — written by `tools/preflight_report.py`, bound
+  by sha256 to the SQL, solver, surface, manifest and dispositions it checked.
+- `task_inputs/Working_Files/run_forensics/<rev>/01_Universe_Inject.sql` (S5e) — this revision's SQL, stored byte for
+  byte and never edited: revision binding compares every run against every stored revision.
 
 ## Hard gates
 
@@ -69,6 +84,20 @@ Output
 12. **Facts declared, consistent and not leaked.** Declare every load-bearing fact (amounts, dates, counts, names, statuses, ids, versions) in the manifest's `facts` field (`references/Hardness_Manifest_Spec.md`); give every per-record fact its `home_ids` (the per-record carrier rows). `tools/fact_check.py --no-leak` verifies them against every text the SQL writes and fails a per-record value that also appears outside its home rows — above all in bulk-readable rows (Slack messages, Linear issue descriptions, Sheets cells, Confluence bodies). Its PASS output goes in the dossier's fact sheet.
 13. **Stage gate.** `tools/stage_gate.py injection` PASS; handoff is blocked until it passes.
 14. **Friction-compatible.** The task stays solvable without any tool `03_Error_Async_Config.txt` kills. (Evidence: forced errors and async waits do not make Opus fail — every run routed around them. Use them only to add realism.)
+15. **Solver contract** (S4b, blocking, `solver.contract`): deterministic; reproduces the previous revision's truth on
+    the previous SQL; rules ↔ `mechanism_portfolio` one-to-one; every direct and aggregate surface slot produced; golden
+    values spot-checked against their records.
+16. **Every mutation result dispositioned** (S5b, blocking, `mutation.dispositions`): each KILLED / WEAK / SURVIVED /
+    EQUIVALENT rule or degrade mutant and each intervention carries a written disposition — EQUIVALENT is never
+    auto-labelled FALSE.
+17. **Geometry can reach the cap** (S5b′, blocking, `geometry.upper_bound`): the flippable-weight upper bound U must
+    exceed 1 − cap. If it does not, no supported failure state of the designed mechanisms can clear the cap: redesign the
+    deliverables. When the solver is not composable (not key-local), U is no guaranteed bound: it reads UNVERIFIED and
+    passes only with a written `geometry.U` disposition in `01c_Dispositions.json` (`"geometry": {"geometry.U":
+    {disposition: accepted-unverified | redesign | solver-gap, reason}}`), never a BLOCK.
+
+Advisory (UNCALIBRATED; never blocking): the geometry margin L_max, liveness flags (each with a written disposition),
+optional blind probes, and the pre-registered forecast.
 
 ## Procedure
 
@@ -117,6 +146,28 @@ decisive clause on which it differs.
 - **Companions.** For every seeded record whose service has an automated mirror, look it up in `references/universe_kb/integrations.json` and seed the companion with the exact `shape` inside the integration's active `window`, at its base rate (e.g. `INT-01` GitHub app → `#engineering-bots` only for GameOfDominoes, backend and match3d in their windows; `INT-11` invitation mails; `INT-03` linear[bot] PR comment). Record each decision in the dossier's **Integrations and companions** table (service · INT id · companion seeded or none · reason).
 - **Text.** Match 1.C voice: varied length, fragments, half-answers, typos where the author has them. No AI tells, no tidy completeness, no em-dash-heavy prose in casual channels. Seed claims and evidence, never conclusions.
 
+### S4b — Solver completion (blocking)
+- [ ] Complete `Working_Files/solver/solver.py` from the design's `mechanism_portfolio`: one rule per mechanism node,
+      each with its natural-reading fallback, `load_state` (base records through `tools/hg.py`, SQL rows through
+      `base_check.parse_sql` — never executed), `solve(state, disable, degrade, keys_)` with per-record ablations
+      (`(rule, key set)`), `aggregates`, `evidence`, and where possible `touched`, `deciding` and the `DEGRADES`
+      operators (`tools/oracle_kit.py` docstring). Declare what the design has, so the tools can see it:
+      - **Controls.** A rule's control members, and the operator that over-applies the rule to them (`controls`,
+        `over_application`). `node_verdicts` reports each written control as a control trial (OVER-APPLIED or
+        HELD), never a landing.
+      - **Complexity channels** (`CHANNELS`: `kind`, `degrade`, `members`, optional `latent` and `family`; or surface
+        `slots` when the solver can't express the failure). Geometry U counts them, `node_verdicts` reports each per
+        run, and the forecast models them.
+      - **Base routes.** `base_route(record_id)`, so the golden check reads base records through `tools/hg.py records`.
+
+      `contract.controls` checks that every declared control and channel is live.
+- [ ] `python3 Task_Authoring/tools/oracle_kit.py check --task-dir Task_Authoring/task_inputs [--previous-sql <revision N-1
+      SQL> --previous-truth <its truth.json>]` → PASS. Then
+      `python3 Task_Authoring/tools/oracle_kit.py truth --task-dir Task_Authoring/task_inputs --out Task_Authoring/task_inputs/Working_Files/solver/truth.json`.
+- [ ] Every total in the dossier and in Facts for the human comes from `truth.json`. Spot-check the golden values the
+      contract lists as unverified (base records) through `tools/hg.py`.
+- [ ] Record `solver {path, digest}` in the final manifest.
+
 ### S5 — Validate
 
 - [ ] `python3 Task_Authoring/tools/sql_lint.py Task_Authoring/task_inputs/01_Universe_Inject.sql` → 0 errors; every warning dispositioned in the dossier.
@@ -147,6 +198,69 @@ decisive clause on which it differs.
 - [ ] Lazy-solver pass on the implemented records (first hits, no threads, bulk shortcuts, stop at the first conclusion) — fix every point it scores.
 - [ ] Local red team (recommended): `python3 Task_Authoring/tools/redteam_review.py --mode redteam --dual --in Task_Authoring/task_inputs/Working_Files/01_Grounding_Dossier.md --in Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.json --out Task_Authoring/task_inputs/Working_Files/01b_Redteam_Review.md`.
 - [ ] **Stage gate (blocking):** `python3 Task_Authoring/tools/stage_gate.py injection Task_Authoring/task_inputs --paste` → `STAGE GATE injection: PASS`. It re-runs `sql_lint`, `base_check`, `fact_check --no-leak`, `hardness_gate` (at the manifest's `effective_profile`) and `persona_view` and compares them with the pastes, requires the upstream scenario PASS to be current, the final manifest to keep every draft id or list it in `design_delta`, every anchor name to be a noun phrase of ≤ 6 words, a disposition line per `sql_lint` warning class, the KB citations and the self-review. `--paste` writes the PASS into the Self-review.
+
+### S5b — Mutation and interventions (blocking: a written disposition for every result)
+- [ ] `python3 Task_Authoring/tools/difficulty_mutation.py mutate --task-dir Task_Authoring/task_inputs` (plan §7.2):
+      every rule ablation, rule × shard ablation, degrade, and the exact whole-mechanism combination table (k ≤ 8, else
+      UNSUPPORTED; `--max-k N` above 8 runs only with `--allow-max-k N`, an explicit override disclosed in the output,
+      the same in `hardness_forecast.py` and `preflight_report.py`), each diagnosed KILLED / WEAK / SURVIVED / EQUIVALENT on the gradable surface; plus one intervention per
+      node (its injected deciding records removed from an in-memory copy of the SQL): load-bearing, inert, or escaped
+      (a record outside the node's closure changed — undeclared coupling).
+- [ ] Write a disposition for every rule mutant, degrade mutant and intervention in `Working_Files/01c_Dispositions.json`
+      (`{"mutation": {id: {disposition, reason}}}`; dispositions `live`, `weak-accepted`, `redesign`, `retire`,
+      `redundant`, `masked`, `solver-gap`). EQUIVALENT may be a FALSE trap, a redundant rule, a masking interaction or an
+      incomplete solver: the author decides which.
+
+### S5b′ — Geometry (U blocking, L_max advisory)
+- [ ] `python3 Task_Authoring/tools/difficulty_mutation.py geometry --task-dir Task_Authoring/task_inputs` (plan §5):
+      U = the weight share the designed mechanisms can flip (every per-record ablation subset, aggregates fed by a
+      changeable record, degrades, the degrades of declared complexity channels; delivery slots never). U ≤ 1 − cap
+      blocks; on a solver that is not composable U is UNVERIFIED and needs its `geometry.U` disposition (gate 17).
+      L_max (the largest loss over whole-mechanism combinations) below (1 − cap) + 0.10 warns.
+
+### S5c — Liveness flags (advisory; each flag dispositioned)
+- [ ] `python3 Task_Authoring/tools/trap_liveness.py --task-dir Task_Authoring/task_inputs` on the SQL; write a
+      disposition per flag under `"liveness"` in `01c_Dispositions.json`. Redesign the difficulty; never remove a fairness
+      link.
+
+### S5d — Blind probes (optional, advisory)
+- [ ] `tools/judgment_probe.py` when it exists (plan §7.4); results enter the ledger with `source: probe` and stay apart
+      from platform evidence.
+
+### S5e — Forecast (advisory, UNCALIBRATED, pre-registered) and the preflight report
+- [ ] `python3 Task_Authoring/tools/hardness_forecast.py forecast --task-dir Task_Authoring/task_inputs --model <baseline
+      model> --preregister --out Task_Authoring/task_inputs/Working_Files/01c_Forecast.json` — priors per model from the
+      ledger (another model only through a transfer record: TRANSFERRED · UNCALIBRATED), exact solver outcomes, 10,000
+      simulated six-run baselines through `difficulty_stats.compute()` per scenario. Its ledger id is written before the
+      platform run; nothing changes after. Declared channels take their rates from the model's ledger records of their
+      family; a channel with none needs a disclosed `--channel-rate <channel>=<e>`, otherwise it prints UNPARAMETERIZED
+      and is not simulated. The forecast also reports each slot's P(fail) and P(fails all six); the latter is all-fail
+      justification workload, never a block.
+- [ ] `python3 Task_Authoring/tools/preflight_report.py --task-dir Task_Authoring/task_inputs --forecast Task_Authoring/task_inputs/Working_Files/01c_Forecast.json`
+      → writes `01c_Preflight_Report.json` + `.md` (solver contract, surface validation with expected values and
+      `flipped_by`, mutation with dispositions, geometry, liveness, forecast). Record `preflight {report, digest}` in the
+      final manifest. Any later edit to the SQL, solver, surface, manifest or dispositions makes it stale.
+- [ ] **Store the revision.** Copy the final `01_Universe_Inject.sql` byte for byte to
+      `Working_Files/run_forensics/<rev>/01_Universe_Inject.sql` (`<rev>` = this revision's label, e.g. `rev3`) and
+      never edit that copy. A run is bound to a revision only on content the other stored revisions don't hold, so
+      every later intake passes every stored revision (`--sql <rev>=<its copy>` for each
+      `Working_Files/run_forensics/*/01_Universe_Inject.sql`); with one SQL alone the binding is INSUFFICIENT.
+
+### S5f — Early target-model runs (advisory; after S5e, before `/injection`)
+- [ ] Run 1–2 Opus 5.5 trajectories of the full build in the independent harness, configured like the platform (Claude
+      Code version, effort, subagent policy).
+      - Store them under `Working_Files/run_forensics/<rev>/early/`, never in `06_*` or `07_*`.
+      - They are ledger evidence (`source: independent-harness`), never the platform pre-check.
+- [ ] Take each one in with `01a_Hardening.md` MODE B (pre-check) steps 1–4, passing every stored revision with
+      `--sql` (the task's first revision has no other: then `--sole-revision "<why this is the only revision>"`, which
+      the tools refuse while another revision is stored). A run that is not BOUND on evidence (INSUFFICIENT,
+      AMBIGUOUS, UNBOUND) is not evidence for this revision. Confirm every failed slot against the run's write payload.
+      Record one verdict per mechanism in the dossier.
+- [ ] **Keep or replace.** Keep channels that fail in Opus 5.5's own decisions (designed mechanisms that land, or
+      declared complexity channels that fail), and replace those that leak through `/create-scenario --revise`, then
+      rebuild. Control errors and unattributed slips count for neither.
+      - At most two cycles; after that, change the scenario rather than iterate.
+      - Season Pass spent 14 revisions without target-model evidence (`Hardness_Mastery.md` §12).
 
 ### S6 — Hand-off sections of the dossier
 - **Intended disagreements** — each designed contradiction, why it is realistic, what resolves it.
@@ -210,5 +324,7 @@ decisive clause on which it differs.
 Run `python3 Task_Authoring/tools/stage_gate.py injection Task_Authoring/task_inputs --paste`; handoff is blocked
 until it prints PASS. Report: the SQL path and row/schema counts (from `sql_lint.py`), the gate verdict, services
 carrying weight, hidden authorities and decoys, chains, any red-team findings and their
-disposition, and open platform follow-ups. Next: paste the SQL into `/injection`; then
+disposition, the preflight (solver contract, mutation dispositions, U and L_max per gate view, liveness flags and
+their dispositions, the pre-registered forecast id with its P(all gates) range — labelled UNCALIBRATED), and open
+platform follow-ups. Next: paste the SQL into `/injection`; then
 `/create-error-async` / `/create-reference-files` if designed; then `/create-prompt-writing`.

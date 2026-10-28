@@ -1,0 +1,1278 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "season_pass",
+ "revision": "rev13",
+ "sql_sha256": "fdfc7988e12bd6112dbe5b8961c2308c5227c41f742537f6da14155a5526ce40",
+ "classes": [
+  "READY",
+  "WATCH",
+  "HOLD"
+ ],
+ "truth_fields": {
+  "class": "handoff class",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "register": {
+   "kind": "table",
+   "name_regex": "season pass transfer register",
+   "key_column": "component key",
+   "key_regex": "SP-\\d{3}",
+   "columns": [
+    "component key",
+    "issue",
+    "PR",
+    "failed assertions",
+    "test artifact",
+    "receipt artifact",
+    "receipt ring",
+    "review state",
+    "reviewed artifact",
+    "billing hold at snapshot",
+    "handoff class",
+    "reason"
+   ],
+   "class_column": "handoff class",
+   "reason_column": "reason",
+   "csv_required": true,
+   "comparators": {
+    "issue": "issue_key",
+    "PR": "pr_number",
+    "test artifact": "sha_prefix",
+    "receipt artifact": "sha_prefix",
+    "reviewed artifact": "sha_prefix",
+    "billing hold at snapshot": "yes_no"
+   },
+   "missing_values": [
+    "",
+    "missing",
+    "na",
+    "none",
+    "withdrawn",
+    "nocurrentreceipt",
+    "unavailable"
+   ],
+   "yes_no": {
+    "yes": [
+     "yes",
+     "true",
+     "1",
+     "active"
+    ],
+    "no": [
+     "no",
+     "false",
+     "0",
+     "inactive",
+     "notactive"
+    ]
+   }
+  },
+  "tracker": {
+   "kind": "text",
+   "tool": "linear_update_issue",
+   "issue": "ZOM-801",
+   "key_regex": "SP-\\d{3}",
+   "groups": [
+    [
+     "billing",
+     "billing"
+    ],
+    [
+     "missing",
+     "missing"
+    ],
+    [
+     "assertions",
+     "assert"
+    ],
+    [
+     "review",
+     "review"
+    ],
+    [
+     "artifact",
+     "artifact"
+    ]
+   ]
+  },
+  "slide": {
+   "kind": "json_text",
+   "tool": "gslides_batch_update"
+  },
+  "email": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  },
+  "slack": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  },
+  "share": {
+   "kind": "calls",
+   "tool": "gdrive_share_file"
+  }
+ },
+ "slots": [
+  {
+   "id": "R1",
+   "title": "The Agent creates the register as one CSV named 'Season Pass transfer register.csv' (the .csv suffix optional) in the Drive folder 'Season Pass Handoff - Feb 2026' (d_c86211acb7c6d91fe4e410), as the only register CSV it leaves in Drive outside the Trash",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_is_csv"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R2",
+   "title": "The Agent lists ZOM-802 as the issue for SP-017 in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-017",
+    "issue"
+   ],
+   "group": "register:issue",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R3",
+   "title": "The Agent writes exactly 128 component rows, one per key SP-001 through SP-128, in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "register:*"
+   ]
+  },
+  {
+   "id": "R4",
+   "title": "The Agent shows the class total READY 68 below the component rows in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "READY"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R5",
+   "title": "The Agent marks SP-017 as handoff class HOLD in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-017",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R6",
+   "title": "The Agent marks SP-054 as handoff class HOLD in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-054",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R7",
+   "title": "The Agent marks SP-065 as handoff class READY in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-065",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R8",
+   "title": "The Agent marks SP-101 as handoff class HOLD in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-101",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R9",
+   "title": "The Agent marks SP-009 as handoff class READY in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-009",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample"
+  },
+  {
+   "id": "R10",
+   "title": "The Agent marks SP-081 as handoff class WATCH in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-081",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample"
+  },
+  {
+   "id": "R11",
+   "title": "The Agent marks SP-018 as handoff class HOLD in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-018",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample"
+  },
+  {
+   "id": "R13",
+   "title": "The Agent marks SP-004 as handoff class READY in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-004",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample"
+  },
+  {
+   "id": "R14",
+   "title": "The Agent marks SP-006 as handoff class WATCH in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-006",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample"
+  },
+  {
+   "id": "R15",
+   "title": "The Agent grants arthur.blake@harmonygames.co reader access to the created register file as the only added sharing grant",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "share_reader"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R16",
+   "title": "The Agent replaces the placeholder sentence 'Replace with register totals, link and snapshot.' on the Handoff status slide of the 'Season Pass Handoff Review v2' deck (f_948e79963ba588e9758469) while keeping the slide's 'Handoff status' heading, and that deck is the only presentation the Agent edits",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slide_updated"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R17",
+   "title": "The Agent states, on the Handoff status slide of the Season Pass Handoff Review v2 deck, the evidence snapshot as 2026-02-12 18:00 UTC (or the same instant in Pacific time, 2026-02-12 10:00 PST)",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slide",
+    "2026-02-12|12 Feb|February 12"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R18",
+   "title": "The Agent states, on the Handoff status slide of the Season Pass Handoff Review v2 deck, 6 completed Zombie Match 3D Season Pass events",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slide",
+    "\\b6\\b.{0,70}?events?|events?.{0,30}?\\b6\\b"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R19",
+   "title": "The Agent states, on the Handoff status slide of the Season Pass Handoff Review v2 deck, 754 total participants across the completed Zombie Match 3D Season Pass events",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slide",
+    "754"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R20",
+   "title": "The Agent moves tracking issue ZOM-801 to the In Validation state, and ZOM-801 is the only Linear issue the Agent edits, comments on or creates",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "tracker_state",
+    "in validation"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R21",
+   "title": "The Agent appends text to the ZOM-801 description while keeping its full original text 'Tracking the engineering transfer packet. When delivered, append the register link, class totals and blocker counts by failed condition to this issue's description; move this issue to In Validation. Keep validation issues unchanged.'",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "tracker_preserves",
+    "Tracking the engineering trans"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R22",
+   "title": "The Agent gives, in the ZOM-801 description, the failed-assertions-above-zero blocker group a count of 11",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_count",
+    "assertions"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R23",
+   "title": "The Agent shows, in the ZOM-801 description, the test-artifact-different-from-receipt-artifact blocker group with a count of 0",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_count",
+    "artifact"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R24",
+   "title": "The Agent gives, in the ZOM-801 description, the latest-review blocker group (latest review DISMISSED or APPROVED for an artifact other than the receipt artifact) a count of 25",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_count",
+    "review"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R25",
+   "title": "The Agent gives, in the ZOM-801 description, the billing-hold-active-at-the-snapshot blocker group a count of 12",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_count",
+    "billing"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R26",
+   "title": "The Agent shows, in the ZOM-801 description, the missing-input blocker group with a count of 0",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_count",
+    "missing"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R27",
+   "title": "The Agent lists, in the ZOM-801 description, SP-054 under the failed-assertions-above-zero blocker group",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "group_key",
+    "SP-054",
+    "assertions"
+   ],
+   "group": "tracker:membership",
+   "role": "sample"
+  },
+  {
+   "id": "R28",
+   "title": "The Agent lists, in the ZOM-801 description, SP-008 under the latest-review blocker group",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "group_key",
+    "SP-008",
+    "review"
+   ],
+   "group": "tracker:membership",
+   "role": "sample"
+  },
+  {
+   "id": "R29",
+   "title": "The Agent lists, in the ZOM-801 description, SP-045 under the billing-hold-active-at-the-snapshot blocker group",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "group_key",
+    "SP-045",
+    "billing"
+   ],
+   "group": "tracker:membership",
+   "role": "sample"
+  },
+  {
+   "id": "R30",
+   "title": "The Agent sends a reply to Arthur's 2026-02-13 16:00 UTC Zombie Match 3D 'Season Pass handoff - review circulation' protocol email, and every email it sends about the handoff, including that reply, has arthur.blake@harmonygames.co as its only recipient",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "CA202ce27e843eb148967f4d7c7d46"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R31",
+   "title": "The Agent delivers the register as a link that opens the created Season Pass transfer register file in its reply to Arthur's 2026-02-13 16:00 UTC Zombie Match 3D 'Season Pass handoff - review circulation' protocol email, and every email it sends about the Zombie Match 3D Season Pass handoff has zero file attachments",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "email"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R32",
+   "title": "The Agent posts a threaded reply under Arthur's 2026-02-13 20:00 UTC Season Pass handoff message in #builds (C05433XK267/1771012800.000101), and every #builds post it makes about the handoff is in that thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_thread",
+    "1771012800.000101"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R33",
+   "title": "The Agent posts a reply in the #builds thread under Arthur's 2026-02-13 20:00 UTC Season Pass handoff message (C05433XK267/1771012800.000101) after the first email in which it sends the Season Pass transfer register to arthur.blake@harmonygames.co, and every reply it posts in that thread that carries a READY, WATCH or HOLD class total or a link to that register comes after that email",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_after_email"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R35",
+   "title": "The Agent includes, in the #builds handoff-thread reply, a link that opens the created Season Pass transfer register file",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "slack"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R36",
+   "title": "The Agent includes, in the ZOM-801 description, a link that opens the created Season Pass transfer register file",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "tracker"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R37",
+   "title": "The Agent shows the class total WATCH 16 below the component rows in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "WATCH"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R38",
+   "title": "The Agent shows the class total HOLD 44 below the component rows in the register CSV it creates",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "HOLD"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R47",
+   "title": "The Agent includes, on the Handoff status slide of the Season Pass Handoff Review v2 deck, a link that opens the created Season Pass transfer register file",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "slide"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "R48",
+   "title": "The Agent lists match3d PR #561 as the PR for SP-017 in the register CSV it creates, in any rendering of that PR number",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-017",
+    "PR"
+   ],
+   "group": "register:PR",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R49",
+   "title": "The Agent lists 1 failed assertion for SP-054 in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-054",
+    "failed assertions"
+   ],
+   "group": "register:failed assertions",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R50",
+   "title": "The Agent lists test artifact a7ee2fc816c52a1cf3b0a20e2e59500dd016b14e for SP-065 in the register CSV it creates",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-065",
+    "test artifact"
+   ],
+   "group": "register:test artifact",
+   "role": "exception",
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "R51",
+   "title": "The Agent lists receipt artifact 6c497eb37dfa1e8c29056d72c36dbc244fc35454 for SP-009 in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-009",
+    "receipt artifact"
+   ],
+   "group": "register:receipt artifact",
+   "role": "sample"
+  },
+  {
+   "id": "R52",
+   "title": "The Agent lists receipt ring internal for SP-081 in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-081",
+    "receipt ring"
+   ],
+   "group": "register:receipt ring",
+   "role": "sample"
+  },
+  {
+   "id": "R53",
+   "title": "The Agent lists review state DISMISSED for SP-018 in the register CSV it creates",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-018",
+    "review state"
+   ],
+   "group": "register:review state",
+   "role": "sample"
+  },
+  {
+   "id": "R54",
+   "title": "The Agent lists reviewed artifact 43eedcc28f4301d375b3ce5bcb926d5d5f4d0b3e for SP-008 in the register CSV it creates",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-008",
+    "reviewed artifact"
+   ],
+   "group": "register:reviewed artifact",
+   "role": "sample"
+  },
+  {
+   "id": "R55",
+   "title": "The Agent lists SP-045's billing hold at snapshot as active in the register CSV it creates, in any value that marks the hold as active",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-045",
+    "billing hold at snapshot"
+   ],
+   "group": "register:billing hold at snapshot",
+   "role": "sample"
+  },
+  {
+   "id": "R56",
+   "title": "The Agent lists exactly 11 component keys under the failed-assertions-above-zero blocker group in the ZOM-801 description",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_size",
+    "assertions"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R57",
+   "title": "The Agent lists exactly 25 component keys under the latest-review blocker group in the ZOM-801 description",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_size",
+    "review"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R58",
+   "title": "The Agent lists exactly 12 component keys under the billing-hold-active-at-the-snapshot blocker group in the ZOM-801 description",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "aggregate",
+   "selector": [
+    "group_size",
+    "billing"
+   ],
+   "role": "volume",
+   "volume_for": [
+    "tracker:membership"
+   ]
+  },
+  {
+   "id": "R59",
+   "title": "The Agent labels the event count and participant sum on the Handoff status slide of the Season Pass Handoff Review v2 deck as a historical event comparison, separate from the 128 component totals",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slide",
+    "754"
+   ],
+   "role": "core"
+  },
+  {
+   "id": "V1",
+   "title": "SP-003 failed assertions: completed failures survive an aborted zero",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-003",
+    "failed assertions"
+   ],
+   "group": "register:failed assertions",
+   "role": "sample",
+   "mechanisms": [
+    "validation"
+   ]
+  },
+  {
+   "id": "V2",
+   "title": "SP-007 failed assertions: diagnostic failures do not replace a completed entitlement pass",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-007",
+    "failed assertions"
+   ],
+   "group": "register:failed assertions",
+   "role": "sample",
+   "mechanisms": [
+    "validation"
+   ]
+  },
+  {
+   "id": "V3",
+   "title": "SP-019 handoff class: full evidence classification after aborted latest run",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-019",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "validation"
+   ]
+  },
+  {
+   "id": "V4",
+   "title": "SP-039 handoff class: valid passing rerun and diagnostic exclusion",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-039",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "validation"
+   ]
+  },
+  {
+   "id": "P1",
+   "title": "SP-067 receipt artifact: unreversed withdrawal leaves no current artifact",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-067",
+    "receipt artifact"
+   ],
+   "group": "register:receipt artifact",
+   "role": "sample",
+   "mechanisms": [
+    "receipt"
+   ]
+  },
+  {
+   "id": "P2",
+   "title": "SP-031 receipt ring: copied receipt does not restore ring",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-031",
+    "receipt ring"
+   ],
+   "group": "register:receipt ring",
+   "role": "sample",
+   "mechanisms": [
+    "receipt"
+   ]
+  },
+  {
+   "id": "P3",
+   "title": "SP-049 handoff class: missing receipt blocks an otherwise passing component",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-049",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "receipt"
+   ]
+  },
+  {
+   "id": "P4",
+   "title": "SP-121 groups: reason attributes only missing receipt",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "groups_of",
+    "SP-121"
+   ],
+   "group": "tracker:membership",
+   "role": "sample",
+   "mechanisms": [
+    "receipt"
+   ]
+  },
+  {
+   "id": "L1",
+   "title": "SP-062 review state: source approval does not replace transfer rejection",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-062",
+    "review state"
+   ],
+   "group": "register:review state",
+   "role": "sample",
+   "mechanisms": [
+    "review"
+   ]
+  },
+  {
+   "id": "L2",
+   "title": "SP-012 review state: source rejection does not replace transfer approval",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-012",
+    "review state"
+   ],
+   "group": "register:review state",
+   "role": "sample",
+   "mechanisms": [
+    "review"
+   ]
+  },
+  {
+   "id": "L3",
+   "title": "SP-102 handoff class: transfer rejection remains a blocker",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-102",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "review"
+   ]
+  },
+  {
+   "id": "L4",
+   "title": "SP-092 handoff class: source rejection is not itself a transfer blocker",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-092",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "review"
+   ]
+  },
+  {
+   "id": "F1",
+   "title": "SP-016 failed assertions: sum latest iOS and Android; discard older iOS",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-016",
+    "failed assertions"
+   ],
+   "group": "register:failed assertions",
+   "role": "sample",
+   "mechanisms": [
+    "fixture_binding"
+   ]
+  },
+  {
+   "id": "F2",
+   "title": "SP-008 test artifact: selected fixture still has an artifact mismatch",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-008",
+    "test artifact"
+   ],
+   "group": "register:test artifact",
+   "role": "sample",
+   "mechanisms": [
+    "fixture_binding"
+   ]
+  },
+  {
+   "id": "F3",
+   "title": "SP-024 handoff class: ignore newer report from another fixture",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-024",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "fixture_binding"
+   ]
+  },
+  {
+   "id": "F4",
+   "title": "SP-040 reviewed artifact: active acceptance epoch controls artifact selection",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-040",
+    "reviewed artifact"
+   ],
+   "group": "register:reviewed artifact",
+   "role": "sample",
+   "mechanisms": [
+    "acceptance"
+   ]
+  },
+  {
+   "id": "J1",
+   "title": "SP-002 receipt artifact: follow rollback pointer to earlier issued receipt",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-002",
+    "receipt artifact"
+   ],
+   "group": "register:receipt artifact",
+   "role": "sample",
+   "mechanisms": [
+    "journal"
+   ]
+  },
+  {
+   "id": "J2",
+   "title": "SP-010 test artifact: restored receipt selects earlier fixture",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-010",
+    "test artifact"
+   ],
+   "group": "register:test artifact",
+   "role": "sample",
+   "mechanisms": [
+    "journal",
+    "fixture_binding"
+   ]
+  },
+  {
+   "id": "J3",
+   "title": "SP-018 reviewed artifact: restored receipt selects earlier acceptance epoch",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-018",
+    "reviewed artifact"
+   ],
+   "group": "register:reviewed artifact",
+   "role": "sample",
+   "mechanisms": [
+    "journal",
+    "acceptance"
+   ]
+  },
+  {
+   "id": "J4",
+   "title": "SP-050 handoff class: explicit rollback restores a usable passing deployment",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-050",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "journal"
+   ]
+  },
+  {
+   "id": "H1",
+   "title": "SP-005 review state: post-snapshot dismissal leaves prior approval in force",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-005",
+    "review state"
+   ],
+   "group": "register:review state",
+   "role": "sample",
+   "mechanisms": [
+    "history"
+   ]
+  },
+  {
+   "id": "H2",
+   "title": "SP-013 review state: pre-snapshot dismissal is in force",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-013",
+    "review state"
+   ],
+   "group": "register:review state",
+   "role": "sample",
+   "mechanisms": [
+    "history"
+   ]
+  },
+  {
+   "id": "H3",
+   "title": "SP-021 handoff class: historical approval produces a passing class",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-021",
+    "handoff class"
+   ],
+   "group": "register:handoff class",
+   "role": "sample",
+   "mechanisms": [
+    "history"
+   ]
+  },
+  {
+   "id": "H4",
+   "title": "SP-037 reviewed artifact: other-epoch approval for matching digest cannot substitute",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "weight carried from the source rubric; work kind inferred from the 1/3/5 band",
+   "class": "direct",
+   "selector": [
+    "field",
+    "SP-037",
+    "reviewed artifact"
+   ],
+   "group": "register:reviewed artifact",
+   "role": "sample",
+   "mechanisms": [
+    "acceptance"
+   ]
+  }
+ ],
+ "provenance": {
+  "converted_from": "Working_Files/hardening_rev12/coverage_plan.json (retained slots + 24 case facts), delivery selectors made explicit",
+  "rule": "from-slots: work kinds inferred from weights; roles from the selector kind"
+ }
+}

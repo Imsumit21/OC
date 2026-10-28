@@ -92,6 +92,17 @@ review and rubric evidence in `Working_Files/00_V3_Authoring_Evidence.json`
   Never execute SQL. Never modify the base exports.
 - All work happens inside `Task_Authoring/` — normally `Task_Authoring/task_inputs/`;
   new folders and files inside `Task_Authoring/` are fine (e.g. `support/examples/`).
+- The one shared file the `/create-*` commands write outside `task_inputs/` is the cross-task evidence ledger
+  `support/hardness_ledger/ledger.jsonl`, and only through its tools: `tools/hardness_ledger.py` (append, seed,
+  transfer) and `tools/hardness_forecast.py` (`--preregister`, `score --append`). It is append-only and
+  content-addressed: a record is never edited or deleted, a correction supersedes it, and every record keeps its model,
+  harness and source.
+- **Self-tests write only under `support/scratch/`**: each temp folder is a unique `tempfile.mkdtemp(dir=...)` folder
+  there, removed afterwards (never the system temp folder), and the ledger self-tests use a temp ledger. The
+  `stage_gate.py` and `hardness_gate.py` self-tests rerun themselves inside a `tools/selftest_sandbox.py` workspace, because
+  `persona_view.py`, `base_check.py` and `tools/hg.py` write caches: no self-test writes `support/local_search/` or
+  `support/hardness_ledger/`. The sandbox links the read-only folders, asserts every write path resolves inside it
+  before each command, and fails on any `find <linked folders> -newer <start marker>` output after it.
 - **The eval commands are not run from this bundle.** The user runs `/injection`,
   `/prompt`, `/hardness`, `/oe` and `/rubric` in Eval Portal and handles its inputs,
   reviews and proof uploads. Locally, a `/create-*` command prepares the artifacts
@@ -298,10 +309,12 @@ resolves names in both places.
 | Slot | Author | Platform step | Produced by | Evals key |
 |---|---|---|---|---|
 | `00_Assigments.md` | Human (exact paste of all eight V3 fields); `task_context.py` writes `Working_Files/00_Task_Context.json` | Assignment, Persona Selection | `task_context.py --write`; source validation before grounding | `task-details` |
-| `01_Scenario_Design.md` + `01_Hardness_Manifest.draft.json` (draft manifest) | Model | — (design) | `/create-scenario` | — |
-| `01b_Redteam_Review.md` | Model (optional, local) | — | `tools/redteam_review.py` | — |
+| `01_Scenario_Design.md` + `01_Hardness_Manifest.draft.json` (draft manifest, with the `mechanism_portfolio`) + `01_Gradable_Surface.json` | Model | — (design) | `/create-scenario` | — |
+| `01b_Redteam_Review.md` + `.second.md` | Model (local; scenario needs both, or a recorded `RED TEAM FALLBACK:`) | — | `tools/redteam_review.py` | — |
 | `01_Universe_Inject.sql` + `01_Grounding_Dossier.md` + `01_Hardness_Manifest.json` (final manifest: every draft id kept or listed in `design_delta`) | Model | Injection SQL | `/create-injection` | `injection` |
-| `01a_Hardening_Report.md` (+ revision N+1 of the SQL / final manifest / dossier) | Model | — (forensics after a run) | `/create-hardening` | — |
+| `solver/solver.py` (+ `solver/truth.json`) + `01c_Dispositions.json` + `01c_Preflight_Report.json` (+ `.md`) | Model (+ `tools/oracle_kit.py`, `difficulty_mutation.py`, `preflight_report.py`) | — (injection preflight) | `/create-injection` | — |
+| `run_forensics/<rev>/01_Universe_Inject.sql` (each revision's SQL, stored byte for byte, never edited; early S5f runs in `run_forensics/<rev>/early/`) | Model (copy) | — | `/create-injection` S5e | — |
+| `01a_Hardening_Report.md` + `run_forensics/<revision>/` (no SQL: universe changes go through `/create-scenario --revise` → `/create-injection`) | Model (+ `tools/trajectory_ledger.py`, `node_verdicts.py`, `surface_grader.py`) | — (forensics after a run) | `/create-hardening` | — |
 | `02_Reference_Files/` + `02_Reference_Files_Manifest.md` | Model | Upload / Re-upload Reference Files | `/create-reference-files` | `reference:<id>` |
 | `03_Error_Async_Config.txt` | Model | Configure Server Behavior | `/create-error-async` | `error-async` |
 | `04_Prompt_Writing_Brief.md` | Model (prep) | — | `/create-prompt-writing` | — |
@@ -327,9 +340,9 @@ the pasted PASS block; the next stage's gate checks that block is current.
 
 | Stage | Gates the slot(s) | Upstream PASS it requires |
 |---|---|---|
-| `scenario` | **`01_Scenario_Design.md`**, `01_Hardness_Manifest.draft.json` | — |
-| `injection` | SQL, final manifest, **`01_Grounding_Dossier.md`** (inputs: assignment, scenario design, draft manifest — never a later stage's output) | scenario |
-| `hardening` | **`01a_Hardening_Report.md`** + digests of the revised SQL and final manifest (its gate re-runs the injection checks: revision N+1) | injection |
+| `scenario` | **`01_Scenario_Design.md`**, `01_Hardness_Manifest.draft.json`, `01_Gradable_Surface.json` | — |
+| `injection` | SQL, final manifest, **`01_Grounding_Dossier.md`**, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` (inputs: assignment, scenario design, draft manifest, gradable surface — never a later stage's output) | scenario |
+| `hardening` | **`01a_Hardening_Report.md`** (its gate re-runs the injection checks on the current revision) | injection |
 | `reference-files` | **`02_Reference_Files_Manifest.md`** + folder | injection |
 | `error-async` | **`03_Error_Async_Config.txt`** | injection |
 | `prompt-writing` | **`04_Prompt_Writing_Brief.md`** | injection (+ error-async, reference-files if present) |
@@ -346,9 +359,11 @@ The prompt, OE and rubric slots (`04_Prompt.txt`, `08_Oracle_Events.md`, `09_Rub
 check reports are gated, and their digests tie each report to the exact text checked.
 
 **Revisions, not cycles.** The stage graph is a DAG: no stage reads a later stage's output. The scenario certifies the
-draft manifest; injection writes the final one. Hardening is revision N+1 of the injection: it edits the SQL / final
-manifest / dossier, re-runs `stage_gate.py injection --paste`, then `stage_gate.py hardening --paste` (which re-runs the
-injection checks on the revised files and records their digests); downstream stages then re-run on the new revision.
+draft manifest and the gradable surface; injection writes the final manifest and never rewrites either (its solver
+values and `flipped_by` go into the preflight report). `/create-hardening` measures a revision and proposes;
+`/create-scenario --revise` (S0r) decides. Revision N+1 is `/create-injection` run again: it edits the SQL / final
+manifest / dossier, re-runs the preflight and `stage_gate.py injection --paste`; downstream stages then re-run on the
+new revision (the hardening gate, when its report exists, re-runs the injection checks on it).
 
 Platform outputs (`06_PreCheck_Trajectory/`, `07_Baseline_Trajectories/`,
 `10_Baseline_Verifier_Results.md`) are placed here by the user. No command ever
@@ -369,7 +384,10 @@ from the platform).
    and clock, `/injection` Check B; `tools/base_check.py` — consistency with the base
    universe, `/injection` Checks A and C; `tools/hardness_gate.py`, which runs both;
    `tools/difficulty_stats.py`; and the universe tools the playbook names: `tools/persona_view.py`, `tools/entity.py`,
-   `tools/fact_check.py`) and report their verdicts verbatim. A FAIL blocks handoff.
+   `tools/fact_check.py`; for scenario, injection, hardening and difficulty also the fold-hardening tools:
+   `gradable_surface`, `oracle_kit`, `difficulty_mutation`, `trap_liveness`, `hardness_forecast`, `preflight_report`,
+   `trajectory_ledger`, `node_verdicts`, `surface_grader`, `hardness_ledger`, each with `--self-test`) and report their
+   verdicts verbatim. A FAIL blocks handoff; probabilistic outputs are labelled UNCALIBRATED and never block.
    Schema of record: `references/universe_schema_live.json` (exported with
    `setup/extract_schema.sql`).
 6. Self-check against the applicable `QC_Spec_Doc_Latest.csv` dimensions and the Evals rules
@@ -400,7 +418,7 @@ under **Self-review**:
    through `tools/hg.py`; a value carried over from a ledger, brief or dossier is a lead, not
    evidence.
 4. **Mechanical checks again** after any change (`sql_lint`, `base_check`, `hardness_gate`,
-   `difficulty_stats`).
+   `difficulty_stats`, and the injection preflight: `oracle_kit check`, `difficulty_mutation`, `preflight_report`).
 5. **Record** the final verdict per check with its evidence, each counter-reading and how it
    was resolved, and anything left unresolved (named, never hidden). Never soften a finding to
    reach PASS; never invent a finding to look thorough.
@@ -411,24 +429,32 @@ under **Self-review**:
    minimum that scales with the artifact, and checks that the self-review names its required items and an
    `Unresolved:` line.
 
-Independent pass (required for scenario — the gate blocks without both files; recommended for injection): `tools/redteam_review.py --mode redteam --dual` — two reviewer models from different families red-team the same model-authored artifacts
+Independent pass (required for scenario — the gate blocks unless both reviews ran or a `RED TEAM FALLBACK: <who reviewed instead, how, and why>` line is recorded; a file holding only the tool's error, such as `set REDTEAM_MODEL`, is not a review; recommended for injection): `tools/redteam_review.py --mode redteam --dual` — two reviewer models from different families red-team the same model-authored artifacts
 (design, dossier, ledger, plans) — not on the prompt, OE or criteria text.
 
 ## 6b · Stage gates (`tools/stage_gate.py`, every `/create-*` command)
 
 A stage is handed off when its gate passes, not when its author says it is done. The gate is mechanical,
-read-only on inputs, stdlib only; `--self-test` runs 15 good stages (release included), 66 planted defects and 2 re-run contradictions
-(`support/examples/calibration/stage_gate/`; the 13 added for harness red team A carry a `redteam` field).
+read-only on inputs, stdlib only; `--self-test` runs 118 cases inside a `tools/selftest_sandbox.py` workspace: 15 good
+stages (release included), 96 planted defects, 2 re-run contradictions, four controls that must pass (a complete
+revision intake, an INSUFFICIENT export marked historical, a surface with no mechanism, a recorded red-team fallback)
+and digest invariance (`support/examples/calibration/stage_gate/`; the 13 added for harness red team A carry a
+`redteam` field, the 30 added for the fold-hardening plan and the 2026-10-25 fixes a `plan` field; `expect_detail`
+names the family a check must block on).
 
 | Family | What blocks |
 |---|---|
 | structure | missing output or input; an output older than an input (stale); a required heading missing or empty; `<…>` template slots, TODO/TBD, empty table rows, unchecked boxes, unresolved `[ a / b ]` choices |
 | evidence | factual rows without a record id or pointer (Slack `C…/ts`, `f_`/`d_`+22 hex, `evt_`, `ENG-n`, `repo#n`, `mailbox/id`, `page_`, `cmt_`, 24-hex, JSON pointer, SQL line, F-id) below the stage's ratio; quoted spans that are not exact substrings of the human file |
-| tool | a required tool output not pasted, or a paste the re-run contradicts (`sql_lint`, `base_check`, `fact_check --no-leak`, `hardness_gate` at the manifest's `effective_profile`, `difficulty_stats`, `persona_view` reach / can-see / check-sql) |
+| tool | a required tool output not pasted, or a paste the re-run contradicts (`sql_lint`, `base_check`, `fact_check --no-leak`, `hardness_gate` at the manifest's `effective_profile`, `difficulty_stats`, `persona_view` reach / can-see / check-sql); scenario: a red-team review missing or only a tool-error stub, with no `RED TEAM FALLBACK:` line (`tool.redteam_dual`) |
+| surface | scenario: `01_Gradable_Surface.json` missing, or invalid under `tools/gradable_surface.py`: every V3 rubric rule blocks, each printed with its basis (`FAMILY_BASIS`): structure, work-kind weights, no fact in ≥ 3 slots, ≤ 5 samples per group plus a volume slot, exceptions an incorporated authority singles out, known mechanism ids (`surface.valid`). The geometry (mechanism share, always-pass share) is reported, never gated. rubric-writing / rubric-check, when the surface exists: a slot without a covering row (P-n in plan §G, C-n under `Coverage — gradable surface`) or a disposition with its reason, a `gap`, or a line for a slot the surface no longer has (`surface.coverage`, gate 17) |
+| revise | scenario `--revise`: a `/create-hardening` MODE B report without a revision-intake section; a proposed node verdict without a keep / purge / rebuild row, or a CONFOUNDED candidate neither confirmed nor rejected (`revise.verdict_dispositions`); an export not BOUND on evidence (a basis, discriminating content or the sole revision with its reason, and seen needles: `trajectory_ledger.binding_ok`; INSUFFICIENT, AMBIGUOUS, UNBOUND and a legacy SINGLE never certify) and not marked historical (`revise.revision_binding`); intake rows without run steps (`evidence.register_run_step`, copied from `hardening`, which keeps it); the counter-reading minimum rises to LANDED + LEAKED rows + 1 |
+| preflight | injection: `01c_Preflight_Report.json` missing, or stale against the SQL, solver, surface, manifest or dispositions (`structure.preflight`); solver contract not PASS (`solver.contract`, re-run with `--rerun all`); a mutation or intervention result without a written disposition (`mutation.dispositions`); geometry U ≤ 1 − cap (`geometry.upper_bound`, re-run with `--rerun all`) |
+| advisory (WARN only) | scenario / injection, UNCALIBRATED: no pre-registered forecast in the ledger (`forecast.preregistered`); L_max below (1 − cap) + 0.10 (`geometry.margin`); a liveness flag without a written disposition (`liveness.dispositions`) |
 | review | fewer evidenced counter-readings than the stage minimum; required items not addressed; no unresolved list |
 | reach | a load-bearing scoped record that `persona_view` does not show as YES for the assigned persona; a `DENIAL-INTENDED` / `UNVERIFIED-OK` probe row marked `LB` or without `alternate_evidence_ids` that are all YES |
 | anchor naming | scenario, injection, prompt-writing: an anchor-naming entry (an `anchor name` / `may be named` / `noun phrase` table column, an `Anchor An name:` line, the manifest's `anchors[].prompt_reference`) that starts with an imperative verb, contains a second-person request or runs over 6 words (`boundary.anchor_naming`) |
-| revision | injection: a draft-manifest id missing from the final manifest without a `design_delta` entry (`structure.design_delta`); a pasted hardness_gate profile other than the manifest's `effective_profile`. hardening: the injection checks re-run on the revised SQL / manifest / dossier (`revision.injection`) |
+| revision | injection: a draft-manifest id missing from the final manifest without a `design_delta` entry (`structure.design_delta`); a pasted hardness_gate profile other than the manifest's `effective_profile`. hardening: the injection checks re-run on the current revision's SQL / manifest / dossier, preflight included (`revision.injection`) |
 | kb | scenario/injection without `coherence_hazards` ids for all six categories, `activity.json` status for every seeded speaker, `integrations.json` companions per seeded service, cohorts/trap_catalog/timeline citations, `conventions.json`, `entity.py` output |
 | chain | the upstream artifact lacks a pasted `STAGE GATE <stage>: PASS` block, or its digests no longer match the files |
 | tier | prompt-check: no `01_Hardness_Manifest.json`; an `effective_profile` that does not fit the assignment's tier (Long Horizon → extreme; Normal → normal, or extreme with `profile_exception.requester_confirmation`) or a manifest `horizon` other than the assignment's; or no current dossier `HARDNESS GATE (<effective_profile>): PASS`; the C12 QC floor stays the `/prompt` prediction |
@@ -481,9 +507,12 @@ mechanical check; the partial answer is named so nobody mistakes a gate PASS for
   and trajectories to one universe snapshot + tool runtime + configuration, and no reference solution is executed in an
   isolated clone. Partial answer: the release gate's single bundle digest over every local artifact, and the Opus
   pre-check run (`06_PreCheck_Trajectory/trajectory.json`) as the first end-to-end execution.
-- **Causal independence of chains** (R1 #11). `root_cause` ids are now a closed enum and distinct means distinct ids,
-  but no intervention test neutralises each trap while holding the others fixed; failure patterns are still read from
-  rubric vectors.
+- **Causal independence of chains** (R1 #11), partly closed. `root_cause` ids are a closed enum and distinct means
+  distinct ids. `tools/difficulty_mutation.py` now intervenes per node: it removes that node's injected deciding records
+  from an in-memory copy of the SQL while holding the rest fixed, re-runs the solver, and flags any change outside the
+  node's dependency closure (`escaped`: an undeclared coupling); rule ablations measure each mechanism alone and in
+  exact combination. Still open: the interventions see only the solver's declared deciding records and modelled
+  outputs, and the failure patterns of real runs are still read from rubric vectors.
 - **Record-level service necessity by removal** (R1 #8). The orphan check is schema-level; no test removes a service's
   operations to prove a required result becomes unattainable. Partially covered by `surface_requirements` (every
   per-record surface must serve an incorporated requirement's stated output).

@@ -1,0 +1,55 @@
+--- a/playbooks/01_Universe_Injection.md
++++ b/playbooks/01_Universe_Injection.md
+@@ -92,7 +92,9 @@
+     auto-labelled FALSE.
+ 17. **Geometry can reach the cap** (S5b′, blocking, `geometry.upper_bound`): the flippable-weight upper bound U must
+     exceed 1 − cap. If it does not, no supported failure state of the designed mechanisms can clear the cap: redesign the
+-    deliverables.
++    deliverables. When the solver is not composable (not key-local), U is no guaranteed bound: it reads UNVERIFIED and
++    passes only with a written `geometry.U` disposition in `01c_Dispositions.json` (`"geometry": {"geometry.U":
++    {disposition: accepted-unverified | redesign | solver-gap, reason}}`), never a BLOCK.
+ 
+ Advisory (UNCALIBRATED; never blocking): the geometry margin L_max, liveness flags (each with a written disposition),
+ optional blind probes, and the pre-registered forecast.
+@@ -149,7 +151,16 @@
+       each with its natural-reading fallback, `load_state` (base records through `tools/hg.py`, SQL rows through
+       `base_check.parse_sql` — never executed), `solve(state, disable, degrade, keys_)` with per-record ablations
+       (`(rule, key set)`), `aggregates`, `evidence`, and where possible `touched`, `deciding` and the `DEGRADES`
+-      operators (`tools/oracle_kit.py` docstring).
++      operators (`tools/oracle_kit.py` docstring). Declare what the design has, so the tools can see it:
++      - **Controls.** A rule's control members, and the operator that over-applies the rule to them (`controls`,
++        `over_application`). `node_verdicts` reports each written control as a control trial (OVER-APPLIED or
++        HELD), never a landing.
++      - **Complexity channels** (`CHANNELS`: `kind`, `degrade`, `members`, optional `latent` and `family`; or surface
++        `slots` when the solver can't express the failure). Geometry U counts them, `node_verdicts` reports each per
++        run, and the forecast models them.
++      - **Base routes.** `base_route(record_id)`, so the golden check reads base records through `tools/hg.py records`.
++
++      `contract.controls` checks that every declared control and channel is live.
+ - [ ] `python3 Task_Authoring/tools/oracle_kit.py check --task-dir Task_Authoring/task_inputs [--previous-sql <revision N-1
+       SQL> --previous-truth <its truth.json>]` → PASS. Then
+       `python3 Task_Authoring/tools/oracle_kit.py truth --task-dir Task_Authoring/task_inputs --out Task_Authoring/task_inputs/Working_Files/solver/truth.json`.
+@@ -203,8 +214,9 @@
+ ### S5b′ — Geometry (U blocking, L_max advisory)
+ - [ ] `python3 Task_Authoring/tools/difficulty_mutation.py geometry --task-dir Task_Authoring/task_inputs` (plan §5):
+       U = the weight share the designed mechanisms can flip (every per-record ablation subset, aggregates fed by a
+-      changeable record, degrades; delivery slots never). U ≤ 1 − cap blocks. L_max (the largest loss over whole-mechanism
+-      combinations) below (1 − cap) + 0.10 warns.
++      changeable record, degrades, the degrades of declared complexity channels; delivery slots never). U ≤ 1 − cap
++      blocks; on a solver that is not composable U is UNVERIFIED and needs its `geometry.U` disposition (gate 17).
++      L_max (the largest loss over whole-mechanism combinations) below (1 − cap) + 0.10 warns.
+ 
+ ### S5c — Liveness flags (advisory; each flag dispositioned)
+ - [ ] `python3 Task_Authoring/tools/trap_liveness.py --task-dir Task_Authoring/task_inputs` on the SQL; write a
+@@ -220,7 +232,10 @@
+       model> --preregister --out Task_Authoring/task_inputs/Working_Files/01c_Forecast.json` — priors per model from the
+       ledger (another model only through a transfer record: TRANSFERRED · UNCALIBRATED), exact solver outcomes, 10,000
+       simulated six-run baselines through `difficulty_stats.compute()` per scenario. Its ledger id is written before the
+-      platform run; nothing changes after.
++      platform run; nothing changes after. Declared channels take their rates from the model's ledger records of their
++      family; a channel with none needs a disclosed `--channel-rate <channel>=<e>`, otherwise it prints UNPARAMETERIZED
++      and is not simulated. The forecast also reports each slot's P(fail) and P(fails all six); the latter is all-fail
++      justification workload, never a block.
+ - [ ] `python3 Task_Authoring/tools/preflight_report.py --task-dir Task_Authoring/task_inputs --forecast Task_Authoring/task_inputs/Working_Files/01c_Forecast.json`
+       → writes `01c_Preflight_Report.json` + `.md` (solver contract, surface validation with expected values and
+       `flipped_by`, mutation with dispositions, geometry, liveness, forecast). Record `preflight {report, digest}` in the

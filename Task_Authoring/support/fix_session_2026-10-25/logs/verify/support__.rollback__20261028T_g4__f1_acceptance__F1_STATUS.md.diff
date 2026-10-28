@@ -1,0 +1,22 @@
+--- a/support/.rollback/20261028T_g4/f1_acceptance/F1_STATUS.md
++++ b/support/.rollback/20261028T_g4/f1_acceptance/F1_STATUS.md
+@@ -0,0 +1,19 @@
++# F1 status (current, 2026-10-27)
++
++**Engine implemented; acceptance partial (7 records pass, 1 stub, 5 absent); replay FAIL withdrawn; no calibration.**
++
++- 7 implemented protocol records pass on seeds 1/2/3 at 20,000 baselines: f1 independent, f1 linked, f2 Beta(1,1) N=2,
++  f3 scope, f7 E2E, f7 shared, f10 fail closed (`logs/f1/protocol_seed{1,2,3}/result.json`).
++- 1 stub: f4 cancellation is NOT IMPLEMENTED (the harness has no SB/sample fixture).
++- 5 absent: f5 joint table, f6 chain (no chain channel ships), f7_sd, f8 geometry, f9 mechanisms.
++- The harness does **not** yet emit all 13 manifest ids with a status, and Bonferroni z = 3.656 for m = 39 is **not**
++  the gate (the harness uses |z| <= 4 per assertion, no multiplicity correction); power is not printed.
++- Provenance: eligible control:process_findings = r3's 3 controls, Beta(1,4); tool_surface:register = r3 S01 FAILED,
++  Beta(2,1). Exclusions and events are in F1_PROVENANCE_AUDIT.txt. The replay's overrides name their source; the
++  source is a disclosure, not independence.
++- Replay (amended 2026-10-27): advisory and diagnostic only. B 0/15, C 4/6/6, A 1/15, r3 15/15. The original criterion
++  is recorded FAIL and withdrawn by amendment; `f1_acceptance.py` now reports it as ADVISORY and exits 0, so the
++  executable harness no longer presents a pass/fail gate. No replacement validation is supplied. No run is V3-valid.
++  No calibration claim. No replay-fitted estimate is used for task 1.
++- Open for F1 completion: f4/f5/f7_sd/f8/f9, the 13-id status emitter, the Bonferroni gate and the pre-run power print,
++  and the audited-pool provenance wired into the harness (currently the replay's `--channel-rate` overrides).

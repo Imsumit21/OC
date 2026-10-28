@@ -100,9 +100,9 @@ writes goes to `task_inputs/Working_Files/`.
 
 | Command | Writes | Then |
 |---|---|---|
-| `/create-scenario` | `01_Scenario_Design.md`, draft `01_Hardness_Manifest.json` (+ optional `01b_Redteam_Review.md`) | `/create-injection` |
-| `/create-injection` | `01_Universe_Inject.sql`, `01_Grounding_Dossier.md`, final `01_Hardness_Manifest.json` | `/injection` |
-| `/create-hardening` *(advanced)* | `01a_Hardening_Report.md` (+ hardened SQL) | `/injection`; human revises prompt if needed |
+| `/create-scenario` (`--revise` after `/create-hardening`) | `01_Scenario_Design.md`, draft `01_Hardness_Manifest.draft.json` (with the mechanism portfolio), `01_Gradable_Surface.json`, `01b_Redteam_Review.md` + `.second.md` (or a recorded `RED TEAM FALLBACK:`) | `/create-injection` |
+| `/create-injection` | `01_Universe_Inject.sql`, `01_Grounding_Dossier.md`, final `01_Hardness_Manifest.json`, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` | `/injection` |
+| `/create-hardening` *(forensics after a run)* | `01a_Hardening_Report.md`, `run_forensics/<revision>/`, ledger records (no SQL) | `/create-scenario --revise`; human revises prompt if needed |
 | `/create-reference-files` *(optional)* | `02_Reference_Files/`, `02_Reference_Files_Manifest.md` | — |
 | `/create-error-async` *(optional)* | `03_Error_Async_Config.txt` | — |
 | `/create-prompt-writing` | `04_Prompt_Writing_Brief.md` (+ `04_Prompt.txt` draft on request) | `04_Prompt.txt` (Claude, Codex or human) |
@@ -139,6 +139,16 @@ equivalents of every command: `Guide/Manual_Commands.md`.
 | `tools/fact_check.py <sql> --manifest <manifest>` | Fact consistency inside an injection: the manifest's declared `facts` hold in every text the SQL writes; unresolved ids cited in text; drift warnings |
 | `tools/entity.py resolve · collisions` | One entity per person across every service (`references/universe_kb/entities.json`); shared names, lookalike handles and token conflicts |
 | `tools/stage_gate.py <stage> <task_dir> [--paste]` | **Stage gates, blocking.** Per stage: outputs present and fresh, headings filled, no placeholders, evidence pointers per row, tool outputs pasted and re-run, persona reach of load-bearing records, universe-KB use, counter-readings in the self-review, and a current PASS from the upstream stage. Handoff is blocked until PASS; `--paste` writes the block into the Self-review (`setup/GEN_EXECUTION.md` § 6b; fixtures in `support/examples/calibration/stage_gate/`) |
+| `tools/gradable_surface.py validate · from-slots` | The gradable surface `Working_Files/01_Gradable_Surface.json` (scenario S6b): the fact slots the deliverables make gradable, validated against the V3 rubric rules (work-kind weights, ≤ 5 samples per group plus a volume slot, exceptions an authority singles out, no fact in ≥ 3 slots); mechanism share reported, never gated |
+| `tools/oracle_kit.py check · truth` | The solver contract (injection S4b): deterministic, reproduces the previous revision's truth on its SQL, rules ↔ `mechanism_portfolio` one-to-one, every direct and aggregate slot produced; writes `solver/truth.json` |
+| `tools/difficulty_mutation.py mutate · geometry` | Rule, shard and degrade mutants (KILLED / WEAK / SURVIVED / EQUIVALENT), per-node interventions on an in-memory copy of the SQL (load-bearing / inert / escaped), the exact whole-mechanism combination table, geometry U (blocking: U ≤ 1 − cap) and L_max (advisory); every result needs a written disposition |
+| `tools/trap_liveness.py [--design]` | Advisory lexical flags for traps the entry set already neutralises: breadcrumb, self-advertising decoy, order, rule placement; each flag needs a written disposition |
+| `tools/hardness_forecast.py forecast · exhaustive · score · compare` | The joint-gate forecast from per-model ledger priors and exact solver outcomes through `difficulty_stats.compute()` (UNCALIBRATED, pre-registered in the ledger; another model's evidence only through a transfer record); the whole-rule enumeration; the pre-registration scorer; the §14.7 comparison after the runs |
+| `tools/preflight_report.py` | The injection preflight `Working_Files/01c_Preflight_Report.json` (+ `.md`): solver contract, surface validation with expected values and `flipped_by`, mutation with dispositions, geometry, liveness, forecast — bound by sha256 to the files it checked |
+| `tools/trajectory_ledger.py` | Run validity and provenance (model labels incl. subagents and fallbacks, compaction, events after the result), revision binding by content, the call ledger counted through `difficulty_stats.count_tool_calls`, decoded write payloads and subagent briefs |
+| `tools/node_verdicts.py` | Proposed node verdicts per run against the solver of the revision the run is bound to: LANDED / LEAKED / NOT-REACHED with event citations, brief transmission, every register difference classified once (mechanism · slip · representation · cascade); CONFOUNDED is only flagged, never assigned |
+| `tools/surface_grader.py` | Grades runs against the gradable surface before any rubric or verifier exists and runs the four gates through `difficulty_stats.compute()`; UNGRADED slots are listed with the coverage (a design check, not the grading of record) |
+| `tools/hardness_ledger.py append · seed · priors · write-priors · transfer · query` | The cross-task evidence ledger `support/hardness_ledger/ledger.jsonl`: content-addressed, append-only, conflict-rejecting; Beta priors per model with their record ids, never pooled across models |
 
 Every tool has `--self-test`.
 
@@ -152,10 +162,13 @@ Task_Authoring/
 │   └── Working_Files/        everything the commands generate (design, dossier, manifests, briefs, checks, stats, gates)
 ├── playbooks/                01 (scenario, injection), 01a, 02, 03, 04, 05, 08, 09, 11, 12 — numbered like the slot they write
 ├── skills/create-*/          the 11 command wrappers
-├── tools/                    hg (search wrapper), sql_lint, base_check, fact_check, hardness_gate, persona_view, entity, stage_gate, difficulty_stats, redteam_review, build_taxonomy_map
+├── tools/                    hg (search wrapper), sql_lint, base_check, fact_check, hardness_gate, persona_view, entity, stage_gate, difficulty_stats, redteam_review, build_taxonomy_map; gradable_surface, oracle_kit, difficulty_mutation, trap_liveness, hardness_forecast, preflight_report, trajectory_ledger, node_verdicts, surface_grader, hardness_ledger
 ├── setup/                    GEN_EXECUTION.md (contract every command reads first), install.py, uninstall.py, local_search.py
 ├── support/                  internals — not needed to author a task
 │   ├── local_search/         patched copies of Evals/tools + their cache (rebuilt on demand by setup/local_search.py)
+│   ├── hardness_ledger/      ledger.jsonl — the cross-task evidence ledger (append-only, through its tools only)
+│   ├── backtests/season_pass/  the Season Pass development fixtures: frozen revision-13 copy, ported solver, outputs — not validation
+│   ├── fixtures/             task-shaped fixture folders built by copying (season_pass_rev13)
 │   └── examples/             tool self-test fixtures, calibration evidence, two sample runs (sample_task_01/02) — not platform tasks
 ├── references/
 │   ├── Hardness_Mastery.md   the technique library + the evidence behind it (read before designing)
@@ -204,11 +217,18 @@ HarmonyGames set would tighten them further.
 - **Verification ceiling.** The lint and the gate prove structure, breadth, volume and
   that every designed difficulty exists in the SQL. Whether Opus actually fails is only
   proven by platform runs: the Opus pre-check → `/hardness`, then the baseline →
-  `/create-difficulty`. `/create-hardening` MODE B closes that loop.
+  `/create-difficulty`. `/create-hardening` MODE B (forensics on the shared tools) and `/create-scenario --revise`
+  close that loop.
+- **Predictions are advisory.** Liveness flags, the forecast and the pre-check go / no-go are UNCALIBRATED until plan
+  §10 Phase 2 meets its pre-registered adequacy criteria on ≥ 3 prospective tasks. The Season Pass backtests are
+  development fixtures, not validation.
+- **Solver key-locality.** With a solver that is not key-local (a record's value depends on rules applied to other
+  records, as in Season Pass revision 13), every forecast and mutation outcome is an exact full solve and slow, and
+  geometry U is the per-record enumeration plus the whole-mechanism combinations, not a guaranteed upper bound.
 - **Horizon.** The extreme profile is built for Long Horizon. A Normal Horizon
   assignment at ≥ 500 calls scores Borderline Horizon (non-fail, task score capped at 3);
   use `--profile normal` unless the requester confirms otherwise.
-- **Red team** needs `REDTEAM_BASE_URL`, `REDTEAM_API_KEY` and `REDTEAM_MODEL` (plus `REDTEAM_SECOND_MODEL` for `--dual`) in the environment and fails cleanly when the endpoint rejects the request (for example an exhausted budget). Transient drops are retried three times.
+- **Red team** needs `REDTEAM_BASE_URL`, `REDTEAM_API_KEY` and `REDTEAM_MODEL` (plus `REDTEAM_SECOND_MODEL` for `--dual`) in the environment and fails cleanly when the endpoint rejects the request (for example an exhausted budget). Transient drops are retried three times. When it cannot run, the scenario gate needs a recorded `RED TEAM FALLBACK: <who reviewed instead, how, and why>`.
 - **Personas.** 17 usable. `thomas` and `tim_steudler` are on the taxonomy list but fail
   `/prompt`'s identity gate and have too little data.
 - **External reviews.** The user operates Eval Portal, including its five review

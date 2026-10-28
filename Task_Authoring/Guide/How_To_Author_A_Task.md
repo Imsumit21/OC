@@ -24,9 +24,9 @@ cohort spine, hidden authorities, delegation lattice, chains, traps, call budget
 
 ```mermaid
 flowchart TD
-  A["00 · Exact assignment paste<br/>8 fields · normalize context<br/>shared data · assigned freeze"] --> S["/create-scenario<br/>01 design + manifest<br/>gate --design · Red team"]
+  A["00 · Exact assignment paste<br/>8 fields · normalize context<br/>shared data · assigned freeze"] --> S["/create-scenario<br/>01 design + manifest + gradable surface<br/>gate --design · Red team · prior forecast"]
   S -->|gate FAIL / leaks| S
-  S --> I["/create-injection<br/>01 SQL + dossier + manifest<br/>sql_lint + hardness_gate"]
+  S --> I["/create-injection<br/>01 SQL + dossier + manifest + solver<br/>sql_lint + hardness_gate · preflight"]
   I -->|gate FAIL| I
   I --> EI{{"/injection"}}
   EI -->|FAIL| I
@@ -40,11 +40,12 @@ flowchart TD
   EP -->|universe-rooted| I
   EP --> HT["/create-humantime → 06<br/>human types the estimate"]
   HT --> PRE["PLATFORM · re-inject · 1 Opus 5.5 run"]
-  PRE --> Q{"Opus struggled<br/>on substance?"}
-  Q -->|"no — too easy"| H["/create-hardening (MODE B)"]
-  H --> I
+  PRE --> PI["/create-hardening MODE B · pre-check intake<br/>node verdicts · posterior forecast"]
+  PI --> Q{"Opus struggled<br/>on substance?<br/>go / no-go (advisory)"}
+  Q -->|"no — too easy"| SR["/create-scenario --revise<br/>S0r: disposition the verdicts"]
+  SR --> I
   Q -->|yes| EH{{"/hardness<br/>(trajectory uploaded as a file)"}}
-  EH -->|"score 1–2 HOLD"| H
+  EH -->|"score 1–2 HOLD"| SR
   EH --> BASE["PLATFORM · re-inject · 6 Opus 5.5 rollouts<br/>do not wait — click Next"]
   BASE --> L["/create-oe-writing → 08 OE writing ledger (facts only)"]
   L --> HO(["Model draft or human writes 08_Oracle_Events.md"])
@@ -62,7 +63,8 @@ flowchart TD
   V --> AF["/create-allfail → 11"]
   AF -->|"invalid all-fail"| HR
   AF --> D["/create-difficulty → 12"]
-  D -->|"gate fails"| H
+  D -->|"gate fails"| H["/create-hardening (MODE B)<br/>baseline forensics"]
+  H --> SR
   D --> DONE(["Confirm difficulty check · submit"])
 ```
 
@@ -82,8 +84,8 @@ assigned Easy/Medium/Hard changes the measured score cap, not the profile.
 
 | Artifact | Written by | The harness's part |
 |---|---|---|
-| Scenario design, hardness manifest, injection SQL, grounding dossier | **Model** (harness) | builds them; gates verify against the SQL and the base universe |
-| Reference files, error/async config, human-time worksheet, all-fail justifications, difficulty stats, hardening report | **Model** (harness) | builds them; stage gates check them |
+| Scenario design, hardness manifest (with its mechanism portfolio), gradable surface, injection SQL, grounding dossier, solver, preflight report | **Model** (harness) | builds them; gates verify against the SQL and the base universe |
+| Reference files, error/async config, human-time worksheet, all-fail justifications, difficulty stats, hardening report and run forensics | **Model** (harness) | builds them; stage gates check them |
 | **Prompt** (`04_Prompt.txt`) | **Claude, Codex or human** | `/create-prompt-writing` gives the brief; `draft` writes the prompt; `check` reports defects with suggested wording |
 | **Oracle Events** (`08_Oracle_Events.md`) | **Claude, Codex or human** | `/create-oe-writing` gives a verified fact ledger; `draft` writes the events; `check` reports defects |
 | **Rubric criteria** (`09_Rubrics.json`) | **Claude, Codex or human** | `/create-rubric-writing` gives a coverage plan; `draft` writes the criteria; `check` reports defects |
@@ -96,17 +98,21 @@ assigned Easy/Medium/Hard changes the measured score cap, not the profile.
 | Proving a fact is reachable | `persona_view.py can-see <persona> <service> <id>` · `search <persona> …` | Search tools ignore ACL; this applies it (YES / NO / UNVERIFIED) |
 | Writing the SQL | `conventions` (lengths, hours, patterns) · `integrations` (companion records) · declare facts in the manifest `facts` | Seeded rows look native and carry their automatic companions |
 | After every SQL change | `sql_lint.py` · `base_check.py --manifest` · `fact_check.py` · `persona_view.py check-sql` · `hardness_gate.py` | Schema, base consistency (`/injection` A + C), integrity of the injection's own facts, reach of every load-bearing record, hardness |
-| Design and injection review | `redteam_review.py --mode redteam --dual` | Two independent red teams (two independent reviewers) |
+| Design and injection review | `redteam_review.py --mode redteam --dual` | Two independent red teams (two independent reviewers); a recorded `RED TEAM FALLBACK:` when they cannot run |
+| Designing the difficulty (scenario S5a–S9b) | `hardness_ledger.py priors --model <m>` · `gradable_surface.py validate` · `trap_liveness.py --design` · `hardness_forecast.py forecast --design --preregister` | Priors per model with their record ids; a valid gradable surface; liveness flags and a pre-registered prior forecast (advisory, UNCALIBRATED) |
+| Injection preflight (S4b–S5e) | `oracle_kit.py check` · `difficulty_mutation.py mutate` · `trap_liveness.py` · `hardness_forecast.py forecast --preregister` · `preflight_report.py` | Solver contract, a disposition for every mutation result, geometry that can reach the cap (blocking); liveness and the forecast advisory |
+| After any run (forensics) | `trajectory_ledger.py` · `node_verdicts.py` · `surface_grader.py` · `hardness_ledger.py append` | Revision binding, the call ledger, proposed node verdicts, grades of the deliverables before any rubric, the ledger |
 | End of every `/create-*` | `stage_gate.py <stage> task_inputs --paste` | Blocks handoff until the work is complete, evidenced and self-reviewed |
-| After the baseline | `difficulty_stats.py --build …` | Gates computed from the real verifier output |
+| After the baseline | `difficulty_stats.py --build …` · `hardness_forecast.py compare` / `score` | Gates computed from the real verifier output; the pre-registered forecast compared with them (advisory) |
 
 ## Stage by stage
 
 | # | Step | Command / action | Gate to pass | On failure go to |
 |---|---|---|---|---|
 | 0 | Assignment | Exact paste of all eight fields into `00`; run `task_context.py --task-dir <task_dir> --write --require-source` | Persona resolves; role/mode/date present; shared local source validated | Fix incomplete input; use the same data for either freeze, and scope relied-on facts to the assigned date |
-| 0.5 | Scenario | `/create-scenario` | `hardness_gate.py --design` PASS; lazy-solver leaks fixed; dual red-team findings dispositioned; `stage_gate.py scenario` PASS | Redesign (never shrink the targets to pass) |
-| 1 | Universe | `/create-injection` | Dossier cited; `sql_lint.py` clean; `base_check.py`, `fact_check.py`, `persona_view.py check-sql`, `hardness_gate.py` PASS; findability proven; `stage_gate.py injection` PASS | Step 0.5 if the design cannot be implemented |
+| 0.5 | Scenario | `/create-scenario` | `hardness_gate.py --design` PASS; mechanism portfolio with ledger priors; `gradable_surface.py validate` PASS; lazy-solver leaks fixed; dual red-team findings dispositioned (or a recorded `RED TEAM FALLBACK:`); liveness flags dispositioned and a prior forecast pre-registered (advisory); `stage_gate.py scenario` PASS | Redesign (never shrink the targets to pass) |
+| 0.5r | Revision intake | `/create-scenario --revise` after `/create-hardening` MODE B | Every proposed node verdict kept, purged or rebuilt; CONFOUNDED candidates confirmed or rejected; every export bound to its revision; `stage_gate.py scenario` PASS | `/create-hardening` for missing forensics |
+| 1 | Universe | `/create-injection` | Dossier cited; `sql_lint.py` clean; `base_check.py`, `fact_check.py`, `persona_view.py check-sql`, `hardness_gate.py` PASS; findability proven; solver contract PASS; a written disposition for every mutation result; geometry U > 1 − cap; preflight report current; `stage_gate.py injection` PASS | Step 0.5 if the design cannot be implemented |
 | 1e | Universe check | `/injection` (skip if nothing seeded) | PASS | Step 1 |
 | 2 | Friction *(opt.)* | `/create-error-async` | Alternate path proven; async needs real discovery; `stage_gate.py error-async` PASS | Drop the friction |
 | 3 | Files *(opt.)* | `/create-reference-files` | Grounded, not pre-solving, every fair outcome accepted; `stage_gate.py reference-files` PASS | Step 1 or drop the files |
@@ -115,23 +121,73 @@ assigned Easy/Medium/Hard changes the measured score cap, not the profile.
 | 5c | Prompt check | `/create-prompt-writing check` | Assigned role plausible; clean ordinary request; no hints/riddles; fair outcomes reviewed; local tier profile certified; `stage_gate.py prompt-check` PASS | Step 5; step 1 for universe/profile failure |
 | 5e | Evals | `/injection` + `/prompt` | PASS / NON-FAIL | `/prompt` FAIL is fatal → step 5 or step 1 |
 | 6 | Human time | `/create-humantime`; human types it (50–2,000 characters) | Arithmetic adds up; fits the tier; `stage_gate.py humantime` PASS | — |
-| 7 | Pre-check | Platform: re-inject, 1 Opus 5.5 run; save to `06_PreCheck_Trajectory/trajectory.json` | Opus failed on substance | `/create-hardening` → step 1 |
-| 7e | Hardness | `/hardness` with the JSON uploaded | Score 3–5 = PROCEED | Score 1–2 = HOLD → `/create-hardening` (make it harder; do not just re-run) |
+| 7 | Pre-check | Platform: re-inject, 1 Opus 5.5 run; save to `06_PreCheck_Trajectory/trajectory.json`; then the pre-check intake (`/create-hardening` MODE B): validity, node verdicts, deliverable diff, ledger, pre-registered posterior forecast | Opus failed on substance; go / no-go recorded (advisory, UNCALIBRATED) | `/create-scenario --revise` → step 1 |
+| 7e | Hardness | `/hardness` with the JSON uploaded | Score 3–5 = PROCEED | Score 1–2 = HOLD → `/create-scenario --revise` on the intake's verdicts (make it harder; do not just re-run) |
 | 8 | Baseline | Platform: re-inject, run the rollouts; save to `07_Baseline_Trajectories/` | Trigger and move on | — |
 | 9 | Oracle Event writing (prep) | `/create-oe-writing` (while the baseline runs) | Status READY; every opaque locator has a provenance (prompt · earlier fact · natural search); defer searches complete or UNRESOLVED; `stage_gate.py oe-writing` PASS | Step 1 or 5 for blockers |
 | 10 | **Oracle Events** | `/create-oe-writing draft` or the human writes `08_Oracle_Events.md` (typed into the platform; paste blocked) | — | — |
 | 10c | OE check | `/create-oe-writing check` | No blocking findings; `stage_gate.py oe-check` PASS | Step 10 |
 | 10e | Eval | `/oe` | PASS 5 or NON-FAIL 3 (minor / non-action / final-response defects — fix them anyway) | FAIL 2 (missing or wrong step) → step 10 |
-| 11 | Rubric writing (prep) | `/create-rubric-writing` | Prompt trace, actual source values/reachable path and every fair alternative supplied in V3 evidence; no fact appears in ≥3 criteria; predicted all-fail = 0; shortcut/diversity checks pass | Fix fairness first; step 1 / `/create-hardening` for a shortcut source |
+| 11 | Rubric writing (prep) | `/create-rubric-writing` (seeded from `01_Gradable_Surface.json`) | Prompt trace, actual source values/reachable path and every fair alternative supplied in V3 evidence; every gradable-surface slot covered or dispositioned (gate 17; the mechanism share is reported, not gated); no fact appears in ≥3 criteria; predicted all-fail = 0; shortcut/diversity checks pass | Fix fairness first; step 1 / `/create-hardening` for a shortcut source |
 | 12 | **Criteria** | `/create-rubric-writing draft` or the human writes them; enter in the builder; export `09_Rubrics.json` | — | — |
 | 12c | Rubric check | `/create-rubric-writing check` | No validity defect (incorrect / unauthorized / unobservable / contradiction / missing coverage / predicted all-fail — binary, whatever the tally); no fail-risk dimensions; `stage_gate.py rubric-check` PASS | Step 12 |
 | 12e | Eval | `/rubric` | PASS / scored NON-FAIL (an `/oe` PASS is not required) | Step 12 |
 | 13 | Verifier | Platform: confirm all 6 finished, run the verifier; paste results to `10_…` | — | — |
 | 14 | All-fails | `/create-allfail`; enter justifications | ≤ 1 invalid all-fail (aim for 0); `stage_gate.py allfail` PASS | Step 12, then re-run the verifier |
-| 15 | Difficulty | `/create-difficulty` after fairness corrections and regrading | Corrected average strictly below Easy 90% / Medium 85% / Hard 70%; <5 full passes; unchanged error/spread/pattern checks and horizon minimum; `stage_gate.py difficulty` PASS | Repair/re-grade unfair criteria first; if still too easy, harden the universe |
+| 15 | Difficulty | `/create-difficulty` after fairness corrections and regrading | Corrected average strictly below Easy 90% / Medium 85% / Hard 70%; <5 full passes; unchanged error/spread/pattern checks and horizon minimum; `stage_gate.py difficulty` PASS; the pre-registered forecast compared with the corrected gates (advisory) | Repair/re-grade unfair criteria first; if still too easy, `/create-hardening` MODE B, then `/create-scenario --revise` |
 | 16 | Human time refresh | `/create-humantime` again if the OEs changed the picture | — | — |
 | 16b | **Release** | `python3 Task_Authoring/tools/stage_gate.py release Task_Authoring/task_inputs --paste` (writes `13_Release_Gate.txt`) | Every stage certificate current; one bundle digest (prompt, OEs, rubric JSON, SQL, reference files, error/async config, manifest, assignment + persona) matching every stage-recorded digest; no PROVISIONAL / UNRESOLVED / UNVERIFIED marker; OE solvability SUPPORTED_BY_OE; difficulty gates clear; `06_PreCheck_Trajectory/trajectory.json` present | The step that owns the failing certificate or marker |
 | 17 | Submit | Run `references/Docs/9_Common Errors & Pre-QC - V2.md` §10 checklist, after the release gate passed | Every box | The owning step |
+
+## Your 7-trajectory test (plan §14.7)
+
+This tests the predictions against your own harness runs; it is not a gate. Lay the runs out as the platform does:
+run 1 → `06_PreCheck_Trajectory/trajectory.json`, runs 2–7 → `07_Baseline_Trajectories/trajectory-run-1.json` …
+`trajectory-run-6.json`. Below, `T=Task_Authoring/task_inputs` and `R=$T/Working_Files/run_forensics/<rev>`;
+`<model>` is the run model's label, `<harness>` is `NAME@VERSION`, `<task>` the task id. `$SQLS` is one `--sql` per
+stored revision: `--sql <rev>=$T/01_Universe_Inject.sql` plus `--sql <older rev>=$T/Working_Files/run_forensics/<older
+rev>/01_Universe_Inject.sql` for each older one (`/create-injection` stores them). On the task's first revision use
+`--sql <rev>=$T/01_Universe_Inject.sql --sole-revision "<why it is the only revision>"`: refused while another revision
+is stored. With one SQL and no `--sole-revision`, every run is INSUFFICIENT and is not evaluated. Decide now that all 7
+runs happen whatever run 1 shows; otherwise a wrong "too easy" call can never be detected.
+
+1. **Freeze and pre-register, before any run.** Finish `/create-scenario` → `/create-injection` → the prompt, with every
+   check, then:
+   ```sh
+   python3 -B Task_Authoring/tools/oracle_kit.py truth --task-dir $T --out $T/Working_Files/solver/truth.json
+   python3 -B Task_Authoring/tools/hardness_forecast.py forecast --task-dir $T --model <model> --task <task> --harness <harness> --freeze $T/04_Prompt.txt --freeze $T/Working_Files/01_Hardness_Manifest.json --freeze $T/Working_Files/solver/truth.json --preregister --out $T/Working_Files/01c_Forecast.json
+   python3 -B Task_Authoring/tools/preflight_report.py --task-dir $T --forecast $T/Working_Files/01c_Forecast.json
+   ```
+   The ledger record now holds the SQL, solver, surface, prompt, manifest and truth hashes. Nothing changes after this.
+2. **Run the 7 trajectories**: fresh, independent sessions on one harness, model, prompt and SQL; no hints; complete
+   exports with no compaction gaps; record the harness and model labels.
+3. **Run 1 only** — the pre-check intake (`playbooks/01a_Hardening.md`, MODE B pre-check), before opening runs 2–7:
+   ```sh
+   python3 -B Task_Authoring/tools/trajectory_ledger.py --task-dir $T --run precheck=$T/06_PreCheck_Trajectory/trajectory.json $SQLS --prompt $T/04_Prompt.txt --source independent-harness --harness <harness> --out-dir $R
+   python3 -B Task_Authoring/tools/node_verdicts.py --task-dir $T --run precheck=$T/06_PreCheck_Trajectory/trajectory.json $SQLS --source independent-harness --task <task> --ledger-out $R/precheck.proposals.jsonl --out $R/precheck.node_verdicts.json
+   python3 -B Task_Authoring/tools/surface_grader.py --task-dir $T --run precheck=$T/06_PreCheck_Trajectory/trajectory.json --out $R/precheck.surface_grades.json
+   python3 -B Task_Authoring/tools/hardness_ledger.py append <your dispositioned pre-check records>.jsonl
+   python3 -B Task_Authoring/tools/hardness_forecast.py forecast --task-dir $T --model <model> --task <task> --harness <harness> --freeze $T/04_Prompt.txt --freeze $T/Working_Files/01_Hardness_Manifest.json --freeze $T/Working_Files/solver/truth.json --preregister --out $R/precheck.posterior_forecast.json
+   ```
+   Write down the go / no-go call and the old `/hardness`-style band (1–5) now.
+4. **Runs 2–7, then all 7 runs together:**
+   ```sh
+   python3 -B Task_Authoring/tools/trajectory_ledger.py --task-dir $T $SQLS --prompt $T/04_Prompt.txt --source independent-harness --harness <harness> --out-dir $R
+   python3 -B Task_Authoring/tools/surface_grader.py --task-dir $T --out $R/surface_grades.json
+   python3 -B Task_Authoring/tools/node_verdicts.py --task-dir $T $SQLS --source independent-harness --task <task> --ledger-out $R/proposals.jsonl --out $R/node_verdicts.json
+   python3 -B Task_Authoring/tools/hardness_forecast.py compare --forecast prior=$T/Working_Files/01c_Forecast.json --forecast posterior=$R/precheck.posterior_forecast.json --verdicts $R/node_verdicts.json --grades $R/surface_grades.json --precheck-call <go|no-go> --old-band <1-5> --out $R/comparison.json --md $R/comparison.md
+   ```
+   Then disposition `$R/proposals.jsonl` and append it (`hardness_ledger.py append`). Once a rubric and a verifier
+   exist, add `--difficulty <difficulty_stats.py --json output>` to compare with the gates of record.
+5. **What counts as "works"** (fixed in advance; `comparison.md` reports each one):
+   - tooling: every run BOUND on evidence to its revision, every landed verdict citing events, no unclassified item;
+   - predictions sane: each mechanism's landings inside its 90 % predictive interval, the six-run average inside the
+     forecast's 10–90 % band, and the forecast giving the observed gate verdict at least 10 %;
+   - the goal: the six runs pass the Hard gates;
+   - the screens: whether the run-1 call and the old band each agreed with the six-run outcome.
+
+   One task catches big errors; it cannot prove the improvement. Calibration needs at least three tasks, and harness
+   runs measure the harness, not the platform.
 
 ## Transfer to the platform
 
@@ -231,3 +287,16 @@ does not establish mutable task state, historical employment or a role at the fr
 - **Activity is evaluated at the assigned freeze.** Use shared activity/KB as leads and verify status with dated records; a later summary label cannot establish an earlier status.
 - **Never shrink the design to pass the gate.** If `hardness_gate.py` fails, add the missing breadth or difficulty in the universe; a lower `--profile` is only for a Normal Horizon assignment.
 - **Re-inject the SQL** before the pre-check and before the baseline; environments expire after 24 hours.
+- **Predictions are advisory until calibrated.** Liveness flags, the forecast and the pre-check go / no-go are
+  UNCALIBRATED. What blocks is the solver contract, a written disposition for every mutation result, geometry U and the
+  stage gates.
+- **Never choose criteria for forecast loss.** The mechanism share is reported, not gated; weights stay by the kind of
+  work.
+- **Lessons from Season Pass**, a task skipped after 14 revisions (`references/Hardness_Mastery.md` §12;
+  `plans/V3_Opus55_Difficulty_Plan.md`):
+  - **Design to the mode's loss budget.** Aim 8 points under the cap: Easy 82 %, Medium 77 %, Hard 62 %.
+  - **Name authorities by role.** A hub that lists every source becomes a checklist the agent completes.
+  - **Run Opus 5.5 early** (injection S5f).
+  - **Confirm failed slots against the write payloads.**
+  - **Treat a fallback run as invalid under V3.**
+  - **Stop at two pre-checks per scenario,** then change the scenario.

@@ -1,0 +1,68 @@
+--- a/support/.rollback/20261028T_g4/f1_acceptance/F1_SNAPSHOT.json
++++ b/support/.rollback/20261028T_g4/f1_acceptance/F1_SNAPSHOT.json
+@@ -0,0 +1,65 @@
++{
++ "python": "3.15.0 (main, Oct  9 2026, 11:16:41) [Clang 21.0.0 (clang-2100.3.34.2)]",
++ "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
++ "tools": {
++  "tools/base_check.py": "476901260b896fa6894fdce3ca98504a6752d31584e1b11e8d093b7bc29ebbe3",
++  "tools/build_taxonomy_map.py": "09cbc4a84736c64e0870b03aa9645e5b3a295954ea8daa030c919e4d03fa9df2",
++  "tools/difficulty_mutation.py": "11cfebfcf9d95917bf3735f2698a5c36fe97faae1c20e3e8517fbc5653416ebf",
++  "tools/difficulty_stats.py": "d3ca89c53ec0fd0acea76cf8bcf97effabde63567cf148483f531faf70a90a4d",
++  "tools/entity.py": "ed6ea9925fed22fe379601e3c1954e530b65396a5f3b969b407c390a5f73da22",
++  "tools/fact_check.py": "481df49ced801bd631de120a674f419f2ff8ed234c7270f5eb9f87ddb2ef6fb6",
++  "tools/gradable_surface.py": "0c1c21a33f4aad01e2034ea4645296aaf1636fcc2c08dfacef4bc6c2d6609a3d",
++  "tools/hardness_forecast.py": "7d9d95575476c4dae4e90e635d0fcacf7ea624e622cd1f6bac44771142ee200b",
++  "tools/hardness_gate.py": "73383d0a369ea51ce4dd410c2cc8a8db081890ac379ec0c76bce54141f17cf5d",
++  "tools/hardness_ledger.py": "89c130e96ce9c31ba1a1788c2452d2787e208f5791bc10ca938169716b4a59a4",
++  "tools/hg.py": "9b83e795ffbaa6e4b1bd5b5ff292adad0c94ff370f27dc79290f2555aa8b03b6",
++  "tools/node_verdicts.py": "28656fe459126329bc696b0fcb3601e6a7f3637641d47a1748f6315ce8432284",
++  "tools/oracle_kit.py": "1798337f1e7dfc3893eeb20209d60741d39b83a070810a02abe2b76e420a128a",
++  "tools/persona_view.py": "c99c39206baa47d9dfbbc0276cada5fb701f807cce74b4a0ca04104cb4bd70a6",
++  "tools/preflight_report.py": "afa48970fd301bdc58420eee8600c92e6a773eeb99bdadfb4a976b3e56e3df9c",
++  "tools/redteam_review.py": "373beba71051273bff18bebee27039e96bd5558268293c4712c5434c9baad1ad",
++  "tools/runtime_context.py": "539dd616620718079c987435a6576ff96ad43177592227e06c26e9e3ee0a36e2",
++  "tools/selftest_sandbox.py": "982890eaace626bdd1b82b9bca7ef4b4c6c0c55baf93918f430b105aff92c97e",
++  "tools/shortcut_probe.py": "eaf56777666cfac8ae77e991367c49420ad01aa5f42f52dd648e9b486c074bdf",
++  "tools/sql_lint.py": "a46cfe7f65d33bf18e327e69f5cd8020d1fea0268665b77c846d524e4d809a78",
++  "tools/stage_gate.py": "4d2b3d79ce26d7c9285fcf58ced43670665341a7f34979823e4023331c415d6b",
++  "tools/surface_grader.py": "b65df65bf00820c275ec6c5971efb2760d95890a61f2cd3c8acd364731e4df58",
++  "tools/task_context.py": "7ae0e08072653ca5ddf542a9917be0690dc5bd3a78f37c50e217f24ee7a78e79",
++  "tools/test_difficulty_v3.py": "62790ab6371b3c4f10732ced7af306348431718b47b669b8d086d6c3d6a1d36c",
++  "tools/test_task_context.py": "437be91b299993bde322a8850dab130407d7a17d7bc60e55eefdb76d1200d3e7",
++  "tools/trajectory_ledger.py": "95b6de2c163cf94fa540f3cf61aee596c1f88041ab2c5f4bd758896a4a508234",
++  "tools/trap_liveness.py": "167cc313e09bb57e3ea78de5e39ff98b4b9ba4d8e8f0bc3e24ce56c14631e4c3",
++  "tools/v3_artifact_checks.py": "35bb0262f7769b005a4d70c6fb4de99a178033dc7b825b4e2efb65d78370cad3"
++ },
++ "replay": {
++  "script": "support/fix_session_2026-10-25/scripts/f1_acceptance.py",
++  "command": "python3 -B scripts/f1_acceptance.py logs/f1/round3/seed<N> --seed <N>",
++  "seeds": [
++   7,
++   8,
++   9
++  ],
++  "draws": 1500,
++  "baseline_runs": 6,
++  "views": "15 (3 dependence x 5 extent)",
++  "interval": "10-90% quantile band",
++  "channel_overrides": [
++   "scale:groups=4,266",
++   "tool_surface:register=3,3",
++   "control:process_findings=1,13"
++  ],
++  "variants": [
++   "A_out_of_sample",
++   "B_slips_only",
++   "C_evidence",
++   "A0_no_channels",
++   "B0_no_channels",
++   "C0_no_channels"
++  ],
++  "original_criterion": "variant B brackets the observed 4-run average 89.9% and r3 91.8% in every scenario view",
++  "original_result": "FAIL: B 0/15 views in all 3 seeds"
++ },
++ "ledger": "support/hardness_ledger/ledger.jsonl",
++ "ledger_sha256": "355ae3bf98cdd3a072e507b8360e0e35ece0e1f2c7d0ab6b1db9150a5c4eb0b4",
++ "replay_log_sha256": "ec0e024d0ccaa562766d377c6a21468294c917f5483454527698cf601af1745b"
++}

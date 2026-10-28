@@ -1,0 +1,1368 @@
+CONTEXT
+P1 remediation of Task_Authoring (stdlib-only tools that author/check HarmonyGames V3 tasks). The round-3 independent
+verification failed 8 bundles; this artifact contains the ROUND-4 DELTA against the exact tree that verifier reviewed
+(the pre-round-4 copies are the session's own rollback files, sha256 in each delta header) plus the raw acceptance
+outputs. Rounds 1-3 reviewed the rest of the full P1 diff; nothing outside the deltas below changed in round 4 except
+the new F1 acceptance files (shown in full). Hard rules: SQL is parsed, never executed; the frozen backtests
+(support/backtests/season_pass/rev13|rev14) are read-only and verified by SHA256SUMS; self-tests run in a sandbox and
+write no shared cache; each fix carries a planted case and a falsification undo.
+
+===== ROUND-4 DELTA tools/node_verdicts.py (pre-round-4 sha 1f45a01b1df536c2 -> now f35e00bca888e8c3) =====
+--- a/tools/node_verdicts.py
++++ b/tools/node_verdicts.py
+@@ -314,7 +314,8 @@
+ 
+ def channel_reports(view: RunView, channels: dict, rows: dict, truth: dict, *, mod, state, tspec: dict,
+                     table_events: list, graded: dict | None = None, class_field: str = "class",
+-                    key_events: dict | None = None, deciders: dict | None = None) -> dict:
++                    key_events: dict | None = None, deciders: dict | None = None,
++                    slot_targets: dict | None = None) -> dict:
+     """{channel: {...}} for every declared complexity channel. H1-7: observed, failed, held and unobserved members are
+     counted apart (an unobserved member is never a held trial); a slots-only channel is judged on the run's surface
+     grades and carries the failed slots' deciding model; a channel whose degrade moves no register column is
+@@ -331,13 +332,26 @@
+             unobs = [s for s in declared if (graded or {}).get(s) is None or s not in (graded or {})]
+             dec = [deciders.get(s) or {} for s in bad] if deciders else []
+             models = sorted({m for d in dec for m in d.get("models") or []})
+-            events = [max(d.get("write_events") or []) for d in dec if d.get("write_events")] or \
+-                [max(d.get("brief_events") or []) for d in dec if d.get("brief_events")]
++            # H1 residual f: a failed slot the ledger has no deciding record for is an UNKNOWN decision, never a
++            # known trial of the harness model (this also covers deciders=None, where `dec` is empty)
++            provenance_missing = [s for s in bad if not ((deciders or {}).get(s) or {}).get("models")]
++            obs_dec = [deciders.get(s) or {} for s in (bad + ok)] if deciders else []
++
++            def _slot_event(d):
++                evs = list(d.get("write_events") or []) + list(d.get("brief_events") or [])
++                return max(evs) if evs else None
++
++            events = [e for e in (_slot_event(d) for d in obs_dec) if e is not None]
+             out[cid] = dict(base, verdict="FAILED" if bad else ("HELD" if ok else "UNOBSERVED"), members=0,
+                             observed=len(bad) + len(ok), held=len(ok), unobserved=len(unobs), slots=declared,
+                             failed_slots=bad, failed_members=[], held_members=[
+                                 {"slot": s, **((deciders or {}).get(s) or {})} for s in ok],
+-                            deciding_models=models, unknown_decisions=sum(1 for d in dec if not d.get("models")),
++                            deciding_models=models, unknown_decisions=len(provenance_missing),
++                            provenance_missing=provenance_missing,
++                            failed_slot_targets=[{"slot": s, **slot_targets[s]} for s in bad
++                                                 if (slot_targets or {}).get(s)],
++                            failed_slot_details=[{"slot": s, "models": list(((deciders or {}).get(s) or {})
++                                                                           .get("models") or [])} for s in bad],
+                             deciding_event=max(events) if events else None,
+                             counts={"unit": "run", "n": 1, "failed": int(bool(bad))})
+             continue
+@@ -353,13 +367,26 @@
+             unobs = [s for s in declared if (graded or {}).get(s) is None or s not in (graded or {})]
+             dec = [deciders.get(s) or {} for s in bad] if deciders else []
+             models = sorted({m for d in dec for m in d.get("models") or []})
+-            events = [max(d.get("write_events") or []) for d in dec if d.get("write_events")] or \
+-                [max(d.get("brief_events") or []) for d in dec if d.get("brief_events")]
++            # H1 residual f: a failed slot the ledger has no deciding record for is an UNKNOWN decision, never a
++            # known trial of the harness model (this also covers deciders=None, where `dec` is empty)
++            provenance_missing = [s for s in bad if not ((deciders or {}).get(s) or {}).get("models")]
++            obs_dec = [deciders.get(s) or {} for s in (bad + ok)] if deciders else []
++
++            def _slot_event(d):
++                evs = list(d.get("write_events") or []) + list(d.get("brief_events") or [])
++                return max(evs) if evs else None
++
++            events = [e for e in (_slot_event(d) for d in obs_dec) if e is not None]
+             out[cid] = dict(base, verdict="FAILED" if bad else ("HELD" if ok else "UNOBSERVED"), members=0,
+                             observed=len(bad) + len(ok), held=len(ok), unobserved=len(unobs), slots=declared,
+                             failed_slots=bad, failed_members=[], held_members=[
+                                 {"slot": s, **((deciders or {}).get(s) or {})} for s in ok],
+-                            deciding_models=models, unknown_decisions=sum(1 for d in dec if not d.get("models")),
++                            deciding_models=models, unknown_decisions=len(provenance_missing),
++                            provenance_missing=provenance_missing,
++                            failed_slot_targets=[{"slot": s, **slot_targets[s]} for s in bad
++                                                 if (slot_targets or {}).get(s)],
++                            failed_slot_details=[{"slot": s, "models": list(((deciders or {}).get(s) or {})
++                                                                           .get("models") or [])} for s in bad],
+                             deciding_event=max(events) if events else None,
+                             counts={"unit": "run", "n": 1, "failed": int(bool(bad))})
+             continue
+@@ -446,10 +473,29 @@
+                 (counted if own(v["deciding_models"], v.get("unknown_decisions", 0)) else excluded).append(x)
+     for cid, v in channels.items():
+         if v["verdict"] == "FAILED" and not v.get("failed_members"):
+-            # a slots-only failure: the evidence is its failed slots and their reported decisions
++            # a slots-only failure: the evidence is its failed slots and their reported decisions. H1 residual a:
++            # a failed slot whose (key, field) target a control over-application already explains is removed from the
++            # residual; every other failed slot stays, including one with no field target (never silently dropped),
++            # and the residual models / unknown count are recomputed over the surviving slots only.
+             models = v.get("deciding_models") or []
+             unknown = v.get("unknown_decisions", 0)
+-            x = (f"channel {cid}", set(v.get("failed_slots") or []), v.get("source") or cid, models)
++            targets = v.get("failed_slot_targets") or []
++            details = {d["slot"]: d for d in v.get("failed_slot_details") or []}
++            residual = []
++            for s in (v.get("failed_slots") or []):
++                t = next((x for x in targets if x.get("slot") == s), None)
++                if t and (t.get("key"), t.get("field")) in over_pairs:
++                    continue
++                residual.append(s)
++            if targets and not residual:
++                control_explained.append(f"channel {cid}")
++                continue
++            # recompute UNCONDITIONALLY over the surviving slots: a survivor with no detail is an UNKNOWN decision,
++            # never the channel-wide aggregate (which may have been computed over removed slots)
++            models = sorted({m for s in residual for m in (details.get(s) or {}).get("models") or []})
++            unknown = sum(1 for s in residual if not (details.get(s) or {}).get("models"))
++            keys = {t["key"] for t in targets if t.get("slot") in residual} | set(residual)
++            x = (f"channel {cid}", keys, v.get("source") or cid, models)
+             (counted if own(models, unknown) and v["preregistered"] else excluded).append(x)
+             continue
+         if v["verdict"] == "FAILED":
+@@ -510,8 +556,12 @@
+ 
+ 
+ def classify(rows: dict, truth: dict, abl: dict, touched: dict, rules: dict, tspec: dict, class_field: str,
+-             legacy=None) -> list:
+-    """Every register difference from the truth, classified once (see the module docstring)."""
++             legacy=None, explained=None) -> list:
++    """Every register difference from the truth, classified once (see the module docstring).
++
++    `explained` is the set of (key, field) pairs a declared control's over-application already accounts for. Such a
++    difference gets its own class, "control": never a slip, never a mechanism and never a landing. The subtraction is
++    strictly per (key, field), so a control that changes only the class does not erase an unrelated field landing."""
+     columns = [c for c in tspec.get("columns", []) if c != tspec.get("key_column") and c != tspec.get("reason_column")]
+     missing = {tl.norm(m) for m in (tspec.get("missing_values") or tl.MISSING)}
+     items = []
+@@ -531,6 +581,11 @@
+         for d in diffs:
+             f = d["field"]
+             d["attributed"], d["candidates"] = [], []
++            if explained and (k, f) in explained:
++                d["classification"] = "control"
++                d["note"] = ("a declared control's over-application already accounts for this (key, field): a control "
++                             "trial, never a slip and never a landing")
++                continue
+             if f == class_field:
+                 # H1-9: attribute the class only to a class-deciding rule whose ablation reproduces it without moving
+                 # any other written column (class-only rows included); otherwise cascade (a stated conservative
+@@ -600,12 +655,18 @@
+     touched = {r: mod.touched(state, r) if hasattr(mod, "touched") else
+                {k for k in truth if abl[r][k] != truth[k]} for r in rules}
+     cf = ok.class_field(mod)
+-    items = classify(rows, truth, abl, touched, rules, tspec, cf, legacy)
+     prov = tl.provenance(run, view.briefs, expected)
+     fallback_events = [f["event"] for f in prov["fallbacks"]]
+     main_files = file_writes(view, "main")
+     table_events = t["meta"].get("events") or ([t["meta"]["event"]] if t["meta"].get("event") is not None else [])
+     key_events = t["meta"].get("key_events") or {}          # H1-5: the write that set each key's final value
++    # H1 residual a: a control's over-application is decided BEFORE classification, so its evidence is never a slip,
++    # never a mechanism and never a landing downstream (go_rule repeats the subtraction as an independent check).
++    controls = control_trials(view, rules, controls_decl, rows, truth, mod=mod, state=state, tspec=tspec,
++                              class_field=cf, table_events=table_events, key_events=key_events)
++    over_pairs = {(x["key"], f) for c in controls.values() for x in c["trials"]
++                  if x["outcome"] == "OVER-APPLIED" for f in x.get("fields") or []}
++    items = classify(rows, truth, abl, touched, rules, tspec, cf, legacy, explained=over_pairs or None)
+     graded, slot_deciders = _surface_results(run, surface, truth, view.briefs)
+     out_rules = {}
+     for r, spec in rules.items():
+@@ -613,7 +674,11 @@
+             continue
+         rx = re.compile(spec.get("signature") or r"(?!x)x", re.I)
+         sub = [x for x, v in rules.items() if v.get("part_of") == r]
+-        landed = sorted({d["key"] for d in items if r in d.get("attributed", [])})
++        landed = sorted({d["key"] for d in items if r in d.get("attributed", [])
++                         and d.get("classification") != "control"})
++        rule_over = {(x["key"], f) for x in (controls.get(r) or {}).get("trials", [])
++                     if x["outcome"] == "OVER-APPLIED" for f in x.get("fields") or []}
++        control_keys = sorted({k for k, _f in rule_over if k not in set(landed)})
+         pending = sorted({d["key"] for d in items if d["classification"] == "mechanism?"
+                           and r in _parents(rules, d.get("candidates") or [])})
+         cohort = set(touched.get(r, set())) | {k for s in sub for k in touched.get(s, set())}
+@@ -625,7 +690,8 @@
+             seen = {i: view.first_seen(calls + view.main_calls(), need.get(i, [i.lower()])) for i in deciding}
+             reached = any(v is not None for v in seen.values())
+             tx = [transmission(view, b, rx, main_files) for b in cov]
+-            keys_detail.append({"key": k, "fields": [d["field"] for d in items if d["key"] == k and r in d.get("attributed", [])],
++            keys_detail.append({"key": k, "fields": [d["field"] for d in items if d["key"] == k and r in d.get("attributed", [])
++                                                     and d.get("classification") != "control"],
+                                 "deciding_records_seen": {i: e for i, e in seen.items() if e is not None},
+                                 "deciding_records_unseen": [i for i, e in seen.items() if e is None][:12],
+                                 "covering_briefs": tx, "worker_writes": worker_lines(view, cov, k),
+@@ -695,6 +761,7 @@
+         tx_all = [b for kd in keys_detail for b in kd["covering_briefs"]]
+         out_rules[r] = {"verdict": verdict, "why": why, "mechanism": spec.get("mechanism"), "family": spec.get("family"),
+                         "nodes": spec.get("nodes", []), "cohort": len(cohort), "landed_keys": landed_reached,
++                        "control_explained_keys": control_keys,
+                         "not_reached_keys": not_reached, "pending_review_keys": pending, "keys": keys_detail,
+                         "deciding_models": sorted({kd["decided_by"]["deciding_model"] for kd in keys_detail
+                                                    if kd["key"] in landed_reached and kd["decided_by"]["deciding_model"]}),
+@@ -715,11 +782,14 @@
+                             "candidates": hidden},
+                         "citations": {"register_write_events": table_events,
+                                                       "brief_events": sorted({b["event"] for b in tx_all})}}
+-    controls = control_trials(view, rules, controls_decl, rows, truth, mod=mod, state=state, tspec=tspec,
+-                              class_field=cf, table_events=table_events, key_events=key_events)
++    slot_targets = {}
++    for s in surface.get("slots") or []:
++        sel = s.get("selector") or []
++        if len(sel) >= 3 and sel[0] == "field":
++            slot_targets[s["id"]] = {"key": sel[1], "field": sel[2]}
+     channels = channel_reports(view, channels_decl, rows, truth, mod=mod, state=state, tspec=tspec,
+                                table_events=table_events, graded=graded, class_field=cf, key_events=key_events,
+-                               deciders=slot_deciders)
++                               deciders=slot_deciders, slot_targets=slot_targets)
+     special = {c["over_application"] for c in controls_decl.values() if c["over_application"]} | \
+         {c.get("degrade") for c in channels_decl.values()}
+     # degrade nodes (e.g. trusting a stale export); over-application operators and channel degrades are reported above
+@@ -761,6 +831,10 @@
+                            "models": (prov.get("model_check") or {}).get("models"),
+                            "valid_for_expected": (prov.get("model_check") or {}).get("valid")},
+             "items": items, "rules": out_rules, "degrades": degrades, "controls": controls, "channels": channels,
++            "coverage": {"controls": sum(1 for c in controls.values() for x in c["trials"]
++                                         if x["outcome"] not in ("NOT-WRITTEN", "UNOBSERVED")),
++                         "channels": sum(1 for c in channels.values() if c["verdict"] != "UNOBSERVED"),
++                         "dropped": _dropped(controls, channels)},
+             "go_rule": go_rule(out_rules, channels, controls, items, prov, expected, rules),
+             "reach_nodes": {k: ("READ", v) if v is not None else ("NOT-READ", None) for k, v in reach.items()},
+             "review_queue": {"events": review[:400], "unclassified_calls": unclassified[:50],
+@@ -839,10 +913,22 @@
+     observed row and full ablation row; another wrong field does not veto it, because the predicate already checks
+     that the ablation leaves every written column equal. A diff-only item that cannot supply that context is added to
+     `unresolved` instead of being synthesized into either a landing or an empty landed-key set. Rules outside `legacy`
+-    are not judged."""
++    are not judged.
++
++    The trichotomy (H1 residual c): a reference item lands only when the classifier would also land it. An item labelled
++    cascade, mechanism?, mechanism (ambiguous) or control lands nothing and, when it names an ablation, is recorded in
++    `unresolved` so the comparison reports a contract disagreement instead of silently agreeing. A class item whose
++    own label is not "mechanism" never lands, even with a stale reproduced_by_ignoring list."""
+     out = collections.defaultdict(set)
+     for d in ref_items:
+-        if d.get("classification") == "representation":
++        cls = d.get("classification")
++        if cls == "representation":
++            continue
++        if cls is not None and cls != "mechanism":
++            for r in d.get("reproduced_by_ignoring") or []:
++                if ((legacy is None or r in legacy) and r in rules
++                        and d.get("field") in (rules[r].get("decides") or []) and unresolved is not None):
++                    unresolved.add((_parents(rules, [r])[0], d["key"]))
+             continue
+         for r in d.get("reproduced_by_ignoring") or []:
+             if not ((legacy is None or r in legacy) and r in rules
+@@ -862,6 +948,10 @@
+                     continue
+                 if not class_attribution_ok(ctx.get("row") or {}, ablation, ctx.get("columns") or [],
+                                             ctx.get("tspec") or {}, class_field):
++                    continue
++                if cls is not None and cls != "mechanism":
++                    if unresolved is not None:
++                        unresolved.add((parent, d["key"]))
+                     continue
+             out[parent].add(d["key"])
+     return out
+@@ -906,7 +996,8 @@
+             if any(u[0] == rule for u in unresolved):
+                 diffs.append({"run": lab, "item": None, "kind": "reference_insufficient", "rule": rule,
+                               "grader": mine_k,
+-                              "reference": "diff-only reference lacks the written row/ablation for a class item",
++                              "reference": "a reference item this classifier never lands (cascade/mechanism?/control), or "
++                                           "a diff-only class item without its written row and ablation",
+                               "pending_review": v.get("pending_review_keys", [])})
+                 continue
+             ref_k = sorted(implied.get(rule, set())) if judged else None
+@@ -941,12 +1032,44 @@
+     if c["verdict"] == "FAILED":
+         members = c.get("failed_members") or []
+         if members:
+-            models = {m["deciding_model"] for m in members if m.get("deciding_model")}
+-            unknown = sum(1 for m in members if not m.get("deciding_model"))
++            # a FAILED member channel's proposal covers failed AND held observations: an unknown held member is an
++            # unknown decision too, never attributed to a failed member's model
++            held = c.get("held_members") or []
++            models = {m.get("deciding_model") for m in members + held if m.get("deciding_model")}
++            unknown = (sum(1 for m in members if not m.get("deciding_model"))
++                       + sum(1 for m in held if not m.get("deciding_model")))
++            # declared observations with NO detail object are unknown too: reconcile with the declared counts
++            declared = max(int(c.get("observed") or 0), int(c.get("held") or 0))
++            unknown += max(0, declared - len(members) - len(held))
+             return sorted(models), unknown
+-        return sorted(set(c.get("deciding_models") or [])), int(c.get("unknown_decisions") or 0)
++        # a FAILED slots-only channel's proposal covers failed AND held slots: recompute from the per-slot details so
++        # an off-model or unknown HELD slot is neither dropped from the model set nor counted as known
++        details, held = c.get("failed_slot_details") or [], c.get("held_members") or []
++        if details or held or c.get("failed_slots"):
++            models, unknown = set(), 0
++            by_slot = {d["slot"]: d for d in details if d.get("slot")}
++            for s_ in (c.get("failed_slots") or []):
++                ms = set((by_slot.get(s_) or {}).get("models") or [])
++                models |= ms
++                unknown += 0 if ms else 1               # a failed slot with no detail is an UNKNOWN decision
++            for m in held:
++                ms = set(m.get("models") or []) if "models" in m else (
++                    {m["deciding_model"]} if m.get("deciding_model") else set())
++                models |= ms
++                unknown += 0 if ms else 1
++            declared = max(int(c.get("observed") or 0), int(c.get("held") or 0))
++            unknown += max(0, declared - len(c.get("failed_slots") or []) - len(held))
++            return sorted(models), unknown
++        models = sorted(set(c.get("deciding_models") or []))
++        unknown = int(c.get("unknown_decisions") or 0)
++        if not unknown and not models and c.get("failed_slots"):
++            unknown = len(c["failed_slots"])       # a failed slot with no recorded decider is an unknown decision
++        if not (c.get("failed_slot_details") or c.get("held_members")):
++            unknown = max(unknown, int(c.get("observed") or 0), int(c.get("held") or 0))   # no details at all
++        return models, unknown
+     models, unknown = set(), 0
+-    for m in c.get("held_members") or []:
++    held = c.get("held_members") or []
++    for m in held:
+         if "models" in m:                       # a surface slot's decided_by carries a model list
+             ms = set(m.get("models") or [])
+         else:                                    # a register member carries one deciding_model
+@@ -954,7 +1077,27 @@
+         if not ms:
+             unknown += 1
+         models |= ms
++    declared = max(int(c.get("observed") or 0), int(c.get("held") or 0))
++    unknown += max(0, declared - len(held))       # a declared HELD observation with no detail is unknown
+     return sorted(models), unknown
++
++
++def _dropped(controls: dict, channels: dict) -> list:
++    """Every observation a run dropped, with its reason: never a trial, but never invisible either (H1 residual d)."""
++    out = []
++    for rule, c in (controls or {}).items():
++        for x in c.get("trials") or []:
++            if x.get("outcome") in ("NOT-WRITTEN", "UNOBSERVED"):
++                out.append({"kind": "control", "node": rule, "key": x.get("key"), "outcome": x["outcome"],
++                            "reason": ("the control member was not written in the run" if x["outcome"] == "NOT-WRITTEN"
++                                       else "the row does not carry the operator's own field"),
++                            "deciding_event": x.get("deciding_event")})
++    for cid, c in (channels or {}).items():
++        if c.get("verdict") == "UNOBSERVED":
++            out.append({"kind": "channel", "node": cid, "key": None, "outcome": "UNOBSERVED",
++                        "reason": c.get("why") or "nothing observed: no member written and no grade",
++                        "deciding_event": c.get("deciding_event")})
++    return out
+ 
+ 
+ def ledger_proposals(report: dict, *, task: str, source_for, harness_for) -> list:
+@@ -971,11 +1114,17 @@
+         for rule, v in r["rules"].items():
+             if v["verdict"] == "SURFACE-ONLY":
+                 continue                   # the register view can't judge it: never a ledger trial
++            observed = {"controls": sum(1 for c in (r.get("controls") or {}).values() for x in c["trials"]
++                                        if x["outcome"] not in ("NOT-WRITTEN", "UNOBSERVED")),
++                        "channels": sum(1 for c in (r.get("channels") or {}).values() if c["verdict"] != "UNOBSERVED")}
+             out.append(dict(base, kind="verdict", model=h["model"], node=rule, mechanism=v["mechanism"],
+-                            family=v["family"], verdict=v["verdict"], keys=v["landed_keys"],
++                            family=v["family"], verdict=v["verdict"],
++                            keys=[k for k in v["landed_keys"] if k not in set(v.get("control_explained_keys") or [])],
+                             evidence={"producer": VERSION, "why": v["why"], "citations": v["citations"]},
+                             features={"mixed_model": r["provenance"]["mixed_model"], "flags": v["flags"],
+                                       "pending_review": v.get("pending_review_keys", []),
++                                      "control_explained": v.get("control_explained_keys", []),
++                                      "observed_units": observed,
+                                       "deciding_models": v.get("deciding_models", []),
+                                       "unknown_decisions": v.get("unknown_decisions", 0),
+                                       "disposition": "PROPOSED - review the queue and disposition before appending"}))
+@@ -1003,16 +1152,30 @@
+                 model = h["model"]
+                 model_unknown = unknown > 0
+             n = c["members"] or 1                     # a slots-only channel is one trial per run
++            observed_members = sorted({(m.get("key") or m.get("slot")) for m in
++                                       (c["failed_members"] or []) + (c.get("held_members") or [])
++                                       if (m.get("key") or m.get("slot"))} | set(c.get("failed_slots") or []))
++            member_events = [m.get("deciding_event") for m in
++                             (c["failed_members"] or []) + (c.get("held_members") or [])
++                             if isinstance(m, dict) and m.get("deciding_event") is not None]
++            # the channel's own aggregate may be later than any member copy (failed slots are not in held_members)
++            deciding_event = max(member_events + ([c["deciding_event"]] if c.get("deciding_event") is not None else [])) \
++                if (member_events or c.get("deciding_event") is not None) else None
+             out.append(dict(base, kind="channel", model=model, node=cid,
+                             mechanism=c["kind"], family=c.get("family") or c["kind"], verdict=c["verdict"],
+-                            keys=[m["key"] for m in c["failed_members"]],
++                            keys=observed_members,
+                             counts=dict(c.get("counts") or {"unit": "run", "n": 1, "failed": int(c["verdict"] == "FAILED")}),
+                             evidence={"producer": VERSION, "failed_members": c["failed_members"][:20],
+                                       "held_members": (c.get("held_members") or [])[:20],
+-                                      "failed_slots": c.get("failed_slots") or []},
++                                      "failed_slots": c.get("failed_slots") or [],
++                                      "covered": {"members": c.get("members"), "observed": c.get("observed"),
++                                                  "unobserved": c.get("unobserved")},
++                                      "deciding_event": deciding_event,
++                                      "deciding_run": lab, "sql_sha256": b["sql_sha256"]},
+                             features={"run_model": h["model"], "deciding_models": models,
+                                       "unknown_decisions": unknown,
+                                       "deciding_model_unknown": model_unknown,
++                                      "model_is_fallback": not (models and unknown == 0),
+                                       "preregistered": c["preregistered"], "mixed_model": r["provenance"]["mixed_model"],
+                                       "disposition": "PROPOSED - a complexity-channel trial"}))
+     return out
+@@ -1228,6 +1391,21 @@
+         assert g["independent_channels"] == 2 and g["channels"] == [["mechanism late"], ["channel scale:count"]], g
+         # K-03's error is the failed channel's member, K-04's the over-applied control: neither is listed as a slip
+         assert g["not_counted"]["control_over_applications"] == ["late:K-04"] and g["not_counted"]["slips"] == [], g
++        # H1 residual a (classification, not just the summary): a control-explained (key, field) is its own class,
++        # never a slip and never a mechanism, and it appears in no landed key
++        assert [(x["key"], x["field"], x["classification"]) for x in rb["items"] if x["key"] == "K-04"] == [
++            ("K-04", "count", "control"), ("K-04", "class", "cascade")], rb["items"]
++        assert "K-04" not in rb["rules"]["late"]["landed_keys"], rb["rules"]["late"]
++        # the proposal carries the control-explained key and lands only the unexplained one
++        prb = {(x["node"], x["kind"]): x for x in ledger_proposals(
++            {"runs": {"run-1": dict(rb, evaluated=True, binding={"revision": "rev-1", "sql_sha256": "0" * 64})}},
++            task="t", source_for=lambda lab: "platform-baseline",
++            harness_for=lambda lab: {"model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}})}
++        assert prb[("late", "verdict")]["keys"] == ["K-01"] and \
++            prb[("late", "verdict")]["features"]["control_explained"] == ["K-04"], prb[("late", "verdict")]
++        # all-dropped provenance: the run says which observations it dropped and why, and a proposal says how many
++        # units it actually observed
++        assert prb[("late", "verdict")]["features"]["observed_units"] == {"controls": 1, "channels": 1}, prb
+         p.write_text(json.dumps(json.loads(json.dumps(ev))))      # the go rule counts only the expected model's decisions
+         e5 = verdicts_for_run(tl.load(p, "run-1"), mod=mod, state=state, truth=truth, surface=surface, manifest=manifest,
+                               need=need)
+@@ -1292,6 +1470,50 @@
+                         "b": {"trials": [{"key": "K-03", "outcome": "OVER-APPLIED", "fields": ["receipt"]}],
+                               "over_applied": ["K-03"]}}, [], {}, "claude-opus-4-8", {})
+         assert gxu["independent_channels"] == 0, gxu
++        # H1 residual a (slots-only): a failed slot whose (key, field) target a control over-application explains is
++        # listed as control-explained, never counted as an independent channel
++        gsl = go_rule({}, {"surface:deck": {"verdict": "FAILED", "failed_slots": ["D1"], "failed_members": [],
++                                            "failed_slot_targets": [{"slot": "D1", "key": "K-03", "field": "count"}],
++                                            "deciding_models": ["claude-opus-4-8"], "unknown_decisions": 0,
++                                            "preregistered": True}},
++                       {"late": {"trials": [{"key": "K-03", "outcome": "OVER-APPLIED", "fields": ["count"]}],
++                                 "over_applied": ["K-03"]}}, [], {}, "claude-opus-4-8", {})
++        assert gsl["independent_channels"] == 0 and gsl["not_counted"]["explained_by_control"] == [
++            "channel surface:deck"], gsl
++        # H1 residual a (slots, partial): only the control-explained slot is removed. A failed slot with no field
++        # target stays, and the residual models / unknown count are recomputed over the survivors (a subset of mapped
++        # slots is never treated as the whole channel)
++        gpart = go_rule({}, {"surface:deck": {
++            "verdict": "FAILED", "failed_slots": ["D1", "D2"], "failed_members": [],
++            "failed_slot_targets": [{"slot": "D1", "key": "K-03", "field": "count"}],
++            "failed_slot_details": [{"slot": "D1", "models": ["claude-opus-5"]},
++                                    {"slot": "D2", "models": ["claude-opus-4-8"]}],
++            "deciding_models": ["claude-opus-5", "claude-opus-4-8"], "unknown_decisions": 0,
++            "preregistered": True}},
++            {"late": {"trials": [{"key": "K-03", "outcome": "OVER-APPLIED", "fields": ["count"]}],
++                      "over_applied": ["K-03"]}}, [], {}, "claude-opus-4-8", {})
++        assert gpart["independent_channels"] == 1 and gpart["channels"] == [["channel surface:deck"]] and \
++            gpart["not_counted"]["off_model_or_unregistered"] == [], gpart
++        # the same, with the explained slot's decision unknown: its unknown status must not contaminate the residual
++        gun = go_rule({}, {"surface:deck": {
++            "verdict": "FAILED", "failed_slots": ["D1", "D2"], "failed_members": [],
++            "failed_slot_targets": [{"slot": "D1", "key": "K-03", "field": "count"}],
++            "failed_slot_details": [{"slot": "D1", "models": []}, {"slot": "D2", "models": ["claude-opus-4-8"]}],
++            "deciding_models": ["claude-opus-4-8"], "unknown_decisions": 1, "preregistered": True}},
++            {"late": {"trials": [{"key": "K-03", "outcome": "OVER-APPLIED", "fields": ["count"]}],
++                      "over_applied": ["K-03"]}}, [], {}, "claude-opus-4-8", {})
++        assert gun["independent_channels"] == 1, gun
++        # H1 residual a (class): an over-application that changes ONLY the class is control-explained there, so a
++        # class-deciding rule cannot land through the class (a control's class cascade cannot survive)
++        ts_cls0 = {"columns": ["key", "count", "class"], "key_column": "key", "class_column": "class",
++                   "missing_values": [""]}
++        ic = classify({"K-04": {"key": "K-04", "count": "3", "class": "READY"}},
++                      {"K-04": {"key": "K-04", "count": "3", "class": "HOLD"}},
++                      {"cls": {"K-04": {"key": "K-04", "count": "3", "class": "READY"}}}, {"cls": {"K-04"}},
++                      {"cls": {"mechanism": "M3", "decides": ["class"]}}, ts_cls0, "class",
++                      explained={("K-04", "class")})
++        assert [(d["key"], d["field"], d["classification"], d["attributed"]) for d in ic] == [
++            ("K-04", "class", "control", [])], ic
+         # a control-explained off-model member does not disqualify the separate expected-model member
+         gxr = go_rule({}, {"scale:count": {"verdict": "FAILED", "failed_members": [
+             {"key": "K-03", "fields": ["count"], "deciding_model": "claude-opus-5"},
+@@ -1307,7 +1529,8 @@
+             "provenance": {"mixed_model": False}, "rules": {}, "controls": {},
+             "channels": {
+                 "scale:held": {"kind": "scale", "verdict": "HELD", "members": 1, "failed_members": [],
+-                               "held_members": [{"key": "K-01", "deciding_model": "claude-opus-4-8"}],
++                               "held_members": [{"key": "K-01", "deciding_model": "claude-opus-4-8",
++                                                 "deciding_event": 7}],
+                                "deciding_models": [], "unknown_decisions": 0, "preregistered": True,
+                                "counts": {"unit": "member", "n": 1, "failed": 0}},
+                 "scale:unknown": {"kind": "scale", "verdict": "FAILED", "members": 1,
+@@ -1320,8 +1543,117 @@
+         pcby = {(x["node"], x["verdict"]): x for x in pch}
+         assert pcby[("scale:held", "HELD")]["model"] == "claude-opus-4-8" and \
+             pcby[("scale:held", "HELD")]["features"]["deciding_model_unknown"] is False, pcby
++        # H1 residual b: a HELD channel proposes its observed record set and its deciding event, not an empty trial
++        assert pcby[("scale:held", "HELD")]["keys"] == ["K-01"] and \
++            pcby[("scale:held", "HELD")]["evidence"]["deciding_event"] == 7, pcby[("scale:held", "HELD")]
+         assert pcby[("scale:unknown", "FAILED")]["model"] == "harness-model" and \
+             pcby[("scale:unknown", "FAILED")]["features"]["deciding_model_unknown"] is True, pcby
++        # H1 residual f: an unknown failure is never attributed to the harness's model as a known trial
++        assert pcby[("scale:unknown", "FAILED")]["features"]["model_is_fallback"] is True, pcby
++        # a surviving failed slot with NO detail and a known aggregate is UNKNOWN: the aggregate is never reused
++        gnt = go_rule({}, {"surface:nt": {"verdict": "FAILED", "failed_slots": ["D1"], "failed_members": [],
++                                          "failed_slot_details": [], "deciding_models": ["claude-opus-4-8"],
++                                          "unknown_decisions": 0, "preregistered": True}}, {}, [], {},
++                       "claude-opus-4-8", {})
++        assert gnt["independent_channels"] == 0, gnt
++        # H1 residual b: a FAILED member channel's proposal covers failed AND held observations, so an unknown held
++        # member makes the record unknown (never attributed to the failed member's model)
++        repm2 = {"runs": {"run-1": {"evaluated": True, "binding": {"revision": "rev-1", "sql_sha256": "0" * 64},
++                                    "provenance": {"mixed_model": False}, "rules": {}, "controls": {},
++                                    "channels": {"scale:mixedheld": {
++                                        "kind": "scale", "verdict": "FAILED", "members": 2, "observed": 2,
++                                        "held": 1, "unobserved": 0, "preregistered": True,
++                                        "failed_members": [{"key": "K-01", "fields": ["count"],
++                                                            "deciding_model": "claude-opus-4-8", "deciding_event": 8}],
++                                        "held_members": [{"key": "K-02", "deciding_model": None, "deciding_event": 9}],
++                                        "deciding_models": ["claude-opus-4-8"], "unknown_decisions": 0,
++                                        "counts": {"unit": "member", "n": 2, "failed": 1}}}}}}
++        pm2 = next(x for x in ledger_proposals(
++            repm2, task="t", source_for=lambda lab: "platform-baseline",
++            harness_for=lambda lab: {"model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}})
++            if x["kind"] == "channel")
++        assert pm2["features"]["unknown_decisions"] >= 1 and pm2["features"]["model_is_fallback"] is True, pm2
++        # H1 residual b (slots): a FAILED slots-only proposal covers held slots too — an off-model held slot is part of
++        # the model set, and an unknown held slot is an unknown decision
++        soff = channel_reports(None, {"surface:mixed": {"kind": "surface", "slots": ["D1", "D2"],
++                                                        "preregistered": True}},
++                               {}, {}, mod=mod, state=state, tspec=ts, table_events=[],
++                               graded={"D1": False, "D2": True},
++                               deciders={"D1": {"models": ["claude-opus-4-8"], "write_events": [8]},
++                                         "D2": {"models": ["claude-opus-5"], "brief_events": [9]}})["surface:mixed"]
++        poff = next(x for x in ledger_proposals(
++            {"runs": {"run-1": {"evaluated": True, "binding": {"revision": "rev-1", "sql_sha256": "0" * 64},
++                                "provenance": {"mixed_model": False}, "rules": {}, "controls": {},
++                                "channels": {"surface:mixed": soff}}}},
++            task="t", source_for=lambda lab: "platform-baseline",
++            harness_for=lambda lab: {"model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}})
++            if x["kind"] == "channel")
++        assert poff["features"]["deciding_models"] == ["claude-opus-4-8", "claude-opus-5"], poff
++        sunk = channel_reports(None, {"surface:unk": {"kind": "surface", "slots": ["D1", "D2"],
++                                                      "preregistered": True}},
++                               {}, {}, mod=mod, state=state, tspec=ts, table_events=[],
++                               graded={"D1": False, "D2": True},
++                               deciders={"D1": {"models": ["claude-opus-4-8"], "write_events": [8]},
++                                         "D2": {"models": [], "brief_events": [9]}})["surface:unk"]
++        punk = next(x for x in ledger_proposals(
++            {"runs": {"run-1": {"evaluated": True, "binding": {"revision": "rev-1", "sql_sha256": "0" * 64},
++                                "provenance": {"mixed_model": False}, "rules": {}, "controls": {},
++                                "channels": {"surface:unk": sunk}}}},
++            task="t", source_for=lambda lab: "platform-baseline",
++            harness_for=lambda lab: {"model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}})
++            if x["kind"] == "channel")
++        assert punk["features"]["unknown_decisions"] == 1 and punk["features"]["model_is_fallback"] is True, punk
++        # declared counts exceeding detail coverage: reconcile against max(observed, held) without double counting
++        assert _channel_provenance({"verdict": "HELD", "observed": 3, "held": 3,
++                                    "held_members": [{"key": "K-01", "deciding_model": "claude-opus-4-8"}]}) == \
++            (["claude-opus-4-8"], 2)
++        assert _channel_provenance({"verdict": "FAILED", "observed": 3, "held": 1, "failed_members": [],
++                                    "failed_slots": ["D1"],
++                                    "failed_slot_details": [{"slot": "D1", "models": ["claude-opus-4-8"]}],
++                                    "held_members": []}) == (["claude-opus-4-8"], 2)
++        assert _channel_provenance({"verdict": "FAILED", "observed": 2, "held": 1, "failed_members": [],
++                                    "failed_slots": [], "deciding_models": ["claude-opus-4-8"],
++                                    "unknown_decisions": 0}) == (["claude-opus-4-8"], 2)
++        # the proposal's deciding event is the MAXIMUM of the channel aggregate and its member copies (a failed slot
++        # is not in held_members, so its later event must not be overwritten by a held member's earlier one)
++        p12 = next(x for x in ledger_proposals(
++            {"runs": {"run-1": {"evaluated": True, "binding": {"revision": "rev-1", "sql_sha256": "0" * 64},
++                                "provenance": {"mixed_model": False}, "rules": {}, "controls": {},
++                                "channels": {"surface:ev": {
++                                    "kind": "surface", "verdict": "FAILED", "members": 0, "observed": 2,
++                                    "failed_slots": ["D1"], "held_members": [{"slot": "D2", "deciding_event": 9,
++                                                                              "models": ["claude-opus-4-8"]}],
++                                    "failed_slot_details": [{"slot": "D1", "models": ["claude-opus-4-8"]}],
++                                    "failed_members": [], "deciding_models": ["claude-opus-4-8"],
++                                    "unknown_decisions": 0, "deciding_event": 12, "preregistered": True,
++                                    "counts": {"unit": "run", "n": 1, "failed": 1}}}}}},
++            task="t", source_for=lambda lab: "platform-baseline",
++            harness_for=lambda lab: {"model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}})
++            if x["kind"] == "channel")
++        assert p12["evidence"]["deciding_event"] == 12, p12
++        # H1 residual b (slots-only): a FAILED slot is part of the proposal's record set, and a HELD slots-only
++        # channel carries its held slot's deciding event (events are aggregated over observed slots, not failed only)
++        sfail = channel_reports(None, {"surface:bad": {"kind": "surface", "slots": ["D1"], "preregistered": True}},
++                                {}, {}, mod=mod, state=state, tspec=ts, table_events=[], graded={"D1": False},
++                                deciders={"D1": {"models": ["claude-opus-4-8"], "write_events": [8]}})["surface:bad"]
++        pbad = next(x for x in ledger_proposals(
++            {"runs": {"run-1": {"evaluated": True, "binding": {"revision": "rev-1", "sql_sha256": "0" * 64},
++                                "provenance": {"mixed_model": False}, "rules": {}, "controls": {},
++                                "channels": {"surface:bad": sfail}}}},
++            task="t", source_for=lambda lab: "platform-baseline",
++            harness_for=lambda lab: {"model": "m", "harness": {"name": "h", "version": "1"}}) if x["kind"] == "channel")
++        assert pbad["keys"] == ["D1"] and pbad["evidence"]["deciding_event"] == 8, pbad
++        sheld = channel_reports(None, {"surface:held": {"kind": "surface", "slots": ["D2"], "preregistered": True}},
++                                {}, {}, mod=mod, state=state, tspec=ts, table_events=[], graded={"D2": True},
++                                deciders={"D2": {"models": ["claude-opus-4-8"], "write_events": [9]}})["surface:held"]
++        assert sheld["verdict"] == "HELD" and sheld["deciding_event"] == 9, sheld
++        # H1 residual b: each observed slot's own deciding event counts; a write-backed slot must not mask a later
++        # brief-only decision for another slot (per-slot aggregation, not write-events-or-brief-events for the channel)
++        sboth = channel_reports(None, {"surface:held": {"kind": "surface", "slots": ["D1", "D2"], "preregistered": True}},
++                                {}, {}, mod=mod, state=state, tspec=ts, table_events=[], graded={"D1": True, "D2": True},
++                                deciders={"D1": {"models": ["claude-opus-4-8"], "write_events": [8]},
++                                          "D2": {"models": ["claude-opus-4-8"], "brief_events": [9]}})["surface:held"]
++        assert sboth["verdict"] == "HELD" and sboth["deciding_event"] == 9, sboth
+         # reference_landed shares classify's class predicate: the written row and full ablation row decide; a
+         # diff-only item that lacks them is unresolved, not silently landed or dropped
+         ts_cls = {"columns": ["key", "count", "class"], "key_column": "key", "class_column": "class",
+@@ -1342,6 +1674,12 @@
+         unresolved = set()
+         assert reference_landed(ref_cls, {"c": {"decides": ["class"]}}, "class", unresolved=unresolved) == {}
+         assert ("c", "K-01") in unresolved, unresolved
++        # H1 residual c: a reference item the classifier would never land (cascade / mechanism? / control) lands
++        # nothing, even with a stale reproduced_by_ignoring flag list, and is recorded as a contract disagreement
++        for bad_cls in ("cascade", "mechanism?", "mechanism (ambiguous)", "control", "slip"):
++            ub = set()
++            assert reference_landed([dict(ref_cls[0], classification=bad_cls)], rules_cls, "class",
++                                    context=ctx_ok, unresolved=ub) == {} and ("c", "K-01") in ub, (bad_cls, ub)
+         # another wrong field does not veto class attribution when the ablation matches the written row; the count
+         # item cannot land for c because c does not decide it
+         ref_mixed = [
+@@ -1365,6 +1703,12 @@
+         su = channel_reports(None, {"scale:none": {"kind": "scale", "degrade": "slip:count", "members": []}},
+                              {}, {}, mod=mod, state=state, tspec=ts, table_events=[])
+         assert su["scale:none"]["verdict"] == "UNOBSERVED" and su["scale:none"]["members"] == 0, su
++        # H1 residual f: a failed slot with no deciding record is an UNKNOWN decision (deciders=None included)
++        for dc in (None, {}, {"D1": {}}):
++            snp = channel_reports(None, {"surface:none": {"kind": "surface", "slots": ["D1"], "preregistered": True}},
++                                  {}, {}, mod=mod, state=state, tspec=ts, table_events=[], graded={"D1": False},
++                                  deciders=dc)["surface:none"]
++            assert snp["verdict"] == "FAILED" and snp["unknown_decisions"] == 1, (dc, snp)
+         # an absent or ungraded slots-only grade is UNOBSERVED, never a held trial
+         for grades in ({"D1": None}, {}):
+             sn = channel_reports(None, {"surface:none": {"kind": "surface", "slots": ["D1"]}}, {}, {}, mod=mod,
+@@ -1386,6 +1730,12 @@
+         pm = ledger_proposals(repm, task="t", source_for=lambda lab: "platform-baseline",
+                               harness_for=lambda lab: {"model": "claude-opus-4-8", "harness": {"name": "h", "version": "1"}})
+         assert not [x for x in pm if x["kind"] == "control"], pm          # an unobserved control is not a trial
++        # H1 residual d: a run whose every observation is dropped retains it, with the reason, and its proposal shows
++        # zero observed units (never a silent "no observations at all")
++        assert [(x["kind"], x["node"], x["outcome"]) for x in rm["coverage"]["dropped"]] == [
++            ("control", "late", "UNOBSERVED"), ("channel", "scale:count", "UNOBSERVED")], rm["coverage"]
++        pmv = next(x for x in pm if x["kind"] == "verdict" and x["node"] == "late")
++        assert pmv["features"]["observed_units"] == {"controls": 0, "channels": 0}, pmv
+         # H1-9: a class difference is attributed only when the class rule's ablation leaves the other written columns
+         # equal; a class-only difference still lands, a class plus a moved count cascades (the planted known false
+         # negative: the naive rule would land it)
+
+
+===== ROUND-4 DELTA tools/hardness_ledger.py (pre-round-4 sha 89c130e96ce9c31b -> now 5a6a4af995749fe7) =====
+--- a/tools/hardness_ledger.py
++++ b/tools/hardness_ledger.py
+@@ -155,6 +155,17 @@
+         c = rec.get("counts") or {}
+         if not isinstance(c, dict) or not isinstance(c.get("runs"), (int, float)):
+             raise LedgerError("an observation needs counts {landed, not_landed | leaked, ..., runs}")
++    if rec["kind"] in ("control", "channel"):
++        ev = rec.get("evidence") or {}
++        f = rec.get("features") or {}
++        cov = ev.get("covered") if isinstance(ev.get("covered"), dict) else None
++        covered_ok = bool(cov) and type(cov.get("members")) is int and cov["members"] >= 0
++        event_ok = type(ev.get("deciding_event")) is int and ev["deciding_event"] >= 0
++        dm = f.get("deciding_models")
++        models_ok = isinstance(dm, list) and bool(dm) and all(isinstance(x, str) and x.strip() for x in dm)
++        if not (event_ok or covered_ok or models_ok or f.get("deciding_model_unknown") is True):
++            raise LedgerError(f"a {rec['kind']} record needs provenance: a deciding event, a deciding model, a covered "
++                              f"count, or an explicit features.deciding_model_unknown (never inferred)")
+     if rec["kind"] == "transfer":
+         f = rec.get("features") or {}
+         if not f.get("from_model") or not f.get("to_model") or "offset" not in f:
+@@ -259,6 +270,14 @@
+         if (r.get("features") or {}).get("mixed_model") and not include_mixed:
+             f["excluded"].append([r["id"], "mixed-model run"])
+             continue
++        if r["kind"] == "verdict" and (r.get("features") or {}).get("control_explained"):
++            # H1 residual a2: a LANDED verdict whose keys are all control-explained is never a landing, whatever the
++            # record says (a second, independent gate under the classifier and the go rule). A verdict that also
++            # landed an unexplained key stays a trial on that key.
++            kept = set(r.get("keys") or []) - set(r["features"]["control_explained"])
++            if r.get("verdict") == "LANDED" and not kept:
++                f["excluded"].append([r["id"], "control-explained (key, field) evidence: never a landing"])
++                continue
+         w = float(r.get("weight", 1.0))
+         if r["kind"] == "verdict":
+             if r["verdict"] != "LANDED" and r["verdict"] not in NOT_LANDED:
+@@ -675,12 +694,40 @@
+         # a seed correction supersedes its original and moves the counts to the corrected family, idempotently
+         # control and channel records are kept but never enter the priors; an unreviewed mechanism? is refused
+         before = priors(Ledger(path), "claude-opus-4-8")["A15"]
+-        trial = dict(base, kind="control", run="run-7", key="K-04", verdict="OVER-APPLIED")
+-        chan = dict(base, kind="channel", run="run-7", node="scale:count", family="scale", verdict="FAILED")
++        trial = dict(base, kind="control", run="run-7", key="K-04", verdict="OVER-APPLIED",
++                     evidence={"deciding_event": 91})
++        chan = dict(base, kind="channel", run="run-7", node="scale:count", family="scale", verdict="FAILED",
++                    evidence={"deciding_event": 92})
+         assert len(Ledger(path).append([trial, chan])["added"]) == 2
++        # H1 residual b/f: a control/channel record with no provenance at all is refused, never inferred
++        assert Ledger(path).append([dict(chan, node="scale:noprov", evidence={}, features={})])["rejected"]
++        # H1 residual a2: a verdict whose landing is control-explained never moves a prior
++        ce = dict(base, run="run-10", verdict="LANDED", keys=["K-04"],
++                  features={"control_explained": ["K-04"]})
++        assert Ledger(path).append([ce])["added"]
++        qce = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        assert any("control-explained" in e[1] for e in qce["excluded"]), qce["excluded"]
+         after = priors(Ledger(path), "claude-opus-4-8")["A15"]
+         assert (after["alpha"], after["beta"], after["record_ids"]) == (before["alpha"], before["beta"],
+                                                                         before["record_ids"]), (before, after)
++        # H1 residual b/f: the provenance gate requires a REAL covered count (a truthy dict or a bool/string is not one)
++        for j, bad_cov in enumerate(({"observed": 1}, {"members": None}, {"members": "1"}, {"members": True})):
++            assert Ledger(path).append([dict(chan, node=f"scale:cov{j}", evidence={"covered": bad_cov},
++                                             features={})])["rejected"], bad_cov
++        assert Ledger(path).append([dict(chan, node="scale:covok", evidence={"covered": {"members": 1}},
++                                         features={})])["added"]
++        # an explicit unknown must be a real True, not a truthy string
++        assert Ledger(path).append([dict(chan, node="scale:strunknown", evidence={},
++                                         features={"deciding_model_unknown": "false"})])["rejected"]
++        # H1 residual a2 (preservation): a LANDED verdict that ALSO has an unexplained key stays a trial; only the
++        # control-explained key is removed, never the whole record
++        base_q = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        keep = dict(base, run="run-11", verdict="LANDED", keys=["K-01", "K-04"],
++                    features={"control_explained": ["K-04"]})
++        kid = Ledger(path).append([keep])["added"][0]
++        qk = priors(Ledger(path), "claude-opus-4-8")["A15"]
++        assert kid in qk["record_ids"] and qk["trials"] == base_q["trials"] + 1, (
++            f"the legitimate landing {kid} was removed from the prior with its control-explained key", kid, qk)
+         assert Ledger(path).append([dict(trial, key="K-05", verdict="LANDED")])["rejected"]    # not a trial outcome
+         assert Ledger(path).append([{x: y for x, y in trial.items() if x != "key"}])["rejected"]
+         pend = dict(base, run="run-8", verdict="LEAKED", features={"pending_review": ["K-01"]})
+
+
+===== ROUND-4 DELTA scripts/falsify_h1.py (pre-round-4 sha bcecc0eec9aee96f -> now 05375b47ee07c1c5) =====
+--- a/scripts/falsify_h1.py
++++ b/scripts/falsify_h1.py
+@@ -34,7 +34,7 @@
+     import shutil
+     with sx.Sandbox("live") as _sb:
+         shutil.copy2(__file__, _sb.bundle / "tools" / "_falsify_h1.py")
+-        _rc = _sb.run(["_falsify_h1.py"])
++        _rc = _sb.run(["_falsify_h1.py"] + sys.argv[1:])
+     raise SystemExit(_rc)
+ import difficulty_mutation as dm  # noqa: E402
+ import hardness_forecast as hf  # noqa: E402
+@@ -95,9 +95,11 @@
+ 
+ 
+ def any_column_channels(channel_reports):         # channel members matched on any column
+-    def f(view, channels, rows, truth, *, mod, state, tspec, table_events, graded=None, class_field="class"):
++    def f(view, channels, rows, truth, *, mod, state, tspec, table_events, graded=None, class_field="class",
++          key_events=None, deciders=None, slot_targets=None):
+         out = channel_reports(view, channels, rows, truth, mod=mod, state=state, tspec=tspec,
+-                              table_events=table_events, graded=graded, class_field=class_field)
++                              table_events=table_events, graded=graded, class_field=class_field,
++                              key_events=key_events, deciders=deciders, slot_targets=slot_targets)
+         cols = [c for c in tspec.get("columns") or [] if c not in (tspec.get("key_column"), tspec.get("reason_column"))]
+         for cid, c in channels.items():
+             if c.get("degrade") and out[cid]["verdict"] != "UNOBSERVED":
+@@ -110,9 +112,9 @@
+ 
+ 
+ def any_column_controls(control_trials):          # control trials matched on any column
+-    def f(view, rules, controls, rows, truth, *, mod, state, tspec, class_field, table_events):
++    def f(view, rules, controls, rows, truth, *, mod, state, tspec, class_field, table_events, key_events=None):
+         out = control_trials(view, rules, controls, rows, truth, mod=mod, state=state, tspec=tspec,
+-                             class_field=class_field, table_events=table_events)
++                             class_field=class_field, table_events=table_events, key_events=key_events)
+         for r, c in controls.items():
+             if not c["over_application"]:
+                 continue
+@@ -259,6 +261,241 @@
+                 out.append(list(ks))
+         return out
+     return [engine.keys[i:i + size] for i in range(0, len(engine.keys), size)]
++
++
++def old_classify_no_controls(classify):           # control-explained items kept as slips / mechanisms
++    def f(*args, **kw):
++        kw.pop("explained", None)
++        return classify(*args, **kw)
++    return f
++
++
++def held_keys_from_failed_members(ledger_proposals):   # the old HELD record set: failed members only (always empty)
++    def f(*a, **kw):
++        out = ledger_proposals(*a, **kw)
++        for r in out:
++            if r["kind"] == "channel" and r["verdict"] == "HELD":
++                r["keys"] = []
++        return out
++    return f
++
++
++def old_reference_landed(reference_landed):       # a reference item's own classification never vetoes a landing
++    def f(ref_items, rules, class_field, legacy=None, context=None, unresolved=None):
++        stripped = [{k: v for k, v in d.items() if k != "classification"} for d in ref_items]
++        return reference_landed(stripped, rules, class_field, legacy, context=context, unresolved=unresolved)
++    return f
++
++
++def ignoring_slot_targets(go_rule):               # a slots-only channel counted although a control explains its target
++    def f(out_rules, channels, controls, items, prov, expected, rules):
++        return go_rule(out_rules, {cid: {k: v for k, v in c.items() if k != "failed_slot_targets"}
++                                   for cid, c in channels.items()}, controls, items, prov, expected, rules)
++    return f
++
++
++def priors_without_control_gate(priors):          # a control-explained LANDED verdict enters the priors again
++    def f(led, model, **kw):
++        for r in led.records:
++            if isinstance(r.get("features"), dict):
++                r["features"].pop("control_explained", None)
++        return priors(led, model, **kw)
++    return f
++
++
++def subset_slot_targets(go_rule):                 # the subset defect: only the mapped slots are treated as the channel
++    def f(out_rules, channels, controls, items, prov, expected, rules):
++        ch = {}
++        for cid, c in channels.items():
++            if c.get("failed_slot_targets") and not c.get("failed_members"):
++                ch[cid] = dict(c, failed_slots=[t["slot"] for t in c["failed_slot_targets"]])
++            else:
++                ch[cid] = c
++        return go_rule(out_rules, ch, controls, items, prov, expected, rules)
++    return f
++
++
++def stale_slot_provenance(go_rule):               # targets and slots kept, but the residual models/unknown not recomputed
++    def f(out_rules, channels, controls, items, prov, expected, rules):
++        ch = {cid: ({k: v for k, v in c.items() if k != "failed_slot_details"}
++                    if c.get("failed_slot_details") else c) for cid, c in channels.items()}
++        return go_rule(out_rules, ch, controls, items, prov, expected, rules)
++    return f
++
++
++def old_check_provenance(check):                  # the provenance requirement for control/channel records disabled
++    def f(rec):
++        if isinstance(rec, dict) and rec.get("kind") in ("control", "channel"):
++            rec = dict(rec, evidence=dict(rec.get("evidence") or {}, covered={"members": 1}))
++        return check(rec)
++    return f
++
++
++def blanket_control_exclusion(priors):           # a control tag removes a whole LANDING that also has an unexplained key
++    def f(led, model, **kw):
++        saved = list(led.records)
++        keep = []
++        for r in led.records:
++            ce = set((r.get("features") or {}).get("control_explained") or [])
++            if r.get("kind") == "verdict" and r.get("verdict") == "LANDED" and ce \
++                    and set(r.get("keys") or []) - ce:
++                continue                              # the over-broad rule; control-only records stay for the real gate
++            keep.append(r)
++        led.records = keep
++        try:
++            return priors(led, model, **kw)
++        finally:
++            led.records = saved
++    return f
++
++
++def old_proposal_slot_keys(ledger_proposals):     # a FAILED slot omitted from a channel proposal's record set
++    def f(*a, **kw):
++        out = ledger_proposals(*a, **kw)
++        for r in out:
++            if r["kind"] == "channel" and r["verdict"] == "FAILED":
++                r["keys"] = [k for k in r["keys"] if not str(k).startswith("D")]
++        return out
++    return f
++
++
++def details_only_provenance(channel_provenance):    # declared observed/held counts ignored (only detail objects count)
++    def f(c):
++        if c.get("verdict") == "FAILED" and (c.get("failed_members") or []):
++            ms = c["failed_members"]
++            return (sorted({m["deciding_model"] for m in ms if m.get("deciding_model")}),
++                    sum(1 for m in ms if not m.get("deciding_model")))
++        if c.get("verdict") == "FAILED":
++            details, held = c.get("failed_slot_details") or [], c.get("held_members") or []
++            if details or held or c.get("failed_slots"):
++                models, unknown = set(), 0
++                by = {d["slot"]: d for d in details if d.get("slot")}
++                for s in (c.get("failed_slots") or []):
++                    ms = set((by.get(s) or {}).get("models") or [])
++                    models |= ms
++                    unknown += 0 if ms else 1
++                for m in held:
++                    ms = set(m.get("models") or []) if "models" in m else (
++                        {m["deciding_model"]} if m.get("deciding_model") else set())
++                    models |= ms
++                    unknown += 0 if ms else 1
++                return sorted(models), unknown
++            return sorted(set(c.get("deciding_models") or [])), int(c.get("unknown_decisions") or 0)
++        models, unknown = set(), 0
++        for m in c.get("held_members") or []:
++            ms = set(m.get("models") or []) if "models" in m else (
++                {m["deciding_model"]} if m.get("deciding_model") else set())
++            models |= ms
++            unknown += 0 if ms else 1
++        return sorted(models), unknown
++    return f
++
++
++def aggregate_when_no_details(go_rule):          # a slot with no detail reuses the channel aggregate (known)
++    def f(out_rules, channels, controls, items, prov, expected, rules):
++        ch = {}
++        for cid, c in channels.items():
++            if not c.get("failed_members") and not (c.get("failed_slot_details") or []) and c.get("failed_slots"):
++                # the old behaviour: a slot with no detail inherits the channel-wide aggregate as if it were its own
++                ch[cid] = dict(c, failed_slot_details=[{"slot": s, "models": list(c.get("deciding_models") or [])}
++                                                       for s in c["failed_slots"]], unknown_decisions=0)
++            else:
++                ch[cid] = c
++        return go_rule(out_rules, ch, controls, items, prov, expected, rules)
++    return f
++
++
++def failed_only_models(channel_provenance):      # a FAILED member channel ignores its HELD observations' models
++    def f(c):
++        if c.get("verdict") == "FAILED" and (c.get("failed_members") or []):
++            ms = c["failed_members"]
++            return (sorted({m["deciding_model"] for m in ms if m.get("deciding_model")}),
++                    sum(1 for m in ms if not m.get("deciding_model")))
++        if c.get("verdict") == "FAILED" and (c.get("failed_slot_details") or c.get("held_members")):
++            return sorted(set(c.get("deciding_models") or [])), int(c.get("unknown_decisions") or 0)
++        return channel_provenance(c)
++    return f
++
++
++def member_events_only(ledger_proposals):        # proposal event from member copies only, ignoring the aggregate
++    def f(*a, **kw):
++        out = ledger_proposals(*a, **kw)
++        for r in out:
++            if r["kind"] == "channel":
++                me = [m.get("deciding_event") for m in (r["evidence"].get("held_members") or [])
++                      if m.get("deciding_event") is not None]
++                if me:
++                    r["evidence"]["deciding_event"] = max(me)
++        return out
++    return f
++
++
++def truthy_unknown(check):                       # the explicit unknown flag accepted by truthiness (a string passes)
++    def f(rec):
++        if isinstance(rec, dict):
++            fe = dict(rec.get("features") or {})
++            if "deciding_model_unknown" in fe and fe["deciding_model_unknown"] is not True:
++                fe["deciding_model_unknown"] = bool(fe["deciding_model_unknown"])
++            rec = dict(rec, features=fe)
++        return check(rec)
++    return f
++
++
++def fallback_by_emptiness(ledger_proposals):     # model_is_fallback = "no deciding models", not the selection branch
++    def f(*a, **kw):
++        out = ledger_proposals(*a, **kw)
++        for r in out:
++            if r["kind"] == "channel":
++                r["features"]["model_is_fallback"] = not (r["features"].get("deciding_models") or [])
++        return out
++    return f
++
++
++def covered_by_truthiness(check):                # any truthy evidence.covered passes, whatever it contains
++    def f(rec):
++        if isinstance(rec, dict):
++            ev = dict(rec.get("evidence") or {})
++            cov = ev.get("covered")
++            if isinstance(cov, dict) and type(cov.get("members")) is not int:
++                ev["covered"] = {"members": 1}
++                rec = dict(rec, evidence=ev)
++        return check(rec)
++    return f
++
++
++def channel_wide_events(channel_reports):        # HELD event selection channel-wide: write_events OR brief_events
++    def f(*a, **kw):
++        out = channel_reports(*a, **kw)
++        deciders = kw.get("deciders") or {}
++        for c in out.values():
++            if not c.get("members") and c.get("held") and deciders:
++                w = [max(d["write_events"]) for d in deciders.values() if d.get("write_events")]
++                b = [max(d["brief_events"]) for d in deciders.values() if d.get("brief_events")]
++                c["deciding_event"] = max(w) if w else (max(b) if b else None)
++        return out
++    return f
++
++
++def failed_only_events(channel_reports):         # deciding events aggregated over failed slots only (HELD loses it)
++    def f(*a, **kw):
++        out = channel_reports(*a, **kw)
++        for c in out.values():
++            if not c.get("failed_slots") and c.get("held_members"):
++                c["deciding_event"] = None
++        return out
++    return f
++
++
++def old_slot_unknown(channel_reports):           # the pre-fix unknown count: deciders=None means "nothing unknown"
++    def f(*a, **kw):
++        out = channel_reports(*a, **kw)
++        deciders = kw.get("deciders")
++        for c in out.values():
++            if "provenance_missing" in c:
++                c["unknown_decisions"] = (sum(1 for d in deciders.values() if not (d or {}).get("models"))
++                                          if deciders else 0)
++        return out
++    return f
+ 
+ 
+ UNDO = [("node_verdicts", "mechanism? -> the old cohort fallback", nv, [(nv, "classify", old_classify(nv.classify))]),
+@@ -303,7 +540,49 @@
+         ("hardness_forecast", "channel rate run key drops the revision", hf,
+          [(hf, "_rate_from_records", run_only_rate(hf._rate_from_records))]),
+         ("hardness_forecast", "channel ops accepted as mechanisms", hf,
+-         [(hf, "refuse_channel_elements", no_channel_guard)])]
++         [(hf, "refuse_channel_elements", no_channel_guard)]),
++        ("node_verdicts", "control-explained items kept as slips / mechanisms", nv,
++         [(nv, "classify", old_classify_no_controls(nv.classify))]),
++        ("node_verdicts", "HELD channel proposes no record set", nv,
++         [(nv, "ledger_proposals", held_keys_from_failed_members(nv.ledger_proposals))]),
++        ("node_verdicts", "a reference item's classification never vetoes a landing", nv,
++         [(nv, "reference_landed", old_reference_landed(nv.reference_landed))]),
++        ("node_verdicts", "slots-only channel counted although a control explains its target", nv,
++         [(nv, "go_rule", ignoring_slot_targets(nv.go_rule))]),
++        ("node_verdicts", "a subset of mapped slots treated as the whole channel (residual lost)", nv,
++         [(nv, "go_rule", subset_slot_targets(nv.go_rule))]),
++        ("node_verdicts", "residual models/unknown not recomputed after subtraction", nv,
++         [(nv, "go_rule", stale_slot_provenance(nv.go_rule))]),
++        ("node_verdicts", "all-dropped observations leave no provenance", nv,
++         [(nv, "_dropped", lambda *a, **kw: [])]),
++        ("node_verdicts", "missing slot provenance counted as known", nv,
++         [(nv, "channel_reports", old_slot_unknown(nv.channel_reports))]),
++        ("node_verdicts", "failed slot omitted from a channel proposal's record set", nv,
++         [(nv, "ledger_proposals", old_proposal_slot_keys(nv.ledger_proposals))]),
++        ("node_verdicts", "HELD slots-only channel loses its deciding event", nv,
++         [(nv, "channel_reports", failed_only_events(nv.channel_reports))]),
++        ("node_verdicts", "a write-backed slot masks another slot's brief-only decision", nv,
++         [(nv, "channel_reports", channel_wide_events(nv.channel_reports))]),
++        ("node_verdicts", "declared observed/held counts ignored (details only)", nv,
++         [(nv, "_channel_provenance", details_only_provenance(nv._channel_provenance))]),
++        ("node_verdicts", "a slot with no detail reuses the channel aggregate", nv,
++         [(nv, "go_rule", aggregate_when_no_details(nv.go_rule))]),
++        ("node_verdicts", "the fallback flag ignores a known-but-unknown model set", nv,
++         [(nv, "ledger_proposals", fallback_by_emptiness(nv.ledger_proposals))]),
++        ("hardness_ledger", "a truthy covered evidence passes as a count", hl,
++         [(hl, "check", covered_by_truthiness(hl.check))]),
++        ("node_verdicts", "a FAILED channel ignores its held observations' models", nv,
++         [(nv, "_channel_provenance", failed_only_models(nv._channel_provenance))]),
++        ("node_verdicts", "the proposal event ignores the channel aggregate", nv,
++         [(nv, "ledger_proposals", member_events_only(nv.ledger_proposals))]),
++        ("hardness_ledger", "the unknown flag accepted by truthiness", hl,
++         [(hl, "check", truthy_unknown(hl.check))]),
++        ("hardness_ledger", "control-explained LANDED verdict enters the priors", hl,
++         [(hl, "priors", priors_without_control_gate(hl.priors))]),
++        ("hardness_ledger", "control/channel record without provenance accepted", hl,
++         [(hl, "check", old_check_provenance(hl.check))]),
++        ("hardness_ledger", "a legitimate landing removed with its control-explained key", hl,
++         [(hl, "priors", blanket_control_exclusion(hl.priors))])]
+ 
+ 
+ def self_test(mod) -> str | None:
+@@ -317,7 +596,45 @@
+     return None
+ 
+ 
++INTERFACE_ERRORS = ("unexpected keyword argument", "positional argument", "multiple values for argument")
++
++
++def failure_kind(err: str | None) -> str | None:
++    """'interface' when a mutation crashed on a stale signature, 'semantic' when the planted assertion fired."""
++    if err is None:
++        return None
++    return "interface" if (err.startswith("TypeError") or any(x in err for x in INTERFACE_ERRORS)) else "semantic"
++
++
++class _TypeErrFixture:
++    @staticmethod
++    def _self_test():
++        raise TypeError("channel_reports() missing 1 required keyword-only argument: 'table_events'")
++
++
++class _AssertErrFixture:
++    @staticmethod
++    def _self_test():
++        raise AssertionError("planted assertion fired")
++
++
++def runner_self_test() -> int:
++    """Planted negative controls: a TypeError (even a missing keyword-only argument) is an interface error, never a
++    semantic falsification; an AssertionError is semantic."""
++    assert failure_kind(self_test(_TypeErrFixture)) == "interface"
++    assert failure_kind(self_test(_AssertErrFixture)) == "semantic"
++    assert failure_kind("TypeError: f() got an unexpected keyword argument 'x'") == "interface"
++    assert failure_kind("TypeError: f() missing 1 required keyword-only argument: 'y'") == "interface"
++    assert failure_kind("AssertionError: nope") == "semantic"
++    assert failure_kind(None) is None
++    print("falsify runner self-test: ok (TypeError, including a missing keyword-only argument, is an interface error; "
++          "only a semantic failure counts as a falsification)")
++    return 0
++
++
+ def main() -> int:
++    if "--self-test" in sys.argv:
++        return runner_self_test()
+     ok_all = True
+     for mod in (nv, hl, hf, ok, tl, dm):
+         err = self_test(mod)
+@@ -332,9 +649,14 @@
+         finally:
+             for m, attr, old in saved:
+                 setattr(m, attr, old)
+-        ok_all = ok_all and err is not None
+-        print(f"{'ok  ' if err else 'FAIL'} {owner}: {name} -> the self-test {'fails' if err else 'still passes'}"
+-              + (f"\n       {err}" if err else ""))
++        # a mutation that crashes on a stale interface is NOT a semantic falsification
++        interface = failure_kind(err) == "interface"
++        ok_case = err is not None and not interface
++        ok_all = ok_all and ok_case
++        status = "ok  " if ok_case else "FAIL"
++        note = " (interface error, not a semantic falsification: fix the undo wrapper)" if interface else ""
++        print(f"{status} {owner}: {name} -> the self-test {'fails' if err and not interface else 'still passes'}"
++              f"{note}" + (f"\n       {err}" if err else ""))
+     print("H1 FALSIFICATION " + ("PASS" if ok_all else "FAIL"))
+     return 0 if ok_all else 1
+ 
+
+
+===== OUTPUT logs/final4/c05.txt =====
+precheck: bound BOUND:rev13 (discriminating content) · register NATIVE_SHEET:128 · LANDED none · slips none · degrades {'trust:f_ddbcc47ba64c9c00764727': ('LEAKED', 0)} · MIXED-MODEL · V3-INVALID
+    - go rule: 0 independent loss channel(s) in claude-opus-4-8's own decisions []; not counted []; run valid False
+run-1: bound BOUND:rev13 (discriminating content) · register CSV:128 · LANDED none · slips [('SP-043', 'reviewed artifact')] · degrades {'trust:f_ddbcc47ba64c9c00764727': ('LEAKED', 0)} · V3-INVALID
+    - go rule: 0 independent loss channel(s) in claude-opus-4-8's own decisions []; not counted []; run valid False
+run-2: bound BOUND:rev13 (discriminating content) · register NATIVE_SHEET:128 · LANDED none · slips none · degrades {'trust:f_ddbcc47ba64c9c00764727': ('LEAKED', 0)} · V3-INVALID
+    - go rule: 0 independent loss channel(s) in claude-opus-4-8's own decisions []; not counted []; run valid False
+run-3: bound BOUND:rev13 (discriminating content) · register CSV:128 · LANDED none · slips none · degrades {'trust:f_ddbcc47ba64c9c00764727': ('LEAKED', 0)} · MIXED-MODEL · V3-INVALID
+    - snapshot_labels: PENDING REVIEW (mechanism?): ['SP-091', 'SP-106', 'SP-112'] - wrong inside the cohort, but no ablation reproduces the value; disposition them before the verdict is final
+    - go rule: 0 independent loss channel(s) in claude-opus-4-8's own decisions []; not counted []; run valid False
+run-4: bound BOUND:rev13 (discriminating content) · register CSV:128 · LANDED {'validation': ['SP-003', 'SP-019', 'SP-035', 'SP-051', 'SP-067', 'SP-083', 'SP-099', 'SP-115']} · slips [('SP-079', 'receipt artifact'), ('SP-079', 'receipt ring')] · degrades {'trust:f_ddbcc47ba64c9c00764727': ('LEAKED', 0)} · MIXED-MODEL · V3-INVALID
+    - validation: CONFOUNDED-run candidate (mixed-model): 16 covering brief(s) written after the model_refusal_fallback at event 779 by ['claude-opus-5']; brief writers {'claude-opus-4-8': 9, 'claude-opus-5': 16}
+    - validation: PENDING REVIEW (mechanism?): ['SP-039', 'SP-091'] - wrong inside the cohort, but no ablation reproduces the value; disposition them before the verdict is final
+    - go rule: 0 independent loss channel(s) in claude-opus-4-8's own decisions []; not counted [['mechanism validation', ['claude-opus-5']]]; run valid False
+run-5: bound BOUND:rev13 (discriminating content) · register CSV:128 · LANDED none · slips none · degrades {'trust:f_ddbcc47ba64c9c00764727': ('LEAKED', 0)} · MIXED-MODEL · V3-INVALID
+    - go rule: 0 independent loss channel(s) in claude-opus-4-8's own decisions []; not counted []; run valid False
+run-6: bound BOUND:rev13 (discriminating content) · register NATIVE_SHEET:128 · LANDED {'acceptance': ['SP-037']} · slips none · degrades {'trust:f_ddbcc47ba64c9c00764727': ('LEAKED', 1)} · V3-INVALID
+    - go rule: 1 independent loss channel(s) in claude-opus-4-8's own decisions [['mechanism acceptance']]; not counted []; run valid False
+reference comparison (attribution.json): 2 difference(s)
+    - {'run': 'run-3', 'item': None, 'kind': 'landed_keys', 'rule': 'snapshot_labels', 'grader': [], 'reference': None, 'seed': {'id': 'hev_0aea2ae9c00e83c2', 'keys': ['SP-091', 'SP-106', 'SP-112']}, 'pending_review': ['SP-091', 'SP-106', 'SP-112']}
+    - {'run': 'run-4', 'item': None, 'kind': 'landed_keys', 'rule': 'validation', 'grader': ['SP-003', 'SP-019', 'SP-035', 'SP-051', 'SP-067', 'SP-083', 'SP-099', 'SP-115'], 'reference': ['SP-003', 'SP-019', 'SP-035', 'SP-051', 'SP-067', 'SP-083', 'SP-099', 'SP-115'], 'seed': {'id': 'hev_b639bb440e0cc1c4', 'keys': ['SP-003', 'SP-019', 'SP-035', 'SP-039', 'SP-051', 'SP-067', 'SP-079', 'SP-083', 'SP-099', 'SP-115']}, 'pending_review': ['SP-039', 'SP-091']}
+summary: remap {'LEAKED': 7}; own_package {'LEAKED': 7}; snapshot_labels {'LEAKED': 7}; validation {'LEAKED': 6, 'LANDED': 1}; receipt {'LEAKED': 7}; review {'LEAKED': 7}; journal {'LEAKED': 7}; fixture_binding {'LEAKED': 7}; acceptance {'LEAKED': 6, 'LANDED': 1}; history {'LEAKED': 7}; trust:f_ddbcc47ba64c9c00764727 {'LEAKED': 7}
+reach nodes never read in any run: ['K15:cmt_c0696e5f7676681c910c', 'H2-decoy:f_a5b35f0c09feb283ab8c6e', 'H3-decoy:page_dd_season_pass_planning']
+wrote 70 proposed ledger record(s) to Task_Authoring/support/fix_session_2026-10-25/logs/final4/rev13_proposals.jsonl (append after disposition)
+wrote Task_Authoring/support/fix_session_2026-10-25/logs/final4/rev13_node_verdicts.json
+
+===== OUTPUT logs/h1/falsify_h1.round39.txt =====
+ok   control: node_verdicts self-test passes
+ok   control: hardness_ledger self-test passes
+ok   control: hardness_forecast self-test passes
+ok   control: oracle_kit self-test passes
+ok   control: trajectory_ledger self-test passes
+ok   control: difficulty_mutation self-test passes
+ok   node_verdicts: mechanism? -> the old cohort fallback -> the self-test fails
+       AssertionError: [{'key': 'K-01', 'field': 'count', 'run': '7', 'truth': '2', 'reproduced_by_ignoring': [], 'attributed': ['late'], 'candidates': ['late'], 'classifica
+ok   node_verdicts: no control trials -> the self-test fails
+       KeyError: 'late'
+ok   node_verdicts: no deciding event / model -> the self-test fails
+       AssertionError: [{'key': 'K-04', 'outcome': 'OVER-APPLIED', 'error': True, 'fields': ['count'], 'written': {'count': 'missing'}, 'truth': {'count': '3'}, 'over_applie
+ok   node_verdicts: go rule without model or independence checks -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-5-5', 'independent_channels': 1, 'channels': [['mechanism late']], 'not_counted': {'off_model_or_unregistered': [], 'c
+ok   node_verdicts: compare without landed-key sets -> the self-test fails
+       AssertionError: []
+ok   node_verdicts: surface-only rules proposed -> the self-test fails
+       KeyError: 'revision'
+ok   hardness_ledger: no control / channel kinds -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: pending review not refused -> the self-test fails
+       AssertionError: 
+ok   node_verdicts: slips listed again when a channel or control explains them -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 2, 'channels': [['mechanism late'], ['channel scale:count']], 'not_counted': {'off_model
+ok   node_verdicts: channel members matched on any column (class cascade) -> the self-test fails
+       AssertionError: {'scale:count': {'kind': 'scale', 'rule': None, 'source': 'notes', 'preregistered': True, 'verdict': 'FAILED', 'members': 4, 'observed': 3, 'held': 3,
+ok   node_verdicts: control trials matched on any column (class cascade) -> the self-test fails
+       AssertionError: {'late': {'mechanism': 'A15', 'family': 'A15', 'over_application': 'over:late', 'trials': [{'key': 'K-04', 'outcome': 'OVER-APPLIED', 'error': True, '
+ok   hardness_ledger: H2 design effect over weighted trials -> the self-test fails
+       AssertionError: {'model': 'claude-opus-4-8', 'alpha': 2.25, 'beta': 1.25, 'mean': 0.6429, 'n_eff': 1.5, 'trials': 6, 'tasks': {'lib': {'trials': 6, 'weighted': 3.0, '
+ok   hardness_forecast: F1 channel rates matched by channel id -> the self-test fails
+       AssertionError: a member-unit rate silently fed the run-latent channel linked:a
+ok   trajectory_ledger: a revision-14 surface read raw (no key pattern for the briefs) -> the self-test fails
+       AssertionError: (None, None)
+ok   difficulty_mutation: keyless briefs give silent empty batches -> the self-test fails
+       AssertionError: briefs that name no solver key were accepted (every batch would be empty)
+ok   oracle_kit: no live-controls check -> the self-test fails
+       KeyError: 'contract.controls'
+ok   node_verdicts: seeded landings ignore supersession and revision -> the self-test fails
+       KeyError: ('r2', 'run-1', 'late')
+ok   node_verdicts: decider bounded by the last table write -> the self-test fails
+       AssertionError: ({'deciding_event': 7, 'deciding_model': 'claude-opus-4-8', 'via': 'brief', 'briefs': [[5, 'claude-opus-4-8'], [7, 'claude-opus-4-8']], 'register_writ
+ok   node_verdicts: unknown deciding models ignored -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 1, 'channels': [['mechanism late']], 'not_counted': {'off_model_or_unregistered': [], 'c
+ok   node_verdicts: unobserved control member held -> the self-test fails
+       AssertionError: [{'key': 'K-04', 'outcome': 'HELD', 'error': None, 'fields': ['count'], 'written': {}, 'truth': {'count': '3'}, 'over_applied_value': None, 'deciding_
+ok   node_verdicts: slots-only channel without provenance -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: class difference always cascade -> the self-test fails
+       AssertionError: {('K-01', 'count'): 'mechanism', ('K-01', 'class'): 'mechanism', ('K-02', 'count'): 'slip', ('K-02', 'class'): 'mechanism', ('K-03', 'count'): 'repres
+ok   hardness_ledger: observation records summed per record -> the self-test fails
+       AssertionError: {'model': 'claude-opus-4-8', 'alpha': 1.4615, 'beta': 1.4615, 'mean': 0.5, 'n_eff': 0.9231, 'trials': 12, 'tasks': {'ov': {'trials': 12, 'weighted': 6
+ok   hardness_ledger: rho unvalidated -> the self-test fails
+       AssertionError: rho -0.1 was accepted
+ok   hardness_forecast: channel rate run key drops the revision -> the self-test fails
+       AssertionError: {'alpha': 2.0, 'beta': 2.0, 'mean': 0.5, 'records': ['a', 'b'], 'unit': 'member', 'n': 2, 'f': 1, 'tasks': {'t': {'runs': 1, 'deff': 1.0, 'n': 2, 'f':
+ok   hardness_forecast: channel ops accepted as mechanisms -> the self-test fails
+       AssertionError: a channel degrade was accepted as a mechanism
+ok   node_verdicts: control-explained items kept as slips / mechanisms -> the self-test fails
+       AssertionError: [{'key': 'K-01', 'field': 'count', 'run': '0', 'truth': '2', 'reproduced_by_ignoring': ['late'], 'attributed': ['late'], 'candidates': ['late'], 'clas
+ok   node_verdicts: HELD channel proposes no record set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: a reference item's classification never vetoes a landing -> the self-test fails
+       AssertionError: ('cascade', set())
+ok   node_verdicts: slots-only channel counted although a control explains its target -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [['channel surface:deck'
+ok   node_verdicts: a subset of mapped slots treated as the whole channel (residual lost) -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [], 'control_over_applic
+ok   node_verdicts: residual models/unknown not recomputed after subtraction -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [['channel surface:deck'
+ok   node_verdicts: all-dropped observations leave no provenance -> the self-test fails
+       AssertionError: {'controls': 0, 'channels': 0, 'dropped': []}
+ok   node_verdicts: missing slot provenance counted as known -> the self-test fails
+       AssertionError: (None, {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'FAILED', 'members': 0, 'observed': 1, 'held': 0, 'unobserv
+ok   node_verdicts: failed slot omitted from a channel proposal's record set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: HELD slots-only channel loses its deciding event -> the self-test fails
+       AssertionError: {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'HELD', 'members': 0, 'observed': 1, 'held': 1, 'unobserved': 0, '
+ok   node_verdicts: a write-backed slot masks another slot's brief-only decision -> the self-test fails
+       AssertionError: {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'HELD', 'members': 0, 'observed': 2, 'held': 2, 'unobserved': 0, '
+ok   node_verdicts: declared observed/held counts ignored (details only) -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: a slot with no detail reuses the channel aggregate -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 1, 'channels': [['channel surface:nt']], 'not_counted': {'off_model_or_unregistered': []
+ok   node_verdicts: the fallback flag ignores a known-but-unknown model set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   hardness_ledger: a truthy covered evidence passes as a count -> the self-test fails
+       AssertionError: {'observed': 1}
+ok   node_verdicts: a FAILED channel ignores its held observations' models -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: the proposal event ignores the channel aggregate -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   hardness_ledger: the unknown flag accepted by truthiness -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: control-explained LANDED verdict enters the priors -> the self-test fails
+       AssertionError: [['hev_728e74412ae018be', 'NOT-REACHED is never counted'], ['hev_a21dd18d32813db6', 'mixed-model run']]
+ok   hardness_ledger: control/channel record without provenance accepted -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: a legitimate landing removed with its control-explained key -> the self-test fails
+       AssertionError: ('the legitimate landing hev_fe13fe8e5334b10c was removed from the prior with its control-explained key', 'hev_fe13fe8e5334b10c', {'model': 'claude-op
+H1 FALSIFICATION PASS
+
+===== OUTPUT logs/final4/v1_acceptance.txt =====
+ok   L4 rev13 pre-check: with the fallback event [5855]: mixed True, off [('claude-opus-5', 'main', 1, 5855)]; fallback event removed: mixed True, valid INVALID, off [('claude-opus-5', 'main', 1)]
+ok   synthetic Opus 5.5 run: v3_valid True · mixed False · models ['claude-opus-5-5'] · synthetic 1
+V1 ACCEPTANCE PASS
+
+===== OUTPUT logs/p1_suite_round16.log =====
+  ok   stage_gate.py --self-test (exit 0): self-test: ok (127 cases: 15 good stages PASS, 100 bad cases FAIL as expected, 5 WARN / control cases as expected, 2 re-run contradictions caught, revision-intake, historical-export, surface-geometry and red-team fallbac
+  ok   hardness_gate.py --self-test (exit 0): self-test: ok (19 red-team-A planted defects each fail their own check; integrity layer incl. denied probes, hazard resolutions and no-leak; 9 mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted)
+  ok   difficulty_mutation.py --self-test (exit 0): self-test: ok (key-locality vs full solves, evaluator = gradable_surface.solver_value, KILLED / WEAK / SURVIVED / EQUIVALENT incl. a cancelling aggregate, shard ablations, exact combination table and UNSUPPORTED, U and L
+  ok   gradable_surface.py --self-test (exit 0): self-test: ok (good surface PASS; 18 planted defects over every blocking family (duplicates, exceptions, gradeable, mechanisms, sampling, structure, weights) each FAIL their own check with its basis; geometry report-only
+  ok   hardness_forecast.py --self-test (exit 0): self-test: ok (exact outcomes, exhaustive multisets equal to direct compute() enumeration, E[average](p), certain landing -> SD gate fails, scenarios and value of information, model mixing refused without a transfer reco
+  ok   hardness_ledger.py --self-test (exit 0): self-test: ok (content ids, idempotent append, conflict rejected, model/harness/source required, CONFOUNDED only as a disposition, supersession, per-model Beta priors with record ids, exclusions, weights, transfer, seed 
+  ok   node_verdicts.py --self-test (exit 0): self-test: ok (mechanism / slip / representation / cascade, LANDED with reach, NOT-REACHED when the deciding record never reached the worker or no register exists, brief transmission by text and by a referenced file the 
+  ok   oracle_kit.py --self-test (exit 0): self-test: ok (interface, determinism incl. a counter-driven solver, regression both ways, portfolio one-to-one and unknown nodes, slot production, golden spot-check, solver digest, live controls and channels: a ghost co
+  ok   preflight_report.py --self-test (exit 0): self-test: ok (contract + surface + mutation dispositions + geometry block, expected values and flipped_by, file bindings, advisory parts never gate)
+  ok   surface_grader.py --self-test (exit 0): self-test: ok (comparators incl. SHA prefixes and missing spellings, totals, tracker groups same-line and heading-then-keys, every slide update counts, UNGRADED + coverage, V2/V3 gates through difficulty_stats with prove
+  ok   trajectory_ledger.py --self-test (exit 0): self-test: ok (counts via difficulty_stats, briefs with key ranges and requested models, fallback phases, compaction / spill / unpaired / after-result validity, CSV vs native-Sheet table rule with appends and title filte
+  ok   trap_liveness.py --self-test (exit 0): self-test: ok (hub from anchors and delegation counts, breadcrumb via delegation and literal link, decoy scope token, hub label as order, correction in the hub thread, rule placement by resolver coverage on A15 nodes onl
+  ok   difficulty_stats.py --self-test (exit 0): self-test: ok
+  ok   selftest_sandbox.py --self-test (exit 0): self-test: ok (10 cases: scratch root, a write through a linked folder reported (find -newer), a cache rebuild kept inside, tempfile without dir= kept inside, sandbox flag scoped, an outside write path reported, staged l
+
+===== OUTPUT logs/h1/falsify_h1.round39.txt =====
+ok   control: node_verdicts self-test passes
+ok   control: hardness_ledger self-test passes
+ok   control: hardness_forecast self-test passes
+ok   control: oracle_kit self-test passes
+ok   control: trajectory_ledger self-test passes
+ok   control: difficulty_mutation self-test passes
+ok   node_verdicts: mechanism? -> the old cohort fallback -> the self-test fails
+       AssertionError: [{'key': 'K-01', 'field': 'count', 'run': '7', 'truth': '2', 'reproduced_by_ignoring': [], 'attributed': ['late'], 'candidates': ['late'], 'classifica
+ok   node_verdicts: no control trials -> the self-test fails
+       KeyError: 'late'
+ok   node_verdicts: no deciding event / model -> the self-test fails
+       AssertionError: [{'key': 'K-04', 'outcome': 'OVER-APPLIED', 'error': True, 'fields': ['count'], 'written': {'count': 'missing'}, 'truth': {'count': '3'}, 'over_applie
+ok   node_verdicts: go rule without model or independence checks -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-5-5', 'independent_channels': 1, 'channels': [['mechanism late']], 'not_counted': {'off_model_or_unregistered': [], 'c
+ok   node_verdicts: compare without landed-key sets -> the self-test fails
+       AssertionError: []
+ok   node_verdicts: surface-only rules proposed -> the self-test fails
+       KeyError: 'revision'
+ok   hardness_ledger: no control / channel kinds -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: pending review not refused -> the self-test fails
+       AssertionError: 
+ok   node_verdicts: slips listed again when a channel or control explains them -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 2, 'channels': [['mechanism late'], ['channel scale:count']], 'not_counted': {'off_model
+ok   node_verdicts: channel members matched on any column (class cascade) -> the self-test fails
+       AssertionError: {'scale:count': {'kind': 'scale', 'rule': None, 'source': 'notes', 'preregistered': True, 'verdict': 'FAILED', 'members': 4, 'observed': 3, 'held': 3,
+ok   node_verdicts: control trials matched on any column (class cascade) -> the self-test fails
+       AssertionError: {'late': {'mechanism': 'A15', 'family': 'A15', 'over_application': 'over:late', 'trials': [{'key': 'K-04', 'outcome': 'OVER-APPLIED', 'error': True, '
+ok   hardness_ledger: H2 design effect over weighted trials -> the self-test fails
+       AssertionError: {'model': 'claude-opus-4-8', 'alpha': 2.25, 'beta': 1.25, 'mean': 0.6429, 'n_eff': 1.5, 'trials': 6, 'tasks': {'lib': {'trials': 6, 'weighted': 3.0, '
+ok   hardness_forecast: F1 channel rates matched by channel id -> the self-test fails
+       AssertionError: a member-unit rate silently fed the run-latent channel linked:a
+ok   trajectory_ledger: a revision-14 surface read raw (no key pattern for the briefs) -> the self-test fails
+       AssertionError: (None, None)
+ok   difficulty_mutation: keyless briefs give silent empty batches -> the self-test fails
+       AssertionError: briefs that name no solver key were accepted (every batch would be empty)
+ok   oracle_kit: no live-controls check -> the self-test fails
+       KeyError: 'contract.controls'
+ok   node_verdicts: seeded landings ignore supersession and revision -> the self-test fails
+       KeyError: ('r2', 'run-1', 'late')
+ok   node_verdicts: decider bounded by the last table write -> the self-test fails
+       AssertionError: ({'deciding_event': 7, 'deciding_model': 'claude-opus-4-8', 'via': 'brief', 'briefs': [[5, 'claude-opus-4-8'], [7, 'claude-opus-4-8']], 'register_writ
+ok   node_verdicts: unknown deciding models ignored -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 1, 'channels': [['mechanism late']], 'not_counted': {'off_model_or_unregistered': [], 'c
+ok   node_verdicts: unobserved control member held -> the self-test fails
+       AssertionError: [{'key': 'K-04', 'outcome': 'HELD', 'error': None, 'fields': ['count'], 'written': {}, 'truth': {'count': '3'}, 'over_applied_value': None, 'deciding_
+ok   node_verdicts: slots-only channel without provenance -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: class difference always cascade -> the self-test fails
+       AssertionError: {('K-01', 'count'): 'mechanism', ('K-01', 'class'): 'mechanism', ('K-02', 'count'): 'slip', ('K-02', 'class'): 'mechanism', ('K-03', 'count'): 'repres
+ok   hardness_ledger: observation records summed per record -> the self-test fails
+       AssertionError: {'model': 'claude-opus-4-8', 'alpha': 1.4615, 'beta': 1.4615, 'mean': 0.5, 'n_eff': 0.9231, 'trials': 12, 'tasks': {'ov': {'trials': 12, 'weighted': 6
+ok   hardness_ledger: rho unvalidated -> the self-test fails
+       AssertionError: rho -0.1 was accepted
+ok   hardness_forecast: channel rate run key drops the revision -> the self-test fails
+       AssertionError: {'alpha': 2.0, 'beta': 2.0, 'mean': 0.5, 'records': ['a', 'b'], 'unit': 'member', 'n': 2, 'f': 1, 'tasks': {'t': {'runs': 1, 'deff': 1.0, 'n': 2, 'f':
+ok   hardness_forecast: channel ops accepted as mechanisms -> the self-test fails
+       AssertionError: a channel degrade was accepted as a mechanism
+ok   node_verdicts: control-explained items kept as slips / mechanisms -> the self-test fails
+       AssertionError: [{'key': 'K-01', 'field': 'count', 'run': '0', 'truth': '2', 'reproduced_by_ignoring': ['late'], 'attributed': ['late'], 'candidates': ['late'], 'clas
+ok   node_verdicts: HELD channel proposes no record set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: a reference item's classification never vetoes a landing -> the self-test fails
+       AssertionError: ('cascade', set())
+ok   node_verdicts: slots-only channel counted although a control explains its target -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [['channel surface:deck'
+ok   node_verdicts: a subset of mapped slots treated as the whole channel (residual lost) -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [], 'control_over_applic
+ok   node_verdicts: residual models/unknown not recomputed after subtraction -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [['channel surface:deck'
+ok   node_verdicts: all-dropped observations leave no provenance -> the self-test fails
+       AssertionError: {'controls': 0, 'channels': 0, 'dropped': []}
+ok   node_verdicts: missing slot provenance counted as known -> the self-test fails
+       AssertionError: (None, {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'FAILED', 'members': 0, 'observed': 1, 'held': 0, 'unobserv
+ok   node_verdicts: failed slot omitted from a channel proposal's record set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: HELD slots-only channel loses its deciding event -> the self-test fails
+       AssertionError: {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'HELD', 'members': 0, 'observed': 1, 'held': 1, 'unobserved': 0, '
+ok   node_verdicts: a write-backed slot masks another slot's brief-only decision -> the self-test fails
+       AssertionError: {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'HELD', 'members': 0, 'observed': 2, 'held': 2, 'unobserved': 0, '
+ok   node_verdicts: declared observed/held counts ignored (details only) -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: a slot with no detail reuses the channel aggregate -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 1, 'channels': [['channel surface:nt']], 'not_counted': {'off_model_or_unregistered': []
+ok   node_verdicts: the fallback flag ignores a known-but-unknown model set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   hardness_ledger: a truthy covered evidence passes as a count -> the self-test fails
+       AssertionError: {'observed': 1}
+ok   node_verdicts: a FAILED channel ignores its held observations' models -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: the proposal event ignores the channel aggregate -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   hardness_ledger: the unknown flag accepted by truthiness -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: control-explained LANDED verdict enters the priors -> the self-test fails
+       AssertionError: [['hev_728e74412ae018be', 'NOT-REACHED is never counted'], ['hev_a21dd18d32813db6', 'mixed-model run']]
+ok   hardness_ledger: control/channel record without provenance accepted -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: a legitimate landing removed with its control-explained key -> the self-test fails
+       AssertionError: ('the legitimate landing hev_fe13fe8e5334b10c was removed from the prior with its control-explained key', 'hev_fe13fe8e5334b10c', {'model': 'claude-op
+H1 FALSIFICATION PASS

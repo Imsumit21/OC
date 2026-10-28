@@ -1,0 +1,1332 @@
+{
+ "kind": "GRADABLE_SURFACE_REVISION_14",
+ "variant": "B",
+ "sql_sha256": "38781f13e65d09edd1d973ed009215f3270d0aa3ea40503b081b0ab5703471e0",
+ "oracle": "Working_Files/hardening_rev14/oracle.py",
+ "entry_point": "Task_Authoring/support/analysis/season_pass_runs_rev14.py",
+ "total_weight": 255,
+ "truth": {
+  "classes": {
+   "HOLD": 67,
+   "READY": 44,
+   "WATCH": 17
+  },
+  "groups": {
+   "assertions": 28,
+   "artifact": 4,
+   "review": 28,
+   "billing": 10,
+   "missing": 7
+  },
+  "extras": {
+   "register_folder": "d_d5a255766f6138166f7987",
+   "owner_calls": [
+    "SP-060",
+    "SP-089",
+    "SP-111",
+    "SP-116"
+   ],
+   "value_notes": [
+    "SP-007",
+    "SP-011",
+    "SP-015",
+    "SP-027",
+    "SP-070",
+    "SP-087"
+   ],
+   "process_findings": [
+    "SP-030",
+    "SP-044",
+    "SP-075",
+    "SP-088",
+    "SP-108",
+    "SP-114"
+   ],
+   "process_findings_listed": [
+    "SP-030",
+    "SP-044",
+    "SP-075",
+    "SP-088",
+    "SP-108",
+    "SP-114"
+   ],
+   "claims": [
+    "SP-003",
+    "SP-005",
+    "SP-009",
+    "SP-019",
+    "SP-037",
+    "SP-083"
+   ]
+  }
+ },
+ "sampling_groups": {
+  "class-column volume": [
+   "S03",
+   "S04",
+   "S05",
+   "S06"
+  ],
+  "class column": [
+   "S14",
+   "S15",
+   "S16",
+   "S17",
+   "S18"
+  ],
+  "owner-calls line": [
+   "S25",
+   "S26",
+   "S27",
+   "S28"
+  ],
+  "process findings": [
+   "S35",
+   "S36",
+   "S37",
+   "S38",
+   "S39",
+   "S40"
+  ],
+  "value notes": [
+   "S41",
+   "S42",
+   "S43",
+   "S44",
+   "S45",
+   "S46"
+  ],
+  "assertions key list": [
+   "S52"
+  ],
+  "artifact key list": [
+   "S53"
+  ],
+  "review key list": [
+   "S54"
+  ],
+  "billing key list": [
+   "S55"
+  ],
+  "missing key list": [
+   "S56"
+  ]
+ },
+ "known_gaps": [
+  "Selectors are proxies; the criterion text is authoritative where they differ.",
+  "The class totals are graded in the register and on the slide only (V3: no fact in three or more rows); the same totals in the ZOM-801 description and the hub reply are covered by that fact, not by separate rows.",
+  "printed_total reads the first READY/WATCH/HOLD number outside the component rows; a totals block in another layout needs manual reading.",
+  "tracker_entry checks both values on the key's line under Value notes; values on a following line pass the criterion but fail the selector.",
+  "register_parent follows gdrive_create_file parentId and gdrive_move_file; a register moved by another tool is read manually.",
+  "group_size counts distinct keys under a heading the parser recognises; unusual headings need manual reading.",
+  "Class rows grade the class only; register field representation for owner-called components is not graded.",
+  "Unsampled class rows are covered by the volume rows (row count and class totals), per rubric_sampling.md; edges not sampled here (eligibility, epoch, remap, billing history) are protected by direct rows (M4 claim, Control-tab remap, M3 calls)."
+ ],
+ "slots": [
+  {
+   "id": "S01",
+   "weight": 1,
+   "selector": [
+    "delivery",
+    "register_is_csv"
+   ],
+   "title": "The Agent creates the register as a CSV file (text/csv) named 'Season Pass transfer register.csv'",
+   "mechanism": "core",
+   "requirement": "R4",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Create one CSV named Season Pass transfer register.csv in the destination folder linked by the handoff hub.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "literal check from one source",
+   "sampling_group": null
+  },
+  {
+   "id": "S02",
+   "weight": 3,
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_d5a255766f6138166f7987"
+   ],
+   "title": "The Agent saves the Season Pass transfer register in the 'LLC transfer copy' folder (d_d5a255766f6138166f7987) inside the 'Season Pass Handoff - Feb 2026' folder, as Arthur's final call on ZOM-801 directs",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "Save the register in the LLC transfer copy folder inside the handoff folder",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "interpretation: a later owner call replaces the hub save location",
+   "sampling_group": null
+  },
+  {
+   "id": "S03",
+   "weight": 3,
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "title": "The Agent writes exactly 128 component rows, one for each key SP-001 through SP-128, in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R2",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Use one row per included key and no other keys.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "interpretation of the matrix scope rules",
+   "sampling_group": "class-column volume"
+  },
+  {
+   "id": "S04",
+   "weight": 5,
+   "selector": [
+    "printed_total",
+    "READY"
+   ],
+   "title": "The Agent states the class total READY 44 below the component rows of the Season Pass transfer register",
+   "mechanism": "aggregate",
+   "requirement": "R1",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Put class totals below the component rows, clearly separated from them.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation over all 128 components",
+   "sampling_group": "class-column volume"
+  },
+  {
+   "id": "S05",
+   "weight": 5,
+   "selector": [
+    "printed_total",
+    "WATCH"
+   ],
+   "title": "The Agent states the class total WATCH 17 below the component rows of the Season Pass transfer register",
+   "mechanism": "aggregate",
+   "requirement": "R1",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Put class totals below the component rows, clearly separated from them.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation over all 128 components",
+   "sampling_group": "class-column volume"
+  },
+  {
+   "id": "S06",
+   "weight": 5,
+   "selector": [
+    "printed_total",
+    "HOLD"
+   ],
+   "title": "The Agent states the class total HOLD 67 below the component rows of the Season Pass transfer register",
+   "mechanism": "aggregate",
+   "requirement": "R1",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Put class totals below the component rows, clearly separated from them.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation over all 128 components",
+   "sampling_group": "class-column volume"
+  },
+  {
+   "id": "S07",
+   "weight": 5,
+   "selector": [
+    "text",
+    "slide",
+    "\\bREADY\\b\\D{0,20}?\\b44\\b|\\b44\\b\\D{0,6}\\bREADY\\b"
+   ],
+   "title": "The Agent states the class total READY 44 on the Handoff status slide of the Season Pass Handoff Review v2 deck",
+   "mechanism": "aggregate",
+   "requirement": "R8",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Replace its placeholder with the READY/WATCH/HOLD totals, the register link, the snapshot, and a separately labelled historical comparison from the event evidence note.",
+   "prompt_span": "review slide",
+   "kind_of_work": "multi-source reconciliation over all 128 components (second occurrence of the class-total fact)",
+   "sampling_group": null
+  },
+  {
+   "id": "S08",
+   "weight": 5,
+   "selector": [
+    "text",
+    "slide",
+    "\\bWATCH\\b\\D{0,20}?\\b17\\b|\\b17\\b\\D{0,6}\\bWATCH\\b"
+   ],
+   "title": "The Agent states the class total WATCH 17 on the Handoff status slide of the Season Pass Handoff Review v2 deck",
+   "mechanism": "aggregate",
+   "requirement": "R8",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Replace its placeholder with the READY/WATCH/HOLD totals, the register link, the snapshot, and a separately labelled historical comparison from the event evidence note.",
+   "prompt_span": "review slide",
+   "kind_of_work": "multi-source reconciliation over all 128 components (second occurrence of the class-total fact)",
+   "sampling_group": null
+  },
+  {
+   "id": "S09",
+   "weight": 5,
+   "selector": [
+    "text",
+    "slide",
+    "\\bHOLD\\b\\D{0,20}?\\b67\\b|\\b67\\b\\D{0,6}\\bHOLD\\b"
+   ],
+   "title": "The Agent states the class total HOLD 67 on the Handoff status slide of the Season Pass Handoff Review v2 deck",
+   "mechanism": "aggregate",
+   "requirement": "R8",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Replace its placeholder with the READY/WATCH/HOLD totals, the register link, the snapshot, and a separately labelled historical comparison from the event evidence note.",
+   "prompt_span": "review slide",
+   "kind_of_work": "multi-source reconciliation over all 128 components (second occurrence of the class-total fact)",
+   "sampling_group": null
+  },
+  {
+   "id": "S10",
+   "weight": 3,
+   "selector": [
+    "field",
+    "SP-017",
+    "issue"
+   ],
+   "title": "The Agent lists ZOM-802 as the issue for SP-017 in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R2",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "The Cohort tab still lists the original issues; use the replacement issue for these keys.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "interpretation: Control-tab re-map over the Cohort tab (direct row: singled out by the Control tab)",
+   "sampling_group": null
+  },
+  {
+   "id": "S11",
+   "weight": 3,
+   "selector": [
+    "field",
+    "SP-054",
+    "issue"
+   ],
+   "title": "The Agent lists ZOM-803 as the issue for SP-054 in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R2",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "The Cohort tab still lists the original issues; use the replacement issue for these keys.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "interpretation: Control-tab re-map over the Cohort tab (direct row: singled out by the Control tab)",
+   "sampling_group": null
+  },
+  {
+   "id": "S12",
+   "weight": 3,
+   "selector": [
+    "field",
+    "SP-065",
+    "issue"
+   ],
+   "title": "The Agent lists ZOM-804 as the issue for SP-065 in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R2",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "The Cohort tab still lists the original issues; use the replacement issue for these keys.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "interpretation: Control-tab re-map over the Cohort tab (direct row: singled out by the Control tab)",
+   "sampling_group": null
+  },
+  {
+   "id": "S13",
+   "weight": 3,
+   "selector": [
+    "field",
+    "SP-101",
+    "issue"
+   ],
+   "title": "The Agent lists ZOM-805 as the issue for SP-101 in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R2",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "The Cohort tab still lists the original issues; use the replacement issue for these keys.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "interpretation: Control-tab re-map over the Cohort tab (direct row: singled out by the Control tab)",
+   "sampling_group": null
+  },
+  {
+   "id": "S14",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-038",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-038 as handoff class READY in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R1",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Record READY only when failed assertions are zero",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation; sample: ordinary: legacy receipt, one transfer approval, no labels",
+   "sampling_group": "class column"
+  },
+  {
+   "id": "S15",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-030",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-030 as handoff class WATCH in the Season Pass transfer register",
+   "mechanism": "M2",
+   "requirement": "R11",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302 + gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "The Control tab review-history row decides when the selected transfer approval is a process finding and how that changes the class.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation; sample: review history: CHANGES_REQUESTED then APPROVED on the same artifact",
+   "sampling_group": "class column"
+  },
+  {
+   "id": "S16",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-049",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-049 as handoff class HOLD in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R1",
+   "quote_source": "github harmonygames-Games/match3d#545#c_3",
+   "quote": "If no current receipt remains, record the receipt fields as missing and include the missing-input blocker.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation; sample: withdrawal: copies never restore a withdrawn receipt",
+   "sampling_group": "class column"
+  },
+  {
+   "id": "S17",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-024",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-024 as handoff class READY in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R1",
+   "quote_source": "trello 698f7e10ca7ddc9ad307027f",
+   "quote": "another fixture is not a newer validation of this deployment",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation; sample: fixture binding: a newer report from another fixture does not count",
+   "sampling_group": "class column"
+  },
+  {
+   "id": "S18",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-021",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-021 as handoff class READY in the Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R1",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "A dismissal after the snapshot leaves the submitted decision in force at the snapshot",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation; sample: historical state: a dismissal after the snapshot leaves the approval",
+   "sampling_group": "class column"
+  },
+  {
+   "id": "S19",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-060",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-060 as handoff class HOLD in the Season Pass transfer register, applying Arthur's final call on ZOM-801",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "Carry both as HOLD and list them under missing input.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: owner call over the record-derived class",
+   "sampling_group": null
+  },
+  {
+   "id": "S20",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-089",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-089 as handoff class READY in the Season Pass transfer register, applying Arthur's final call on ZOM-801",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "No billing hold for SP-089.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: owner call over the record-derived class",
+   "sampling_group": null
+  },
+  {
+   "id": "S21",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-111",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-111 as handoff class WATCH in the Season Pass transfer register, applying Arthur's final call on ZOM-801",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "No billing hold for SP-111.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: owner call over the record-derived class",
+   "sampling_group": null
+  },
+  {
+   "id": "S22",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-116",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-116 as handoff class HOLD in the Season Pass transfer register, applying Arthur's final call on ZOM-801",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "Carry both as HOLD and list them under missing input.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: owner call over the record-derived class",
+   "sampling_group": null
+  },
+  {
+   "id": "S23",
+   "weight": 3,
+   "selector": [
+    "group_key",
+    "SP-060",
+    "missing"
+   ],
+   "title": "The Agent lists SP-060 under the missing-input blocker group in the ZOM-801 description",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "Carry both as HOLD and list them under missing input.",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "interpretation: owner call places the key in a blocker group",
+   "sampling_group": null
+  },
+  {
+   "id": "S24",
+   "weight": 3,
+   "selector": [
+    "group_key",
+    "SP-116",
+    "missing"
+   ],
+   "title": "The Agent lists SP-116 under the missing-input blocker group in the ZOM-801 description",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "Carry both as HOLD and list them under missing input.",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "interpretation: owner call places the key in a blocker group",
+   "sampling_group": null
+  },
+  {
+   "id": "S25",
+   "weight": 1,
+   "selector": [
+    "tracker_lists",
+    "owner calls",
+    "SP-060"
+   ],
+   "title": "The Agent lists SP-060 on an Owner calls line in the ZOM-801 description",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "add an Owner calls line listing these four keys",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "literal check from one source",
+   "sampling_group": "owner-calls line"
+  },
+  {
+   "id": "S26",
+   "weight": 1,
+   "selector": [
+    "tracker_lists",
+    "owner calls",
+    "SP-089"
+   ],
+   "title": "The Agent lists SP-089 on an Owner calls line in the ZOM-801 description",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "add an Owner calls line listing these four keys",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "literal check from one source",
+   "sampling_group": "owner-calls line"
+  },
+  {
+   "id": "S27",
+   "weight": 1,
+   "selector": [
+    "tracker_lists",
+    "owner calls",
+    "SP-111"
+   ],
+   "title": "The Agent lists SP-111 on an Owner calls line in the ZOM-801 description",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "add an Owner calls line listing these four keys",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "literal check from one source",
+   "sampling_group": "owner-calls line"
+  },
+  {
+   "id": "S28",
+   "weight": 1,
+   "selector": [
+    "tracker_lists",
+    "owner calls",
+    "SP-116"
+   ],
+   "title": "The Agent lists SP-116 on an Owner calls line in the ZOM-801 description",
+   "mechanism": "M3",
+   "requirement": "R9",
+   "quote_source": "linear ZOM-801 comment cmt_3f0ae94ca322f64d0929",
+   "quote": "add an Owner calls line listing these four keys",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "literal check from one source",
+   "sampling_group": "owner-calls line"
+  },
+  {
+   "id": "S29",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-003",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-003 as handoff class HOLD in the Season Pass transfer register",
+   "mechanism": "M4",
+   "requirement": "R1",
+   "quote_source": "trello 698f7000692c3588d1022036",
+   "quote": "A newer ineligible run does not erase the last qualifying result.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: records over a confident hub-thread claim",
+   "sampling_group": null
+  },
+  {
+   "id": "S30",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-005",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-005 as handoff class HOLD in the Season Pass transfer register",
+   "mechanism": "M4",
+   "requirement": "R1",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "A review of another epoch does not supersede it, even if later or for the same digest.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: records over a confident hub-thread claim",
+   "sampling_group": null
+  },
+  {
+   "id": "S31",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-009",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-009 as handoff class READY in the Season Pass transfer register",
+   "mechanism": "M4-control",
+   "requirement": "R1",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Record READY only when failed assertions are zero",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: records over a confident hub-thread claim",
+   "sampling_group": null
+  },
+  {
+   "id": "S32",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-019",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-019 as handoff class HOLD in the Season Pass transfer register",
+   "mechanism": "M4-control",
+   "requirement": "R1",
+   "quote_source": "trello 698f7000692c3588d1022036",
+   "quote": "A newer ineligible run does not erase the last qualifying result.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: records over a confident hub-thread claim",
+   "sampling_group": null
+  },
+  {
+   "id": "S33",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-037",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-037 as handoff class HOLD in the Season Pass transfer register",
+   "mechanism": "M4",
+   "requirement": "R1",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "A review of another epoch does not supersede it, even if later or for the same digest.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: records over a confident hub-thread claim",
+   "sampling_group": null
+  },
+  {
+   "id": "S34",
+   "weight": 5,
+   "selector": [
+    "field",
+    "SP-083",
+    "handoff class"
+   ],
+   "title": "The Agent marks SP-083 as handoff class HOLD in the Season Pass transfer register",
+   "mechanism": "M4",
+   "requirement": "R1",
+   "quote_source": "trello 698f7000692c3588d1022036",
+   "quote": "A newer ineligible run does not erase the last qualifying result.",
+   "prompt_span": "get the complete register",
+   "kind_of_work": "multi-source reconciliation: records over a confident hub-thread claim",
+   "sampling_group": null
+  },
+  {
+   "id": "S35",
+   "weight": 3,
+   "selector": [
+    "tracker_lists",
+    "process findings",
+    "SP-030"
+   ],
+   "title": "The Agent lists SP-030 under a Process findings heading in the ZOM-801 description",
+   "mechanism": "M2",
+   "requirement": "R11",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "under a Process findings heading in the tracking issue description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "comparison of two transfer reviews on the same artifact, lane and epoch",
+   "sampling_group": "process findings"
+  },
+  {
+   "id": "S36",
+   "weight": 3,
+   "selector": [
+    "tracker_lists",
+    "process findings",
+    "SP-044"
+   ],
+   "title": "The Agent lists SP-044 under a Process findings heading in the ZOM-801 description",
+   "mechanism": "M2",
+   "requirement": "R11",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "under a Process findings heading in the tracking issue description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "comparison of two transfer reviews on the same artifact, lane and epoch",
+   "sampling_group": "process findings"
+  },
+  {
+   "id": "S37",
+   "weight": 3,
+   "selector": [
+    "tracker_lists",
+    "process findings",
+    "SP-088"
+   ],
+   "title": "The Agent lists SP-088 under a Process findings heading in the ZOM-801 description",
+   "mechanism": "M2",
+   "requirement": "R11",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "under a Process findings heading in the tracking issue description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "comparison of two transfer reviews on the same artifact, lane and epoch",
+   "sampling_group": "process findings"
+  },
+  {
+   "id": "S38",
+   "weight": 3,
+   "selector": [
+    "tracker_lists",
+    "process findings",
+    "SP-108"
+   ],
+   "title": "The Agent lists SP-108 under a Process findings heading in the ZOM-801 description",
+   "mechanism": "M2",
+   "requirement": "R11",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "under a Process findings heading in the tracking issue description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "comparison of two transfer reviews on the same artifact, lane and epoch",
+   "sampling_group": "process findings"
+  },
+  {
+   "id": "S39",
+   "weight": 3,
+   "selector": [
+    "tracker_lists",
+    "process findings",
+    "SP-114"
+   ],
+   "title": "The Agent lists SP-114 under a Process findings heading in the ZOM-801 description",
+   "mechanism": "M2",
+   "requirement": "R11",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "under a Process findings heading in the tracking issue description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "comparison of two transfer reviews on the same artifact, lane and epoch",
+   "sampling_group": "process findings"
+  },
+  {
+   "id": "S40",
+   "weight": 5,
+   "selector": [
+    "tracker_count",
+    "process findings",
+    6
+   ],
+   "title": "The Agent lists exactly 6 components under the Process findings heading in the ZOM-801 description",
+   "mechanism": "M2",
+   "requirement": "R11",
+   "quote_source": "gsheets f_7d4307eb29c34530f083ad/Control",
+   "quote": "under a Process findings heading in the tracking issue description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source count over every transfer review history",
+   "sampling_group": "process findings"
+  },
+  {
+   "id": "S41",
+   "weight": 5,
+   "selector": [
+    "tracker_entry",
+    "value notes",
+    "SP-007",
+    [
+     "\\b3\\b",
+     "\\b0\\b"
+    ]
+   ],
+   "title": "The Agent lists SP-007 under a Value notes heading in the ZOM-801 description with its failed assertions: note value 3, record value 0",
+   "mechanism": "M1",
+   "requirement": "R10",
+   "quote_source": "confluence page_season_pass_handoff v5",
+   "quote": "in the tracking issue description under a Value notes heading with the field, the note's value and the record's value",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation: a colleague note on one service against the record on another",
+   "sampling_group": "value notes"
+  },
+  {
+   "id": "S42",
+   "weight": 5,
+   "selector": [
+    "tracker_entry",
+    "value notes",
+    "SP-011",
+    [
+     "store",
+     "internal"
+    ]
+   ],
+   "title": "The Agent lists SP-011 under a Value notes heading in the ZOM-801 description with its receipt ring: note value store, record value internal",
+   "mechanism": "M1",
+   "requirement": "R10",
+   "quote_source": "confluence page_season_pass_handoff v5",
+   "quote": "in the tracking issue description under a Value notes heading with the field, the note's value and the record's value",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation: a colleague note on one service against the record on another",
+   "sampling_group": "value notes"
+  },
+  {
+   "id": "S43",
+   "weight": 5,
+   "selector": [
+    "tracker_entry",
+    "value notes",
+    "SP-015",
+    [
+     "75aaa18c4190",
+     "7630f5ab09ad"
+    ]
+   ],
+   "title": "The Agent lists SP-015 under a Value notes heading in the ZOM-801 description with its reviewed artifact: note value 75aaa18c4190, record value 7630f5ab09ad",
+   "mechanism": "M1",
+   "requirement": "R10",
+   "quote_source": "confluence page_season_pass_handoff v5",
+   "quote": "in the tracking issue description under a Value notes heading with the field, the note's value and the record's value",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation: a colleague note on one service against the record on another",
+   "sampling_group": "value notes"
+  },
+  {
+   "id": "S44",
+   "weight": 5,
+   "selector": [
+    "tracker_entry",
+    "value notes",
+    "SP-027",
+    [
+     "d5a4d20d2759",
+     "5a0f6e2210ae"
+    ]
+   ],
+   "title": "The Agent lists SP-027 under a Value notes heading in the ZOM-801 description with its receipt artifact: note value d5a4d20d2759, record value 5a0f6e2210ae",
+   "mechanism": "M1",
+   "requirement": "R10",
+   "quote_source": "confluence page_season_pass_handoff v5",
+   "quote": "in the tracking issue description under a Value notes heading with the field, the note's value and the record's value",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation: a colleague note on one service against the record on another",
+   "sampling_group": "value notes"
+  },
+  {
+   "id": "S45",
+   "weight": 5,
+   "selector": [
+    "tracker_entry",
+    "value notes",
+    "SP-070",
+    [
+     "\\b(yes|held|active|on hold|under)\\b",
+     "\\b(no|not|none|inactive|released|clear)\\b"
+    ]
+   ],
+   "title": "The Agent lists SP-070 under a Value notes heading in the ZOM-801 description with its billing hold at snapshot: note value yes, record value no",
+   "mechanism": "M1",
+   "requirement": "R10",
+   "quote_source": "confluence page_season_pass_handoff v5",
+   "quote": "in the tracking issue description under a Value notes heading with the field, the note's value and the record's value",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation: a colleague note on one service against the record on another",
+   "sampling_group": "value notes"
+  },
+  {
+   "id": "S46",
+   "weight": 5,
+   "selector": [
+    "tracker_count",
+    "value notes",
+    6
+   ],
+   "title": "The Agent lists exactly 6 components under the Value notes heading in the ZOM-801 description",
+   "mechanism": "M1",
+   "requirement": "R10",
+   "quote_source": "confluence page_season_pass_handoff v5",
+   "quote": "in the tracking issue description under a Value notes heading with the field, the note's value and the record's value",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source count over every issue and PR note",
+   "sampling_group": "value notes"
+  },
+  {
+   "id": "S47",
+   "weight": 5,
+   "selector": [
+    "group_count",
+    "assertions"
+   ],
+   "title": "The Agent gives the failed-assertions-above-zero blocker group a count of 28 in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source count over all HOLD components",
+   "sampling_group": null
+  },
+  {
+   "id": "S48",
+   "weight": 5,
+   "selector": [
+    "group_count",
+    "artifact"
+   ],
+   "title": "The Agent gives the test-artifact-different-from-receipt-artifact blocker group a count of 4 in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source count over all HOLD components",
+   "sampling_group": null
+  },
+  {
+   "id": "S49",
+   "weight": 5,
+   "selector": [
+    "group_count",
+    "review"
+   ],
+   "title": "The Agent gives the selected-transfer-review-not-APPROVED-for-the-receipt-artifact blocker group a count of 28 in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source count over all HOLD components",
+   "sampling_group": null
+  },
+  {
+   "id": "S50",
+   "weight": 5,
+   "selector": [
+    "group_count",
+    "billing"
+   ],
+   "title": "The Agent gives the billing-hold-active-at-the-snapshot blocker group a count of 10 in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source count over all HOLD components",
+   "sampling_group": null
+  },
+  {
+   "id": "S51",
+   "weight": 5,
+   "selector": [
+    "group_count",
+    "missing"
+   ],
+   "title": "The Agent gives the missing-input blocker group a count of 7 in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source count over all HOLD components",
+   "sampling_group": null
+  },
+  {
+   "id": "S52",
+   "weight": 5,
+   "selector": [
+    "group_size",
+    "assertions"
+   ],
+   "title": "The Agent lists exactly 28 component keys under the failed-assertions-above-zero blocker group in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation of every member",
+   "sampling_group": "assertions key list"
+  },
+  {
+   "id": "S53",
+   "weight": 5,
+   "selector": [
+    "group_size",
+    "artifact"
+   ],
+   "title": "The Agent lists exactly 4 component keys under the test-artifact-different-from-receipt-artifact blocker group in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation of every member",
+   "sampling_group": "artifact key list"
+  },
+  {
+   "id": "S54",
+   "weight": 5,
+   "selector": [
+    "group_size",
+    "review"
+   ],
+   "title": "The Agent lists exactly 28 component keys under the selected-transfer-review-not-APPROVED-for-the-receipt-artifact blocker group in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation of every member",
+   "sampling_group": "review key list"
+  },
+  {
+   "id": "S55",
+   "weight": 5,
+   "selector": [
+    "group_size",
+    "billing"
+   ],
+   "title": "The Agent lists exactly 10 component keys under the billing-hold-active-at-the-snapshot blocker group in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation of every member",
+   "sampling_group": "billing key list"
+  },
+  {
+   "id": "S56",
+   "weight": 5,
+   "selector": [
+    "group_size",
+    "missing"
+   ],
+   "title": "The Agent lists exactly 7 component keys under the missing-input blocker group in the ZOM-801 description",
+   "mechanism": "aggregate",
+   "requirement": "R7",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "The tracking issue description must list the component keys under each failed-condition group and show its count",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "multi-source reconciliation of every member",
+   "sampling_group": "missing key list"
+  },
+  {
+   "id": "S57",
+   "weight": 1,
+   "selector": [
+    "delivery",
+    "slide_updated"
+   ],
+   "title": "The Agent replaces the placeholder sentence 'Replace with register totals, link and snapshot.' on the Handoff status slide of the 'Season Pass Handoff Review v2' deck",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Replace its placeholder with the READY/WATCH/HOLD totals, the register link, the snapshot, and a separately labelled historical comparison from the event evidence note.",
+   "prompt_span": "review slide",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S58",
+   "weight": 1,
+   "selector": [
+    "text",
+    "slide",
+    "2026-02-12|12 Feb|February 12"
+   ],
+   "title": "The Agent states the evidence snapshot 2026-02-12 18:00 UTC (10:00 PST) on the Handoff status slide",
+   "mechanism": "core",
+   "requirement": "R6",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Replace its placeholder with the READY/WATCH/HOLD totals, the register link, the snapshot, and a separately labelled historical comparison from the event evidence note.",
+   "prompt_span": "review slide",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S59",
+   "weight": 3,
+   "selector": [
+    "text",
+    "slide",
+    "\\b6\\b.{0,70}?events?|events?.{0,30}?\\b6\\b"
+   ],
+   "title": "The Agent states 6 completed Zombie Match 3D Season Pass events on the Handoff status slide",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "Show event count and participant sum separately on the review deck.",
+   "prompt_span": "review slide",
+   "kind_of_work": "calculation from warehouse rows",
+   "sampling_group": null
+  },
+  {
+   "id": "S60",
+   "weight": 3,
+   "selector": [
+    "text",
+    "slide",
+    "754"
+   ],
+   "title": "The Agent states 754 participants across those completed Season Pass events on the Handoff status slide",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "confluence page_season_pass_handoff",
+   "quote": "Show event count and participant sum separately on the review deck.",
+   "prompt_span": "review slide",
+   "kind_of_work": "calculation from warehouse rows",
+   "sampling_group": null
+  },
+  {
+   "id": "S61",
+   "weight": 1,
+   "selector": [
+    "link",
+    "slide"
+   ],
+   "title": "The Agent includes a link to the created Season Pass transfer register on the Handoff status slide",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Replace its placeholder with the READY/WATCH/HOLD totals, the register link, the snapshot, and a separately labelled historical comparison from the event evidence note.",
+   "prompt_span": "review slide",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S62",
+   "weight": 1,
+   "selector": [
+    "text",
+    "slide",
+    "histor"
+   ],
+   "title": "The Agent labels the event count and participant sum on the Handoff status slide as a historical comparison, separate from the component totals",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Replace its placeholder with the READY/WATCH/HOLD totals, the register link, the snapshot, and a separately labelled historical comparison from the event evidence note.",
+   "prompt_span": "review slide",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S63",
+   "weight": 1,
+   "selector": [
+    "delivery",
+    "tracker_state",
+    "in validation"
+   ],
+   "title": "The Agent moves ZOM-801 to In Validation",
+   "mechanism": "core",
+   "requirement": "R7",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "move that tracking issue to In Validation",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S64",
+   "weight": 1,
+   "selector": [
+    "delivery",
+    "tracker_preserves",
+    "Tracking the engineering trans"
+   ],
+   "title": "The Agent keeps ZOM-801's existing description text and appends below it",
+   "mechanism": "core",
+   "requirement": "R7",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Append the register link and class totals to that tracking issue's description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S65",
+   "weight": 1,
+   "selector": [
+    "link",
+    "tracker"
+   ],
+   "title": "The Agent includes a link to the created Season Pass transfer register in the ZOM-801 description",
+   "mechanism": "core",
+   "requirement": "R7",
+   "quote_source": "gdocs f_ae32fe0648ef35cf597302",
+   "quote": "Append the register link and class totals to that tracking issue's description",
+   "prompt_span": "tracking issue done",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S66",
+   "weight": 1,
+   "selector": [
+    "delivery",
+    "share_reader"
+   ],
+   "title": "The Agent gives arthur.blake@harmonygames.co reader access to the created Season Pass transfer register",
+   "mechanism": "core",
+   "requirement": "R5",
+   "quote_source": "gmail oliver.brooks@harmonygames.co/<CA202ce27e843eb148967f4d7c7d46@mail.gmail.com>",
+   "quote": "Please give me reader access to the register and reply here with the link when the packet is done.",
+   "prompt_span": "send Arthur the register",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S67",
+   "weight": 3,
+   "selector": [
+    "delivery",
+    "email_reply",
+    "CA202ce27e843eb148967f4d7c7d46"
+   ],
+   "title": "The Agent replies only to arthur.blake@harmonygames.co on Arthur's 2026-02-13 16:00 UTC Zombie Match 3D recipient-protocol email",
+   "mechanism": "core",
+   "requirement": "R5",
+   "quote_source": "gmail oliver.brooks@harmonygames.co/<CA202ce27e843eb148967f4d7c7d46@mail.gmail.com>",
+   "quote": "No cc, no attachments, and no public or domain-wide link.",
+   "prompt_span": "send Arthur the register",
+   "kind_of_work": "interpretation: protocol over the earlier circulation thread",
+   "sampling_group": null
+  },
+  {
+   "id": "S68",
+   "weight": 1,
+   "selector": [
+    "link",
+    "email"
+   ],
+   "title": "The Agent includes a link to the created Season Pass transfer register, with no attachment, in its reply to Arthur's recipient-protocol email",
+   "mechanism": "core",
+   "requirement": "R5",
+   "quote_source": "gmail oliver.brooks@harmonygames.co/<CA202ce27e843eb148967f4d7c7d46@mail.gmail.com>",
+   "quote": "Please give me reader access to the register and reply here with the link when the packet is done.",
+   "prompt_span": "send Arthur the register",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S69",
+   "weight": 1,
+   "selector": [
+    "delivery",
+    "slack_thread",
+    "1771012800.000101"
+   ],
+   "title": "The Agent replies in the #builds thread under Arthur's 2026-02-13 20:00 UTC Season Pass handoff message",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "slack C05433XK267/1771012800.000101",
+   "quote": "Reply here with the totals and link once sent.",
+   "prompt_span": "reply on the handoff thread once it's sent",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S70",
+   "weight": 1,
+   "selector": [
+    "delivery",
+    "slack_after_email"
+   ],
+   "title": "The Agent posts that #builds thread reply after its reply to Arthur's recipient-protocol email",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "slack C05433XK267/1771012800.000101",
+   "quote": "Reply here with the totals and link once sent.",
+   "prompt_span": "reply on the handoff thread once it's sent",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  },
+  {
+   "id": "S71",
+   "weight": 1,
+   "selector": [
+    "link",
+    "slack"
+   ],
+   "title": "The Agent includes a link to the created Season Pass transfer register in the #builds thread reply",
+   "mechanism": "core",
+   "requirement": "R8",
+   "quote_source": "slack C05433XK267/1771012800.000101",
+   "quote": "Reply here with the totals and link once sent.",
+   "prompt_span": "reply on the handoff thread once it's sent",
+   "kind_of_work": "literal",
+   "sampling_group": null
+  }
+ ]
+}

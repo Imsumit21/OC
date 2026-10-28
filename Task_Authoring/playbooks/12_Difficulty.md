@@ -89,13 +89,21 @@ Readings the rules leave open — the calculator applies the strictest and print
 
 ## Diagnosis and routing
 
+The score-shape rows from `/create-hardening` B3b are merged into this table (plan §2, §9: content move). The universe
+fixes in the Route column are designed in `/create-scenario --revise` from the MODE B forensics.
+
 | Symptom | Likely cause | Route |
 |---|---|---|
-| Too Easy / average too high | Evidence sits in one obvious place; the prompt names the artifact; no conclusion-sounding message to stop at; correction met before the claim it overturns | `/create-hardening` (MODE B), then `/create-injection`; prompt-side defects go to the human |
+| Too Easy / average too high (uniform success, corrected avg ≥ assigned cap) | Evidence sits in one obvious place; rules stated where Opus reads first; the prompt names the artifact; a mechanical cohort; no rarely-opened evidence; no conclusion-sounding message to stop at; correction met before the claim it overturns | `/create-hardening` (MODE B forensics), then `/create-scenario --revise`: move rules to hidden authorities with decoys, add A13/A14/A15/A17 chains, never just add volume; prompt-side defects go to the human |
+| Material failures in most runs, corrected average ≥ assigned cap | Mechanism-dependent weight is too small (≈ 26 % in `Hardness_Mastery.md` §11, NF2) | `/create-scenario --revise`: add independent chains whose facts the deliverable must carry; never re-weight to hit the gate (geometry U and L_max in the preflight show the room) |
 | Gate fails only in the corrected fair view | Unfair rows were inflating difficulty | Fix the criteria and re-run the verifier; then deepen the universe if the assigned cap is reached |
-| One pattern dominates | A single choke point carries the difficulty (bimodal scores) | Add an independent difficulty source — a second hidden authority or chain landing on different rows (`Hardness_Mastery.md` §0) |
+| Raw average low, clean (corrected) average high | All-fail rows from unincorporated rules, unauthorized criteria or verifier errors | Not hardness — route the defects (`/create-allfail`, `/create-rubric-writing check`); rebuild the difficulty on incorporated mechanisms (`Hardness_Mastery.md` §11, recert task: 48.7 % raw, ≈ 80 % clean) |
+| One pattern dominates (bimodal: some runs near 0, some near 100) | A single choke point carries the difficulty — usually one hidden authority (A12) gating most requirements | Add an independent difficulty source: split governance across 2–4 authorities in different rarely-searched services, or a chain landing on different rows (`Hardness_Mastery.md` §0) |
 | Over-concentrated only by single-linkage chaining | Rollouts differ by one rubric step by step | Report both readings; read screen 60; treat as at risk |
-| SD < 0.1 | Uniform success, or one universal blind spot | Uniform success → `/create-hardening`; uniform failure on the same rows → check those rows in 11 first |
+| SD < 0.1 | Uniform success, or one universal blind spot everyone misses the same way | Uniform success → `/create-hardening` then `/create-scenario --revise`; uniform failure on the same rows → check those rows in 11 first, then make chains partially solvable with a different root cause each |
+| Short runs (< 100 calls) on a cohort task | No cohort mandate reached the agent, or a bulk shortcut exists | Make the cohort rule an incorporated requirement; remove the shortcut (`Ask_Carriers.md` §3) |
+| Many calls, high score | Volume without judgment (the 0.984 / 816-call case) | Add per-record house rules, boundary records, derived figures |
+| Latching early (narration "I have enough") | The decoy is the first plausible source | Keep — this is the lever; make sure the real authority is findable by its name |
 | SD > 0.3 | Near-0 and near-100 runs | One gating discovery or an ambiguous row — check row ambiguity, then split the gating discovery |
 | Wrong Horizon | Scenario too narrow for the tier | Deepen the universe; never pad with blocked or repeated calls |
 | Borderline Horizon | Scenario larger than the tier | Non-fail; note it. Narrow only if that honestly simplifies |
@@ -104,6 +112,16 @@ Readings the rules leave open — the calculator applies the strictest and print
 After any prompt or universe change the baseline is re-run in full (re-inject the SQL first)
 and every downstream step re-checked; after a criterion change, the verifier is re-run and
 11 and 12 are redone (scores bind to the exact rubric version).
+
+**What this stage owns** (plan §2, §4.6): B0 file mapping (each trajectory ↔ verifier `Run #N` by content, never by file
+order: `tools/trajectory_ledger.py` binds every export to its revision and `difficulty_stats.build` maps the files), B2
+friction and horizon (`trajectory_ledger.py` counts through `difficulty_stats.count_tool_calls`), the routing above
+(B3b) and the corrected numbers. On a gate failure after fairness corrections the next step is `/create-hardening`
+MODE B (baseline), whose output `/create-scenario --revise` consumes. The pre-registered forecast (its ledger id is in
+`01c_Preflight_Report`) is compared here with the corrected gates of record: save `difficulty_stats.py <input> --json`
+output, write the forecast's yes/no predictions (for example "the baseline fails a difficulty gate", confidence
+1 − P(all gates) per reported scenario) with their sha256s, and score them with `hardness_forecast.py score --append`,
+which records the outcomes in the ledger. It stays advisory and UNCALIBRATED until plan §10 Phase 2.
 
 ## Report format
 

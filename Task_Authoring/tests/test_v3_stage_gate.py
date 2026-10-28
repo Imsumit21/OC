@@ -4,22 +4,20 @@ import json
 import os
 from pathlib import Path
 import sys
-import tempfile
 import types
 import unittest
 from unittest.mock import patch
 
 TOOLS = Path(__file__).resolve().parents[1] / "tools"
 sys.path.insert(0, str(TOOLS))
+import selftest_sandbox  # noqa: E402  (temp folders under the scratch root, never the shared cache)
 import stage_gate as gate
 import v3_artifact_checks as evidence
 
 
 class V3EvidenceTests(unittest.TestCase):
     def setUp(self):
-        cache = TOOLS.parent / "support" / "local_search" / "cache"
-        cache.mkdir(parents=True, exist_ok=True)
-        self.tmp = tempfile.TemporaryDirectory(prefix="v3_stage_test_", dir=cache)
+        self.tmp = selftest_sandbox.scratch_tmp("v3_stage_test_")      # support/scratch/, unique, removed after
         self.td = Path(self.tmp.name)
         (self.td / "Working_Files").mkdir()
         (self.td / "source").mkdir()

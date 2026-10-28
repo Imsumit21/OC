@@ -1,0 +1,114 @@
+--- a/tools/test_difficulty_v3.py
++++ b/tools/test_difficulty_v3.py
+@@ -3,6 +3,7 @@
+ import json
+ from pathlib import Path
+ import tempfile
++import selftest_sandbox
+ import unittest
+ 
+ import difficulty_stats as stats
+@@ -15,6 +16,8 @@
+             "rubrics": [{"id": f"R{i}", "weight": 1} for i in range(100)],
+             "rollouts": [{"id": f"run-{number}", "status": "completed", "tool_calls": calls,
+                           "models": ["claude-opus-5-5"], "model_source": f"trajectory:run-{number}.json",
++                          "model_check": {"v3_valid": True, "mixed_model": False, "fallback_events": [],
++                                          "models": ["claude-opus-5-5"]},
+                           "results": {f"R{i}": i < passed for i in range(100)}}
+                          for number, passed in enumerate(passes, 1)],
+         }
+@@ -85,17 +88,91 @@
+         self.assertIn("baseline_models", stats.compute(data)["blocking"])
+         data["rollouts"][0]["models"] = []
+         self.assertIn("missing provenance", stats.compute(data)["gates"]["baseline_models"]["value"])
++        data["rollouts"][0]["models"] = ["claude-opus-5-5"]
++        data["rollouts"][0]["model_check"] = {"v3_valid": False, "mixed_model": True, "fallback_events": [3],
++                                              "models": ["claude-opus-5-5"]}
++        self.assertIn("mixed/fallback", stats.compute(data)["gates"]["baseline_models"]["value"])
++
++    def test_model_gate_rejects_bad_labels_and_missing_source(self):
++        for label in ("claude-opus-5", "claude-opus-5-5-20261001", "Opus 5.5", "<synthetic>"):
++            data = self.matrix([80] * 6)
++            data["rollouts"][0]["models"] = [label]
++            self.assertIn("baseline_models", stats.compute(data)["blocking"], label)
++        data = self.matrix([80] * 6)
++        data["rollouts"][0]["model_source"] = ""
++        self.assertIn("baseline_models", stats.compute(data)["blocking"])
++        data = self.matrix([80] * 6)
++        data["rollouts"][0].pop("model_check")
++        self.assertIn("baseline_models", stats.compute(data)["blocking"])
++        data = self.matrix([80] * 6)
++        data["rollouts"][5]["model_check"]["fallback_events"] = [1]
++        self.assertIn("baseline_models", stats.compute(data)["blocking"])
++        for bad in (None, "False", 0):
++            data = self.matrix([80] * 6)
++            data["rollouts"][0]["model_check"]["v3_valid"] = bad
++            self.assertIn("baseline_models", stats.compute(data)["blocking"], bad)
++        data = self.matrix([80] * 6)
++        data["rollouts"][0]["model_check"].pop("v3_valid")
++        self.assertIn("baseline_models", stats.compute(data)["blocking"])
++        data = self.matrix([80] * 6)
++        data["rollouts"][0]["models"] = ["claude-opus-5-5", "claude-sonnet-5-5"]
++        self.assertIn("baseline_models", stats.compute(data)["blocking"])
++        self.assertEqual(stats.check_models(["claude-opus-5-5[1m]"], expected="claude-opus-5-5[1m]")["verdict"],
++                         "VALID")
++
++    def test_trajectory_provenance_flags_fallback_without_a_bad_label(self):
++        with selftest_sandbox.scratch_tmp("test_difficulty_v3_") as temp:
++            path = Path(temp) / "run-1.json"
++            path.write_text(json.dumps([
++                {"type": "system", "subtype": "init", "model": "claude-opus-5-5"},
++                {"type": "assistant", "message": {"model": "claude-opus-5-5"}},
++                {"type": "system", "subtype": "model_refusal_fallback"},
++            ]))
++            prov = stats.trajectory_provenance(path)
++            self.assertEqual(prov["fallback_events"], [2])
++            self.assertFalse(prov["v3_valid"])
++            gate = stats.model_gate([{"id": "run-1", "models": ["claude-opus-5-5"],
++                                      "model_source": "trajectory:run-1.json", "model_check": prov}])
++            self.assertTrue(gate["verdict"].startswith("FAIL"), gate)
+ 
+     def test_trajectory_models_read_actual_metadata(self):
+-        with tempfile.TemporaryDirectory() as temp:
++        with selftest_sandbox.scratch_tmp("test_difficulty_v3_") as temp:
+             path = Path(temp) / "run-1.json"
+             path.write_text(json.dumps([{"type": "system", "subtype": "init", "model": "claude-opus-5-5"},
+                                        {"type": "assistant", "message": {"model": "claude-sonnet-5-5"}}]))
+             self.assertEqual(stats.trajectory_models(path), ["claude-opus-5-5", "claude-sonnet-5-5"])
+-        for model in ("claude-opus-5-5", "Opus 5.5", "claude-opus-5-5-20261001"):
++
++    def test_trajectory_models_keep_blank_and_fallback_labels(self):
++        with selftest_sandbox.scratch_tmp("test_difficulty_v3_") as temp:
++            path = Path(temp) / "run-1.json"
++            path.write_text(json.dumps([
++                {"type": "system", "subtype": "init", "model": "claude-opus-5-5[1m]"},
++                {"type": "assistant", "message": {"model": ""}},
++                {"type": "system", "subtype": "model_refusal_fallback", "fallback_model": "claude-opus-5"},
++            ]))
++            models = stats.trajectory_models(path)
++            self.assertIn("", models)
++            self.assertIn("claude-opus-5", models)
++            self.assertIn(stats.check_models(models)["verdict"], {"UNKNOWN", "INVALID"})
++        self.assertEqual(stats.classify_model("claude-opus-5-5[1m]", "claude-opus-5-5[1m]"), "expected")
++        # one owner of model labels (2026-10-25): strip only a bracketed suffix, then compare exactly
++        for model in ("claude-opus-5-5", "claude-opus-5-5[1m]"):
+             self.assertTrue(stats.is_opus_55(model), model)
+-        for model in ("claude-opus-4-8", "claude-sonnet-5-5", "unknown", "opus-5-50"):
++        for model in ("claude-opus-4-8", "claude-sonnet-5-5", "unknown", "opus-5-50", "claude-opus-5",
++                      "Opus 5.5", "claude-opus-5-5-20261001", "<synthetic>"):
+             self.assertFalse(stats.is_opus_55(model), model)
++        self.assertEqual(stats.classify_model("Opus 5.5"), "unknown")
++        self.assertEqual(stats.classify_model("<synthetic>"), "synthetic")
++
++    def test_precheck_provenance_positive_and_negative(self):
++        init = {"type": "system", "subtype": "init", "model": "claude-opus-5-5"}
++        def ev(label):
++            return {"type": "assistant", "message": {"model": label}}
++        self.assertTrue(stats.precheck_provenance([init, ev("claude-opus-5-5")])["ok"])
++        self.assertFalse(stats.precheck_provenance([init, ev("")])["ok"])
++        self.assertFalse(stats.precheck_provenance([init, ev("claude-opus-5")])["ok"])
++        self.assertFalse(stats.precheck_provenance([init, ev("claude-opus-5-5"),
++                                                    {"type": "system", "subtype": "model_refusal_fallback"}])["ok"])
+ 
+     def test_context_binding_rejects_assignment_and_policy_changes(self):
+         data = self.matrix([80] * 6)

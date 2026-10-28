@@ -1,0 +1,53 @@
+--- a/tools/hardness_gate.py
++++ b/tools/hardness_gate.py
+@@ -35,7 +35,8 @@
+ 
+ Fold-hardening plan §8 (fields optional, so legacy manifests stay valid; malformed entries FAIL):
+   mechanism_portfolio      one entry per solver rule: unique id, mechanism from the enum (A22/A23 are library
+-                           hypotheses), nodes that are trap or chain ids, requirement, natural_reading
++                           hypotheses), nodes that are trap or chain ids, requirement, natural_reading, prior_family
++                           (legacy: family) and prior_family_reason (why that family's ledger evidence applies)
+   artifact_fields          gradable_surface (path), solver {path, digest}, preflight {report, digest}: relative paths
+                            and 64-hex sha256 digests (tools/stage_gate.py verifies the digests against the files)
+ 
+@@ -194,10 +195,15 @@
+         for f in ("requirement", "natural_reading"):
+             if not str(p.get(f) or "").strip():
+                 bad.append(f"{pid}: {f} missing")
++        if not str(p.get("prior_family") or p.get("family") or "").strip():
++            bad.append(f"{pid}: prior_family missing (the ledger family the forecast takes the rule's prior from)")
++        if not str(p.get("prior_family_reason") or "").strip():
++            bad.append(f"{pid}: prior_family_reason missing (why that family's evidence applies to this rule)")
+     hyp = sorted({p.get("mechanism") for p in port if isinstance(p, dict) and p.get("mechanism") in HYPOTHESIS_IDS})
+     check("mechanism_portfolio", not bad,
+           f"{len(port)} portfolio entr{'y' if len(port) == 1 else 'ies'}, each a mechanism-enum id with trap/chain nodes, "
+-          f"a requirement and a natural-reading fallback" + (f"; hypothesis ids {hyp} (library hypotheses)" if hyp else "")
++          f"a requirement, a natural-reading fallback and a prior family with its reason"
++          + (f"; hypothesis ids {hyp} (library hypotheses)" if hyp else "")
+           + (f"; bad: {bad[:6]}" if bad else ""))
+ 
+ 
+@@ -1062,8 +1068,10 @@
+         return {c["check"]: c for c in evaluate(m, sql, None, records=rt, integrity=False)["checks"]}
+     by = run(man)
+     assert by["mechanism_portfolio"]["ok"] and by["artifact_fields"]["ok"], (by["mechanism_portfolio"], by["artifact_fields"])
+-    good_port = [{"id": "late_rule", "mechanism": "A15", "nodes": ["T1"], "requirement": "R1", "natural_reading": "x"},
+-                 {"id": "brief_loss", "mechanism": "A23", "nodes": ["C1"], "requirement": "R1", "natural_reading": "y"}]
++    good_port = [{"id": "late_rule", "mechanism": "A15", "nodes": ["T1"], "requirement": "R1", "natural_reading": "x",
++                  "prior_family": "A15", "prior_family_reason": "same mechanism id"},
++                 {"id": "brief_loss", "mechanism": "A23", "nodes": ["C1"], "requirement": "R1", "natural_reading": "y",
++                  "family": "brief-transmission loss (A23)", "prior_family_reason": "the library hypothesis family"}]
+     fields = {"gradable_surface": {"path": "01_Gradable_Surface.json", "digest": "a" * 64},
+               "solver": {"path": "solver/solver.py", "digest": "b" * 64},
+               "preflight": {"report": "01c_Preflight_Report.json", "digest": "c" * 64}}
+@@ -1080,6 +1088,10 @@
+         f(p)
+         return p
+     cases = [("mechanism outside the enum", dict(man, mechanism_portfolio=bad_port(lambda p: p[0].update(mechanism="A99"))),
++              "mechanism_portfolio"),
++             ("no prior family", dict(man, mechanism_portfolio=bad_port(lambda p: p[0].pop("prior_family"))),
++              "mechanism_portfolio"),
++             ("no prior-family reason", dict(man, mechanism_portfolio=bad_port(lambda p: p[1].pop("prior_family_reason"))),
+               "mechanism_portfolio"),
+              ("node that is no trap or chain", dict(man, mechanism_portfolio=bad_port(lambda p: p[0].update(nodes=["T9"]))),
+               "mechanism_portfolio"),

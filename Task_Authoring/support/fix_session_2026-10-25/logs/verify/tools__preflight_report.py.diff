@@ -1,0 +1,54 @@
+--- a/tools/preflight_report.py
++++ b/tools/preflight_report.py
+@@ -89,6 +89,7 @@
+     geo = dm.geometry(eng, slots, surface, dm.caps_for(views, context))
+     results = mut["rules"] + mut["degrades"] + [x for x in inter if "status" in x]
+     mdisp = dm.dispositions(results, disp.get("mutation") or {})
++    gdisp = dm.geometry_dispositions(geo, disp.get("geometry") or {})
+     flipped_by = {}
+     for x in mut["rules"] + mut["degrades"]:
+         for sid in x["flipped_slots"]:
+@@ -108,10 +109,12 @@
+         "solver_contract": contract["verdict"] == "PASS",
+         "surface_validation": sval["verdict"] == "PASS",
+         "mutation_dispositions": not mdisp["missing"],
+-        "geometry_upper_bound": all(v["U"]["verdict"] == "PASS" for v in geo["views"].values()),
++        "geometry_upper_bound": all(v["U"]["verdict"] in ("PASS", "UNVERIFIED") for v in geo["views"].values())
++        and not gdisp["missing"],                     # UNVERIFIED only with its written disposition (M2)
+     }
+     advisory = {
+         "geometry_margin": {v: x["L_max"]["verdict"] for v, x in geo["views"].items()},
++        "geometry_bound_verdict": {v: x["U"].get("bound_verdict") for v, x in geo["views"].items()},
+         "liveness_dispositions_missing": ldisp["missing"],
+         "forecast": fc["status"],
+     }
+@@ -132,7 +135,7 @@
+                                 "diagnostics": {d: sum(1 for x in mut["shards"] if x["diagnostic"] == d)
+                                                 for d in ("KILLED", "WEAK", "SURVIVED", "EQUIVALENT")}},
+                      "interventions": inter, "dispositions": mdisp},
+-        "geometry": geo,
++        "geometry": dict(geo, dispositions=gdisp),
+         "liveness": {"label": live["label"], "summary": live["summary"], "nodes": [
+             {"id": n["id"], "flagged": n["flagged"]} for n in live["nodes"]] + [
+             {"id": n["id"], "flagged": n["flagged"]} for n in live.get("authority_decoys", [])], "dispositions": ldisp},
+@@ -178,7 +181,11 @@
+         (t / "inject.sql").write_text(dm._SQL)
+         surf = dm._surface()
+         surf["deliverables"] = {"register": {"kind": "table", "name_regex": "register", "key_column": "key",
+-                                             "key_regex": r"K-\d{2}", "columns": ["key", "count", "note", "flag", "class"]}}
++                                             "key_regex": r"K-\d{2}", "columns": ["key", "count", "note", "flag", "class"],
++                                             "class_column": "class"},
++                                # the group slot needs a written source for surface.gradeable's dry run
++                                "tracker": {"kind": "text", "tool": "linear_update_issue", "issue": "T-1",
++                                            "key_regex": r"K-\d{2}", "groups": [["counted", "counted"]]}}
+         for s in surf["slots"]:
+             s.update(work_kind={1: "lookup", 3: "interpretation", 5: "multi_source_reconciliation"}[s["weight"]],
+                      work_reason="fixture")
+@@ -186,6 +193,7 @@
+                 s["role"] = "sample"
+         surf["slots"].append({"id": "S8", "weight": 1, "work_kind": "lookup", "work_reason": "fixture", "class": "delivery",
+                               "selector": ["delivery", "register_keys_exact"], "role": "volume", "volume_for": ["register:*"]})
++        surf["truth_keys"] = ["K-01"]                 # surface.gradeable needs an explicit register key set
+         (t / "surface.json").write_text(json.dumps(surf))
+         man = {"traps": [{"id": f"T{i}"} for i in range(1, 5)], "chains": []}
+         (t / "manifest.json").write_text(json.dumps(man))

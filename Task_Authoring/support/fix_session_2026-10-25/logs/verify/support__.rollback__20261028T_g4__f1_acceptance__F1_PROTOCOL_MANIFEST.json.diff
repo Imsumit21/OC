@@ -1,0 +1,29 @@
+--- a/support/.rollback/20261028T_g4/f1_acceptance/F1_PROTOCOL_MANIFEST.json
++++ b/support/.rollback/20261028T_g4/f1_acceptance/F1_PROTOCOL_MANIFEST.json
+@@ -0,0 +1,26 @@
++{
++ "protocol": "F1 acceptance, third revision (2026-10-26)",
++ "status": "DRAFT - manifest frozen before the run; harness coverage is reported per assertion",
++ "seeds": [1, 2, 3],
++ "draws_per_seed": 20000,
++ "baseline_runs": 6,
++ "familywise_alpha": 0.01,
++ "multiplicity": "Bonferroni over m assertions x 3 seeds",
++ "interval_rule": "two-sided normal z from the analytic variance; exact binomial when n*p < 5",
++ "assertions": [
++  {"id":"f1_independent","target":0.5542995960043573,"tolerance":"4 analytic SE","draws":20000,"defect":"members treated as linked / any-count","power_min":0.99},
++  {"id":"f1_linked","target":0.02,"tolerance":"4 analytic SE","draws":20000,"defect":"linked members treated as independent","power_min":0.99},
++  {"id":"f2_beta_n2","target":0.6666666666666666,"tolerance":"4 analytic SE","draws":20000,"defect":"plug-in mean (0.75) or linked outcomes (0.5)","power_min":0.99},
++  {"id":"f3_scope","target":0.3333333333333333,"tolerance":"4 analytic SE","draws":20000,"defect":"rate redrawn per run (0.25)","power_min":0.99},
++  {"id":"f4_cancel","target":"exact failed sets {A,C} and {A,B}","tolerance":"exact","draws":1,"defect":"count slot passes on a cancelling pair / affected slots not failed","power_min":1.0},
++  {"id":"f5_joint","target":"P00=.7 P11=.3 P01=P10=0 vs .49/.09/.21/.21","tolerance":"4 analytic SE per cell","draws":20000,"defect":"pattern count instead of the joint table","power_min":0.99},
++  {"id":"f6_chain","target":0.488,"tolerance":"4 analytic SE","draws":20000,"defect":"independent upstream facts / severed edge","power_min":0.99},
++  {"id":"f7_e2e","target":0.875,"tolerance":"4 analytic SE","draws":20000,"defect":"channel not charged to the score / wrong weight","power_min":0.99},
++  {"id":"f7_sd","target":0.8218,"tolerance":"4 analytic SE","draws":20000,"defect":"SD band computed from the wrong run count","power_min":0.99},
++  {"id":"f7_shared","target":0.75,"tolerance":"4 analytic SE","draws":20000,"defect":"q redrawn per run (E=0.875)","power_min":0.99},
++  {"id":"f8_geometry","target":"declared degrade path is the only route to U","tolerance":"exact","draws":1,"defect":"edge removed but slot still flippable / edge present but not flippable","power_min":1.0},
++  {"id":"f9_mechanisms","target":"independent P(both)=.25; correlated E[min]=.3333","tolerance":"4 analytic SE","draws":20000,"defect":"correlation treated as independence","power_min":0.99},
++  {"id":"f10_fail_closed","target":"missing/unknown/NaN/negative raises or is UNPARAMETERIZED; finite outputs","tolerance":"exact","draws":1,"defect":"silent zero/NaN rate","power_min":1.0}
++ ],
++ "replay": {"status":"diagnostic only; never a gate","original_criterion":"recorded FAIL; withdrawn by amendment","label_A":"transferred priors plus disclosed overrides","label_B":"conditional","label_C":"fitted on these fixtures"}
++}

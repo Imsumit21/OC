@@ -1,0 +1,26 @@
+F1 protocol seed 2 · draws 20000 · m=39 alpha=0.01 z_crit=3.6558
+  id                  status  statistic      target         n      z/exact_p  pass
+  f1_independent      PASS   0.555750      0.554300      20000  0.413     True
+  f1_linked           PASS   0.020550      0.020000      20000  0.556     True
+  f2_beta_n2          PASS   0.672000      0.666667      20000  1.600     True
+  f3_scope            PASS   0.339150      0.333333      20000  1.745     True
+  f4_cancel           PASS   {'B-01': ['SB {'B-01': ['SB 1      -         True
+  f5_joint            PASS   0.698700      0.700000      20000  -0.401    True
+  f6_chain            ABSENT -             0.488000      -      -         False
+      reason: no chain channel ships in any solver (oracle_kit supports the kind; the rev14 wrapper declares only scale:groups and tool_surface:register)
+  f7_e2e              PASS   0.876000      0.875000      20000  1.600     True
+  f7_sd               PASS   0.823400      0.821800      20000  0.591     True
+  f7_shared           PASS   0.749600      0.750000      20000  -0.339    True
+  f8_geometry         PASS   {'declared':  {'declared':  1      -         True
+  f9_mechanisms       PASS   0.245900      0.250000      120000 -2.156    True
+  f10_fail_closed     PASS   22            22            1      -         True
+  statuses: {'PASS': 12, 'FAIL': 0, 'STUB': 0, 'ABSENT': 1}
+  production-path rate_draw_once_per_baseline: PASS ({'pass': True, 'calls': 14, 'want': 14, 'wrong_if_per_run': 84, 'draws': 7, 'channels': 2, 'rule': 'simulate() draws rates once per baseline, outside the six-run loop'})
+  production-path sampled_members_reach_solver: PASS ({'pass': True, 'one_member': ['S1'], 'full_set': ['S1', 'S2'], 'want_one_member': ['S1'], 'want_full_set': ['S1', 'S2'], 'rule': "Outcomes.of({('degrade','slip:a'): subset}) fails exactly the slots the sampled members move"})
+  production-path sampled_subset_reaches_solver_through_simulate: PASS ({'pass': True, 'subset_member_latent': ['A-01'], 'subset_run_latent': ['A-01'], 'member': {'S1': {'P_fail': 1.0, 'P_fails_all_six': 1.0}, 'S2': {'P_fail': 0.0, 'P_fails_all_six': 0.0}}, 'run': {'S1': {'P_fail': 1.0, 'P_fails_all_six': 1.0}, 'S2': {'P_fail': 0.0, 'P_fails_all_six': 0.0}}, 'one_in_six': {'P_fail': 0.1667, 'P_fails_all_six': 0.0}, 'rule': "the sampled singleton arrives unchanged for both latents (a run-latent expansion fails S2), and the slot report's P(fail) and P(fails all six) are distinct"})
+F1 provenance pools (session-local audited ledger; pools are IN-SAMPLE: r3 is one of the judged baselines)
+  control:process_findings   ledger-pooled Beta(1,4) mean 0.2000 n=3 f=0 [member; dropped 0] | former override Beta(1,13) mean 0.0714 | used ledger: Beta(1,4) mean 0.2000
+  tool_surface:register      ledger-pooled Beta(2,1) mean 0.6667 n=1 f=1 [run; dropped 3] | former override Beta(3,3) mean 0.5000 | used ledger: Beta(2,1) mean 0.6667
+  scale:groups               ledger-pooled none (no eligible record) | former override Beta(4,266) mean 0.0148 | used former override: Beta(4,266) mean 0.0148
+  'dropped' lists the records that would otherwise be this channel's trials but were excluded (mixed model or not a trial); it is channel-scoped (kind + family).
+  consistency check, not validation: every pool is in-sample (r3 is one of the judged baselines).

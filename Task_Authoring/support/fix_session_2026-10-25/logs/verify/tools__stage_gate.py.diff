@@ -1,0 +1,114 @@
+--- a/tools/stage_gate.py
++++ b/tools/stage_gate.py
+@@ -1753,13 +1753,14 @@
+ 
+ 
+ def v3_precheck(ctx):
+-    from difficulty_stats import is_opus_55, trajectory_models, read_trajectory
++    from difficulty_stats import precheck_provenance, trajectory_models, read_trajectory   # one owner
+     trajectory = ctx.p("06_PreCheck_Trajectory") / "trajectory.json"
+     try:
+         data = json.loads(trajectory.read_text())
+         models = trajectory_models(trajectory)
++        precheck = precheck_provenance(data if isinstance(data, list) else [])
+         status, reason, _ = read_trajectory(trajectory)
+-        ok = bool(data) and status == "completed" and bool(models) and all(is_opus_55(m) for m in models)
++        ok = bool(data) and status == "completed" and precheck["ok"]
+     except (OSError, ValueError, TypeError) as exc:
+         models, ok = [], False
+         ctx.add("v3.precheck_model", False, f"pre-check trajectory cannot be verified: {exc}")
+@@ -1932,6 +1933,7 @@
+     ctx.add("surface.valid", not fails,
+             (f"{len(fails)} gradable-surface defect(s): " + "; ".join(
+                 f"{f['check']}{' ' + f['slot'] if f['slot'] else ''}: {f['detail'][:90]}" for f in fails[:4])
++             + (f"; also {', '.join(sorted({f['check'] for f in fails[4:]}))}" if len(fails) > 4 else "")
+              + " — basis: " + " | ".join(f"{fam}: {gs.FAMILY_BASIS[fam]}" for fam in fams)) if fails else
+             f"{rep['slots']} slots, weight {rep['total_weight']}; geometry report-only, never gated: mechanism share "
+             f"{rep['mechanism_share']:.0%}, always-pass share {rep['always_pass_share_if_no_mechanism_lands']:.0%}")
+@@ -2135,9 +2137,15 @@
+     view, mode = _view(ctx)
+     geo = rep.get("geometry") or {}
+     gv = (geo.get("views") or {}).get(view)
+-    ok = bool(gv) and gv["U"]["verdict"] == "PASS"
++    gdisp = recorded.get("geometry") or {}
++
++    def u_ok(v):                       # M2: an UNVERIFIED U passes only with its written disposition (geometry.U)
++        return v["U"]["verdict"] == "PASS" or (v["U"]["verdict"] == "UNVERIFIED" and not dm.geometry_dispositions(
++            {"views": {view: v}}, gdisp)["missing"])
++    ok = bool(gv) and u_ok(gv)
+     detail = (f"U {geo.get('U', 0):.3f} ({geo.get('flippable_weight')}/{geo.get('total_weight')}) vs 1 - cap "
+-              f"{gv['needs_loss_above']:.2f} ({view}{' ' + mode if mode else ''}): {gv['U']['verdict']}") if gv else (
++              f"{gv['needs_loss_above']:.2f} ({view}{' ' + mode if mode else ''}): {gv['U']['verdict']} "
++              f"(bound {gv['U'].get('bound_verdict')})") if gv else (
+         f"the preflight has no {view} geometry view")
+     if gv and ctx.rerun == "all":
+         mod = fold_tool("oracle_kit").load_solver(ctx.p("solver/solver.py"))
+@@ -2145,8 +2153,9 @@
+         surface = json.loads(ctx.p(SURFACE).read_text())
+         g = dm.geometry(eng, dm.Slots(surface["slots"], surface), surface,
+                         dm.caps_for(view.lower(), ctx.context if ctx.v3 else None))
+-        ok = g["views"][view]["U"]["verdict"] == "PASS"
+-        detail += f"; re-run U {g['U']:.3f} {g['views'][view]['U']['verdict']}"
++        ok = u_ok(g["views"][view])
++        detail += (f"; re-run U {g['U']:.3f} {g['views'][view]['U']['verdict']} "
++                   f"(bound {g['views'][view]['U'].get('bound_verdict')})")
+     ctx.add("geometry.upper_bound", ok, detail)
+     lm = (gv or {}).get("L_max", {}).get("verdict")
+     ctx.add("geometry.margin", lm == "OK", f"L_max {(geo.get('L_max') or {}).get('value')} vs (1 - cap) + 0.10: {lm} "
+@@ -3025,10 +3034,12 @@
+     cases = json.loads((FIXTURES / "bad" / "cases.json").read_text())["cases"]
+     fails, n = [], 0
+     g = tmp / "good"
++    good_status, case_status = {}, {}
+     for stage in STAGES:
+         _prepare(g, good, stage)
+         ctx = run_stage(stage, g, "lint", True)
+         v = verdict_of(ctx, allow_partial=True)
++        good_status[stage] = {r["id"]: r["status"] for r in ctx.res}
+         n += 1
+         if v != "PASS":
+             fails.append(f"good/{stage}: {v} — " + "; ".join(f"{r['id']}: {r['detail'][:120]}" for r in ctx.res
+@@ -3043,16 +3054,27 @@
+         ctx = run_stage(case["stage"], d, "lint", True)
+         v = verdict_of(ctx, allow_partial=True)
+         failed = {r["id"] for r in ctx.res if r["blocking"]}
+-        missing = [e for e in case["expect"] if not any(f == e or f.startswith(e) for f in failed)]
++        status = case_status[case["name"]] = {r["id"]: r["status"] for r in ctx.res}
++        expect = case.get("expect") or []
++        missing = [e for e in expect if not any(f == e or f.startswith(e) for f in failed)]
+         # expect_detail: substrings a blocking check's detail must hold (which family of a check blocked)
+         details = " ".join(r["detail"] for r in ctx.res if r["blocking"])
+         missing += [f"detail:{d}" for d in case.get("expect_detail", []) if d not in details]
++        # expect_warn: the advisory check WARNs here and PASSes on the good stage (or a named baseline case), so
++        # the mutation caused it; expect_pass: a control the check accepts
++        base = case_status.get(case["baseline"], {}) if case.get("baseline") else good_status.get(case["stage"], {})
++        missing += [f"warn:{e}" for e in case.get("expect_warn", []) if status.get(e) != "WARN"]
++        missing += [f"baseline:{e} is {base.get(e)}" for e in case.get("expect_warn", []) if base.get(e) != "PASS"]
++        missing += [f"pass:{e} is {status.get(e)}" for e in case.get("expect_pass", []) if status.get(e) != "PASS"]
++        want = "FAIL" if expect else "PASS"
+         n += 1
+-        if v != "FAIL" or missing:
+-            fails.append(f"bad/{case['name']} ({case['stage']}): verdict {v}, expected failing {case['expect']} "
+-                         f"{case.get('expect_detail', '')}, got {sorted(failed)}; missing {missing}")
++        if v != want or missing:
++            fails.append(f"bad/{case['name']} ({case['stage']}): verdict {v} (want {want}), expected failing {expect} "
++                         f"{case.get('expect_detail', '')}, WARN {case.get('expect_warn', [])}, PASS "
++                         f"{case.get('expect_pass', [])}; got failing {sorted(failed)}; missing {missing}")
+         elif verbose:
+-            print(f"  ok  bad/{case['name']} ({case['stage']}) FAIL on {sorted(failed & set(case['expect'])) or case['expect']}")
++            print(f"  ok  bad/{case['name']} ({case['stage']}) " + (f"FAIL on {sorted(failed & set(expect)) or expect}"
++                  if expect else f"PASS with WARN {case.get('expect_warn', [])} / PASS {case.get('expect_pass', [])}"))
+     # re-run comparison: the good fixture pastes a hardness_gate PASS for a deliberately thin manifest; a full
+     # re-run (--rerun all) must catch the false paste
+     _prepare(g, good, "scenario")
+@@ -3126,7 +3148,9 @@
+     for f in fails:
+         print("self-test FAIL - " + f)
+     if not fails:
+-        print(f"self-test: ok ({n} cases: {len(STAGES)} good stages PASS, {len(cases)} bad cases FAIL as expected, "
++        nf = sum(1 for c in cases if c.get("expect"))
++        print(f"self-test: ok ({n} cases: {len(STAGES)} good stages PASS, {nf} bad cases FAIL as expected, "
++              f"{len(cases) - nf} WARN / control cases as expected, "
+               "2 re-run contradictions caught, revision-intake, historical-export, surface-geometry and red-team "
+               "fallback controls PASS, digest invariance)")
+     return 1 if fails else 0

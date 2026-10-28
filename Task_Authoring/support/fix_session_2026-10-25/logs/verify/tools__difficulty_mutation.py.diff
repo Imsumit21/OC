@@ -1,0 +1,246 @@
+--- a/tools/difficulty_mutation.py
++++ b/tools/difficulty_mutation.py
+@@ -6,7 +6,9 @@
+ Read-only on its inputs, stdlib only. Deterministic: it measures the design, not how often a model errs.
+ 
+ Error elements are the solver's rules active at the revision (rule ablations: the natural reading) and its degrade
+-operators that change at least one record. A solver is key-local when a record's row depends only on the elements
++operators that change at least one record, including the degrades of declared complexity channels (CHANNELS) and the
++over-application operators of control members (oracle_kit): geometry U counts the slots they can flip; they are never
++whole mechanisms (hardness_forecast models them as channels). A solver is key-local when a record's row depends only on the elements
+ applied to that record; then any configuration is composed from per-record outcome tables, one per subset of the
+ elements touching the record (2^k, k <= --max-k, else UNSUPPORTED). Key-locality is checked against full solves on
+ seeded random configurations before anything is composed.
+@@ -29,7 +31,10 @@
+   geometry   U (blocking): the weight share of flippable slots. Per-record slots: any subset of the elements touching
+              the record changes the slot. Aggregates: a record that feeds them can change (cancellation ignored, so U is
+              an upper bound). Write-content slots: only when they declare mechanisms or flipped_by. Delivery slots fail at
+-             a base rate, never by design: never flippable, kept in the denominator. U <= 1 - cap blocks.
++             a base rate, never by design: never flippable, kept in the denominator. U <= 1 - cap blocks. When the
++             solver is not composable (not key-local, or locality checked on too few configurations), U is not a
++             guaranteed upper bound: its verdict is UNVERIFIED, which needs a written disposition (geometry.U:
++             accepted-unverified · redesign · solver-gap, with a reason), never BLOCK (M2).
+              L_max (advisory): the largest loss over whole-mechanism combinations; warns below (1 - cap) + 0.10.
+   stress     re-emit the Season Pass coverage_stress.json format from a spec file (fixture reproduction)
+   plan       re-emit the Season Pass coverage_plan.json format from a spec file and the stress output
+@@ -86,6 +91,7 @@
+ V2_CAP = Fraction(3, 4)
+ LMAX_MARGIN = Fraction(1, 10)
+ DISPOSITIONS = ("live", "weak-accepted", "redesign", "retire", "redundant", "masked", "solver-gap")
++GEOMETRY_DISPOSITIONS = ("accepted-unverified", "redesign", "solver-gap")
+ NOTE = ("deterministic design diagnostics from the solver; on the Season Pass backtests these are development "
+         "fixtures, not validation")
+ 
+@@ -144,7 +150,10 @@
+             changed = {k for k in self.keys if not _same(single[k], self.truth[k])}
+             declared = set(mod.touched(self.state, r)) if hasattr(mod, "touched") else set()
+             self.touched[("rule", r)] = (declared | changed) & set(self.keys)
+-        for op in getattr(mod, "DEGRADES", {}) or {}:
++        declared = list(getattr(mod, "DEGRADES", {}) or {})
++        self.channel_ops = {c["degrade"] for c in ok.channels_of(mod).values() if c.get("degrade")} | \
++            {c["over_application"] for c in ok.controls_of(mod, self.revision).values() if c["over_application"]}
++        for op in declared + sorted(self.channel_ops - set(declared)):
+             dg = mod.solve(self.state, degrade=frozenset({op}))
+             self.touched[("degrade", op)] = {k for k in self.keys if not _same(dg[k], self.truth[k])}
+         self.elements = [e for e, ks in self.touched.items() if ks]
+@@ -154,8 +163,10 @@
+         self._locality = None
+ 
+     def mechanisms(self) -> list:
+-        """Whole mechanisms: rules that are not part of another rule, and degrades that change a record."""
+-        return [e for e in self.elements if e[0] == "degrade" or not self.rules[e[1]].get("part_of")]
++        """Whole mechanisms: rules that are not part of another rule, and degrades that change a record; channel
++        degrades and over-application operators are channels, not designed mechanisms."""
++        return [e for e in self.elements if (e[0] == "degrade" and e[1] not in self.channel_ops)
++                or (e[0] == "rule" and not self.rules[e[1]].get("part_of"))]
+ 
+     def solve(self, failing: dict) -> dict:
+         """A full solve. failing: {element: None (every record) | set of keys}."""
+@@ -333,7 +344,9 @@
+ 
+ 
+ def shards_for(engine: Engine, briefs=None, size: int = SHARD_SIZE) -> list:
+-    """Worker batches: the key sets of recorded subagent briefs, else consecutive slices of the record list."""
++    """Worker batches: the key sets of recorded subagent briefs, else consecutive slices of the record list. Briefs
++    that name no key the solver knows are refused: every batch would be empty (no shard ablation, and a batch-latent
++    forecast channel that never fails)."""
+     if briefs:
+         seen, out = set(), []
+         for b in briefs:
+@@ -341,6 +354,10 @@
+             if ks and ks not in seen:
+                 seen.add(ks)
+                 out.append(list(ks))
++        if not out:
++            raise ValueError("the briefs name no key the solver knows (they carry no key lists): rebuild them with "
++                             "trajectory_ledger --surface <the task's surface> or --key-regex, or drop --briefs to use "
++                             "consecutive slices")
+         return out
+     return [engine.keys[i:i + size] for i in range(0, len(engine.keys), size)]
+ 
+@@ -573,12 +590,16 @@
+     else:
+         lmax, lmax_doc = None, {"value": None, "status": "UNSUPPORTED", "why": combos["why"]}
+     views = {}
++    composable = engine.composable()
+     for v, c in caps.items():
+         need = 1 - c["cap"]
++        bound = "PASS" if u > need else "BLOCK"
+         views[v] = {"cap": float(c["cap"]), "mode": c["mode"], "needs_loss_above": float(need),
+-                    "U": {"verdict": "PASS" if u > need else "BLOCK",
++                    "U": {"verdict": bound if composable else "UNVERIFIED", "bound_verdict": bound,
+                           "rule": "U must exceed 1 - cap: otherwise no combination of the designed mechanisms can "
+-                                  "bring the average strictly below the cap"},
++                                  "bring the average strictly below the cap" + ("" if composable else
++                                  "; the solver is not composable, so U is no guaranteed bound: UNVERIFIED, which "
++                                  "needs a written disposition (geometry.U), never BLOCK")},
+                     "L_max": ({"verdict": "WARN" if lmax < need + LMAX_MARGIN else "OK",
+                                "rule": f"advisory: warns when L_max < (1 - cap) + {float(LMAX_MARGIN):.2f}"}
+                               if lmax is not None else {"verdict": "UNSUPPORTED"})}
+@@ -594,6 +615,21 @@
+ 
+ 
+ # ------------------------------------------------------------------ dispositions
++
++def geometry_dispositions(geo: dict, recorded) -> dict:
++    """M2: an UNVERIFIED U needs a written disposition (geometry.U); a PASS or BLOCK needs none."""
++    if not isinstance(recorded, dict):
++        recorded = json.loads(Path(recorded).read_text()) if recorded and Path(recorded).is_file() else {}
++        recorded = recorded.get("geometry", recorded)
++    need = ["geometry.U"] if any(v["U"]["verdict"] == "UNVERIFIED" for v in geo["views"].values()) else []
++    bad = [k for k in need if k in recorded and (not isinstance(recorded[k], dict) or recorded[k].get("disposition")
++                                                 not in GEOMETRY_DISPOSITIONS or not str(recorded[k].get("reason") or "").strip())]
++    if bad:
++        raise ValueError(f"geometry dispositions need {{disposition: one of {GEOMETRY_DISPOSITIONS}, reason}}: {bad}")
++    return {"required": need, "recorded": {k: recorded[k] for k in need if k in recorded},
++            "missing": [k for k in need if k not in recorded],
++            "rule": "an UNVERIFIED U (the solver is not composable) needs a written disposition, never a BLOCK"}
++
+ 
+ def dispositions(results: list, path) -> dict:
+     """path: a JSON file or an already-loaded {id: {disposition, reason}} mapping."""
+@@ -872,9 +908,54 @@
+             "classes": ["READY", "HOLD"], "deliverables": {}, "slots": slots}
+ 
+ 
++_SCALE_SOLVER = '''
++import collections
++KEY_REGEX = r"K-\\d{2}"
++CLASS_FIELD, GROUPS_FIELD = "class", "groups"
++RULES = {"tidy": {"mechanism": "A9", "requirement": "R1", "natural_reading": "keep the raw note", "nodes": ["T1"],
++                  "decides": ["note"]}}
++CHANNELS = {"scale:class": {"kind": "scale", "degrade": "slip:class", "members": [f"K-{n:02d}" for n in range(1, 11)],
++                            "description": "a member's class misread"}}
++def load_state(sql_text, revision=None):
++    return {"revision": revision or "r1"}
++def keys():
++    return [f"K-{n:02d}" for n in range(1, 11)]
++def solve(state, disable=frozenset(), degrade=frozenset(), keys_=None):
++    on = lambda spec, op, k: any(d == op or (isinstance(d, tuple) and d[0] == op and k in d[1]) for d in spec)
++    return {k: {"key": k, "note": "raw" if on(disable, "tidy", k) else "tidy",
++                "class": "HOLD" if on(degrade, "slip:class", k) else "READY",
++                "groups": [], "evidence": {}} for k in keys_ or keys()}
++def aggregates(rows):
++    return {"classes": dict(collections.Counter(v["class"] for v in rows.values())), "groups": {}}
++def evidence(rows, key, field):
++    return []
++'''
++
++
++def _self_test_scale(tmp) -> None:
++    """F1: a scale-driven design passes geometry U only through its declared channel degrade (planted: the same
++    solver without CHANNELS blocks), and the channel is never a whole mechanism."""
++    surface = {"kind": "GRADABLE_SURFACE", "version": 1, "truth_fields": {"class": "class", "groups": "groups"},
++               "classes": ["READY", "HOLD"], "deliverables": {},
++               "slots": [{"id": f"S{n}", "weight": 1, "class": "direct", "selector": ["field", f"K-{n:02d}", "class"]}
++                         for n in range(1, 11)] + [{"id": "D1", "weight": 5, "class": "delivery",
++                                                     "selector": ["delivery", "slide_updated"]}]}
++    caps = caps_for("v3", {"difficulty_mode": "hard"})
++    got = {}
++    for name, text in (("declared", _SCALE_SOLVER), ("undeclared", _SCALE_SOLVER.replace("CHANNELS = {", "_UNUSED = {"))):
++        sp = Path(tmp) / f"scale_{name}.py"
++        sp.write_text(text)
++        eng = Engine(ok.load_solver(sp), "")
++        g = geometry(eng, Slots(surface["slots"], surface), surface, caps)
++        got[name] = (g["U_exact"], g["views"]["V3"]["U"]["verdict"], [_label(e) for e in eng.mechanisms()])
++    assert got["declared"] == ("2/3", "PASS", ["rule:tidy"]), got           # the channel is no whole mechanism
++    assert got["undeclared"] == ("0/1", "BLOCK", ["rule:tidy"]), got
++
++
+ def _self_test() -> None:
+     import selftest_sandbox
+     with selftest_sandbox.scratch_tmp("difficulty_mutation_selftest_") as tmp:
++        _self_test_scale(tmp)
+         sp = Path(tmp) / "solver.py"
+         sp.write_text(_SOLVER)
+         mod = ok.load_solver(sp)
+@@ -883,6 +964,13 @@
+         assert [_label(e) for e in eng.inert] == ["rule:noop"], eng.inert
+         loc = eng.locality()
+         assert loc["key_local"] and loc["configs"] > 4, loc
++        try:                                     # planted: keyless briefs gave silent empty batches
++            shards_for(eng, [{"keys": []}, {"keys": ["Z-99"]}])
++        except ValueError:
++            pass
++        else:
++            raise AssertionError("briefs that name no solver key were accepted (every batch would be empty)")
++        assert shards_for(eng, [{"keys": ["K-01", "K-03"]}, {"keys": ["K-03", "K-01"]}]) == [["K-01", "K-03"]]
+         surface = _surface()
+         slots = Slots(surface["slots"], surface)
+         # the evaluator agrees with gradable_surface.solver_value on truth and on a mutant
+@@ -967,6 +1055,19 @@
+         g_l = geometry(eng_l, Slots(s_l["slots"], s_l), s_l, caps_for("v3", {"difficulty_mode": "hard"}))
+         assert g_l["flippable_only_by_combinations"] == ["S8"] and not g_l["key_local"], g_l
+         assert any("not key-local" in x for x in g_l["assumptions"]), g_l["assumptions"]
++        # M2: a solver that isn't composable gets an UNVERIFIED U (never a BLOCK) and needs a written disposition
++        assert {v["U"]["verdict"] for v in g_l["views"].values()} == {"UNVERIFIED"}, g_l["views"]
++        assert geometry_dispositions(g_l, {})["missing"] == ["geometry.U"]
++        assert not geometry_dispositions(g_l, {"geometry.U": {"disposition": "accepted-unverified",
++                                                             "reason": "a cross-record link the solver declares"}})["missing"]
++        assert geometry_dispositions(geometry(eng, slots, surface, caps_for("v3", {"difficulty_mode": "hard"})),
++                                     {})["required"] == []                        # a composable solver needs none
++        try:
++            geometry_dispositions(g_l, {"geometry.U": {"disposition": "fine", "reason": "x"}})
++        except ValueError:
++            pass
++        else:
++            raise AssertionError("a geometry disposition outside the allowed set was accepted")
+         assert eng_l.rows({("rule", "late"): None}) == eng_l.solve({("rule", "late"): None})     # falls back to full solves
+         iv = {x["id"]: x for x in interventions(eng, slots)}
+         assert iv["intervention:rule:late"]["status"] == "load-bearing" and not iv["intervention:rule:late"]["finding"], iv
+@@ -1021,7 +1122,9 @@
+           "SURVIVED / EQUIVALENT incl. a cancelling aggregate, shard ablations, exact combination table and UNSUPPORTED, "
+           "U and L_max with PASS / BLOCK / WARN and unsupported records counted flippable, interventions load-bearing / "
+           "inert / escaped, dispositions, legacy emitters, skipped locality configurations reported, a non-key-local "
+-          "solver detected with full-solve fallback and its combination-only flips kept in U)")
++          "solver detected with full-solve fallback and its combination-only flips kept in U; F1: a scale-driven design "
++          "passes U only through its declared channel degrade, never a whole mechanism; M2: a non-composable solver's U "
++          "is UNVERIFIED with a required written disposition, never BLOCK)")
+ 
+ 
+ # ------------------------------------------------------------------ main
+@@ -1090,6 +1193,7 @@
+             p.add_argument("--layout", type=Path, help="a coverage_stress.json / coverage_plan.json slot layout")
+             p.add_argument("--with-cases", action="store_true")
+             p.add_argument("--mechanisms", help="comma list of rule ids / degrade names for L_max (default: all)")
++            p.add_argument("--dispositions", type=Path, help="geometry.U's written disposition when U is UNVERIFIED")
+     p = sub.add_parser("stress")
+     p.add_argument("--spec", type=Path, required=True)
+     p.add_argument("--out", type=Path)
+@@ -1160,9 +1264,16 @@
+             mechs = [e for e in eng.elements if e[1] in names or _label(e) in names]
+             if len(mechs) != len(names):
+                 raise ValueError(f"unknown or inert mechanisms in {names}; elements: {[_label(e) for e in eng.elements]}")
++            chans = [e for e in mechs if e[0] == "degrade" and e[1] in getattr(eng, "channel_ops", set())]
++            if chans:
++                raise ValueError(f"--mechanisms names complexity channel(s) {[_label(e) for e in chans]}: a channel is "
++                                 f"counted by U and reported as a channel (F1), never as a designed mechanism")
+         rep["geometry"] = geometry(eng, slots, surface, caps, mechs)
+     if any(v["U"]["verdict"] == "BLOCK" for v in rep["geometry"]["views"].values()):
+         rc = 1
++    rep["geometry"]["dispositions"] = geometry_dispositions(rep["geometry"], a.dispositions)
++    if rep["geometry"]["dispositions"]["missing"]:
++        rc = 1                             # an UNVERIFIED U without its written disposition
+     if a.out:
+         _write(a.out, rep)
+     print(json.dumps(rep, indent=1, ensure_ascii=False, default=sorted) if a.json else to_text(rep))

@@ -934,6 +934,696 @@
    "expect": [
     "structure.exact_set_rows"
    ]
+  },
+  {
+   "name": "scenario-surface-weight-off-band",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "file": "01_Gradable_Surface.json",
+     "find": "\"weight\": 3, \"work_kind\": \"interpretation\"",
+     "replace": "\"weight\": 1, \"work_kind\": \"interpretation\""
+    }
+   ],
+   "expect": [
+    "surface.valid"
+   ],
+   "expect_detail": [
+    "weights.band"
+   ]
+  },
+  {
+   "name": "scenario-surface-missing",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "delete": "01_Gradable_Surface.json"
+    }
+   ],
+   "expect": [
+    "structure.outputs"
+   ]
+  },
+  {
+   "name": "scenario-redteam-tool-error-stub",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "file": "01b_Redteam_Review.md",
+     "find": "# Red team, reviewer 1 (fixture)",
+     "replace": "redteam_review: set REDTEAM_MODEL or pass --model"
+    }
+   ],
+   "expect": [
+    "tool.redteam_dual"
+   ]
+  },
+  {
+   "name": "scenario-redteam-unavailable-without-fallback",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "delete": "01b_Redteam_Review.second.md"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\nRED TEAM UNAVAILABLE: HTTP 503 from the review endpoint\n"
+    }
+   ],
+   "expect": [
+    "tool.redteam_dual"
+   ]
+  },
+  {
+   "name": "scenario-revise-mode-b-without-intake",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    }
+   ],
+   "expect": [
+    "revise.intake"
+   ]
+  },
+  {
+   "name": "scenario-revise-verdict-undispositioned",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | — | run-1 event 12 read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "revise.verdict_dispositions"
+   ]
+  },
+  {
+   "name": "scenario-revise-confounded-candidate-unaddressed",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": [\"CONFOUNDED-run candidate (mixed-model)\"]}}}, \"run-2\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "revise.verdict_dispositions"
+   ]
+  },
+  {
+   "name": "scenario-revise-export-not-bound",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"UNBOUND\", \"bound_to\": null}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "revise.revision_binding"
+   ]
+  },
+  {
+   "name": "scenario-revise-register-without-run-steps",
+   "stage": "scenario",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | the run read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "evidence.register_run_step"
+   ]
+  },
+  {
+   "name": "injection-preflight-missing",
+   "stage": "injection",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "delete": "01c_Preflight_Report.json"
+    }
+   ],
+   "expect": [
+    "structure.outputs"
+   ]
+  },
+  {
+   "name": "injection-solver-edited-after-preflight",
+   "stage": "injection",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "file": "solver/solver.py",
+     "append": "\n# edited after the preflight\n"
+    }
+   ],
+   "expect": [
+    "structure.preflight"
+   ]
+  },
+  {
+   "name": "injection-mutation-result-undispositioned",
+   "stage": "injection",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "file": "01c_Dispositions.json",
+     "find": "\"intervention:rule:stale_count\": {",
+     "replace": "\"intervention:rule:stale_count_retired\": {"
+    }
+   ],
+   "expect": [
+    "mutation.dispositions"
+   ]
+  },
+  {
+   "name": "injection-solver-contract-fails",
+   "stage": "injection",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"solver_contract\": {\n  \"verdict\": \"PASS\"",
+     "replace": "\"solver_contract\": {\n  \"verdict\": \"FAIL\""
+    }
+   ],
+   "expect": [
+    "solver.contract"
+   ]
+  },
+  {
+   "name": "injection-geometry-cannot-reach-the-cap",
+   "stage": "injection",
+   "plan": "fold-hardening plan §4.2 / §8",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"U\": {\n     \"verdict\": \"PASS\"",
+     "replace": "\"U\": {\n     \"verdict\": \"BLOCK\""
+    }
+   ],
+   "expect": [
+    "geometry.upper_bound"
+   ]
+  },
+  {
+   "name": "scenario-revise-binding-single-unchecked",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 B2",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"SINGLE\", \"bound_to\": [\"rev2\"]}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "revise.revision_binding"
+   ]
+  },
+  {
+   "name": "scenario-revise-binding-bound-without-evidence",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 B2",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"]}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "revise.revision_binding"
+   ]
+  },
+  {
+   "name": "scenario-revise-binding-insufficient-not-historical",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 B2",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"INSUFFICIENT\", \"bound_to\": null, \"basis\": null, \"evidence\": {\"discriminating_seen\": 0, \"shared_seen\": 40}}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "revise.revision_binding"
+   ]
+  },
+  {
+   "name": "scenario-revise-binding-sole-revision-without-reason",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 B2",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"sole revision\", \"sole_revision\": \"\", \"evidence\": {\"discriminating_seen\": 5, \"shared_seen\": 0}}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n"
+    }
+   ],
+   "expect": [
+    "revise.revision_binding"
+   ]
+  },
+  {
+   "name": "scenario-surface-duplicate-slot-id",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 D6 (V3 rubric rules block; geometry report-only)",
+   "mutate": [
+    {
+     "file": "01_Gradable_Surface.json",
+     "find": "{\"id\": \"S2\", ",
+     "replace": "{\"id\": \"S1\", "
+    }
+   ],
+   "expect": [
+    "surface.valid"
+   ],
+   "expect_detail": [
+    "structure.slot_ids"
+   ]
+  },
+  {
+   "name": "scenario-surface-fact-in-three-slots",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 D6 (V3 rubric rules block; geometry report-only)",
+   "mutate": [
+    {
+     "file": "01_Gradable_Surface.json",
+     "find": "   \"role\": \"volume\", \"volume_for\": [\"schedule:*\"]}\n ]",
+     "replace": "   \"role\": \"volume\", \"volume_for\": [\"schedule:*\"]},\n  {\"id\": \"S3\", \"title\": \"the schedule marks defect list open\", \"weight\": 3, \"work_kind\": \"interpretation\", \"work_reason\": \"planted\", \"class\": \"direct\", \"selector\": [\"field\", \"defect list\", \"status\"], \"role\": \"sample\", \"group\": \"schedule:status\"},\n  {\"id\": \"S4\", \"title\": \"the schedule marks defect list open\", \"weight\": 3, \"work_kind\": \"interpretation\", \"work_reason\": \"planted\", \"class\": \"direct\", \"selector\": [\"field\", \"defect list\", \"status\"], \"role\": \"sample\", \"group\": \"schedule:status\"}\n ]"
+    }
+   ],
+   "expect": [
+    "surface.valid"
+   ],
+   "expect_detail": [
+    "duplicates.fact"
+   ]
+  },
+  {
+   "name": "scenario-surface-six-samples-in-a-group",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 D6 (V3 rubric rules block; geometry report-only)",
+   "mutate": [
+    {
+     "file": "01_Gradable_Surface.json",
+     "find": "   \"role\": \"volume\", \"volume_for\": [\"schedule:*\"]}\n ]",
+     "replace": "   \"role\": \"volume\", \"volume_for\": [\"schedule:*\"]},\n  {\"id\": \"S3\", \"title\": \"the schedule marks defect 0 open\", \"weight\": 3, \"work_kind\": \"interpretation\", \"work_reason\": \"planted\", \"class\": \"direct\", \"selector\": [\"field\", \"defect 0\", \"status\"], \"role\": \"sample\", \"group\": \"schedule:status\"},\n  {\"id\": \"S4\", \"title\": \"the schedule marks defect 1 open\", \"weight\": 3, \"work_kind\": \"interpretation\", \"work_reason\": \"planted\", \"class\": \"direct\", \"selector\": [\"field\", \"defect 1\", \"status\"], \"role\": \"sample\", \"group\": \"schedule:status\"},\n  {\"id\": \"S5\", \"title\": \"the schedule marks defect 2 open\", \"weight\": 3, \"work_kind\": \"interpretation\", \"work_reason\": \"planted\", \"class\": \"direct\", \"selector\": [\"field\", \"defect 2\", \"status\"], \"role\": \"sample\", \"group\": \"schedule:status\"},\n  {\"id\": \"S6\", \"title\": \"the schedule marks defect 3 open\", \"weight\": 3, \"work_kind\": \"interpretation\", \"work_reason\": \"planted\", \"class\": \"direct\", \"selector\": [\"field\", \"defect 3\", \"status\"], \"role\": \"sample\", \"group\": \"schedule:status\"},\n  {\"id\": \"S7\", \"title\": \"the schedule marks defect 4 open\", \"weight\": 3, \"work_kind\": \"interpretation\", \"work_reason\": \"planted\", \"class\": \"direct\", \"selector\": [\"field\", \"defect 4\", \"status\"], \"role\": \"sample\", \"group\": \"schedule:status\"}\n ]"
+    }
+   ],
+   "expect": [
+    "surface.valid"
+   ],
+   "expect_detail": [
+    "sampling.limit"
+   ]
+  },
+  {
+   "name": "scenario-surface-sampled-group-without-volume",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 D6 (V3 rubric rules block; geometry report-only)",
+   "mutate": [
+    {
+     "file": "01_Gradable_Surface.json",
+     "find": "\"volume_for\": [\"schedule:*\"]",
+     "replace": "\"volume_for\": [\"other:*\"]"
+    }
+   ],
+   "expect": [
+    "surface.valid"
+   ],
+   "expect_detail": [
+    "sampling.volume"
+   ]
+  },
+  {
+   "name": "scenario-surface-exception-singled-out-by-nobody",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 D6 (V3 rubric rules block; geometry report-only)",
+   "mutate": [
+    {
+     "file": "01_Gradable_Surface.json",
+     "find": "\"role\": \"sample\", \"group\": \"schedule:status\",",
+     "replace": "\"role\": \"exception\", \"group\": \"schedule:status\","
+    }
+   ],
+   "expect": [
+    "surface.valid"
+   ],
+   "expect_detail": [
+    "exceptions.singled_out_by"
+   ]
+  },
+  {
+   "name": "scenario-surface-unknown-mechanism",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 D6 (V3 rubric rules block; geometry report-only)",
+   "mutate": [
+    {
+     "file": "01_Hardness_Manifest.draft.json",
+     "find": "  \"horizon\": \"Long Horizon\",",
+     "replace": "  \"mechanism_portfolio\": [{\"id\": \"other_rule\"}],\n  \"horizon\": \"Long Horizon\","
+    }
+   ],
+   "expect": [
+    "surface.valid"
+   ],
+   "expect_detail": [
+    "mechanisms.known"
+   ]
+  },
+  {
+   "name": "rubric-writing-surface-slot-missing",
+   "stage": "rubric-writing",
+   "plan": "Learnings 2026-10-25 §4.2 D3 (audit M1: surface.coverage, gate 17)",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "| S1 | S1 | field `defect list` status · sample / schedule:status | interpretation (3) | stale_count → T1 | P2 | — |\n",
+     "replace": ""
+    }
+   ],
+   "expect": [
+    "surface.coverage"
+   ]
+  },
+  {
+   "name": "rubric-writing-surface-slot-neither",
+   "stage": "rubric-writing",
+   "plan": "Learnings 2026-10-25 §4.2 D3 (audit M1: surface.coverage, gate 17)",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "duplicate fact: P4 and P5 already grade the open set (C4, C5); a row-volume row would grade it a third time (gate 6)",
+     "replace": "—"
+    }
+   ],
+   "expect": [
+    "surface.coverage"
+   ]
+  },
+  {
+   "name": "rubric-writing-surface-disposition-without-reason",
+   "stage": "rubric-writing",
+   "plan": "Learnings 2026-10-25 §4.2 D3 (audit M1: surface.coverage, gate 17)",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "duplicate fact: P4 and P5 already grade the open set (C4, C5); a row-volume row would grade it a third time (gate 6)",
+     "replace": "duplicate fact"
+    }
+   ],
+   "expect": [
+    "surface.coverage"
+   ]
+  },
+  {
+   "name": "rubric-writing-surface-stale-slot",
+   "stage": "rubric-writing",
+   "plan": "Learnings 2026-10-25 §4.2 D3 (audit M1: surface.coverage, gate 17)",
+   "mutate": [
+    {
+     "file": "09_Rubric_Writing_Plan.md",
+     "find": "| S1 | S1 | field `defect list` status · sample / schedule:status | interpretation (3) | stale_count → T1 | P2 | — |\n",
+     "replace": "| S1 | S1 | field `defect list` status · sample / schedule:status | interpretation (3) | stale_count → T1 | P2 | — |\n| S9 | S9 | field `x` status · sample / schedule:status | lookup (1) | — | P1 | — |\n"
+    }
+   ],
+   "expect": [
+    "surface.coverage"
+   ]
+  },
+  {
+   "name": "rubric-check-surface-gap",
+   "stage": "rubric-check",
+   "plan": "Learnings 2026-10-25 §4.2 D3 (audit M1: surface.coverage, gate 17)",
+   "mutate": [
+    {
+     "file": "09_Rubric_Check.md",
+     "find": "| S2 | S2 | — | dispositioned |",
+     "replace": "| S2 | S2 | — | gap |"
+    }
+   ],
+   "expect": [
+    "surface.coverage",
+    "validity.rubric"
+   ]
+  },
+  {
+   "name": "rubric-check-surface-slot-missing",
+   "stage": "rubric-check",
+   "plan": "Learnings 2026-10-25 §4.2 D3 (audit M1: surface.coverage, gate 17)",
+   "mutate": [
+    {
+     "file": "09_Rubric_Check.md",
+     "find": "| S1 | S1 | C2 | covered | — |\n",
+     "replace": ""
+    }
+   ],
+   "expect": [
+    "surface.coverage"
+   ]
+  },
+  {
+   "name": "injection-output-older-than-surface",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "older_than": "01_Gradable_Surface.json"
+    }
+   ],
+   "expect": [
+    "structure.fresh"
+   ],
+   "expect_detail": [
+    "older than its input 01_Gradable_Surface.json"
+   ]
+  },
+  {
+   "name": "scenario-raised-self-review-minimum",
+   "stage": "scenario",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "create": "01a_Hardening_Report.md",
+     "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"
+    },
+    {
+     "create": "run_forensics/rev2/node_verdicts.json",
+     "content": "{\"runs\": {\"run-1\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LANDED\", \"flags\": []}}}, \"run-2\": {\"binding\": {\"verdict\": \"BOUND\", \"bound_to\": [\"rev2\"], \"basis\": \"discriminating content\", \"evidence\": {\"discriminating_seen\": 3, \"shared_seen\": 12}}, \"rules\": {\"stale_count\": {\"verdict\": \"LEAKED\", \"flags\": []}}}}}"
+    },
+    {
+     "file": "01_Scenario_Design.md",
+     "append": "\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening MODE B, revision 2; both exports bound to revision 2).\n\n| Node | Runs | Proposed | Disposition | Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | run-1 event 12 read ENG-2280 and still wrote the stale count |\n\nEarlier exports read for comparison: rev1 run-1 LEAKED, rev1 run-2 LEAKED, rev1 run-3 LEAKED, rev1 run-4 LEAKED, rev1 run-5 LEAKED, rev1 run-6 LEAKED, rev1 run-7 LEAKED, rev1 run-8 LEAKED, rev1 run-9 LEAKED, rev1 run-10 LEAKED, rev1 run-11 LEAKED, rev1 run-12 LEAKED, rev1 run-13 LEAKED, rev1 run-14 LEAKED, rev1 run-15 LEAKED, rev1 run-16 LEAKED, rev1 run-17 LEAKED, rev1 run-18 LEAKED, rev1 run-19 LEAKED, rev1 run-20 LEAKED, rev1 run-21 LEAKED, rev1 run-22 LEAKED, rev1 run-23 LEAKED, rev1 run-24 LEAKED, rev1 run-25 LEAKED, rev1 run-26 LEAKED, rev1 run-27 LEAKED, rev1 run-28 LEAKED, rev1 run-29 LEAKED.\n"
+    }
+   ],
+   "expect": [
+    "review.counter_readings"
+   ],
+   "expect_detail": [
+    "need ≥ 33"
+   ]
+  },
+  {
+   "name": "injection-preflight-lists-no-mutation-results",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"dispositions\": {\n   \"required\": [\n    \"rule:stale_count\",\n    \"intervention:rule:stale_count\"\n   ],",
+     "replace": "\"dispositions\": {\n   \"required\": [],"
+    }
+   ],
+   "expect": [
+    "mutation.dispositions"
+   ],
+   "expect_detail": [
+    "lists no mutation results"
+   ]
+  },
+  {
+   "name": "injection-geometry-margin-warns",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"L_max\": {\n     \"verdict\": \"OK\",",
+     "replace": "\"L_max\": {\n     \"verdict\": \"WARN\","
+    }
+   ],
+   "expect": [],
+   "expect_warn": [
+    "geometry.margin"
+   ]
+  },
+  {
+   "name": "injection-liveness-flag-undispositioned",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"dispositions\": {\n   \"required\": [],\n   \"recorded\": {},\n   \"missing\": [],\n   \"rule\": \"every flag needs",
+     "replace": "\"dispositions\": {\n   \"required\": [\"T1:breadcrumb collision\"],\n   \"recorded\": {},\n   \"missing\": [],\n   \"rule\": \"every flag needs"
+    }
+   ],
+   "expect": [],
+   "expect_warn": [
+    "liveness.dispositions"
+   ]
+  },
+  {
+   "name": "injection-forecast-preregistered-control",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"forecast\": {\n  \"status\": \"not run\",",
+     "replace": "\"forecast\": {\n  \"status\": \"recorded\",\n  \"preregistration\": {\"id\": \"hev_52b022ea60c70fc4\"},"
+    }
+   ],
+   "expect": [],
+   "expect_pass": [
+    "forecast.preregistered"
+   ]
+  },
+  {
+   "name": "injection-forecast-not-in-ledger",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"forecast\": {\n  \"status\": \"not run\",",
+     "replace": "\"forecast\": {\n  \"status\": \"recorded\",\n  \"preregistration\": {\"id\": \"hev_0000000000000000\"},"
+    }
+   ],
+   "expect": [],
+   "expect_warn": [
+    "forecast.preregistered"
+   ],
+   "baseline": "injection-forecast-preregistered-control"
+  },
+  {
+   "name": "injection-geometry-unverified-without-disposition",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"U\": {\n     \"verdict\": \"PASS\"",
+     "replace": "\"U\": {\n     \"verdict\": \"UNVERIFIED\""
+    }
+   ],
+   "expect": [
+    "geometry.upper_bound"
+   ]
+  },
+  {
+   "name": "injection-geometry-unverified-with-disposition-control",
+   "stage": "injection",
+   "plan": "Learnings 2026-10-25 §4.2 M7 (planted defects for the uncovered families) / M2",
+   "mutate": [
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "\"U\": {\n     \"verdict\": \"PASS\"",
+     "replace": "\"U\": {\n     \"verdict\": \"UNVERIFIED\""
+    },
+    {
+     "file": "01c_Dispositions.json",
+     "find": " \"liveness\": {}\n}",
+     "replace": " \"liveness\": {},\n \"geometry\": {\"geometry.U\": {\"disposition\": \"accepted-unverified\", \"reason\": \"a cross-record link the solver declares; U enumerated per record\"}}\n}"
+    },
+    {
+     "file": "01c_Preflight_Report.json",
+     "find": "c605e21e6a873125e5fac208793153c581bd90d5c38ee3b68ceedf3ce55cbeab",
+     "replace": "90c9285521312efc1da047d440360ec68b13e7ddc50a91641de629a412ecadb7"
+    }
+   ],
+   "expect": [],
+   "expect_pass": [
+    "geometry.upper_bound"
+   ]
   }
  ]
 }

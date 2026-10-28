@@ -1,0 +1,22 @@
+{
+ "_note": "stage_gate self-test fixture: the gradable surface of the one-row fixture universe (tools/gradable_surface.py)",
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "stage_gate fixture",
+ "revision": "r1",
+ "classes": ["open", "stale"],
+ "truth_fields": {"class": "status", "groups": "groups"},
+ "deliverables": {
+  "schedule": {"kind": "table", "name_regex": "known defects|schedule", "key_column": "item", "key_regex": "defect list",
+               "columns": ["item", "status"], "class_column": "status"}
+ },
+ "slots": [
+  {"id": "S1", "title": "the schedule marks the defect list open", "weight": 3, "work_kind": "interpretation",
+   "work_reason": "ENG-2280 overrides the hub post's framing of the list", "class": "direct",
+   "selector": ["field", "defect list", "status"], "role": "sample", "group": "schedule:status",
+   "mechanisms": ["stale_count"]},
+  {"id": "S2", "title": "the schedule lists exactly the known defects", "weight": 1, "work_kind": "lookup",
+   "work_reason": "row volume of the schedule", "class": "delivery", "selector": ["delivery", "register_keys_exact"],
+   "role": "volume", "volume_for": ["schedule:*"]}
+ ]
+}

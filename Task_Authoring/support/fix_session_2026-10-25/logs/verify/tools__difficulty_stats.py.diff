@@ -1,0 +1,278 @@
+--- a/tools/difficulty_stats.py
++++ b/tools/difficulty_stats.py
+@@ -162,12 +162,103 @@
+                 _fail(f"rollout {ro['id']}: judge_corrections must be booleans")
+ 
+ 
++# ------------------------------------------------------------------ model labels (the one owner: trajectory_ledger, the
++# model gate, stage_gate's release check and surface_grader all classify labels here; decision 2026-10-25)
++SYNTHETIC_MODEL_LABELS = ("<synthetic>",)          # harness messages, not a model: never checked, counted apart
++RX_MODEL_ID = re.compile(r"claude-[a-z]+(?:-[a-z0-9]+)+")
++
++
++def model_id(label) -> str:
++    """The label with only a bracketed suffix stripped: claude-opus-5-5[1m] -> claude-opus-5-5. Nothing else changes
++    (V1: strip only a bracketed suffix, then compare exactly; whitespace is part of the label)."""
++    return re.sub(r"\[[^\[\]]*\]$", "", str(label or ""))
++
++
++def classify_model(label, expected: str | None = None) -> str:
++    """expected · other · synthetic · unknown. The comparison is exact after model_id(): claude-opus-5 is not
++    claude-opus-5-5, and neither is claude-opus-5-5-20261001. A label that is not a model id is unknown."""
++    raw = str(label or "")
++    if raw in SYNTHETIC_MODEL_LABELS:
++        return "synthetic"
++    mid = model_id(raw)
++    if not RX_MODEL_ID.fullmatch(mid):
++        return "unknown"
++    return "expected" if mid == model_id(expected or V3_POLICY["model"]) else "other"
++
++
+ def is_opus_55(model: str) -> bool:
+-    def normalized(value):
+-        value = re.sub(r"^claude[-\s]+", "", str(value).strip().casefold())
+-        return re.sub(r"[.\s]+", "-", value)
+-    expected, actual = normalized(V3_POLICY["model"]), normalized(model)
+-    return bool(re.fullmatch(re.escape(expected) + r"(?:[-@][a-z0-9.\-]+)?", actual))
++    return classify_model(model) == "expected"
++
++
++def check_models(labels, expected: str | None = None) -> dict:
++    """A run's model labels against the expected model: {verdict: VALID | INVALID | UNKNOWN | MISSING, models,
++    off_model, unknown, synthetic}. Synthetic labels never decide; an unknown label is never valid."""
++    expected = expected or V3_POLICY["model"]
++    cls = [(str(m), classify_model(m, expected)) for m in labels or []]
++    real = sorted({model_id(m) for m, c in cls if c in ("expected", "other")})
++    off = sorted({m for m, c in cls if c == "other"})
++    unknown = sorted({m for m, c in cls if c == "unknown"})
++    verdict = ("UNKNOWN" if unknown else "INVALID" if off else "VALID" if real else "MISSING")
++    return {"verdict": verdict, "expected": expected, "models": real, "off_model": off, "unknown": unknown,
++            "synthetic": sum(1 for _, c in cls if c == "synthetic")}
++
++
++def message_models(events: list) -> list[dict]:
++    """Every model label an export carries, with where it came from: the init event, and each assistant message
++    (main thread, or the subagent of a brief through parent_tool_use_id)."""
++    out = []
++    for i, event in enumerate(events if isinstance(events, list) else []):
++        if not isinstance(event, dict):
++            continue
++        # a label is collected whenever the field is present: an explicit "" or null is a label (UNKNOWN), which is
++        # different from a message that carries no model field at all (V1)
++        if event.get("type") == "system" and event.get("subtype") == "init" and "model" in event:
++            out.append({"event": i, "label": str(event["model"]), "source": "init", "parent": None})
++        message = event.get("message")
++        if event.get("type") == "assistant" and isinstance(message, dict) and "model" in message:
++            parent = event.get("parent_tool_use_id")
++            out.append({"event": i, "label": str(message["model"]), "source": "subagent" if parent else "main",
++                        "parent": parent})
++    return out
++
++
++def model_provenance(events: list, expected: str | None = None) -> dict:
++    """Run-level model provenance from every message label. mixed_model and validity are separate outcomes:
++      mixed_model     two or more distinct model ids among the messages (synthetic labels excluded)
++      valid           VALID / INVALID / UNKNOWN / MISSING against `expected` (default: the V3 policy model)
++      v3_valid        True / False / None (UNKNOWN or MISSING) against the V3 policy model
++    off_model lists each off-model label with its source (main thread or subagent), count, first and last event and
++    the fallback event before it, if any."""
++    expected = expected or V3_POLICY["model"]
++    msgs = message_models(events)
++    falls = [i for i, e in enumerate(events if isinstance(events, list) else []) if isinstance(e, dict)
++             and e.get("type") == "system" and e.get("subtype") == "model_refusal_fallback"]
++    labels = [m["label"] for m in msgs]
++    mine, v3 = check_models(labels, expected), check_models(labels, V3_POLICY["model"])
++    groups = {}
++    for m in msgs:
++        if classify_model(m["label"], expected) != "other":
++            continue
++        g = groups.setdefault((m["label"], m["source"]), {"label": m["label"], "id": model_id(m["label"]),
++                                                         "source": m["source"], "count": 0, "first_event": m["event"],
++                                                         "last_event": m["event"], "subagent_briefs": set()})
++        g["count"] += 1
++        g["last_event"] = m["event"]
++        if m["parent"]:
++            g["subagent_briefs"].add(m["parent"])
++    off = []
++    for g in groups.values():
++        before = [f for f in falls if f <= g["first_event"]]
++        off.append(dict(g, subagent_briefs=len(g["subagent_briefs"]), after_fallback_event=before[-1] if before else None))
++    v3_valid = {"VALID": True, "INVALID": False}.get(v3["verdict"])
++    if falls or len(mine["models"]) > 1:
++        v3_valid = False
++    return {"expected_model": expected, "models": mine["models"], "mixed_model": len(mine["models"]) > 1,
++            "valid": mine["verdict"], "v3_valid": v3_valid,
++            "v3_verdict": v3["verdict"], "off_model": sorted(off, key=lambda x: x["first_event"]),
++            "unknown_labels": mine["unknown"], "synthetic_messages": mine["synthetic"], "fallback_events": falls,
++            "rule": "labels compared exactly after stripping a bracketed suffix; <synthetic> is a harness message, "
++                    "counted apart; an unrecognised label is UNKNOWN, never valid"}
+ 
+ 
+ def trajectory_models(path: Path) -> list[str]:
+@@ -179,26 +270,66 @@
+     for event in events if isinstance(events, list) else []:
+         if not isinstance(event, dict):
+             continue
+-        if event.get("type") == "system" and event.get("subtype") == "init" and event.get("model"):
++        # An explicit empty/null label is a label (UNKNOWN), not an absent field. The pre-check gate and the
++        # baseline model gate use this reader, so it must agree with message_models/model_provenance.
++        if event.get("type") == "system" and event.get("subtype") == "init" and "model" in event:
+             models.add(str(event["model"]))
++        if event.get("type") == "system" and event.get("subtype") == "model_refusal_fallback" and "fallback_model" in event:
++            models.add(str(event["fallback_model"]))
+         message = event.get("message")
+-        if event.get("type") == "assistant" and isinstance(message, dict) and message.get("model"):
++        if event.get("type") == "assistant" and isinstance(message, dict) and "model" in message:
+             models.add(str(message["model"]))
+     return sorted(models)
+ 
+ 
++def precheck_provenance(events: list) -> dict:
++    """The pre-check gate's provenance decision in one testable place: completed/current check_models is VALID,
++    model_provenance is v3-valid, not mixed, and has no fallback events."""
++    ev = events if isinstance(events, list) else []
++    prov = model_provenance(ev)
++    labels = [m["label"] for m in message_models(ev)]
++    ok = (check_models(labels)["verdict"] == "VALID" and prov["v3_valid"] is True
++          and not prov["mixed_model"] and not prov["fallback_events"])
++    return {"ok": ok, "provenance": prov, "models": labels}
++
++
++def trajectory_provenance(path: Path) -> dict:
++    """Run-level provenance from the same events used by the pre-check and baseline gates. A missing/blank label,
++    a fallback event or a mixed label set is never accepted as clean Opus 5.5 provenance."""
++    if not path.stat().st_size:
++        return {"models": [], "mixed_model": False, "v3_valid": None, "fallback_events": [],
++                "unknown_labels": [], "valid": "MISSING"}
++    events = json.loads(path.read_text(encoding="utf-8"))
++    return model_provenance(events if isinstance(events, list) else [])
++
++
+ def model_gate(rollouts: list[dict]) -> dict:
+-    missing, wrong = [], []
++    missing, wrong, unknown, mixed = [], [], [], []
+     for ro in rollouts:
+-        models = ro.get("models") or ([ro["model"]] if ro.get("model") else [])
+-        if not isinstance(models, list) or not models or not str(ro.get("model_source") or "").strip():
++        models = ro.get("models") or ([ro["model"]] if "model" in ro else [])
++        c = check_models(models if isinstance(models, list) else [])
++        if not isinstance(models, list) or c["verdict"] == "MISSING" or not str(ro.get("model_source") or "").strip():
+             missing.append(ro["id"])
+-        elif any(not is_opus_55(model) for model in models):
+-            wrong.append(f"{ro['id']}: {models}")
++        elif c["verdict"] == "UNKNOWN":
++            unknown.append(f"{ro['id']}: {c['unknown']}")
++        elif c["verdict"] == "INVALID":
++            wrong.append(f"{ro['id']}: {c['models']}")
++        mc = ro.get("model_check")
++        if not isinstance(mc, dict):
++            if ro["id"] not in missing:
++                missing.append(ro["id"])
++            continue
++        if mc.get("mixed_model") or mc.get("fallback_events") or mc.get("v3_valid") is not True:
++            mixed.append(f"{ro['id']}: mixed/fallback provenance"
++                         + (f" (fallbacks {mc.get('fallback_events')})" if mc.get("fallback_events") else "")
++                         + (f" (models {mc.get('models')})" if mc.get("models") else ""))
+     detail = "; ".join((["missing provenance: " + ", ".join(missing)] if missing else [])
+-                       + (["other/mixed models: " + "; ".join(wrong)] if wrong else []))
++                       + (["unrecognised model labels (UNKNOWN, never valid): " + "; ".join(unknown)] if unknown else [])
++                       + (["other/mixed models: " + "; ".join(wrong)] if wrong else [])
++                       + (["mixed/fallback provenance: " + "; ".join(mixed)] if mixed else []))
+     return {"value": detail or f"all {BASELINE_RUNS} rollout slots have {V3_POLICY['model']} provenance",
+-            "rule": f"{V3_POLICY['model']} for all {BASELINE_RUNS} baseline rollouts; missing model evidence blocks",
++            "rule": f"{V3_POLICY['model']} for all {BASELINE_RUNS} baseline rollouts; missing model evidence and "
++                    "fallback/mixed provenance block",
+             "verdict": "FAIL (Model Provenance)" if detail else "PASS"}
+ 
+ 
+@@ -662,7 +793,8 @@
+         status, reason, detail = read_trajectory(files[n])
+         rows = runs.get(n) or []
+         rid = f"run-{n}"
+-        provenance = ({"models": trajectory_models(files[n]), "model_source": f"trajectory:{files[n].name}"}
++        provenance = ({"models": trajectory_models(files[n]), "model_source": f"trajectory:{files[n].name}",
++                       "model_check": trajectory_provenance(files[n])}
+                       if spec_version == "V3" else {})
+         if status == "errored":
+             if rows:
+@@ -744,8 +876,6 @@
+ # --------------------------------------------------------------------------- self-test
+ 
+ def _self_test() -> None:
+-    import tempfile
+-
+     # These archival regression cases intentionally exercise the old V2 policy.
+     calculate = globals()["compute"]
+ 
+@@ -893,8 +1023,9 @@
+         else:
+             raise AssertionError(f"should reject {broken}")
+ 
+-    # --build: platform exports -> input JSON
+-    with tempfile.TemporaryDirectory() as tmp:
++    # --build: platform exports -> input JSON (a unique folder under the scratch root, even outside a sandbox)
++    import selftest_sandbox
++    with selftest_sandbox.scratch_tmp("difficulty_stats_selftest_") as tmp:
+         d = Path(tmp)
+         (d / "rubrics.json").write_text(            # unescaped inner quotes: not valid JSON
+             '[\n {\n  "title": "The Agent reports the "Draft" state of TASK-1.",\n  "category": "outcome",\n'
+@@ -988,7 +1119,59 @@
+             assert "two trajectory files for run 1" in str(error), error
+         else:
+             raise AssertionError("duplicate run files should stop the build")
++    _self_test_models()
+     print("self-test: ok")
++
++
++def _self_test_models() -> None:
++    """V1: one owner for model labels (planted: the old prefix rule rejected claude-opus-5-5[1m] and <synthetic>)."""
++    want = {"claude-opus-5-5": "expected", "claude-opus-5-5[1m]": "expected", "<synthetic>": "synthetic",
++            "claude-opus-5": "other", "claude-opus-5[1m]": "other", "claude-opus-4-8[1m]": "other",
++            "claude-opus-5-5-20261001": "other", "Opus 5.5": "unknown", "": "unknown", "gpt": "unknown"}
++    got = {m: classify_model(m) for m in want}
++    assert got == want, got
++    assert classify_model("claude-opus-4-8[1m]", "claude-opus-4-8") == "expected"
++    ro = lambda i, models: {"id": f"run-{i}", "models": models, "model_source": f"trajectory:run-{i}.json",
++                            "model_check": {"v3_valid": True, "mixed_model": False, "fallback_events": [],
++                                            "models": ["claude-opus-5-5"]}}  # noqa: E731
++    ok = [ro(i, ["<synthetic>", "claude-opus-5-5[1m]"]) for i in range(1, 7)]
++    assert model_gate(ok)["verdict"] == "PASS", model_gate(ok)                  # a valid Opus 5.5 run passes
++    assert model_gate(ok[:5] + [ro(6, ["claude-opus-5[1m]"])])["verdict"].startswith("FAIL")
++    unk = model_gate(ok[:5] + [ro(6, ["claude-opus-5-5", "Opus 5.5"])])
++    assert unk["verdict"].startswith("FAIL") and "UNKNOWN" in unk["value"], unk
++    assert model_gate(ok[:5] + [ro(6, ["<synthetic>"])])["verdict"].startswith("FAIL")   # synthetic alone is no model
++    for blank in ("", None):
++        one = dict(ok[0], model=blank, models=None)
++        g = model_gate([one] + ok[1:])
++        assert g["verdict"].startswith("FAIL") and "UNKNOWN" in g["value"] \
++            and "missing" not in g["value"].lower(), g
++
++    def ev(model, parent=None):
++        return {"type": "assistant", "parent_tool_use_id": parent, "message": {"model": model, "content": []}}
++    init = {"type": "system", "subtype": "init", "model": "claude-opus-5-5[1m]"}
++    valid = model_provenance([init, ev("claude-opus-5-5[1m]"), ev("<synthetic>"), ev("claude-opus-5-5[1m]", "t1")])
++    assert valid["v3_valid"] is True and not valid["mixed_model"] and valid["synthetic_messages"] == 1, valid
++    sub = model_provenance([init, ev("claude-opus-5-5[1m]"), ev("claude-sonnet-5-5", "t9")])
++    assert sub["mixed_model"] and sub["v3_valid"] is False and sub["off_model"][0]["source"] == "subagent", sub
++    fb = {"type": "system", "subtype": "model_refusal_fallback", "fallback_model": "claude-opus-5[1m]"}
++    with_fb = model_provenance([init, ev("claude-opus-5-5[1m]"), fb, ev("claude-opus-5[1m]")])
++    assert with_fb["off_model"][0]["after_fallback_event"] == 2 and with_fb["mixed_model"], with_fb
++    no_fb = model_provenance([init, ev("claude-opus-5-5[1m]"), ev("claude-opus-5[1m]")])     # audit L4
++    assert no_fb["mixed_model"] and no_fb["off_model"][0]["label"] == "claude-opus-5[1m]" and \
++        no_fb["off_model"][0]["after_fallback_event"] is None, no_fb
++    unknown = model_provenance([init, ev("opus-ish")])
++    assert unknown["valid"] == "UNKNOWN" and unknown["v3_valid"] is None and unknown["unknown_labels"] == ["opus-ish"]
++    r48 = model_provenance([{"type": "system", "subtype": "init", "model": "claude-opus-4-8[1m]"},
++                            ev("claude-opus-4-8[1m]")], expected="claude-opus-4-8")
++    assert r48["valid"] == "VALID" and not r48["mixed_model"] and r48["v3_valid"] is False, r48
++    # V1-1: an explicitly supplied empty or null label is a label (UNKNOWN), not an absent field; whitespace is part of
++    # the label (strip only a bracketed suffix, then compare exactly)
++    for label in ("", None):
++        blank = model_provenance([init, ev(label)])
++        assert blank["valid"] == "UNKNOWN" and blank["v3_valid"] is None and "None" not in blank["models"], blank
++    assert classify_model(" claude-opus-5-5 ") == "unknown" and model_id(" claude-opus-5-5 ") == " claude-opus-5-5 "
++    padded = model_provenance([{"type": "system", "subtype": "init", "model": " claude-opus-5-5 "}, ev("claude-opus-5-5")])
++    assert padded["valid"] == "UNKNOWN" and padded["v3_valid"] is None, padded
+ 
+ 
+ def _flag(argv: list[str], name: str) -> str | None:

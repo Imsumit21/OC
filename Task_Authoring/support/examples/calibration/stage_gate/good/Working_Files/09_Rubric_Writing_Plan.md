@@ -44,6 +44,7 @@ No repetitive item groups in this fixture (P1–P5 are single items; P4/P5 grade
 Rows 5 · Outcome 5 · Process candidates 0 — ≥ 1 Outcome ☑ · builder minimum 5 ☑ · predicted all-fail rows 0 ☑
 Failure diversity: largest unit of discovery C1 / ENG-2280 at 47% of 17 (≤ 50% ☑) · chains landing on distinct rows ☑
 Bands: 5 ×2 · 3 ×2 · 1 ×1
+Gradable surface (gate 17): slots 2 · covered 1 · dispositioned 1 (§G) · no slot with neither ☑ · mechanism share 1/2 slots, 3 of 4 weight (reported, not gated)
 
 Visibility proof (persona_view, pasted verbatim):
 
@@ -63,6 +64,13 @@ verdict: CLEAR (0 shortcut records)
 
 Dispositions: none needed (verdict CLEAR). The skipped value `48` is a two-character count; P5 grades it exactly.
 
+## G · Gradable-surface coverage
+
+| Slot | Stable fact ID | Selector · role / group | Work kind (band) | Mechanisms → Decided by | Covered by (P-n) | Disposition and reason (evidence) |
+|---|---|---|---|---|---|---|
+| S1 | S1 | field `defect list` status · sample / schedule:status | interpretation (3) | stale_count → T1 | P2 | — |
+| S2 | S2 | delivery register_keys_exact · volume / schedule:* | lookup (1) | — | — | duplicate fact: P4 and P5 already grade the open set (C4, C5); a row-volume row would grade it a third time (gate 6) |
+
 ## Self-review
 
 | Row | Verdict | Strongest counter-reading | Resolution (evidence) | Unresolved |
@@ -78,7 +86,7 @@ Predicted all-fail re-check: every value reachable (can-see YES above); 0 rows o
 Unresolved: none.
 
 ```
-STAGE GATE rubric-writing: PASS — Task_Authoring/support/local_search/cache/stage_gate_selftest/gen · 09_Rubric_Writing_Plan.md#1685f5279950 · blocking 0 · warnings 0 · checks 26
+STAGE GATE rubric-writing: PASS — Task_Authoring/support/local_search/cache/stage_gate_selftest/gen · 09_Rubric_Writing_Plan.md#42231d21cd87 · blocking 0 · warnings 0 · checks 26
 [PASS] structure.outputs: 1 output(s) present: 09_Rubric_Writing_Plan.md
 [PASS] structure.inputs: 3 input(s) present: 04_Prompt.txt, 08_Oracle_Events.md, 08_OE_Writing_Ledger.md
 [PASS] structure.fresh: every output newer than its inputs (04_Prompt.txt, 08_Oracle_Events.md, 08_OE_Writing_Ledger.md)

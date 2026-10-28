@@ -1,0 +1,343 @@
+--- a/tools/trajectory_ledger.py
++++ b/tools/trajectory_ledger.py
+@@ -278,7 +278,9 @@
+     return re.sub(r"\[.*?\]$", "", str(model or "")).strip()
+ 
+ 
+-def provenance(run: Run, briefs_: list | None = None) -> dict:
++def provenance(run: Run, briefs_: list | None = None, expected_model: str | None = None) -> dict:
++    """Who ran: harness, main-agent phases, call and brief models, and the message-level model check owned by
++    difficulty_stats.model_provenance (mixed_model and V3 validity are separate outcomes)."""
+     events = run.events or []
+     fb = fallbacks(events)
+     init = harness(events).get("init_model")
+@@ -312,6 +314,17 @@
+     if len(main_families | sub_families) > 1 and not mixed:
+         mixed = True
+         details.append(f"calls ran on several model families: main {sorted(main_families)}, subagents {sorted(sub_families)}")
++    mc = ds.model_provenance(events, expected_model) if run.format == "stream-json" else None
++    if mc:
++        for o in mc["off_model"]:
++            details.append(f"{o['count']} message(s) labelled {o['label']} ({o['source']}"
++                           + (f", {o['subagent_briefs']} brief(s)" if o["source"] == "subagent" else "")
++                           + f", events {o['first_event']}-{o['last_event']}; "
++                           + (f"after the fallback at event {o['after_fallback_event']})" if o["after_fallback_event"]
++                              is not None else "no fallback event before them)"))
++        if mc["unknown_labels"]:
++            details.append(f"unrecognised model label(s) {mc['unknown_labels']}: UNKNOWN, never valid")
++        mixed = mixed or mc["mixed_model"]      # keep a fallback/call mixed signal; never let label-only reset it
+     requested = sorted({b["requested_model"] for b in briefs_ if b.get("requested_model")})
+     honoured = []
+     for b in briefs_:
+@@ -322,11 +335,38 @@
+         details.append(f"subagent model requested {requested} but the subagent events report "
+                        f"{sorted({m for b in briefs_ for m in b.get('subagent_models', [])})}")
+     return {"init_model": init, "fallbacks": fb, "main_model_phases": phases, "mixed_model": mixed, "details": details,
++            "model_check": mc, "v3_valid": False if mixed else (mc or {}).get("v3_valid"),
+             "models_seen": sorted(families), "calls_by_model_context": {f"{m}|{ctx}": n for (m, ctx), n in sorted(
+                 by.items(), key=lambda x: (str(x[0][0]), x[0][1]))},
+             "brief_models": dict(collections.Counter(b["writer_model"] for b in briefs_)),
+             "subagent_launches": len(briefs_), "requested_subagent_models": requested,
+-            "trajectory_models": ds.trajectory_models(run.path) if run.format == "stream-json" else []}
++            "trajectory_models": sorted({m["label"] for m in ds.message_models(events)}) if run.format == "stream-json"
++            else []}                                # = ds.trajectory_models(run.path), from the events already loaded
++
++
++def deciders(run: Run, briefs_: list, keys=(), tools=()) -> dict:
++    """Who decided a written value (V1: a failure is attributed to the deciding model): the briefs that name any of
++    `keys`, with their writer models, and the successful write calls to `tools`, with their thread and model."""
++    ks = set(keys or ())
++    bs = [{"event": b["event"], "writer_model": b["writer_model"], "context": b["context"],
++           "keys": sorted(ks & set(b["keys"]))} for b in briefs_ if ks & set(b["keys"])]
++    ws = [{"event": c["event"], "tool": short(c["name"]), "model": c["model"], "context": c["context"]}
++          for c in run.calls if short(c["name"]) in set(tools or ()) and not failed(run.results.get(c["id"]))]
++    models = sorted({x["writer_model"] for x in bs if x["writer_model"]} | {x["model"] for x in ws if x["model"]})
++    return {"briefs": bs, "writes": ws, "models": models}
++
++
++def expected_model_for(task_dir) -> str:
++    """The run's expected model: the task context's baseline_model, else the V3 policy model."""
++    if task_dir:
++        ctx = Path(task_dir) / "Working_Files" / "00_Task_Context.json"
++        try:
++            m = json.loads(ctx.read_text()).get("baseline_model")
++            if m:
++                return str(m)
++        except (OSError, ValueError):
++            pass
++    return ds.V3_POLICY["model"]
+ 
+ 
+ def by_model(events) -> set:
+@@ -570,12 +610,17 @@
+ 
+ def keyed_rows(values: list, spec: dict) -> dict:
+     """{key: {column: value}} from table rows (header rows remap the columns; ported component_rows)."""
++    return _keyed_rows(values, spec)[0]
++
++
++def _keyed_rows(values: list, spec: dict) -> tuple:
++    """({key: {column: value}}, {key: index of its row in values}) from table rows."""
+     cols = spec["columns"]
+     key_col = spec["key_column"]
+     key_rx = re.compile(spec["key_regex"])
+     mapping = {norm(f): i for i, f in enumerate(cols)}
+-    rows = {}
+-    for value in values:
++    rows, at = {}, {}
++    for r, value in enumerate(values):
+         if not isinstance(value, list) or not value:
+             continue
+         normalized = [norm(v) for v in value]
+@@ -585,9 +630,11 @@
+         ki = mapping.get(norm(key_col), 0)
+         if ki >= len(value) or not key_rx.fullmatch(str(value[ki]).strip()):
+             continue
+-        rows[str(value[ki]).strip()] = {f: str(value[mapping[norm(f)]]).strip() for f in cols
+-                                        if norm(f) in mapping and mapping[norm(f)] < len(value)}
+-    return rows
++        key = str(value[ki]).strip()
++        rows[key] = {f: str(value[mapping[norm(f)]]).strip() for f in cols
++                     if norm(f) in mapping and mapping[norm(f)] < len(value)}
++        at[key] = r
++    return rows, at
+ 
+ 
+ def table(run: Run, spec: dict) -> dict:
+@@ -597,35 +644,67 @@
+     valid, else read as text; a later CSV with as many rows replaces an earlier one. Native Sheets are rebuilt per
+     spreadsheet from values updates (A1 ranges), batch updates and appends (appended rows follow the grid rows); a
+     Sheet replaces the CSV only with strictly more keyed rows. Failed writes are ignored. This is the rule of
+-    support/analysis/season_pass_runs.py register(); Sheets whose title is known must also match the name pattern."""
++    support/analysis/season_pass_runs.py register(); Sheets whose title is known must also match the name pattern.
++
++    Round 2 (G1-3): a register write the decoder can't read is a candidate of its own with its `file_id`; because a
++    later write replaces an earlier one and a write with no row count cannot be shown to lose, it becomes the
++    selected table (rows {}, meta unreadable) until a later readable write re-establishes the content. So the
++    uncertainty comes from the delivered register's own writes, never from "some rows exist elsewhere".
++
++    meta["key_events"] (G1, consumed by the attribution stage) maps every key of the selected table to the last write
++    event that contributed to its final row: a CSV's selected candidate event; a native Sheet's last values-update or
++    append event touching the key's row."""
+     name_rx = re.compile(spec.get("name_regex") or ".", re.I)
+     width = len(spec["columns"])
+     titles = sheet_titles(run)
+     best, kind, raw, meta = {}, None, [], {}
+-    grids, appends, events = collections.defaultdict(dict), collections.defaultdict(list), collections.defaultdict(list)
+-    candidates = []
++    grids, row_events = collections.defaultdict(dict), collections.defaultdict(dict)
++    appends, append_events = collections.defaultdict(list), collections.defaultdict(list)
++    events = collections.defaultdict(list)
++    candidates, states = [], []
++    known_csv = set()
+     for c in run.calls:
+         q, r, n = c["input"] or {}, run.results.get(c["id"]), c["name"]
+         if failed(r):
+             continue
++        update = "gdrive" in n and str(n).endswith("update_file")
+         if "gdrive" in n and n.endswith(("create_file", "update_file")) and "content" in q \
+-                and name_rx.search(str(q.get("name", ""))):
++                and (name_rx.search(str(q.get("name", ""))) or (update and q.get("fileId") in known_csv)):
+             text, b64 = _b64_text(q["content"])
++            # G1-3: an update's identity is the file it targets; only a create takes the result id
++            fid = q.get("fileId") if str(n).endswith("update_file") else None
++            if not fid:
++                fid = r["data"].get("id") if isinstance(r.get("data"), dict) else None
++            if fid:
++                known_csv.add(fid)
+             try:
+                 values = list(csv.reader(io.StringIO(text)))
+                 cand = keyed_rows(values, spec)
+-            except (csv.Error, TypeError):
++            except (csv.Error, TypeError) as error:
++                # a register write the decoder can't read: it may be the delivered register, so it is selected and
++                # its slots are UNGRADED, never false (a later readable write re-establishes the content)
++                candidates.append({"kind": "CSV", "event": c["event"], "rows": None, "name": q.get("name"),
++                                   "file_id": fid, "identity": fid,
++                                   "error": f"{type(error).__name__}: {str(error)[:80]}"})
++                best, kind, raw = {}, "CSV", []
++                meta = {"event": c["event"], "name": q.get("name"), "file_id": fid, "mime_type": q.get("mimeType"),
++                        "parent": q.get("parentId"), "identity": fid, "unreadable": True, "key_events": {}}
++                states.append({"kind": "CSV", "last": c["event"], "rows": {}, "raw": [], "meta": meta,
++                               "identity": fid, "readable": False, "bound": True})
+                 continue
+-            fid = r["data"].get("id") if isinstance(r.get("data"), dict) else None
+             candidates.append({"kind": "CSV", "event": c["event"], "rows": len(cand), "name": q.get("name"),
+-                               "file_id": fid, "base64": b64})
++                               "file_id": fid, "identity": fid, "base64": b64})
++            cmeta = {"event": c["event"], "name": q.get("name"), "file_id": fid, "mime_type": q.get("mimeType"),
++                     "parent": q.get("parentId"), "identity": fid, "key_events": {k: c["event"] for k in cand}}
+             if len(cand) >= len(best):
+-                best, kind, raw = cand, "CSV", values
+-                meta = {"event": c["event"], "name": q.get("name"), "file_id": fid, "mime_type": q.get("mimeType"),
+-                        "parent": q.get("parentId")}
++                best, kind, raw, meta = cand, "CSV", values, cmeta
++            states.append({"kind": "CSV", "last": c["event"], "rows": cand, "raw": values, "meta": cmeta,
++                           "identity": fid, "readable": True, "bound": True})
+         sn = short(n)
+         if sn == "gsheets_values_append":
+-            appends[q.get("spreadsheetId")].extend(q.get("values") or [])
++            rows_added = q.get("values") or []
++            appends[q.get("spreadsheetId")].extend(rows_added)
++            append_events[q.get("spreadsheetId")].extend([c["event"]] * len(rows_added))
+             events[q.get("spreadsheetId")].append(c["event"])
+         ups = [q] if sn == "gsheets_values_update" else (q.get("data") or []) if sn == "gsheets_values_batch_update" else []
+         for u in ups:
+@@ -638,18 +717,54 @@
+             for dy, vs in enumerate(u.get("values") or []):
+                 for dx, v in enumerate(vs):
+                     grids[sid][(int(m.group(2)) - 1 + dy, col - 1 + dx)] = v
++                    row = int(m.group(2)) - 1 + dy
++                    row_events[sid][row] = max(row_events[sid].get(row, -1), c["event"])
+     for sid in list(dict.fromkeys(list(grids) + list(appends))):
+         if sid in titles and titles[sid] is not None and not name_rx.search(str(titles[sid])):
+             continue
+         g = grids.get(sid, {})
+-        values = [[g.get((rr, cc), "") for cc in range(width)] for rr in sorted({a for a, _ in g})] + appends.get(sid, [])
+-        cand = keyed_rows(values, spec)
++        grid_rows = sorted({a for a, _ in g})
++        values = [[g.get((rr, cc), "") for cc in range(width)] for rr in grid_rows]
++        row_event = [row_events[sid].get(rr) for rr in grid_rows]
++        values += appends.get(sid, [])
++        row_event += append_events.get(sid, [])
++        cand, at = _keyed_rows(values, spec)
+         candidates.append({"kind": "NATIVE_SHEET", "events": events.get(sid, []), "rows": len(cand),
+-                           "spreadsheet_id": sid, "title": titles.get(sid)})
++                           "spreadsheet_id": sid, "identity": sid, "title": titles.get(sid)})
++        nmeta = {"events": events.get(sid, []), "spreadsheet_id": sid, "title": titles.get(sid),
++                 "identity": sid, "appended_rows": len(appends.get(sid, [])),
++                 "key_events": {k: row_event[r] for k, r in at.items()}}
++        # R3-1: a native Sheet is bound to this table only when its title is known and matches name_regex; an
++        # untitled Sheet written and shared later is not evidence that it is this deliverable's table.
++        states.append({"kind": "NATIVE_SHEET", "last": max(events.get(sid, [0]) or [0]), "rows": cand,
++                       "raw": values, "meta": nmeta, "identity": sid, "readable": True,
++                       "bound": bool(titles.get(sid)) and bool(name_rx.search(str(titles[sid])))})
+         if len(cand) > len(best):
+-            best, kind, raw = cand, "NATIVE_SHEET", values
+-            meta = {"events": events.get(sid, []), "spreadsheet_id": sid, "title": titles.get(sid),
+-                    "appended_rows": len(appends.get(sid, []))}
++            best, kind, raw, meta = cand, "NATIVE_SHEET", values, nmeta
++    # the delivered register is the candidate the run shared; the latest write to it decides (a later unreadable
++    # write is UNGRADED, a later readable one re-establishes the content). With no share, the row-count rule above is
++    # the fallback.
++    shares = [str(c["input"].get("fileId")) for c in run.calls
++              if short(c["name"]) == "gdrive_share_file" and not failed(run.results.get(c["id"]))]
++    delivered = [s for s in states if s["identity"] and str(s["identity"]) in shares]
++    bound = [s for s in delivered if s.get("bound")]
++    if bound:
++        delivered = bound              # an unbound candidate never displaces an identified one (R3-1)
++    if delivered:
++        s = max(delivered, key=lambda x: x["last"])
++        return {"rows": s["rows"], "kind": s["kind"], "raw": s["raw"], "meta": s["meta"], "candidates": candidates}
++    # no share: the latest write to each identity is its effective state (a smaller update replaces its own earlier
++    # content), then the identity with the most keyed rows wins
++    latest = {}
++    for s in states:
++        if s["identity"] and (s["identity"] not in latest or s["last"] >= latest[s["identity"]]["last"]):
++            latest[s["identity"]] = s
++    pool = list(latest.values()) or states
++    if pool:
++        # R10-1: an unreadable candidate bound to this deliverable has unknown cardinality, not zero: it outranks a
++        # readable candidate so its slots are UNGRADED rather than guessed from a smaller readable file.
++        s = max(pool, key=lambda x: (bool(x.get("bound") and not x.get("readable")), len(x["rows"]), x["last"]))
++        return {"rows": s["rows"], "kind": s["kind"], "raw": s["raw"], "meta": s["meta"], "candidates": candidates}
+     return {"rows": best, "kind": kind, "raw": raw, "meta": meta, "candidates": candidates}
+ 
+ 
+@@ -896,9 +1011,9 @@
+ # ------------------------------------------------------------------ ledger assembly
+ 
+ def summarize(run: Run, *, key_rx=None, table_spec=None, sql=None, prompt_text=None, source=None, harness_override=None,
+-              brief_rx=None, sole_revision=None) -> dict:
++              brief_rx=None, sole_revision=None, expected_model=None) -> dict:
+     bl = briefs(run, key_rx)
+-    prov = provenance(run, bl)
++    prov = provenance(run, bl, expected_model)
+     val = validity(run, prompt_text)
+     counts = ds.count_tool_calls(run.events) if run.events is not None else _derived_counts(run)
+     counts["by_tool"] = dict(collections.Counter(short(c["name"]) for c in run.calls).most_common())
+@@ -928,6 +1043,14 @@
+         flags.append("mixed-model: " + "; ".join(prov["details"]))
+     elif prov["details"]:
+         flags.append("model note: " + "; ".join(prov["details"]))
++    mc = prov.get("model_check")
++    if mc and mc["v3_valid"] is not True:
++        flags.append(f"V3 {'invalid' if mc['v3_valid'] is False else mc['v3_verdict']}: messages from {mc['models']} "
++                     f"(V3 needs {ds.V3_POLICY['model']} only; a fallback run is invalid for V3)")
++    if mc and mc["expected_model"] != ds.V3_POLICY["model"] and mc["valid"] != "VALID":
++        flags.append(f"off the expected model {mc['expected_model']}: {mc['valid']}")
++    if mc and mc["synthetic_messages"]:
++        flags.append(f"{mc['synthetic_messages']} synthetic harness message(s) (<synthetic>): complete but counted")
+     if val.get("events_after_result"):
+         flags.append(f"{len(val['events_after_result'])} event(s) after the final result")
+     if val.get("unpaired_calls"):
+@@ -1020,7 +1143,13 @@
+ 
+ 
+ def table_spec_from_surface(surface_path: Path) -> tuple:
+-    s = json.loads(Path(surface_path).read_text())
++    """The surface's table deliverable and key regex, read through gradable_surface.load (the owner of the surface
++    formats: a revision-14 surface is converted, so the briefs get their key lists); other JSON is read as it is."""
++    import gradable_surface as gs        # lazy: the surface formats have one owner
++    try:
++        s = gs.load(surface_path)
++    except ValueError:
++        s = json.loads(Path(surface_path).read_text())
+     d = (s.get("deliverables") or {})
+     spec = next((v for v in d.values() if isinstance(v, dict) and v.get("kind") == "table"), None)
+     if spec is not None:
+@@ -1116,9 +1245,25 @@
+         bl = briefs(run, krx)
+         assert len(bl) == 1 and bl[0]["keys"] == ["SP-001", "SP-002"] and bl[0]["requested_model"] == "sonnet", bl
+         assert bl[0]["calls_under"] == 2 and bl[0]["writer_model"] == "claude-opus-4-8", bl
++        # a revision-14 surface goes through its owner (gradable_surface.load), so the CLI gets the key pattern and the
++        # briefs their key lists (planted: the raw read found no deliverables, and every brief had keys [])
++        s14 = Path(tmp) / "surface14.json"
++        s14.write_text(json.dumps({"kind": "GRADABLE_SURFACE_REVISION_14", "truth": {"classes": {"READY": 1}},
++                                   "slots": [{"id": "S1", "weight": 3, "selector": ["field", "SP-001", "issue"]}]}))
++        spec14, krx14 = table_spec_from_surface(s14)
++        assert krx14 == r"SP-\d{3}" and spec14["key_column"] == "component key", (spec14, krx14)
++        assert briefs(run, key_regex_list(krx14))[0]["keys"] == ["SP-001", "SP-002"]
+         prov = provenance(run, bl)
+         assert prov["fallbacks"][0]["fallback_model"] == "claude-opus-5[1m]", prov
+         assert prov["mixed_model"] and prov["main_model_phases"][-1]["main_model"] == "claude-opus-5[1m]", prov
++        # V1: the message-level check (difficulty_stats owns the label rules): V3-invalid, and each off-model label
++        # is named with its source and the fallback event before it
++        mc = prov["model_check"]
++        assert prov["v3_valid"] is False and mc["models"] == ["claude-opus-4-8", "claude-opus-5"], mc
++        assert any("labelled claude-opus-5 (main" in d and "after the fallback at event" in d for d in prov["details"]), prov
++        assert provenance(run, bl, "claude-opus-4-8")["model_check"]["valid"] == "INVALID"
++        assert deciders(run, bl, keys=["SP-001"], tools=["gdrive_create_file"])["models"] == ["claude-opus-4-8",
++                                                                                              "claude-opus-5"]
+         val = validity(run, prompt_text="Finish the handoff for me")
+         assert val["status"] == "errored" and "no final result event" in val["reason"], val   # an event after the result
+         assert val["compactions"] and val["events_after_result"] and val["spilled_results"], val
+@@ -1249,6 +1394,8 @@
+     ap.add_argument("--prompt", type=Path)
+     ap.add_argument("--source", choices=("platform-precheck", "platform-baseline", "independent-harness", "probe"))
+     ap.add_argument("--harness", help="NAME@VERSION when the export has no init event")
++    ap.add_argument("--expected-model", help="the run's expected model (default: the task context's baseline_model, "
++                                             "else the V3 policy model)")
+     ap.add_argument("--brief-regex", help="count subagent briefs whose prompt matches this pattern")
+     ap.add_argument("--out-dir", type=Path)
+     ap.add_argument("--json", action="store_true")
+@@ -1281,7 +1428,8 @@
+         run = load(path, lab)
+         source = a.source or (("platform-precheck" if lab == "precheck" else "platform-baseline") if kind == "run" else None)
+         s = summarize(run, key_rx=key_rx, table_spec=spec, sql=sqls or None, prompt_text=prompt_text, source=source,
+-                      harness_override=a.harness, brief_rx=a.brief_regex, sole_revision=a.sole_revision)
++                      harness_override=a.harness, brief_rx=a.brief_regex, sole_revision=a.sole_revision,
++                      expected_model=a.expected_model or expected_model_for(a.task_dir))
+         summaries.append(s)
+         bad += any(f.startswith(("errored", "revision binding")) for f in s["flags"])
+         if out_dir:
+@@ -1291,6 +1439,9 @@
+             br = s.get("brief_regex")
+             print(f"{lab}: {s['format']} counted={s['counts']['counted']} briefs={s['counts']['briefs']}"
+                   f" models={s['provenance']['brief_models']} fallbacks={[f['event'] for f in s['provenance']['fallbacks']]}"
++                  f" mixed={s['provenance']['mixed_model']} v3_valid={s['provenance']['v3_valid']}"
++                  + (f" valid_for_{s['provenance']['model_check']['expected_model']}="
++                     f"{s['provenance']['model_check']['valid']}" if s['provenance'].get('model_check') else "")
+                   + (f" table={tb.get('kind')}:{tb.get('rows')}" if spec else "")
+                   + (f" binding={s['binding']['verdict']}:{s['binding']['bound_to']}" if sqls else "")
+                   + (f" brief_regex={br['matching']}/{br['briefs']}" if br else "")

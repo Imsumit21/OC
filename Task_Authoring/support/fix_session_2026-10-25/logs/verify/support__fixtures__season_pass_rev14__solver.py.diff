@@ -1,0 +1,258 @@
+--- a/support/fixtures/season_pass_rev14/solver.py
++++ b/support/fixtures/season_pass_rev14/solver.py
+@@ -0,0 +1,255 @@
++"""Season Pass revision-14 solver: a fixture wrapper (E2E, 2026-10-25). Development fixture.
++
++It gives the frozen revision-14 oracle the oracle_kit contract and declares what that oracle leaves implicit. The
++oracle is support/backtests/season_pass/rev14/working_files/hardening_rev14/oracle.py, imported as a library under
++python3 -B (rev14/README.md, "Safe use"); the snapshot is never edited.
++  - Rule ids are the oracle's flags, so `disable` keeps its meaning. The revision-12 flags take whole-rule disables
++    only, so a (rule, key set) disable is spliced: those keys come from a solve with the rule off.
++  - The revision-14 mechanisms of plans/Rev14_Preregistration.md are rules M1-M4: value_notes, process_findings,
++    owner_calls and claims. Their nodes and families come from the revision-14 manifest (traps T40-T47, chains C12-C15
++    with root causes A14, A16, A15 and A1).
++  - Controls are the pre-registered ones of rev14_platform_runs/analyze_rev14.py:
++    - M2: SP-110, SP-119 and SP-123, the seeded records of trap T45. Its expected wrong reading is "count a dismissed
++      request, a request on another artifact or a source-lane request as a process finding". The over-application
++      operator over:process_findings demotes those members from READY to WATCH, which is what the rule does to a true
++      finding.
++    - M4: SP-009 and SP-019, agreeing controls. The claim agrees with their records, so trusting it gives their true
++      values and no over-application operator exists; their trials are HELD, with any error noted.
++value_notes decides no register column; its effect is the tracker's Value notes list, which only the surface sees.
++Complexity channels (F1) the revision-14 runs show, declared for the replay:
++  - scale:groups: a component left out of one of its blocker groups in the tracker (r1, r3: assertions / review 27 of
++    28). Its degrade drops the component's last group and keeps its class: the register is right, the group counts
++    are not.
++  - tool_surface:register: the register written as a native Sheet instead of the CSV upload (r3, r6): slot S01.
++Parses the SQL as data (the oracle's base_check.parse_sql); never executes it. Read-only.
++"""
++from __future__ import annotations
++
++import collections
++import hashlib
++import importlib.util
++import json
++import sys
++from pathlib import Path
++
++TASK = "season_pass"
++KEY_REGEX = r"SP-\d{3}"
++FIELDS = ["component key", "issue", "PR", "failed assertions", "test artifact", "receipt artifact", "receipt ring",
++          "review state", "reviewed artifact", "billing hold at snapshot", "handoff class"]
++GROUPS = ("assertions", "artifact", "review", "billing", "missing")
++CLASS_FIELD, GROUPS_FIELD = "handoff class", "groups"
++SNAPSHOT = "2026-02-12T18:00:00Z"
++CONTROL_SHEET = "f_7d4307eb29c34530f083ad"
++OWNER_CALLS_RECORD = "cmt_3f0ae94ca322f64d0929"
++CLAIM_RECORD = "cceb345fbba87a410565e061c992280c"
++HANDOFF_PAGE = "ver_page_season_pass_handoff_v5"
++ORACLE = (Path(__file__).resolve().parents[2] / "backtests" / "season_pass" / "rev14" / "working_files"
++          / "hardening_rev14" / "oracle.py")
++REVISIONS = ("rev14",)
++KNOWN_SQL = {"38781f13": "rev14", "b15b1102": "rev14"}      # canonical and comment-free (rev14/README.md)
++
++RULES = {
++    "validation": {"mechanism": "A17", "family": "A17", "requirement": "R1", "since": "rev14",
++                   "nodes": ["T21", "T22", "T23", "C6"], "decides": ["failed assertions", "test artifact"],
++                   "natural_reading": "take the latest comment that prints failed assertions, whatever its suite or "
++                                      "run status", "authority": ["698f7000692c3588d1022036"],
++                   "source": "scope control card", "signature": r"abort|diagnostic|smoke|run_status|incomplete"},
++    "receipt": {"mechanism": "A13", "family": "A13", "requirement": "R3", "since": "rev14",
++                "nodes": ["T24", "T25", "T26", "C7"], "decides": ["receipt artifact", "receipt ring"],
++                "natural_reading": "take the latest posted receipt; a withdrawal or copy changes nothing",
++                "authority": ["harmonygames-Games/match3d#545#c_3"], "source": "receipt-format note",
++                "signature": r"withdraw"},
++    "review": {"mechanism": "A15", "family": "A15", "requirement": "R1", "since": "rev14",
++               "nodes": ["T27", "T28", "T29", "T32", "C8"], "decides": ["review state", "reviewed artifact"],
++               "natural_reading": "take the latest submitted review, whatever its lane", "authority": [CONTROL_SHEET],
++               "source": "control sheet", "signature": r"\blanes?\b|source[- ](?:only|lane|review)|transfer[- ]review"},
++    "journal": {"mechanism": "A13", "family": "A13", "requirement": "R3", "since": "rev14", "nodes": ["T35", "C10"],
++                "decides": ["receipt artifact", "receipt ring"],
++                "natural_reading": "keep the revision-11 receipt; ignore receipt ids, rollbacks and their restores",
++                "authority": ["harmonygames-Games/match3d#545#c_3"], "source": "receipt-format note",
++                "signature": r"rollback|restore_receipt|receipt_id|journal|replay"},
++    "fixture_binding": {"mechanism": "A19", "family": "A19", "requirement": "R3", "since": "rev14",
++                        "nodes": ["T33", "T34", "C9"], "decides": ["failed assertions", "test artifact"],
++                        "natural_reading": "keep the latest qualifying validation, whatever fixture or platform it ran",
++                        "authority": ["698f7e10ca7ddc9ad307027f"], "source": "scope control card",
++                        "signature": r"fixture|validation_mode|split"},
++    "acceptance": {"mechanism": "A17", "family": "A17", "requirement": "R3", "since": "rev14",
++                   "nodes": ["T36", "T38", "C11"], "decides": ["review state", "reviewed artifact"],
++                   "natural_reading": "keep the revision-11 review selection; ignore acceptance epochs",
++                   "authority": [CONTROL_SHEET], "source": "control sheet", "signature": r"acceptance[_ ]epoch|\bepochs?\b"},
++    "epoch_binding": {"mechanism": "A17", "family": "A17", "requirement": "R3", "since": "rev14", "nodes": ["T36"],
++                      "decides": ["review state", "reviewed artifact"], "part_of": "acceptance",
++                      "natural_reading": "within the acceptance rule, any lane-qualified review counts, whatever its epoch",
++                      "authority": [CONTROL_SHEET], "source": "control sheet",
++                      "signature": r"acceptance[_ ]epoch|\bepochs?\b"},
++    "history": {"mechanism": "A17", "family": "A17", "requirement": "R6", "since": "rev14", "nodes": ["T37", "C11"],
++                "decides": ["review state"], "natural_reading": "use the review's current state (DISMISSED) at the snapshot",
++                "authority": [CONTROL_SHEET], "source": "control sheet", "signature": r"dismiss"},
++    "owner_calls": {"mechanism": "M3", "family": "A14", "requirement": "R9", "since": "rev14",
++                    "nodes": ["T40", "T41", "C12"],
++                    "decides": ["handoff class", "billing hold at snapshot", "review state", "reviewed artifact"],
++                    "natural_reading": "derive SP-060, SP-089, SP-111 and SP-116 from their records alone",
++                    "authority": [OWNER_CALLS_RECORD], "source": "ZOM-801 comments",
++                    "signature": r"owner calls?|final calls|ZOM-801 comment"},
++    "value_notes": {"mechanism": "M1", "family": "A16", "requirement": "R10", "since": "rev14",
++                    "nodes": ["T42", "T43", "T47", "C13"], "decides": [],
++                    "natural_reading": "keep the record values but drop the value notes", "authority": [HANDOFF_PAGE],
++                    "source": "Confluence handoff page", "signature": r"value notes?"},
++    "process_findings": {"mechanism": "M2", "family": "A15", "requirement": "R11", "since": "rev14",
++                         "nodes": ["T44", "T45", "C14"], "decides": ["handoff class"],
++                         "natural_reading": "an APPROVED transfer review is READY whatever review history precedes it",
++                         "authority": [CONTROL_SHEET], "source": "control sheet",
++                         "signature": r"process findings?|changes[_ ]requested",
++                         "controls": ["SP-110", "SP-119", "SP-123"], "over_application": "over:process_findings"},
++    "claims": {"mechanism": "M4", "family": "A1", "requirement": "R1", "since": "rev14", "nodes": ["T46", "C15"],
++               "decides": ["failed assertions", "test artifact", "review state", "reviewed artifact", "handoff class"],
++               "natural_reading": "accept the co-founder's 'fixed' for SP-083/SP-003 and 'cleared' for SP-037/SP-005",
++               "authority": [CLAIM_RECORD], "source": "hub thread", "signature": r"co-?founder|claim|Robert",
++               "controls": ["SP-009", "SP-019"]},
++}
++DEGRADES = {"over:process_findings": {
++    "description": "over-apply the process-finding rule to its controls (T45's expected wrong reading): READY -> WATCH",
++    "mechanism": "M2", "family": "A15", "nodes": ["T45"], "source": "control sheet", "since": "rev14", "control": True}}
++CHANNELS = {
++    "scale:groups": {"kind": "scale", "degrade": "slip:groups", "members": [f"SP-{n:03d}" for n in range(1, 129)],
++                     "source": "tracker blocker groups",
++                     "description": "a component left out of one of its blocker groups in the tracker"},
++    "tool_surface:register": {"kind": "tool_surface", "slots": ["S01"], "source": "register upload",
++                              "description": "the register written as a native Sheet instead of the CSV upload"}}
++OPERATORS = {"over:process_findings": RULES["process_findings"]["controls"],
++             "slip:groups": [f"SP-{n:03d}" for n in range(1, 129)]}           # the key set of each whole operator
++_ORACLE = None
++
++
++def _oracle():
++    """The frozen oracle, imported once as a library; refused unless bytecode writing is off (python3 -B)."""
++    global _ORACLE
++    if _ORACLE is None:
++        if not sys.dont_write_bytecode:
++            raise RuntimeError("the revision-14 wrapper imports a frozen oracle: run with python3 -B")
++        for p in (ORACLE.parent, ORACLE.parent.parent):
++            if str(p) not in sys.path:
++                sys.path.insert(0, str(p))
++        spec = importlib.util.spec_from_file_location("season_pass_rev14_oracle", ORACLE)
++        mod = importlib.util.module_from_spec(spec)
++        spec.loader.exec_module(mod)
++        _ORACLE = mod
++    return _ORACLE
++
++
++class State:
++    def __init__(self, sql_text: str, revision: str | None):
++        self.sql = sql_text
++        self.sql_sha256 = hashlib.sha256(sql_text.encode()).hexdigest()
++        self.revision = revision or KNOWN_SQL.get(self.sql_sha256[:8])
++        if self.revision not in REVISIONS:
++            raise ValueError(f"not revision-14 SQL (sha256 {self.sql_sha256[:12]}); this wrapper solves revision 14 only")
++        self.tables = _oracle()._tables(sql_text)
++        self._solved, self._touched = {}, {}
++
++    def solved(self, flags: frozenset) -> dict:
++        if flags not in self._solved:
++            self._solved[flags] = json.loads(json.dumps(_oracle().solve(self.sql, new=True, disable=tuple(sorted(flags)))))
++        return self._solved[flags]
++
++
++def load_state(sql_text: str, revision: str | None = None) -> State:
++    return State(sql_text, revision)
++
++
++def keys() -> list:
++    return [f"SP-{n:03d}" for n in range(1, 129)]
++
++
++def rules_for(revision: str) -> list:
++    return list(RULES)
++
++
++def solve(state: State, disable=frozenset(), degrade=frozenset(), keys_=None) -> dict:
++    whole, per_key = set(), collections.defaultdict(set)
++    for d in disable or ():
++        if isinstance(d, tuple):
++            for k in d[1]:
++                per_key[k].add(d[0])
++        else:
++            whole.add(d)
++    unknown = (whole | {r for rs in per_key.values() for r in rs}) - set(RULES)
++    if unknown:
++        raise ValueError(f"unknown rules {sorted(unknown)}")
++    out = {}
++    for k in keys_ or keys():
++        out[k] = json.loads(json.dumps(state.solved(frozenset(whole | per_key.get(k, set())))[k]))
++    hits = collections.defaultdict(set)
++    for d in degrade or ():
++        op, ks = (d[0], set(d[1])) if isinstance(d, tuple) else (d, None)
++        if op not in OPERATORS:
++            raise ValueError(f"unknown degrade {op!r}")
++        hits[op] |= ks if ks is not None else set(OPERATORS[op])
++    for k in sorted(hits["over:process_findings"] & set(out)):
++        if out[k][CLASS_FIELD] == "READY":
++            out[k][CLASS_FIELD] = "WATCH"
++            out[k]["evidence"]["over_applied"] = "process_findings"
++    for k in sorted(hits["slip:groups"] & set(out)):
++        if out[k][GROUPS_FIELD]:
++            out[k][GROUPS_FIELD] = out[k][GROUPS_FIELD][:-1]
++            out[k]["evidence"]["slip"] = "groups"
++    return out
++
++
++def aggregates(rows: dict) -> dict:
++    return {"classes": dict(collections.Counter(x[CLASS_FIELD] for x in rows.values())),
++            "groups": {g: [k for k, v in rows.items() if g in v[GROUPS_FIELD]] for g in GROUPS}}
++
++
++def evidence(rows: dict, key: str, column: str) -> list:
++    """Record ids that decide one output field."""
++    ev = rows[key]["evidence"]
++
++    def ids(*names):
++        out = []
++        for name in names:
++            v = ev.get(name)
++            out += [x for x in v if isinstance(x, str)] if isinstance(v, list) else [v] if isinstance(v, str) else []
++        return out
++    if column in ("failed assertions", "test artifact"):
++        return ids("test")
++    if column in ("receipt artifact", "receipt ring"):
++        return ids("receipt", "journal")
++    if column in ("review state", "reviewed artifact"):
++        return ids("review", "review_events", "review_notes")
++    if column == CLASS_FIELD:
++        return ids("test", "receipt", "review", "process_finding", "owner_call")
++    return [f"harmonygames-Games/match3d#{544 + int(key[3:])}"]
++
++
++def touched(state: State, rule: str) -> set:
++    """The components whose register row the rule changes: a solve with the rule off differs there."""
++    if rule not in state._touched:
++        base, off = state.solved(frozenset()), state.solved(frozenset({rule}))
++        strip = lambda v: {f: x for f, x in v.items() if f != "evidence"}  # noqa: E731
++        state._touched[rule] = {k for k in base if strip(base[k]) != strip(off[k])}
++    return set(state._touched[rule])
++
++
++def deciding(state: State, rule: str, key: str) -> list:
++    """The record ids a worker must read to apply the rule to one component (reach checks)."""
++    n = int(key[3:])
++    pr, issue = f"harmonygames-Games/match3d#{544 + n}", state.solved(frozenset())[key]["issue"]
++    t = state.tables
++    comments = [r["id"] for r in t["linear.linear_comments"] if r.get("issue_id") == issue and r.get("created_at", "") <= SNAPSHOT]
++    reviews = [r["id"] for r in t["github.github_reviews"] if r.get("pr_id") == pr]
++    if rule in ("validation", "fixture_binding"):
++        return comments
++    if rule in ("receipt", "journal"):
++        return [r["id"] for r in t["github.github_pr_comments"] if r.get("pr_id") == pr]
++    if rule in ("review", "acceptance", "epoch_binding", "history", "process_findings"):
++        extra = [e["id"] for e in t["github.github_timeline_events"] if e.get("pr_id") == pr
++                 and e.get("event") == "review_dismissed"] if rule == "history" else []
++        return reviews + extra + ([CONTROL_SHEET] if rule == "process_findings" else [])
++    if rule == "owner_calls":
++        return [OWNER_CALLS_RECORD]
++    if rule == "claims":
++        return [CLAIM_RECORD] + (comments if key in ("SP-083", "SP-003") else reviews)
++    if rule == "value_notes":
++        return [HANDOFF_PAGE]
++    raise ValueError(f"unknown rule {rule!r}")

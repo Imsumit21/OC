@@ -1,0 +1,283 @@
+{
+ "kind": "PREFLIGHT_REPORT",
+ "version": 1,
+ "tool": "preflight_report/1",
+ "label": "probabilistic parts UNCALIBRATED · advisory",
+ "revision": "r1",
+ "verdict": "PASS",
+ "blocking": {
+  "solver_contract": true,
+  "surface_validation": true,
+  "mutation_dispositions": true,
+  "geometry_upper_bound": true
+ },
+ "advisory": {
+  "geometry_margin": {
+   "V2": "OK"
+  },
+  "liveness_dispositions_missing": [],
+  "forecast": "not run"
+ },
+ "bound_to": {
+  "sql": {
+   "path": "01_Universe_Inject.sql",
+   "sha256": "07dc66233f213e620d3c4f1aca7ca2f14b0c578ad32de9a7e6d0ff72c9f290e0"
+  },
+  "solver": {
+   "path": "Working_Files/solver/solver.py",
+   "sha256": "b7821de8e59b4e97ddf7c0fdc3be097ba255ff40595a5c4f63e229e2d7ff04f4"
+  },
+  "surface": {
+   "path": "Working_Files/01_Gradable_Surface.json",
+   "sha256": "4d64882efe5f6ff05ad8100547160e3b9f0a9d71fbd2519446c4f47c774e12cc"
+  },
+  "manifest": {
+   "path": "Working_Files/01_Hardness_Manifest.json",
+   "sha256": "47833614874308bafd00593aea5e5d23614f403da954427864f792759889ea4c"
+  },
+  "dispositions": {
+   "path": "Working_Files/01c_Dispositions.json",
+   "sha256": "c605e21e6a873125e5fac208793153c581bd90d5c38ee3b68ceedf3ce55cbeab"
+  }
+ },
+ "solver_contract": {
+  "verdict": "PASS",
+  "checks": [
+   {
+    "check": "contract.interface",
+    "status": "PASS",
+    "detail": "1 rules, each with mechanism, requirement and natural_reading; optional: ['touched', 'deciding']"
+   },
+   {
+    "check": "contract.deterministic",
+    "status": "PASS",
+    "detail": "two fresh solves (forward and reverse key order) give identical output (1 keys, sha 2d139056e1e3)"
+   },
+   {
+    "check": "contract.regression",
+    "status": "PASS",
+    "detail": "no previous revision supplied (first revision)"
+   },
+   {
+    "check": "contract.rules_nodes",
+    "status": "PASS",
+    "detail": "legacy manifest (no mechanism_portfolio): every rule node exists; 0 manifest trap(s) carry no solver rule [] (decoys, writes and retired nodes need none; mechanism nodes do). Retired in design_delta: []",
+    "unruled_traps": []
+   },
+   {
+    "check": "contract.slots",
+    "status": "PASS",
+    "detail": "1 direct/aggregate slots read a solver value; 1 write-content/delivery slots are graded from the writes, not the solver"
+   },
+   {
+    "check": "contract.golden",
+    "status": "PASS",
+    "detail": "1 golden values checked against their deciding records (1 sampled keys x 1 fields): 1 identifier values found, 0 short tokens found, 0 presence-type; 0 unverified",
+    "unverified": []
+   },
+   {
+    "check": "contract.digest",
+    "status": "PASS",
+    "detail": "manifest declares no solver {path, digest} (legacy manifest)"
+   }
+  ],
+  "solver_sha256": "b7821de8e59b4e97ddf7c0fdc3be097ba255ff40595a5c4f63e229e2d7ff04f4",
+  "sql_sha256": "07dc66233f213e620d3c4f1aca7ca2f14b0c578ad32de9a7e6d0ff72c9f290e0",
+  "truth_sha256": "2d139056e1e30ee22dbecce2fcddd7e69043c0abe1f2a93902719a8f1909dcdd",
+  "rules": [
+   "stale_count"
+  ]
+ },
+ "surface": {
+  "validation": {
+   "verdict": "PASS",
+   "findings": [],
+   "report": {
+    "slots": 2,
+    "total_weight": 4,
+    "weight_by_class": {
+     "direct": 3,
+     "delivery": 1
+    },
+    "mechanism_weight": 3,
+    "mechanism_share": 0.75,
+    "always_pass_share_if_no_mechanism_lands": 0.25,
+    "ungraded_slots": [],
+    "groups": {
+     "schedule:status": 1
+    },
+    "note": "mechanism share is reported, not gated (plan §4.6)"
+   }
+  },
+  "expected": {
+   "S1": "open",
+   "S2": "graded from the writes"
+  },
+  "flipped_by": {
+   "S1": [
+    "rule:stale_count"
+   ]
+  }
+ },
+ "mutation": {
+  "key_locality": {
+   "configs": 25,
+   "checked": 25,
+   "skipped_unsupported": 0,
+   "mismatches": [],
+   "key_local": true,
+   "weak": false,
+   "rule": "composed per-record outputs equal a full solve's on every checked configuration (each element alone, then seeded random mixes); a configuration touching a record past --max-k is skipped, never counted as agreement; evidence bookkeeping is not compared"
+  },
+  "mutants": [
+   {
+    "id": "rule:stale_count",
+    "rule": "stale_count",
+    "mechanism": "A1",
+    "part_of": null,
+    "touched": 1,
+    "diagnostic": "KILLED",
+    "changed_outputs": 1,
+    "changed_records": 1,
+    "changed_fields": [
+     "status"
+    ],
+    "flipped_slots": [
+     "S1"
+    ],
+    "flipped_weight": 3,
+    "why": "flips direct slot(s) of weight >= 3: ['S1']"
+   }
+  ],
+  "shards": {
+   "count": 1,
+   "source": "consecutive slices of 14 records",
+   "diagnostics": {
+    "KILLED": 1,
+    "WEAK": 0,
+    "SURVIVED": 0,
+    "EQUIVALENT": 0
+   }
+  },
+  "interventions": [
+   {
+    "id": "intervention:rule:stale_count",
+    "key": "defect list",
+    "removed_records": [
+     "b759cfabc37fef15d3b8d50fb4aeb564"
+    ],
+    "removed_lines": [
+     2,
+     3,
+     4
+    ],
+    "closure": [
+     "defect list"
+    ],
+    "changed_records": [
+     "defect list"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [
+     "S1"
+    ],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   }
+  ],
+  "dispositions": {
+   "required": [
+    "rule:stale_count",
+    "intervention:rule:stale_count"
+   ],
+   "recorded": {
+    "rule:stale_count": {
+     "disposition": "live",
+     "reason": "KILLED: ablating the rule flips S1 (weight 3, direct)"
+    },
+    "intervention:rule:stale_count": {
+     "disposition": "live",
+     "reason": "removing the hub post changes only the defect-list row, inside the node's closure"
+    }
+   },
+   "missing": [],
+   "unknown": [],
+   "rule": "every rule, degrade and intervention result needs a written disposition (blocking)"
+  }
+ },
+ "geometry": {
+  "U": 0.75,
+  "U_exact": "3/4",
+  "flippable_weight": 3,
+  "total_weight": 4,
+  "flippable_slots": [
+   "S1"
+  ],
+  "not_flippable": [
+   "S2"
+  ],
+  "flippable_by_class": {
+   "direct": 1
+  },
+  "unsupported_records": [],
+  "flippable_only_by_combinations": [],
+  "key_local": true,
+  "composable": true,
+  "elements": [
+   "rule:stale_count"
+  ],
+  "inert_elements": [],
+  "assumptions": [],
+  "L_max": {
+   "value": 0.75,
+   "lost_weight": 3,
+   "failing": [
+    "rule:stale_count"
+   ],
+   "mechanisms": [
+    "rule:stale_count"
+   ]
+  },
+  "views": {
+   "V2": {
+    "cap": 0.75,
+    "mode": null,
+    "needs_loss_above": 0.25,
+    "U": {
+     "verdict": "PASS",
+     "rule": "U must exceed 1 - cap: otherwise no combination of the designed mechanisms can bring the average strictly below the cap"
+    },
+    "L_max": {
+     "verdict": "OK",
+     "rule": "advisory: warns when L_max < (1 - cap) + 0.10"
+    }
+   }
+  }
+ },
+ "liveness": {
+  "label": "ADVISORY · UNCALIBRATED · lexical warnings, not proof",
+  "summary": {
+   "breadcrumb": [],
+   "self-advertising": [],
+   "order": [],
+   "rule placement": []
+  },
+  "nodes": [
+   {
+    "id": "T1",
+    "flagged": []
+   }
+  ],
+  "dispositions": {
+   "required": [],
+   "recorded": {},
+   "missing": [],
+   "rule": "every flag needs a written disposition; redesign the difficulty, never remove a fairness link"
+  }
+ },
+ "forecast": {
+  "status": "not run",
+  "note": "advisory: pre-register a forecast with tools/hardness_forecast.py --preregister"
+ }
+}

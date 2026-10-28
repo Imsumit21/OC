@@ -1,0 +1,74 @@
+--- a/tools/selftest_sandbox.py
++++ b/tools/selftest_sandbox.py
+@@ -61,12 +61,22 @@
+ ENV_FLAG = "TA_SELFTEST_SANDBOX"
+ LINKED = ("Evals", "HarmonyGames_GitHub", "HarmonyGames_Gmail", "HarmonyGames_Other_Services")
+ COPY = ("tools", "setup", "references", "playbooks", "skills", "Guide", "README.md", "support/examples",
+-        "support/hardness_ledger")
++        "support/hardness_ledger", "support/fixtures/surface_formats",
++        "support/fixtures/season_pass_rev13/00_Assigments.md")       # a V3 assignment for self-tests that need one
+ CACHE = Path("support") / "local_search" / "cache"
+ # The sandbox's copy of setup/local_search.py: the Evals helpers refuse a data file that resolves outside their root,
+ # so their root is the real workspace (data and Evals/ read in place), while their patched copies (LOCAL/tools) and
+ # caches (CACHE_REL) stay inside the sandbox. Both anchors must match exactly once, else the sandbox is not built;
+ # the path probe then asserts local_search.LOCAL, .TOOLS and .WORKSPACE/CACHE_REL resolve inside the sandbox.
++# The sandbox's copy of tools/task_context.py accepts the universe sources (manifest, service folders) in the real
++# workspace: the sandbox links them, and a link resolves outside the sandbox workspace, which the loader refuses. Only
++# these two read checks change; the KB paths (written) and DEFAULT_TASK stay the sandbox's.
++TASK_CONTEXT_PATCH = (
++    ("        if WORKSPACE not in manifest_path.parents:\n",
++     "        if WORKSPACE not in manifest_path.parents and Path({ws!r}) not in manifest_path.parents:  # selftest_sandbox\n"),
++    ("        outside = [s for s, p in paths.items() if WORKSPACE not in p.parents]\n",
++     "        outside = [s for s, p in paths.items() if WORKSPACE not in p.parents and Path({ws!r}) not in p.parents]"
++     "  # selftest_sandbox\n"))
+ LOCAL_SEARCH_PATCH = (("WORKSPACE = BUNDLE.parent ", "WORKSPACE = Path({ws!r})  # selftest_sandbox: the real workspace "),
+                       ('CACHE_REL = f"{BUNDLE.name}/support/local_search/cache"',
+                        'CACHE_REL = str((LOCAL / "cache").relative_to(WORKSPACE))  # selftest_sandbox: inside the sandbox'))
+@@ -141,10 +151,12 @@
+ class Sandbox:
+     """A throwaway workspace under the scratch root (see the module docstring)."""
+ 
+-    def __init__(self, layout: str = "live", source: Path = BUNDLE, linked: dict | None = None, keep: bool = False):
++    def __init__(self, layout: str = "live", source: Path = BUNDLE, linked: dict | None = None, keep: bool = False,
++                 ignore_newer: tuple = ()):
+         if layout not in ("live", "staged"):
+             raise ValueError(f"layout {layout!r}: live or staged")
+         self.layout, self.source, self.keep = layout, source, keep
++        self.ignore_newer = tuple(ignore_newer)     # externally edited input folders (never read by the calling test)
+         self.linked = linked if linked is not None else {n: source.parent / n for n in LINKED}
+         scratch = source / "support" / "scratch"
+         scratch.mkdir(parents=True, exist_ok=True)
+@@ -180,14 +192,15 @@
+             elif src.is_file():
+                 dst.parent.mkdir(parents=True, exist_ok=True)
+                 shutil.copy2(src, dst)
+-        ls = self.bundle / "setup" / "local_search.py"
+-        if ls.is_file():
+-            text = ls.read_text()
+-            for old, new in LOCAL_SEARCH_PATCH:
+-                if text.count(old) != 1:
+-                    raise Leak(f"setup/local_search.py: patch anchor {old!r} found {text.count(old)} time(s), not once")
+-                text = text.replace(old, new.format(ws=str(self.source.parent.resolve())))
+-            ls.write_text(text)
++        for rel, patch in (("setup/local_search.py", LOCAL_SEARCH_PATCH), ("tools/task_context.py", TASK_CONTEXT_PATCH)):
++            ls = self.bundle / rel
++            if ls.is_file():
++                text = ls.read_text()
++                for old, new in patch:
++                    if text.count(old) != 1:
++                        raise Leak(f"{rel}: patch anchor {old!r} found {text.count(old)} time(s), not once")
++                    text = text.replace(old, new.format(ws=str(self.source.parent.resolve())))
++                ls.write_text(text)
+         cache = self.bundle / CACHE
+         cache.mkdir(parents=True, exist_ok=True)
+         for f in sorted((self.source / CACHE).glob("*.json")):
+@@ -234,7 +247,8 @@
+         r = subprocess.run(["find", *real, "-newer", str(self.marker)], capture_output=True, text=True, timeout=1800)
+         if r.returncode != 0:
+             raise Leak(f"find failed: {r.stderr.strip()[-300:]}")
+-        return [ln for ln in r.stdout.splitlines() if ln.strip()]
++        return [ln for ln in r.stdout.splitlines() if ln.strip()
++                and not any(f"/{x.strip('/')}" in ln for x in self.ignore_newer)]
+ 
+     def run(self, argv: list, *, quiet: bool = False) -> int:
+         """Run tools/<argv[0]> with argv[1:] inside the sandbox; raises Leak on an outside path or a linked write."""

@@ -9,7 +9,8 @@ input, stdlib only (Python 3.9). Run from the workspace root:
 
   python3 Task_Authoring/tools/stage_gate.py <stage> <task_dir> [--json] [--rerun all|lint] [--paste]
   python3 Task_Authoring/tools/stage_gate.py --list
-  python3 Task_Authoring/tools/stage_gate.py --self-test
+  python3 Task_Authoring/tools/stage_gate.py --self-test     (reruns itself inside a tools/selftest_sandbox.py
+              workspace, so the cache writers it reaches never write a shared file; scratch: support/scratch/)
 
 <stage>     scenario · injection · hardening · reference-files · error-async · prompt-writing ·
             prompt-check · humantime · oe-writing · oe-check · rubric-writing · rubric-check ·
@@ -65,6 +66,27 @@ CHECK FAMILIES (each check prints PASS / FAIL / WARN / SKIP with file:line locat
                 every stage-recorded digest, no PROVISIONAL/UNRESOLVED/UNVERIFIED marker, OE solvability
                 SUPPORTED_BY_OE, difficulty gates clear, 06_PreCheck_Trajectory/trajectory.json present. Writes 13_Release_Gate.txt.
 
+Fold-hardening families (plans/Fold_Hardening_Into_Scenario_And_Injection.md §4.2, §8):
+  surface.*     scenario: Working_Files/01_Gradable_Surface.json present and valid under tools/gradable_surface.py
+                (structure, 1/3/5 work-kind weights, <= 5 samples per group plus a volume row, exceptions an authority
+                singles out, no fact in >= 3 slots, known mechanism ids: each printed with its basis). blocking
+                The geometry (mechanism share, always-pass share) is reported, never gated.
+  surface.coverage  rubric-writing / rubric-check: when the surface exists, every slot has a covering row or a
+                written disposition (gate 17, following missing_coverage).                          blocking
+  tool.redteam_dual  scenario: both reviews ran (a tool-error stub such as "set REDTEAM_MODEL" is not a review), or a
+                `RED TEAM FALLBACK: <who reviewed instead and why>` line is recorded. No silent skip. blocking
+  solver.* mutation.* geometry.*  injection: Working_Files/01c_Preflight_Report.json (tools/preflight_report.py) bound by
+                sha256 to the current SQL, solver, surface, manifest and dispositions; solver contract PASS; a written
+                disposition for every mutation result (01c_Dispositions.json); geometry U > 1 - cap. --rerun all re-runs
+                the solver contract and the geometry in-process.                                  blocking
+  geometry.margin · liveness.* · forecast.*  L_max >= (1 - cap) + 0.10, a written disposition for every liveness
+                flag, a pre-registered forecast (UNCALIBRATED).                                    advisory (WARN)
+  revise.*      scenario --revise (S0r): when a /create-hardening MODE B report exists, the design's revision-intake
+                section dispositions every proposed node verdict, keeps every export BOUND on evidence to its own
+                revision (trajectory_ledger.binding_ok: never an unchecked SINGLE) or marked historical, cites
+                run steps (evidence.register_run_step) and meets the counter-reading minimum - both copied from
+                `hardening`, which keeps them.                                                      blocking
+
 Digests: `<file>#<12 hex>` = sha256 of the file with every STAGE GATE output line removed,
 so pasting the block does not change the digest but any later edit does.
 
@@ -80,6 +102,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -88,7 +111,7 @@ WS = BUNDLE.parent
 KB = BUNDLE / "references" / "universe_kb"
 SPEC = BUNDLE / "references" / "Hardness_Manifest_Spec.md"
 FIXTURES = BUNDLE / "support" / "examples" / "calibration" / "stage_gate"
-SELFTEST_TMP = BUNDLE / "support" / "local_search" / "cache" / "stage_gate_selftest"
+SELFTEST_TMP = BUNDLE / "support" / "scratch"     # the self-test scratch root: one mkdtemp folder per run, removed
 PY = sys.executable or "python3"
 
 # ------------------------------------------------------------------ patterns
@@ -158,8 +181,10 @@ HAZ_CATS = {"T": "temporal", "S": "semantic", "R": "referential", "Q": "quantita
 INT_SOURCE_SCHEMA = {"github": "github", "linear": "linear", "gcal": "gcal", "google_drive": "gdrive", "slack": "slack",
                      "trello": "trello", "gmail": "gmail"}
 SLOT_ORDER = ["00_Assigments.md", "01b_Redteam_Review.md", "01b_Redteam_Review.second.md",
-              "01_Scenario_Design.md", "01_Hardness_Manifest.draft.json", "01_Universe_Inject.sql", "01_Hardness_Manifest.json",
-              "01_Grounding_Dossier.md", "01a_Hardening_Report.md", "03_Error_Async_Config.txt", "02_Reference_Files",
+              "01_Scenario_Design.md", "01_Hardness_Manifest.draft.json", "01_Gradable_Surface.json",
+              "01_Universe_Inject.sql", "01_Hardness_Manifest.json", "01_Grounding_Dossier.md", "solver/solver.py",
+              "01c_Dispositions.json", "01c_Preflight_Report.json", "01c_Preflight_Report.md",
+              "01a_Hardening_Report.md", "03_Error_Async_Config.txt", "02_Reference_Files",
               "02_Reference_Files_Manifest.md", "04_Prompt_Writing_Brief.md", "04_Prompt.txt", "04_Prompt_Check.md",
               "06_PreCheck_Trajectory", "07_Baseline_Trajectories", "08_OE_Writing_Ledger.md",
               "08_Oracle_Events.md", "05_Human_Time_Worksheet.md", "08_OE_Check.md", "09_Rubric_Writing_Plan.md", "09_Rubrics.json",
@@ -1728,13 +1753,14 @@ def difficulty_command(ctx, *args):
 
 
 def v3_precheck(ctx):
-    from difficulty_stats import is_opus_55, trajectory_models, read_trajectory
+    from difficulty_stats import precheck_provenance, trajectory_models, read_trajectory   # one owner
     trajectory = ctx.p("06_PreCheck_Trajectory") / "trajectory.json"
     try:
         data = json.loads(trajectory.read_text())
         models = trajectory_models(trajectory)
+        precheck = precheck_provenance(data if isinstance(data, list) else [])
         status, reason, _ = read_trajectory(trajectory)
-        ok = bool(data) and status == "completed" and bool(models) and all(is_opus_55(m) for m in models)
+        ok = bool(data) and status == "completed" and precheck["ok"]
     except (OSError, ValueError, TypeError) as exc:
         models, ok = [], False
         ctx.add("v3.precheck_model", False, f"pre-check trajectory cannot be verified: {exc}")
@@ -1776,7 +1802,9 @@ def v3_checks(ctx):
                                          lambda name: file_digest(ctx.p(name)) if ctx.p(name).exists() else None,
                                          reachable, WS):
         ctx.add(cid, ok, detail)
-    if ctx.stage == "release" or (ctx.stage == "hardening" and (ctx.p("06_PreCheck_Trajectory") / "trajectory.json").exists()):
+    # the pre-check model check stays on the release path only (plan §8): in revision intake it would block a repair on a
+    # historical export
+    if ctx.stage == "release":
         v3_precheck(ctx)
 
 
@@ -1851,6 +1879,300 @@ def st_release(ctx):
     ctx.add("release.precheck_trajectory", okt, "06_PreCheck_Trajectory/trajectory.json present (model provenance checked separately for V3)" if okt else
             "06_PreCheck_Trajectory/trajectory.json missing, empty or not JSON — the pre-check run is required before release")
 
+# ------------------------------------------------------------------ fold-hardening families (plan §4.2, §8)
+
+SURFACE = "01_Gradable_Surface.json"
+PREFLIGHT = "01c_Preflight_Report.json"
+DISPOSITIONS = "01c_Dispositions.json"
+RX_REDTEAM_STUB = re.compile(r"set REDTEAM_MODEL|pass --model|budget_exceeded|\bHTTP \d{3}\b|^redteam_review:\s*(?:error|failed)",
+                             re.I | re.M)
+RX_REDTEAM_FALLBACK = re.compile(r"^\s*(?:[-*>]\s*)?RED TEAM FALLBACK:\s*(\S.{24,})$", re.M)
+RX_LEDGER_ID = re.compile(r"\bhev_[0-9a-f]{16}\b")
+REVISE_DISPOSITIONS = re.compile(r"\b(?:keep|purge|rebuild)\b", re.I)
+
+
+def fold_tool(name):
+    """A fold-hardening tool imported in-process (they live beside this file in tools/)."""
+    if str(HERE) not in sys.path:
+        sys.path.insert(0, str(HERE))
+    return __import__(name)
+
+
+def _sha_file(p: Path):
+    return hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None
+
+
+def redteam(ctx, doc):
+    files = [ctx.p("01b_Redteam_Review.md"), ctx.p("01b_Redteam_Review.second.md")]
+    missing = [p.name for p in files if not p.exists()]
+    stubs = [p.name for p in files if p.exists() and RX_REDTEAM_STUB.search(p.read_text(errors="replace")[:4000])]
+    fallback = RX_REDTEAM_FALLBACK.search(doc.text)
+    ran = not missing and not stubs
+    why = "; ".join(([f"missing {', '.join(missing)}"] if missing else []) +
+                    ([f"tool-error stub instead of a review in {', '.join(stubs)}"] if stubs else []))
+    ctx.add("tool.redteam_dual", ran or bool(fallback),
+            "dual red team present (01b_Redteam_Review.md + .second.md)" if ran else
+            (f"red team did not run ({why}); explicit fallback recorded: {fallback.group(1)[:90]}" if fallback else
+             f"red team did not run ({why}) — run tools/redteam_review.py --dual with REDTEAM_* set, or record "
+             f"'RED TEAM FALLBACK: <who reviewed instead, and why>' in the design (no silent skip, plan §4.2)"))
+
+
+def surface_check(ctx):
+    gs = fold_tool("gradable_surface")
+    try:
+        surface = gs.load(ctx.p(SURFACE))
+    except (OSError, ValueError) as exc:
+        ctx.add("surface.valid", False, f"{SURFACE} unreadable: {exc}")
+        return
+    r = gs.validate(surface, load_manifest(ctx, "01_Hardness_Manifest.draft.json"))
+    fails = [f for f in r["findings"] if f["severity"] == "FAIL"]
+    rep = r["report"]
+    # blocks on the V3 rubric rules (structure, weights, duplicates, sampling, exceptions, mechanisms), each with its
+    # basis; the geometry (mechanism share, always-pass share) is reported and never gated (decision 2026-10-25)
+    fams = sorted({f["check"].split(".")[0] for f in fails})
+    ctx.add("surface.valid", not fails,
+            (f"{len(fails)} gradable-surface defect(s): " + "; ".join(
+                f"{f['check']}{' ' + f['slot'] if f['slot'] else ''}: {f['detail'][:90]}" for f in fails[:4])
+             + (f"; also {', '.join(sorted({f['check'] for f in fails[4:]}))}" if len(fails) > 4 else "")
+             + " — basis: " + " | ".join(f"{fam}: {gs.FAMILY_BASIS[fam]}" for fam in fams)) if fails else
+            f"{rep['slots']} slots, weight {rep['total_weight']}; geometry report-only, never gated: mechanism share "
+            f"{rep['mechanism_share']:.0%}, always-pass share {rep['always_pass_share_if_no_mechanism_lands']:.0%}")
+
+
+SURFACE_DISPOSITIONS = ("sampled out", "duplicate fact", "not incorporated", "unobservable")
+RX_SURFACE_ROW = {"plan": re.compile(r"\bP-?\d+\b"), "check": re.compile(r"\bC-?\d+\b")}
+RX_PLACEHOLDER_CELL = re.compile(r"^\s*(?:—|–|-|n/?a|none|tbd|covered|dispositioned|\.\.\.|…)?\s*$", re.I)
+
+
+def surface_coverage(ctx, doc, mode):
+    """Gate 17 (plan §4.6, following missing_coverage): when Working_Files/01_Gradable_Surface.json exists, every slot
+    has a line naming a covering row (plan §G: P-n; check `Coverage — gradable surface`: C-n) or a written disposition
+    with its reason: sampled out, duplicate fact, not incorporated, unobservable (each followed by why), or another
+    reason with its evidence (a record id, row id or gate number). A slot with neither, a `gap`, a slot the table
+    misses and a line for a slot the surface doesn't have all block. The mechanism share is reported by the author,
+    never gated."""
+    sp = ctx.p(SURFACE)
+    if not sp.exists():
+        ctx.add("surface.coverage", True, f"no {SURFACE}: no slot to account for (gate 17)", status="SKIP")
+        return
+    try:
+        surface = fold_tool("gradable_surface").load(sp)
+    except (OSError, ValueError) as exc:
+        ctx.add("surface.coverage", False, f"{SURFACE} unreadable: {exc}")
+        return
+    want = [s.get("id") for s in surface.get("slots") or [] if s.get("id")]
+    rx = r"gradable-surface coverage" if mode == "plan" else r"coverage\W+gradable surface"
+    where = "§G" if mode == "plan" else "'Coverage — gradable surface'"
+    lines, unknown = {}, []
+    for i, c, t in rows_in(doc, rx):
+        sid = (c[0] if c else "").strip(" `*")
+        if sid in want:
+            lines.setdefault(sid, []).append((i, c, t))
+        elif sid:
+            unknown.append(sid)
+    covered, disposed, bad = [], [], []
+    for sid in want:
+        verdicts = []
+        for i, c, t in lines.get(sid, []):
+            if mode == "plan":
+                cov, disp, state = t.cell(c, t.col(r"covered by")), t.cell(c, t.col(r"disposition")), ""
+            else:
+                cov, disp = t.cell(c, t.col(r"^criteria")), t.cell(c, t.col(r"reason"))
+                state = t.cell(c, t.col(r"covered|gap"))
+            if re.search(r"\bgap\b|\bmissing\b|\buncovered\b", state, re.I):
+                verdicts.append("gap")
+            elif RX_SURFACE_ROW[mode].search(cov) and not re.search(r"dispositioned", state, re.I):
+                verdicts.append("covered")
+            elif not RX_PLACEHOLDER_CELL.match(disp):
+                label = next((d for d in SURFACE_DISPOSITIONS if d in disp.lower()), None)
+                rest = disp.lower().replace(label, " ") if label else disp
+                words = len(re.findall(r"[A-Za-z]{2,}", rest))
+                evidenced = bool(RX_ID.search(disp) or re.search(r"\bgate\s*\d+|\b[PCSF]-?\d+\b", disp))
+                verdicts.append("dispositioned" if words >= 3 and (label or evidenced) else "reasonless")
+            else:
+                verdicts.append("neither")
+        if "covered" in verdicts:
+            covered.append(sid)
+        elif "dispositioned" in verdicts:
+            disposed.append(sid)
+        else:
+            bad.append(f"{sid} ({verdicts[0] if verdicts else 'no line'})")
+    ok = not bad and not unknown
+    ctx.add("surface.coverage", ok,
+            f"{len(want)} surface slot(s): {len(covered)} covered, {len(disposed)} dispositioned in {where} (gate 17)"
+            if ok else (f"gate 17 (missing_coverage): slots neither covered nor dispositioned with a reason in {where}: "
+                        f"{bad[:6]}" + (f"; lines for slots the surface doesn't have (stale): {unknown[:4]}" if unknown
+                                        else "")),
+            [doc.loc(i) for sid in lines for i, _, _ in lines[sid]][:6])
+
+
+def ledger_has(ids, kind):
+    try:
+        led = fold_tool("hardness_ledger").Ledger()
+    except Exception as exc:  # noqa: BLE001 - an unreadable ledger is reported, not raised
+        return set(), f"ledger unreadable: {exc}"
+    return {i for i in ids if (led.by_id.get(i) or {}).get("kind") == kind}, None
+
+
+def prior_forecast(ctx, doc):
+    found, err = ledger_has(set(RX_LEDGER_ID.findall(doc.text)), "forecast")
+    ctx.add("forecast.preregistered", bool(found),
+            f"prior forecast pre-registered in the ledger: {sorted(found)[:2]} (UNCALIBRATED, advisory)" if found else
+            (err or "no pre-registered forecast id (hev_…) cited: run tools/hardness_forecast.py forecast --design "
+                    "--preregister (S9b, advisory)"), block=False)
+
+
+def revise(ctx, doc):
+    """S0r: copied from st_hardening (register run steps, counter-reading minimum) plus verdict dispositions and
+    revision binding. Returns the LANDED/LEAKED count the self-review minimum is raised to cover."""
+    rep = ctx.doc("01a_Hardening_Report.md")
+    mm = re.search(r"MODE\s*([AB])", rep.text) if rep.exists else None
+    secs = [s for s in doc.sections(r"revision intake") if s.content_lines()]
+    if not (mm and mm.group(1) == "B") and not secs:
+        ctx.add("revise.intake", True, "no MODE B report and no revision-intake section: nothing to take in", status="SKIP")
+        return 0
+    if not secs:
+        ctx.add("revise.intake", False, "a /create-hardening MODE B report exists: 01_Scenario_Design.md needs a "
+                "'Revision intake' section (S0r) that dispositions its proposed verdicts")
+        return 0
+    text = "\n".join(s.text(tools=False) for s in secs)
+    vm = re.search(r"([\w./-]*node_verdicts[\w.-]*\.json)", text)
+    verdicts = None
+    if vm:
+        try:
+            verdicts = json.loads(ctx.p(vm.group(1)).read_text())
+        except (OSError, ValueError):
+            verdicts = None
+    ctx.add("revise.intake", verdicts is not None,
+            f"revision intake consumes {vm.group(1)}" if verdicts is not None else
+            "the revision-intake section must name the node_verdicts.json it dispositions (run_forensics/<revision>/), "
+            "and the file must exist")
+    if verdicts is None:
+        return 0
+    rows = {}
+    for s in secs:
+        for t in s.tables():
+            for i, cells in t.rows:
+                line = " | ".join(cells)
+                for rule in {r for run in verdicts.get("runs", {}).values() for r in run.get("rules", {})}:
+                    if re.search(r"(?<![\w-])" + re.escape(rule) + r"(?![\w-])", line):
+                        rows.setdefault(rule, []).append((i, line))
+    rules = sorted({r for run in verdicts.get("runs", {}).values() for r in run.get("rules", {})})
+    flagged = sorted({r for run in verdicts.get("runs", {}).values() for r, v in run.get("rules", {}).items() if v.get("flags")})
+    missing = [r for r in rules if r not in rows]
+    undisposed = [r for r in rules if r in rows and not any(REVISE_DISPOSITIONS.search(l) for _, l in rows[r])]
+    unconfirmed = [r for r in flagged if r in rows and not any(re.search(r"confounded", l, re.I) for _, l in rows[r])]
+    ctx.add("revise.verdict_dispositions", not (missing or undisposed or unconfirmed),
+            (f"node verdicts without a disposition row: {missing[:6]}; rows without keep/purge/rebuild: {undisposed[:6]}; "
+             f"CONFOUNDED candidates neither confirmed nor rejected: {unconfirmed[:6]}") if (missing or undisposed or unconfirmed)
+            else f"{len(rules)} proposed node verdict(s) dispositioned; {len(flagged)} CONFOUNDED candidate(s) addressed")
+    # bound on evidence only (trajectory_ledger.binding_ok owns the rule): an unchecked SINGLE, a BOUND without its
+    # basis and seen needles, INSUFFICIENT, AMBIGUOUS and UNBOUND all need the export marked historical
+    tl = fold_tool("trajectory_ledger")
+    loose = []
+    for lab, run in verdicts.get("runs", {}).items():
+        ok_, why = tl.binding_ok(run.get("binding"))
+        if not ok_ and not re.search(re.escape(lab) + r"[^\n]*historical|historical[^\n]*" + re.escape(lab), text, re.I):
+            loose.append(f"{lab}: {why}")
+    ctx.add("revise.revision_binding", not loose,
+            f"exports not bound to their revision on evidence and not marked historical: {loose[:4]}" if loose else
+            "every export is bound on evidence to the revision it ran on, or marked historical (historical evidence "
+            "never certifies a revision)")
+    evidence(ctx, doc, "register_run_step", r"revision intake", 1.0,
+             pattern=re.compile(r"(?:run-?\d|rollout\s*\d|opus|precheck)[^|]*?(?:step|event|call)\s*#?\d+|"
+                                r"(?:step|event|call)\s*#?\d+[^|]*?(?:run-?\d|rollout\s*\d|opus|precheck)", re.I))
+    return len(re.findall(r"\b(?:LANDED|LEAKED)\b", text))
+
+
+def _view(ctx):
+    return ("V3", ctx.context["difficulty_mode"]) if ctx.v3 and ctx.context else ("V2", None)
+
+
+def preflight_checks(ctx):
+    try:
+        rep = json.loads(ctx.p(PREFLIGHT).read_text())
+    except (OSError, ValueError) as exc:
+        ctx.add("structure.preflight", False, f"{PREFLIGHT} unreadable: {exc} — run tools/preflight_report.py --task-dir")
+        return
+    if rep.get("kind") != "PREFLIGHT_REPORT":
+        ctx.add("structure.preflight", False, f"{PREFLIGHT} is not a PREFLIGHT_REPORT")
+        return
+    files = {"sql": "01_Universe_Inject.sql", "solver": "solver/solver.py", "surface": SURFACE,
+             "manifest": "01_Hardness_Manifest.json", "dispositions": DISPOSITIONS}
+    bound = rep.get("bound_to") or {}
+    stale = [f"{k} ({'missing' if _sha_file(ctx.p(f)) is None else 'changed'} since the preflight)"
+             for k, f in files.items() if (bound.get(k) or {}).get("sha256") != _sha_file(ctx.p(f))]
+    ctx.add("structure.preflight", not stale, ("preflight is stale: " + "; ".join(stale) + " — re-run "
+                                                "tools/preflight_report.py") if stale else
+            f"{PREFLIGHT} bound by sha256 to the current SQL, solver, surface, manifest and dispositions")
+    # S4b solver contract (blocking)
+    sc = rep.get("solver_contract") or {}
+    ok, detail = sc.get("verdict") == "PASS", f"solver contract {sc.get('verdict')} in the preflight"
+    if ok and ctx.rerun == "all":
+        ok_ = fold_tool("oracle_kit")
+        r = ok_.contract(ctx.p("solver/solver.py"), ctx.p("01_Universe_Inject.sql").read_text(),
+                         manifest=load_manifest(ctx), surface=json.loads(ctx.p(SURFACE).read_text()), task_dir=ctx.td)
+        ok, detail = r["verdict"] == "PASS", f"solver contract re-run {r['verdict']}" + (
+            "" if r["verdict"] == "PASS" else ": " + "; ".join(c["check"] for c in r["checks"] if c["status"] == "FAIL"))
+    elif not ok:
+        detail += ": " + "; ".join(c["check"] for c in sc.get("checks") or [] if c.get("status") == "FAIL")
+    ctx.add("solver.contract", ok, detail)
+    # S5b every mutation result dispositioned (blocking), recomputed from the author's file
+    dm = fold_tool("difficulty_mutation")
+    required = ((rep.get("mutation") or {}).get("dispositions") or {}).get("required") or []
+    try:
+        recorded = json.loads(ctx.p(DISPOSITIONS).read_text())
+    except (OSError, ValueError):
+        recorded = {}
+    mut = recorded.get("mutation") or {}
+    missing = [i for i in required if i not in mut]
+    bad = [i for i in required if i in mut and (not isinstance(mut[i], dict) or mut[i].get("disposition") not in dm.DISPOSITIONS
+                                                or not str(mut[i].get("reason") or "").strip())]
+    ctx.add("mutation.dispositions", bool(required) and not missing and not bad,
+            (f"{len(missing)} mutation result(s) without a written disposition: {missing[:6]}" if missing else "")
+            + (f"; malformed (needs one of {dm.DISPOSITIONS} and a reason): {bad[:4]}" if bad else "")
+            + ("the preflight lists no mutation results" if not required else "") if (missing or bad or not required) else
+            f"{len(required)} mutation and intervention results each carry a written disposition ({DISPOSITIONS})")
+    # S5b' geometry (U blocking, L_max advisory) in the task's gate view
+    view, mode = _view(ctx)
+    geo = rep.get("geometry") or {}
+    gv = (geo.get("views") or {}).get(view)
+    gdisp = recorded.get("geometry") or {}
+
+    def u_ok(v):                       # M2: an UNVERIFIED U passes only with its written disposition (geometry.U)
+        return v["U"]["verdict"] == "PASS" or (v["U"]["verdict"] == "UNVERIFIED" and not dm.geometry_dispositions(
+            {"views": {view: v}}, gdisp)["missing"])
+    ok = bool(gv) and u_ok(gv)
+    detail = (f"U {geo.get('U', 0):.3f} ({geo.get('flippable_weight')}/{geo.get('total_weight')}) vs 1 - cap "
+              f"{gv['needs_loss_above']:.2f} ({view}{' ' + mode if mode else ''}): {gv['U']['verdict']} "
+              f"(bound {gv['U'].get('bound_verdict')})") if gv else (
+        f"the preflight has no {view} geometry view")
+    if gv and ctx.rerun == "all":
+        mod = fold_tool("oracle_kit").load_solver(ctx.p("solver/solver.py"))
+        eng = dm.Engine(mod, ctx.p("01_Universe_Inject.sql").read_text())
+        surface = json.loads(ctx.p(SURFACE).read_text())
+        g = dm.geometry(eng, dm.Slots(surface["slots"], surface), surface,
+                        dm.caps_for(view.lower(), ctx.context if ctx.v3 else None))
+        ok = u_ok(g["views"][view])
+        detail += (f"; re-run U {g['U']:.3f} {g['views'][view]['U']['verdict']} "
+                   f"(bound {g['views'][view]['U'].get('bound_verdict')})")
+    ctx.add("geometry.upper_bound", ok, detail)
+    lm = (gv or {}).get("L_max", {}).get("verdict")
+    ctx.add("geometry.margin", lm == "OK", f"L_max {(geo.get('L_max') or {}).get('value')} vs (1 - cap) + 0.10: {lm} "
+            "(advisory: the margin is a judgment, not a proof)", block=False)
+    live = (rep.get("liveness") or {}).get("dispositions") or {}
+    lrec = recorded.get("liveness") or {}
+    lmiss = [i for i in live.get("required") or [] if i not in lrec]
+    ctx.add("liveness.dispositions", not lmiss, f"{len(lmiss)} liveness flag(s) without a written disposition: "
+            f"{lmiss[:6]} (advisory; redesign the difficulty, never remove a fairness link)" if lmiss else
+            f"every liveness flag dispositioned ({len(live.get('required') or [])} flag(s))", block=False)
+    fc = rep.get("forecast") or {}
+    pid = (fc.get("preregistration") or {}).get("id") if isinstance(fc.get("preregistration"), dict) else None
+    found, err = ledger_has({pid} if pid else set(), "forecast")
+    ctx.add("forecast.preregistered", bool(found), f"forecast {pid} pre-registered in the ledger (UNCALIBRATED)" if found
+            else (err or f"forecast {fc.get('status', 'not run')}: pre-register it with tools/hardness_forecast.py "
+                         "--preregister before the platform run (advisory)"), block=False)
+
 # ------------------------------------------------------------------ stages
 
 
@@ -1888,16 +2210,14 @@ def st_scenario(ctx):
     kb_integrations(ctx, doc, r"integration|companion", services)
     kb_storyline(ctx, doc)
     anchor_naming(ctx, doc, "01_Hardness_Manifest.draft.json", required=True)
-    red = [ctx.p("01b_Redteam_Review.md").exists(), ctx.p("01b_Redteam_Review.second.md").exists()]
-    unavailable = re.search(r"RED TEAM UNAVAILABLE:[^\n]*(?:budget_exceeded|HTTP \d{3}|error)", doc.text, re.I)
-    ctx.add("tool.redteam_dual", all(red) or bool(unavailable),
-            "dual red team present (01b_Redteam_Review.md + .second.md)" if all(red) else
-            ("red team unavailable, error recorded" if unavailable else
-             f"redteam_review.py --dual outputs missing: {'01b_Redteam_Review.md ' if not red[0] else ''}"
-             f"{'01b_Redteam_Review.second.md' if not red[1] else ''}"), block=not unavailable)
+    redteam(ctx, doc)
+    surface_check(ctx)
+    prior_forecast(ctx, doc)
+    n_rev = revise(ctx, doc)
     reach_check(ctx, doc, "scenario", lb_lines(doc, [r"reach table|load-bearing"]), None, planned_ok=True)
     n_dp = len(rows_in(doc, r"two-reading|decision point"))
-    self_review(ctx, doc, 7 + n_dp, [(n, rx) for n, rx in QC_CATS] + [("hardness_gate output", r"HARDNESS GATE")])
+    self_review(ctx, doc, max(7 + n_dp, n_rev + 1),
+                [(n, rx) for n, rx in QC_CATS] + [("hardness_gate output", r"HARDNESS GATE")])
 
 
 def census(ctx, doc):
@@ -1979,6 +2299,7 @@ def st_injection(ctx):
                      "--profile", prof, "--json"], r"HARDNESS GATE \((?:extreme|normal)\): (PASS|FAIL)", doc,
                     "hardness_gate (SQL)")
     design_delta(ctx)
+    preflight_checks(ctx)
     # persona_view check-sql
     m = re.search(r"CHECK-SQL as \S+ <([^>]+)>", doc.text)
     mv = re.search(r"^verdict: (PASS|FAIL|REPORT-ONLY)", doc.text, re.M)
@@ -2353,6 +2674,7 @@ def st_rubric_plan(ctx):
     plan_diversity(ctx, doc, A, A2, facts)
     plan_exact_set(ctx, doc, A)
     shortcut_check(ctx, doc)
+    surface_coverage(ctx, doc, "plan")
     self_review(ctx, doc, max(1, len(A)), [("predicted all-fail re-check", r"all-fail"),
                                            ("re-verified", r"re-?verif|hg\.py")])
 
@@ -2382,6 +2704,7 @@ def st_rubric_check(ctx):
     ctx.add("structure.readiness", bool(re.search(r"Readiness for /rubric:\s*(FAIL-RISK|NON-FAIL-RISK|CLEAN)", doc.text)),
             "readiness line " + ("present" if re.search(r"Readiness for /rubric:", doc.text) else "missing"))
     rubric_validity(ctx, doc)
+    surface_coverage(ctx, doc, "check")
     self_review(ctx, doc, n or 1, [(f"C{k}", rf"\bC{k}\b") for k in range(1, (n or 0) + 1)] +
                 [("re-verified", r"re-?verif|hg\.py")])
 
@@ -2483,13 +2806,15 @@ def st_difficulty(ctx):
 
 STAGES = {
     "scenario": dict(fn=st_scenario, primary="01_Scenario_Design.md",
-                     outputs=["01_Scenario_Design.md", "01_Hardness_Manifest.draft.json"],
+                     outputs=["01_Scenario_Design.md", "01_Hardness_Manifest.draft.json", SURFACE],
                      inputs=["00_Assigments.md"], optional=[], upstream=[]),
     # injection reads only upstream design slots: never reference-files / error-async / hardening outputs (their stages
-    # need an injection PASS, so consuming them would make a freshness cycle — red team A, R1 #18)
+    # need an injection PASS, so consuming them would make a freshness cycle — red team A, R1 #18). For the same reason
+    # injection never rewrites the scenario's gradable surface: expected values and flipped_by go into the preflight.
     "injection": dict(fn=st_injection, primary="01_Grounding_Dossier.md",
-                      outputs=["01_Universe_Inject.sql", "01_Hardness_Manifest.json", "01_Grounding_Dossier.md"],
-                      inputs=["00_Assigments.md", "01_Scenario_Design.md", "01_Hardness_Manifest.draft.json"],
+                      outputs=["01_Universe_Inject.sql", "01_Hardness_Manifest.json", "01_Grounding_Dossier.md",
+                               "solver/solver.py", DISPOSITIONS, PREFLIGHT],
+                      inputs=["00_Assigments.md", "01_Scenario_Design.md", "01_Hardness_Manifest.draft.json", SURFACE],
                       optional=[], upstream=[("scenario", "01_Scenario_Design.md")]),
     "hardening": dict(fn=st_hardening, primary="01a_Hardening_Report.md", outputs=["01a_Hardening_Report.md"],
                       inputs=["00_Assigments.md", "01_Grounding_Dossier.md"],
@@ -2690,16 +3015,31 @@ def _apply(dst: Path, mut: dict):
 
 
 def self_test(verbose=False) -> int:
+    """Outside a sandbox, rerun inside one (tools/selftest_sandbox.py): persona_view, base_check and hg.py write caches,
+    and the --rerun all cases start them as subprocesses. Inside, every scratch folder is a unique mkdtemp folder under
+    SELFTEST_TMP, removed afterwards."""
+    sb = fold_tool("selftest_sandbox")
+    if not sb.in_sandbox(BUNDLE):
+        return sb.run_isolated(["stage_gate.py", "--self-test"] + (["--verbose"] if verbose else []), source=BUNDLE)
+    SELFTEST_TMP.mkdir(parents=True, exist_ok=True)
+    tmp = Path(tempfile.mkdtemp(prefix="stage_gate_selftest_", dir=SELFTEST_TMP))
+    try:
+        return _self_test_cases(tmp, verbose)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _self_test_cases(tmp: Path, verbose=False) -> int:
     good = FIXTURES / "good"
     cases = json.loads((FIXTURES / "bad" / "cases.json").read_text())["cases"]
-    tmp = SELFTEST_TMP
-    tmp.mkdir(parents=True, exist_ok=True)
     fails, n = [], 0
     g = tmp / "good"
+    good_status, case_status = {}, {}
     for stage in STAGES:
         _prepare(g, good, stage)
         ctx = run_stage(stage, g, "lint", True)
         v = verdict_of(ctx, allow_partial=True)
+        good_status[stage] = {r["id"]: r["status"] for r in ctx.res}
         n += 1
         if v != "PASS":
             fails.append(f"good/{stage}: {v} — " + "; ".join(f"{r['id']}: {r['detail'][:120]}" for r in ctx.res
@@ -2714,13 +3054,27 @@ def self_test(verbose=False) -> int:
         ctx = run_stage(case["stage"], d, "lint", True)
         v = verdict_of(ctx, allow_partial=True)
         failed = {r["id"] for r in ctx.res if r["blocking"]}
-        missing = [e for e in case["expect"] if not any(f == e or f.startswith(e) for f in failed)]
+        status = case_status[case["name"]] = {r["id"]: r["status"] for r in ctx.res}
+        expect = case.get("expect") or []
+        missing = [e for e in expect if not any(f == e or f.startswith(e) for f in failed)]
+        # expect_detail: substrings a blocking check's detail must hold (which family of a check blocked)
+        details = " ".join(r["detail"] for r in ctx.res if r["blocking"])
+        missing += [f"detail:{d}" for d in case.get("expect_detail", []) if d not in details]
+        # expect_warn: the advisory check WARNs here and PASSes on the good stage (or a named baseline case), so
+        # the mutation caused it; expect_pass: a control the check accepts
+        base = case_status.get(case["baseline"], {}) if case.get("baseline") else good_status.get(case["stage"], {})
+        missing += [f"warn:{e}" for e in case.get("expect_warn", []) if status.get(e) != "WARN"]
+        missing += [f"baseline:{e} is {base.get(e)}" for e in case.get("expect_warn", []) if base.get(e) != "PASS"]
+        missing += [f"pass:{e} is {status.get(e)}" for e in case.get("expect_pass", []) if status.get(e) != "PASS"]
+        want = "FAIL" if expect else "PASS"
         n += 1
-        if v != "FAIL" or missing:
-            fails.append(f"bad/{case['name']} ({case['stage']}): verdict {v}, expected failing {case['expect']}, "
-                         f"got {sorted(failed)}")
+        if v != want or missing:
+            fails.append(f"bad/{case['name']} ({case['stage']}): verdict {v} (want {want}), expected failing {expect} "
+                         f"{case.get('expect_detail', '')}, WARN {case.get('expect_warn', [])}, PASS "
+                         f"{case.get('expect_pass', [])}; got failing {sorted(failed)}; missing {missing}")
         elif verbose:
-            print(f"  ok  bad/{case['name']} ({case['stage']}) FAIL on {sorted(failed & set(case['expect'])) or case['expect']}")
+            print(f"  ok  bad/{case['name']} ({case['stage']}) " + (f"FAIL on {sorted(failed & set(expect)) or expect}"
+                  if expect else f"PASS with WARN {case.get('expect_warn', [])} / PASS {case.get('expect_pass', [])}"))
     # re-run comparison: the good fixture pastes a hardness_gate PASS for a deliberately thin manifest; a full
     # re-run (--rerun all) must catch the false paste
     _prepare(g, good, "scenario")
@@ -2738,19 +3092,87 @@ def self_test(verbose=False) -> int:
         fails.append("rerun: prompt-check did not re-run hardness_gate for the tier's profile")
     elif verbose:
         print("  ok  rerun/prompt-check: tier hardness_gate --profile extreme re-run on the thin manifest → FAIL")
+    # S0r: a revision intake that dispositions every proposed verdict, keeps exports bound and cites run steps passes
+    _prepare(g, good, "scenario")
+    _revise_fixture(g)
+    ctx = run_stage("scenario", g, "lint", True)
+    n += 1
+    rev = [f"{r['id']}: {r['detail'][:100]}" for r in ctx.res if r["blocking"]]
+    if rev or not any(r["id"] == "revise.verdict_dispositions" and r["status"] == "PASS" for r in ctx.res):
+        fails.append(f"revise/scenario: a complete revision intake did not pass: {rev or 'revise checks did not run'}")
+    elif verbose:
+        print("  ok  revise/scenario: complete revision intake (dispositions, binding, run steps) → PASS")
+    # S0r: an export that is not bound on evidence passes only when the intake marks it historical
+    _prepare(g, good, "scenario")
+    hist = {"runs": {"run-1": REVISE_VERDICTS["runs"]["run-1"],
+                     "run-2": {"binding": {"verdict": "INSUFFICIENT", "bound_to": None, "basis": None,
+                                           "evidence": {"discriminating_seen": 0, "shared_seen": 40}},
+                               "rules": {"stale_count": {"verdict": "LEAKED", "flags": []}}}}}
+    _revise_fixture(g, hist, REVISE_SECTION + "\nrun-2 is historical: a revision-1 export kept for its LEAKED reading; it "
+                                              "certifies nothing about revision 2.\n")
+    ctx = run_stage("scenario", g, "lint", True)
+    n += 1
+    rb = [r for r in ctx.res if r["id"] == "revise.revision_binding"]
+    if not rb or rb[0]["blocking"]:
+        fails.append(f"revise/scenario: an INSUFFICIENT export marked historical was not accepted: {rb}")
+    elif verbose:
+        print("  ok  revise/scenario: INSUFFICIENT export marked historical → revise.revision_binding PASS")
+    # surface geometry is report-only: no slot mechanism at all (mechanism share 0 %) still passes surface.valid
+    _prepare(g, good, "scenario")
+    _apply(g, {"file": SURFACE, "find": ',\n   "mechanisms": ["stale_count"]}', "replace": "}"})
+    ctx = run_stage("scenario", g, "lint", True)
+    n += 1
+    sv = [r for r in ctx.res if r["id"] == "surface.valid"]
+    if not sv or sv[0]["blocking"] or "mechanism share 0%" not in sv[0]["detail"]:
+        fails.append(f"surface/scenario: a surface with no mechanism (geometry only) blocked or was not reported: {sv}")
+    elif verbose:
+        print("  ok  surface/scenario: mechanism share 0 % (geometry) reported, surface.valid PASS (never gated)")
+    # red team: a recorded fallback replaces a review that could not run; a silent skip never does (cases.json)
+    _prepare(g, good, "scenario")
+    _apply(g, {"delete": "01b_Redteam_Review.second.md"})
+    _apply(g, {"file": "01_Scenario_Design.md", "append": "\nRED TEAM FALLBACK: REDTEAM_MODEL unavailable (HTTP 503); "
+                                                         "a second author reviewed the shortcut audit by hand on 2026-10-25\n"})
+    ctx = run_stage("scenario", g, "lint", True)
+    n += 1
+    red = [r for r in ctx.res if r["id"] == "tool.redteam_dual"]
+    if not red or red[0]["blocking"]:
+        fails.append("redteam/scenario: a recorded RED TEAM FALLBACK was not accepted")
+    elif verbose:
+        print("  ok  redteam/scenario: second review missing, explicit fallback recorded → tool.redteam_dual PASS")
     # digest invariance: pasting a gate block never changes the digest; an edit does
     t = "a\n\n## Self-review\nx\n"
     t2 = t + "\n```\nSTAGE GATE scenario: PASS — d · f#000000000000\n[PASS] x: y\n```\n"
     n += 1
     if digest_text(t) != digest_text(t2) or digest_text(t) == digest_text(t + "z\n"):
         fails.append("digest invariance")
-    shutil.rmtree(tmp, ignore_errors=True)
     for f in fails:
         print("self-test FAIL - " + f)
     if not fails:
-        print(f"self-test: ok ({n} cases: {len(STAGES)} good stages PASS, {len(cases)} bad cases FAIL as expected, "
-              "2 re-run contradictions caught, digest invariance)")
+        nf = sum(1 for c in cases if c.get("expect"))
+        print(f"self-test: ok ({n} cases: {len(STAGES)} good stages PASS, {nf} bad cases FAIL as expected, "
+              f"{len(cases) - nf} WARN / control cases as expected, "
+              "2 re-run contradictions caught, revision-intake, historical-export, surface-geometry and red-team "
+              "fallback controls PASS, digest invariance)")
     return 1 if fails else 0
+
+
+REVISE_BOUND = {"verdict": "BOUND", "bound_to": ["rev2"], "basis": "discriminating content",
+                "evidence": {"discriminating_seen": 3, "shared_seen": 12}}
+REVISE_VERDICTS = {"runs": {"run-1": {"binding": REVISE_BOUND,
+                                      "rules": {"stale_count": {"verdict": "LANDED", "flags": []}}},
+                            "run-2": {"binding": REVISE_BOUND,
+                                      "rules": {"stale_count": {"verdict": "LEAKED", "flags": []}}}}}
+REVISE_SECTION = ("\n## Revision intake (S0r)\n\nVerdicts consumed: run_forensics/rev2/node_verdicts.json (/create-hardening "
+                  "MODE B, revision 2; both exports bound to revision 2).\n\n| Node | Runs | Proposed | Disposition | "
+                  "Evidence |\n|---|---|---|---|---|\n| stale_count | run-1 LANDED, run-2 LEAKED | LANDED 1/2 | keep | "
+                  "run-1 event 12 read ENG-2280 and still wrote the stale count |\n")
+
+
+def _revise_fixture(d: Path, verdicts=None, section=None):
+    """A MODE B report, its node verdicts and the design's revision-intake section (the S0r good case)."""
+    _apply(d, {"create": "01a_Hardening_Report.md", "content": "# Hardening report\n\nMODE B (baseline), revision 2.\n"})
+    _apply(d, {"create": "run_forensics/rev2/node_verdicts.json", "content": json.dumps(verdicts or REVISE_VERDICTS)})
+    _apply(d, {"file": "01_Scenario_Design.md", "append": section or REVISE_SECTION})
 
 # ------------------------------------------------------------------ main
 
