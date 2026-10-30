@@ -1,0 +1,1992 @@
+{
+ "tool": "hardness_forecast/1",
+ "note": "model outputs, not measurements; the Season Pass backtests are development fixtures, not validation",
+ "revision": "rev14",
+ "sql_sha256": "38781f13e65d09edd1d973ed009215f3270d0aa3ea40503b081b0ab5703471e0",
+ "solver_sha256": "81c3c3c523f2742b77e28f931c7e3536e0cec7cd033b4948878435805db01589",
+ "surface": "Task_Authoring/support/backtests/season_pass/rev14/working_files/01_Gradable_Surface.json",
+ "sha256": "1fb8970f4cb6ae04402f6b4d525d5059ae543f4867513fe5825012a7fa1fe58b",
+ "views": {
+  "V3": {
+   "cap": 0.7,
+   "mode": "hard"
+  }
+ },
+ "task_type": "long-horizon",
+ "calls": 550,
+ "max_k": 8,
+ "max_k_override": null,
+ "kind": "HARDNESS_FORECAST",
+ "label": "UNCALIBRATED · advisory · CONDITIONAL (mechanism rates overridden)",
+ "model": "claude-opus-4-8",
+ "priors_from": "claude-opus-4-8",
+ "exclusions": {
+  "tasks": [],
+  "revisions": [],
+  "include_mixed": false
+ },
+ "ledger": "Task_Authoring/support/hardness_ledger/ledger.jsonl",
+ "ledger_sha256": "355ae3bf98cdd3a072e507b8360e0e35ece0e1f2c7d0ab6b1db9150a5c4eb0b4",
+ "mechanisms": [
+  {
+   "id": "rule:owner_calls",
+   "family": "override:rule:owner_calls",
+   "source": "ZOM-801 comments",
+   "touched": 4,
+   "prior": {
+    "point": 0.0,
+    "mean": 0.0,
+    "records": [],
+    "basis": "OVERRIDE (disclosed, no ledger record): --mechanism-rate owner_calls=0",
+    "label": "UNCALIBRATED · OVERRIDE",
+    "model": "claude-opus-4-8",
+    "n_eff": null,
+    "record_ids": [],
+    "excluded": []
+   }
+  },
+  {
+   "id": "rule:process_findings",
+   "family": "override:rule:process_findings",
+   "source": "control sheet",
+   "touched": 6,
+   "prior": {
+    "point": 0.0,
+    "mean": 0.0,
+    "records": [],
+    "basis": "OVERRIDE (disclosed, no ledger record): --mechanism-rate process_findings=0",
+    "label": "UNCALIBRATED · OVERRIDE",
+    "model": "claude-opus-4-8",
+    "n_eff": null,
+    "record_ids": [],
+    "excluded": []
+   }
+  },
+  {
+   "id": "rule:claims",
+   "family": "override:rule:claims",
+   "source": "hub thread",
+   "touched": 4,
+   "prior": {
+    "point": 0.0,
+    "mean": 0.0,
+    "records": [],
+    "basis": "OVERRIDE (disclosed, no ledger record): --mechanism-rate claims=0",
+    "label": "UNCALIBRATED · OVERRIDE",
+    "model": "claude-opus-4-8",
+    "n_eff": null,
+    "record_ids": [],
+    "excluded": []
+   }
+  }
+ ],
+ "channels": [
+  {
+   "id": "scale:groups",
+   "kind": "scale",
+   "latent": "member",
+   "members": 67,
+   "inert_members": 61,
+   "slots": [],
+   "batch_sizes": null,
+   "source": "tracker blocker groups",
+   "preregistered": true,
+   "rate": {
+    "alpha": 4.0,
+    "beta": 266.0,
+    "mean": 0.014815,
+    "records": [],
+    "basis": "OVERRIDE (disclosed, no ledger record): --channel-rate scale:groups=4,266",
+    "label": "UNCALIBRATED · OVERRIDE"
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.591017,
+    "plug_in": 0.632132,
+    "units": 67,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.033219,
+   "label": "UNCALIBRATED · OVERRIDE"
+  },
+  {
+   "id": "tool_surface:register",
+   "kind": "tool_surface",
+   "latent": "run",
+   "members": 0,
+   "inert_members": 0,
+   "slots": [
+    "S01"
+   ],
+   "batch_sizes": null,
+   "source": "register upload",
+   "preregistered": true,
+   "rate": {
+    "alpha": 3.0,
+    "beta": 3.0,
+    "mean": 0.5,
+    "records": [],
+    "basis": "OVERRIDE (disclosed, no ledger record): --channel-rate tool_surface:register=3,3",
+    "label": "UNCALIBRATED · OVERRIDE"
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.5,
+    "plug_in": 0.5,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.002038,
+   "label": "UNCALIBRATED · OVERRIDE"
+  },
+  {
+   "id": "control:process_findings",
+   "kind": "control",
+   "latent": "member",
+   "members": 3,
+   "inert_members": 0,
+   "slots": [],
+   "batch_sizes": null,
+   "source": "control sheet",
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 13.0,
+    "mean": 0.071429,
+    "records": [],
+    "basis": "OVERRIDE (disclosed, no ledger record): --channel-rate control:process_findings=1,13",
+    "label": "UNCALIBRATED · OVERRIDE"
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.1875,
+    "plug_in": 0.199345,
+    "units": 3,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.007369,
+   "label": "UNCALIBRATED · OVERRIDE"
+  }
+ ],
+ "unparameterized_channels": [],
+ "briefs": {
+  "files": [
+   "Task_Authoring/support/fix_session_2026-10-25/logs/f1/tl/r3/briefs.json"
+  ],
+  "batches": 0
+ },
+ "scenarios": [
+  {
+   "dependence": "independent",
+   "extent": "whole",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:32",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:14",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "independent",
+   "extent": "slip",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "independent",
+   "extent": "batches",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "source",
+   "extent": "whole",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:32",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:14",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "source",
+   "extent": "slip",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "source",
+   "extent": "batches",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9572,
+     "band_10_90": [
+      0.9281,
+      0.9837
+     ],
+     "P_gate": {
+      "pass_at_1": 0.994,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8567
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9427
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.584,
+    "tool_surface:register": 0.495,
+    "control:process_findings": 0.191
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.495,
+     "P_fails_all_six": 0.0633
+    },
+    "S49": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S54": {
+     "P_fail": 0.2852,
+     "P_fails_all_six": 0.0027
+    },
+    "S47": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S52": {
+     "P_fail": 0.2808,
+     "P_fails_all_six": 0.0047
+    },
+    "S04": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S05": {
+     "P_fail": 0.191,
+     "P_fails_all_six": 0.004
+    },
+    "S50": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1199,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0986,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.0572,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0143,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0129,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "whole",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9569,
+     "band_10_90": [
+      0.9314,
+      0.9824
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9913,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.856
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9607
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.591,
+    "tool_surface:register": 0.4978,
+    "control:process_findings": 0.1894
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0527
+    },
+    "S49": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S54": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S47": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S52": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S04": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S05": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S50": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0149,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0144,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:32",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9569,
+     "band_10_90": [
+      0.9314,
+      0.9824
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9913,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.856
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9607
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.591,
+    "tool_surface:register": 0.4978,
+    "control:process_findings": 0.1894
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0527
+    },
+    "S49": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S54": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S47": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S52": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S04": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S05": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S50": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0149,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0144,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:14",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9569,
+     "band_10_90": [
+      0.9314,
+      0.9824
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9913,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.856
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9607
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.591,
+    "tool_surface:register": 0.4978,
+    "control:process_findings": 0.1894
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0527
+    },
+    "S49": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S54": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S47": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S52": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S04": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S05": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S50": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0149,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0144,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "slip",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9569,
+     "band_10_90": [
+      0.9314,
+      0.9824
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9913,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.856
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9607
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.591,
+    "tool_surface:register": 0.4978,
+    "control:process_findings": 0.1894
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0527
+    },
+    "S49": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S54": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S47": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S52": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S04": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S05": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S50": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0149,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0144,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "batches",
+   "draws": 1500,
+   "seed": 7,
+   "views": {
+    "V3": {
+     "E_average": 0.9569,
+     "band_10_90": [
+      0.9314,
+      0.9824
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9913,
+      "avg_weighted_pass_rate": 0.0,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.856
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:owner_calls",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:process_findings",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:claims",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 3.9607
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:owner_calls": 0.0,
+    "rule:process_findings": 0.0,
+    "rule:claims": 0.0
+   },
+   "run_score_band_10_90": [
+    0.9176,
+    1.0
+   ],
+   "channels_hit_rate": {
+    "scale:groups": 0.591,
+    "tool_surface:register": 0.4978,
+    "control:process_findings": 0.1894
+   },
+   "slots": {
+    "S01": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0527
+    },
+    "S49": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S54": {
+     "P_fail": 0.2973,
+     "P_fails_all_six": 0.006
+    },
+    "S47": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S52": {
+     "P_fail": 0.2797,
+     "P_fails_all_six": 0.002
+    },
+    "S04": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S05": {
+     "P_fail": 0.1894,
+     "P_fails_all_six": 0.0033
+    },
+    "S50": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S55": {
+     "P_fail": 0.1202,
+     "P_fails_all_six": 0.0
+    },
+    "S51": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S56": {
+     "P_fail": 0.0947,
+     "P_fails_all_six": 0.0
+    },
+    "S48": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S53": {
+     "P_fail": 0.058,
+     "P_fails_all_six": 0.0
+    },
+    "S24": {
+     "P_fail": 0.0149,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0144,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block"
+  }
+ ],
+ "summary": {
+  "V3": {
+   "P_all_min": 0.0,
+   "P_all_max": 0.0,
+   "E_average_range": [
+    0.9569,
+    0.9572
+   ],
+   "voi": [
+    "rule:owner_calls",
+    "rule:process_findings",
+    "rule:claims"
+   ]
+  }
+ }
+}

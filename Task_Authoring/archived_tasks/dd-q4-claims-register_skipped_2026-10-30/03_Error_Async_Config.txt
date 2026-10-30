@@ -1,0 +1,75 @@
+# Error Injection & Async Wait (screen 16) — dd-q4-claims-register
+
+Completed 29 Oct 2026. The task uses no synthetically injected friction: the
+difficulty is carried entirely by the universe (three hidden authorities, a
+mid-thread correction, per-record production facts and a stale summary). The
+platform fields are left empty.
+
+```
+Friction:          none
+
+error_functions:   # none selected
+error_mode:        # not applicable
+error_rate:        # not applicable
+
+wait_functions:    # none selected
+wait_min_seconds:  # not applicable
+wait_max_seconds:  # not applicable
+```
+
+## Alternate path (required for every errored function)
+
+| Errored function | Same facts available from | Locator | Persona-readable? |
+|---|---|---|---|
+| none selected | — | — | — |
+
+No forced error is configured. Every fact needed by the task has a cataloged
+read on at least one service (the ground evidence is in
+`Working_Files/01_Grounding_Dossier.md` §1.E and the `check-sql` PASS), and no
+route depends on retrying a failed call.
+
+## Discovery the async wait depends on
+
+| Async function | What the agent must search for | Must NOT be named in the prompt |
+|---|---|---|
+| none selected | — | — |
+
+No `*_submit_*` search function is configured, so there is no waited discovery
+step and the prompt names no search service.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- Friction: none; the OE path must show the task solved with plain reads and
+  the four writes, with no retry or wait step.
+- No fallback route needs documenting for a killed tool.
+
+## Post-baseline checks
+
+- Forced error fired (failed calls visible in the trajectories): n/a
+- Async submit → check → get appeared, with the delay: n/a
+- Only 1.0 / 30 / 35 have been exercised before; any other value confirmed in the first trajectory: n/a
+
+## Self-review
+
+| Area | Counter-reading (strongest argument it fails) | Evidence that resolves it | Verdict |
+|---|---|---|---|
+| Is the scenario about an outage | A task that reads production config, event runs and PR state could be read as an outage-recovery task, which would want a forced error | The story is a pre-pack claim certification; the records are configuration, run and transaction rows, not incident data. `01_Scenario_Design.md` §0 records a Product Management remit, and `01_Grounding_Dossier.md` §1.E needs no retry. No outage framing is used. | PASS |
+| Async temptation | Snowflake is a slow, rarely opened service, so a configured wait would be tempting | `snowflake.LIVE_EVENT_PERFORMANCE` and `snowflake.IAP_TRANSACTIONS` are read directly by a cataloged query; `01_Scenario_Design.md` §9 budgets six unconditional Snowflake calls and no wait. Adding a wait would change the call budget without adding a discovery. | PASS |
+| Verifier reads | A forced error would make the baseline trajectories noisier without changing the rubric | The rubric samples per-claim values that survive a retry; `01_Gradable_Surface.json` has 55 slots and no slot depends on a failure. Friction would add error-rate risk (≤ 2 of 6 errored) with no grading benefit. | PASS |
+
+**Unresolved: none.**
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputs · 03_Error_Async_Config.txt#2253e9d33f13 · 00_Assigments.md#f8550b78dd9d · 01_Grounding_Dossier.md#3a92d7fdeb22 · 01_Universe_Inject.sql#bc3abbdfb1d8 · __context__#fee9c0ab9e8c · __assignment__#3f9540413be0 · __policy__#dc4ab5df3cdd · __gate_policy__#bf8e231eb5d9 · __review__#0519e1000740 · blocking 0 · warnings 0 · checks 11
+[PASS] assignment.v3_context: Julia Lawson / Product Manager; hard cap <70%; freeze 2025-10-01T00:00:00Z; shared source available; record dates and freeze-state evidence checked separately
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#bc3abbdfb1d8, 01_Hardness_Manifest.json#cc9e8fdd561f, 01_Grounding_Dossier.md#3a92d7fdeb22, solver/solver.py#880e65cd119b, 01c_Dispositions.json#7d660f2eb68c, 01c_Preflight_Report.json#52985489dbc4, 00_Assigments.md#f8550b78dd9d, 01_Scenario_Design.md#5aefb2d5ce41, 01_Hardness_Manifest.draft.json#81b53550b53a, 01_Gradable_Surface.json#ed7f0476e12c, __context__#fee9c0ab9e8c, __assignment__#3f9540413be0, __policy__#dc4ab5df3cdd, __gate_policy__#bf8e231eb5d9, __review__#0519e1000740)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 3 evidenced counter-readings (of 3 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```

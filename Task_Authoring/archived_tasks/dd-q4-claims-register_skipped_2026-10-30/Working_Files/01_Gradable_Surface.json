@@ -1,0 +1,1010 @@
+{
+  "kind": "GRADABLE_SURFACE",
+  "version": 1,
+  "task": "dd-q4-claims-register",
+  "revision": "scenario-02",
+  "classes": [
+    "LIVE",
+    "TESTING",
+    "NOT_LIVE",
+    "OUT_OF_SCOPE"
+  ],
+  "truth_fields": {
+    "class": "status",
+    "groups": "groups"
+  },
+  "deliverables": {
+    "register": {
+      "kind": "table",
+      "name_regex": "register",
+      "key_column": "claim_id",
+      "key_regex": "C[0-9]{2}",
+      "columns": [
+        "claim_id",
+        "claim",
+        "feature",
+        "scope",
+        "status",
+        "decision",
+        "qualifier",
+        "evidence",
+        "evidence_date",
+        "conflict",
+        "owner",
+        "action"
+      ],
+      "class_column": "status",
+      "reason_column": "qualifier",
+      "comparators": {
+        "status": "norm",
+        "decision": "norm"
+      },
+      "missing_values": [
+        "",
+        "-",
+        "n/a"
+      ]
+    },
+    "summary": {
+      "kind": "json_text",
+      "tool": "slack_send_message"
+    },
+    "page": {
+      "kind": "json_text",
+      "tool": "confluence_update_page"
+    },
+    "ticket": {
+      "kind": "json_text",
+      "tool": "linear_create_issue"
+    }
+  },
+  "slots": [
+    {
+      "id": "S01_C06_status",
+      "title": "C06 Season Pass live status",
+      "weight": 5,
+      "work_kind": "multi_source_reconciliation",
+      "work_reason": "the ticket state, the merged PR, the scoped readiness instruction, the config comment and the empty warehouse must be reconciled",
+      "class": "direct",
+      "role": "sample",
+      "group": "status",
+      "selector": [
+        "field",
+        "C06",
+        "status"
+      ],
+      "fact_id": "C06.status",
+      "mechanisms": [
+        "M1_status",
+        "M2_flag",
+        "M3_live_standard"
+      ]
+    },
+    {
+      "id": "S02_C07_status",
+      "title": "C07 Collectibles live status",
+      "weight": 3,
+      "work_kind": "interpretation",
+      "work_reason": "a card with no build is read against the live rule and the no-build-slot decision",
+      "class": "direct",
+      "role": "sample",
+      "group": "status",
+      "selector": [
+        "field",
+        "C07",
+        "status"
+      ],
+      "fact_id": "C07.status",
+      "mechanisms": [
+        "M1_status"
+      ]
+    },
+    {
+      "id": "S03_C10_status",
+      "title": "C10 Hero Offers rotation status",
+      "weight": 5,
+      "work_kind": "multi_source_reconciliation",
+      "work_reason": "the Done ticket, the merged PR, the 10% cohort comment and the enabled 48-hour behaviour must be reconciled",
+      "class": "direct",
+      "role": "sample",
+      "group": "status",
+      "selector": [
+        "field",
+        "C10",
+        "status"
+      ],
+      "fact_id": "C10.status",
+      "mechanisms": [
+        "M2_flag",
+        "M3_live_standard"
+      ]
+    },
+    {
+      "id": "S04_C11_status",
+      "title": "C11 live-ops engine status",
+      "weight": 3,
+      "work_kind": "interpretation",
+      "work_reason": "a true but internal claim is judged against the player-facing scope",
+      "class": "direct",
+      "role": "sample",
+      "group": "status",
+      "selector": [
+        "field",
+        "C11",
+        "status"
+      ],
+      "fact_id": "C11.status",
+      "mechanisms": [
+        "M5_scope"
+      ]
+    },
+    {
+      "id": "S05_C05_status",
+      "title": "C05 Axe Arena and Streak Fever status",
+      "weight": 3,
+      "work_kind": "interpretation",
+      "work_reason": "two completed event runs are read against the live rule",
+      "class": "direct",
+      "role": "sample",
+      "group": "status",
+      "selector": [
+        "field",
+        "C05",
+        "status"
+      ],
+      "fact_id": "C05.status"
+    },
+    {
+      "id": "S06_register_complete",
+      "title": "Register carries exactly the thirteen claim keys",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "completeness of the key set is a direct check of the delivered register",
+      "class": "delivery",
+      "role": "volume",
+      "volume_for": [
+        "status",
+        "decision",
+        "qualifier",
+        "owner",
+        "feature",
+        "evidence",
+        "evidence_date",
+        "claim",
+        "scope",
+        "action"
+      ],
+      "selector": [
+        "delivery",
+        "register_keys_exact"
+      ]
+    },
+    {
+      "id": "S07_C03_decision",
+      "title": "C03 cadence decision",
+      "weight": 3,
+      "work_kind": "comparison",
+      "work_reason": "the event schedule is compared with the daily wording and the wording rule",
+      "class": "direct",
+      "role": "sample",
+      "group": "decision",
+      "selector": [
+        "field",
+        "C03",
+        "decision"
+      ],
+      "fact_id": "C03.decision",
+      "mechanisms": [
+        "M4_wording",
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S08_C09_decision",
+      "title": "C09 bundle count decision",
+      "weight": 3,
+      "work_kind": "calculation",
+      "work_reason": "the sold SKU set is counted, not the April card's number",
+      "class": "direct",
+      "role": "sample",
+      "group": "decision",
+      "selector": [
+        "field",
+        "C09",
+        "decision"
+      ],
+      "fact_id": "C09.decision",
+      "mechanisms": [
+        "M4_wording",
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S09_C12_decision",
+      "title": "C12 level count decision",
+      "weight": 3,
+      "work_kind": "calculation",
+      "work_reason": "the GDD and manifest counts replace the pipeline target",
+      "class": "direct",
+      "role": "sample",
+      "group": "decision",
+      "selector": [
+        "field",
+        "C12",
+        "decision"
+      ],
+      "fact_id": "C12.decision",
+      "mechanisms": [
+        "M4_wording",
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S10_C13_decision",
+      "title": "C13 launch-date decision",
+      "weight": 5,
+      "work_kind": "multi_source_reconciliation",
+      "work_reason": "the claim, the GDD dates, the readiness date and the install comment must be reconciled and the wording qualified",
+      "class": "direct",
+      "role": "sample",
+      "group": "decision",
+      "selector": [
+        "field",
+        "C13",
+        "decision"
+      ],
+      "fact_id": "C13.decision",
+      "mechanisms": [
+        "M4_wording",
+        "M6_conflict"
+      ]
+    },
+    {
+      "id": "S11_C10_qualifier",
+      "title": "C10 qualifier says in testing",
+      "weight": 3,
+      "work_kind": "interpretation",
+      "work_reason": "the qualifier must use the wording rule for a staged feature",
+      "class": "direct",
+      "role": "sample",
+      "group": "qualifier",
+      "selector": [
+        "field",
+        "C10",
+        "qualifier"
+      ],
+      "fact_id": "C10.qualifier",
+      "mechanisms": [
+        "M2_flag",
+        "M4_wording"
+      ]
+    },
+    {
+      "id": "S12_C09_qualifier",
+      "title": "C09 qualifier states the exact bundle count",
+      "weight": 3,
+      "work_kind": "calculation",
+      "work_reason": "the qualifier must state the exact count from the SKU set",
+      "class": "direct",
+      "role": "sample",
+      "group": "qualifier",
+      "selector": [
+        "field",
+        "C09",
+        "qualifier"
+      ],
+      "fact_id": "C09.qualifier",
+      "mechanisms": [
+        "M4_wording",
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S14_C06_conflict",
+      "title": "C06 conflict statement names both sources",
+      "weight": 5,
+      "work_kind": "multi_source_reconciliation",
+      "work_reason": "the conflict column must reconcile the draft, the readiness instruction and the config comment and name the governing one",
+      "class": "direct",
+      "role": "core",
+      "group": "conflict",
+      "selector": [
+        "field",
+        "C06",
+        "conflict"
+      ],
+      "fact_id": "C06.conflict",
+      "mechanisms": [
+        "M6_conflict"
+      ]
+    },
+    {
+      "id": "S15_live_count",
+      "title": "LIVE count",
+      "weight": 3,
+      "work_kind": "calculation",
+      "work_reason": "the live count is the sum of the classified rows, not the draft's claim",
+      "class": "aggregate",
+      "role": "core",
+      "group": "counts",
+      "selector": [
+        "total",
+        "LIVE"
+      ],
+      "fact_id": "count.LIVE",
+      "mechanisms": [
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S16_testing_count",
+      "title": "TESTING count",
+      "weight": 3,
+      "work_kind": "calculation",
+      "work_reason": "the testing count follows from the Hero Offers classification",
+      "class": "aggregate",
+      "role": "core",
+      "group": "counts",
+      "selector": [
+        "total",
+        "TESTING"
+      ],
+      "fact_id": "count.TESTING",
+      "mechanisms": [
+        "M2_flag",
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S17_summary_live",
+      "title": "Summary post states the LIVE count",
+      "weight": 3,
+      "work_kind": "calculation",
+      "work_reason": "the summary must repeat the computed live count",
+      "class": "write_content",
+      "role": "core",
+      "group": "summary",
+      "selector": [
+        "text",
+        "summary",
+        "\\bLIVE: 9 claims"
+      ],
+      "fact_id": "summary.LIVE",
+      "mechanisms": [
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S18_summary_qualify",
+      "title": "Summary post states the QUALIFY count",
+      "weight": 3,
+      "work_kind": "calculation",
+      "work_reason": "the qualifier count is derived from the decision column",
+      "class": "write_content",
+      "role": "core",
+      "group": "summary",
+      "selector": [
+        "text",
+        "summary",
+        "\\bQUALIFY: 5 claims"
+      ],
+      "fact_id": "summary.QUALIFY",
+      "mechanisms": [
+        "M7_counts"
+      ]
+    },
+    {
+      "id": "S19_page_c06",
+      "title": "Claims page states the Season Pass correction",
+      "weight": 5,
+      "work_kind": "multi_source_reconciliation",
+      "work_reason": "the page correction must reconcile the ticket, the readiness instruction and the empty warehouse",
+      "class": "write_content",
+      "role": "core",
+      "group": "page",
+      "selector": [
+        "text",
+        "page",
+        "Season Pass is not live"
+      ],
+      "fact_id": "page.C06",
+      "mechanisms": [
+        "M1_status",
+        "M3_live_standard"
+      ]
+    },
+    {
+      "id": "S20_ticket_season_pass",
+      "title": "Follow-up ticket names the Season Pass claim",
+      "weight": 3,
+      "work_kind": "interpretation",
+      "work_reason": "the ticket must carry the unsupported claim by its feature name",
+      "class": "write_content",
+      "role": "core",
+      "group": "ticket",
+      "selector": [
+        "text",
+        "ticket",
+        "Season Pass"
+      ],
+      "fact_id": "ticket.C06",
+      "mechanisms": [
+        "M1_status"
+      ]
+    },
+    {
+      "id": "S21_summary_thread",
+      "title": "Summary is posted in the claims thread",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "delivery into the named thread is a direct check",
+      "class": "delivery",
+      "role": "core",
+      "selector": [
+        "delivery",
+        "slack_thread",
+        "1759248600.000100"
+      ]
+    },
+    {
+      "id": "S22_owner_C01",
+      "title": "C01 owner field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the owning team is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "owner",
+      "selector": [
+        "field",
+        "C01",
+        "owner"
+      ],
+      "fact_id": "C01.owner"
+    },
+    {
+      "id": "S23_owner_C03",
+      "title": "C03 owner field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the owning team is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "owner",
+      "selector": [
+        "field",
+        "C03",
+        "owner"
+      ],
+      "fact_id": "C03.owner"
+    },
+    {
+      "id": "S24_owner_C06",
+      "title": "C06 owner field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the owning team is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "owner",
+      "selector": [
+        "field",
+        "C06",
+        "owner"
+      ],
+      "fact_id": "C06.owner"
+    },
+    {
+      "id": "S25_owner_C09",
+      "title": "C09 owner field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the owning team is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "owner",
+      "selector": [
+        "field",
+        "C09",
+        "owner"
+      ],
+      "fact_id": "C09.owner"
+    },
+    {
+      "id": "S26_owner_C11",
+      "title": "C11 owner field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the owning team is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "owner",
+      "selector": [
+        "field",
+        "C11",
+        "owner"
+      ],
+      "fact_id": "C11.owner"
+    },
+    {
+      "id": "S28_feature_C02",
+      "title": "C02 feature field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the feature name is a direct lookup from the claim",
+      "class": "direct",
+      "role": "sample",
+      "group": "feature",
+      "selector": [
+        "field",
+        "C02",
+        "feature"
+      ],
+      "fact_id": "C02.feature"
+    },
+    {
+      "id": "S29_feature_C05",
+      "title": "C05 feature field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the feature name is a direct lookup from the claim",
+      "class": "direct",
+      "role": "sample",
+      "group": "feature",
+      "selector": [
+        "field",
+        "C05",
+        "feature"
+      ],
+      "fact_id": "C05.feature"
+    },
+    {
+      "id": "S30_feature_C08",
+      "title": "C08 feature field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the feature name is a direct lookup from the claim",
+      "class": "direct",
+      "role": "sample",
+      "group": "feature",
+      "selector": [
+        "field",
+        "C08",
+        "feature"
+      ],
+      "fact_id": "C08.feature"
+    },
+    {
+      "id": "S31_feature_C10",
+      "title": "C10 feature field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the feature name is a direct lookup from the claim",
+      "class": "direct",
+      "role": "sample",
+      "group": "feature",
+      "selector": [
+        "field",
+        "C10",
+        "feature"
+      ],
+      "fact_id": "C10.feature"
+    },
+    {
+      "id": "S32_feature_C12",
+      "title": "C12 feature field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the feature name is a direct lookup from the claim",
+      "class": "direct",
+      "role": "sample",
+      "group": "feature",
+      "selector": [
+        "field",
+        "C12",
+        "feature"
+      ],
+      "fact_id": "C12.feature"
+    },
+    {
+      "id": "S34_evidence_C01",
+      "title": "C01 evidence field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence record is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence",
+      "selector": [
+        "field",
+        "C01",
+        "evidence"
+      ],
+      "fact_id": "C01.evidence"
+    },
+    {
+      "id": "S35_evidence_C02",
+      "title": "C02 evidence field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence record is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence",
+      "selector": [
+        "field",
+        "C02",
+        "evidence"
+      ],
+      "fact_id": "C02.evidence"
+    },
+    {
+      "id": "S36_evidence_C04",
+      "title": "C04 evidence field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence record is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence",
+      "selector": [
+        "field",
+        "C04",
+        "evidence"
+      ],
+      "fact_id": "C04.evidence"
+    },
+    {
+      "id": "S37_evidence_C06",
+      "title": "C06 evidence field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence record is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence",
+      "selector": [
+        "field",
+        "C06",
+        "evidence"
+      ],
+      "fact_id": "C06.evidence"
+    },
+    {
+      "id": "S38_evidence_C08",
+      "title": "C08 evidence field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence record is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence",
+      "selector": [
+        "field",
+        "C08",
+        "evidence"
+      ],
+      "fact_id": "C08.evidence"
+    },
+    {
+      "id": "S40_date_C03",
+      "title": "C03 evidence date",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence date is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence_date",
+      "selector": [
+        "field",
+        "C03",
+        "evidence_date"
+      ],
+      "fact_id": "C03.evidence_date"
+    },
+    {
+      "id": "S41_date_C05",
+      "title": "C05 evidence date",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence date is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence_date",
+      "selector": [
+        "field",
+        "C05",
+        "evidence_date"
+      ],
+      "fact_id": "C05.evidence_date"
+    },
+    {
+      "id": "S42_date_C07",
+      "title": "C07 evidence date",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence date is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence_date",
+      "selector": [
+        "field",
+        "C07",
+        "evidence_date"
+      ],
+      "fact_id": "C07.evidence_date"
+    },
+    {
+      "id": "S43_date_C09",
+      "title": "C09 evidence date",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence date is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence_date",
+      "selector": [
+        "field",
+        "C09",
+        "evidence_date"
+      ],
+      "fact_id": "C09.evidence_date"
+    },
+    {
+      "id": "S44_date_C10",
+      "title": "C10 evidence date",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the evidence date is a direct lookup",
+      "class": "direct",
+      "role": "sample",
+      "group": "evidence_date",
+      "selector": [
+        "field",
+        "C10",
+        "evidence_date"
+      ],
+      "fact_id": "C10.evidence_date"
+    },
+    {
+      "id": "S41_claim_C02",
+      "title": "C02 claim field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the claim value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "claim",
+      "selector": [
+        "field",
+        "C02",
+        "claim"
+      ],
+      "fact_id": "C02.claim"
+    },
+    {
+      "id": "S42_claim_C04",
+      "title": "C04 claim field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the claim value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "claim",
+      "selector": [
+        "field",
+        "C04",
+        "claim"
+      ],
+      "fact_id": "C04.claim"
+    },
+    {
+      "id": "S43_claim_C06",
+      "title": "C06 claim field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the claim value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "claim",
+      "selector": [
+        "field",
+        "C06",
+        "claim"
+      ],
+      "fact_id": "C06.claim"
+    },
+    {
+      "id": "S44_claim_C08",
+      "title": "C08 claim field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the claim value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "claim",
+      "selector": [
+        "field",
+        "C08",
+        "claim"
+      ],
+      "fact_id": "C08.claim"
+    },
+    {
+      "id": "S45_claim_C10",
+      "title": "C10 claim field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the claim value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "claim",
+      "selector": [
+        "field",
+        "C10",
+        "claim"
+      ],
+      "fact_id": "C10.claim"
+    },
+    {
+      "id": "S46_scope_C01",
+      "title": "C01 scope field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the scope value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "scope",
+      "selector": [
+        "field",
+        "C01",
+        "scope"
+      ],
+      "fact_id": "C01.scope"
+    },
+    {
+      "id": "S47_scope_C03",
+      "title": "C03 scope field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the scope value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "scope",
+      "selector": [
+        "field",
+        "C03",
+        "scope"
+      ],
+      "fact_id": "C03.scope"
+    },
+    {
+      "id": "S48_scope_C06",
+      "title": "C06 scope field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the scope value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "scope",
+      "selector": [
+        "field",
+        "C06",
+        "scope"
+      ],
+      "fact_id": "C06.scope"
+    },
+    {
+      "id": "S49_scope_C09",
+      "title": "C09 scope field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the scope value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "scope",
+      "selector": [
+        "field",
+        "C09",
+        "scope"
+      ],
+      "fact_id": "C09.scope"
+    },
+    {
+      "id": "S50_scope_C11",
+      "title": "C11 scope field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the scope value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "scope",
+      "selector": [
+        "field",
+        "C11",
+        "scope"
+      ],
+      "fact_id": "C11.scope"
+    },
+    {
+      "id": "S51_action_C01",
+      "title": "C01 action field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the action value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "action",
+      "selector": [
+        "field",
+        "C01",
+        "action"
+      ],
+      "fact_id": "C01.action"
+    },
+    {
+      "id": "S52_action_C05",
+      "title": "C05 action field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the action value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "action",
+      "selector": [
+        "field",
+        "C05",
+        "action"
+      ],
+      "fact_id": "C05.action"
+    },
+    {
+      "id": "S53_action_C07",
+      "title": "C07 action field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the action value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "action",
+      "selector": [
+        "field",
+        "C07",
+        "action"
+      ],
+      "fact_id": "C07.action"
+    },
+    {
+      "id": "S54_action_C09",
+      "title": "C09 action field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the action value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "action",
+      "selector": [
+        "field",
+        "C09",
+        "action"
+      ],
+      "fact_id": "C09.action"
+    },
+    {
+      "id": "S55_action_C11",
+      "title": "C11 action field",
+      "weight": 1,
+      "work_kind": "lookup",
+      "work_reason": "the action value is a direct lookup from the claim's record",
+      "class": "direct",
+      "role": "sample",
+      "group": "action",
+      "selector": [
+        "field",
+        "C11",
+        "action"
+      ],
+      "fact_id": "C11.action"
+    }
+  ]
+}

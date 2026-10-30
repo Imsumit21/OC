@@ -30,6 +30,8 @@ apply the persona ACL yourself (search does not).
 ## Output
 `task_inputs/11_AF_Justification.md` (or `NONE`): one verdict per all-fail (VALID · INVALID — rubric · INVALID — environment · JUDGE ERROR · UNRESOLVED; invalid only when the defect causes the failure), justifications for VALID rows, the tally, the `--invalid` / `--judge-correction` hand-off line, and the **Self-review** section (playbook; GEN_EXECUTION §6a).
 
+A forecast's `P(fails all six)` is workload, not an all-fail verdict or a block: decide each rubric on the trajectory evidence and the rubric defect.
+
 ## Stage gate (blocking)
 Run `python3 Task_Authoring/tools/stage_gate.py allfail Task_Authoring/task_inputs --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
 

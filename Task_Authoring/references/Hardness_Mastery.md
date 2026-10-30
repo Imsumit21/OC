@@ -38,7 +38,7 @@ at any length."
 
 | # | Mechanism | Measured result |
 |---|---|---|
-| A1 | **Authoritative-but-wrong summary met first + a thread that continues past its apparent conclusion** | ML-selected Combo Fighters task: Opus 5.5 pass@1 **0/6**, best 18/31; both consequential findings inverted. Opus "found the data, computed it correctly, and then deferred to the most confident-sounding summary" and stopped reading at 21:08 of a thread that ran to 21:54 |
+| A1 | **Authoritative-but-wrong summary met first + a thread that continues past its apparent conclusion** | ML-selected Combo Fighters task: pass@1 **0/6**, best 18/31 (recorded as Opus 5.5, but the source doesn't establish the model: Phase 0–1 audit L5); both consequential findings inverted. Opus "found the data, computed it correctly, and then deferred to the most confident-sounding summary" and stopped reading at 21:08 of a thread that ran to 21:54 |
 | A2 | **Scale completeness** — an exact predicate with exclusions held across a large cohort where per-record evidence is needed and no bulk call carries it | PR residue register (`…fea91`): 133 PRs × 4 surfaces ≈ 540 retrievals; Opus **306–949 calls**, avg **70.2%**, pass@1 **0/6**, 5 distinct signatures; **0/6** got the two derived totals right (42–46 vs 47; 77–82 vs 78) |
 | A3 | **Tool-surface blind spot** — the obvious bulk call does not return the evidence (Slack channel history returns thread parents only; files live in replies) | Art-canon handoff: avg **44.1%** (author-reported). Floor ≈ 4,769 calls once measured on the tool surface |
 | A4 | **Forensic chain of eliminating facts** — 4–6 facts, one per message/hop, each ruling out the obvious alternative, that a coherent write-up can silently drop | Marcus **47%**, Martin **52%**; their always-fail weight was 27% / 21%. Neutralising those facts alone lifts them to 74% / 73%. "With zero always-fail weight the average sits near 80% no matter how long the prompt is" |
@@ -109,6 +109,9 @@ each with a decoy in a frequently-searched one and a stale/partial version · ex
 per-surface-output criteria · one or more decisive facts only in Gmail threads, Calendar
 events, Slides, Sheets tabs or Slack replies · a house rule that overrides the natural
 reading, applied per record · a reported conflict · boundary records at the cohort edge.
+
+**Update, Oct 25 (§12).** The recipe holds only while the authorities are named by role and found by search. When
+Season Pass's hub named every source, Opus 4.8 read them all and every family leaked.
 
 ---
 
@@ -682,6 +685,13 @@ else still open") on one specific item (NF2 PR #1914, failed 5/6: a fairness ris
 mechanism) · a landed mechanism whose criteria carry too little weight to move the average (NF2:
 material misses in 5/6 runs, average 88.9%).
 
+Added from Season Pass (§12):
+- rules enumerated in a hub-named document: seven rule families leaked in every revision-13 run;
+- a plain-words pointer, in a record every run reads, to the deciding record: Opus 4.8 followed it within 26 events;
+- a list whose membership rule is stated explicitly (value notes, process findings): exact in every pure run;
+- a confident claim contradicted by per-item records the agent reads anyway (0/5);
+- counting on model fallbacks or harness failures. These are validity confounds, never levers.
+
 ---
 
 ## 10 · Where V1 and V2 advice conflict — and the resolution used here
@@ -758,3 +768,49 @@ All runs are Opus 4.8. The NF1 and NF2 rubrics are unweighted. Scratch work: `su
 - reverts and parent-child callouts
 - cross-recipient splits stated in an incorporated write-up
 - forced errors and async waits
+
+---
+
+## 12 · Season Pass, revisions 10–14 (Opus 4.8 platform runs, Oct 21–25)
+
+A Hard task (cap 70 %) with a 128-component register, a review slide, a tracking issue and two messages. Across 14
+revisions, every designed rule, pointer, list and claim leaked, and the task was skipped. Details:
+`plans/Rev13_Results.md`, `support/backtests/season_pass/rev14/working_files/rev14_platform_runs/Rev14_Precheck_Findings.md`.
+The full task folder is archived at `support/archive/task_inputs_season_pass_2026-10-25/`.
+
+| Revision | Six-run average (corrected) | Designed mechanisms that landed | Where the loss came from |
+|---|---|---|---|
+| 10 | 84.69 % raw | issue remap in 1 run (rule in 0 of 8 briefs); row association in 1 | brief transmission, slips |
+| 13 | 92.1 % (SD 0.068) | 3 rules once each; 2 of them in fallback runs | about 1 wrong row in 128 per run, cascading through totals |
+| 14 | about 90 % (4 of 6 runs) | M1/M2 only through Opus 5 fallback decisions; M3/M4 0/5 | fallback-rewritten briefs and classification; 2 group-membership slips in the one pure run |
+
+**What leaked, and why.** All **[O]** unless marked.
+- **Every source the hub names was read, 7/7.** The hub named every source, so retrieval was complete:
+  validation comments 330–338 of 338, every review, timeline and PR, and every hub-named source.
+- **Stated rules ran as checklists.** Opus 4.8 copied each rule into its subagent briefs. In rev-13 run-4, the 12 briefs
+  Opus 4.8 wrote stated the rule; in rev 14, Opus 4.8's briefs kept the dismissal exception.
+- **The pointer was followed.** Revision 14 put the owner's calls in tracker comments, with a plain-words pointer in the
+  description. Opus 4.8 listed the comments 26 events after reading the description.
+- **Lists the agent compiled itself came out exact,** with explicit membership rules: value notes and process findings.
+- **A confident non-owner claim lost to the per-item records** in 5 of 5 runs.
+- **The contrast that matters [I].** The same families landed on V7-T1 and SB-T2 (§0, §11), where the governing rule
+  was named but its location wasn't. Incorporation style, not the mechanism, decided transfer.
+
+**What cost points:**
+- slips at scale: a class error cascades to about 8–10 points through the totals and groups;
+- tool-surface friction: a native Sheet instead of a CSV in 5 of 12 runs;
+- a multi-membership rule slip: "count under every condition" on 2 keys;
+- the `model_refusal_fallback` (category bio) in 8 of 12 runs. After it, the fallback model rewrote briefs (dropping an
+  exception) or took over classification. Every traced failure in the four revision-14 fallback runs came from those
+  decisions; the pure Opus 4.8 run (r3) lost about 8 points to the two slips above.
+
+**Lessons for V3 (Opus 5.5).** See `plans/V3_Opus55_Difficulty_Plan.md`.
+1. **Incorporate by role, not by location.** Never let a hub list every authority. V3 allows multi-hop reachability.
+2. **Design to the mode's loss budget.** Easy needs more than 10 points of loss, Medium more than 15, Hard more than 30.
+   Season Pass was Hard, a band only about 5 % of tasks get.
+3. **A fallback run is not Opus 5.5 evidence and is invalid under V3.** Screen themes: bio-adjacent words are suspected,
+   not proven. Check every pre-check for fallback events.
+4. **Confirm every failed slot against the write payload.** The proxy grader had eight decoder defects on these outputs;
+   one run moved 20 points.
+5. **Measure on the target model before building.** The pre-registered forecast said 72 %; the observed was about
+   90 %.

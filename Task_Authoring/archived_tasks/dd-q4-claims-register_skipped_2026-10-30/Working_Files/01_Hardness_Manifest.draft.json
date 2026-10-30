@@ -1,0 +1,1077 @@
+{
+  "assignment_context": {
+    "context_hash": "fee9c0ab9e8cd4f9761198f1ccb51b29f1603fecdf3fc68c88e0e91c044164c4",
+    "assignment_hash": "3f9540413be0b6269a9d856d1241429b357ef67a65cfd9b1e9cc108f27a5380f",
+    "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+    "freeze_utc": "2025-10-01T00:00:00Z",
+    "difficulty_mode": "hard"
+  },
+  "persona": "julia_lawson",
+  "horizon": "Normal Horizon",
+  "effective_profile": "normal",
+  "requirements": {
+    "R1": "Per-claim live status in the register's status column, classified by the live-claim standard.",
+    "R2": "Per-claim decision and qualifier in the register's decision and qualifier columns, worded by the external wording rules.",
+    "R3": "Player-facing scope per claim in the register's scope column, fixed by the Q4 scope note.",
+    "R4": "Per-claim evidence record and date in the register's evidence and evidence_date columns.",
+    "R5": "Conflict statement in the register's conflict column for every claim whose incorporated sources disagree, naming both sources and the governing one.",
+    "R6": "Register destination and format: the existing Register tab, one row per claim.",
+    "R7": "Derived status and decision counts in the summary post's counts block.",
+    "R8": "Follow-up ticket for each unsupported claim, recorded in the register's action column and on the claims review ticket."
+  },
+  "services": {
+    "slack": {
+      "role": "hub, correction thread and summary destination",
+      "weight_reason": "A1 (the request and the three authority names), K2 (the C06/C07 amendment) and D2 (the counts post) live only here"
+    },
+    "gmail": {
+      "role": "scope and launch-date authority",
+      "weight_reason": "H3 fixes the pack to Domino Delights only and fixes the external launch date; without it C11 and C13 are wrong"
+    },
+    "gcal": {
+      "role": "live-claim standard",
+      "weight_reason": "H1 is the only record that defines live as 100% enablement plus a production surface; without it C06/C07/C10 flip"
+    },
+    "gdrive": {
+      "role": "cohort source and stale version",
+      "weight_reason": "A2 defines the 13 numbered claims; the v1 near-duplicate defines the 9-claim distractor"
+    },
+    "gdocs": {
+      "role": "base resolving record",
+      "weight_reason": "the DD Global Launch Readiness P0 overturns the Season Pass claim and carries the global release date"
+    },
+    "gsheets": {
+      "role": "register destination, level manifest and old tab",
+      "weight_reason": "D1 is written here; the level manifest supplies the 4,755/245 count; the Old register supplies the reuse/stale distractor"
+    },
+    "linear": {
+      "role": "per-record production facts and follow-up write",
+      "weight_reason": "eleven per-issue comments carry the flag, cohort, cadence and count facts that decide the statuses; D4 is created here"
+    },
+    "github": {
+      "role": "per-record merge and branch facts",
+      "weight_reason": "eight PR conversation comments carry the merge, branch and revert facts that decide C06 and C10 and corroborate the live features"
+    },
+    "trello": {
+      "role": "wording authority and boundary card",
+      "weight_reason": "H2 fixes the qualifier wording; the Collectibles card is the boundary record for C07"
+    },
+    "confluence": {
+      "role": "decoys, conflict format and claims page write",
+      "weight_reason": "the three decoy pages test the authorities; K8 fixes the conflict column; D3 corrects the claims page"
+    },
+    "snowflake": {
+      "role": "aggregate production evidence",
+      "weight_reason": "the completed event runs, the SKU set and the install-date comment decide C01-C05, C08, C09 and C13"
+    }
+  },
+  "anchors": [
+    {
+      "id": "A1",
+      "prompt_reference": "Leonard's Q4 claims note",
+      "service": "slack",
+      "locator": "slack:C1CB3D58E38B/1759248600.000100",
+      "seeded_ids": [
+        "1759248600.000100"
+      ],
+      "requirement_ids": [
+        "R7"
+      ]
+    },
+    {
+      "id": "A2",
+      "prompt_reference": "my Q4 claims draft",
+      "service": "gdrive",
+      "locator": "gdrive:f_5a1b2c3d4e5f60718293a4",
+      "seeded_ids": [
+        "f_5a1b2c3d4e5f60718293a4"
+      ],
+      "requirement_ids": [
+        "R1",
+        "R4"
+      ]
+    }
+  ],
+  "ask_fragments": [
+    {
+      "id": "K2",
+      "service": "slack",
+      "container": "C1CB3D58E38B thread",
+      "locator": "slack:C1CB3D58E38B/1759255200.000200",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "1759255200.000200"
+      ],
+      "delegated_by_record": "slack:C1CB3D58E38B/1759248600.000100",
+      "delegation_quote": "Post the corrected counts in this thread",
+      "requirement_ids": [
+        "R1",
+        "R7"
+      ]
+    },
+    {
+      "id": "K3",
+      "service": "gcal",
+      "container": "Q4 product claims review event",
+      "locator": "gcal:evt_5c1a7e93b2d04f61a8e7",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "evt_5c1a7e93b2d04f61a8e7"
+      ],
+      "delegated_by_record": "slack:C1CB3D58E38B/1759248600.000100",
+      "delegation_quote": "the live-claim standard we agreed at the Q4 review",
+      "requirement_ids": [
+        "R1"
+      ]
+    },
+    {
+      "id": "K4",
+      "service": "gmail",
+      "container": "jlawson mailbox thread",
+      "locator": "gmail:jlawson@harmonygames.co_1860000000000000001",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "jlawson@harmonygames.co_1860000000000000001"
+      ],
+      "delegated_by_record": "slack:C1CB3D58E38B/1759248600.000100",
+      "delegation_quote": "the scope note I sent this morning",
+      "requirement_ids": [
+        "R3",
+        "R5"
+      ]
+    },
+    {
+      "id": "K5",
+      "service": "trello",
+      "container": "DD Product Roadmap card",
+      "locator": "trello:68d672304f5e6d7a8b9c0d11",
+      "kind": "format",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "68d672304f5e6d7a8b9c0d11"
+      ],
+      "delegated_by_record": "slack:C1CB3D58E38B/1759248600.000100",
+      "delegation_quote": "the external wording rules product signed off",
+      "requirement_ids": [
+        "R2"
+      ],
+      "names_authorities": [
+        {
+          "id": "H2",
+          "quote": "External wording \u2014 product claims"
+        }
+      ]
+    },
+    {
+      "id": "K6",
+      "service": "gsheets",
+      "container": "Q4 claims workbook Register tab",
+      "locator": "gsheets:f_6b2c3d4e5f60718293a4b5",
+      "kind": "destination",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "f_6b2c3d4e5f60718293a4b5"
+      ],
+      "delegated_by_record": "slack:C1CB3D58E38B/1759248600.000100",
+      "delegation_quote": "drop the register in the tab we already use",
+      "requirement_ids": [
+        "R4",
+        "R6"
+      ]
+    },
+    {
+      "id": "K7",
+      "service": "linear",
+      "container": "claims review ticket",
+      "locator": "linear:ENG-2371",
+      "kind": "delegation",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "ENG-2371"
+      ],
+      "delegated_by_record": "slack:C1CB3D58E38B/1759248600.000100",
+      "delegation_quote": "put anything we can't support on the claims review ticket",
+      "requirement_ids": [
+        "R8"
+      ]
+    },
+    {
+      "id": "K8",
+      "service": "confluence",
+      "container": "claims conflict format page",
+      "locator": "confluence:page_q4_claims_conflict_format",
+      "kind": "format",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "page_q4_claims_conflict_format"
+      ],
+      "delegated_by_record": "slack:C1CB3D58E38B/1759248600.000100",
+      "delegation_quote": "If a claim's sources disagree, write both and say which one governs",
+      "requirement_ids": [
+        "R5"
+      ]
+    }
+  ],
+  "authorities": [
+    {
+      "id": "H1",
+      "name": "the live-claim standard",
+      "home_service": "gcal",
+      "decoy_service": "confluence",
+      "governs": [
+        "R1"
+      ],
+      "findable_query": "Q4 product claims review",
+      "seeded_ids": [
+        "evt_5c1a7e93b2d04f61a8e7"
+      ],
+      "decoy_seeded_ids": [
+        "page_release_status_definitions"
+      ],
+      "decoy_scope": {
+        "dimension": "team",
+        "decoy": "Engineering release tracking",
+        "task": "Product claims pack"
+      }
+    },
+    {
+      "id": "H2",
+      "name": "the external wording rules",
+      "home_service": "trello",
+      "decoy_service": "trello",
+      "governs": [
+        "R2"
+      ],
+      "findable_query": "external wording",
+      "seeded_ids": [
+        "68d672304f5e6d7a8b9c0d11"
+      ],
+      "decoy_seeded_ids": [
+        "68d6735c4f5e6d7a8b9c0d12",
+        "page_external_messaging_guide"
+      ],
+      "decoy_scope": {
+        "dimension": "team",
+        "decoy": "Engineering and Marketing release wording",
+        "task": "Product claims"
+      }
+    },
+    {
+      "id": "H3",
+      "name": "the Q4 scope note",
+      "home_service": "gmail",
+      "decoy_service": "confluence",
+      "governs": [
+        "R3",
+        "R5"
+      ],
+      "findable_query": "player-facing claims only",
+      "seeded_ids": [
+        "jlawson@harmonygames.co_1860000000000000001"
+      ],
+      "decoy_seeded_ids": [
+        "page_q4_product_narrative"
+      ],
+      "decoy_scope": {
+        "dimension": "team",
+        "decoy": "Engineering appendix",
+        "task": "Product pack"
+      }
+    }
+  ],
+  "cohort": {
+    "definition_source": "A2",
+    "key": "claim id",
+    "size": 13,
+    "evidence_surfaces": [
+      {
+        "service": "linear",
+        "tool": "linear_list_comments",
+        "per_record_calls": 2.0,
+        "records": 11,
+        "seeded": true,
+        "seeded_ids": [
+          "DES-313",
+          "ENG-1385",
+          "ENG-1874",
+          "ENG-2065",
+          "ENG-2136",
+          "ENG-2323",
+          "ENG-2367",
+          "ENG-2368",
+          "ENG-2369",
+          "ENG-2372",
+          "ENG-645"
+        ],
+        "why_no_bulk": "linear_list_issues returns identifier, title, state and labels but never comments; each issue's comments are a separate read",
+        "short_circuit": "the comment carries the raw production-config fact (flag default, cohort, slot list, manifest count) that no event row or PR states; a run that skips it cannot separate shipped code from an enabled feature for C06, C10 and C12",
+        "requirement": "R4",
+        "decides": "evidence"
+      },
+      {
+        "service": "github",
+        "tool": "github_list_pr_comments",
+        "per_record_calls": 1.5,
+        "records": 2,
+        "seeded": true,
+        "seeded_ids": [
+          "harmonygames-Games/GameOfDominoes#1755",
+          "harmonygames-Games/GameOfDominoes#1838"
+        ],
+        "why_no_bulk": "github_list_pull_requests returns PR metadata and review state but not conversation comments; each PR thread is a separate read",
+        "short_circuit": "the PR thread carries the branch and flag fact (develop, not release; 10% cohort) that the ticket state hides; the two contested claims cannot be separated from shipped code without it",
+        "requirement": "R4",
+        "decides": "evidence"
+      }
+    ]
+  },
+  "chains": [
+    {
+      "id": "C1",
+      "root_cause": "A1",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "gdrive",
+          "record": "f_5a1b2c3d4e5f60718293a4",
+          "finding": "the draft's all-live summary is met first"
+        },
+        {
+          "service": "gdocs",
+          "record": "f_c57724584820a26f3bbe54",
+          "finding": "the scoped P0 removes the pass from the out-of-moves screen"
+        },
+        {
+          "service": "linear",
+          "record": "ENG-2136",
+          "finding": "the production flag is off and no SKU exists"
+        },
+        {
+          "service": "snowflake",
+          "record": "LIVE_EVENT_PERFORMANCE",
+          "finding": "no Domino Delights Season Pass run exists"
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "root_cause": "A15",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "gcal",
+          "record": "evt_5c1a7e93b2d04f61a8e7",
+          "finding": "live needs 100% enablement plus a production surface"
+        },
+        {
+          "service": "linear",
+          "record": "ENG-2323",
+          "finding": "offer_rotation_v2 is at a 10% cohort"
+        },
+        {
+          "service": "github",
+          "record": "harmonygames-Games/GameOfDominoes#1838",
+          "finding": "the Hero Offers code is merged"
+        },
+        {
+          "service": "snowflake",
+          "record": "LIVE_EVENT_PERFORMANCE",
+          "finding": "no 48-hour rotation run exists"
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "root_cause": "A12",
+      "ends_in": "R2",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68d672304f5e6d7a8b9c0d11",
+          "finding": "testing items must say in testing"
+        },
+        {
+          "service": "confluence",
+          "record": "page_external_messaging_guide",
+          "finding": "the decoy allows live for anything shipped this quarter"
+        },
+        {
+          "service": "linear",
+          "record": "ENG-2323",
+          "finding": "the rotation is a 10% cohort"
+        },
+        {
+          "service": "gsheets",
+          "record": "f_6b2c3d4e5f60718293a4b5",
+          "finding": "the qualifier is written as in testing"
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "root_cause": "A7",
+      "ends_in": "R3",
+      "hops": [
+        {
+          "service": "gmail",
+          "record": "jlawson@harmonygames.co_1860000000000000001",
+          "finding": "the pack covers player-facing claims only"
+        },
+        {
+          "service": "confluence",
+          "record": "page_live_ops_engine",
+          "finding": "the engine is internal scheduling tooling"
+        },
+        {
+          "service": "linear",
+          "record": "ENG-2372",
+          "finding": "the engine has no player-facing surface"
+        },
+        {
+          "service": "gsheets",
+          "record": "f_6b2c3d4e5f60718293a4b5",
+          "finding": "C11 is out of scope and dropped"
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "root_cause": "A16",
+      "ends_in": "R5",
+      "hops": [
+        {
+          "service": "gdrive",
+          "record": "f_5a1b2c3d4e5f60718293a4",
+          "finding": "C06 is written as live"
+        },
+        {
+          "service": "gdocs",
+          "record": "f_c57724584820a26f3bbe54",
+          "finding": "the readiness doc says it was replaced"
+        },
+        {
+          "service": "linear",
+          "record": "ENG-2136",
+          "finding": "the flag is off"
+        },
+        {
+          "service": "gsheets",
+          "record": "f_6b2c3d4e5f60718293a4b5",
+          "finding": "the conflict column names both sources and the governing one"
+        }
+      ]
+    }
+  ],
+  "traps": [
+    {
+      "id": "T1",
+      "family": "stale_summary",
+      "services": [
+        "gdrive",
+        "gsheets"
+      ],
+      "seeded_ids": [
+        "f_5a1b2c3d4e5f60718293a4"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "the draft's all-live opening line is repeated as the status set",
+      "resolver": "H1 applied to each claim's production evidence",
+      "discovery_order": "the draft is the first record the task opens"
+    },
+    {
+      "id": "T2",
+      "family": "authority",
+      "services": [
+        "gcal",
+        "confluence"
+      ],
+      "seeded_ids": [
+        "evt_5c1a7e93b2d04f61a8e7",
+        "page_release_status_definitions"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "the Engineering release-status page is used: merged and deployed means shipped, so C06 is live",
+      "resolver": "H1's flag and production-surface clause",
+      "discovery_order": "the Confluence page is the first search hit for release status"
+    },
+    {
+      "id": "T3",
+      "family": "authority",
+      "services": [
+        "trello",
+        "confluence"
+      ],
+      "seeded_ids": [
+        "68d672304f5e6d7a8b9c0d11",
+        "page_external_messaging_guide"
+      ],
+      "requirement": "R2",
+      "expected_wrong_reading": "the marketing guide allows live for anything shipped this quarter, so C10 keeps live",
+      "resolver": "H2's in-testing rule",
+      "discovery_order": "the marketing guide is in Confluence and is read before Trello"
+    },
+    {
+      "id": "T4",
+      "family": "scope_alias",
+      "services": [
+        "gmail",
+        "confluence",
+        "linear"
+      ],
+      "seeded_ids": [
+        "jlawson@harmonygames.co_1860000000000000001",
+        "ENG-2372"
+      ],
+      "base_pointers": [
+        "confluence:page_live_ops_engine"
+      ],
+      "requirement": "R3",
+      "expected_wrong_reading": "C11 is marked live because the engine runs",
+      "resolver": "H3: the pack covers player-facing claims only",
+      "discovery_order": "C11 is true but internal and looks live"
+    },
+    {
+      "id": "T5",
+      "family": "superseding",
+      "services": [
+        "github",
+        "gdocs",
+        "slack"
+      ],
+      "seeded_ids": [
+        "1759255200.000200"
+      ],
+      "base_pointers": [
+        "github:harmonygames-Games/GameOfDominoes#1755",
+        "gdocs:f_c57724584820a26f3bbe54"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "C06 is live because the PR merged and the ticket is Done",
+      "resolver": "the 2025-05-05 readiness P0 and the 2025-09-28 config comment overturn the merge",
+      "discovery_order": "the PR and ticket are met before the readiness doc",
+      "version_records": [
+        {
+          "service": "github",
+          "id": "harmonygames-Games/GameOfDominoes#1755",
+          "seeded": false,
+          "at": "2025-03-29T01:57:59Z"
+        },
+        {
+          "service": "gdocs",
+          "base_pointer": "gdocs:f_c57724584820a26f3bbe54",
+          "seeded": false,
+          "at": "2025-05-05T15:42:14Z"
+        },
+        {
+          "service": "slack",
+          "id": "1759255200.000200",
+          "seeded": true,
+          "at": "2025-09-30T18:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "T6",
+      "family": "superseding",
+      "services": [
+        "trello",
+        "linear"
+      ],
+      "seeded_ids": [
+        "680222a04f5e6d7a8b9c0d13",
+        "ENG-2369"
+      ],
+      "requirement": "R7",
+      "expected_wrong_reading": "the April five-bundle card is copied into the register",
+      "resolver": "the September SKU comment lists four coin bundles and the starter pack",
+      "discovery_order": "the Trello card is found by coin bundles before the ticket",
+      "version_records": [
+        {
+          "service": "trello",
+          "id": "680222a04f5e6d7a8b9c0d13",
+          "seeded": true,
+          "at": "2025-04-18T10:00:00Z"
+        },
+        {
+          "service": "linear",
+          "id": "ENG-2369",
+          "seeded": true,
+          "at": "2025-09-26T13:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "T7",
+      "family": "exact_predicate",
+      "services": [
+        "snowflake"
+      ],
+      "base_pointers": [
+        "snowflake:LIVE_OPS.EVENTS.LIVE_EVENT_PERFORMANCE"
+      ],
+      "requirement": "R7",
+      "expected_wrong_reading": "the number of event rows is reported as the number of event features",
+      "resolver": "the register counts six event features across five event claims, not runs",
+      "discovery_order": "the table row count is the first number seen"
+    },
+    {
+      "id": "T8",
+      "family": "conclusion_stop",
+      "services": [
+        "slack"
+      ],
+      "seeded_ids": [
+        "1759255200.000200"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "the parent message is read and the thread is not opened, so C06 and C07 stay live",
+      "resolver": "the 18:00 reply corrects both",
+      "discovery_order": "the parent is returned by the search; the reply is not"
+    },
+    {
+      "id": "T9",
+      "family": "distractor",
+      "distractor_type": "non_authoritative_instruction",
+      "services": [
+        "slack"
+      ],
+      "seeded_ids": [
+        "1759249980.000300"
+      ],
+      "requirement": "R6",
+      "expected_wrong_reading": "Brian's offer-calendar request is added to the register or the pack",
+      "resolver": "ignore: no authority over claims",
+      "discovery_order": "the message is in the same channel and arrives before the correction"
+    },
+    {
+      "id": "T10",
+      "family": "distractor",
+      "distractor_type": "stale_summary",
+      "services": [
+        "gsheets"
+      ],
+      "seeded_ids": [
+        "f_6b2c3d4e5f60718293a4b5"
+      ],
+      "requirement": "R6",
+      "expected_wrong_reading": "the old nine-row register is copied as the answer",
+      "resolver": "use the Register tab and the thirteen-claim set",
+      "discovery_order": "the old tab has data and looks complete"
+    },
+    {
+      "id": "T11",
+      "family": "distractor",
+      "distractor_type": "scope_adjacent",
+      "services": [
+        "gsheets",
+        "confluence"
+      ],
+      "seeded_ids": [
+        "f_6b2c3d4e5f60718293a4b5"
+      ],
+      "base_pointers": [
+        "confluence:page_live_ops_engine"
+      ],
+      "requirement": "R3",
+      "expected_wrong_reading": "the old register's live-ops engine row is carried forward as in scope",
+      "resolver": "H3 excludes internal tooling",
+      "discovery_order": "the old tab looks like a shortcut"
+    },
+    {
+      "id": "T12",
+      "family": "distractor",
+      "distractor_type": "near_duplicate_record",
+      "services": [
+        "gdrive"
+      ],
+      "seeded_ids": [
+        "f_5a1b2c3d4e5f60718293a5"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "the nine-claim v1 draft is used as the cohort",
+      "resolver": "the current v2 draft dated 2025-09-30 is the source",
+      "discovery_order": "v1 is a near-duplicate title and is found by the same search"
+    },
+    {
+      "id": "T13",
+      "family": "eliminating_evidence",
+      "services": [
+        "trello",
+        "linear",
+        "slack"
+      ],
+      "seeded_ids": [
+        "1759251600.000400"
+      ],
+      "base_pointers": [
+        "trello:67ec1f6021f4291d45f9c21e"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "C07 is live because the card exists",
+      "resolver": "the card has no ticket, no PR and no config; the 2025-09-30 decision records no build slot",
+      "discovery_order": "the card is in the October list"
+    },
+    {
+      "id": "T14",
+      "family": "reuse_exclusion",
+      "services": [
+        "gsheets"
+      ],
+      "seeded_ids": [
+        "f_6b2c3d4e5f60718293a4b5"
+      ],
+      "requirement": "R6",
+      "expected_wrong_reading": "a new workbook is created, or the Old register tab is overwritten",
+      "resolver": "update the existing Register tab",
+      "discovery_order": "the workbook has two tabs and one looks empty"
+    }
+  ],
+  "call_budget": [
+    {
+      "phase": "discovery",
+      "service": "slack",
+      "calls": 5,
+      "reason": "find the note, the product channel and the correction reply; read the parent and its thread"
+    },
+    {
+      "phase": "discovery",
+      "service": "gdrive",
+      "calls": 3,
+      "reason": "open the current draft, check its modified date and reject the v1 near-duplicate"
+    },
+    {
+      "phase": "discovery",
+      "service": "gmail",
+      "calls": 2,
+      "reason": "find and read the scope thread"
+    },
+    {
+      "phase": "discovery",
+      "service": "gcal",
+      "calls": 2,
+      "reason": "find the 2025-09-29 review event and read its description"
+    },
+    {
+      "phase": "rules",
+      "service": "confluence",
+      "calls": 5,
+      "reason": "read the three decoys, the conflict-format page and the claims page to be corrected"
+    },
+    {
+      "phase": "rules",
+      "service": "trello",
+      "calls": 3,
+      "reason": "read the DD wording card, the same-service decoy and the Collectibles card"
+    },
+    {
+      "phase": "rules",
+      "service": "gmail",
+      "calls": 1,
+      "reason": "re-read the scope note once for the player-facing and launch-date clauses"
+    },
+    {
+      "phase": "per-record",
+      "service": "linear",
+      "calls": 22,
+      "reason": "eleven issues plus their comments, each issue and its comment carrying a distinct production fact (2 calls per claim)"
+    },
+    {
+      "phase": "per-record",
+      "service": "github",
+      "calls": 3,
+      "reason": "the two contested PR threads (Season Pass and Hero Offers) whose branch and flag state contradicts the ticket"
+    },
+    {
+      "phase": "structured",
+      "service": "snowflake",
+      "calls": 6,
+      "reason": "one query per evidence family: event runs, event types, SKU set, ad revenue, install dates and the empty Season Pass check"
+    },
+    {
+      "phase": "structured",
+      "service": "gsheets",
+      "calls": 4,
+      "reason": "Register headers, Old register, level manifest active/disabled counts and summary totals"
+    },
+    {
+      "phase": "reconciliation",
+      "service": "slack",
+      "calls": 1,
+      "reason": "reconcile the parent, the amendment and the draft opening line in one read"
+    },
+    {
+      "phase": "reconciliation",
+      "service": "gdocs",
+      "calls": 2,
+      "reason": "reconcile the readiness P0 with the Season Pass ticket and the launch date"
+    },
+    {
+      "phase": "writes",
+      "service": "gsheets",
+      "calls": 2,
+      "reason": "write the thirteen rows and read back the totals"
+    },
+    {
+      "phase": "writes",
+      "service": "slack",
+      "calls": 2,
+      "reason": "post the summary and read it back"
+    },
+    {
+      "phase": "writes",
+      "service": "confluence",
+      "calls": 2,
+      "reason": "update the claims page and read it back"
+    },
+    {
+      "phase": "writes",
+      "service": "linear",
+      "calls": 2,
+      "reason": "create the follow-up issue and read it back"
+    }
+  ],
+  "writes": [
+    {
+      "service": "gsheets",
+      "tool": "gsheets_update_cells",
+      "count": 1,
+      "depends_on": [
+        "M1_status",
+        "M2_flag",
+        "M5_scope",
+        "M6_conflict",
+        "M7_counts"
+      ],
+      "requirements": [
+        "R1",
+        "R2",
+        "R4",
+        "R6"
+      ]
+    },
+    {
+      "service": "slack",
+      "tool": "slack_post_message",
+      "count": 1,
+      "depends_on": [
+        "M1_status",
+        "M7_counts"
+      ],
+      "requirements": [
+        "R7"
+      ]
+    },
+    {
+      "service": "confluence",
+      "tool": "confluence_update_page",
+      "count": 1,
+      "depends_on": [
+        "M1_status",
+        "M5_scope",
+        "M6_conflict"
+      ],
+      "requirements": [
+        "R5"
+      ]
+    },
+    {
+      "service": "linear",
+      "tool": "linear_create_issue",
+      "count": 1,
+      "depends_on": [
+        "M1_status",
+        "M3_live_standard"
+      ],
+      "requirements": [
+        "R8"
+      ]
+    }
+  ],
+  "mechanism_portfolio": [
+    {
+      "id": "M1_status",
+      "mechanism": "A1",
+      "prior_family": "wrong summary + thread past its conclusion (A1)",
+      "prior_family_reason": "same mechanism: an authoritative-but-wrong summary met before the production evidence that overturns it",
+      "prior": {
+        "alpha": 1.8571,
+        "beta": 1.0,
+        "record_ids": [
+          "hev_0e23d0e0b6b029a5"
+        ]
+      },
+      "nodes": [
+        "T1",
+        "T5",
+        "C1"
+      ],
+      "requirement": "R1",
+      "natural_reading": "trust the draft's all-live summary",
+      "decides": [
+        "status"
+      ],
+      "source": "claims-draft",
+      "signature": "status-from-production-evidence",
+      "controls": [
+        "C01",
+        "C02",
+        "C04"
+      ],
+      "over_application": "over:all-not-live"
+    },
+    {
+      "id": "M2_flag",
+      "mechanism": "A15",
+      "prior_family": "A15",
+      "prior_family_reason": "same family: a house rule that overrides the natural reading, applied per record; no Opus 5.5 record exists and the Opus 4.8 evidence is not pooled",
+      "nodes": [
+        "T2",
+        "C2"
+      ],
+      "requirement": "R1",
+      "natural_reading": "Done plus merged means live",
+      "decides": [
+        "status"
+      ],
+      "source": "live-standard",
+      "signature": "flag-and-cohort-overrides-done",
+      "controls": [
+        "C01",
+        "C02",
+        "C08"
+      ],
+      "over_application": "over:all-testing"
+    },
+    {
+      "id": "M3_live_standard",
+      "mechanism": "A12",
+      "prior_family": "A12",
+      "prior_family_reason": "same family: the governing rule home is in a rarely-opened service and a near-matching decoy is in a frequently-opened one; Opus 4.8 only",
+      "nodes": [
+        "T2"
+      ],
+      "requirement": "R1",
+      "natural_reading": "use the first release-status page found",
+      "decides": [
+        "status"
+      ],
+      "source": "live-standard",
+      "signature": "find-the-q4-standard-not-the-engineering-page",
+      "controls": [
+        "C01",
+        "C06"
+      ],
+      "over_application": "over:trust-engineering-page"
+    },
+    {
+      "id": "M4_wording",
+      "mechanism": "A12",
+      "prior_family": "A12",
+      "prior_family_reason": "same family: the wording rule is homed in Trello with a same-service decoy; Opus 4.8 only",
+      "nodes": [
+        "T3"
+      ],
+      "requirement": "R2",
+      "natural_reading": "anything shipped may be called live",
+      "decides": [
+        "decision",
+        "qualifier"
+      ],
+      "source": "wording-rules",
+      "signature": "testing-must-say-in-testing",
+      "controls": [
+        "C01",
+        "C02"
+      ],
+      "over_application": "over:all-in-testing"
+    },
+    {
+      "id": "M5_scope",
+      "mechanism": "A7",
+      "prior_family": "A7",
+      "prior_family_reason": "same family: a scope boundary that survives full retrieval; Opus 4.8 only",
+      "nodes": [
+        "T4",
+        "T11",
+        "C4"
+      ],
+      "requirement": "R3",
+      "natural_reading": "a live feature is in scope",
+      "decides": [
+        "scope"
+      ],
+      "source": "scope-note",
+      "signature": "internal-tooling-is-out-of-scope",
+      "controls": [
+        "C01",
+        "C04"
+      ],
+      "over_application": "over:all-out-of-scope"
+    },
+    {
+      "id": "M6_conflict",
+      "mechanism": "A16",
+      "prior_family": "A16",
+      "prior_family_reason": "same family: a source conflict the task asks to report; Opus 4.8 only",
+      "nodes": [
+        "T5",
+        "C5"
+      ],
+      "requirement": "R5",
+      "natural_reading": "pick the more recent of two sources silently",
+      "decides": [
+        "conflict"
+      ],
+      "source": "claims-draft",
+      "signature": "report-both-sources-and-the-governing-one",
+      "controls": [
+        "C01",
+        "C02"
+      ],
+      "over_application": "over:all-conflict"
+    },
+    {
+      "id": "M7_counts",
+      "mechanism": "A19",
+      "prior_family": "A19",
+      "prior_family_reason": "same family: rows retrieved but the derived comparison or exact count is never computed; Opus 4.8 only",
+      "nodes": [
+        "T6",
+        "T7",
+        "C1"
+      ],
+      "requirement": "R7",
+      "natural_reading": "count rows or repeat the card numbers",
+      "decides": [
+        "counts"
+      ],
+      "source": "claims-draft",
+      "signature": "count-features-and-exact-values",
+      "controls": [
+        "C01",
+        "C02"
+      ],
+      "over_application": "over:count-runs"
+    }
+  ],
+  "gradable_surface": {
+    "path": "01_Gradable_Surface.json"
+  }
+}

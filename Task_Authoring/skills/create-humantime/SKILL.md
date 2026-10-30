@@ -35,7 +35,7 @@ yourself (search does not).
 ## Output
 `task_inputs/Working_Files/05_Human_Time_Worksheet.md`: hours, the sub-task table (kind, volume, rate, minutes),
 the tier check, the character count and the **Self-review** (playbook section, GEN_EXECUTION §6a).
-It contains no paragraph written to be retyped.
+It contains no paragraph written to be retyped. Channel/control evidence is not a deliverable: it must not add sub-tasks, volumes or minutes.
 
 ## Stage gate (blocking)
 Run `python3 Task_Authoring/tools/stage_gate.py humantime Task_Authoring/task_inputs --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.

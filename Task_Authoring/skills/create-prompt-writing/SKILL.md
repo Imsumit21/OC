@@ -28,6 +28,8 @@ apply the persona ACL yourself (search does not).
 Persona view: prove each discovery-map fact is findable with `tools/persona_view.py search <persona> <service> "<natural query>"` (brief §5a) and visible with `persona_view.py can-see`; pin name traps with `tools/entity.py collisions` / `resolve` (brief §10).
 Final outcomes: brief §4b records every fair reading and accepted result; 08 and 09 reuse it. Supply outcome reviews for prompt-writing and prompt-check plus the assigned-role review for prompt-check in `Working_Files/00_V3_Authoring_Evidence.json` (Guide schema). Write a clean ordinary request with no riddle, trap hint or answer-key clause. Tier targets remain Long→extreme / Normal→normal, certified separately from the assigned mode cap.
 
+The deliverable must be in a shape the grader decodes — tracker text with group lists/tables, a table/CSV-shaped register, a `json_text` write (tickets/summary/mail), or a Slack/Trello post delivered through `json_text`/`calls` — never prose only. Before the pre-check, run `python3 Task_Authoring/tools/gradable_surface.py gradeable-report --task-dir Task_Authoring/task_inputs` and spot-decode one realistic deliverable per selector kind; control/channel declarations are universe facts, not prompt hints, so do not leak them.
+
 ## Output
 brief mode: `task_inputs/Working_Files/04_Prompt_Writing_Brief.md` · draft mode: `task_inputs/04_Prompt.txt` · check mode: `task_inputs/Working_Files/04_Prompt_Check.md`.
 

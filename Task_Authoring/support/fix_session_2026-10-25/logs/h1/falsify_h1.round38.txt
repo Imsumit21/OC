@@ -1,0 +1,99 @@
+ok   control: node_verdicts self-test passes
+ok   control: hardness_ledger self-test passes
+ok   control: hardness_forecast self-test passes
+ok   control: oracle_kit self-test passes
+ok   control: trajectory_ledger self-test passes
+ok   control: difficulty_mutation self-test passes
+ok   node_verdicts: mechanism? -> the old cohort fallback -> the self-test fails
+       AssertionError: [{'key': 'K-01', 'field': 'count', 'run': '7', 'truth': '2', 'reproduced_by_ignoring': [], 'attributed': ['late'], 'candidates': ['late'], 'classifica
+ok   node_verdicts: no control trials -> the self-test fails
+       KeyError: 'late'
+ok   node_verdicts: no deciding event / model -> the self-test fails
+       AssertionError: [{'key': 'K-04', 'outcome': 'OVER-APPLIED', 'error': True, 'fields': ['count'], 'written': {'count': 'missing'}, 'truth': {'count': '3'}, 'over_applie
+ok   node_verdicts: go rule without model or independence checks -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-5-5', 'independent_channels': 1, 'channels': [['mechanism late']], 'not_counted': {'off_model_or_unregistered': [], 'c
+ok   node_verdicts: compare without landed-key sets -> the self-test fails
+       AssertionError: []
+ok   node_verdicts: surface-only rules proposed -> the self-test fails
+       KeyError: 'revision'
+ok   hardness_ledger: no control / channel kinds -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: pending review not refused -> the self-test fails
+       AssertionError: 
+ok   node_verdicts: slips listed again when a channel or control explains them -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 2, 'channels': [['mechanism late'], ['channel scale:count']], 'not_counted': {'off_model
+ok   node_verdicts: channel members matched on any column (class cascade) -> the self-test fails
+       AssertionError: {'scale:count': {'kind': 'scale', 'rule': None, 'source': 'notes', 'preregistered': True, 'verdict': 'FAILED', 'members': 4, 'observed': 3, 'held': 3,
+ok   node_verdicts: control trials matched on any column (class cascade) -> the self-test fails
+       AssertionError: {'late': {'mechanism': 'A15', 'family': 'A15', 'over_application': 'over:late', 'trials': [{'key': 'K-04', 'outcome': 'OVER-APPLIED', 'error': True, '
+ok   hardness_ledger: H2 design effect over weighted trials -> the self-test fails
+       AssertionError: {'model': 'claude-opus-4-8', 'alpha': 2.25, 'beta': 1.25, 'mean': 0.6429, 'n_eff': 1.5, 'trials': 6, 'tasks': {'lib': {'trials': 6, 'weighted': 3.0, '
+ok   hardness_forecast: F1 channel rates matched by channel id -> the self-test fails
+       AssertionError: a member-unit rate silently fed the run-latent channel linked:a
+ok   trajectory_ledger: a revision-14 surface read raw (no key pattern for the briefs) -> the self-test fails
+       AssertionError: (None, None)
+ok   difficulty_mutation: keyless briefs give silent empty batches -> the self-test fails
+       AssertionError: briefs that name no solver key were accepted (every batch would be empty)
+ok   oracle_kit: no live-controls check -> the self-test fails
+       KeyError: 'contract.controls'
+ok   node_verdicts: seeded landings ignore supersession and revision -> the self-test fails
+       KeyError: ('r2', 'run-1', 'late')
+ok   node_verdicts: decider bounded by the last table write -> the self-test fails
+       AssertionError: ({'deciding_event': 7, 'deciding_model': 'claude-opus-4-8', 'via': 'brief', 'briefs': [[5, 'claude-opus-4-8'], [7, 'claude-opus-4-8']], 'register_writ
+ok   node_verdicts: unknown deciding models ignored -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 1, 'channels': [['mechanism late']], 'not_counted': {'off_model_or_unregistered': [], 'c
+ok   node_verdicts: unobserved control member held -> the self-test fails
+       AssertionError: [{'key': 'K-04', 'outcome': 'HELD', 'error': None, 'fields': ['count'], 'written': {}, 'truth': {'count': '3'}, 'over_applied_value': None, 'deciding_
+ok   node_verdicts: slots-only channel without provenance -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: class difference always cascade -> the self-test fails
+       AssertionError: {('K-01', 'count'): 'mechanism', ('K-01', 'class'): 'mechanism', ('K-02', 'count'): 'slip', ('K-02', 'class'): 'mechanism', ('K-03', 'count'): 'repres
+ok   hardness_ledger: observation records summed per record -> the self-test fails
+       AssertionError: {'model': 'claude-opus-4-8', 'alpha': 1.4615, 'beta': 1.4615, 'mean': 0.5, 'n_eff': 0.9231, 'trials': 12, 'tasks': {'ov': {'trials': 12, 'weighted': 6
+ok   hardness_ledger: rho unvalidated -> the self-test fails
+       AssertionError: rho -0.1 was accepted
+ok   hardness_forecast: channel rate run key drops the revision -> the self-test fails
+       AssertionError: {'alpha': 2.0, 'beta': 2.0, 'mean': 0.5, 'records': ['a', 'b'], 'unit': 'member', 'n': 2, 'f': 1, 'tasks': {'t': {'runs': 1, 'deff': 1.0, 'n': 2, 'f':
+ok   hardness_forecast: channel ops accepted as mechanisms -> the self-test fails
+       AssertionError: a channel degrade was accepted as a mechanism
+ok   node_verdicts: control-explained items kept as slips / mechanisms -> the self-test fails
+       AssertionError: [{'key': 'K-01', 'field': 'count', 'run': '0', 'truth': '2', 'reproduced_by_ignoring': ['late'], 'attributed': ['late'], 'candidates': ['late'], 'clas
+ok   node_verdicts: HELD channel proposes no record set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: a reference item's classification never vetoes a landing -> the self-test fails
+       AssertionError: ('cascade', set())
+ok   node_verdicts: slots-only channel counted although a control explains its target -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [['channel surface:deck'
+ok   node_verdicts: a subset of mapped slots treated as the whole channel (residual lost) -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [], 'control_over_applic
+ok   node_verdicts: residual models/unknown not recomputed after subtraction -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 0, 'channels': [], 'not_counted': {'off_model_or_unregistered': [['channel surface:deck'
+ok   node_verdicts: all-dropped observations leave no provenance -> the self-test fails
+       AssertionError: {'controls': 0, 'channels': 0, 'dropped': []}
+ok   node_verdicts: missing slot provenance counted as known -> the self-test fails
+       AssertionError: (None, {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'FAILED', 'members': 0, 'observed': 1, 'held': 0, 'unobserv
+ok   node_verdicts: failed slot omitted from a channel proposal's record set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: HELD slots-only channel loses its deciding event -> the self-test fails
+       AssertionError: {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'HELD', 'members': 0, 'observed': 1, 'held': 1, 'unobserved': 0, '
+ok   node_verdicts: a write-backed slot masks another slot's brief-only decision -> the self-test fails
+       AssertionError: {'kind': 'surface', 'rule': None, 'source': None, 'preregistered': True, 'verdict': 'HELD', 'members': 0, 'observed': 2, 'held': 2, 'unobserved': 0, '
+ok   node_verdicts: a slot with no detail reuses the channel aggregate -> the self-test fails
+       AssertionError: {'expected_model': 'claude-opus-4-8', 'independent_channels': 1, 'channels': [['channel surface:nt']], 'not_counted': {'off_model_or_unregistered': []
+ok   node_verdicts: the fallback flag ignores a known-but-unknown model set -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   hardness_ledger: a truthy covered evidence passes as a count -> the self-test fails
+       AssertionError: {'observed': 1}
+ok   node_verdicts: a FAILED channel ignores its held observations' models -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   node_verdicts: the proposal event ignores the channel aggregate -> the self-test fails
+       AssertionError: {'task': 't', 'revision': 'rev-1', 'sql_sha256': '0000000000000000000000000000000000000000000000000000000000000000', 'source': 'platform-baseline', 'h
+ok   hardness_ledger: the unknown flag accepted by truthiness -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: control-explained LANDED verdict enters the priors -> the self-test fails
+       AssertionError: [['hev_728e74412ae018be', 'NOT-REACHED is never counted'], ['hev_a21dd18d32813db6', 'mixed-model run']]
+ok   hardness_ledger: control/channel record without provenance accepted -> the self-test fails
+       AssertionError: 
+ok   hardness_ledger: a legitimate landing removed with its control-explained key -> the self-test fails
+       AssertionError: ('the legitimate landing hev_fe13fe8e5334b10c was removed from the prior with its control-explained key', 'hev_fe13fe8e5334b10c', {'model': 'claude-op
+H1 FALSIFICATION PASS

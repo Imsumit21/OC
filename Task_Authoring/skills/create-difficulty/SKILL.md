@@ -18,6 +18,9 @@ Build the matrix with `python3 Task_Authoring/tools/difficulty_stats.py --build 
 plus 11's `--invalid` / `--judge-correction` hand-off. Map each trajectory to its verifier `Run #N` by content, never by
 file order: `python3 Task_Authoring/tools/trajectory_ledger.py --task-dir Task_Authoring/task_inputs --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=Task_Authoring/task_inputs/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql …`
 (one `--sql` per stored revision; the first revision: `--sole-revision "<reason>"`) binds every export to its revision on evidence (one SQL alone is INSUFFICIENT) and reports validity, friction and the counted calls (`difficulty_stats.count_tool_calls`).
+
+Six **V3-valid** slots are required, and the tool owns the model labels (strip only a bracketed suffix, compare exactly; `mixed_model` and `v3_valid` are separate outcomes; an unrecognised label is UNKNOWN, never valid): a batch with mixed, wrong or unknown provenance is refused, and four runs (or any batch without the six slots, including errored exports) do not satisfy the six-slot requirement. The matrix binds `assignment_hash`, `policy_hash` and `context_hash`; `--build` stops when a verifier row does not bind exactly once to a `09_Rubrics.json` criterion or a criterion has no verifier row. The difficulty stage certificate digests `12_difficulty_input.json`, `09_Rubrics.json`, `10_Baseline_Verifier_Results.md` and `07_Baseline_Trajectories`: editing any of them after the paste makes the PASS stale — re-run and re-paste, never hand-edit.
+
 Fix unfair rows and re-grade before
 judging difficulty. The corrected fair view determines the V3 verdict; the platform view
 remains audit evidence. Never switch difficulty mode or use `--legacy-v2` for a V3 task.
@@ -31,5 +34,5 @@ apply the persona ACL yourself (search does not).
 Run `python3 Task_Authoring/tools/stage_gate.py difficulty Task_Authoring/task_inputs --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
 
 ## Deliver
-Report the output path(s), any blocking findings, the pre-registered forecast against the observed corrected gates (scored with `hardness_forecast.py score`; advisory, UNCALIBRATED), and the next step: confirm the platform check only if every gate passes; otherwise `/create-hardening` (MODE B forensics), whose output `/create-scenario --revise` consumes, and the routing in the report.
+Report the output path(s), any blocking findings, the pre-registered forecast against the observed corrected gates (scored with `hardness_forecast.py score`; advisory, UNCALIBRATED, UNPARAMETERIZED channels disclosed), and the next step: confirm the platform check only if every gate passes; otherwise `/create-hardening` (MODE B forensics), whose output `/create-scenario --revise` consumes, and the routing in the report.
 The user handles Eval Portal submissions and screenshots.

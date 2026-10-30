@@ -1,0 +1,39 @@
+[e2e_rev14] sandbox support/scratch/sandbox_live_0e0qgjt8; inputs read in place from support/backtests/season_pass
+ok   trajectory_ledger ran
+ok   every run BOUND to rev14 on evidence: {'pre': ('BOUND', ['rev14']), 'r1': ('BOUND', ['rev14']), 'r2': ('BOUND', ['rev14']), 'r3': ('BOUND', ['rev14']), 'r6': ('BOUND', ['rev14'])}
+ok   the pre-check is v3-invalid and mixed: v3_valid False, mixed True, models ['claude-opus-4-8', 'claude-opus-5']
+     node_verdicts.py exit 1:
+andbox_live_0e0qgjt8/ws/Task_Authoring/tools/node_verdicts.py", line 1305, in main
+    bad = evaluate_runs(report, runs, sqls, mod=mod, surface=surface, manifest=manifest, revision=a.revision,
+                        legacy=legacy, trust_min=a.trust_min, sole_revision=a.sole_revision, echo=not a.json,
+                        expected_model=expected)
+  File "/Users/sumitkumar/Source/Outlier/OC/Task_Authoring/support/scratch/sandbox_live_0e0qgjt8/ws/Task_Authoring/tools/node_verdicts.py", line 731, in evaluate_runs
+    r = verdicts_for_run(run, mod=mod, state=st, truth=truth, surface=surface, manifest=manifest, need=need,
+                         legacy=legacy, trust_min=trust_min, expected_model=expected_model)
+  File "/Users/sumitkumar/Source/Outlier/OC/Task_Authoring/support/scratch/sandbox_live_0e0qgjt8/ws/Task_Authoring/tools/node_verdicts.py", line 650, in verdicts_for_run
+    channels = channel_reports(view, channels_decl, rows, truth, mod=mod, state=state, tspec=tspec,
+                               table_events=table_events, graded=graded, class_field=cf, key_events=key_events,
+                               deciders=slot_deciders)
+  File "/Users/sumitkumar/Source/Outlier/OC/Task_Authoring/support/scratch/sandbox_live_0e0qgjt8/ws/Task_Authoring/tools/node_verdicts.py", line 339, in channel_reports
+    {"slot": s, **(deciders.get(s) if deciders else {})} for s in ok],
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not a mapping
+
+FAIL node_verdicts ran
+FAIL the pre-check has 0 designed landings: LANDED none; go rule None None
+FAIL SP-110 is an M2 control record from an Opus 5 brief: None None (truth None), decided by the None at event None (None); briefs None
+     r1: LANDED none; controls over-applied none; pending review none; go rule None
+     r2: LANDED none; controls over-applied none; pending review none; go rule None
+     r3: LANDED none; controls over-applied none; pending review none; go rule None
+     r6: LANDED none; controls over-applied none; pending review none; go rule None
+ok   surface_grader: the failed-slot sets of record: pre 90.2% ['S04', 'S05', 'S07', 'S08', 'S40']; r1 92.2% ['S43', 'S46', 'S47', 'S52']; r2 76.1% ['S04', 'S05', 'S07', 'S08', 'S38', 'S39', 'S40', 'S41', 'S42', 'S43', 'S44', 'S45', 'S46']; r3 91.8% ['S01', 'S47', 'S49', 'S52', 'S54']; r6 99.6% ['S01']
+ok   r3's S43/S44 and S69-S71 pass: {'S43': True, 'S44': True, 'S69': True, 'S70': True, 'S71': True}
+FAIL the temp ledger takes the control and channel records; no prior moves: 0 record(s) (0 control, 0 channel); models []; 0 Opus 4.8 families compared
+FAIL the verdict proposals append; exactly the pending reviews are refused: 0 verdict(s); accepted 0, pending none (known: ['r2:acceptance', 'r2:history']); rejected lines 0 all pending review: True; ledger ids exactly before + accepted: True; append head 'added 0 · already present 0 · rejected 0'
+ok   the verdicts move only the families of the non-mixed run r3 (mixed runs stay out by default): moved {}; r3 families []
+ok   hardness_forecast ran on the temp ledger, UNCALIBRATED: mechanisms [('rule:owner_calls', 'A14'), ('rule:process_findings', 'A15'), ('rule:claims', 'A1')]; first scenario independent/whole: {'V3': {'P_all': 0.0075, 'E_average': 0.8352}}; brief batches 34
+FAIL hardness_forecast: each channel's rate is exactly the eligible records of its family (F1): ; UNPARAMETERIZED ['scale:groups', 'tool_surface:register', 'control:process_findings']; briefs ['r3'] (34 brief batches)
+ok   the frozen copies are unchanged (SHA256SUMS, nothing newer than the start)
+E2E FAIL: 8/14 checks; failed: ['node_verdicts ran', 'the pre-check has 0 designed landings', 'SP-110 is an M2 control record from an Opus 5 brief', 'the temp ledger takes the control and channel records; no prior moves', 'the verdict proposals append; exactly the pending reviews are refused', "hardness_forecast: each channel's rate is exactly the eligible records of its family (F1)"]
+E2E_RC=1
+DONE

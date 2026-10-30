@@ -30,6 +30,8 @@ Visibility per fact is proven with `tools/persona_view.py can-see` (base) or `ch
 ## Output
 prep mode: `task_inputs/Working_Files/08_OE_Writing_Ledger.md` · draft mode: `task_inputs/08_Oracle_Events.md` · check mode: `task_inputs/Working_Files/08_OE_Check.md`. Both end with the playbook's **Self-review** (GEN_EXECUTION §6a): counter-readings for every completeness and accuracy judgement, every expected value re-read through `tools/hg.py`.
 
+Check mode must report exactly `Path feasibility SUPPORTED`, `Task solvability SUPPORTED_BY_OE` and `Blocking 0`; `release.oe_solvability` parses those three and blocks on anything else. The fact ledger also carries any control/channel fact that affects the path, and the exact deliverable locations; an OE path that depends on a channel record the agent cannot see is not solvable.
+
 ## Stage gate (blocking)
 Run `python3 Task_Authoring/tools/stage_gate.py oe-writing Task_Authoring/task_inputs --paste` (prep) or `… oe-check …` (check mode). Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, locator provenance and defer-search completeness (prep), pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
 

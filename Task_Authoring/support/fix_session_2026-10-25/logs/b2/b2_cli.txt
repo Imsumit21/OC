@@ -1,0 +1,18 @@
+$ trajectory_ledger.py --run precheck=<rev13 pre-check> --sql rev14=<rev14 SQL>
+precheck: stream-json counted=578 briefs=62 models={'claude-opus-4-8': 62} fallbacks=[5855] binding=INSUFFICIENT:None flags=4
+    - revision binding INSUFFICIENT: one candidate: content alone can't tell this revision from another one (pass every stored revision with --sql, or --sole-revision with a reason when the task has no other revision)
+exit=1
+
+$ node_verdicts.py --task-dir <rev13 fixture> --solver <ported> --sql rev14=<rev14 SQL> --run precheck=<rev13 pre-check>
+precheck: NOT EVALUATED - binding INSUFFICIENT (one candidate: content alone can't tell this revision from another one (pass every stored revision with --sql, or --sole-revision with a reason when the task has no other revision)); mark it historical in the intake, or bind it (--sql for every stored revision)
+summary: 
+reach nodes never read in any run: none
+exit=1
+
+$ trajectory_ledger.py --task-dir <scratch task storing rev13 + rev14> --run precheck=<rev14 pre-check> --sql rev14=<rev14 SQL> --sole-revision "first revision"
+trajectory_ledger: --sole-revision refused: the task stores other revision(s) ['rev13'] under Working_Files/run_forensics/; pass every stored revision with --sql instead
+exit=2
+
+$ (the same, after removing the stored rev13)
+precheck: stream-json counted=582 briefs=97 models={'claude-opus-4-8': 17, 'claude-opus-5': 80} fallbacks=[1092] binding=BOUND:['rev14'] flags=3
+exit=0

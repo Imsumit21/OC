@@ -30,6 +30,8 @@ Re-read every expected value through `tools/hg.py` and record its actual source 
 ## Rules that most often decide the verdict
 Keep unchanged title-only, atomicity, affirmative-title, weight 1/3/5, coverage and binary-validity checks. V3 controls fair alternatives, prompt trace, source correctness/reachability, date flexibility and global fact duplication. Fix unfair rows and re-grade before comparing with the assigned mode cap; do not tighten or add rows to depress the average.
 
+§G must cover every slot of `Working_Files/01_Gradable_Surface.json`: a covering row (P-n; C-n in check mode) or a disposition with its reason. A slot with neither, a bare label, a `gap` or a stale line blocks `surface.coverage` (gate 17). A criterion must not grade a control-explained field as a landing; a forecast's P(fails all six) is workload, never a block.
+
 ## Output
 prep mode: `task_inputs/Working_Files/09_Rubric_Writing_Plan.md` · draft mode: `task_inputs/09_Rubrics.json` · check mode: `task_inputs/Working_Files/09_Rubric_Check.md`.
 

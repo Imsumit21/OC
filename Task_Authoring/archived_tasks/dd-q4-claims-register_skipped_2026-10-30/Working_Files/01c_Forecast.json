@@ -1,0 +1,8600 @@
+{
+ "tool": "hardness_forecast/1",
+ "note": "model outputs, not measurements; the Season Pass backtests are development fixtures, not validation",
+ "revision": "r1",
+ "sql_sha256": "26385ee9641873346b66adad0c52a99753a47a1f5af61624b9d81c86bb2cf8ba",
+ "solver_sha256": "880e65cd119b835f99153673475be9ec0d47abba26c947b4801b411182f12319",
+ "surface": "Task_Authoring/task_inputs/Working_Files/01_Gradable_Surface.json",
+ "sha256": "ed7f0476e12c1838fe7299595f168e7176418b15a8d3f795cec19e022612ac96",
+ "views": {
+  "V3": {
+   "cap": 0.7,
+   "mode": "hard"
+  }
+ },
+ "task_type": "normal",
+ "calls": 550,
+ "max_k": 8,
+ "max_k_override": null,
+ "kind": "HARDNESS_FORECAST",
+ "label": "UNCALIBRATED · advisory",
+ "model": "claude-opus-5-5",
+ "priors_from": "claude-opus-5-5",
+ "exclusions": {
+  "tasks": [],
+  "revisions": [],
+  "include_mixed": false
+ },
+ "ledger": "Task_Authoring/support/hardness_ledger/ledger.jsonl",
+ "ledger_sha256": "a8d748b546756dc15559ecb4ff60da42b9c84030534d0fb9c3c522787bcb3602",
+ "mechanisms": [
+  {
+   "id": "rule:M1_status",
+   "family": "wrong summary + thread past its conclusion (A1)",
+   "source": "claims-draft",
+   "touched": 13,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.8571,
+    "beta": 1.0,
+    "mean": 0.65,
+    "n_eff": 0.8571,
+    "trials": 6,
+    "tasks": {
+     "library:ML-selected Combo Fighters": {
+      "trials": 6,
+      "weighted": 3.0,
+      "deff": 3.5,
+      "n_eff": 0.8571,
+      "landed": 0.8571
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_0e23d0e0b6b029a5"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:M2_flag",
+   "family": "A15",
+   "source": "live-standard",
+   "touched": 2,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 1.0,
+    "mean": 0.5,
+    "n_eff": 0.0,
+    "record_ids": [],
+    "excluded": [],
+    "label": "UNCALIBRATED · no evidence for this family on this model: flat Beta(1,1)"
+   }
+  },
+  {
+   "id": "rule:M3_live_standard",
+   "family": "A12",
+   "source": "live-standard",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 1.0,
+    "mean": 0.5,
+    "n_eff": 0.0,
+    "record_ids": [],
+    "excluded": [],
+    "label": "UNCALIBRATED · no evidence for this family on this model: flat Beta(1,1)"
+   }
+  },
+  {
+   "id": "rule:M4_wording",
+   "family": "A12",
+   "source": "wording-rules",
+   "touched": 13,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 1.0,
+    "mean": 0.5,
+    "n_eff": 0.0,
+    "record_ids": [],
+    "excluded": [],
+    "label": "UNCALIBRATED · no evidence for this family on this model: flat Beta(1,1)"
+   }
+  },
+  {
+   "id": "rule:M5_scope",
+   "family": "A7",
+   "source": "scope-note",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 1.0,
+    "mean": 0.5,
+    "n_eff": 0.0,
+    "record_ids": [],
+    "excluded": [],
+    "label": "UNCALIBRATED · no evidence for this family on this model: flat Beta(1,1)"
+   }
+  },
+  {
+   "id": "rule:M6_conflict",
+   "family": "A16",
+   "source": "claims-draft",
+   "touched": 2,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 1.0,
+    "mean": 0.5,
+    "n_eff": 0.0,
+    "record_ids": [],
+    "excluded": [],
+    "label": "UNCALIBRATED · no evidence for this family on this model: flat Beta(1,1)"
+   }
+  },
+  {
+   "id": "rule:M7_counts",
+   "family": "A19",
+   "source": "claims-draft",
+   "touched": 3,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 1.0,
+    "mean": 0.5,
+    "n_eff": 0.0,
+    "record_ids": [],
+    "excluded": [],
+    "label": "UNCALIBRATED · no evidence for this family on this model: flat Beta(1,1)"
+   }
+  }
+ ],
+ "channels": [],
+ "unparameterized_channels": [
+  {
+   "id": "scale:claims",
+   "kind": "scale",
+   "members": 4,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "tool_surface:pr",
+   "kind": "tool_surface",
+   "members": 2,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "delegation:scope",
+   "kind": "delegation",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:M1_status",
+   "kind": "control",
+   "members": 3,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:M2_flag",
+   "kind": "control",
+   "members": 3,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:M3_live_standard",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:M4_wording",
+   "kind": "control",
+   "members": 2,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:M5_scope",
+   "kind": "control",
+   "members": 2,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:M6_conflict",
+   "kind": "control",
+   "members": 2,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:M7_counts",
+   "kind": "control",
+   "members": 2,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  }
+ ],
+ "briefs": {
+  "files": [],
+  "sha256": {},
+  "digest": null,
+  "content_digest": null,
+  "batches": null
+ },
+ "scenarios": [
+  {
+   "dependence": "independent",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6067,
+     "band_10_90": [
+      0.5446,
+      0.6881
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.9207,
+      "per_rollout_sd": 0.2101,
+      "failure_patterns": 0.2988
+     },
+     "P_all": 0.0704,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.02,
+       "P_all_if_rate_below_median": 0.1208,
+       "spread": 0.1008
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0506,
+       "P_all_if_rate_below_median": 0.0902,
+       "spread": 0.0396
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0512,
+       "P_all_if_rate_below_median": 0.0896,
+       "spread": 0.0384
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0608,
+       "P_all_if_rate_below_median": 0.08,
+       "spread": 0.0192
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.064,
+       "P_all_if_rate_below_median": 0.0768,
+       "spread": 0.0128
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0768,
+       "P_all_if_rate_below_median": 0.064,
+       "spread": 0.0128
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0642,
+       "P_all_if_rate_below_median": 0.0766,
+       "spread": 0.0124
+      }
+     ],
+     "E_patterns": 2.4347
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6529,
+    "rule:M2_flag": 0.4975,
+    "rule:M3_live_standard": 0.4973,
+    "rule:M4_wording": 0.5026,
+    "rule:M5_scope": 0.5052,
+    "rule:M6_conflict": 0.5007,
+    "rule:M7_counts": 0.4959
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19539,
+     "either": 49488,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19540,
+     "either": 49472,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19703,
+     "either": 49630,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19846,
+     "either": 49640,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 19760,
+     "either": 49457,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 19344,
+     "either": 49587,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 14891,
+     "either": 44798,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 14925,
+     "either": 45085,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 15173,
+     "either": 44990,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 14886,
+     "either": 45008,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 14886,
+     "either": 44722,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 15055,
+     "either": 44940,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 14987,
+     "either": 45161,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14995,
+     "either": 44884,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 14881,
+     "either": 44712,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15225,
+     "either": 45244,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 15108,
+     "either": 45092,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15115,
+     "either": 44799,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15211,
+     "either": 45142,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 14911,
+     "either": 45156,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 14847,
+     "either": 44951,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3256,
+     "either": 0.8248
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3257,
+     "either": 0.8245
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3284,
+     "either": 0.8272
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3308,
+     "either": 0.8273
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.3293,
+     "either": 0.8243
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.3224,
+     "either": 0.8265
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.2482,
+     "either": 0.7466
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2487,
+     "either": 0.7514
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2529,
+     "either": 0.7498
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2481,
+     "either": 0.7501
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.2481,
+     "either": 0.7454
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.2509,
+     "either": 0.749
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.2498,
+     "either": 0.7527
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2499,
+     "either": 0.7481
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.248,
+     "either": 0.7452
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.2537,
+     "either": 0.7541
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2518,
+     "either": 0.7515
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2519,
+     "either": 0.7467
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2535,
+     "either": 0.7524
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.2485,
+     "either": 0.7526
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.2475,
+     "either": 0.7492
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.7624
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9548,
+     "P_fails_all_six": 0.8042
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9135,
+     "P_fails_all_six": 0.6813
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9122,
+     "P_fails_all_six": 0.6802
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9108,
+     "P_fails_all_six": 0.676
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8273,
+     "P_fails_all_six": 0.4767
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6529,
+     "P_fails_all_six": 0.2368
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5052,
+     "P_fails_all_six": 0.1454
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5007,
+     "P_fails_all_six": 0.1454
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9548,
+     "P_fails_all_six": 0.8042
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9135,
+     "P_fails_all_six": 0.6813
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9128,
+     "P_fails_all_six": 0.677
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9122,
+     "P_fails_all_six": 0.6802
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9108,
+     "P_fails_all_six": 0.676
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8273,
+     "P_fails_all_six": 0.4767
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6529,
+     "P_fails_all_six": 0.2368
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5052,
+     "P_fails_all_six": 0.1454
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5007,
+     "P_fails_all_six": 0.1454
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6064,
+     "band_10_90": [
+      0.5446,
+      0.6832
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.9293,
+      "per_rollout_sd": 0.2087,
+      "failure_patterns": 0.3024
+     },
+     "P_all": 0.072,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0224,
+       "P_all_if_rate_below_median": 0.1216,
+       "spread": 0.0992
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0494,
+       "P_all_if_rate_below_median": 0.0946,
+       "spread": 0.0452
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0546,
+       "P_all_if_rate_below_median": 0.0894,
+       "spread": 0.0348
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.061,
+       "P_all_if_rate_below_median": 0.083,
+       "spread": 0.022
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.078,
+       "P_all_if_rate_below_median": 0.066,
+       "spread": 0.012
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0664,
+       "P_all_if_rate_below_median": 0.0776,
+       "spread": 0.0112
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.067,
+       "P_all_if_rate_below_median": 0.077,
+       "spread": 0.01
+      }
+     ],
+     "E_patterns": 2.4319
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6513,
+    "rule:M2_flag": 0.5018,
+    "rule:M3_live_standard": 0.4976,
+    "rule:M4_wording": 0.5017,
+    "rule:M5_scope": 0.505,
+    "rule:M6_conflict": 0.5004,
+    "rule:M7_counts": 0.4983
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19724,
+     "either": 49463,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19362,
+     "either": 49574,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19452,
+     "either": 49729,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19758,
+     "either": 49619,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 19568,
+     "either": 49533,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 19406,
+     "either": 49570,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 14822,
+     "either": 45147,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 15076,
+     "either": 45138,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 15206,
+     "either": 45204,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 14914,
+     "either": 45220,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 15062,
+     "either": 44947,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 14933,
+     "either": 45030,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 15058,
+     "either": 45101,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14971,
+     "either": 44912,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 14859,
+     "either": 44899,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15298,
+     "either": 45106,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 14996,
+     "either": 45132,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15054,
+     "either": 44949,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15314,
+     "either": 45010,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15114,
+     "either": 45085,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 14807,
+     "either": 45116,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3287,
+     "either": 0.8244
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3227,
+     "either": 0.8262
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3242,
+     "either": 0.8288
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3293,
+     "either": 0.827
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.3261,
+     "either": 0.8256
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.3234,
+     "either": 0.8262
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.247,
+     "either": 0.7524
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2513,
+     "either": 0.7523
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2534,
+     "either": 0.7534
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2486,
+     "either": 0.7537
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.251,
+     "either": 0.7491
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.2489,
+     "either": 0.7505
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.251,
+     "either": 0.7517
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2495,
+     "either": 0.7485
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2477,
+     "either": 0.7483
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.255,
+     "either": 0.7518
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2499,
+     "either": 0.7522
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2509,
+     "either": 0.7491
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2552,
+     "either": 0.7502
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.2519,
+     "either": 0.7514
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.2468,
+     "either": 0.7519
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.7624
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9574,
+     "P_fails_all_six": 0.8146
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9154,
+     "P_fails_all_six": 0.6814
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9132,
+     "P_fails_all_six": 0.6769
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9131,
+     "P_fails_all_six": 0.6786
+    },
+    "S04_C11_status": {
+     "P_fail": 0.827,
+     "P_fails_all_six": 0.476
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6513,
+     "P_fails_all_six": 0.2307
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.505,
+     "P_fails_all_six": 0.1497
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5004,
+     "P_fails_all_six": 0.1437
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9574,
+     "P_fails_all_six": 0.8146
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9154,
+     "P_fails_all_six": 0.6814
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9132,
+     "P_fails_all_six": 0.6769
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9131,
+     "P_fails_all_six": 0.6786
+    },
+    "S04_C11_status": {
+     "P_fail": 0.827,
+     "P_fails_all_six": 0.476
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6513,
+     "P_fails_all_six": 0.2307
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.505,
+     "P_fails_all_six": 0.1497
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5004,
+     "P_fails_all_six": 0.1437
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6064,
+     "band_10_90": [
+      0.5446,
+      0.6832
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.9293,
+      "per_rollout_sd": 0.2087,
+      "failure_patterns": 0.3024
+     },
+     "P_all": 0.072,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0224,
+       "P_all_if_rate_below_median": 0.1216,
+       "spread": 0.0992
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0494,
+       "P_all_if_rate_below_median": 0.0946,
+       "spread": 0.0452
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0546,
+       "P_all_if_rate_below_median": 0.0894,
+       "spread": 0.0348
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.061,
+       "P_all_if_rate_below_median": 0.083,
+       "spread": 0.022
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.078,
+       "P_all_if_rate_below_median": 0.066,
+       "spread": 0.012
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0664,
+       "P_all_if_rate_below_median": 0.0776,
+       "spread": 0.0112
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.067,
+       "P_all_if_rate_below_median": 0.077,
+       "spread": 0.01
+      }
+     ],
+     "E_patterns": 2.4319
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6513,
+    "rule:M2_flag": 0.5018,
+    "rule:M3_live_standard": 0.4976,
+    "rule:M4_wording": 0.5017,
+    "rule:M5_scope": 0.505,
+    "rule:M6_conflict": 0.5004,
+    "rule:M7_counts": 0.4983
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19724,
+     "either": 49463,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19362,
+     "either": 49574,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19452,
+     "either": 49729,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19758,
+     "either": 49619,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 19568,
+     "either": 49533,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 19406,
+     "either": 49570,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 14822,
+     "either": 45147,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 15076,
+     "either": 45138,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 15206,
+     "either": 45204,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 14914,
+     "either": 45220,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 15062,
+     "either": 44947,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 14933,
+     "either": 45030,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 15058,
+     "either": 45101,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14971,
+     "either": 44912,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 14859,
+     "either": 44899,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15298,
+     "either": 45106,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 14996,
+     "either": 45132,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15054,
+     "either": 44949,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15314,
+     "either": 45010,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15114,
+     "either": 45085,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 14807,
+     "either": 45116,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3287,
+     "either": 0.8244
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3227,
+     "either": 0.8262
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3242,
+     "either": 0.8288
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3293,
+     "either": 0.827
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.3261,
+     "either": 0.8256
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.3234,
+     "either": 0.8262
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.247,
+     "either": 0.7524
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2513,
+     "either": 0.7523
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2534,
+     "either": 0.7534
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2486,
+     "either": 0.7537
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.251,
+     "either": 0.7491
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.2489,
+     "either": 0.7505
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.251,
+     "either": 0.7517
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2495,
+     "either": 0.7485
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2477,
+     "either": 0.7483
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.255,
+     "either": 0.7518
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2499,
+     "either": 0.7522
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2509,
+     "either": 0.7491
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2552,
+     "either": 0.7502
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.2519,
+     "either": 0.7514
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.2468,
+     "either": 0.7519
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.7624
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9574,
+     "P_fails_all_six": 0.8146
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9154,
+     "P_fails_all_six": 0.6814
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9132,
+     "P_fails_all_six": 0.6769
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9131,
+     "P_fails_all_six": 0.6786
+    },
+    "S04_C11_status": {
+     "P_fail": 0.827,
+     "P_fails_all_six": 0.476
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6513,
+     "P_fails_all_six": 0.2307
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.505,
+     "P_fails_all_six": 0.1497
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5004,
+     "P_fails_all_six": 0.1437
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9574,
+     "P_fails_all_six": 0.8146
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9154,
+     "P_fails_all_six": 0.6814
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9138,
+     "P_fails_all_six": 0.677
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9132,
+     "P_fails_all_six": 0.6769
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9131,
+     "P_fails_all_six": 0.6786
+    },
+    "S04_C11_status": {
+     "P_fail": 0.827,
+     "P_fails_all_six": 0.476
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8244,
+     "P_fails_all_six": 0.4737
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6513,
+     "P_fails_all_six": 0.2307
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.505,
+     "P_fails_all_six": 0.1497
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5004,
+     "P_fails_all_six": 0.1437
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8312,
+     "band_10_90": [
+      0.7789,
+      0.8845
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.0005,
+      "per_rollout_sd": 0.0082,
+      "failure_patterns": 0.9148
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 4.7208
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6502,
+    "rule:M2_flag": 0.4968,
+    "rule:M3_live_standard": 0.4968,
+    "rule:M4_wording": 0.5001,
+    "rule:M5_scope": 0.5052,
+    "rule:M6_conflict": 0.4987,
+    "rule:M7_counts": 0.501
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19549,
+     "either": 49269,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19280,
+     "either": 49536,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19574,
+     "either": 49442,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19726,
+     "either": 49597,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 19338,
+     "either": 49594,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 19442,
+     "either": 49629,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 14874,
+     "either": 44742,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 14873,
+     "either": 44943,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 14950,
+     "either": 45173,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 14858,
+     "either": 44874,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 14818,
+     "either": 45053,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 14914,
+     "either": 44900,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 14984,
+     "either": 45137,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14938,
+     "either": 44792,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 14987,
+     "either": 44882,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15223,
+     "either": 45098,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 15067,
+     "either": 44863,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 14997,
+     "either": 45072,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15137,
+     "either": 45100,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15296,
+     "either": 45080,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 14915,
+     "either": 45070,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3258,
+     "either": 0.8212
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3213,
+     "either": 0.8256
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3262,
+     "either": 0.824
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3288,
+     "either": 0.8266
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.3223,
+     "either": 0.8266
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.324,
+     "either": 0.8272
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.2479,
+     "either": 0.7457
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2479,
+     "either": 0.749
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2492,
+     "either": 0.7529
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2476,
+     "either": 0.7479
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.247,
+     "either": 0.7509
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.2486,
+     "either": 0.7483
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.2497,
+     "either": 0.7523
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.249,
+     "either": 0.7465
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2498,
+     "either": 0.748
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.2537,
+     "either": 0.7516
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2511,
+     "either": 0.7477
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.25,
+     "either": 0.7512
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2523,
+     "either": 0.7517
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.2549,
+     "either": 0.7513
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.2486,
+     "either": 0.7512
+    }
+   },
+   "run_score_band_10_90": [
+    0.7327,
+    0.9208
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.8999,
+     "P_fails_all_six": 0.6361
+    },
+    "S01_C06_status": {
+     "P_fail": 0.6404,
+     "P_fails_all_six": 0.2065
+    },
+    "S04_C11_status": {
+     "P_fail": 0.5289,
+     "P_fails_all_six": 0.1609
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5052,
+     "P_fails_all_six": 0.154
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.3137,
+     "P_fails_all_six": 0.0046
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.311,
+     "P_fails_all_six": 0.004
+    },
+    "S03_C10_status": {
+     "P_fail": 0.2838,
+     "P_fails_all_six": 0.0031
+    },
+    "S16_testing_count": {
+     "P_fail": 0.2838,
+     "P_fails_all_six": 0.0031
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.2502,
+     "P_fails_all_six": 0.002
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.2411,
+     "P_fails_all_six": 0.0006
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.2411,
+     "P_fails_all_six": 0.0006
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.2398,
+     "P_fails_all_six": 0.0014
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.2386,
+     "P_fails_all_six": 0.0013
+    },
+    "S02_C07_status": {
+     "P_fail": 0.0497,
+     "P_fails_all_six": 0.0
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.8999,
+     "P_fails_all_six": 0.6361
+    },
+    "S01_C06_status": {
+     "P_fail": 0.6404,
+     "P_fails_all_six": 0.2065
+    },
+    "S04_C11_status": {
+     "P_fail": 0.5289,
+     "P_fails_all_six": 0.1609
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5052,
+     "P_fails_all_six": 0.154
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.3137,
+     "P_fails_all_six": 0.0046
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.311,
+     "P_fails_all_six": 0.004
+    },
+    "S03_C10_status": {
+     "P_fail": 0.2838,
+     "P_fails_all_six": 0.0031
+    },
+    "S16_testing_count": {
+     "P_fail": 0.2838,
+     "P_fails_all_six": 0.0031
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.2502,
+     "P_fails_all_six": 0.002
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.2411,
+     "P_fails_all_six": 0.0006
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.2411,
+     "P_fails_all_six": 0.0006
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.2398,
+     "P_fails_all_six": 0.0014
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.2386,
+     "P_fails_all_six": 0.0013
+    },
+    "S02_C07_status": {
+     "P_fail": 0.0497,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.608,
+     "band_10_90": [
+      0.5462,
+      0.6898
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.9177,
+      "per_rollout_sd": 0.2178,
+      "failure_patterns": 0.3123
+     },
+     "P_all": 0.0733,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0224,
+       "P_all_if_rate_below_median": 0.1242,
+       "spread": 0.1018
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.053,
+       "P_all_if_rate_below_median": 0.0936,
+       "spread": 0.0406
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0552,
+       "P_all_if_rate_below_median": 0.0914,
+       "spread": 0.0362
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0624,
+       "P_all_if_rate_below_median": 0.0842,
+       "spread": 0.0218
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0662,
+       "P_all_if_rate_below_median": 0.0804,
+       "spread": 0.0142
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.08,
+       "P_all_if_rate_below_median": 0.0666,
+       "spread": 0.0134
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0696,
+       "P_all_if_rate_below_median": 0.077,
+       "spread": 0.0074
+      }
+     ],
+     "E_patterns": 2.4704
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6442,
+    "rule:M2_flag": 0.5024,
+    "rule:M3_live_standard": 0.4955,
+    "rule:M4_wording": 0.5029,
+    "rule:M5_scope": 0.5008,
+    "rule:M6_conflict": 0.501,
+    "rule:M7_counts": 0.5017
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19568,
+     "either": 49229,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19130,
+     "either": 49255,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19527,
+     "either": 49299,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19279,
+     "either": 49422,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 19313,
+     "either": 49400,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 19485,
+     "either": 49272,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 14790,
+     "either": 45084,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 15256,
+     "either": 45059,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 15238,
+     "either": 44952,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 15145,
+     "either": 45057,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 15127,
+     "either": 45119,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 14967,
+     "either": 44936,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 14925,
+     "either": 44853,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14988,
+     "either": 44802,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 14922,
+     "either": 44912,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 14982,
+     "either": 45237,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 15192,
+     "either": 45039,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15172,
+     "either": 45103,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 14983,
+     "either": 45123,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15063,
+     "either": 45087,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 15019,
+     "either": 45143,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3261,
+     "either": 0.8205
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3188,
+     "either": 0.8209
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3255,
+     "either": 0.8216
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3213,
+     "either": 0.8237
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.3219,
+     "either": 0.8233
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.3247,
+     "either": 0.8212
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.2465,
+     "either": 0.7514
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2543,
+     "either": 0.751
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.254,
+     "either": 0.7492
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2524,
+     "either": 0.751
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.2521,
+     "either": 0.752
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.2495,
+     "either": 0.7489
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.2487,
+     "either": 0.7476
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2498,
+     "either": 0.7467
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2487,
+     "either": 0.7485
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.2497,
+     "either": 0.754
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2532,
+     "either": 0.7507
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2529,
+     "either": 0.7517
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2497,
+     "either": 0.752
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.251,
+     "either": 0.7514
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.2503,
+     "either": 0.7524
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.7723
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9554,
+     "P_fails_all_six": 0.8071
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9106,
+     "P_fails_all_six": 0.6675
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9098,
+     "P_fails_all_six": 0.6674
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9092,
+     "P_fails_all_six": 0.6644
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8237,
+     "P_fails_all_six": 0.4733
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8205,
+     "P_fails_all_six": 0.4667
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8205,
+     "P_fails_all_six": 0.4667
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6442,
+     "P_fails_all_six": 0.2316
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.501,
+     "P_fails_all_six": 0.1426
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5008,
+     "P_fails_all_six": 0.1416
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9554,
+     "P_fails_all_six": 0.8071
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.9106,
+     "P_fails_all_six": 0.6675
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.9101,
+     "P_fails_all_six": 0.6685
+    },
+    "S01_C06_status": {
+     "P_fail": 0.9098,
+     "P_fails_all_six": 0.6674
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9092,
+     "P_fails_all_six": 0.6644
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8237,
+     "P_fails_all_six": 0.4733
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8205,
+     "P_fails_all_six": 0.4667
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8205,
+     "P_fails_all_six": 0.4667
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6442,
+     "P_fails_all_six": 0.2316
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.501,
+     "P_fails_all_six": 0.1426
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5008,
+     "P_fails_all_six": 0.1416
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6154,
+     "band_10_90": [
+      0.5429,
+      0.7079
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9998,
+      "avg_weighted_pass_rate": 0.8861,
+      "per_rollout_sd": 0.3584,
+      "failure_patterns": 0.2936
+     },
+     "P_all": 0.1002,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0272,
+       "P_all_if_rate_below_median": 0.1732,
+       "spread": 0.146
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0878,
+       "P_all_if_rate_below_median": 0.1126,
+       "spread": 0.0248
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.108,
+       "P_all_if_rate_below_median": 0.0924,
+       "spread": 0.0156
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0946,
+       "P_all_if_rate_below_median": 0.1058,
+       "spread": 0.0112
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0954,
+       "P_all_if_rate_below_median": 0.105,
+       "spread": 0.0096
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0986,
+       "P_all_if_rate_below_median": 0.1018,
+       "spread": 0.0032
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0996,
+       "P_all_if_rate_below_median": 0.1008,
+       "spread": 0.0012
+      }
+     ],
+     "E_patterns": 2.3676
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6529,
+    "rule:M2_flag": 0.4975,
+    "rule:M3_live_standard": 0.4992,
+    "rule:M4_wording": 0.5026,
+    "rule:M5_scope": 0.5052,
+    "rule:M6_conflict": 0.499,
+    "rule:M7_counts": 0.4979
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19539,
+     "either": 49488,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19632,
+     "either": 49497,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19703,
+     "either": 49630,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19846,
+     "either": 49640,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24661,
+     "either": 44452,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24427,
+     "either": 44620,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 19870,
+     "either": 39936,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 14925,
+     "either": 45085,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 15173,
+     "either": 44990,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 14799,
+     "either": 44991,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 14978,
+     "either": 44746,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 15135,
+     "either": 44977,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 15179,
+     "either": 45086,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14995,
+     "either": 44897,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 15008,
+     "either": 44818,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15225,
+     "either": 45244,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 14945,
+     "either": 45151,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15111,
+     "either": 44919,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15128,
+     "either": 45121,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15110,
+     "either": 45073,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 19934,
+     "either": 39876,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3256,
+     "either": 0.8248
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3272,
+     "either": 0.8249
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3284,
+     "either": 0.8272
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3308,
+     "either": 0.8273
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.411,
+     "either": 0.7409
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4071,
+     "either": 0.7437
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3312,
+     "either": 0.6656
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2487,
+     "either": 0.7514
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2529,
+     "either": 0.7498
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2467,
+     "either": 0.7499
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.2496,
+     "either": 0.7458
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.2522,
+     "either": 0.7496
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.253,
+     "either": 0.7514
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2499,
+     "either": 0.7483
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2501,
+     "either": 0.747
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.2537,
+     "either": 0.7541
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2491,
+     "either": 0.7525
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2519,
+     "either": 0.7487
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2521,
+     "either": 0.752
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.2518,
+     "either": 0.7512
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3322,
+     "either": 0.6646
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.802
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9401,
+     "P_fails_all_six": 0.7494
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9135,
+     "P_fails_all_six": 0.6813
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8826,
+     "P_fails_all_six": 0.5899
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8711,
+     "P_fails_all_six": 0.5637
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8273,
+     "P_fails_all_six": 0.4767
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6529,
+     "P_fails_all_six": 0.2368
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5052,
+     "P_fails_all_six": 0.1454
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.499,
+     "P_fails_all_six": 0.1416
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9401,
+     "P_fails_all_six": 0.7494
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9135,
+     "P_fails_all_six": 0.6813
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8826,
+     "P_fails_all_six": 0.5899
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.8728,
+     "P_fails_all_six": 0.5686
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8711,
+     "P_fails_all_six": 0.5637
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8273,
+     "P_fails_all_six": 0.4767
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8248,
+     "P_fails_all_six": 0.4808
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6529,
+     "P_fails_all_six": 0.2368
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5052,
+     "P_fails_all_six": 0.1454
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.499,
+     "P_fails_all_six": 0.1416
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6168,
+     "band_10_90": [
+      0.5413,
+      0.7112
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.8801,
+      "per_rollout_sd": 0.3596,
+      "failure_patterns": 0.3045
+     },
+     "P_all": 0.0993,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0284,
+       "P_all_if_rate_below_median": 0.1702,
+       "spread": 0.1418
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0836,
+       "P_all_if_rate_below_median": 0.115,
+       "spread": 0.0314
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.1126,
+       "P_all_if_rate_below_median": 0.086,
+       "spread": 0.0266
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0936,
+       "P_all_if_rate_below_median": 0.105,
+       "spread": 0.0114
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.095,
+       "P_all_if_rate_below_median": 0.1036,
+       "spread": 0.0086
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0958,
+       "P_all_if_rate_below_median": 0.1028,
+       "spread": 0.007
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.1002,
+       "P_all_if_rate_below_median": 0.0984,
+       "spread": 0.0018
+      }
+     ],
+     "E_patterns": 2.3894
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6454,
+    "rule:M2_flag": 0.4917,
+    "rule:M3_live_standard": 0.4975,
+    "rule:M4_wording": 0.5029,
+    "rule:M5_scope": 0.5009,
+    "rule:M6_conflict": 0.5009,
+    "rule:M7_counts": 0.5022
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19091,
+     "either": 49136,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19346,
+     "either": 49229,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19441,
+     "either": 49456,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19425,
+     "either": 49355,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24536,
+     "either": 44243,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24561,
+     "either": 44297,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 19566,
+     "either": 39784,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 14719,
+     "either": 44953,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 14766,
+     "either": 44789,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 14783,
+     "either": 44771,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 15011,
+     "either": 44622,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 15001,
+     "either": 45019,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 15043,
+     "either": 44860,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14978,
+     "either": 44924,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 15083,
+     "either": 44898,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15016,
+     "either": 45209,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 15055,
+     "either": 45169,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15167,
+     "either": 45136,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15051,
+     "either": 45056,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15182,
+     "either": 45004,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 20188,
+     "either": 39997,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3182,
+     "either": 0.8189
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3224,
+     "either": 0.8205
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.324,
+     "either": 0.8243
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3237,
+     "either": 0.8226
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4089,
+     "either": 0.7374
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4093,
+     "either": 0.7383
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3261,
+     "either": 0.6631
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2453,
+     "either": 0.7492
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2461,
+     "either": 0.7465
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2464,
+     "either": 0.7462
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.2502,
+     "either": 0.7437
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.25,
+     "either": 0.7503
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.2507,
+     "either": 0.7477
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2496,
+     "either": 0.7487
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2514,
+     "either": 0.7483
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.2503,
+     "either": 0.7535
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2509,
+     "either": 0.7528
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2528,
+     "either": 0.7523
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2509,
+     "either": 0.7509
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.253,
+     "either": 0.7501
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3365,
+     "either": 0.6666
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.802
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9398,
+     "P_fails_all_six": 0.7504
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9117,
+     "P_fails_all_six": 0.6691
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8794,
+     "P_fails_all_six": 0.5866
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8701,
+     "P_fails_all_six": 0.5612
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8226,
+     "P_fails_all_six": 0.4676
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6454,
+     "P_fails_all_six": 0.2325
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1425
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1454
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9398,
+     "P_fails_all_six": 0.7504
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9117,
+     "P_fails_all_six": 0.6691
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8794,
+     "P_fails_all_six": 0.5866
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8701,
+     "P_fails_all_six": 0.5612
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8226,
+     "P_fails_all_six": 0.4676
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6454,
+     "P_fails_all_six": 0.2325
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1425
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1454
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6168,
+     "band_10_90": [
+      0.5413,
+      0.7112
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.8801,
+      "per_rollout_sd": 0.3596,
+      "failure_patterns": 0.3045
+     },
+     "P_all": 0.0993,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0284,
+       "P_all_if_rate_below_median": 0.1702,
+       "spread": 0.1418
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0836,
+       "P_all_if_rate_below_median": 0.115,
+       "spread": 0.0314
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.1126,
+       "P_all_if_rate_below_median": 0.086,
+       "spread": 0.0266
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0936,
+       "P_all_if_rate_below_median": 0.105,
+       "spread": 0.0114
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.095,
+       "P_all_if_rate_below_median": 0.1036,
+       "spread": 0.0086
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0958,
+       "P_all_if_rate_below_median": 0.1028,
+       "spread": 0.007
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.1002,
+       "P_all_if_rate_below_median": 0.0984,
+       "spread": 0.0018
+      }
+     ],
+     "E_patterns": 2.3894
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6454,
+    "rule:M2_flag": 0.4917,
+    "rule:M3_live_standard": 0.4975,
+    "rule:M4_wording": 0.5029,
+    "rule:M5_scope": 0.5009,
+    "rule:M6_conflict": 0.5009,
+    "rule:M7_counts": 0.5022
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19091,
+     "either": 49136,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19346,
+     "either": 49229,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19441,
+     "either": 49456,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19425,
+     "either": 49355,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24536,
+     "either": 44243,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24561,
+     "either": 44297,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 19566,
+     "either": 39784,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 14719,
+     "either": 44953,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 14766,
+     "either": 44789,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 14783,
+     "either": 44771,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 15011,
+     "either": 44622,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 15001,
+     "either": 45019,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 15043,
+     "either": 44860,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14978,
+     "either": 44924,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 15083,
+     "either": 44898,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15016,
+     "either": 45209,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 15055,
+     "either": 45169,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15167,
+     "either": 45136,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15051,
+     "either": 45056,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15182,
+     "either": 45004,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 20188,
+     "either": 39997,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3182,
+     "either": 0.8189
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3224,
+     "either": 0.8205
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.324,
+     "either": 0.8243
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3237,
+     "either": 0.8226
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4089,
+     "either": 0.7374
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4093,
+     "either": 0.7383
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3261,
+     "either": 0.6631
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2453,
+     "either": 0.7492
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2461,
+     "either": 0.7465
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2464,
+     "either": 0.7462
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.2502,
+     "either": 0.7437
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.25,
+     "either": 0.7503
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.2507,
+     "either": 0.7477
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2496,
+     "either": 0.7487
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2514,
+     "either": 0.7483
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.2503,
+     "either": 0.7535
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2509,
+     "either": 0.7528
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2528,
+     "either": 0.7523
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2509,
+     "either": 0.7509
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.253,
+     "either": 0.7501
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3365,
+     "either": 0.6666
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.802
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9398,
+     "P_fails_all_six": 0.7504
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9117,
+     "P_fails_all_six": 0.6691
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8794,
+     "P_fails_all_six": 0.5866
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8701,
+     "P_fails_all_six": 0.5612
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8226,
+     "P_fails_all_six": 0.4676
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6454,
+     "P_fails_all_six": 0.2325
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1425
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1454
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9398,
+     "P_fails_all_six": 0.7504
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9117,
+     "P_fails_all_six": 0.6691
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8794,
+     "P_fails_all_six": 0.5866
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8701,
+     "P_fails_all_six": 0.5612
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.87,
+     "P_fails_all_six": 0.5604
+    },
+    "S04_C11_status": {
+     "P_fail": 0.8226,
+     "P_fails_all_six": 0.4676
+    },
+    "S03_C10_status": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S16_testing_count": {
+     "P_fail": 0.8189,
+     "P_fails_all_six": 0.4677
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6454,
+     "P_fails_all_six": 0.2325
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1425
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5009,
+     "P_fails_all_six": 0.1454
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8346,
+     "band_10_90": [
+      0.7772,
+      0.8911
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9998,
+      "avg_weighted_pass_rate": 0.0006,
+      "per_rollout_sd": 0.0417,
+      "failure_patterns": 0.9072
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 4.6493
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6494,
+    "rule:M2_flag": 0.5005,
+    "rule:M3_live_standard": 0.4956,
+    "rule:M4_wording": 0.5037,
+    "rule:M5_scope": 0.4971,
+    "rule:M6_conflict": 0.5012,
+    "rule:M7_counts": 0.4985
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19455,
+     "either": 49540,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19456,
+     "either": 49242,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19701,
+     "either": 49484,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19485,
+     "either": 49306,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24519,
+     "either": 44517,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24505,
+     "either": 44367,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 19825,
+     "either": 39940,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 15158,
+     "either": 45094,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 15050,
+     "either": 44808,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 15133,
+     "either": 44970,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 15075,
+     "either": 44864,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 14860,
+     "either": 45095,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 14798,
+     "either": 44763,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 14930,
+     "either": 44876,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 14836,
+     "either": 44806,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15039,
+     "either": 45009,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 15056,
+     "either": 45237,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15121,
+     "either": 45008,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 14992,
+     "either": 44907,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15042,
+     "either": 44693,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 19960,
+     "either": 40020,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3242,
+     "either": 0.8257
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3243,
+     "either": 0.8207
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3283,
+     "either": 0.8247
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3247,
+     "either": 0.8218
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4087,
+     "either": 0.7419
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4084,
+     "either": 0.7395
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3304,
+     "either": 0.6657
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2526,
+     "either": 0.7516
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2508,
+     "either": 0.7468
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2522,
+     "either": 0.7495
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.2512,
+     "either": 0.7477
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.2477,
+     "either": 0.7516
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.2466,
+     "either": 0.746
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2488,
+     "either": 0.7479
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.2473,
+     "either": 0.7468
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.2506,
+     "either": 0.7501
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2509,
+     "either": 0.754
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.252,
+     "either": 0.7501
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2499,
+     "either": 0.7484
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.2507,
+     "either": 0.7449
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3327,
+     "either": 0.667
+    }
+   },
+   "run_score_band_10_90": [
+    0.7228,
+    0.9307
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.8642,
+     "P_fails_all_six": 0.5415
+    },
+    "S01_C06_status": {
+     "P_fail": 0.6028,
+     "P_fails_all_six": 0.1669
+    },
+    "S04_C11_status": {
+     "P_fail": 0.5224,
+     "P_fails_all_six": 0.148
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4971,
+     "P_fails_all_six": 0.1396
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.3144,
+     "P_fails_all_six": 0.0068
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.3118,
+     "P_fails_all_six": 0.0043
+    },
+    "S03_C10_status": {
+     "P_fail": 0.2873,
+     "P_fails_all_six": 0.0053
+    },
+    "S16_testing_count": {
+     "P_fail": 0.2873,
+     "P_fails_all_six": 0.0053
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0022
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.2382,
+     "P_fails_all_six": 0.0004
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.2382,
+     "P_fails_all_six": 0.0004
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.2361,
+     "P_fails_all_six": 0.0007
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.2344,
+     "P_fails_all_six": 0.0006
+    },
+    "S02_C07_status": {
+     "P_fail": 0.0492,
+     "P_fails_all_six": 0.0
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.8642,
+     "P_fails_all_six": 0.5415
+    },
+    "S01_C06_status": {
+     "P_fail": 0.6028,
+     "P_fails_all_six": 0.1669
+    },
+    "S04_C11_status": {
+     "P_fail": 0.5224,
+     "P_fails_all_six": 0.148
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4971,
+     "P_fails_all_six": 0.1396
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.3144,
+     "P_fails_all_six": 0.0068
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.3118,
+     "P_fails_all_six": 0.0043
+    },
+    "S03_C10_status": {
+     "P_fail": 0.2873,
+     "P_fails_all_six": 0.0053
+    },
+    "S16_testing_count": {
+     "P_fail": 0.2873,
+     "P_fails_all_six": 0.0053
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0022
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.2382,
+     "P_fails_all_six": 0.0004
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.2382,
+     "P_fails_all_six": 0.0004
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.2361,
+     "P_fails_all_six": 0.0007
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.2344,
+     "P_fails_all_six": 0.0006
+    },
+    "S02_C07_status": {
+     "P_fail": 0.0492,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6163,
+     "band_10_90": [
+      0.5429,
+      0.7079
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9998,
+      "avg_weighted_pass_rate": 0.8862,
+      "per_rollout_sd": 0.3634,
+      "failure_patterns": 0.3084
+     },
+     "P_all": 0.1066,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0312,
+       "P_all_if_rate_below_median": 0.182,
+       "spread": 0.1508
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.1208,
+       "P_all_if_rate_below_median": 0.0924,
+       "spread": 0.0284
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.094,
+       "P_all_if_rate_below_median": 0.1192,
+       "spread": 0.0252
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0956,
+       "P_all_if_rate_below_median": 0.1176,
+       "spread": 0.022
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.1032,
+       "P_all_if_rate_below_median": 0.11,
+       "spread": 0.0068
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.1098,
+       "P_all_if_rate_below_median": 0.1034,
+       "spread": 0.0064
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.1036,
+       "P_all_if_rate_below_median": 0.1096,
+       "spread": 0.006
+      }
+     ],
+     "E_patterns": 2.3921
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6463,
+    "rule:M2_flag": 0.5003,
+    "rule:M3_live_standard": 0.4988,
+    "rule:M4_wording": 0.5034,
+    "rule:M5_scope": 0.5022,
+    "rule:M6_conflict": 0.5017,
+    "rule:M7_counts": 0.5037
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 19415,
+     "either": 49381,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 19337,
+     "either": 49370,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 19609,
+     "either": 49377,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 19468,
+     "either": 49442,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24403,
+     "either": 44476,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24596,
+     "either": 44406,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 19937,
+     "either": 40008,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 15013,
+     "either": 45211,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 15160,
+     "either": 44988,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 15034,
+     "either": 45083,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 15130,
+     "either": 45110,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 15063,
+     "either": 45072,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 14962,
+     "either": 45097,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 15051,
+     "either": 44977,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 15057,
+     "either": 45094,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 15118,
+     "either": 45220,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 15265,
+     "either": 45042,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 15267,
+     "either": 45163,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 15078,
+     "either": 45153,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 15074,
+     "either": 45280,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 20041,
+     "either": 40282,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.3236,
+     "either": 0.823
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.3223,
+     "either": 0.8228
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.3268,
+     "either": 0.8229
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.3245,
+     "either": 0.824
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4067,
+     "either": 0.7413
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4099,
+     "either": 0.7401
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3323,
+     "either": 0.6668
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.2502,
+     "either": 0.7535
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.2527,
+     "either": 0.7498
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.2506,
+     "either": 0.7514
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.2522,
+     "either": 0.7518
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.251,
+     "either": 0.7512
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.2494,
+     "either": 0.7516
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.2509,
+     "either": 0.7496
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.251,
+     "either": 0.7516
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.252,
+     "either": 0.7537
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.2544,
+     "either": 0.7507
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.2545,
+     "either": 0.7527
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.2513,
+     "either": 0.7526
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.2512,
+     "either": 0.7547
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.334,
+     "either": 0.6714
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    0.802
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.9414,
+     "P_fails_all_six": 0.76
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9119,
+     "P_fails_all_six": 0.6744
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8825,
+     "P_fails_all_six": 0.5899
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8702,
+     "P_fails_all_six": 0.5564
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S04_C11_status": {
+     "P_fail": 0.824,
+     "P_fails_all_six": 0.4762
+    },
+    "S03_C10_status": {
+     "P_fail": 0.823,
+     "P_fails_all_six": 0.4773
+    },
+    "S16_testing_count": {
+     "P_fail": 0.823,
+     "P_fails_all_six": 0.4773
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6463,
+     "P_fails_all_six": 0.2348
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5022,
+     "P_fails_all_six": 0.1451
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5017,
+     "P_fails_all_six": 0.1449
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.9414,
+     "P_fails_all_six": 0.76
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.9119,
+     "P_fails_all_six": 0.6744
+    },
+    "S01_C06_status": {
+     "P_fail": 0.8825,
+     "P_fails_all_six": 0.5899
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.8702,
+     "P_fails_all_six": 0.5564
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.8688,
+     "P_fails_all_six": 0.5584
+    },
+    "S04_C11_status": {
+     "P_fail": 0.824,
+     "P_fails_all_six": 0.4762
+    },
+    "S03_C10_status": {
+     "P_fail": 0.823,
+     "P_fails_all_six": 0.4773
+    },
+    "S16_testing_count": {
+     "P_fail": 0.823,
+     "P_fails_all_six": 0.4773
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6463,
+     "P_fails_all_six": 0.2348
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.5022,
+     "P_fails_all_six": 0.1451
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5017,
+     "P_fails_all_six": 0.1449
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.649,
+     "band_10_90": [
+      0.5429,
+      0.7706
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9977,
+      "avg_weighted_pass_rate": 0.7402,
+      "per_rollout_sd": 0.6483,
+      "failure_patterns": 0.1936
+     },
+     "P_all": 0.0624,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0166,
+       "P_all_if_rate_below_median": 0.1082,
+       "spread": 0.0916
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0714,
+       "P_all_if_rate_below_median": 0.0534,
+       "spread": 0.018
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0708,
+       "P_all_if_rate_below_median": 0.054,
+       "spread": 0.0168
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0708,
+       "P_all_if_rate_below_median": 0.054,
+       "spread": 0.0168
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0708,
+       "P_all_if_rate_below_median": 0.054,
+       "spread": 0.0168
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.066,
+       "P_all_if_rate_below_median": 0.0588,
+       "spread": 0.0072
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0634,
+       "P_all_if_rate_below_median": 0.0614,
+       "spread": 0.002
+      }
+     ],
+     "E_patterns": 1.8327
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6503,
+    "rule:M2_flag": 0.5022,
+    "rule:M3_live_standard": 0.5012,
+    "rule:M4_wording": 0.5012,
+    "rule:M5_scope": 0.4944,
+    "rule:M6_conflict": 0.5013,
+    "rule:M7_counts": 0.497
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 24713,
+     "either": 44436,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 24613,
+     "either": 44478,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 24532,
+     "either": 44556,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 24302,
+     "either": 44380,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24659,
+     "either": 44438,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24359,
+     "either": 44479,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 20195,
+     "either": 40013,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 20120,
+     "either": 40085,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 19905,
+     "either": 39894,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 20054,
+     "either": 40160,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 19799,
+     "either": 40156,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 20069,
+     "either": 40078,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 19893,
+     "either": 39848,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 20164,
+     "either": 39992,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 20007,
+     "either": 39890,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 19862,
+     "either": 39876,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 20018,
+     "either": 40135,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 19873,
+     "either": 40021,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 19843,
+     "either": 39904,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 19785,
+     "either": 39703,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 19905,
+     "either": 39998,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.4119,
+     "either": 0.7406
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.4102,
+     "either": 0.7413
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.4089,
+     "either": 0.7426
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.405,
+     "either": 0.7397
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.411,
+     "either": 0.7406
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.406,
+     "either": 0.7413
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3366,
+     "either": 0.6669
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.3353,
+     "either": 0.6681
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.3317,
+     "either": 0.6649
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.3342,
+     "either": 0.6693
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.33,
+     "either": 0.6693
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.3345,
+     "either": 0.668
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.3316,
+     "either": 0.6641
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.3361,
+     "either": 0.6665
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.3335,
+     "either": 0.6648
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.331,
+     "either": 0.6646
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.3336,
+     "either": 0.6689
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.3312,
+     "either": 0.667
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.3307,
+     "either": 0.6651
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.3297,
+     "either": 0.6617
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3317,
+     "either": 0.6666
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.8279,
+     "P_fails_all_six": 0.4421
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.7954,
+     "P_fails_all_six": 0.3932
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.7946,
+     "P_fails_all_six": 0.3885
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7935,
+     "P_fails_all_six": 0.3846
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7406,
+     "P_fails_all_six": 0.3209
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7406,
+     "P_fails_all_six": 0.3209
+    },
+    "S04_C11_status": {
+     "P_fail": 0.7397,
+     "P_fails_all_six": 0.3209
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6503,
+     "P_fails_all_six": 0.2348
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5013,
+     "P_fails_all_six": 0.1421
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4944,
+     "P_fails_all_six": 0.1433
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.8279,
+     "P_fails_all_six": 0.4421
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.7954,
+     "P_fails_all_six": 0.3932
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7953,
+     "P_fails_all_six": 0.3904
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.7946,
+     "P_fails_all_six": 0.3885
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7935,
+     "P_fails_all_six": 0.3846
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7406,
+     "P_fails_all_six": 0.3209
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7406,
+     "P_fails_all_six": 0.3209
+    },
+    "S04_C11_status": {
+     "P_fail": 0.7397,
+     "P_fails_all_six": 0.3209
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6503,
+     "P_fails_all_six": 0.2348
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5013,
+     "P_fails_all_six": 0.1421
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4944,
+     "P_fails_all_six": 0.1433
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6503,
+     "band_10_90": [
+      0.5446,
+      0.7756
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9959,
+      "avg_weighted_pass_rate": 0.7294,
+      "per_rollout_sd": 0.6496,
+      "failure_patterns": 0.1986
+     },
+     "P_all": 0.0618,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0164,
+       "P_all_if_rate_below_median": 0.1072,
+       "spread": 0.0908
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.072,
+       "P_all_if_rate_below_median": 0.0516,
+       "spread": 0.0204
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0716,
+       "P_all_if_rate_below_median": 0.052,
+       "spread": 0.0196
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.068,
+       "P_all_if_rate_below_median": 0.0556,
+       "spread": 0.0124
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.068,
+       "P_all_if_rate_below_median": 0.0556,
+       "spread": 0.0124
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0658,
+       "P_all_if_rate_below_median": 0.0578,
+       "spread": 0.008
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0602,
+       "P_all_if_rate_below_median": 0.0634,
+       "spread": 0.0032
+      }
+     ],
+     "E_patterns": 1.8437
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6488,
+    "rule:M2_flag": 0.4964,
+    "rule:M3_live_standard": 0.4989,
+    "rule:M4_wording": 0.4976,
+    "rule:M5_scope": 0.4974,
+    "rule:M6_conflict": 0.497,
+    "rule:M7_counts": 0.4973
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 24408,
+     "either": 44305,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 24535,
+     "either": 44325,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 24524,
+     "either": 44258,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 24432,
+     "either": 44342,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24532,
+     "either": 44217,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24516,
+     "either": 44251,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 19857,
+     "either": 39860,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 19773,
+     "either": 39866,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 19871,
+     "either": 39760,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 19881,
+     "either": 39725,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 19776,
+     "either": 39848,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 19853,
+     "either": 39933,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 19844,
+     "either": 39934,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 19853,
+     "either": 39900,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 19977,
+     "either": 39794,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 19908,
+     "either": 39792,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 19840,
+     "either": 39835,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 19923,
+     "either": 39770,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 19923,
+     "either": 39744,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 19804,
+     "either": 39881,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 19700,
+     "either": 39960,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.4068,
+     "either": 0.7384
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.4089,
+     "either": 0.7388
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.4087,
+     "either": 0.7376
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.4072,
+     "either": 0.739
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4089,
+     "either": 0.7369
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4086,
+     "either": 0.7375
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.331,
+     "either": 0.6643
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.3296,
+     "either": 0.6644
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.3312,
+     "either": 0.6627
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.3313,
+     "either": 0.6621
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.3296,
+     "either": 0.6641
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.3309,
+     "either": 0.6655
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.3307,
+     "either": 0.6656
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.3309,
+     "either": 0.665
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.333,
+     "either": 0.6632
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.3318,
+     "either": 0.6632
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.3307,
+     "either": 0.6639
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.3321,
+     "either": 0.6628
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.3321,
+     "either": 0.6624
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.3301,
+     "either": 0.6647
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3283,
+     "either": 0.666
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.8287,
+     "P_fails_all_six": 0.4447
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7924,
+     "P_fails_all_six": 0.387
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.791,
+     "P_fails_all_six": 0.3845
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.7902,
+     "P_fails_all_six": 0.3853
+    },
+    "S04_C11_status": {
+     "P_fail": 0.739,
+     "P_fails_all_six": 0.3199
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6488,
+     "P_fails_all_six": 0.2329
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4974,
+     "P_fails_all_six": 0.1434
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.497,
+     "P_fails_all_six": 0.1412
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.8287,
+     "P_fails_all_six": 0.4447
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7924,
+     "P_fails_all_six": 0.387
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.791,
+     "P_fails_all_six": 0.3845
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.7902,
+     "P_fails_all_six": 0.3853
+    },
+    "S04_C11_status": {
+     "P_fail": 0.739,
+     "P_fails_all_six": 0.3199
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6488,
+     "P_fails_all_six": 0.2329
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4974,
+     "P_fails_all_six": 0.1434
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.497,
+     "P_fails_all_six": 0.1412
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6503,
+     "band_10_90": [
+      0.5446,
+      0.7756
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9959,
+      "avg_weighted_pass_rate": 0.7294,
+      "per_rollout_sd": 0.6496,
+      "failure_patterns": 0.1986
+     },
+     "P_all": 0.0618,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0164,
+       "P_all_if_rate_below_median": 0.1072,
+       "spread": 0.0908
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.072,
+       "P_all_if_rate_below_median": 0.0516,
+       "spread": 0.0204
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0716,
+       "P_all_if_rate_below_median": 0.052,
+       "spread": 0.0196
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.068,
+       "P_all_if_rate_below_median": 0.0556,
+       "spread": 0.0124
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.068,
+       "P_all_if_rate_below_median": 0.0556,
+       "spread": 0.0124
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0658,
+       "P_all_if_rate_below_median": 0.0578,
+       "spread": 0.008
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0602,
+       "P_all_if_rate_below_median": 0.0634,
+       "spread": 0.0032
+      }
+     ],
+     "E_patterns": 1.8437
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6488,
+    "rule:M2_flag": 0.4964,
+    "rule:M3_live_standard": 0.4989,
+    "rule:M4_wording": 0.4976,
+    "rule:M5_scope": 0.4974,
+    "rule:M6_conflict": 0.497,
+    "rule:M7_counts": 0.4973
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 24408,
+     "either": 44305,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 24535,
+     "either": 44325,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 24524,
+     "either": 44258,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 24432,
+     "either": 44342,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24532,
+     "either": 44217,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24516,
+     "either": 44251,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 19857,
+     "either": 39860,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 19773,
+     "either": 39866,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 19871,
+     "either": 39760,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 19881,
+     "either": 39725,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 19776,
+     "either": 39848,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 19853,
+     "either": 39933,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 19844,
+     "either": 39934,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 19853,
+     "either": 39900,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 19977,
+     "either": 39794,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 19908,
+     "either": 39792,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 19840,
+     "either": 39835,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 19923,
+     "either": 39770,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 19923,
+     "either": 39744,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 19804,
+     "either": 39881,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 19700,
+     "either": 39960,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.4068,
+     "either": 0.7384
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.4089,
+     "either": 0.7388
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.4087,
+     "either": 0.7376
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.4072,
+     "either": 0.739
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4089,
+     "either": 0.7369
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4086,
+     "either": 0.7375
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.331,
+     "either": 0.6643
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.3296,
+     "either": 0.6644
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.3312,
+     "either": 0.6627
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.3313,
+     "either": 0.6621
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.3296,
+     "either": 0.6641
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.3309,
+     "either": 0.6655
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.3307,
+     "either": 0.6656
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.3309,
+     "either": 0.665
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.333,
+     "either": 0.6632
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.3318,
+     "either": 0.6632
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.3307,
+     "either": 0.6639
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.3321,
+     "either": 0.6628
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.3321,
+     "either": 0.6624
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.3301,
+     "either": 0.6647
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3283,
+     "either": 0.666
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.8287,
+     "P_fails_all_six": 0.4447
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7924,
+     "P_fails_all_six": 0.387
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.791,
+     "P_fails_all_six": 0.3845
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.7902,
+     "P_fails_all_six": 0.3853
+    },
+    "S04_C11_status": {
+     "P_fail": 0.739,
+     "P_fails_all_six": 0.3199
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6488,
+     "P_fails_all_six": 0.2329
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4974,
+     "P_fails_all_six": 0.1434
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.497,
+     "P_fails_all_six": 0.1412
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.8287,
+     "P_fails_all_six": 0.4447
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7924,
+     "P_fails_all_six": 0.387
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7911,
+     "P_fails_all_six": 0.3843
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.791,
+     "P_fails_all_six": 0.3845
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.7902,
+     "P_fails_all_six": 0.3853
+    },
+    "S04_C11_status": {
+     "P_fail": 0.739,
+     "P_fails_all_six": 0.3199
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7384,
+     "P_fails_all_six": 0.3161
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6488,
+     "P_fails_all_six": 0.2329
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4974,
+     "P_fails_all_six": 0.1434
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.497,
+     "P_fails_all_six": 0.1412
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8381,
+     "band_10_90": [
+      0.7706,
+      0.9076
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9958,
+      "avg_weighted_pass_rate": 0.0015,
+      "per_rollout_sd": 0.3027,
+      "failure_patterns": 0.87
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 4.124
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6499,
+    "rule:M2_flag": 0.5023,
+    "rule:M3_live_standard": 0.4988,
+    "rule:M4_wording": 0.5035,
+    "rule:M5_scope": 0.4992,
+    "rule:M6_conflict": 0.5012,
+    "rule:M7_counts": 0.4991
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 24702,
+     "either": 44430,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 24404,
+     "either": 44517,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 24801,
+     "either": 44400,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 24460,
+     "either": 44483,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24575,
+     "either": 44489,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24584,
+     "either": 44354,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 20053,
+     "either": 40018,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 20227,
+     "either": 40124,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 20128,
+     "either": 39965,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 20049,
+     "either": 40165,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 20159,
+     "either": 39929,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 20151,
+     "either": 39989,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 19985,
+     "either": 39897,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 19856,
+     "either": 40147,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 20040,
+     "either": 39837,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 20066,
+     "either": 40096,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 20307,
+     "either": 39976,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 20196,
+     "either": 39961,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 20117,
+     "either": 39908,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 20009,
+     "either": 39890,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 19759,
+     "either": 40261,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.4117,
+     "either": 0.7405
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.4067,
+     "either": 0.7419
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.4133,
+     "either": 0.74
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.4077,
+     "either": 0.7414
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4096,
+     "either": 0.7415
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4097,
+     "either": 0.7392
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3342,
+     "either": 0.667
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.3371,
+     "either": 0.6687
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.3355,
+     "either": 0.6661
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.3342,
+     "either": 0.6694
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.336,
+     "either": 0.6655
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.3358,
+     "either": 0.6665
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.3331,
+     "either": 0.665
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.3309,
+     "either": 0.6691
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.334,
+     "either": 0.664
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.3344,
+     "either": 0.6683
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.3384,
+     "either": 0.6663
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.3366,
+     "either": 0.666
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.3353,
+     "either": 0.6651
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.3335,
+     "either": 0.6648
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3293,
+     "either": 0.671
+    }
+   },
+   "run_score_band_10_90": [
+    0.6931,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.7745,
+     "P_fails_all_six": 0.3492
+    },
+    "S01_C06_status": {
+     "P_fail": 0.5976,
+     "P_fails_all_six": 0.1637
+    },
+    "S04_C11_status": {
+     "P_fail": 0.5174,
+     "P_fails_all_six": 0.1463
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4992,
+     "P_fails_all_six": 0.1438
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.3115,
+     "P_fails_all_six": 0.003
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.3083,
+     "P_fails_all_six": 0.0049
+    },
+    "S03_C10_status": {
+     "P_fail": 0.2869,
+     "P_fails_all_six": 0.0023
+    },
+    "S16_testing_count": {
+     "P_fail": 0.2869,
+     "P_fails_all_six": 0.0023
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0014
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.2357,
+     "P_fails_all_six": 0.0004
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.2357,
+     "P_fails_all_six": 0.0004
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.2356,
+     "P_fails_all_six": 0.0004
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.2326,
+     "P_fails_all_six": 0.0009
+    },
+    "S02_C07_status": {
+     "P_fail": 0.051,
+     "P_fails_all_six": 0.0
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.7745,
+     "P_fails_all_six": 0.3492
+    },
+    "S01_C06_status": {
+     "P_fail": 0.5976,
+     "P_fails_all_six": 0.1637
+    },
+    "S04_C11_status": {
+     "P_fail": 0.5174,
+     "P_fails_all_six": 0.1463
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.4992,
+     "P_fails_all_six": 0.1438
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.3115,
+     "P_fails_all_six": 0.003
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.3083,
+     "P_fails_all_six": 0.0049
+    },
+    "S03_C10_status": {
+     "P_fail": 0.2869,
+     "P_fails_all_six": 0.0023
+    },
+    "S16_testing_count": {
+     "P_fail": 0.2869,
+     "P_fails_all_six": 0.0023
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0014
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.2357,
+     "P_fails_all_six": 0.0004
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.2357,
+     "P_fails_all_six": 0.0004
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.2356,
+     "P_fails_all_six": 0.0004
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.2326,
+     "P_fails_all_six": 0.0009
+    },
+    "S02_C07_status": {
+     "P_fail": 0.051,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.6508,
+     "band_10_90": [
+      0.5446,
+      0.7723
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9959,
+      "avg_weighted_pass_rate": 0.7297,
+      "per_rollout_sd": 0.6521,
+      "failure_patterns": 0.1882
+     },
+     "P_all": 0.0609,
+     "value_of_information": [
+      {
+       "mechanism": "rule:M1_status",
+       "P_all_if_rate_above_median": 0.017,
+       "P_all_if_rate_below_median": 0.1048,
+       "spread": 0.0878
+      },
+      {
+       "mechanism": "rule:M2_flag",
+       "P_all_if_rate_above_median": 0.0706,
+       "P_all_if_rate_below_median": 0.0512,
+       "spread": 0.0194
+      },
+      {
+       "mechanism": "rule:M7_counts",
+       "P_all_if_rate_above_median": 0.0684,
+       "P_all_if_rate_below_median": 0.0534,
+       "spread": 0.015
+      },
+      {
+       "mechanism": "rule:M6_conflict",
+       "P_all_if_rate_above_median": 0.0676,
+       "P_all_if_rate_below_median": 0.0542,
+       "spread": 0.0134
+      },
+      {
+       "mechanism": "rule:M4_wording",
+       "P_all_if_rate_above_median": 0.0674,
+       "P_all_if_rate_below_median": 0.0544,
+       "spread": 0.013
+      },
+      {
+       "mechanism": "rule:M3_live_standard",
+       "P_all_if_rate_above_median": 0.062,
+       "P_all_if_rate_below_median": 0.0598,
+       "spread": 0.0022
+      },
+      {
+       "mechanism": "rule:M5_scope",
+       "P_all_if_rate_above_median": 0.0598,
+       "P_all_if_rate_below_median": 0.062,
+       "spread": 0.0022
+      }
+     ],
+     "E_patterns": 1.8391
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:M1_status": 0.6458,
+    "rule:M2_flag": 0.5,
+    "rule:M3_live_standard": 0.5056,
+    "rule:M4_wording": 0.4975,
+    "rule:M5_scope": 0.498,
+    "rule:M6_conflict": 0.5011,
+    "rule:M7_counts": 0.5014
+   },
+   "landing_pair_counts": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 24542,
+     "either": 44204,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 24785,
+     "either": 44297,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 24430,
+     "either": 44169,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 24503,
+     "either": 44122,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 24379,
+     "either": 44437,
+     "runs": 60000
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 24633,
+     "either": 44200,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 20196,
+     "either": 40138,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 19933,
+     "either": 39918,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 20082,
+     "either": 39795,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 20045,
+     "either": 40023,
+     "runs": 60000
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 20105,
+     "either": 39980,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 20155,
+     "either": 40032,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 20178,
+     "either": 40035,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 20385,
+     "either": 40019,
+     "runs": 60000
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 20287,
+     "either": 40134,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 19930,
+     "either": 39800,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 20008,
+     "either": 39913,
+     "runs": 60000
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 20087,
+     "either": 39851,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 20093,
+     "either": 39854,
+     "runs": 60000
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 20213,
+     "either": 39751,
+     "runs": 60000
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 20138,
+     "either": 40017,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:M1_status|rule:M2_flag": {
+     "both": 0.409,
+     "either": 0.7367
+    },
+    "rule:M1_status|rule:M3_live_standard": {
+     "both": 0.4131,
+     "either": 0.7383
+    },
+    "rule:M1_status|rule:M4_wording": {
+     "both": 0.4072,
+     "either": 0.7361
+    },
+    "rule:M1_status|rule:M5_scope": {
+     "both": 0.4084,
+     "either": 0.7354
+    },
+    "rule:M1_status|rule:M6_conflict": {
+     "both": 0.4063,
+     "either": 0.7406
+    },
+    "rule:M1_status|rule:M7_counts": {
+     "both": 0.4106,
+     "either": 0.7367
+    },
+    "rule:M2_flag|rule:M3_live_standard": {
+     "both": 0.3366,
+     "either": 0.669
+    },
+    "rule:M2_flag|rule:M4_wording": {
+     "both": 0.3322,
+     "either": 0.6653
+    },
+    "rule:M2_flag|rule:M5_scope": {
+     "both": 0.3347,
+     "either": 0.6633
+    },
+    "rule:M2_flag|rule:M6_conflict": {
+     "both": 0.3341,
+     "either": 0.6671
+    },
+    "rule:M2_flag|rule:M7_counts": {
+     "both": 0.3351,
+     "either": 0.6663
+    },
+    "rule:M3_live_standard|rule:M4_wording": {
+     "both": 0.3359,
+     "either": 0.6672
+    },
+    "rule:M3_live_standard|rule:M5_scope": {
+     "both": 0.3363,
+     "either": 0.6673
+    },
+    "rule:M3_live_standard|rule:M6_conflict": {
+     "both": 0.3397,
+     "either": 0.667
+    },
+    "rule:M3_live_standard|rule:M7_counts": {
+     "both": 0.3381,
+     "either": 0.6689
+    },
+    "rule:M4_wording|rule:M5_scope": {
+     "both": 0.3322,
+     "either": 0.6633
+    },
+    "rule:M4_wording|rule:M6_conflict": {
+     "both": 0.3335,
+     "either": 0.6652
+    },
+    "rule:M4_wording|rule:M7_counts": {
+     "both": 0.3348,
+     "either": 0.6642
+    },
+    "rule:M5_scope|rule:M6_conflict": {
+     "both": 0.3349,
+     "either": 0.6642
+    },
+    "rule:M5_scope|rule:M7_counts": {
+     "both": 0.3369,
+     "either": 0.6625
+    },
+    "rule:M6_conflict|rule:M7_counts": {
+     "both": 0.3356,
+     "either": 0.667
+    }
+   },
+   "run_score_band_10_90": [
+    0.5248,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S15_live_count": {
+     "P_fail": 0.8243,
+     "P_fails_all_six": 0.4368
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.792,
+     "P_fails_all_six": 0.3874
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.7909,
+     "P_fails_all_six": 0.3857
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7905,
+     "P_fails_all_six": 0.385
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7367,
+     "P_fails_all_six": 0.3185
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7367,
+     "P_fails_all_six": 0.3185
+    },
+    "S04_C11_status": {
+     "P_fail": 0.7354,
+     "P_fails_all_six": 0.3135
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6458,
+     "P_fails_all_six": 0.232
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5011,
+     "P_fails_all_six": 0.1395
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.498,
+     "P_fails_all_six": 0.1379
+    },
+    "S05_C05_status": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S06_register_complete": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S17_summary_live": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S18_summary_qualify": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S19_page_c06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S20_ticket_season_pass": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21_summary_thread": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22_owner_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23_owner_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S24_owner_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S25_owner_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S26_owner_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S28_feature_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S29_feature_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S30_feature_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S31_feature_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S32_feature_C12": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S34_evidence_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S35_evidence_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S36_evidence_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S37_evidence_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S38_evidence_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S40_date_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_date_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_date_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_date_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_date_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S41_claim_C02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S42_claim_C04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S43_claim_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S44_claim_C08": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S45_claim_C10": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S46_scope_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S47_scope_C03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S48_scope_C06": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S49_scope_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S51_action_C01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S52_action_C05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S53_action_C07": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S54_action_C09": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S55_action_C11": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S15_live_count": {
+     "P_fail": 0.8243,
+     "P_fails_all_six": 0.4368
+    },
+    "S10_C13_decision": {
+     "P_fail": 0.792,
+     "P_fails_all_six": 0.3874
+    },
+    "S11_C10_qualifier": {
+     "P_fail": 0.7909,
+     "P_fails_all_six": 0.3857
+    },
+    "S01_C06_status": {
+     "P_fail": 0.7905,
+     "P_fails_all_six": 0.385
+    },
+    "S07_C03_decision": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S08_C09_decision": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S09_C12_decision": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S12_C09_qualifier": {
+     "P_fail": 0.7896,
+     "P_fails_all_six": 0.3854
+    },
+    "S03_C10_status": {
+     "P_fail": 0.7367,
+     "P_fails_all_six": 0.3185
+    },
+    "S16_testing_count": {
+     "P_fail": 0.7367,
+     "P_fails_all_six": 0.3185
+    },
+    "S04_C11_status": {
+     "P_fail": 0.7354,
+     "P_fails_all_six": 0.3135
+    },
+    "S02_C07_status": {
+     "P_fail": 0.6458,
+     "P_fails_all_six": 0.232
+    },
+    "S14_C06_conflict": {
+     "P_fail": 0.5011,
+     "P_fails_all_six": 0.1395
+    },
+    "S50_scope_C11": {
+     "P_fail": 0.498,
+     "P_fails_all_six": 0.1379
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  }
+ ],
+ "summary": {
+  "V3": {
+   "P_all_min": 0.0,
+   "P_all_max": 0.1066,
+   "E_average_range": [
+    0.6064,
+    0.8381
+   ],
+   "voi": [
+    "rule:M1_status",
+    "rule:M2_flag",
+    "rule:M4_wording",
+    "rule:M7_counts",
+    "rule:M3_live_standard",
+    "rule:M6_conflict",
+    "rule:M5_scope"
+   ]
+  }
+ },
+ "preregistration": {
+  "id": "hev_7aa2091757a26297",
+  "added": true,
+  "present": false,
+  "rejected": []
+ }
+}

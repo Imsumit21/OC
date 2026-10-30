@@ -8,6 +8,10 @@ This guide owns the **order, gates and loop-backs**. The playbooks own the metho
 `setup/GEN_EXECUTION.md` owns the boundaries and the numbers. Platform screen
 numbers refer to `references/Taxonomy_V2_Step_Map.md`.
 
+> **After a tool change**, read `Guide/Authoring_After_P1_Hardening.md`: it records the
+> per-tool deltas from the P1 hardening, the stage-by-stage impact, and the exact steps to
+> re-certify an existing task (the gate-policy hash moved, so every pasted PASS is stale).
+
 ## The shape of a V3 task
 
 Four stages (`references/Docs/2_Overall Task Flow - V2.md`): **Build** the universe and
