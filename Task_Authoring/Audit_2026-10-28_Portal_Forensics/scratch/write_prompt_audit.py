@@ -1,0 +1,213 @@
+from pathlib import Path
+import json,re,hashlib
+base=Path('Task_Authoring/Audit_2026-10-28_Portal_Forensics')
+records=json.loads((base/'scratch/prompt_exact_input_inventory.json').read_text())
+current=json.loads((base/'scratch/prompt_current_hashes.json').read_text())
+text='''# Prompt / role / QC forensic audit
+
+Audit date: 2026-10-28. Scope: preserved local evidence; no Portal operation, SQL execution, paid run, external message, or original-artifact mutation. This report was authored after reading the shared execution contract, prompt-writing skill and playbook, actual stage-gate and V3 evidence validators, actual local Eval 1 and its premise/UGT validators, preserved prompt reports, current checks and relevant repair evidence. No claim of a fresh evaluation is made.
+
+## 1. Finding and evidence standard
+
+The prompt evidence does **not** support “the create skills keep failing on the Portal” as a single current-state conclusion. It supports a narrower and useful diagnosis: earlier prompt pairs repeatedly failed on **underdefined incorporated rules and inconsistent task-touched records**; repairs sometimes fixed one fork while introducing another; hardness edits sometimes reopened a prompt pair that had already passed. A specific Reviewer A wording repair settled the business decisions but created a Contrived failure. Later preserved reports show Reviewer A at NON-FAIL, Reviewer B at PASS, and Reviewer C at PASS on an older SQL revision. Reviewer D has no supplied `/prompt` report, and Reviewer E has none in the searched local evidence.
+
+Counts are descriptive, not failure rates: 24 preserved Portal-format `/prompt` files, 23 unique report SHA-256s, across six task families. Unique reports: 13 FAIL, 6 PASS, 4 NON-FAIL. Reviewer B iteration 03 and iteration 05 are the same report bytes, not two independent passes. The strict five-current-sent-task scope has direct prompt-report histories for Reviewer A, Reviewer B and Reviewer C; the wider scope additionally includes `task_inputs-skipped`, archived `task_inputs-n`, and completed Douglas. Local checks and a locally rerun Eval-format Julia report are outside these external-report counts. The other completed and archived folders were searched; absence of a preserved report does not prove no Portal run happened.
+
+“Portal” below means the preserved returned/Portal-format report identified by path and input hashes. This audit does not authenticate a remote execution merely from the document format. For exact input bytes, the audit hashed preserved `.sql` and `.txt` files under Task_Authoring, completed_tasks and archived task. A report's input hash binds what it says it reviewed; a matching local file establishes the reviewed bytes can be inspected. Neither proves deployment or the opening prompt delivered to a model. Unlocated exact inputs are explicitly marked. All full report hashes, declared input hashes, line numbers and matching-file lists are in `scratch/prompt_exact_input_inventory.json`; current artifact hashes are in `scratch/prompt_current_hashes.json`; actual rule/tool hashes are in `scratch/prompt_rules_hashes.json`.
+
+No skill invocation is inferred from `04_Prompt_Check.md`, a stage PASS, a filename, or an artifact claiming it followed the skill. Such artifacts establish a recorded review, not that all prose instructions were executed. The supplied evidence does not contain a complete execution trace tying every failed Portal pair to an invocation of the exact current `create-prompt-writing/SKILL.md` bytes. The conclusions below distinguish a prescription, an implementation gap, a recorded author judgment, and an externally reported result.
+
+## 2. Current pair status and chronological reports
+
+### Current five-task scope
+
+| Reviewer / task suffix | Current prompt SHA-256 | Current SQL SHA-256 | What the preserved prompt evidence supports |
+|---|---|---|---|
+'''
+lookup={x['task_dir'].split('_')[-1]:x for x in current}
+for suffix,name,status in [
+ ('TASK_A','Reviewer A / TASK_A','Exact pair matches latest saved NON-FAIL report (business-function overlap 3).'),
+ ('TASK_B','Reviewer B / TASK_B','Exact pair matches latest saved PASS report. Later rubric repairs are not additional prompt failures.'),
+ ('TASK_C','Reviewer C / TASK_C','Prompt matches last PASS; current SQL differs. Last PASS certifies SQL 3a5adccd5061…, not current 8b23be8069b4….'),
+ ('TASK_D','Reviewer D / TASK_D','Local NON-FAIL prediction only. Returned screenshot-refresh pair is a different scenario, and no /prompt report was supplied.'),
+ ('TASK_E','Reviewer E / TASK_E','Local NON-FAIL prediction only. No external /prompt result found.')]:
+ x=lookup[suffix]['artifacts'];text+=f"| {name} | `{x['04_Prompt.txt']['sha256']}` | `{x['01_Universe_Inject.sql']['sha256']}` | {status} |\n"
+text+='''
+### Chronological record key
+
+Paths in the chronology table are exact. Report SHA prefixes are 12 characters for readability; the JSON inventory stores the complete SHA-256. Input prefixes are report-declared, checked against preserved matching files where present. Order follows report input revisions and documented intake iterations, not filesystem modification time or numbered attachment suffix alone. Each result is the report's recorded verdict; NONE is not silently upgraded to FAIL.
+
+| Task / chronological report | Report SHA prefix | Prompt / SQL SHA prefixes | Recorded result and final-verdict line |
+|---|---|---|---|
+'''
+def key(r):
+ p=r['path']
+ if 'TASK_A/' in p:g=0
+ elif 'TASK_B/' in p:g=1
+ elif 'TASK_C/' in p:g=2
+ elif 'task_inputs-skipped/' in p:g=3
+ elif 'archived task/' in p:g=4
+ else:g=5
+ m=re.search(r'iteration_(\d+)',p)
+ n=int(m.group(1)) if m else (int(re.search(r'\((\d+)\)',p).group(1))+1 if re.search(r'\((\d+)\)',p) else 0)
+ return g,n,p
+for r in sorted(records,key=key):
+ inp=r['inputs'];sha=lambda k: inp.get(k,{}).get('sha256','UNKNOWN')[:12]
+ ver=r['verdict'];text+=f"| `{r['path']}` | `{r['report_sha256'][:12]}` | `{sha('prompt')}` / `{sha('sql')}` | **{ver[1].split(':',1)[1].strip()}**, line {ver[0]} |\n"
+text+='''
+### Reviewer A — TASK_A: ambiguity → over-specified fix → reverted ambiguity → source-owned repair
+
+1. Iteration 01: **FAIL**. Same current short prompt `cdf0185d…`, older SQL `b9d8cab8…`. Closed Admin items without a live Trello card could be recap-only or require a new Done card. Singular could require only the next unpaid installment or all remaining installments and holds. UGT and Clarity scored 2, while Truthfulness and Contrived passed. Evidence: `Task_Authoring/task_inputs_TASK_A/Audit-Report/iteration_01_portal_6ad90e93a2c3542255f64fbf/6ad90e93a2c3542255f64fbf_1_prompt.md:302` and `:306`; installment alternatives at `:327`. This is missing decision policy, not a role-realism failure.
+2. Iteration 02: **FAIL**, but a different reason. Prompt `3c35800d…` added two per-case sentences without changing SQL. UGT and Clarity now passed (`…/iteration_02_portal_6ad90e93a2c3542255f64fbf/6ad90e93a2c3542255f64fbf_1_prompt (1).md:98`, `:284`). Contrived scored 2 (`:287`, `:332`): the installment instruction was “only set up the card and hold for the next unpaid installment for now” (`:352`). The report explicitly says both previous forks were settled, but the rule placement created an if-chain and a trap hint (`:431`). **High causal confidence:** both the remedy and new failure are stated, and exact candidate bytes are preserved.
+3. Iteration 03: **FAIL**. Prompt returned byte-for-byte to `cdf0185d…`; SQL remained `b9d8cab8…`. Report `…/iteration_03_portal_6ad90e93a2c3542255f64fbf/6ad90e93a2c3542255f64fbf_1_prompt (2).md:30` states the two sentences were removed and nothing replaced them in SQL. The old forks returned, plus the already-Done lawyer-card comment fork (`:369`, `:373`, `:394–395`). This is a verified regression, not random reviewer noise: the missing rules were restored neither in the prompt nor in its incorporated sources.
+4. Iteration 05: **NON-FAIL**, current exact pair `cdf0185d…` / `66d4dde4…`. New DM instructions, an installment rules-thread reply and a lawyer-card closing comment settled the decisions (`…/iteration_05_portal_6ad90e93a2c3542255f64fbf/6ad90e93a2c3542255f64fbf_1_prompt.md:30`). UGT, Truthfulness, Clarity and Contrived all pass (`:104`, `:395`, `:413`, `:415`). Business Function is 3 because the work fits Finance / Legal / HR / Ops as well as Executive (`:464`); it “cannot fail” (`:565`). Treating this as another prompt FAIL would be factually wrong.
+
+Strongest contrary evidence: the current local independent check is cautious, identifies itself as local rather than Portal certification, and binds both hashes (`…/Working_Files/04_Prompt_Check.md:3–6`). It records two local Non-fails (`:12–18`). That caution is appropriate; it is not evidence of a new Portal failure. The Portal report used 07:00Z while local V3 uses 00:00Z; this is a distinct provenance discrepancy, although the local check says revised records do not depend on the seven-hour difference (`:6`).
+
+### Reviewer B — TASK_B: nearly fixed prompt, changing source semantics
+
+The prompt is 32 words. Revisions `9d9735b4…` and `725375ad…` differ only by a trailing newline, as the iteration 03 scope explicitly states. Therefore repeated outcome changes should first be explained by the SQL and rule delta, not by generic prompt naturalness.
+
+| Intake | Actual result | Load-bearing failure or resolution |
+|---|---|---|
+| 01, SQL `db593dd7…` | FAIL | Three ticked canvas items lacked a qualifying re-check/fix record; blank roots left scope uncertainty; older feature PR #370 met an unbounded beta rule. Trello list rename history and an archived active-use Slack channel also failed coherence. |
+| 02, SQL `996f0659…` | FAIL | Item 61b90c74 in-beta vs open, and list-open-only vs list-all remained unresolved after the first repair. |
+| 03, SQL `26ce1f9a…` | PASS | Current rule/record pair settled the forks. Iteration 05 reattached exactly the same report SHA `f8f56661c71a…`; it adds no independent result. |
+| 08, SQL `0114844c…` | FAIL | Hardening left a restart change “installed” with production routed through an old handler, without a rule saying whether installed-but-disabled means live. A progression-reset QA pass lacked its cluster/dependency scope. |
+| 10, SQL `c9ed4e8c…` | FAIL | Correcting “on prod” to mean installed withdrew the confirmation for other server changes too. Rule 4 now required serving traffic, but no new record confirmed those unaffected changes. Rule 3 also did not define qualifying fixes without a QA re-check (open list 9 vs 17). |
+| 12, SQL `35296a98…` | PASS | Explicit serving confirmation and no-recheck classification repaired the source contract. |
+| 14, SQL `87e24c93…` | NON-FAIL | Added same-run broom evidence was posted before the run's claimed ending snapshot; a minor chronology inconsistency, not a prompt-wording failure. |
+| 17, SQL `cb99b9c0…` | PASS | Retimed note and matching references; current exact pair. |
+
+Exact evidence: initial failure `…/Audit-Report/iteration_01/prompt eval.md:386–387` and `:415–422`; second failure `…/iteration_02/6ad90e9449d1194f4e538cdf_1_prompt.md:274`; newline observation `…/iteration_03/6ad90e9449d1194f4e538cdf_1_prompt (2).md:18`; restart/progression forks `…/iteration_08_report_intake/6ad90e9449d1194f4e538cdf_1_prompt (4).md:416–417`; repair collateral effect and no-recheck gap `…/iteration_10_report_intake/6ad90e9449d1194f4e538cdf_1_prompt.md:408–416`; timing issue `…/iteration_14_report_intake/6ad90e9449d1194f4e538cdf_1_prompt.md:596–604`; final PASS `…/iteration_17_report_baseline_intake/received/6ad90e9449d1194f4e538cdf_1_prompt.md:644` and exact pair `:18–20`.
+
+Causal confidence is **high** for the documented source-rule regressions; **moderate** for attributing their introduction to a particular skill or operator. Intake folder names and reports establish repair stages, but do not prove every instruction in the current create skill was invoked then. The strongest contrary evidence is repeated external PASS on the same ordinary prompt, and all dimensions other than UGT/coherence passing in these later failed reports. The current local check preserves its distinction from a new Portal operation (`…/Working_Files/04_Prompt_Check.md:3`, `:13–15`) and a matching fresh hardness run is separately required (`:11`). Prompt PASS is not hardness PASS.
+
+### Reviewer C — TASK_C: one date repair replaced the original fork with a new fork
+
+All three saved external reports review prompt `3715dc04…` unchanged.
+
+- Iteration 02, SQL `85ac9247…`: **FAIL**. Superplay and Sony Mobile had only “Reached out - no response as of 09/11.” A note proving outreach *on or before* its date does not necessarily place outreach inside the Sep 3 window: Inactive versus Not contacted changes two rows and aggregate counts (`…/Audit-Report/iteration_02/6ad90e9fa38cc384483b1c80_1_prompt.md:255`, `:279`). Reply recipient placement was a minor Clarity 3, not the main failure (`:233`).
+- Iteration 03, SQL `d221502f…`: **FAIL**. The card fix said “use … Sep 11 as-of date as the reporting date for the snapshot window and the 14-day check.” That could date outreach Sep 11 against the Sep 30 cut (Inactive) or replace the evaluation cut with Sep 11 (Outreach sent). Exact complaint: `…/iteration_03/6ad90e9fa38cc384483b1c80_1_prompt.md:257`; same-input/unchanged-prompt binding at `:20–22`. An independent 2024 AGM date error persisted as coherence 3 (`:249`).
+- Iteration 05, SQL `3a5adccd…`: **PASS**. Rewritten card preserves Griffin's cut and fixes the relevant date; old AGM decoy now matches base mail (`…/iteration_05_review_intake/6ad90e9fa38cc384483b1c80_1_prompt.md:300–301`, `:310–330`). Strong contrary evidence to a “must eliminate every alternative” theory: a16z last-touch Sep 18 **or** Sep 30 is explicitly accepted as BOTH_FAIR_FIGURE (`:338–342`, `:419`), and the report passes anyway.
+
+Current canonical SQL is `8b23be80…`, not the PASS-reviewed `3a5adccd…`. The exact old PASS input is preserved in iteration 06 before/canonical. The current local check states limited Mode B scope, unrevalidated legacy accepted totals, unresolved run/source binding and the actual formal hardness/model-label blockers (`…/Working_Files/04_Prompt_Check.md:11–19`). It would overstate evidence to call this current pair Portal-passed, or to treat a current local caveat as an additional Portal prompt FAIL. Causal confidence: **high** for the two date forks; **unknown** for a current external prompt outcome.
+
+### Reviewer D — TASK_D: report-to-task attribution fails before prompt diagnosis
+
+Canonical/sent prompt `177495c3…` delegates Claire's PlayableX restart kit. The returned prompt `527690cb…` delegates an October store screenshot refresh. Returned SQL is `4e4b5243…`; sent SQL is `2decd123…`. Preserved reconciliation explicitly records zero overlap of parsed INSERT identities and materially different outputs (`…/Audit-Report/20261024T165457Z_email_1a16ed677b050dd3/version_reconciliation.md:9–20`, `:30–39`). The return contains a **hardness FAIL 1**, not a prompt FAIL. No injection or prompt report was supplied (`:43–51`).
+
+The independent review says the local sent check predicts NON-FAIL and does not certify the returned pair (`…/independent_review_gpt61sol_xhigh.md:88–95`). The exact current local check SHA is `27c7ec91…`; it belongs to `177495c3…`. Missing items: attempt-to-task mapping, intentional-redesign confirmation, active difficulty/freeze, and exact `/prompt` report for returned pair. This task supplies no valid basis for “create-prompt-writing failed” until those are resolved. Action status: **pending evidence**, not denied, and no external action was attempted by this audit.
+
+### Reviewer E — TASK_E: a useful local fairness repair, no external verdict
+
+Current prompt `3ffe1dd1…`, SQL `72ca3929…`. The local check is explicit: Fail 0, Non-fail 1, predicted NON-FAIL, READY FOR `/prompt` (`…/Working_Files/04_Prompt_Check.md:8–14`). It caught and corrected an unauthorized extra requirement: the Midjourney disputed charge need not appear on the cut-list Trello card, because the request only says update that card with its applicable outcomes; it remains required in the workbook/reply (`:22`, `:31`). This is positive evidence that the local fair-reading process can catch a brief defect without changing the prompt. It is not Portal validation. No returned `/prompt` file was found in Reviewer E's task tree.
+
+## 3. Wider preserved task coverage
+
+### task_inputs-skipped: Oliver's handoff; role realism is a state-of-world problem
+
+Two direct prompt reports FAIL. First: UGT 2 because blocker groups could combine or split the review clause and count overlaps differently; coherence 3 for a Google review event after a planned archive (`Task_Authoring/task_inputs-skipped/Plateform_reports/01_prompt.md:298`, `:316`). Second: Truthfulness 2 and Cross-Service Coherence 2 because Brian had already departed while injected records made him the current owner, instruction author, recipient and reviewer (`…/02_Prompt.md:347`, `:371`, `:391`, `:401`, `:430`). Oliver's own Persona remains PASS (`:71`).
+
+Important contrary evidence: the **first** report explicitly rejected the Brian-departure objection using his active account and later offer to help (`…/01_prompt.md:350`); the next report reached the opposite conclusion using termination, channel departure and headcount evidence (`…/02_Prompt.md:430`). Thus there is substantive disagreement across preserved reports about what “left” permits, not proof that the first failure was always a Persona defect. A date/role audit must inspect continued participation, specific remit, company status and recipient authorization rather than equating active account with active owner.
+
+The current prompt switches to Arthur (`4f530d03…`). A later hardness report independently **cites** a matching prompt report `92f80ba8…b245` and recomputed figures, but that prompt report is not preserved as a direct file here (`…/Plateform_reports/02_hardness.md:17–19`, `:45`). Local check explicitly warns the saved `02_Prompt.md` is the predecessor FAIL, and the newer PASS is only cited (`…/Audit-Report/Working_Files/04_Prompt_Check.md:15`, `:163`, `:194`). Therefore final state is **secondary evidence of a later PASS, direct report absent**, not “two fails and no recovery.” Current canonical SQL also differs from the hardness-cited SQL; the comment-free working SQL is what that local check refers to.
+
+Exact-input limitation: predecessor `68ef36ba…` SQL was not located as a byte-identical `.sql` or `.txt` in this audit; report assertions remain attributable but the whole exact pair cannot be freshly inspected. The earlier `836f1bbe…` input and predecessor prompt are present in the preserved Eval_Sandbox snapshot; the audit did not run it.
+
+### Archived task_inputs-n: Sunset / Lot G
+
+Direct history **FAIL → NON-FAIL**. Earlier prompt `001d9b03…`, SQL `2beca945…`, failed because incorporated instructions did not settle automation contributors, certificate day/timezone, Owen's confirmatory end-date inclusivity and the alphabetical sort key (`archived task/task_inputs-n/6acefd9770b8942247032c9e_1_prompt.md:338`, `:362–365`, `:414–417`). Same write set meant Clarity passed; the content forks were scored under UGT (`:342`). Later prompt `244286b9…`, SQL `3f87be1d…`, report dated 2026-10-15, explicitly settles contributor scope/order and certificate date (`…/6acefd9770b8942247032c9e_1_prompt (3).md:518–523`) and records **NON-FAIL 3**, residual signed-licence section references missing from the licence (`:460`, `:531–539`).
+
+No intermediate prompt reports should be invented from the `(3)` suffix. The earlier exact prompt and both exact SQL files were not located in the hashed `.sql`/`.txt` corpus; their hashes are report-declared. Current prompt matches the later reviewed prompt. Archived task_inputs-p, -h and -s have local brief/check files but no standalone preserved external `/prompt` report found.
+
+### Completed Douglas beta server sign-off
+
+Preserved sequence **NON-FAIL → FAIL → PASS → PASS**, same prompt `a0414d89…` throughout. Initial NON-FAIL 3: production branch was referenced without an actual exported branch (`completed_tasks/douglas_beta_server_signoff_2026-10-28/eval_reports/6ad90ea979eb9e5d89f8879f_1_prompt.md:313`, `:377`). Next FAIL 2: ZOM-535 Todo and ZOM-504 Backlog had injected fixed-and-verified comments, a lifecycle mismatch (`…/6ad90ea979eb9e5d89f8879f_1_prompt (1).md:309`, `:371`). Later direct reports PASS (`…/6ad90ea979eb9e5d89f8879f_1_prompt (2).md:420`, `…/6ad90ea979eb9e5d89f8879f_1_prompt (3).md:566`). This is another source-consistency regression with stable natural prompt wording.
+
+The four report-declared SQL hashes differ, and none was located byte-identical in the audited `.sql`/`.txt` corpus. Current submitted SQL has a later different hash; do not transfer a historical PASS to it solely because the folder is called completed. The README labels the reports as platform reports and the task as submitted (`…/README.md:1–5`) and independently records local structural gate versus platform divergence (`:24`). Other completed folders (Frederick account handover and Frederick card spend) contain task/check artifacts but no standalone preserved `/prompt` report found in this search. Their completion/quality cannot be inferred from this report's prompt-only evidence.
+
+### Current task_inputs: Julia release-copy check is local evidence
+
+`Task_Authoring/task_inputs/Working_Files/1_prompt_review.md` ends PASS 5 with reviewed prompt `489ea53b…`, but describes a local re-run, evaluator model deepseek-flash and static source review (`:278–304`). It is outside the returned Portal-format census. It began with an older SQL hash `8b3ced6d…` and later appends repaired-source notes (`:31–33`, `:274–291`); canonical current SQL is `477bed62…`. A single exact final SQL binding should be stored at the result, rather than assuming its opening stale hash is current.
+
+The re-run corrected a real output-contract error: the mail reply is mandatory and a Slack reply additive (`:289`). The earlier reading table still says Slack reply and carries incompatible destination language (`:84–85`) while its later feasibility row and appended correction say mail (`:124`, `:289`). This demonstrates how appending a repair can leave the report's own accepted-outcome table stale. A local PASS declaration alone cannot resolve that internal discrepancy. This audit does not regrade the task; it identifies the concrete inconsistency to reconcile before treating the review as a single coherent certificate.
+
+### Other batch task folders
+
+Fifteen other ID-based batch folders were checked for standalone external prompt reports and current local check headers: TASK_F, TASK_G, TASK_H, TASK_I, TASK_J, TASK_K, TASK_L, TASK_M, TASK_N, TASK_O, TASK_P, TASK_Q, TASK_R, TASK_S, TASK_T. No standalone returned `/prompt` report was found in them. Their local checks predict PASS or NON-FAIL; these are **local-only**, neither observed Portal successes nor observed Portal failures. With Reviewer D and Reviewer E this makes 17 of the 20 ID-based batch folders without direct external prompt reports in the searched workspace. Full current prompt/check hashes for all 22 Task_Authoring task folders are in `scratch/prompt_current_hashes.json`.
+
+## 4. What the actual skill and gate do
+
+### The prose prescription is substantially stronger than a cosmetic prompt lint
+
+- `Task_Authoring/skills/create-prompt-writing/SKILL.md:18–29` requires source validation, fresh fact grounding, persona findability/ACL, every fair reading, assigned-role review and ordinary wording. `:34–37` explicitly says role implausibility fails and that the gate verifies recorded evidence and freshness.
+- `Task_Authoring/playbooks/04_Prompt_Writing.md:74–87` requires fresh grounding, ACL, freeze, fair outcomes and symptom-only writing. Remit must be explained from cited records or work stops (`:100`). Rule zero keeps operating rules in the universe (`:21–24`), exactly the placement Reviewer A's successful repair used.
+- C6 accepts every fair outcome; C7 distinguishes incompatible material writes from representational variation; C8 requires an available, unambiguous, truthful, instructional incorporation chain (`:199–201`). C17 needs every tight identifier and premise checked; C18–19 separate capability from persona visibility (`:210–212`). Self-review must test strongest alternatives, re-read raw facts and bind exact prompt bytes (`:252–279`).
+
+Those instructions already address the main observed failure families. A generic additional “be more thorough” paragraph would add little. Missing execution evidence, machine-enforceable trace depth and regression preservation matter more.
+
+### Actual prompt-check gate: recorded-review validator, not a semantic reviewer
+
+`Task_Authoring/tools/stage_gate.py:2168–2194` checks sections, header word count/12-char prompt hash, exact quoted/coverage spans, occurrence of C1–C24, verification-log pointer syntax, presence of a predicted band/status, tier hardness and self-review. It does not itself enumerate prompt premises, compute possible writes, resolve source authority or decide whether a cited record supports an interpretation. `evidence()` counts rows carrying a pointer regex (`:609–615`). `self_review()` counts evidenced counter-reading rows and mentions, not whether the counterargument is strong or its resolution true (`:625–641`).
+
+A separate **static code gap** is that prompt-check's status test accepts the presence of “BLOCKED” or “UNRESOLVED” as successfully as “READY FOR /prompt” (`:2190–2192`); it does not parse Fail count or make an actual failing C-result a blocking check. Verdict computation only sees generated blocking results (`:2579–2584`). The release marker scan is a separate later check. This is a code-inspection finding, **not a demonstrated live exploit**: no crafted report or evaluation was run, and other checks may independently fail a real bundle. Still, a regression test should prove a structurally complete prompt check that records a genuine Fail cannot get a green handoff certificate.
+
+V3 review validation is intentionally attestation-based. `Task_Authoring/tools/v3_artifact_checks.py:134–152` validates nonempty reviewer/rationale, exact artifact/hash, assigned role and nonempty source_ids, or nonempty accepted_outcomes/alternatives_considered. It does not resolve role-review source IDs or compare asserted remit with those sources. Its success message states “semantic judgment belongs to the named reviewer” (`:282–291`). Test `test_role_review_must_match_assigned_role` checks role-string mismatch (`Task_Authoring/tests/test_v3_stage_gate.py:126–133`); `test_multiple_fair_outcomes_and_current_review_are_accepted` checks recording and freshness (`:135–144`). Neither is a semantic remit or fair-reading oracle.
+
+Therefore a local gate PASS does not imply the external evaluator must agree. The gate is valuable for stale bytes, missing evidence scaffolding and unreachable scoped records. It cannot guarantee the judgment written inside that scaffolding.
+
+### Actual Eval-side checks add stronger source binding, but still rely on substantive judgment
+
+`Evals/tools/hg_prompt_checks.py:90–106` requires the whole prompt be partitioned into quoted clauses and every asserted premise mapped. It requires source-backed premise checks and a UGT review (`:70–85`, `:107–108`); a contradicted premise or recorded phase failure forces FAIL, and missing evidence cannot by itself justify FAIL (`:123–136`). Other failure dimensions need visible primary source/instruction evidence (`:111–122`). `Evals/tools/hg_prompt_ugt.py:80` requires at least two readings; `:183–185` requires FAIL iff a supported unresolved material difference remains. These mechanisms check source/record binding and formal consistency, not whether the reviewer truly found the strongest alternative.
+
+A practical upgrade is to carry this clause/premise/source-contract approach into the authoring preflight, while explicitly selecting the active V3 acceptance policy. Copying the older Eval's strict UGT semantics wholesale would introduce a policy regression.
+
+## 5. Recurring causal mechanisms and strongest contrary evidence
+
+| Mechanism | Evidence and causal confidence | Strongest contrary evidence / limit |
+|---|---|---|
+| Output contract exists in a brief but not in incorporated task sources | Reviewer A no-card and installment rules; Reviewer B open-only/all-items and no-recheck rules; Reviewer C date window. High for exact missing clauses and divergent outputs documented in reports. | V3 can accept multiple fair outcomes instead of forcing a single answer. A fork is not automatically fatal under the current authoring policy. |
+| One local repair changes the reach of another rule | Reviewer B “on prod” withdrawal removed apparent serving confirmation for other changes; Reviewer C reporting-date repair changed both outreach date and possible cut. High, explicit before/after findings. | Some later contradictions were newly discovered in deeper recheck rather than demonstrably newly introduced. Do not call every successive issue an edit-caused regression without a diff. |
+| Prompt overcorrection moves policy into the user request | Reviewer A two added case sentences: UGT passes, Contrived fails; restoring prompt without source fix revives old failure. High, exact same SQL and prompt hashes. | Plain source-pointer requests repeatedly pass. Concision alone is not the failure. |
+| Hardness changes invalidate quality approval | Reviewer B PASS→later UGT FAIL; Douglas NON-FAIL→lifecycle FAIL; current Reviewer C SQL differs from PASS. High for pair invalidation; moderate for authoring-process cause. | Their later repairs also pass. This is evidence for dependent revalidation, not an argument against all hardening. |
+| Role realism is reduced to identity/remit attestation | Sidecar validates role text and nonempty sources; Oliver task made a departed colleague owner/recipient. Moderate pipeline risk. | **No preserved direct prompt report scores Persona FAIL.** Oliver's own Persona passes. The departed-person finding is Truthfulness/coherence and was contested in the preceding review. |
+| Local evidence scaffolding is mistaken for semantic assurance | Gate code counts pointers, mentions and counter-readings; current local files sometimes preserve stale tables. High implementation-level observation. | The skills expressly demand substantive raw-source review; later local checks caught real flaws (Reviewer E unauthorized Midjourney-on-card requirement). This is not proof every review was superficial. |
+| “More difficult” becomes broader rule/supersession machinery | GEN_EXECUTION extreme profile and traps encourage many independent source chains. Moderate contributing pressure; documented design intent. | Complex work can be valid and completed Douglas is positive contrary evidence. Hardness failure and prompt failure remain different stages. |
+
+## 6. Policy divergence that must be recorded, not silently blended
+
+1. **Freeze clock.** Current V3 contract requires assigned date 00:00 UTC (`Task_Authoring/setup/GEN_EXECUTION.md:60–67`, `:146`; `Task_Authoring/references/Docs/11_V3_Changes.md:42–51`). Reviewer A/Reviewer B/Reviewer C returned prompt reports explicitly use Oct 1 **00:00 Pacific = 07:00Z**. Those are different instants. A timestamp valid for the latter may be invalid for the former. This audit did not find that this discrepancy alone caused the recorded prompt failures; record-level timing proof is required before making that claim.
+2. **Fair outcomes.** V3 says multiple fair outcomes are allowed if all pass (`11_V3_Changes.md:197–203`; local playbook `:219–223`). Current local Eval UGT validator still requires no unresolved material difference (`Evals/tools/hg_prompt_ugt.py:183–185`), with authorized variation and limited both-fair cases (`:18–19`). Historical UGT failures must be retained as recorded, but not automatically imported as current-V3 failures. Reviewer C's accepted a16z alternatives show even the returned evaluator had some both-fair handling; the policies overlap but are not identical.
+3. **Authorship.** GEN_EXECUTION explicitly preserves model drafting as a local exception (`:108–136`) while V3 course text says authors write every word without LLM polishing (`11_V3_Changes.md:170`). This is an acknowledged compliance difference, not an observed reason for these specific Portal report failures. No report establishes the AI detector caused the failures.
+4. **Competency and loose facts.** Local playbook C4 treats competency/task-skill mismatch alone as Non-fail (`:197`), and C17 allows one minor loose-descriptor issue (`:210`). Actual local `Evals/1_Prompt_Eval.md:90` still lists a hard competency/task-skill mismatch override, and `:98` fails even one wrong loose descriptor. A check that predicts from V3 while comparing against these older Eval overrides can disagree without an implementation error. The observed Reviewer A Business Function 3 is a Non-fail in the reports too.
+5. **Hardness profile.** The local contract retains Long→extreme with ≥500 necessary calls and ≥10 services, Normal 60–100 with ≥7 services (`GEN_EXECUTION.md:186–207`). Official V3 minimums are Normal 50 and Long 100, with exceeding range allowed (`11_V3_Changes.md:55–65`). The prompt-check gate enforces local tier hardness (`stage_gate.py:1208–1272`). This is stronger local policy and creates a separate certification hurdle. It is not a prompt-quality score and must not be “fixed” by adding procedural wording or excluding a cheap fair outcome.
+
+No current file hash proves what the skill or Eval file contained at the time of an earlier return. Reports cite historical evaluator hashes. The audit stores current rule hashes and report-declared historical bindings separately; exact historical evaluator snapshots are not reconstructed here.
+
+## 7. Recommended tests and skill/gate changes — recommendations only
+
+| Priority | Concrete missing test or change | Acceptance evidence |
+|---|---|---|
+| P0 | Add an explicit prompt-check handoff assertion for Fail count, recorded hard-gate UNVERIFIED and BLOCKED/UNRESOLVED statuses. Keep review-complete and handoff-ready statuses separate. | A fully structured current-hash report containing C6 Fail remains a mechanical FAIL; a complete NON-FAIL with only representational variants remains eligible. Do not test only missing sections. |
+| P0 | Bind prompt result to prompt + SQL + assignment/freeze + references + active policy version, and import every repaired source dependency into the certificate. | Mutating a governing source after a prompt PASS invalidates that pass even if prompt bytes do not change; current Reviewer C's old PASS cannot clear new SQL. |
+| P0 | Preserve a regression ledger of every previously surfaced fork, both readings, exact writes/contents, governing source quote and whether resolved or accepted. Re-run it after every hardening delta. | Reviewer A closed/no-card/Done/installment cases, Reviewer B installed/serving/no-recheck/progression/broom cases, Reviewer C outreach-date-versus-cut cases cannot disappear from later checks. |
+| P0 | Make policy selection explicit at intake and in every returned result: clock, fair-outcome semantics, authorship exception, skill mismatch rule and hardness profile. | A 00:00Z authoring task paired with 07:00Z review stops as a provenance mismatch; no post-freeze fact is silently accepted. A V3 both-fair outcome does not fail merely because two values remain. |
+| P1 | Build a structured requirement ledger for incorporated instructions: prompt clause → source identified → readability → actual instructional quote → transitive amendment → deliverable fields. | A requirement present only in brief/rubric fails authorization; adding a source fact does not automatically create an ask. Test cross-scope and “everything else stands” amendments. |
+| P1 | Require an independent source-backed remit/counter-remit review, not only role string and source-id presence. | A terminated person with an active account is not automatically an owner, and permitted post-departure assistance is not automatically prohibited. Evidence identifies which decision/recipient claim is supported at the freeze. |
+| P1 | Add scope-preservation tests for rule edits, not just the repaired example. | Changing “on prod” to “currently serving” checks every unchanged server item that relied on the old phrase; setting a reporting date distinguishes evidence date, event date, cut and age-computation reference. |
+| P1 | Compare a prompt candidate with its must-not-appear list and source-rule delta before handoff. | Reviewer A's per-case installment rule is flagged as moving operating policy into the prompt, while the equivalent natural source pointer stays clean. A flag routes judgment rather than mechanically banning every conditional sentence. |
+| P1 | Reconcile accepted-outcome tables after appended repair notes; use one canonical structured contract. | Julia's mandatory mail reply appears consistently in every reading/feasibility/coverage row; stale Slack-only acceptance cannot survive a PASS appendix. |
+| P1 | Reuse exact failed/pass fixtures from preserved reports as semantic review cases, with labeled expected policy and pair hashes. | Tests cover actual source forks, non-failing representational alternatives, old report reattachments, and task/scenario mismatches. Do not merely mirror implementation or add C-id count tests. |
+| P2 | Add batch-level similarity review and require rationale for repeated pointer-only delegation wording. | Natural one-off phrasing is not banned; repeated batch shape is an advisory unless the applicable policy actually scores it. V3 flags repetition (`11_V3_Changes.md:174–178`). |
+
+These changes would reduce the gap between “all boxes and pointers present” and “the actual requested work is fair, grounded and naturally phrased.” They should not promise the external evaluator will agree. The independent semantic checks remain judgments, and the exact remote policy/input state must remain attributable.
+
+## 8. Remaining evidence limits and completed work
+
+Completed: all current Task_Authoring task folders searched; targeted five-task histories traced; wider archived/completed prompt reports inventoried and deduplicated; exact report files hashed; declared inputs mapped to matching preserved bytes; current prompt/SQL/check hashes collected; actual skill/playbook/gate/V3/Eval code reviewed; causal findings separated from policy differences and local predictions. No original task, skill, tool, report, sent delivery or source export was edited. Only this new audit and its scratch evidence were written.
+
+Remaining blockers are evidence gaps, not denied actions: exact returned `/prompt` reviews for Reviewer D and Reviewer E; Reviewer D task/attempt/scenario and assignment mapping; current-pair external result for Reviewer C; the directly cited newer skipped-task PASS report; historical SQL bytes missing from the Douglas/archived-n/predecessor-skipped scope; complete traces proving which create skill version and steps were executed on each historical failure. None requires the audit to send mail or run an evaluation. Those actions were outside this assignment and were not attempted.
+'''
+(base/'PROMPT.md').write_text(text)
+print('Wrote',base/'PROMPT.md',len(text.split()),'words',len(text.encode()),'bytes')
