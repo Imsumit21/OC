@@ -201,10 +201,10 @@ def _instant(value):
 
 
 def _temporal(source, context, task_dir, workspace):
-    """Check dated fact evidence within shared data, without inventing a second snapshot."""
+    """Check dated fact evidence within a per-universe source, without inventing a second snapshot."""
     proof = source.get("temporal_evidence")
     if not isinstance(proof, dict):
-        return ["shared-universe source needs temporal_evidence for the assigned freeze"]
+        return ["universe source needs temporal_evidence for the assigned freeze"]
     errors = []
     semantics = proof.get("value_semantics")
     if semantics not in ("fact", "future_deadline", "scheduled_event", "directory_identity"):
@@ -351,7 +351,7 @@ def check_evidence(stage, task_dir, context, artifact_hash, reachable, workspace
                     ok, reason = reachable(step["service"], step["id"])
                     if not ok:
                         raise ValueError(f"{step['id']} not proven reachable: {reason}")
-                if context.get("source", {}).get("mode") == "shared-universe":
+                if context.get("source", {}).get("mode") == "universe":
                     local.extend(_temporal(source, context, task_dir, workspace))
             except (OSError, ValueError, KeyError, IndexError, TypeError) as exc:
                 local.append(str(exc))

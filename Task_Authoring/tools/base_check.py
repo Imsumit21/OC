@@ -82,14 +82,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from sql_lint import literal, parse_time, split_statements, split_top, tuples_after_values  # noqa: E402
+from task_context import v2_export_root  # noqa: E402
 
 BUNDLE = Path(__file__).resolve().parent.parent
 WS = BUNDLE.parent
-OTHER = WS / "HarmonyGames_Other_Services" / "Services_Data"
-GITHUB = WS / "HarmonyGames_GitHub" / "Services_Data" / "github" / "data.json"
-GMAIL = WS / "HarmonyGames_Gmail" / "Services_Data" / "gmail"
+OTHER = v2_export_root("Other_Services", WS) / "Services_Data"
+GITHUB = v2_export_root("GitHub", WS) / "Services_Data" / "github" / "data.json"
+GMAIL = v2_export_root("Gmail", WS) / "Services_Data" / "gmail"
 CACHE = BUNDLE / "support" / "local_search" / "cache"
 CLOCK = dt.datetime(2026, 2, 14, tzinfo=dt.timezone.utc)
+# Data horizon (universe.clock_utc): what exists in the base data and the agent can see. Equals CLOCK on
+# the normal universe, 7 h later on synth-cut. Seeded writes stay bound to CLOCK; recency/activity windows
+# (Activity.judge) and what-exists reads use DATA_CLOCK. runtime_context._apply overwrites both per task.
+DATA_CLOCK = CLOCK
 
 
 # ---------------------------------------------------------------- SQL parsing
@@ -416,6 +421,7 @@ def check(sql: str, base: Base | None = None, manifest: dict | None = None) -> d
     new_channels = new("slack.slack_channels", "id")
     new_slack_users = new("slack.slack_users", "id")
     new_issues = {s["row"].get("id"): s["row"].get("created_at") for s in ins.get("linear.linear_issues", [])}
+    new_projects = new("linear.linear_projects", "id")
     new_lin_comments = new("linear.linear_comments", "id")
     new_prs = {s["row"].get("id"): s["row"].get("created_at") for s in ins.get("github.github_pull_requests", [])}
     new_threads = {s["row"].get("id"): s["row"].get("user_email") for s in ins.get("gmail.gmail_threads", [])}
@@ -522,7 +528,7 @@ def check(sql: str, base: Base | None = None, manifest: dict | None = None) -> d
             if r.get("id") in L["issues"] or r.get("identifier") in L["identifiers"]:
                 fa(s, f"issue {r.get('id')} collides with the base")
             for col, pool in (("team_id", L["teams"]), ("assignee_id", L["users"]), ("creator_id", L["users"]),
-                              ("project_id", L["projects"])):
+                              ("project_id", set(L["projects"]) | new_projects)):
                 if r.get(col) and r[col] not in pool:
                     fa(s, f"{col} {r[col]} does not exist")
             if r.get("parent_id") and r["parent_id"] not in L["issues"] and r["parent_id"] not in new_issues:
@@ -669,12 +675,20 @@ def check(sql: str, base: Base | None = None, manifest: dict | None = None) -> d
                   if isinstance(e, dict) and e.get("record_id")}
     acks = {str(a.get("hazard_id")): a for a in manifest.get("hazard_acknowledgements", []) or []
             if isinstance(a, dict) and a.get("hazard_id")}
-    hazards = hazard_touch(stmts, ins, base, fc, fw, acks)
-    integration_companions(stmts, ins, base, fc, fw, exceptions, notes)
-    voice_realism(stmts, ins, base, fc, fw)
+    hazards = []
+    if kb_status() == "unavailable":
+        warnings.append({"line": 0, "table": "references/universe_kb", "msg": kb_unavailable_note()})
+    else:
+        hazards = hazard_touch(stmts, ins, base, fc, fw, acks)
+        integration_companions(stmts, ins, base, fc, fw, exceptions, notes)
+        voice_realism(stmts, ins, base, fc, fw)
 
     return {"check_A": A, "check_C": C, "warnings": warnings, "notes": sorted(set(notes)),
             "hazards_touched": hazards,
+            "kb": {"status": kb_status(), "universe": kb_universe(),
+                   "note": kb_unavailable_note() if kb_status() == "unavailable" else
+                           ("KB is a reference-only view: its findings are advisory; record evidence is required"
+                            if kb_status() == "reference-only" else "KB bound to the selected universe")},
             "verdict": "PASS" if not A and not C else "FAIL",
             "stats": {"statements": len(stmts), "inserts": sum(1 for s in stmts if s["op"] == "insert"),
                       "updates": sum(1 for s in stmts if s["op"] == "update")}}
@@ -967,13 +981,52 @@ INVITE_RATE, INVITE_BOX_RATE = (836, 941), (2298, 2974)
 _KB = {}
 
 
+class KBUnavailable(RuntimeError):
+    """The active universe has no KB (source.kb_status = unavailable), or its KB failed its binding checks."""
+
+
+KB_STATUSES = ("bound", "reference-only", "unavailable")
+
+
+def kb_status() -> str:
+    """source.kb_status of the active task context; legacy runs (no context) stay `bound`."""
+    context = globals().get("TASK_CONTEXT") or {}
+    status = str(((context.get("source") or {}).get("kb_status")) or "bound")
+    return status if status in KB_STATUSES else "bound"
+
+
+def kb_advisory() -> bool:
+    """reference-only: KB-derived findings are orientation, never PASS/FAIL authority."""
+    return kb_status() == "reference-only"
+
+
+def kb_universe() -> str:
+    context = globals().get("TASK_CONTEXT") or {}
+    return str(context.get("universe_date_key") or "the selected universe")
+
+
+def kb_unavailable_note() -> str:
+    return f"KB unavailable for {kb_universe()}; verify against records"
+
+
+def _kb_error_types() -> tuple:
+    import runtime_context
+    from task_context import ContextError
+    return (getattr(runtime_context, "KBUnavailable", ContextError), OSError, ValueError, KeyError)
+
+
 def kb(name: str):
-    """A universe_kb JSON file (read once per process)."""
+    """A universe_kb JSON file (read once per process). Raises KBUnavailable when the universe has no KB."""
     from runtime_context import ensure_active
     ensure_active(globals(), require_source=True)
+    if kb_status() == "unavailable":
+        raise KBUnavailable(kb_unavailable_note())
     if name not in _KB:
-        from runtime_context import validate_kb
-        _KB[name] = validate_kb(json.loads((KB / f"{name}.json").read_text()), globals())
+        try:
+            from runtime_context import validate_kb
+            _KB[name] = validate_kb(json.loads((KB / f"{name}.json").read_text()), globals())
+        except _kb_error_types() as exc:
+            raise KBUnavailable(f"{kb_unavailable_note()} ({exc})") from exc
     return _KB[name]
 
 
@@ -1032,6 +1085,8 @@ def hazard_index():
     """token -> {hazard ids}; hazard id -> meta; slack message id (sha) -> 'C/ts' for hazard Slack examples."""
     if "hz_index" in _KB:
         return _KB["hz_index"]
+    if kb_status() == "unavailable":
+        return defaultdict(set), {}, {}
     idx, meta, sha = defaultdict(set), {}, {}
     for cat, hz in kb("coherence_hazards")["categories"].items():
         for h in hz:
@@ -1156,6 +1211,10 @@ def repair_status(hid: str, tokens, stmts, base) -> tuple:
 
 def hazard_touch(stmts, ins, base, fc, fw, acks: dict) -> list:
     """Pre-existing inconsistencies (coherence_hazards.json) the SQL updates or seeds references to."""
+    if kb_status() == "unavailable":
+        return []
+    if kb_advisory():  # reference-only KB: orientation only, never PASS/FAIL authority
+        fc = lambda s, msg: fw(s, "ADVISORY (KB reference-only — record evidence required): " + msg)
     idx, meta, _ = hazard_index()
     mod, ref = touched_ids(stmts)
     hits = {}
@@ -1208,13 +1267,19 @@ def _sev(rate, n):
 
 def integration_companions(stmts, ins, base, fc, fw, exceptions: dict, notes: list) -> None:
     """integrations.json INT-01 (GitHub app → Slack mirror), INT-03 (linear[bot]) and INT-11 (calendar invitations)."""
+    if kb_status() == "unavailable":
+        notes.append(kb_unavailable_note() + " — integration companions not checked")
+        return
     ints = {i["id"]: i for i in kb("integrations")["integrations"]}
     i01 = ints["INT-01"]
     windows = {repo: (_t(a), _t(b)) for repo, (a, b) in (i01.get("window") or {}).items()}
     per_repo, rates = i01["base_rates"]["per_repo"], i01["base_rates"]["comment_and_review_copy_rates"]
 
     def emit(sev, stmt, msg):
-        (fc if sev == "error" else fw)(stmt, msg)
+        if sev == "error" and kb_advisory():  # reference-only KB: advisory, never PASS/FAIL authority
+            fw(stmt, "ADVISORY (KB reference-only — record evidence required): " + msg)
+        else:
+            (fc if sev == "error" else fw)(stmt, msg)
 
     def excepted(*ids):
         hit = [i for i in ids if i and str(i) in exceptions]
@@ -1295,11 +1360,11 @@ def integration_companions(stmts, ins, base, fc, fw, exceptions: dict, notes: li
                 if "opened" not in kinds:
                     parent = (sql_opened.get(pr) or (None, None))[1] or (opened_base.get(pr) or [None, None])[1]
                     if parent is None:
-                        fc(m["x"], f"Slack mirror of {label} {rid} has no 'Pull request opened' parent for {pr} in {ch} "
-                                   "(base or SQL) to thread under — base: 100% of comment/review/merge mirrors are threaded under it")
+                        emit("error", m["x"], f"Slack mirror of {label} {rid} has no 'Pull request opened' parent for {pr} in {ch} "
+                                              "(base or SQL) to thread under: 100% of comment/review/merge mirrors are threaded under it")
                     elif m["parent"] != parent:
-                        fc(m["x"], f"Slack mirror of {label} {rid} is not threaded under {pr}'s 'opened' message {ch}/{parent} "
-                                   f"(thread_ts {m['parent']}) — base: 100% threaded")
+                        emit("error", m["x"], f"Slack mirror of {label} {rid} is not threaded under {pr}'s 'opened' message "
+                                              f"{ch}/{parent} (thread_ts {m['parent']}): 100% threaded")
                 continue
             sev = _sev(rate, n)
             if sev is None:
@@ -1379,10 +1444,14 @@ class Activity:
     """activity.json + entities.json joins (exact email only) for 'who could plausibly author this, then'."""
 
     def __init__(self):
+        self.unavailable = kb_status() == "unavailable"
+        self.people, self.months = {}, {}
+        self.by_slack, self.by_linear, self.by_github, self.by_conf, self.names = {}, {}, {}, {}, {}
+        if self.unavailable:
+            return
         a = kb("activity")
         self.people = a["people"]
         self.by_slack = {p["slack_id"]: e for e, p in self.people.items() if p.get("slack_id")}
-        self.by_linear, self.by_github, self.by_conf, self.names = {}, {}, {}, {}
         for ent in kb("entities")["entities"]:
             if ent.get("kind") != "person" or not ent.get("emails"):
                 continue
@@ -1411,7 +1480,7 @@ class Activity:
         if st.startswith("quiet_since") and last and t.date() > dt.date.fromisoformat(last):
             return ("error", f"{t:%Y-%m-%d} is after {self.name(email)}'s departure signal "
                              f"(last authored activity {last}, status {st}; activity.json)")
-        lo, hi = t - dt.timedelta(days=60), min(t + dt.timedelta(days=60), CLOCK)
+        lo, hi = t - dt.timedelta(days=60), min(t + dt.timedelta(days=60), DATA_CLOCK)
         months, cur = set(), dt.date(lo.year, lo.month, 1)
         while cur <= hi.date():
             months.add(f"{cur:%Y-%m}")
@@ -1423,6 +1492,8 @@ class Activity:
 
 
 def _activity() -> Activity:
+    if kb_status() == "unavailable":
+        return None
     if "activity_obj" not in _KB:
         _KB["activity_obj"] = Activity()
     return _KB["activity_obj"]
@@ -1431,6 +1502,8 @@ def _activity() -> Activity:
 def authored_rows(ins):
     """(statement, author email, time, record id) for every seeded human-authored message-like row."""
     act = _activity()
+    if act is None:
+        return
     seen_mail = set()
     for x in ins.get("slack.slack_messages", []):
         r = x["row"]
@@ -1462,7 +1535,11 @@ def authored_rows(ins):
 
 def voice_realism(stmts, ins, base, fc, fw) -> None:
     """A seeded message by someone inactive at that time (activity.json): warning; after their departure: FAIL."""
+    if kb_status() == "unavailable":
+        return
     act = _activity()
+    if kb_advisory():  # reference-only KB: advisory, never PASS/FAIL authority
+        fc = lambda s, msg: fw(s, "ADVISORY (KB reference-only — record evidence required): " + msg)
     agg = {}
     for x, email, t, rid in authored_rows(ins):
         v = act.judge(email, t)
@@ -1493,6 +1570,9 @@ def base_msgs_or_new(base, ch, new_slack_ts) -> dict:
 def to_text(r: dict) -> str:
     lines = [f"BASE CHECK (/injection A + C, static): {r['verdict']}  — "
              f"{r['stats']['inserts']} inserts, {r['stats']['updates']} updates"]
+    kb = r.get("kb") or {}
+    if kb:
+        lines.append(f"KB: {kb.get('status')} ({kb.get('universe')}) — {kb.get('note')}")
     for name in ("check_A", "check_C"):
         lines.append(f"{'Check A — records, references, IDs' if name == 'check_A' else 'Check C — dates and relationships'}: "
                      f"{'PASS' if not r[name] else f'FAIL ({len(r[name])})'}")
@@ -1521,14 +1601,21 @@ def _self_test() -> None:
 INSERT INTO slack.slack_messages (id, ts, channel_id, type, user_id, text, created_at) VALUES ('{good_id}', '{ts}', '{real_ch}', 'message', '{real_user}', 'x', '2026-02-09T11:00:00Z');
 INSERT INTO slack.slack_messages (id, ts, channel_id, type, user_id, text, created_at) VALUES ('bad', '1770634900.000100', 'CNOPE', 'message', 'UNOPE', 'x', '2026-02-09T11:01:40Z');
 INSERT INTO linear.linear_comments (id, issue_id, author_id, body, created_at) VALUES ('cmt_selftest', 'ENG-999999', 'usr_nope', 'x', '2026-02-09T11:00:00Z');
+INSERT INTO linear.linear_projects (id, team_id, name, priority, color, labels_json, links_json, is_archived, created_at, updated_at) VALUES ('11111111-2222-3333-4444-555555555555', 'team_ENG', 'Self-test project', 0, '#bec2c8', '[]', '[]', false, '2026-02-09T10:00:00Z', '2026-02-09T10:00:00Z');
+INSERT INTO linear.linear_issues (id, project_id, team_id, identifier, number, title, priority, labels_json, links_json, relations_json, state_history_json, is_archived, created_at, updated_at) VALUES ('ENG-99990', '11111111-2222-3333-4444-555555555555', 'team_ENG', 'ENG-99990', 99990, 'x', 0, '[]', '[]', '[]', '[]', false, '2026-02-09T10:01:00Z', '2026-02-09T10:01:00Z');
+INSERT INTO linear.linear_issues (id, project_id, team_id, identifier, number, title, priority, labels_json, links_json, relations_json, state_history_json, is_archived, created_at, updated_at) VALUES ('ENG-99991', 'no-such-project', 'team_ENG', 'ENG-99991', 99991, 'x', 0, '[]', '[]', '[]', '[]', false, '2026-02-09T10:01:00Z', '2026-02-09T10:01:00Z');
+INSERT INTO linear.linear_issues (id, project_id, team_id, identifier, number, title, priority, labels_json, links_json, relations_json, state_history_json, is_archived, created_at, updated_at) VALUES ('ENG-99992', '1061a4f4-bc6a-45ca-a5b6-7f73d5e0abe2', 'team_ENG', 'ENG-99992', 99992, 'x', 0, '[]', '[]', '[]', '[]', false, '2026-02-09T10:01:00Z', '2026-02-09T10:01:00Z');
 INSERT INTO slack.slack_messages (id, ts, channel_id, type, user_id, text, thread_ts_legacy, created_at) VALUES ('{hashlib.sha256(f"{real_ch}|1600000000.000100".encode()).hexdigest()[:32]}', '1600000000.000100', '{real_ch}', 'message', '{real_user}', 'reply', '{parent_ts}', '2020-09-13T12:26:40Z');
 """
     r = check(sql, b)
     msgs = " | ".join(f["msg"] for f in r["check_A"] + r["check_C"])
     for needle in ("channel CNOPE does not exist", "breaks the Slack id contract", "user UNOPE", "issue ENG-999999 does not exist",
-                   "is not a linear user", "is not after its parent", "without an UPDATE of the parent"):
+                   "is not a linear user", "is not after its parent", "without an UPDATE of the parent",
+                   "project_id no-such-project does not exist"):
         assert needle in msgs, (needle, msgs)
     assert not any(good_id in f["msg"] for f in r["check_A"]), "valid row flagged"
+    assert "11111111-2222-3333-4444-555555555555" not in msgs, "a project inserted earlier in the SQL flagged as missing"
+    assert "1061a4f4-bc6a-45ca-a5b6-7f73d5e0abe2" not in msgs, "a base project flagged as missing"
 
     # cross-record rules (anchors are real base records; see support/examples/calibration/injection/mutation_matrix.py)
     ch, ol, br = "C09R0KXFX71", "oliver.brooks@harmonygames.co", "brian.foster@harmonygames.co"
@@ -1619,6 +1706,15 @@ INSERT INTO slack.slack_messages (id, ts, channel_id, type, user_id, text, creat
                 f"VALUES ('{sid(mch, mts)}', '{mts}', '{mch}', 'message', 'SLACK_BOT_0004_SLACK_ID', '', '{thread}', '{att}', 'B0GITHUB', '{when}');\n")
     r = check("-- Are you planning to inject? Yes\n" + rev, b)
     assert "APPROVED review" in msgs(r, "check_C") and "no Slack mirror copy" in msgs(r, "check_C"), msgs(r, "check_C")
+    # KB reference-only: a legacy-KB-derived integration failure is a WARN advisory, never a blocking check_C row
+    globals()["TASK_CONTEXT"] = {"universe_date_key": "2026-02-14", "freeze_utc": "2026-02-14T00:00:00Z",
+                                 "source": {"kb_status": "reference-only", "data_clock": "2026-02-14T00:00:00Z"}}
+    try:
+        r = check("-- Are you planning to inject? Yes\n" + rev, b)
+        assert "APPROVED review" in msgs(r, "warnings") and "APPROVED review" not in msgs(r, "check_C"), msgs(r, "check_C")
+        assert "ADVISORY" in msgs(r, "warnings") and r["kb"]["status"] == "reference-only", msgs(r, "warnings")
+    finally:
+        globals().pop("TASK_CONTEXT", None)
     r = check("-- Are you planning to inject? Yes\n" + rev + mirror("1600000000.000100"), b)
     assert "not threaded under" in msgs(r, "check_C"), msgs(r, "check_C")
     r = check("-- Are you planning to inject? Yes\n" + rev + mirror(parent), b)
@@ -1675,6 +1771,9 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
+    if sys.argv[1:] in (["-h"], ["--help"]):    # usage needs no task context
+        print(__doc__)
+        raise SystemExit(0)
     from runtime_context import guarded_entry
     guarded_entry(globals(), require_source=True)
     raise SystemExit(main(sys.argv[1:]))

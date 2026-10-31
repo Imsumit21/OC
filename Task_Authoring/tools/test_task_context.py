@@ -1,7 +1,8 @@
-"""Focused assignment, freeze, source-isolation and date acceptance regressions."""
+"""Focused assignment, universe, freeze, source-isolation, KB and date acceptance regressions."""
 import datetime as dt
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -12,6 +13,27 @@ from unittest.mock import patch
 import task_context as tc
 import runtime_context as runtime
 import sql_lint
+
+SCRATCH = tc.BUNDLE / "support" / "scratch"
+REAL_WORKSPACE = tc.BUNDLE.parent
+CLOCKS = {"normal": "2026-02-14T00:00:00Z", "synthcut": "2025-10-01T07:00:00Z"}
+HUMAN_CLOCKS = {"normal": "2026-02-14 00:00 UTC",
+                "synthcut": "2025-10-01 07:00 UTC (2025-10-01 00:00 PT)"}
+FEBRUARY = "February 14, 2026 08:00"
+NORMAL_BLOCK = {
+    "key": "normal", "date": "2026-02-14", "label": "Feb 14, 2026 (normal)", "folder": "Universe_Normal",
+    "prefix": "Normal", "clock_utc": "2026-02-14T00:00:00Z", "clock_text": "2026-02-14 00:00 UTC",
+    "clock_line": "Clock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)", "shutdown_rules_apply": True,
+    "persona_today": "2026-02-14", "persona_today_weekday": "Saturday", "build_label": "hg4-2026-08-31 v37",
+}
+SYNTHCUT_BLOCK = {
+    "key": "synthcut", "date": "2025-10-01", "label": "Oct 1, 2025 (synth-cut)", "folder": "Universe_SynthCut",
+    "prefix": "SynthCut", "clock_utc": "2025-10-01T07:00:00Z",
+    "clock_text": "2025-10-01 00:00 PT (2025-10-01 07:00 UTC)",
+    "clock_line": "Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)",
+    "shutdown_rules_apply": False, "persona_today": "2025-10-01", "persona_today_weekday": "Wednesday",
+    "build_label": "hg4-synth-sep30cut v16",
+}
 
 RAW = """🏢 Business Function
 Executive
@@ -33,16 +55,66 @@ October 1, 2025 07:00
 
 class TaskContextTests(unittest.TestCase):
     def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
+        # GEN_EXECUTION §1: self-tests write only under support/scratch.
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.root = Path(tempfile.mkdtemp(dir=SCRATCH, prefix="task_context_"))
+        self.addCleanup(shutil.rmtree, self.root, ignore_errors=True)
+        self.workspace = self.root / "workspace"
+        self.registry = self.root / "universe_sources.json"
         self.task = self.root / "task"
         self.task.mkdir()
         self.assignment = self.task / "00_Assigments.md"
         self.assignment.write_text(RAW)
+        patcher = patch.object(tc, "WORKSPACE", self.workspace)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.build_universe("normal")
+        self.build_universe("synthcut")
+        self.write_registry()
+
+    def build_universe(self, key, *, folder=None, prefix=None, manifest_universe=None, evaluation_clock=None):
+        entry = tc._universe_module().UNIVERSES[key]
+        folder, prefix = folder or entry["folder"], prefix or entry["prefix"]
+        manifest = {"format_version": 1, "universe": manifest_universe or key,
+                    "evaluation_clock": evaluation_clock or HUMAN_CLOCKS[key], "services": {}}
+        for service in tc.SERVICES:
+            base = {"github": f"{folder}/{prefix}_HarmonyGames_GitHub",
+                    "gmail": f"{folder}/{prefix}_HarmonyGames_Gmail"}.get(
+                service, f"{folder}/{prefix}_HarmonyGames_Other_Services")
+            relative = f"{base}/Services_Data/{service}"
+            (self.workspace / relative).mkdir(parents=True, exist_ok=True)
+            manifest["services"][service] = {"path": relative}
+        path = self.workspace / "Evals/references/universes" / key / "universe_manifest.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(manifest, indent=1))
+        return manifest
+
+    def write_registry(self, overrides=None):
+        overrides = overrides or {}
+        sources = {}
+        for key, date in (("synthcut", "2025-10-01"), ("normal", "2026-02-14")):
+            entry = {"mode": "universe", "universe": key,
+                     "manifest": f"Evals/references/universes/{key}/universe_manifest.json",
+                     "kb_output_path": str(self.root / "kb" / key),
+                     "legacy_kb_path": str(self.root / "legacy_kb") if key == "normal" else None,
+                     "verification_basis": "fixture"}
+            entry.update(overrides.get(date, {}))
+            sources[date] = entry
+        self.registry.write_text(json.dumps({"format_version": 2, "sources": sources}, indent=1))
+
+    def write_timeline(self, key, fingerprint, **overrides):
+        meta = {"universe": key, "clock": CLOCKS[key], "source_fingerprint": fingerprint,
+                "build": "per-universe-v1", **overrides}
+        path = self.root / "kb" / key / "timeline.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"_meta": meta, "spine": []}))
 
     def context(self, **kwargs):
+        kwargs.setdefault("registry_path", self.registry)
         return tc.load_context(self.task, **kwargs)
+
+    def assign(self, display):
+        self.assignment.write_text(RAW.replace("October 1, 2025 07:00", display))
 
     def test_exact_platform_paste(self):
         ctx = self.context()
@@ -52,6 +124,7 @@ class TaskContextTests(unittest.TestCase):
         self.assertEqual(ctx["difficulty_cap"], .9)
         self.assertEqual(ctx["universe_date_raw"], "October 1, 2025 07:00")
         self.assertEqual(ctx["freeze_utc"], "2025-10-01T00:00:00Z")
+        self.assertEqual(ctx["universe"], SYNTHCUT_BLOCK)
 
     def test_template_requires_only_platform_block_to_be_filled(self):
         template = (tc.BUNDLE / "references/Tasks_Template/00_Assigments.md").read_text()
@@ -82,6 +155,17 @@ universe_date: October 1, 2025 07:00
                 with self.assertRaises(tc.ContextError):
                     self.context()
 
+    def test_label_without_value_stays_missing(self):
+        # A deleted value must not borrow the text after the platform block (closing fence, heading, prose).
+        bare = RAW.replace("October 1, 2025 07:00\n", "")
+        for pasted in ("```text\n" + bare + "```\n\n## Resolved authoring inputs\n\nProse.\n",
+                       bare + "\n## Resolved authoring inputs\n\nProse.\n"):
+            with self.subTest(pasted=pasted[-60:]):
+                self.assignment.write_text(pasted)
+                with self.assertRaises(tc.ContextError) as caught:
+                    self.context()
+                self.assertIn("Missing V3 assigned fields: universe_date_raw", str(caught.exception))
+
     def test_mirror_must_not_substitute_identity_or_clock(self):
         for line in ("email: invented@harmonygames.co", "freeze_utc: 2026-02-14T00:00:00Z",
                      "persona_key: arthur_blake", "universe_date_key: 2026-02-14"):
@@ -91,50 +175,218 @@ universe_date: October 1, 2025 07:00
 
     def test_modes_and_two_freezes(self):
         for mode, cap in (("easy", .9), ("medium", .85), ("hard", .7)):
-            self.assignment.write_text(RAW.replace("easy", mode).replace("October 1, 2025 07:00", "February 14, 2026 08:00"))
+            self.assignment.write_text(RAW.replace("easy", mode).replace("October 1, 2025 07:00", FEBRUARY))
             ctx = self.context()
             self.assertEqual(ctx["difficulty_cap"], cap)
             self.assertEqual(ctx["freeze_utc"], "2026-02-14T00:00:00Z")
+            self.assertEqual(ctx["universe"], NORMAL_BLOCK)
             self.assertEqual(ctx["source"]["status"], "ready")
 
-    def test_same_universe_has_distinct_assignment_freezes(self):
+    def test_two_dates_select_two_universes(self):
         october = self.context(require_source=True)
-        self.assignment.write_text(RAW.replace("October 1, 2025 07:00", "February 14, 2026 08:00"))
+        self.assign(FEBRUARY)
         february = self.context(require_source=True)
-        self.assertEqual(october["source"]["paths"], february["source"]["paths"])
-        self.assertEqual(october["source"]["fingerprint"], february["source"]["fingerprint"])
-        self.assertEqual(october["source"]["data_clock"], "2026-02-14T00:00:00Z")
+        self.assertEqual(october["universe"], SYNTHCUT_BLOCK)
+        self.assertEqual(february["universe"], NORMAL_BLOCK)
+        self.assertNotEqual(october["source"]["manifest"], february["source"]["manifest"])
+        self.assertNotEqual(october["source"]["paths"], february["source"]["paths"])
+        self.assertNotEqual(october["source"]["fingerprint"], february["source"]["fingerprint"])
+        self.assertEqual(october["source"]["data_clock"], "2025-10-01T07:00:00Z")
+        self.assertEqual(february["source"]["data_clock"], "2026-02-14T00:00:00Z")
+        self.assertEqual(october["source"]["assigned_freeze"], october["freeze_utc"])
         self.assertEqual(october["freeze_utc"], "2025-10-01T00:00:00Z")
         self.assertEqual(february["freeze_utc"], "2026-02-14T00:00:00Z")
+        for ctx, key in ((october, "synthcut"), (february, "normal")):
+            self.assertEqual(ctx["source"]["mode"], "universe")
+            self.assertEqual(ctx["source"]["universe"], key)
+            manifest = (self.workspace / "Evals/references/universes" / key / "universe_manifest.json").resolve()
+            self.assertEqual(ctx["source"]["manifest"], str(manifest))
+            self.assertTrue(len(ctx["source"]["paths"]) == len(tc.SERVICES))
+            for value in ctx["source"]["paths"].values():
+                relative = Path(value).relative_to(self.workspace)
+                self.assertEqual(relative.parts[0], tc._universe_module().UNIVERSES[key]["folder"])
+                self.assertTrue(relative.parts[1].startswith(tc._universe_module().UNIVERSES[key]["prefix"] + "_HarmonyGames_"))
         self.assertNotEqual(october["context_hash"], february["context_hash"])
 
     def test_missing_registry_entry_still_blocks_source_access(self):
         registry = self.root / "missing-source.json"
         registry.write_text(json.dumps({"sources": {"2025-10-01": None}}))
-        self.assertEqual(self.context(registry_path=registry)["source"]["status"], "unavailable")
+        ctx = self.context(registry_path=registry)
+        self.assertEqual(ctx["source"]["status"], "unavailable")
+        self.assertEqual(ctx["source"]["universe"], "synthcut")
+        self.assertEqual(ctx["source"]["paths"], {})
+        self.assertEqual(ctx["source"]["kb_status"], "unavailable")
         with self.assertRaisesRegex(tc.ContextError, "No universe source"):
             self.context(require_source=True, registry_path=registry)
 
-    def test_wrong_manifest_clock_rejected(self):
-        registry = self.root / "sources.json"
-        registry.write_text(json.dumps({"sources": {"2025-10-01": {
-            "manifest": "Evals/references/universe_manifest.json",
-            "kb_path": "Task_Authoring/references/universe_kb",
-            "historical_state_verified": True, "verification_basis": "fixture"}}}))
-        ctx = self.context(registry_path=registry)
+    def test_registry_mode_and_identity_errors(self):
+        cases = (
+            ({"mode": "shared-universe"}, "retired by Evals dual-universe-v1"),
+            ({"universe": "normal"}, "does not match date"),
+            ({"manifest": "Evals/references/universes/normal/universe_manifest.json"}, "universe_manifest.json"),
+        )
+        for override, message in cases:
+            with self.subTest(override=override):
+                self.write_registry({"2025-10-01": override})
+                ctx = self.context()
+                self.assertEqual(ctx["source"]["status"], "invalid")
+                self.assertIn(message, ctx["source"]["reason"])
+                self.assertEqual(ctx["source"]["paths"], {})
+                self.assertEqual(ctx["source"]["kb_output_path"], str(self.root / "kb" / "synthcut"))
+                with self.assertRaises(tc.ContextError):
+                    self.context(require_source=True)
+
+    def test_manifest_universe_mismatch_rejected(self):
+        self.build_universe("synthcut", manifest_universe="normal")
+        ctx = self.context()
         self.assertEqual(ctx["source"]["status"], "invalid")
-        self.assertIn("does not match assigned freeze", ctx["source"]["reason"])
+        self.assertIn("declares universe 'normal'", ctx["source"]["reason"])
+
+    def test_service_folders_must_match_universe_folder_and_prefix(self):
+        for kwargs, message in (({"folder": "Universe_Normal", "prefix": "Normal"}, "Universe_SynthCut/SynthCut_HarmonyGames_*"),
+                                ({"prefix": "Wrong"}, "SynthCut_HarmonyGames_*")):
+            with self.subTest(kwargs=kwargs):
+                self.build_universe("synthcut", **kwargs)
+                ctx = self.context()
+                self.assertEqual(ctx["source"]["status"], "invalid")
+                self.assertIn(message, ctx["source"]["reason"])
 
     def test_external_manifest_is_rejected_before_lookup(self):
         manifest = self.root / "manifest.json"
         manifest.write_text("{}")
-        registry = self.root / "registry.json"
-        registry.write_text(json.dumps({"sources": {"2025-10-01": {
-            "manifest": str(manifest), "kb_path": "Task_Authoring/references/universe_kb",
-            "historical_state_verified": True, "verification_basis": "fixture"}}}))
-        ctx = self.context(registry_path=registry)
+        self.write_registry({"2025-10-01": {"manifest": str(manifest)}})
+        ctx = self.context()
         self.assertEqual(ctx["source"]["status"], "invalid")
         self.assertIn("inside the workspace", ctx["source"]["reason"])
+
+    def test_assigned_freeze_must_not_exceed_data_clock(self):
+        self.assign(FEBRUARY)
+        policy = json.loads(tc.POLICY_PATH.read_text())
+        policy["freeze_dates"]["2026-02-14"] = "2026-02-15T00:00:00Z"
+        path = self.root / "policy.json"
+        path.write_text(json.dumps(policy))
+        ctx = self.context(policy_path=path)
+        self.assertEqual(ctx["source"]["status"], "invalid")
+        self.assertIn("after the normal data clock", ctx["source"]["reason"])
+
+    def test_missing_universe_data_blocks_with_install_hint(self):
+        # The shipped registry on a fixture workspace without that universe's folder (the real one may be installed).
+        for display, folder in (("October 1, 2025 07:00", "Universe_SynthCut"), (FEBRUARY, "Universe_Normal")):
+            with self.subTest(folder=folder):
+                self.assign(display)
+                shutil.rmtree(self.workspace / folder)
+                ctx = tc.load_context(self.task, registry_path=tc.SOURCES_PATH)
+                self.assertEqual(ctx["source"]["status"], "invalid")
+                self.assertIn("Source service directories missing:", ctx["source"]["reason"])
+                self.assertIn(f"Install {folder}/ per Evals/UNIVERSE_MAP.md", ctx["source"]["reason"])
+                self.assertEqual(ctx["source"]["paths"], {})
+
+    def test_clock_comes_from_hg_universe_not_manifest_text(self):
+        manifest = (self.workspace / "Evals/references/universes/synthcut/universe_manifest.json").resolve()
+        self.assertEqual(json.loads(manifest.read_text())["evaluation_clock"],
+                         "2025-10-01 07:00 UTC (2025-10-01 00:00 PT)")
+        ctx = self.context()
+        self.assertEqual(ctx["source"]["status"], "ready")
+        self.assertEqual(ctx["source"]["data_clock"], "2025-10-01T07:00:00Z")
+        self.assertEqual(ctx["source"]["data_clock"], ctx["universe"]["clock_utc"])
+        self.assertEqual(ctx["universe"]["clock_line"], tc._universe_module().report_line("synthcut"))
+
+    def test_kb_status_bound_reference_only_and_unavailable(self):
+        october = self.context()
+        self.assertEqual(october["source"]["kb_status"], "unavailable")
+        self.assertIsNone(october["source"]["kb_path"])
+        self.assertEqual(october["source"]["kb_output_path"], str(self.root / "kb" / "synthcut"))
+        self.write_timeline("synthcut", fingerprint=october["source"]["fingerprint"])
+        bound = self.context()
+        self.assertEqual(bound["source"]["kb_status"], "bound")
+        self.assertEqual(bound["source"]["kb_path"], str(self.root / "kb" / "synthcut"))
+        self.assertEqual(bound["source"]["fingerprint"], october["source"]["fingerprint"])
+        self.assign(FEBRUARY)
+        february = self.context()
+        self.assertEqual(february["source"]["kb_status"], "reference-only")
+        self.assertEqual(february["source"]["kb_path"], str(self.root / "legacy_kb"))
+        self.write_timeline("normal", fingerprint=february["source"]["fingerprint"])
+        self.assertEqual(self.context()["source"]["kb_status"], "bound")
+
+    def test_synthcut_never_falls_back_to_the_legacy_kb(self):
+        # A valid-looking legacy Feb-14 KB on disk is never bound to, or readable for, a synth-cut task.
+        legacy = self.root / "legacy_kb"
+        legacy.mkdir(parents=True, exist_ok=True)
+        (legacy / "timeline.json").write_text(json.dumps({"_meta": {"clock": CLOCKS["normal"]}, "spine": []}))
+        october = self.context()
+        self.assertEqual(october["source"]["kb_status"], "unavailable")
+        self.assertIsNone(october["source"]["kb_path"])
+        shipped = json.loads(tc.SOURCES_PATH.read_text())["sources"]["2025-10-01"]
+        self.assertIsNone(shipped.get("legacy_kb_path"))
+        with self.assertRaises(runtime.KBUnavailable):
+            runtime.validate_kb(json.loads((legacy / "timeline.json").read_text()), {"TASK_CONTEXT": october})
+
+    def test_kb_binding_requires_matching_provenance(self):
+        october = self.context()
+        fingerprint = october["source"]["fingerprint"]
+        for overrides in ({"universe": "normal"}, {"clock": "2026-02-14T00:00:00Z"},
+                          {"source_fingerprint": "0" * 64}, {"build": "shared-kb-v1"}):
+            with self.subTest(overrides=overrides):
+                self.write_timeline("synthcut", fingerprint=fingerprint, **overrides)
+                self.assertEqual(self.context()["source"]["kb_status"], "unavailable")
+        self.assign(FEBRUARY)
+        february = self.context()
+        self.write_timeline("normal", fingerprint="0" * 64)
+        self.assertEqual(self.context()["source"]["kb_status"], "reference-only")
+        self.write_timeline("normal", fingerprint=february["source"]["fingerprint"], clock="2025-10-01T07:00:00Z")
+        self.assertEqual(self.context()["source"]["kb_status"], "reference-only")
+
+    def test_registry_is_pinned_to_hg_universe(self):
+        registry = json.loads(tc.SOURCES_PATH.read_text())
+        module = tc._universe_module()
+        self.assertEqual(registry["format_version"], 2)
+        self.assertEqual(sorted(registry["sources"]), sorted(entry["date"] for entry in module.UNIVERSES.values()))
+        for date, entry in registry["sources"].items():
+            key = next(k for k, v in module.UNIVERSES.items() if v["date"] == date)
+            self.assertEqual(entry["mode"], "universe")
+            self.assertEqual(entry["universe"], key)
+            self.assertEqual(entry["manifest"], f"Evals/references/universes/{key}/universe_manifest.json")
+            self.assertEqual(entry["kb_output_path"], f"Task_Authoring/references/universe_kb/by_universe/{key}")
+            self.assertTrue(entry["verification_basis"])
+        self.assertIsNone(registry["sources"]["2025-10-01"]["legacy_kb_path"])
+        self.assertEqual(registry["sources"]["2026-02-14"]["legacy_kb_path"], "Task_Authoring/references/universe_kb")
+        self.assertIn("Task date and universe", registry["note"])
+        self.assertIn("dual-universe-v1", registry["note"])
+        self.assertNotIn("user confirmed", registry["note"].casefold())
+
+    def test_legacy_snapshot_mode_still_verifies_its_manifest_clock(self):
+        manifest = self.build_universe("normal", evaluation_clock="2026-02-14T00:00:00Z")
+        snapshot = self.workspace / "snapshot_manifest.json"
+        snapshot.write_text(json.dumps(manifest))
+        override = {"mode": "snapshot", "manifest": "snapshot_manifest.json", "historical_state_verified": True}
+        self.write_registry({"2025-10-01": override, "2026-02-14": override})
+        october = self.context()
+        self.assertEqual(october["source"]["status"], "invalid")
+        self.assertIn("does not match assigned freeze", october["source"]["reason"])
+        self.assign(FEBRUARY)
+        ctx = self.context()
+        self.assertEqual(ctx["source"]["status"], "ready")
+        self.assertEqual(ctx["source"]["mode"], "snapshot")
+        self.assertEqual(ctx["source"]["data_clock"], "2026-02-14T00:00:00Z")
+
+    def test_loader_never_uses_the_saved_eval_task_date(self):
+        source = (tc.BUNDLE / "tools/task_context.py").read_text()
+        self.assertNotIn("task_inputs/inputs.json", source)
+        self.assertNotIn(".selected(", source)
+        self.assertNotIn("hg_universe.info", source)
+
+    def test_loading_hg_universe_writes_nothing_under_evals(self):
+        root = REAL_WORKSPACE / "Evals" / "tools"
+
+        def listing():
+            return {path.relative_to(root).as_posix(): (path.stat().st_size, path.stat().st_mtime_ns)
+                    for path in sorted(root.rglob("*"))}
+
+        before = listing()
+        module = tc._universe_module()
+        self.assertEqual(tc.universe_block("normal", module)["clock_utc"], "2026-02-14T00:00:00Z")
+        tc.load_context(self.task, registry_path=self.registry)
+        self.assertEqual(before, listing())
 
     def test_hashes_change_with_assignment_and_policy(self):
         a = self.context()
@@ -185,26 +437,6 @@ universe_date: October 1, 2025 07:00
         self.assertEqual(tc.date_acceptance("2025-10-01T00:00:00Z")["pacific"], "2025-09-30")
         self.assertEqual(tc.date_acceptance("2025-11-17T03:00:00Z", "UTC")["accepted_dates"], ["2025-11-17"])
         self.assertEqual(tc.date_acceptance("2025-11-17T03:00:00Z", "Pacific")["accepted_dates"], ["2025-11-16"])
-
-    def test_patched_search_helpers_route_selected_manifest_and_compile(self):
-        import sys
-        sys.path.insert(0, str(tc.BUNDLE / "setup"))
-        import local_search
-        for name in ("hg_search.py", "hg_records.py", "hg_reference.py", "hg_compact_index.py"):
-            source = (tc.WORKSPACE / "Evals" / "tools" / name).read_text()
-            result = local_search.patched(source)
-            compile(result, name, "exec")
-            self.assertIn("TASK_AUTHORING_UNIVERSE_MANIFEST", result)
-            self.assertNotIn("Evals/.cache/", result)
-
-    def test_real_bounded_reader_uses_selected_source(self):
-        from v3_artifact_checks import _bounded_get
-        self.assignment.write_text(RAW.replace("October 1, 2025 07:00", "February 14, 2026 08:00"))
-        ctx = self.context(require_source=True)
-        root = Path(ctx["source"]["paths"]["contacts"])
-        value = _bounded_get("contacts", root / "contacts.json", root, "/contacts/0/contact_id", self.task)
-        self.assertIsInstance(value, str)
-        self.assertTrue(value)
 
     def test_explicit_v3_activation_clears_archival_environment(self):
         with patch.dict(os.environ, {"TASK_AUTHORING_LEGACY_V2": "1"}):

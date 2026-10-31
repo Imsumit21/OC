@@ -27,8 +27,10 @@ CHECK FAMILIES (each check prints PASS / FAIL / WARN / SKIP with file:line locat
                 24-hex Trello/Contacts ids, JSON pointers, SQL lines, F-ids ...) at the
                 stage's minimum ratio; quoted spans are exact substrings of the human file.
   tool.*        tool outputs pasted verbatim where the playbook requires them, re-run and
-                compared when cheap: sql_lint, base_check, hardness_gate, difficulty_stats,
-                persona_view reach / check-sql / can-see, entity.py output.
+                compared when cheap: sql_lint, injection lint (hg.py lint, the eval's static
+                linter: any FAIL, error payload, stale sha256 or undispositioned CHECK blocks),
+                base_check, hardness_gate, difficulty_stats, persona_view reach / check-sql /
+                can-see, entity.py output.
   review.*      a Self-review section exists, holds >= N evidenced counter-readings (N
                 scales with the artifact), names what the stage must cover, lists unresolved.
   reach.*       every load-bearing scoped record (rows in reach sections, Facts for the human,
@@ -49,6 +51,9 @@ CHECK FAMILIES (each check prints PASS / FAIL / WARN / SKIP with file:line locat
   kb.*          universe KB use: coherence_hazards ids (validated) per QC category, activity
                 status for every seeded speaker, integrations companions per seeded service,
                 cohorts / trap_catalog / timeline citations, conventions, entity collisions.
+                Honors source.kb_status: bound = blocking membership; reference-only = membership
+                WARNs ("cite record locators"); unavailable = membership skipped with a WARN and
+                evidence.kb_locators requires a record locator in every KB-dependent section.
   chain.*       the upstream stage's artifact carries a pasted `STAGE GATE <stage>: PASS`
                 block whose digests still match the files (stale upstream = blocked).
   handoff.*     this stage's own PASS block pasted into its Self-review (WARN until pasted;
@@ -97,6 +102,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+from collections import Counter
 import os
 import re
 import shutil
@@ -500,8 +506,20 @@ def assignment_context(ctx):
     ctx.add("assignment.v3_context", True,
             f"{ctx.context['persona_name']} / {ctx.context['persona_role']}; "
             f"{ctx.context['difficulty_mode']} cap <{ctx.context['difficulty_cap']:.0%}; "
-            f"freeze {ctx.context['freeze_utc']}; shared source available; record dates and freeze-state evidence checked separately")
-    return True
+            f"freeze {ctx.context['freeze_utc']}; selected universe available; record dates and freeze-state "
+            f"evidence checked separately")
+    source = ctx.context.get("source") or {}
+    uni = ctx.context.get("universe") or {}
+    mode = source.get("mode")
+    key = uni.get("key") or source.get("universe")
+    ok = mode in ("universe", "snapshot") and (mode != "universe" or bool(key))
+    ctx.add("assignment.source_mode", ok,
+            (f"source mode {mode!r} for universe {key or '?'}; "
+             f"KB {source.get('kb_status') or 'bound'}; clock {uni.get('clock_line') or 'unset'}") if ok else
+            (f"source mode 'shared-universe' is retired: use 'universe' with a universe block" if mode ==
+             "shared-universe" else f"source mode {mode!r} is not a universe/snapshot source"
+             + ("" if key else "; the universe key is unset")))
+    return ok
 
 
 def virtual_digests(ctx, stage):
@@ -811,6 +829,79 @@ def pasted_cansee(ctx, doc, need_ids, sql_text=None, label="pasted_can_see"):
 
 # ------------------------------------------------------------------ KB checks
 
+KB_STATUSES = ("bound", "reference-only", "unavailable")
+# Universe-KB catalog ids are leads, never records: integrations INT-nn, trap_catalog [PNDCBXK]nn,
+# coherence_hazards [TSRQLI]nn, cohorts <LIN|SL|GH|GC|GM|SF|TR|DOC>-*.
+KB_CATALOG_ID = re.compile(r"\b(?:INT-\d{2}|[TSRQLI]\d{2}|[PNDCBXK]\d{2}|"
+                           r"(?:LIN|SL|GH|GC|GM|SF|TR|DOC)-[\w.@-]+)\b")
+
+
+def record_locator(text):
+    """First locator in text that addresses a real exported record (RX_ID), never a universe-KB catalog id."""
+    for m in RX_ID.finditer(text):
+        tok = m.group(0).rstrip(".,;:)")
+        if not KB_CATALOG_ID.fullmatch(tok):
+            return tok
+    return None
+
+
+def source_status(ctx):
+    """(source.kb_status, universe key) from the loaded context; legacy V2 fixtures behave as 'bound'."""
+    ctxd = ctx.context or {}
+    src = ctxd.get("source") or {}
+    uni = ctxd.get("universe") or {}
+    status = src.get("kb_status")
+    if status not in KB_STATUSES:
+        status = "bound"
+    return status, uni.get("key") or src.get("universe") or "universe"
+
+
+def kb_gate(ctx, cid, fn, *args):
+    """One KB-membership check under the context's source.kb_status.
+
+    bound: unchanged (a FAIL blocks). reference-only: KB ids are leads, never membership authority, so a FAIL
+    becomes a WARN naming the universe. unavailable: the KB cannot answer at all, so the check is skipped with a
+    WARN and evidence.kb_locators requires record locators instead."""
+    status, key = source_status(ctx)
+    if status == "unavailable":
+        ctx.add(cid, False, f"KB unavailable for {key}: KB membership not checked — cite record locators", block=False)
+        return
+    before = len(ctx.res)
+    fn(ctx, *args)
+    if status == "reference-only":
+        for r in ctx.res[before:]:
+            if r["status"] == "FAIL":
+                r["status"], r["blocking"] = "WARN", False
+                r["detail"] = f"KB reference-only for {key}: cite record locators — {r['detail']}"
+
+
+def kb_locators(ctx, doc, spec):
+    """When the KB is not bound, every KB-dependent section must still point at real records (blocking)."""
+    status, key = source_status(ctx)
+    if status == "bound":
+        return
+    head = f"KB {'unavailable' if status == 'unavailable' else 'reference-only'} for {key}"
+    probs, locs = [], []
+    for name, rx in spec:
+        secs = doc.sections(rx)
+        if not secs:
+            continue                            # sections_present already blocks a missing section
+        items = [x for s in secs for x in s.items()]
+        txt = "\n".join(s.text(tools=False) for s in secs)
+        hits = [(i, t) for i, t in items if record_locator(t) or RX_EMAIL.search(t)]
+        cited = bool(hits) or (not items and bool(record_locator(txt) or RX_EMAIL.search(txt)))
+        if cited or re.search(r"no records? in scope", txt, re.I):
+            continue
+        if items:
+            probs.append(f"{name}: no record locator in {len(items)} item(s)")
+            locs.append(doc.loc(items[0][0]))
+        else:
+            probs.append(f"{name}: no record locator anywhere")
+            locs.append(doc.loc(secs[0].start))
+    ctx.add("evidence.kb_locators", not probs,
+            (f"{head}: every KB-dependent section cites record locators" if not probs else
+             f"{head}; record locators missing — " + "; ".join(probs[:4])), locs)
+
 
 def kb_hazards(ctx, doc, rx):
     secs = doc.sections(rx)
@@ -1063,6 +1154,129 @@ def rerun_json_tool(ctx, cid, args, pasted_rx, doc, label):
         ctx.add(cid, False, f"{label} re-run failed: {(err or out).strip()[:200]}")
         return
     ctx.add(cid, v == "PASS", f"{label} pasted PASS; re-run {v}" + ("" if v == "PASS" else " — the paste is stale or false"))
+
+def _json_stdout(out):
+    """The tool's JSON payload, tolerating a leading line (hg.py writes caches to stderr, but stay tolerant)."""
+    try:
+        return json.loads(out)
+    except (TypeError, ValueError):
+        pass
+    a, b = out.find("{"), out.rfind("}")
+    if a >= 0 and b > a:
+        try:
+            return json.loads(out[a:b + 1])
+        except ValueError:
+            return None
+    return None
+
+
+LINT_DISPOSITION = re.compile(r"^\s*(?:[-*+]|\d+[.)])?\s*LINT\s+(\S+)\s+L(\d+)\s*:\s*(\S.*?)\s*$", re.M)
+
+
+def _lint_flag(f):
+    return f"{f.get('check') or '?'} L{f.get('line') if f.get('line') is not None else '?'} " \
+           f"{f.get('table') or '?'}.{f.get('column') or '?'}"
+
+
+def _flag_line(f):
+    try:
+        return int(f.get("line"))
+    except (TypeError, ValueError):
+        return -1
+
+
+def _undispositioned_checks(doc, checks):
+    """CHECK flags with no `LINT <check> L<line>: <disposition>` line in the Self-review.
+
+    Every CHECK flag object needs its own line, keyed by that flag's own line; two flags of the same check on
+    different lines need two lines. The only grouping is upstream: records folded into a flag's `also` field are
+    covered by the parent flag's disposition (they are payload of that flag, not flags of their own)."""
+    if not checks:
+        return []
+    secs = doc.sections(r"self[- ]review")
+    txt = secs[-1].text(tools=True) if secs else ""
+    # Count dispositions per (check, line): two distinct flags on one SQL line need two lines. Only byte-identical
+    # duplicate reports collapse to one flag.
+    disp = Counter((m.group(1), int(m.group(2))) for m in LINT_DISPOSITION.finditer(txt))
+    out, seen = [], set()
+    for f in checks:
+        ident = json.dumps(f, sort_keys=True, default=str)   # the whole report, 'also' included
+        if ident in seen:
+            continue
+        seen.add(ident)
+        key = (str(f.get("check") or "?"), _flag_line(f))
+        if disp[key] > 0:
+            disp[key] -= 1
+        else:
+            out.append(f)
+    return out
+
+
+def injection_lint(ctx, doc, sql):
+    """hg.py lint - the eval's static injection linter - on the current SQL.
+
+    The eval linter exits 0 even with FAIL flags, so the gate reads counts/flags itself: an error payload, any
+    FAIL, a sha256 that is not the current SQL (stale output) or a CHECK flag without a Self-review disposition
+    line blocks. INFO flags are reported, never gated."""
+    if not ctx.v3:
+        ctx.skip("tool.injection_lint", "legacy (pre-V3) task: hg.py lint needs the selected universe")
+        return None
+    sql_path = ctx.p(sql)
+    rc, out, err = run_tool([HERE / "hg.py", "lint", "--task-dir", ctx.td])
+    r = _json_stdout(out)
+    if rc != 0:                            # 2 = error payload, 1 = tokenizer error; any non-zero exit blocks
+        msg = (r.get("error") if isinstance(r, dict) else None) or \
+              ((err or out).strip().splitlines() or [""])[-1]
+        ctx.add("tool.injection_lint", False,
+                f"hg.py lint exited {rc}" + (f": {str(msg)[:200]}" if msg else ""))
+        return None
+    if not isinstance(r, dict):
+        tail = (err or out).strip().splitlines()
+        ctx.add("tool.injection_lint", False,
+                f"hg.py lint printed no JSON (exit {rc}): {tail[-1][:200] if tail else 'no output'}")
+        return None
+    if r.get("error"):
+        q = r.get("question")
+        ctx.add("tool.injection_lint", False, f"hg.py lint error: {r['error']}" + (f" — {q}" if q else ""))
+        return None
+    flags = [f for f in r.get("flags") or [] if isinstance(f, dict)]
+    counts = r.get("counts") or {}
+    fails = [f for f in flags if str(f.get("severity") or "").upper() == "FAIL"]
+    checks = [f for f in flags if str(f.get("severity") or "").upper() == "CHECK"]
+    try:
+        n_fail = int(counts.get("FAIL") or 0)
+    except (TypeError, ValueError):
+        n_fail = 0
+    try:
+        n_check = int(counts.get("CHECK") or 0)
+    except (TypeError, ValueError):
+        n_check = 0
+    try:
+        n_info = int(counts.get("INFO") or 0)
+    except (TypeError, ValueError):
+        n_info = 0
+    n_fail, n_check, n_info = n_fail or len(fails), n_check or len(checks), n_info or len(r.get("info") or [])
+    probs = []
+    if n_fail:
+        probs.append(f"{n_fail} FAIL flag(s): " + "; ".join(_lint_flag(f) for f in (fails or flags)[:3]))
+    digest = hashlib.sha256(sql_path.read_bytes()).hexdigest() if sql_path.exists() else ""
+    got = str(r.get("sha256") or "").strip().lower()
+    if not digest:
+        probs.append(f"{sql} is missing, so the lint output cannot be bound to it")
+    elif got != digest:
+        probs.append(f"lint sha256 {got[:12] or '?'} does not match the full sha256 of the current {sql} "
+                     f"({digest[:12]}): the lint output is stale")
+    undisp = _undispositioned_checks(doc, checks)
+    if undisp:
+        probs.append(f"{len(undisp)} CHECK flag(s) without a 'LINT <check> L<line>:' line in the Self-review: "
+                     + ", ".join(f"{f.get('check') or '?'} L{f.get('line')}" for f in undisp[:4]))
+    elif len(checks) < n_check:
+        probs.append(f"counts report {n_check} CHECK flag(s) but the payload carries {len(checks)}")
+    ctx.add("tool.injection_lint", not probs,
+            "; ".join(probs) if probs else
+            f"hg.py lint: 0 FAIL, {n_check} CHECK dispositioned, {n_info} INFO; sha256 {digest[:12]} matches {sql}")
+    return r
+
 
 # ------------------------------------------------------------------ stage helpers
 
@@ -2204,11 +2418,13 @@ def st_scenario(ctx):
                     rx_design, doc, "hardness_gate --design")
     census(ctx, doc)
     kb_entity(ctx, doc, r"identity|entity")
-    kb_hazards(ctx, doc, r"coherence")
-    kb_activity_rows(ctx, doc, r"active|speaker")
+    kb_gate(ctx, "kb.coherence_hazards", kb_hazards, doc, r"coherence")
+    kb_gate(ctx, "kb.activity", kb_activity_rows, doc, r"active|speaker")
     services = set(((load_manifest(ctx, "01_Hardness_Manifest.draft.json") or {}).get("services") or {}).keys())
-    kb_integrations(ctx, doc, r"integration|companion", services)
-    kb_storyline(ctx, doc)
+    kb_gate(ctx, "kb.integrations", kb_integrations, doc, r"integration|companion", services)
+    kb_gate(ctx, "kb.storyline", kb_storyline, doc)
+    kb_locators(ctx, doc, [("coherence audit", r"coherence"), ("active speakers", r"active|speaker"),
+                           ("integrations / companions", r"integration|companion"), ("storyline", r"storyline")])
     anchor_naming(ctx, doc, "01_Hardness_Manifest.draft.json", required=True)
     redteam(ctx, doc)
     surface_check(ctx)
@@ -2270,6 +2486,7 @@ def st_injection(ctx):
     evidence(ctx, doc, "record_ledger", r"record ledger", 1.0)
     evidence(ctx, doc, "facts_for_human", r"facts for the human", 1.0)
     lint = rerun_sql_lint(ctx, doc, "01_Universe_Inject.sql")
+    injection_lint(ctx, doc, "01_Universe_Inject.sql")
     if lint and lint["warnings"]:
         classes = {}
         for w in lint["warnings"]:
@@ -2323,12 +2540,14 @@ def st_injection(ctx):
                         "fact_check --no-leak")
     else:
         ctx.add("tool.fact_check", True, "manifest spec has no `facts` field yet — fact_check not required", status="SKIP")
-    kb_hazards(ctx, doc, r"coherence|touched-data")
-    kb_activity_seeded(ctx, doc, r"1\.C|voice|realism|speaker", sql_text)
+    kb_gate(ctx, "kb.coherence_hazards", kb_hazards, doc, r"coherence|touched-data")
+    kb_gate(ctx, "kb.activity", kb_activity_seeded, doc, r"1\.C|voice|realism|speaker", sql_text)
     services = set()
     if lint:
         services = set(lint["stats"]["schemas_touched"])
-    kb_integrations(ctx, doc, r"integration|companion", services)
+    kb_gate(ctx, "kb.integrations", kb_integrations, doc, r"integration|companion", services)
+    kb_locators(ctx, doc, [("coherence census", r"coherence|touched-data"), ("voice", r"1\.C|voice|realism|speaker"),
+                           ("integrations / companions", r"integration|companion"), ("record ledger", r"record ledger")])
     anchor_naming(ctx, doc, "01_Hardness_Manifest.json", required=True)
     n_dis = len(rows_in(doc, r"intended disagreement")) or len([x for s in doc.sections(r"intended disagreement")
                                                                  for x in s.items()])
@@ -2479,6 +2698,7 @@ def st_prompt_brief(ctx):
     hit_lines = [i for i, c, t in sap]
     reach_check(ctx, doc, "brief", lb_lines(doc, [r"discovery map", r"search.as.persona"]) | set(hit_lines), sql_text)
     kb_entity(ctx, doc, r"entity traps")
+    kb_locators(ctx, doc, [("entity traps", r"entity traps")])
     canonical_outcome(ctx, doc)
     anchor_naming(ctx, doc)
     self_review(ctx, doc, 6, [("fair readings" if ctx.v3 else "UGT", r"fair (?:readings|outcomes)|accepted outcomes" if ctx.v3 else r"\bUGT\b|unique ground truth"), ("clarity", r"clarity"),
@@ -2511,6 +2731,7 @@ def st_prompt_check(ctx):
     for lab, rx in (("band", r"predicted /prompt band|band:"), ("status", r"BLOCKED|UNRESOLVED|READY FOR /prompt")):
         ctx.add(f"structure.summary_{lab}", bool(re.search(rx, doc.text, re.I)), f"summary {lab} "
                 + ("present" if re.search(rx, doc.text, re.I) else "missing"))
+    clock_check(ctx, doc)
     tier_hardness(ctx)
     self_review(ctx, doc, 24, [(f"C{k}", rf"\bC{k}\b") for k in range(1, 25)])
 
@@ -2603,6 +2824,30 @@ def st_oe_ledger(ctx):
     self_review(ctx, doc, max(1, len(A)), [("no-event-text scan", r"event.text"), ("re-verified", r"re-?verif|hg\.py")])
 
 
+def universe_clock_line(ctx):
+    """universe.clock_line (as hg_universe.report_line emits it: 'Clock: <clock_text>, <label>')."""
+    u = (ctx.context or {}).get("universe") or {}
+    s = re.sub(r"\s+", " ", str(u.get("clock_line") or "")).strip()
+    return re.sub(r"^Clock:\s*", "", s, flags=re.I)
+
+
+def clock_check(ctx, doc, required=False):
+    """The eval's `Clock:` line. Required where the playbook template carries it; elsewhere a present line
+    must still agree with universe.clock_line. No check when the context has no universe clock."""
+    want = universe_clock_line(ctx)
+    if not want:
+        return
+    m = re.search(r"^\s*Clock:\s*(.+?)\s*$", doc.text, re.M)
+    got = re.sub(r"\s+", " ", m.group(1)).strip() if m else ""
+    if not m and not required:
+        return
+    ok = bool(m) and got == want
+    ctx.add("structure.clock", ok,
+            (f"'Clock: {want}' matches the universe" if ok else
+             f"Clock line {got!r} does not match universe.clock_line {want!r}" if m else
+             f"no 'Clock: {want}' line in {doc.rel}"))
+
+
 def st_oe_check(ctx):
     doc = ctx.doc("08_OE_Check.md")
     oe = ctx.p("08_Oracle_Events.md").read_text(errors="replace")
@@ -2618,6 +2863,7 @@ def st_oe_check(ctx):
             else f"header {'missing' if not m else m.group(0)} vs file: {n_ev} events, {len(oe)} characters — stale check")
     ctx.add("structure.prediction", bool(re.search(r"/oe prediction[^\n]*(FAIL 2|NON-FAIL 3|PASS 5|PARTIAL)", doc.text)),
             "/oe prediction line " + ("present" if re.search(r"/oe prediction", doc.text) else "missing"))
+    clock_check(ctx, doc)
     F = rows_in(doc, r"findings")
     substr_check(ctx, "evidence.quoted_spans", doc, F, r"quoted span", oe, "08_Oracle_Events.md")
     evidence(ctx, doc, "findings_evidence", r"findings", 1.0, col=r"evidence",
@@ -2764,6 +3010,7 @@ def st_allfail(ctx):
     for lab in ("Summary:", "Hand-off to /create-difficulty:"):
         ctx.add(f"structure.{lab.split()[0].strip(':').lower()}", lab in doc.text, f"'{lab}' line "
                 + ("present" if lab in doc.text else "missing"))
+    clock_check(ctx, doc)
     self_review(ctx, doc, len(blocks) + 1, [("recomputed list", r"recompute"), ("re-verified", r"re-?verif|hg\.py")])
 
 
@@ -2783,8 +3030,11 @@ def st_difficulty(ctx):
                 f"{miss[0][:80]!r}" if miss else f"{len(want)} gate lines match the re-run verbatim")
     labels = ["Task type:", "Readings:", "Tool-call notes:", "Friction check:", "Screen 60 comparison:", "Diagnosis:",
               "Screen 61:"]
+    if ctx.v3:                      # the eval report template carries the universe clock line; V2 fixtures predate it
+        labels.insert(2, "Clock:")
     miss = [l for l in labels if l not in doc.text]
     ctx.add("structure.labels", not miss, f"missing report lines: {miss}" if miss else "all report lines present")
+    clock_check(ctx, doc, required=True)
     af = ctx.p("11_AF_Justification.md")
     if af.exists():
         h = re.search(r"--invalid\s+([\w,]+)", af.read_text())
