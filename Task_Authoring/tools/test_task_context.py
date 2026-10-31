@@ -118,7 +118,7 @@ universe_date: October 1, 2025 07:00
     def test_wrong_manifest_clock_rejected(self):
         registry = self.root / "sources.json"
         registry.write_text(json.dumps({"sources": {"2025-10-01": {
-            "manifest": "Evals/references/universe_manifest.json",
+            "manifest": "Evals/references/universes/normal/universe_manifest.json",
             "kb_path": "Task_Authoring/references/universe_kb",
             "historical_state_verified": True, "verification_basis": "fixture"}}}))
         ctx = self.context(registry_path=registry)

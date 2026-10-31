@@ -166,7 +166,12 @@ def source_context(date, freeze, registry_path=SOURCES_PATH):
             raise ContextError("Source manifest must be inside the workspace for the bounded search helpers")
         manifest = _json(manifest_path)
         raw_clock = str(manifest.get("evaluation_clock", "")).replace("Z", "+00:00")
-        clock = dt.datetime.fromisoformat(raw_clock)
+        # Per-universe manifests state the clock as "2026-02-14 00:00 UTC" or
+        # "2025-10-01 07:00 UTC (2025-10-01 00:00 PT)". Drop the parenthetical gloss and
+        # map a trailing UTC to an offset; bare "YYYY-MM-DD HH:MM" still parses unchanged.
+        iso_clock = re.sub(r"\s*\([^)]*\)\s*$", "", raw_clock).strip()
+        iso_clock = re.sub(r"\s*UTC$", "+00:00", iso_clock)
+        clock = dt.datetime.fromisoformat(iso_clock)
         clock = clock.replace(tzinfo=dt.timezone.utc) if clock.tzinfo is None else clock.astimezone(dt.timezone.utc)
         data_clock = clock.isoformat().replace("+00:00", "Z")
         if mode == "snapshot" and data_clock != freeze:
