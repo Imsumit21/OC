@@ -39,12 +39,19 @@ Business function, competency, and task skill still cannot fail a task on their 
 
 ## 3. Two universe dates
 
-Both freeze times are at **00:00 UTC**. The task requirements specify which one applies.
+The two freeze times do **not** share one convention: the October date is pinned to
+midnight **Pacific**, the February date to midnight **UTC**. The task requirements specify
+which one applies, and `Evals/references/universes/<normal|synthcut>/universe_manifest.json`
+is the authority for each.
 
-| Assigned universe date | Share of tasks | Equivalent Pacific time |
-| --- | --- | --- |
-| October 1, 2025, 00:00 UTC | 75% | Tuesday, September 30, 2025, 5:00 PM Pacific |
-| February 14, 2026, 00:00 UTC | 25% | Friday, February 13, 2026, 4:00 PM Pacific |
+| Assigned universe date | Share of tasks | Clock (UTC) | Clock (Pacific) | Data cutoff |
+| --- | --- | --- | --- | --- |
+| October 1, 2025 | 75% | **2025-10-01 07:00 UTC** | Wednesday, October 1, 2025, 00:00 PT | `2025-10-01T06:59:59Z` |
+| February 14, 2026 | 25% | **2026-02-14 00:00 UTC** | Friday, February 13, 2026, 4:00 PM PT | `2026-02-14T00:00:00Z` |
+
+Writing `2025-10-01T00:00:00Z` as the October freeze is wrong by seven hours and makes
+`sql_lint` reject base-universe rows dated 00:00-06:59 UTC on Oct 1 as future-dated
+(79 such rows exist in the live SynthCut universe).
 
 - Nothing seeded may be dated after the assigned freeze time.
 - The prompt cannot treat an event after that time as already completed.
