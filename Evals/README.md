@@ -3,6 +3,33 @@
 This bundle reviews tasks using local exported universe records. It needs
 Python 3 and local file access, with no `/setup`, deployment or live MCP connection.
 
+**Two-universe update — 2026-10-20 (`dual-universe-v1`):** Every task now names
+its date first: **Oct 1, 2025 (synth-cut)** or **Feb 14, 2026 (normal)**. Each
+skill asks before anything else and saves the answer with
+`tools/hg_store_input.py universe <answer>`; there is no default. The date picks
+`Universe_SynthCut/` (`hg4-synth-sep30cut` v16, clock 2025-10-01 00:00 PT) or
+`Universe_Normal/` (`hg4-2026-08-31` v37, clock 2026-02-14 00:00 UTC); search,
+lint and review tools refuse to read the universe until it is saved, and new
+reports carry a matching `Clock:` line. The February 11, 2026 shutdown rules
+apply to Feb 14 tasks only; on Oct 1 the company runs normally, people who had
+already left (Victor, April 2025) are still gone, and nothing after
+2025-09-30 23:59:59 PT exists. See ENVIRONMENT.md **Task date and universe**.
+
+**Task-quality update — 2026-10-18 (`task-quality-v1`):** From the 50-task QC review
+(2026-10-17). Prompt: staged typos, trap hints/riddles, hidden destinations,
+audit-form prompts and long if-chains fail Contrived; clean writing is fine; a
+narrow `BOTH_FAIR_FIGURE` UGT pass when only one reported figure differs and
+both values are on persona-visible records (every other fork unchanged).
+Rubric: every row needs a `valid_case` it accepts and a `do_nothing_case` it
+rejects; Overly Broad is Major; PT/UTC dates accept either day; anonymized
+tokens bind literally; rows map to OE steps and OE conflicts are recorded
+(format 5). OE: every Expected-line value needs a quote, absence claims need a
+search. Injection: run `tools/hg_injection_lint.py` (future-dated records, ID
+contracts, unreadable Drive files, duplicate accounts, grader-facing text,
+padding comments). Dates are written in PT; on a Feb 14 task "today" is Saturday,
+February 14, 2026 and the clock is 2026-02-14 00:00 UTC. See the Local Overrides in Evals 1
+and 3. Older records keep their release and need a fresh review.
+
 **Unique Ground Truth update — 2026-09-30 (`prompt-ugt-v1`):** Every scored
 UGT verdict now requires a source-bound comparison of concrete outcomes,
 including PASS within an overall FAIL. Prompt check records use format 2;
@@ -144,7 +171,7 @@ requests. Exact-ID lookups can use verified prepared indexes for GitHub, Linear
 and GDrive; other scopes retain the complete scanner. Large Gmail routing lists
 use a bounded lossless cache. `hg_reference.py guide` can include the full
 requested route/schema views in the same call. Include both
-`Evals/references/search_indexes/` and `Evals/references/id_indexes/` when zipping;
+`Evals/references/universes/` (both universes' indexes) when zipping;
 exclude disposable runtime caches. See `Evals/SEARCH.md` for scope and freshness
 rules. No scoring check or instruction is shortened by these optimizations.
 

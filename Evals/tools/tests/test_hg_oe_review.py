@@ -22,7 +22,7 @@ PACKAGE = Path(__file__).resolve().parents[3]
 
 def report(result):
     lines = ['### FINAL VERDICT: ' + result['verdict'], 'Execution status: ' + result['execution_status'],
-             'Evaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort', 'Next action: Review the supported findings', 'Evidence limits: ' + ('; '.join(result['unresolved']) or 'Static source verification')]
+             'Clock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)', 'Evaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort', 'Next action: Review the supported findings', 'Evidence limits: ' + ('; '.join(result['unresolved']) or 'Static source verification')]
     for key, label in [('verdict_score','Score'),('completeness_score','Completeness score'),('accuracy_score','Accuracy score'),
                        ('review_policy','Review policy'),('reviewed_oe_sha256','Reviewed OE SHA-256'),
                        ('review_context_sha256','Review context SHA-256'),('oe_record_sha256','OE record SHA-256'),('path_feasibility','Path feasibility'),
@@ -41,6 +41,7 @@ class OEReviewTests(unittest.TestCase):
         for name in ('REPOSITORY',):
             for module in (inputs, writer):
                 scope = patch.object(module, name, self.root); scope.start(); self.addCleanup(scope.stop)
+        inputs.save_input('universe', content=b'2026-02-14\n')  # task date (hg_universe.py)
         bound_release = release.snapshot('oe')
         scope = patch.object(oe, 'snapshot', return_value=bound_release); scope.start(); self.addCleanup(scope.stop)
         inputs.save_input('prompt', content=b'Send an email to Chloe from Fatimah about a relocation proposal.')
@@ -96,6 +97,7 @@ class OEReviewTests(unittest.TestCase):
                                     source_ids=['D','T']) for field in ('data_access','tool_capability','preconditions','completion')},
             runtime=dict(status='NOT_NEEDED',reason='Synthetic fixture has sufficient local evidence.'),upstream_blockers=[])
         record['format_review']=dict(checked=True,reason='Each step is numbered, names one action and its service, and gives the expected values.',findings=[])
+        record['expected_values']=[]
         return record
 
     def validate(self, record=None):
@@ -273,7 +275,8 @@ class OEReviewTests(unittest.TestCase):
 
     def test_partial_and_blocked_without_fabricated_scores(self):
         for status in ('PARTIAL','BLOCKED'):
-            text=f'### FINAL VERDICT: NON-FAIL\nExecution status: {status}\nNext action: Obtain evidence\nEvidence limits: OE input unavailable\n'
+            text=(f'### FINAL VERDICT: NON-FAIL\nExecution status: {status}\nClock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)\nEvaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort\n'
+                  'Next action: Obtain evidence\nEvidence limits: OE input unavailable\n')
             self.assertIsNone(writer.save_output('oe',text)['verdict_score'])
 
     def test_release_inventory_distinguishes_current_and_historical_oe_reviews(self):

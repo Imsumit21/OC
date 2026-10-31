@@ -1,14 +1,32 @@
 import json
+import shutil
 import subprocess
 from pathlib import Path
 import sys
+import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import hg_reference as ref
+import hg_universe
+from universe_fixture import select
 
 
 class ReferenceViews(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # CLI runs need a saved task date; use a copy so the real task inputs stay untouched.
+        cls.temp = tempfile.TemporaryDirectory()
+        cls.workspace = Path(cls.temp.name).resolve()
+        shutil.copytree(ref.ROOT / 'Evals', cls.workspace / 'Evals',
+                        ignore=shutil.ignore_patterns('task_inputs', '.cache', '__pycache__'))
+        select(cls.workspace, 'normal')
+        cls.cli = cls.workspace / 'Evals/tools/hg_reference.py'
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
     def test_nested_sections_keep_code_fence_verdict_example(self):
         source = '# A\n## B\ntext\n```md\n## fake\n```\n### C\nchild\n## D\nend\n'
         view = ref.sections(source)
@@ -39,25 +57,28 @@ class ReferenceViews(unittest.TestCase):
         self.assertEqual(qualified['missing_tables'], [])
 
     def test_routes_reference_the_verified_linear_and_slack_shapes(self):
-        routes = ref.routes(['slack', 'linear'])['services']
-        self.assertIn('/issues', routes['linear']['locations'][0]['array_pointers'])
-        self.assertTrue(any(row['file'] == 'users.json' and row['array_pointers'] == ['']
-                            for row in routes['slack']['locations']))
-        with self.assertRaises(ValueError):
-            ref.routes(['nonexistent'])
+        for key, entry in hg_universe.UNIVERSES.items():
+            routes = ref.routes(['slack', 'linear'], universe=key)['services']
+            self.assertIn('/issues', routes['linear']['locations'][0]['array_pointers'])
+            self.assertTrue(any(row['file'] == 'users.json' and row['array_pointers'] == ['']
+                                for row in routes['slack']['locations']))
+            self.assertTrue(routes['linear']['directory'].startswith(entry['folder'] + '/'))
+            with self.assertRaises(ValueError):
+                ref.routes(['nonexistent'], universe=key)
 
     def test_combined_guide_keeps_every_independent_view(self):
         for stage in ref.hg_context.GROUPS:
-            proc = subprocess.run([sys.executable, str(Path(ref.__file__)), 'guide', stage,
+            proc = subprocess.run([sys.executable, str(self.cli), 'guide', stage,
                 '--services', 'linear', 'slack', '--tables', 'linear_issues', 'missing_table'],
                 capture_output=True, text=True, check=True)
-            self.assertTrue(proc.stdout.startswith(ref.guide(stage)))
+            # Helper paths in the guide are absolute; map them to the CLI's copy.
+            self.assertTrue(proc.stdout.startswith(ref.guide(stage).replace(str(ref.ROOT), str(self.workspace))))
             payloads = [json.loads(part.split('\n```')[0]) for part in proc.stdout.split('```json\n')[1:]]
-            self.assertEqual(payloads[-2], ref.routes(['linear', 'slack']))
+            self.assertEqual(payloads[-2], ref.routes(['linear', 'slack'], universe='normal'))
             self.assertEqual(payloads[-1], ref.schema(['linear_issues', 'missing_table']))
 
     def test_invalid_combined_route_returns_error_without_partial_guide(self):
-        proc = subprocess.run([sys.executable, str(Path(ref.__file__)), 'guide', 'prompt',
+        proc = subprocess.run([sys.executable, str(self.cli), 'guide', 'prompt',
             '--services', 'invalid'], capture_output=True, text=True)
         self.assertEqual(proc.returncode, 1)
         self.assertEqual(proc.stdout, '')

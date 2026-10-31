@@ -4,6 +4,8 @@ This is archival schema documentation for pre-evaluation-only records. Do not
 follow its creation/publication procedure. Current `/rubric` uses only
 [review_scoring.md](review_scoring.md) and [rubric_checks.md](rubric_checks.md).
 The former writer routes are disabled; this document has no operational authority.
+Its per-row `valid_case` and whole-set `final_reply` test now live in the
+format-5 scoring record (`rubric_checks.md`, with the `do_nothing_case`).
 
 Read this in CREATE mode after staging a proposal. This replaces duplicate prose
 ledgers with one machine-checkable record; it does not add rubric fields or alter

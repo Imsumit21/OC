@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = Path('Evals/references/prompt_rubric_release.json')
-RELEASE = 'prompt-ugt-v1'
+RELEASE = 'task-quality-v1'
 
 
 def sha(path):
@@ -61,10 +61,10 @@ def classify_report(path, stage):
         if sha(record_path) != parsed.get(hash_key) or record.get('eval_release') != current:
             result['classification'] = 'INVALID_BINDING'
             return result
-        required = {'checks', 'weight_reviews', 'reviewed_json_sha256', 'review_context_sha256'} if stage == 'rubric' else {'premises', 'sources', 'unique_ground_truth', 'reviewed_prompt_sha256', 'review_context_sha256'}
+        required = {'checks', 'weight_reviews', 'oe_cross_check', 'reviewed_json_sha256', 'review_context_sha256'} if stage == 'rubric' else {'premises', 'sources', 'unique_ground_truth', 'reviewed_prompt_sha256', 'review_context_sha256'}
         if stage == 'oe':
-            required = {'steps', 'coverage', 'segments', 'sources', 'path_review', 'reviewed_oe_sha256', 'review_context_sha256'}
-        if record.get('format_version') != {'rubric': 4, 'oe': 2, 'prompt': 2}[stage] or not required <= record.keys():
+            required = {'steps', 'coverage', 'segments', 'sources', 'path_review', 'expected_values', 'reviewed_oe_sha256', 'review_context_sha256'}
+        if record.get('format_version') != {'rubric': 5, 'oe': 2, 'prompt': 2}[stage] or not required <= record.keys():
             result['classification'] = 'INVALID_BINDING'
             return result
         if stage == 'prompt':

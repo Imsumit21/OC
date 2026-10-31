@@ -13,11 +13,13 @@ table below:
 - Overly Specific that rejects a valid prompt-authorized answer is Major.
   A wording preference that rejects no valid answer is `harmless_specificity`
   (Minor).
-- Overly Broad is Moderate.
+- Overly Broad is Major (2026-10-17), the same level as Overly Specific. Never
+  repair an overly broad row with a count, format or phrasing; name the value.
 - Rows that would all fail on one Agent error because each embeds the same
   acceptance condition form one Moderate overlap group.
 - Prohibition-only or absence-only acceptance syntax fails Negative Criteria even
-  with explicit prompt authority.
+  with explicit prompt authority, and so does any row an Agent passes by doing
+  nothing, however it is worded ("leaves X as found", "keeps X off Y").
 - A row whose title subject is not The Agent, or that names a tool, is a Major
   `non_agent_centric` tally issue (the spec's 09/27 Appendix lists it as Minor),
   in addition to failing Agent-Centric Phrasing.
@@ -36,6 +38,9 @@ path, applicable static injection and source/reference evidence. This stage
 does not consume verifier results, all-failing justifications or run metrics.
 Requirements come from prompt/incorporated instructions, not an OE
 inventing its own authority. A copied citation does not establish a true claim.
+When the task has OEs, map every row to the OE steps that reach it and record
+each OE conflict with both quotes (Eval 3 §3.1, `oe_cross_check`); the OE eval
+itself stays blind to the rubric.
 
 Build the requirement ledger from these sources, enumerate the acceptance
 conditions, and test legitimate alternative answers against the entire rubric.
@@ -64,7 +69,9 @@ inside a validated immutable source name is still one Moderate `vague_exemplar`
 for that row. The repair is wording that identifies the record without the
 phrase. Descriptive negatives remain affirmative. Every
 prohibition-only acceptance rule fails Negative Criteria, even when the prompt
-explicitly forbids the action; rewrite it as a preserved state or scope boundary.
+explicitly forbids the action; rewrite it as a condition on a write the Agent must
+make (an exact count or scope), or a requirement inside a required artifact. Never
+a standalone row an Agent passes by doing nothing.
 
 ## QC atomicity and self-containment
 
@@ -97,9 +104,10 @@ evidence cannot define acceptance.
 - Major: Incorrect, unauthorized obligations, non-atomic, not self-contained,
   unobservable acceptance, Overly Specific that rejects a valid answer, and each
   missing explicit Outcome.
-- Moderate: Overly Broad, duplicate/overlap (including cascading-failure
-  groups), wrong category, vague exemplars. Exclude implausible invalid paths
-  from Overly Broad under the workbook's explicit broadness exception.
+- Major (local override 2026-10-17): Overly Broad. Exclude implausible invalid
+  paths from Overly Broad under the workbook's explicit broadness exception.
+- Moderate: duplicate/overlap (including cascading-failure groups), wrong
+  category, vague exemplars.
 - Minor: harmless specificity that rejects no valid answer. A wording typo the
   judge would still read correctly is non-failing (QC Appendix B12) and is not tallied.
 
@@ -126,16 +134,18 @@ atomic spot checks are not automatically redundant. A demonstrated non-atomic
 row remains Major even if duplicate controls cover every component; those
 controls do not waive atomicity.
 
-Overall Quality: any Major, any Moderate, or Minor issues on 5% or more of rows is FAIL.
-No Major or Moderate and Minor under 5% is PASS. There is no quality non-fail band
-and no absolute three-row failure rule. `/rubric` never publishes criteria.
+Overall Quality follows the rubric-flow-v2 bands in the Eval 3 Local Overrides
+(2026-10-09): any Major or Moderate fails; Minor on 5-10% of rows is NON-FAIL 3;
+Minor on more than 10% fails; no Major or Moderate and Minor under 5% is PASS.
+There is no absolute three-row failure rule. `/rubric` never publishes criteria.
 
 Criteria Weights is separate. Each row records expected_weight, work_kind,
 source_ids and reason. The helper maps direct lookup/literal verification to 1;
 interpretation/calculation/comparison/limited reconciliation to 3; multi-source
 reconciliation/deep reasoning/cross-modal/tracing to 5. Review the work of the
 agent, not business importance, grader effort or a sibling criterion's work.
-Any weight disagreement fails. All correct is 5. Classification still needs
+Weights are NON-FAIL 4 only when 10% or fewer rows are one level off and none
+are two levels off (Eval 3 Local Overrides); otherwise FAIL. All correct is 5. Classification still needs
 evidence; arithmetic is deterministic.
 
 ## Evaluation result
@@ -164,7 +174,7 @@ obsolete hidden sheets do not override these cells.
 | Rule | Source anchor | Applied interpretation |
 |---|---|---|
 | Weight meanings and failure thresholds | Audit Workflow C10; Appendix C18:C20 | Difficulty 1/3/5; >=15% two-level or >=30% one-level disagreement |
-| Source of factual truth; severity changes | Audit Workflow C17 | Universe facts establish truth. Overridden locally: Overly Specific that rejects a valid answer is Major; Overly Broad is Moderate |
+| Source of factual truth; severity changes | Audit Workflow C17 | Universe facts establish truth. Overridden locally: Overly Specific that rejects a valid answer is Major; Overly Broad is Major |
 | Atomicity exceptions | Appendix C4; Audit Workflow C17 | Same actual output and shared email content may group; separate sends do not |
 | Context for self-containment | Appendix C3 | Overridden locally: title-only; the prompt and sibling criteria cannot supply acceptance values |
 | Large tables and quantifiers | Audit Workflow C14; Appendix C2/C4 | Totals plus spot checks permitted, no minimum; exceptions apply before splitting |

@@ -47,7 +47,7 @@ ANSWER = Path("Evals/task_inputs/08_Golden_Answer.md")
 EXPLICIT_DRAFT = CONTEXT.parent / "08_Golden_Answer.md"
 CHECKS = ("completeness", "accuracy", "authority", "valid_solutions",
           "wrong_solutions", "consistency_feasibility")
-INPUT_KEYS = {"task-details", "prompt", "golden", "injection", "error-async", "dynamic-context"}
+INPUT_KEYS = {"task-details", "universe", "prompt", "golden", "injection", "error-async", "dynamic-context"}
 REFERENCES = (
     "Evals/2_Golden_Response_Eval.md", "claude/skills/golden/SKILL.md",
     "Evals/WORKFLOW.md", "Evals/INPUTS.md", "Evals/EXECUTION.md", "Evals/ENVIRONMENT.md",
@@ -56,7 +56,7 @@ REFERENCES = (
     "Evals/references/rules/scoring.json", "Evals/references/rules/long_horizon.md",
     "Evals/references/persona/roster.json", "Evals/references/persona/acl.md",
     "Evals/references/tools/catalog.json", "Evals/references/tools/manifest.json",
-    "Evals/references/universe_manifest.json", "Evals/references/source_layout.json",
+    "{universe}/universe_manifest.json", "{universe}/source_layout.json",
     "Evals/tools/hg_review_evidence.py",
     "Evals/tools/hg_golden_review.py", "Evals/tools/hg_report_contract.py",
     "Evals/tools/hg_write_output.py", "Evals/tools/hg_rubric_loop.py",

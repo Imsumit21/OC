@@ -83,7 +83,7 @@ reuse and targeted checks; no extra runs or failure-rate targets are introduced.
 
 ## Evidence and time
 
-The fixed current date and time is `2026-02-14 00:00 UTC`. Base and injected records may predate January 1, 2026; there is no
+The fixed current date and time is the task date's clock: `2026-02-14 00:00 UTC` for Feb 14 tasks, `2025-10-01 00:00 PT` (`2025-10-01 07:00 UTC`) for Oct 1 tasks. Base and injected records may predate January 1, 2026; there is no
 global earliest allowed date. Use ENVIRONMENT.md's chronology and timestamp
 rules, together with the task's actual date scope. Future events may be described
 as future, not already completed; new outputs requested by the task need not
@@ -165,7 +165,7 @@ Overall Quality has no non-fail band (2026-10-05): any Major, any Moderate, or
 Minor on 5% or more of the rows fails; no Major/Moderate and Minor <5% is PASS.
 No absolute row count or failed repair gate overrides these QC fractions. Severity follows
 `hg-strict-overrides-v1`: Overly Specific that rejects a valid answer is Major,
-Overly Broad is Moderate, harmless specificity is Minor, and rows that all fail
+Overly Broad is Major (2026-10-17), harmless specificity is Minor, and rows that all fail
 on one Agent error form one Moderate overlap group. Separately, two or more
 predicted all-fail rows make the rubric FAIL. Count each authored
 row once at its highest severity, distinct missing outcomes in the numerator

@@ -14,8 +14,8 @@ than in the source page, and this copy follows the evals:
 - A competency or task-skill mismatch fails (Eval 1 §1.5), not a 3.
 - A prompt that treats an event after the clock as already done fails (Eval 1 §2.8), not a 3.
 - One loose factual slip fails Truthfulness, and spec-like or polished voice fails Contrived (Eval 1, 2026-10-05), not a 3.
-- A title that starts "The Agent's …" is nonstandard and fails Agent-Centric Phrasing (Eval 3 §2.9).
-- Rubric quality, weights, process and agent-centric phrasing have no non-fail band (Eval 3, 2026-10-05).
+- A title that starts "The Agent's …" is nonstandard: a 3 on Agent-Centric Phrasing when such titles are 10% or fewer of the rows, a fail above that (Eval 3 Local Overrides).
+- Rubric quality, weights, process and agent-centric phrasing keep only the narrow non-fail bands in the Eval 3 Local Overrides (rubric-flow-v2, 2026-10-09), which are stricter than the QC form. Those bands decide; this copy does not add any.
 
 The SQL working-hours check from the source page is not adopted.
 
@@ -45,7 +45,8 @@ The quote has to be a prompt sentence or a record this person can open. “B is
 less likely” is not a quote.
 
 While you write B, each of these must come out as one answer. If two answers
-fit, the prompt needs the choosing sentence.
+fit, the prompt needs the choosing sentence, unless only one reported figure
+differs and both values are on records (Eval 1, both-fair figure).
 
 - Which items are in the set, and which are out.
 - Which number, if two amounts or dates exist.
@@ -64,7 +65,8 @@ fit, the prompt needs the choosing sentence.
 | Search hits | `linear_`, `gmail_`, `slack_`, `MCP`, `tool`, `First`, `Then`, `Finally`. A hit fails. “Check Slack” and “the Linear ticket” can stay. |
 
 A sentence that can be deleted without changing the rest of the task is a
-bolt-on. Nothing the prompt treats as already done sits after 2026-02-14 00:00 UTC.
+bolt-on. Nothing the prompt treats as already done sits after the task clock
+(2026-02-14 00:00 UTC, or 2025-10-01 00:00 PT on an Oct 1 task).
 
 SQL, or “no SQL”: ids do not collide, columns exist, the author of an added
 message is a member of its channel, and apostrophes inside quoted strings are
@@ -86,7 +88,7 @@ List every outcome the prompt requires, including exclusions (“only these rows
 
 ## 5 · Three searches on the rubric
 
-- `does not`, `must not`, `never`, `without`, `avoid`, `fails to`. A hit is rewritten as what the agent does or leaves in place. “Reports that PR 438 had no review” can stay.
+- `does not`, `must not`, `never`, `without`, `avoid`, `fails to`. A hit is rewritten as a condition on a write the Agent must make (an exact count or scope), or a requirement inside a required artifact. Never a standalone row an agent passes by doing nothing (“leaves ENG-123 open”, “leaves the sheet as found”). “Reports that PR 438 had no review” can stay.
 - `such as`, `e.g.`, `for example`. Each hit is a Moderate issue, once per row, including inside a quoted record name.
 - Titles that do not start with “The Agent”. No catalog tool name in a title.
 
@@ -146,8 +148,8 @@ Section 2. A different channel to the same person, with the same contents, is a
 
 - BAD: “Wrap up the leftover reviews or flag them before Friday.”
   - One reading closes them. The other only comments.
-- GOOD: “If a leftover review already has an owner, comment on it and leave it open. If it never shipped and nobody owns it, close it.”
-  - Each item has one action. The test is on the record.
+- GOOD: “Can you sort out the leftover reviews before Friday? Arthur posted how he wants each kind handled.”
+  - One request. The per-case rule lives in a seeded record, Arthur’s post, so each item still has one action. A chain of if / but-not / then-also clauses in the prompt fails Contrived (Eval 1 §2.7).
 
 ### 6.3 Cross-service
 
@@ -167,8 +169,8 @@ even when there is only one (Eval 1, 2026-10-05).
 
 - BAD: “Leonard’s note in #ua-spend on February 11 said the Adjoe test starts the 12th. Use that.”
   - The note is in #zombie-marketing, dated February 10, and the test had already started.
-- GOOD: “Use the note I wrote when I turned the Adjoe test on. If my date or channel is off, use the message that is actually there.”
-  - The claim is a lead. The record is allowed to correct it.
+- GOOD: “Use the note I wrote when I turned the Adjoe test on.”
+  - No date or channel to get wrong; the note supplies them. A line telling the agent the prompt may be off hints at the trap and fails Contrived (Eval 1 §2.7).
 
 ### 6.5 Feasibility and access
 
@@ -202,7 +204,8 @@ Stating the cause does not.
 
 ### 6.8 Clock, assignment, universe, SQL
 
-**Clock.** The universe date is 2026-02-14 00:00 UTC. A prompt that treats an
+**Clock.** The universe date is the task date's clock: 2026-02-14 00:00 UTC on a
+Feb 14 task, 2025-10-01 00:00 PT on an Oct 1 task. A prompt that treats an
 event after the clock as already done fails (Eval 1 §2.8). A future deadline can
 stay a deadline.
 
@@ -224,8 +227,8 @@ not in its channel, or an undoubled apostrophe inside a quoted string is a 2.
 
 Among 286 reviews that were not a pass at 5. Count each row once, at its highest
 severity. Missing outcomes count in the numerator only. A cascade group counts
-once. Quality fails on any Major, any Moderate, or Minor on 5% or more of the
-rows (Eval 3, 2026-10-05). There is no non-fail band.
+once. Quality fails on any Major or any Moderate. Minor issues on 5–10% of the
+rows are a 3, and on more than 10% a fail (Eval 3 Local Overrides).
 
 | Issue | Reviews | Severity |
 |---|---|---|
@@ -237,17 +240,21 @@ rows (Eval 3, 2026-10-05). There is no non-fail band.
 | Wrong category | 72 | Moderate |
 | Not self-contained | 63 | Major |
 | Unauthorized | 61 | Major |
-| Overly broad | 45 | Moderate |
+| Overly broad | 45 | Major (2026-10-17) |
 | Harmless specificity | 16 | Minor |
 | Unobservable | 8 | Major |
 | Not agent-centric | 6 | Major, and fails phrasing |
 | Vague exemplar | 5 | Moderate |
 
-These fail the rubric on their own: any weight off by one or two levels; two
-rows that every run will fail because the row is wrong; zero Outcome rows; one
-invalid process row; a nonstandard Agent title such as "The Agent's …"; one title that is not about
-The Agent or that names a tool; one prohibition title; a row missing title,
-category, weight, justification, or evidence.
+These fail the rubric on their own: any weight two levels off, or more than 10%
+of the rows one level off; two rows that every run will fail because the row is
+wrong; zero Outcome rows; one invalid process row, or two or more missing
+ordering checks; nonstandard Agent titles such as "The Agent's …" on more than
+10% of the rows; one title that is not about The Agent or that names a tool; one
+prohibition title, or one row an agent passes by doing nothing; a row missing
+title, category, weight, justification, or evidence. The narrower cases (a few
+rows one weight level off, exactly one missing ordering check, a few "The
+Agent's …" titles) are the non-fail bands in the Eval 3 Local Overrides.
 
 ### 7.1 Missing coverage
 
@@ -319,8 +326,9 @@ Section 5.
   - The subject is the message. One title like this fails agent-centric for the set.
 - GOOD: “The Agent includes the launch date of 2026-02-12 in the Slack update.”
 - BAD: “The Agent does not close ENG-123.”
-  - A prohibition fails even when the prompt forbids the action.
-- GOOD: “The Agent leaves ENG-123 open.”
+  - A prohibition fails even when the prompt forbids the action. “The Agent leaves ENG-123 open” fails the same way: an agent that does nothing passes it.
+- GOOD: “The Agent closes exactly three of the leftover reviews.”
+  - A count on a write the Agent must make. With a row for each review that must close, a run that also closes ENG-123 fails it, and so does a run that does nothing.
 
 `such as`, `e.g.`, and `for example` in any graded field are a Moderate issue,
 once per row.

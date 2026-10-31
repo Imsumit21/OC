@@ -74,6 +74,21 @@ Record the evidence in the existing checks ledger; no new input is required.
   overlap counting, sampling and complexity-based weight rules; do not add
   grading volume or weight for incidental formatting.
 
+## Calibration from the 2026-10-17 task-quality review
+
+Real rows from HarmonyGames tasks (task IDs shortened). They illustrate the
+2026-10-17 rules in Eval 3; they are not facts for other tasks.
+
+| Rule | Row | Result |
+|---|---|---|
+| Do-nothing test (§2.9) | …eccb C26 "The Agent leaves Arthur's Close-out chores spreadsheet (…) as found, …"; C52 "The Agent leaves every payee's own hours and amount off ENG-2558 (…)" | An idle Agent passes both: Negative Criteria FAIL (QC failed the task on C26). C47 (records the $1,570.00 total on ENG-2558) and C32 (pay figures in the required email to Oliver limited to his own) fail an idle Agent and are valid. |
+| Valid case (§5.3) and count formats (§2.7) | …df2ec R2 "keeps its reply to Leonard short: … at most five other lines, and every line is one sentence or less" for "keep it short" | Run 1's compact reply (about 10 lines, all 32 figures, a 3-sentence source note) is a valid case R2 rejects: `overly_specific`. |
+| Cited record, LITERAL keys (§2.3) | …fea90 "the event the specification calls `quest_completion` ships under the same name" | The event that fires is `quest_completed`: LITERAL mismatch, `incorrect`. |
+| PT or UTC day (§2.11) | …fea7a "276 MB on November 17, 2025" | Posted 2025-11-17 00:58 UTC = November 16, 4:58 PM PT. A row stating only one day is `overly_specific`; accept both. |
+| Reachable evidence (§2.4) | …073712 "sets a due date of 2026-02-26 on Linear issue ENG-2443" | The only record with that date is Google's notice in Gmail Trash, and nothing in the prompt points there: unresolved, `unobservable`. |
+| Anonymized tokens (§2.10) | …fea69 "records HOMA as Closed - passed" | The roster the Agent reads shows `[PERSON_NAME_0854]`; the row must accept the token as shown. |
+| OE conflict (§3.1) | …3954 OE 14 creates the sheet in the Wind Down folder; criterion-18 says the folder is inaccessible. …ecca OE 21's model reply fails R85. | Settle from the records, then fix the row or send the OE back. |
+
 ## Historical labels are not current policy
 
 The export contains inconsistent severity descriptions, scores and category

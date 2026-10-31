@@ -18,6 +18,7 @@ INDEX = INPUTS / "inputs.json"
 SLOTS = {
     "task-details": "00_Task_Assigned_Inputs.md",
     "injection": "01_Universe_Inject.sql",
+    "universe": "02_Universe_Date.txt",  # Task date; selects the universe (hg_universe.py).
     "error-async": "03_Error_Async_Config.txt",
     "prompt": "04_Prompt.txt",
     "human-time": "06_Human_Time.txt",
@@ -126,6 +127,12 @@ def save_input(key, sources=None, content=None, origin=None):
         raise ValueError("No input supplied.")
     if not sources and (key in BATCHES or CUSTOM_KEY.fullmatch(key)):
         raise ValueError("File sets and attachments require --source to preserve filenames and bytes.")
+    if key == "universe":
+        # The date selects the universe, so only a recognized answer is saved.
+        from hg_universe import UNIVERSES, parse
+        if sources:
+            raise ValueError("Save the task date with: hg_store_input.py universe <answer>")
+        content = (UNIVERSES[parse(content.decode("utf-8"))]["date"] + "\n").encode()
     names = [p.name for p in sources] or [Path(SLOTS.get(key, "input.txt")).name]
     paths = destinations(key, names)
     for path in paths:
@@ -276,6 +283,27 @@ def hardness_intake(index, legacy):
             "next_action": "Ask for one unhinted Opus run JSON, or a Haiku run if Opus is not available. No Opus backfill is required for the fallback."}
 
 
+def universe_intake(index):
+    """The task date must be answered before any universe read; there is no default."""
+    from hg_universe import QUESTION, describe, parse
+    entry = index["inputs"].get("universe", {})
+    files = entry.get("files", [])
+    if entry.get("state") == "saved" and len(files) == 1 and files[0].get("integrity") == "OK":
+        try:
+            key = parse(local_path(Path(files[0]["path"])).read_text())
+        except (OSError, ValueError):
+            key = None
+        if key is not None:
+            return {"state": "SELECTED", "ask": False, **describe(key),
+                    "next_action": "Use this universe and clock for every read; show the Clock line in the report."}
+    if entry.get("state") == "saved":
+        return {"state": "NEEDS_ATTENTION", "ask": True, "question": QUESTION,
+                "next_action": "The saved task date is missing, changed or unreadable; ask again before any universe read."}
+    return {"state": "ASK", "ask": True, "question": QUESTION,
+            "next_action": "Ask first, before reading the universe or any other input, and wait for the answer. "
+                           "Save it with: python3 Evals/tools/hg_store_input.py universe <answer>"}
+
+
 def inventory():
     index = read_index()
     for key, entry in index["inputs"].items():
@@ -293,6 +321,7 @@ def inventory():
         if key not in index["inputs"] and path.is_file():
             legacy[key] = {"path": (INPUTS / name).as_posix(), **fingerprint(path)}
     return {**index, "unindexed_local_inputs": legacy,
+            "universe_intake": universe_intake(index),
             "injection_intake": injection_intake(index, legacy),
             "hardness_intake": {"stage": "hardness",
                                 "scope": "Run selection for /hardness only; not an input requirement for other stages.",
@@ -309,6 +338,8 @@ def main():
     remove = commands.add_parser("clear", help="Remove a saved input only when the user removes it.")
     remove.add_argument("key")
     commands.add_parser("no-injection", help="Save the user's explicit no-injection answer and clear previous SQL.")
+    date = commands.add_parser("universe", help="Save the user's answer to the task-date question (selects the universe).")
+    date.add_argument("answer", nargs="+", help="2025-10-01 / Oct 1 / synth-cut, or 2026-02-14 / Feb 14 / normal.")
     commands.add_parser("list", help="Read saved inputs and verify their hashes; does not evaluate them.")
     commands.add_parser("keys", help="Show fixed input slots and file-set keys.")
     args = parser.parse_args()
@@ -319,6 +350,10 @@ def main():
             result = clear_input(args.key)
         elif args.command == "no-injection":
             result = clear_input("injection", confirmed_unused=True)
+        elif args.command == "universe":
+            from hg_universe import describe, parse
+            result = save_input("universe", content=" ".join(args.answer).encode(), origin="user answer to the task-date question")
+            result["universe"] = describe(parse(" ".join(args.answer)))
         elif args.command == "keys":
             result = {"slots": SLOTS, "sets": BATCHES, "attachments": ["reference:<id>", "source:<id>", "extra:<id>"]}
         else:

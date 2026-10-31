@@ -228,7 +228,7 @@ Also include input/source/model provenance, the requirement map with expected
 versus observed outcomes and citations, grouped failures and independent causes,
 correct work and usability, task/environment defects, unassessed scope, and the
 score rationale or exact reason no score is supported. Reference
-`references/universe_manifest.json` for source provenance.
+the task universe's `references/universes/<normal|synthcut>/universe_manifest.json` for source provenance.
 
 Do not edit the task or raw export during review. Preserve earlier reports as
 history. A current matching Opus review replaces an earlier prediction at the

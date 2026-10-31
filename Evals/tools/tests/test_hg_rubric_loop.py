@@ -124,7 +124,7 @@ def score_record(root, verdict="PASS", mode="AUDIT"):
                                                             reason="Demonstrated incorrect acceptance fixture.")],
                 hard_gates={g: dict(result="FAIL" if (g == "accuracy_acceptance" and verdict != "PASS") else "PASS",
                                     reason="Gate checked in scoring fixture.") for g in GATES},
-                hard_gate_score=None, unresolved=[], predicted_all_fail=[],
+                hard_gate_score=None, unresolved=[], predicted_all_fail=[], oe_cross_check=dict(oe_present=False),
                 dimensions={d: dict(score=score if d == "overall_quality" else 5,
                                     reason="Recorded dimension judgment in scoring fixture.") for d in DIMENSIONS})
 
@@ -152,7 +152,7 @@ def audit_report(scoring, *, force_pass=False):
             f"Eval release SHA-256: {scoring['eval_release']['manifest_sha256']}\n"
             f"Gate tier: {scoring['gate_tier']}\n"
             f"Coverage ratio: {str(ratio[0])+'/'+str(ratio[1]) if ratio else 'N/A'}\n"
-            "Repairs: See findings\nEvaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort\n"
+            "Repairs: See findings\nClock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)\nEvaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort\n"
             "Next action: Review findings\n"
             f"Evidence limits: {'None' if status == 'COMPLETE' else 'Required factual checks remain unresolved'}\n")
 
@@ -169,6 +169,7 @@ class RubricAuditTests(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer, "REPOSITORY", self.root).start()
         patch.object(inputs, "REPOSITORY", self.root).start()
+        inputs.save_input("universe", content=b"2026-02-14\n")  # task date (hg_universe.py)
         inputs.save_input("prompt", content=b"Report the current download size.")
         inputs.save_input("task-details", content=b"Synthetic rubric audit")
         inputs.clear_input("injection", confirmed_unused=True)
@@ -259,7 +260,7 @@ class RubricAuditTests(unittest.TestCase):
 
     def test_missing_rubric_does_not_generate_one(self):
         inputs.clear_input("rubric")
-        record = dict(format_version=4, review_mode="AUDIT", rubric_path="Evals/task_inputs/09_Rubrics.json")
+        record = dict(format_version=5, review_mode="AUDIT", rubric_path="Evals/task_inputs/09_Rubrics.json")
         before = self.snapshot()
         with self.assertRaises((OSError, ValueError)):
             writer.save_output("rubric-score", json.dumps(record))
@@ -341,7 +342,7 @@ class RubricAuditTests(unittest.TestCase):
         from hg_eval_release import snapshot
         for raw in ("[]", "not JSON", "{}"):
             self.save_rubric(raw)
-            record = dict(format_version=4, review_mode="AUDIT", rubric_path="Evals/task_inputs/09_Rubrics.json",
+            record = dict(format_version=5, review_mode="AUDIT", rubric_path="Evals/task_inputs/09_Rubrics.json",
                           reviewed_json_sha256=digest(raw.encode()), review_context_sha256=review_context(self.root)["sha256"],
                           eval_release=snapshot('rubric'), schema_only=True, issues=[], hard_gates=dict(schema=dict(result="FAIL", reason="Unusable array")),
                           hard_gate_score=2, unresolved=["No usable criteria to review."])

@@ -10,6 +10,16 @@
     {
       "filename": "qc-audit-rubric-and-prompt-failures.html",
       "sha256": "43564054a982c9ac3420c94696b1b2d744952c5dd2baa716c95e0c7698d340f0"
+    },
+    {
+      "filename": "Kelvin Task Quality Flags 2026-10-17/ANALYSIS.html",
+      "sha256": "29e13eacf27a2f7a99a502d7440aca0de79cdb4e26628e937bb46316dd0bf42d",
+      "role": "Agreed plan and spec tabs (2026-10-17) that name the calibration_cases and their expected results."
+    },
+    {
+      "filename": "Kelvin Task Quality Flags 2026-10-17/source/task_quality_lessons_v2_with_run_links.html",
+      "sha256": "7585a71e50046cc73e00894515d76d704a3ac010571e92781f0171d6f6971d29",
+      "role": "Kelvin's 50-task flags; each calibration case binds its own prompt by prompt_sha256."
     }
   ],
   "scope": "Local user-supplied QC audit exports for project 69a74e16c6538223558b70f6; no independent database or universe re-audit.",
@@ -534,6 +544,250 @@
           "auditor_reason": "Most of the actions in the prompt are somewhat ambiguous; 'make sure' is fairly easy to interpret - the model should read and report to the user without writing."
         }
       ]
+    }
+  ],
+  "calibration_scope": "Per-task calibration cases from Kelvin's 50-task review (2026-10-17) for the rules agreed that day. Each TASK case quotes its exact prompt; CONTROL cases are short texts that must raise no flag. Calibration for the reviewer, not task evidence or replayed labels.",
+  "calibration_counts": {
+    "cases": 15,
+    "tasks": 9,
+    "fail": 9,
+    "pass": 6
+  },
+  "calibration_cases": [
+    {
+      "id": "K11-staged-errors",
+      "kind": "TASK",
+      "kelvin_rank": 11,
+      "task_id": "6abc06a64719e24dcc073708",
+      "rule": "staged_errors",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "breakdiwn",
+        "low end device wirk",
+        "whats actualy in the build they testd",
+        "their chanel",
+        "everthing",
+        "whatevr is supposad",
+        "nd get the call",
+        "calndars",
+        "telll boombit"
+      ],
+      "reason": "11 misspellings in about 120 words read as planted, not as natural slips.",
+      "eval_reference": "1_Prompt_Eval.md §1.2 AI-Text check, Staged errors row; Local Overrides, Typing (2026-10-17)",
+      "prompt": "boombit tech people want a breakdiwn of the domino delights UI optimisation pass before our result call with them the week of Feb 16, 2026. leonard thinks if their numbers hold they might take DD on, so it matters. it was our low end device wirk, so what matters is whats actualy in the build they testd. they asked for it in their chanel go answer everthing they asked in that thread. its a partner disclosure it goes by our rules for those all of them  including whatevr is supposad to happen after its posted. nd get the call locked in, find a slot that actually works for leonard and me, put it on both our calndars, and telll boombit when.",
+      "prompt_sha256": "3782db26dd37d6a90070c9a42e1efa4528dcbd81b11feec1ff179fb069096fc6"
+    },
+    {
+      "id": "K11-control-spelled-correctly",
+      "kind": "CONTROL",
+      "rule": "staged_errors",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "PASS",
+      "text": "boombit tech people want a breakdown of the domino delights UI optimisation pass before our result call with them the week of Feb 16, 2026. leonard thinks if their numbers hold they might take DD on, so it matters. it was our low end device work, so what matters is whats actually in the build they tested. they asked for it in their channel go answer everything they asked in that thread. its a partner disclosure it goes by our rules for those all of them  including whatever is supposed to happen after its posted. and get the call locked in, find a slot that actually works for leonard and me, put it on both our calendars, and tell boombit when.",
+      "reason": "The same request with the 11 misspellings corrected raises no Staged errors flag; clean writing is not a defect.",
+      "eval_reference": "1_Prompt_Eval.md §1.2; Local Overrides, Typing (2026-10-17)",
+      "derived_from_kelvin_rank": 11,
+      "derived_from_task_id": "6abc06a64719e24dcc073708"
+    },
+    {
+      "id": "K31-trap-hint",
+      "kind": "TASK",
+      "kelvin_rank": 31,
+      "task_id": "6aaae61198c351537cbb2a2b",
+      "rule": "trap_hint_or_riddle",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "I have a nagging feeling the thing that actually bites us is not on anybody's list",
+        "at least a couple of the conclusions people settled on in Slack do not survive contact with the code"
+      ],
+      "reason": "Both lines point at a hidden trap without naming it.",
+      "eval_reference": "1_Prompt_Eval.md §2.7 Trap hint or riddle row; Local Overrides, Riddles (2026-10-17)",
+      "prompt": "The A/B test on Combo Fighter is one switch away from going live, and a second level pack has been lined up to run against the current one. I end up owning the client, so signing that off lands on me, and I would rather not do it blind. We are down to the last of the ad money, and whatever this test teaches us is close to the only real signal we are going to get, so a result nobody can interpret is worse than not running it at all. Plenty got raised between February 1 and February 13, 2026 that I never saw anyone close out, and I have a nagging feeling the thing that actually bites us is not on anybody's list.\n\nWhat I need is a readiness call I can defend. I am not convinced the two arms differ only in the way we meant them to, or that a player we pay for can really end up in the arm we intended and still be recognisable as having been in it once the numbers come back. I am also unsure the numbers we would read this on can be trusted, or that we are even seeing everyone we paid for, and I keep wondering whether something that landed on or before February 13, 2026 would move those numbers on its own regardless of which arm somebody sits in. Separately I want the picture on what is actually crashing for real players rather than for us poking at it internally, and how current that picture still is, because I do not trust my memory of which build each of those was last seen on. Work off the client and the records rather than what people concluded in passing, because at least a couple of the conclusions people settled on in Slack do not survive contact with the code. For anything you end up calling a blocker, say what would have to change before it stops being one.\n\nPut it in a document on Drive that Arthur and Robert can act on without coming back to me for detail, and land on an explicit go or no go with the reasoning behind it. Anything you call genuinely open has to end up as a ticket in Linear so it stops living in a Slack scroll, and then post where all of it landed in #prototype so the people working on this see it before anyone flips the switch. Keep to reading and writing, do not touch the experiment config, the packs or anything in the repo, and which pack we test is not my call to reopen.",
+      "prompt_sha256": "8745bcebfd1d7dc4609e6567da534446a2fdac9767408ad933c3cc4d651ef7f6"
+    },
+    {
+      "id": "control-symptom",
+      "kind": "CONTROL",
+      "rule": "trap_hint_or_riddle",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "PASS",
+      "text": "CPI jumped last week and I don't know which test did it",
+      "reason": "Naming the symptom is fine; it hints at no trap.",
+      "eval_reference": "1_Prompt_Eval.md §2.7; common_errors.md §6.7"
+    },
+    {
+      "id": "K42-hidden-destination",
+      "kind": "TASK",
+      "kelvin_rank": 42,
+      "task_id": "6abd857f96a9f77c7e518348",
+      "rule": "hidden_destination",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "get it on record wherever that's actually been asked for"
+      ],
+      "reason": "The persona would know where the answer goes; the prompt hides it and the rubric expects many places.",
+      "eval_reference": "1_Prompt_Eval.md §1.5 Ambiguity and §2.7 Hidden destination row",
+      "prompt": "Claire said she'd let me know directly once she'd decided whether the End Game VFX was actually signed off, and i never got that from her - if she wrote something up instead, i may have missed it, so can you track down where it actually stands and get it on record wherever that's actually been asked for, not just back to me ? Separately, i know i pulled some real numbers on the in-house video pipeline a couple of weeks back for Frederick, but i don't think i ever actually got around to squaring away everywhere that still has the old picture - can you dig up what i actually found, make sure it holds up against the source instead of just taking my word for it, get every place that still show the outdated read on it or is still sitting open waiting on the real answer corrected or flagged? today's February 14, 2026, and i want both actually closed out today, since Monday, February 16, 2026 is when i am presenting this to the team.",
+      "prompt_sha256": "c343d7ccf464f532a2f12734d25698e15db03d85f5c1c12fbd1bb88e86613b9f"
+    },
+    {
+      "id": "K47-hidden-destination",
+      "kind": "TASK",
+      "kelvin_rank": 47,
+      "task_id": "6abcef4dc5b130fe26c6025c",
+      "rule": "hidden_destination",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "landed in the same place the rest of these wind down calls have been going"
+      ],
+      "reason": "A person would just name #winddown; the indirection reads as staged.",
+      "eval_reference": "1_Prompt_Eval.md §2.7 Hidden destination row",
+      "prompt": "Robert put together the sunset closing package draft back on February 12,2026 for me to look over and send, and then the handoff review on February 13,2026 came and went without it actually going out. Sunset's going to follow up any minute now. Can you get eyes on the actual draft, fix whatever in it doesn't hold up, and get it sent today, February 14,2026 ? while you're at it, make sure the engineering disclosure ticket actually says where things stand instead of just sitting there, get a clear current answer on the telegram side landed in the same place the rest of these wind down calls have been going. and finish off the reconcilliation sheet I started instead of leaving it half full. and keep anything that shouldn't leave the founders inside the founders - don't let it wander into whatever actually goes out the door.",
+      "prompt_sha256": "a451cc11e4bb9b46e27d0851be83a3c2c1702ebf7752d2bf6b6bd82133f141cb"
+    },
+    {
+      "id": "K44-hidden-destination",
+      "kind": "TASK",
+      "kelvin_rank": 44,
+      "task_id": "6ac674e16329279865bbecbf",
+      "rule": "hidden_destination",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "answer him there too"
+      ],
+      "reason": "Nothing leads to the PR comment the answer has to go to.",
+      "eval_reference": "1_Prompt_Eval.md §2.7 Hidden destination row",
+      "prompt": "Hey, Blake posted his handover rules for before Leonard archives our Harmony accounts, and my part has to be done by Sunday Feb 15, my login is dead after that and I don't want the CF builds breaking because of it. Can you go through everything under my login and do my part the way he asked, the note to him included? I did the AppLovin MAX work for CF so he'll ask about the ads account too, put in the note whose it is. If he asked me somewhere else, not the rules or his posts about them, to shut something off or hand it over, answer him there too. I also told the team I'd run their builds on the testing stuff I set up, so let them know what's changing, in the same place I told them. When you're done tell me exactly what is still on me to do myself by then, and for anything still billing my card, when the next charge would hit and how much. If something just charges as I use it, say that and what it took last time.",
+      "prompt_sha256": "617cf4bf0f8d897d155f522a0cda9cd571797adadc098a1a98779dc19f95f7f8"
+    },
+    {
+      "id": "control-named-destination",
+      "kind": "CONTROL",
+      "rule": "hidden_destination",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "PASS",
+      "text": "post the summary in #winddown",
+      "reason": "The destination the persona knows is named.",
+      "eval_reference": "1_Prompt_Eval.md §2.7"
+    },
+    {
+      "id": "K1-audit-form",
+      "kind": "TASK",
+      "kelvin_rank": 1,
+      "task_id": "6a7f62daa0495108140f6b43",
+      "rule": "audit_form",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "Find the current governing control he meant, reconcile its evidence, and complete the decision record, remediation, and handoff it requires."
+      ],
+      "reason": "Reads like an audit or compliance form, not a person asking for help.",
+      "eval_reference": "1_Prompt_Eval.md §2.7 Audit forms and if-chains (2026-10-17)",
+      "prompt": "Arthur wants the backend merge-review control closed before the next live-ops push. Find the current governing control he meant, reconcile its evidence, and complete the decision record, remediation, and handoff it requires.",
+      "prompt_sha256": "b004cca27f012ce838f89cddc1ab0cbfb1ed9229755c281d5fc9e383bbaaf529"
+    },
+    {
+      "id": "K43-audit-form",
+      "kind": "TASK",
+      "kelvin_rank": 43,
+      "task_id": "6a83fa91fea987ea2b173deb",
+      "rule": "audit_form",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "apply it to the full in-scope upload-thread cohort, reconcile the decisions chronologically, classify the outcomes, rank the outstanding channels and evidence, and complete the review artifacts and handoff it requires"
+      ],
+      "reason": "A chain of form steps, not a request.",
+      "eval_reference": "1_Prompt_Eval.md §2.7 Audit forms and if-chains (2026-10-17)",
+      "prompt": "I’m getting ready to walk the art and engineering leads through production review, but the upload threads still don’t give me a trustworthy read on what was actually decided. Victor said his current art-canon handoff control has the review rules. Find that control, apply it to the full in-scope upload-thread cohort, reconcile the decisions chronologically, classify the outcomes, rank the outstanding channels and evidence, and complete the review artifacts and handoff it requires. Send me the summary and links in the response I’ll need to run the meeting.",
+      "prompt_sha256": "bf634ae92c84d37d538a5879755b96771f39f3ff71ce0b344e7a62198e83020a"
+    },
+    {
+      "id": "K44-if-chain",
+      "kind": "TASK",
+      "kelvin_rank": 44,
+      "task_id": "6ac674e16329279865bbecbf",
+      "rule": "if_chain",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "FAIL",
+      "quotes": [
+        "If he asked me somewhere else, not the rules or his posts about them, to shut something off or hand it over, answer him there too."
+      ],
+      "reason": "A conditional with carve-outs dictates a per-case action; the rule belongs in a seeded record.",
+      "eval_reference": "1_Prompt_Eval.md §2.7 Audit forms and if-chains (2026-10-17)",
+      "prompt": "Hey, Blake posted his handover rules for before Leonard archives our Harmony accounts, and my part has to be done by Sunday Feb 15, my login is dead after that and I don't want the CF builds breaking because of it. Can you go through everything under my login and do my part the way he asked, the note to him included? I did the AppLovin MAX work for CF so he'll ask about the ads account too, put in the note whose it is. If he asked me somewhere else, not the rules or his posts about them, to shut something off or hand it over, answer him there too. I also told the team I'd run their builds on the testing stuff I set up, so let them know what's changing, in the same place I told them. When you're done tell me exactly what is still on me to do myself by then, and for anything still billing my card, when the next charge would hit and how much. If something just charges as I use it, say that and what it took last time.",
+      "prompt_sha256": "617cf4bf0f8d897d155f522a0cda9cd571797adadc098a1a98779dc19f95f7f8"
+    },
+    {
+      "id": "control-plain-request",
+      "kind": "CONTROL",
+      "rule": "audit_form",
+      "dimension": "Contrived or Unnatural Prompt",
+      "expected": "PASS",
+      "text": "Arthur wants the merge-review stuff sorted before the next push, can you check what's still open and close it out?",
+      "reason": "One plain request; the rules live in the records.",
+      "eval_reference": "1_Prompt_Eval.md §2.7",
+      "derived_from_kelvin_rank": 1,
+      "derived_from_task_id": "6a7f62daa0495108140f6b43"
+    },
+    {
+      "id": "K43-departed-person-premise",
+      "kind": "TASK",
+      "kelvin_rank": 43,
+      "task_id": "6a83fa91fea987ea2b173deb",
+      "rule": "false_state_premise",
+      "dimension": "Truthfulness",
+      "expected": "FAIL",
+      "quotes": [
+        "Victor said his current art-canon handoff control has the review rules."
+      ],
+      "reason": "Victor left in April 2025 (last Slack message 2025-04-15; #admin_foundersonly 2025-05-01 says his last day was mid month), and the studio announced its shutdown on 2026-02-11.",
+      "eval_reference": "1_Prompt_Eval.md §2.3 state-premise list (2026-10-17)",
+      "prompt": "I’m getting ready to walk the art and engineering leads through production review, but the upload threads still don’t give me a trustworthy read on what was actually decided. Victor said his current art-canon handoff control has the review rules. Find that control, apply it to the full in-scope upload-thread cohort, reconcile the decisions chronologically, classify the outcomes, rank the outstanding channels and evidence, and complete the review artifacts and handoff it requires. Send me the summary and links in the response I’ll need to run the meeting.",
+      "prompt_sha256": "bf634ae92c84d37d538a5879755b96771f39f3ff71ce0b344e7a62198e83020a"
+    },
+    {
+      "id": "K50-both-fair-figure",
+      "kind": "TASK",
+      "kelvin_rank": 50,
+      "task_id": "6aa8272b1b7a2df0fc0fea8d",
+      "rule": "ugt_both_fair_figure",
+      "dimension": "Unique Ground Truth",
+      "expected": "PASS",
+      "quotes": [
+        "with the right figures wherever leonard's are off"
+      ],
+      "reason": "The 2-day completion rate is 32.8% under the #analytics roll-up note the thread points to and 28.5% from the ZOM-673 operands; nothing ranks them and every write is the same. Record BOTH_FAIR_FIGURE; Rubric must accept: 32.8% or 28.5%.",
+      "eval_reference": "1_Prompt_Eval.md §2.1 both-fair figure (local override 2026-10-17)",
+      "prompt": "brian wants leonard's collect&win numbers sanity checked before they go in the feb 20 report, plus there's a second thing he pulled me into on the same thread that may or may not be the same issue. work out what actually holds up and why, with the right figures wherever leonard's are off, answer them both on leonard's thread and get ZOM-566 moved to where it belongs instead of just leaving a note on it",
+      "prompt_sha256": "668d2ff14ead3ac3a19884e48afdcbe30b7e3ead11803fa76a36e48e29089cbc",
+      "expected_resolution": "BOTH_FAIR_FIGURE",
+      "rubric_must_accept": [
+        "32.8%",
+        "28.5%"
+      ]
+    },
+    {
+      "id": "K49-newer-source",
+      "kind": "TASK",
+      "kelvin_rank": 49,
+      "task_id": "6abc06a64719e24dcc073719",
+      "rule": "ugt_both_fair_figure",
+      "dimension": "Unique Ground Truth",
+      "expected": "PASS",
+      "quotes": [
+        "If two places give you different amounts for the same thing go with whatever was agreed most recently but keep the old number next to it"
+      ],
+      "reason": "Not a both-fair figure: the 2026-01-23 $8K update is newer than the 2026-01-22 $8.5K figure, so the newer-source check (and the prompt sentence) settles it as today. A BOTH_FAIR_FIGURE label is rejected.",
+      "eval_reference": "1_Prompt_Eval.md §2.1 five checks; both-fair figure out of scope",
+      "prompt": "ok, so, now that we've actually told everyone about the wind down on february 11 i need to get my head around the money side before leonard and arthur and i sit down again, because right now nobody can tell me if we have enough cash to close this out cleanly or fi we're going to come up short. theres final payroll and whatever we promised people in their termination paperwork, all the vendors and tools we're still getting billed for, contractors, and probably a bunch of other stuff buried in threads that nobody wrote down anywhere. and honestly I don't trust any single number people have thrown around since the sessions on february 11 and 12, I know a few of them got changed after the fact and i couldn't tell you which ones.\n\nCan you go through all of it and build me a proper wind down budget as a google sheet. every obligation on its own line with who we owe, how much, when its due and where you got the number from, then stack it against the cash we actually have so I can see week by week through march 31 whether we're covered or not. If two places give you different amounts for the same thing go with whatever was agreed most recently but keep the old number next to it so i can see it moved. and if something is clearly owed but you can't find an actual amount don't just guess, mark it as missing so i know what to chase.\n\nonce thats done write up a short summary doc for leonard and arthur with the bottom line, the biggest risks and the gaps I still need to chase down, and send them both the links. don't send anything to employees or investors yet, this stays between the three of us until we've gone through it together.",
+      "prompt_sha256": "aa55f0870f81e4c88651ed71e590881138dcea1ab21fceb797cab6f3fa030250",
+      "expected_resolution": "EXCLUDED"
     }
   ]
 }

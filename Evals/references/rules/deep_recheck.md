@@ -9,6 +9,11 @@ P1 edge values, P2 hidden records / derived columns / date-slip severity, O1
 qualifiers, new pass O3, the known platform defects list, the main-session
 rejection and required-fix rules, and the fix-text check.
 
+Revision 2026-10-17 (Kelvin's 50-task flags): P1 both-fair figures and the
+fixed "today", P3 shutdown and departed-person premises, P4 staged errors, trap
+hints, hidden destinations, audit forms and if-chains, and the anonymized-token
+platform note.
+
 Each pass rechecks one of the fails our audits find most, on every prompt
 sentence, every oracle event or every rubric row. Counts are failing tasks out
 of 57 (`failing_audit_distribution.md`); one task can hit several topics.
@@ -77,6 +82,10 @@ in the report and never scores it against the task:
 - Slack paste artifacts in saved SQL or text: markdown auto-link wrappers,
   doubled `""` from a CSV paste, missing `$$` and stripped `*`. Report the
   file as unreadable as sent; do not score the task content on them.
+- Anonymized tokens such as `[PERSON_NAME_0854]` are the source string. A row
+  or answer that uses the token as shown is correct; the real name is correct
+  only when a persona-visible record maps the token to it. Do not score a
+  token-for-name difference as a factual or accuracy defect.
 
 **Pass work.** A pass checks only its own topic, on every sentence, event or
 row, not a sample. It returns findings in this format and nothing else:
@@ -101,6 +110,12 @@ usable result. Do not save the report while any pass is missing.
      a record the persona can open that rules out Reading B. An inference
      ("the agent would assume", "B is less likely") is not a reason and the
      finding stays CONFIRMED.
+   - A P1 fork that meets every condition of the Eval 1 §2.1 both-fair figure
+     (one reported figure differs, both values quoted from persona-visible
+     records, none of the five checks settles it, the same decision, writes,
+     destinations and recipients) is recorded in `unique_ground_truth` as
+     BOTH_FAIR_FIGURE with both values. It is neither a UGT failure nor a
+     rejection. Any fork that misses one condition stays a UGT finding.
    - An Eval 0 advisory becomes a /prompt Cross-Service Coherence finding only
      when the record it names changes a value, set, order, recipient or
      destination the answer is graded on. Otherwise it stays an advisory in
@@ -153,7 +168,7 @@ Effect on verdict: <unchanged, or which dimensions changed; scores are in the sc
 
 <for /prompt: the fork list, one line per confirmed or open UGT fork, all of them
 in this round>
-- F#: <outcome> | Reading A | Reading B | Settled by: <quoted record> / Missing: <the dated, persona-visible record or prompt sentence that would settle it>
+- F#: <outcome> | Reading A | Reading B | Settled by: <quoted record> / Missing: <the dated, persona-visible record or prompt sentence that would settle it> / Both fair: <X or Y, BOTH_FAIR_FIGURE; the rubric must accept either>
 
 <for /oe: the O3 inventory, one line per group>
 - G#: <open instruction> | <document / tab> | <n> items (M#–M#) | Covered by: OE# / MISSING
@@ -182,11 +197,21 @@ could defend. Compare the decision, the writes, the destination and the
 contents. Settle each of these to one answer: which items are in the set,
 which number or date, which source wins, what counts as the event, and what
 gets written. If two answers fit and no prompt sentence or persona-visible
-record kills one, that is a finding. "B is less likely" is not a kill.
+record kills one, that is a finding. "B is less likely" is not a kill. A
+both-fair figure is not a UGT finding: only one reported figure (an amount,
+count, rate or date) differs, each value is on a record the persona can open,
+no newer source, authority, source identity or scope ranks the two, and the
+decision, writes, destinations and recipients are the same. Report that fork
+with both values and their records; the main session records it as
+BOTH_FAIR_FIGURE (Eval 1 §2.1).
 
 **Edge values.** For every number, set, count or date the answer depends on,
 compute it under each edge the prompt leaves open: cutoff day included or
-excluded, a partial day or week, UTC vs the persona's local day, pooled vs
+excluded, a partial day or week, UTC vs the persona's local day (not for
+"today" or "yesterday" in the prompt: today is Saturday, February 14, 2026 and
+yesterday is February 13 on a Feb 14 task, and Wednesday, October 1, 2025 and
+September 30 on an Oct 1 task; and not for the reported date of one instant whose
+Pacific and UTC days differ, where either day is accepted), pooled vs
 per-item or per-build, before vs after a later correction in the thread, and
 records in a borderline status (In Review with `completed_at`, Trash vs
 deleted). Quote the records behind each figure. If the answer changes at an
@@ -234,7 +259,14 @@ uses; otherwise one minor inconsistency (NON-FAIL).
 List every channel, ticket, vendor, person, amount, date and fiscal period the
 prompt states. Open the record for each and quote it. One wrong tight claim is
 a fail. One loose slip is also a fail. Nothing the prompt treats as already
-done may sit after 2026-02-14 00:00 UTC. If injection SQL is saved, read it
+done may sit after the task clock (2026-02-14 00:00 UTC, or 2025-10-01 00:00 PT
+on an Oct 1 task). On a Feb 14 task, a premise that the company still runs
+normally after the February 11, 2026 shutdown announcement is a false premise.
+On either date, a premise that a person who has left reviews, approves or
+replies is a false premise (Victor left in April 2025). On an Oct 1 task, a
+premise that relies on anything first appearing after 2025-09-30 23:59:59 PT is
+false; business as usual is not. Quote the records that show it, not the
+storyline YAML. If injection SQL is saved, read it
 (never run it): ids do not collide, columns exist, an added message's author is
 in its channel, and apostrophes inside quoted strings are doubled.
 
@@ -242,9 +274,13 @@ in its channel, and apostrophes inside quoted strings are doubled.
 
 Run section 3's search hits and section 6.6. Look for catalog tool names, MCP
 or "tool" wording, a first / then / finally list, a bolt-on sentence, an
-opaque id or exact timestamp the task does not need, and a stated cause
-(section 6.7). Then read it as the persona would type it. Spec-like or polished
-LLM voice fails even when the situation is real (Eval 1 §1.2, §2.7).
+opaque id or exact timestamp the task does not need, a stated cause
+(section 6.7), a hint or riddle aimed at the trap, a hidden destination the
+persona would know, audit or compliance-form wording, long if / but-not /
+then-also chains, and staged typos, made-up emoji or broken punctuation. Then
+read it as a plain natural request; the persona's own Slack or mail style is
+not a standard. Spec-like or polished LLM voice fails even when the situation
+is real; clean writing does not (Eval 1 §1.2, §2.7).
 
 ## Oracle event passes
 

@@ -11,6 +11,31 @@ the saved bytes, and maintains `Evals/task_inputs/inputs.json`. No separate save
 confirmation is needed. Do not claim success if saving fails. Keep the supplied
 content available and resolve the write error first.
 
+## Task date — ask first
+
+Every task runs on one of two universes, picked by its date (ENVIRONMENT.md
+**Task date and universe**). Before anything else in every skill, run `list`
+and read `universe_intake`. If its state is `ASK` or `NEEDS_ATTENTION`, ask this
+question on its own, first, and wait for the answer before reading the universe,
+saving other inputs' sources or asking anything else:
+
+> Which date is this task on: Oct 1, 2025 (synth-cut) or Feb 14, 2026 (normal)?
+
+Save the answer exactly as given:
+
+```sh
+python3 Evals/tools/hg_store_input.py universe "Oct 1, 2025"
+```
+
+The helper accepts `2025-10-01`, `Oct 1`, `synth-cut`, `2026-02-14`, `Feb 14`
+or `normal` (and the full option text) and rejects anything else; ask again
+rather than guessing. There is no default and no shortcut: never infer the
+date from the prompt, SQL, data or task ID, and never fall back to Feb 14. When
+the state is `SELECTED`, reuse the saved date without asking again; later
+stages and re-runs of the same task use it. A user's later, explicit date change
+replaces it (save the new answer); evidence gathered under the old universe
+must then be rechecked. Every report shows the date in its `Clock:` line.
+
 ## Load, replace and reuse
 
 1. Run `python3 Evals/tools/hg_store_input.py list` before asking for inputs.
@@ -43,7 +68,8 @@ content available and resolve the write error first.
    from a later message does not clear the saved SQL. Cleared entries must not
    be restored from old chat messages, reports or source copies.
 6. After saving, ask for required information that is still missing or
-   ambiguous, plus the optional injection question below when it applies and is unanswered. Ask for an attachment again only when its contents are unavailable;
+   ambiguous, plus the optional injection question below when it applies and is unanswered.
+   The task-date question above always comes first and on its own. Ask for an attachment again only when its contents are unavailable;
    already saved inputs are not missing. Saving does not certify that inputs are
    valid, complete, visible to the Agent, or associated with the same run.
 
@@ -95,6 +121,7 @@ From the workspace root (else use the helper's absolute path):
 
 ```sh
 python3 Evals/tools/hg_store_input.py list
+python3 Evals/tools/hg_store_input.py universe "Feb 14, 2026"
 python3 Evals/tools/hg_store_input.py save prompt --source "<new-prompt.txt>"
 python3 Evals/tools/hg_store_input.py save injection --source "<new-injection.sql>"
 python3 Evals/tools/hg_store_input.py save task-details --source "<updated-assignment.md>"
@@ -131,6 +158,7 @@ All following paths are relative to `Evals/task_inputs/`:
 |---|---|
 | `task-details` | `00_Task_Assigned_Inputs.md` |
 | `injection` | `01_Universe_Inject.sql` |
+| `universe` | `02_Universe_Date.txt` (task date; save with the `universe` command) |
 | `error-async` | `03_Error_Async_Config.txt` |
 | `prompt` | `04_Prompt.txt` |
 | `opus` | `opus/trajectory.json` (one selected unhinted hardness run) |

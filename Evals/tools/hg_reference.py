@@ -8,6 +8,7 @@ import re
 import sys
 
 import hg_context
+import hg_universe
 
 ROOT = Path(__file__).resolve().parents[2]
 COMMON = [
@@ -98,10 +99,10 @@ def schema(tables):
             'complete_entries': True}
 
 
-def routes(services):
-    path = ROOT / 'Evals/references/source_layout.json'
-    data = json.loads(path.read_text())
-    universe = json.loads((ROOT / 'Evals/references/universe_manifest.json').read_text())
+def routes(services, universe=None):
+    folder = hg_universe.references(ROOT, universe)
+    data = json.loads((folder / 'source_layout.json').read_text())
+    universe = json.loads((folder / 'universe_manifest.json').read_text())
     selected = services or list(data['services'])
     result = {}
     for service in selected:

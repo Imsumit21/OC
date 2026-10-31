@@ -10,7 +10,13 @@ import re
 from hg_review_evidence import EvidenceReader, authority, links, sources
 from hg_rubric_assertions import validate_assertions
 from hg_coherent_record import verify_record_source
+from hg_rubric_facts import REACHABILITY
 from hg_rubric_sampling import validate_sampling
+
+CASE_RESULTS = {"ACCEPT", "REJECT", "UNRESOLVED"}
+# A rejected prompt-allowed answer is a Major acceptance defect: overly_specific, or
+# incorrect when the expected value is wrong, or unauthorized when the row adds a duty.
+REJECTS_VALID = {"overly_specific", "incorrect", "unauthorized"}
 
 
 ARTIFACT = re.compile(r"^(?:(?:the|an?|that|this|each|its)\s+"
@@ -26,6 +32,20 @@ BARE_ACTION = re.compile(r"^(?:reports?|identifies?|states?|creates?|sends?|list
                          r"explains?|documents?|flags?|updates?|calculates?|summarizes?|compares?|cites?|"
                          r"checks?|confirms?|verifies?|records?|writes?|addresses?|describes?)\b", re.I)
 NEGATIVE_ACTION = re.compile(r"^(?:the )?agent\s+(?:does not|doesn't|do not|must not|will not|won't|never|makes no|takes no|avoids|fails to|refrains from|declines to)\b", re.I)
+# Negatives in disguise (Eval 3 §2.9): "leaves … as found / as is / unchanged / untouched / open / off"
+# and "keeps … off" pass an Agent that does nothing. A hit needs the do-nothing test, not a verdict.
+DISGUISED_NEGATIVE = re.compile(
+    r"\bleav(?:es|e|ing)\b(?:(?![.;]).){0,160}?\b(?:as\s+(?:found|is|it\s+was)|unchanged|untouched|open|off)\b"
+    r"|\bkeep(?:s|ing)?\b(?:(?![.;]).){0,160}?\boff\b", re.I)
+# A length, line, sentence or section count is a format (Eval 3 §2.7): grade it only when the prompt states it.
+_COUNT = r"(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|a\s+single|single)"
+_TEXT_UNIT = (r"(?:lines?|sentences?|paragraphs?|bullets?|bullet\s+points?|words?|characters?|sections?|headings?|pages?)"
+              r"(?!\s+(?:rows?|items?|tabs?|entries|records|columns?)\b)")
+FORMAT_LOCK = re.compile(
+    r"\b(?:at\s+most|no\s+more\s+than|not\s+more\s+than|fewer\s+than|up\s+to|a\s+maximum\s+of|maximum\s+of)\s+" + _COUNT + r"\b"
+    r"|\b" + _COUNT + r"\s+(?:[\w-]+\s+){0,2}?" + _TEXT_UNIT + r"\b"
+    r"|\b(?:sentences?|lines?|words?|paragraphs?)\s+or\s+(?:less|fewer|shorter)\b"
+    r"|\b(?:per|each|every)\s+line\b", re.I)
 
 
 def title_facts(title, tool_names=()):
@@ -46,7 +66,9 @@ def title_facts(title, tool_names=()):
     tools = sorted(tokens.intersection(tool_names))
     if re.search(r"\bmcp__[\w]+", title):
         tools.append("explicit MCP tool identifier")
-    return dict(subject=subject, tool_names=tools, negative_action=bool(NEGATIVE_ACTION.match(title)))
+    return dict(subject=subject, tool_names=tools, negative_action=bool(NEGATIVE_ACTION.match(title)),
+                disguised_negative=bool(DISGUISED_NEGATIVE.search(title)),
+                format_lock=[m.group() for m in FORMAT_LOCK.finditer(title)])
 
 
 def validate_checks(checks, rubric, issues, *, root, context):
@@ -68,15 +90,27 @@ def validate_checks(checks, rubric, issues, *, root, context):
         return set(value)
 
     def finding(kind, row, label, acceptance=True):
-        matches = [i for i in issues if i["type"] == kind and row in i["rows"]]
+        kinds = {kind} if isinstance(kind, str) else set(kind)
+        matches = [i for i in issues if i["type"] in kinds and row in i["rows"]]
         require(any(not acceptance or i.get("impact") in {"rejects_correct", "accepts_wrong"} for i in matches),
-                label + ": record the demonstrated " + kind + " issue; PASS/precision-only cannot override it")
+                label + ": record the demonstrated " + " or ".join(sorted(kinds)) + " issue; PASS/precision-only cannot override it")
+
+    def case(value, label):
+        value = obj(value, label)
+        text(value.get("reason"), label + ".reason")
+        require(value.get("result") in CASE_RESULTS, label + " needs ACCEPT, REJECT or UNRESOLVED")
+        return value
 
     obj(checks, "checks")
     require(isinstance(issues, list) and all(isinstance(i, dict) and isinstance(i.get("rows"), list)
             and isinstance(i.get("type"), str) for i in issues), "issues must be typed findings with row arrays")
     reader = EvidenceReader(root)
     known = sources(reader, checks.get("sources"))
+    for sid, anchor in known.items():
+        # Eval 3 §2.4: outside Trash/Spam unless the prompt points there, readable as content
+        # (not only inside an attachment) and reachable from a prompt noun.
+        require(anchor.get("reachability") in REACHABILITY,
+                sid + ": source anchor needs reachability PROMPT_LINKED, TRASH, ATTACHMENT_ONLY or UNLINKED")
     pending, wording_fail, wording_nonstandard, negative_fail = [], [], [], []
     fact_results = []
     reqs = checks.get("requirements")
@@ -227,6 +261,28 @@ def validate_checks(checks, rubric, issues, *, root, context):
         elif framing == "PROHIBITION":
             # hg-strict-overrides-v1: prompt authority does not rescue prohibition-only acceptance.
             negative_fail.append(number)
+        # Eval 3 §5.3: a prompt-allowed answer the row must ACCEPT.
+        valid = case(row.get("valid_case"), label + ".valid_case")
+        text(valid.get("example"), label + ".valid_case.example")
+        if valid["result"] == "REJECT":
+            finding(REJECTS_VALID, number, label + ": valid_case is rejected (overly_specific)")
+        elif valid["result"] == "UNRESOLVED":
+            pending.append(label + ": unresolved valid_case")
+        # Eval 3 §2.9: an Agent that does nothing must fail every row.
+        idle = case(row.get("do_nothing_case"), label + ".do_nothing_case")
+        if idle["result"] == "ACCEPT":
+            require(framing == "PROHIBITION", label + ": a row an Agent passes by doing nothing is a negative in "
+                    "disguise; classify it PROHIBITION (Negative Criteria FAIL)")
+        elif idle["result"] == "REJECT":
+            quote = idle.get("quote")
+            text(quote, label + ".do_nothing_case.quote")
+            actor = quote if AGENT.match(quote.strip()) else "The Agent " + quote.strip()
+            require(quote in criterion["title"] and not DISGUISED_NEGATIVE.search(quote) and
+                    not NEGATIVE_ACTION.match(actor),
+                    label + ": do_nothing_case.quote must be the title's required write or artifact, not a "
+                    "preserved state or prohibition")
+        else:
+            pending.append(label + ": unresolved do_nothing_case")
         atomic = obj(row.get("atomicity"), label + ".atomicity")
         oids = ids(atomic.get("outcome_ids"), set(requirements), label + ".outcome_ids", True)
         require(oids == {rid for rid, req in requirements.items() if number in req["rows"]},
@@ -290,11 +346,40 @@ def validate_checks(checks, rubric, issues, *, root, context):
         elif support["status"] == "UNRESOLVED":
             pending.append(label + ": unresolved supporting-field consistency")
         from hg_rubric_fact_binding import checked_facts
-        facts_result = checked_facts(row.get('fact_review'), criterion, reader, known, root, context)
+        facts_result = checked_facts(row.get('fact_review'), criterion, reader, known, root, context,
+                                     literal_tokens=True)
         fact_results.append({'row': number, **facts_result})
         if facts_result['mismatches']:
-            finding('incorrect', number, label + ': source-derived fact mismatch')
+            if all(item.get('anonymized_token') for item in facts_result['mismatches']):
+                # The tools show the placeholder; a row that rejects it rejects a valid answer.
+                finding({'overly_specific', 'incorrect'}, number, label + ': title rejects the anonymized source token')
+            else:
+                finding('incorrect', number, label + ': source-derived fact mismatch')
+        if any(item.get('unreachable') for item in facts_result['unresolved']):
+            finding('unobservable', number, label + ': deciding record is unreachable (Trash, attachment-only or unlinked)')
+        # Eval 3 §2.11: when PT and UTC give different days, a row grading the day accepts both.
+        split = {}
+        for item in facts_result['computed']:
+            if item.get('split_day'):
+                entry = split.setdefault(tuple(item['selection']), [{item['pt_day'], item['utc_day']}, set()])
+                if item['matched']:
+                    entry[1].add(item['expected'])
+        if any(days != quoted for days, quoted in split.values()):
+            finding('overly_specific', number, label + ': date accepts only one of the PT and UTC calendar days')
         pending.extend(label + ': ' + item['reason'] for item in facts_result['unresolved'])
+
+    # Eval 3 §3.7: correct delivery plus a concise final reply must pass the whole set.
+    reply = case(checks.get("final_reply_test"), "final_reply_test")
+    for key in ("example", "authority"):
+        text(reply.get(key), "final_reply_test." + key)
+    rejecting = reply.get("rejecting_rows")
+    require(isinstance(rejecting, list) and all(type(r) is int and r in row_numbers for r in rejecting) and
+            len(rejecting) == len(set(rejecting)), "final_reply_test.rejecting_rows needs unique current rows")
+    require(bool(rejecting) == (reply["result"] == "REJECT"), "final_reply_test result contradicts rejecting_rows")
+    for number in rejecting:
+        finding(REJECTS_VALID, number, f"R{number}: concise final reply is rejected (overly_specific)")
+    if reply["result"] == "UNRESOLVED":
+        pending.append("unresolved final_reply_test")
 
     recorded_missing = {i["outcome_id"]: i["criticality"] for i in issues if i["type"] == "missing_coverage"}
     require(recorded_missing == missing, "missing_coverage issues must exactly match the failed substantive outcome tests")
@@ -310,8 +395,10 @@ def validate_checks(checks, rubric, issues, *, root, context):
                                       reader=reader, known=known, check_facts=False))
     for branch in checks['alternative_review']['branches']:
         if branch['validity'] == 'SUPPORTED' and branch['result'] == 'REJECT':
+            # A rejected supported alternative (including a BOTH_FAIR_FIGURE from the
+            # prompt report, Eval 3 §1.4) is overly_specific, or incorrect.
             for number in branch['rejecting_rows']:
-                finding('incorrect', number, 'valid alternative rejected by R' + str(number))
+                finding({'incorrect', 'overly_specific'}, number, 'valid alternative rejected by R' + str(number))
     return dict(required_outcomes=len(requirements), covered_outcomes=len(covered),
                 wording_fail_rows=wording_fail, wording_nonstandard_rows=wording_nonstandard,
                 negative_fail_rows=negative_fail, unresolved=pending,

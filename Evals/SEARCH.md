@@ -220,7 +220,7 @@ an evidence limit.
 ## Caches and long-running jobs
 
 Default `get` and pointer-scoped `search` automatically validate and reuse a
-matching prepared index from `Evals/references/search_indexes/`. Prepared indexes
+matching prepared index from the task universe's `Evals/references/universes/<normal|synthcut>/search_indexes/`. Prepared indexes
 currently cover the structured GitHub, GDrive, Linear and Snowflake exports.
 On first use after extraction, the helper verifies the pinned index artifact
 and hashes the actual selected source bytes before binding offsets to this
@@ -284,8 +284,8 @@ command use the host's supported tracked background-job mechanism, keep its
 task ID and resume that job. Do not start duplicate detached jobs or retry the
 same timed-out cold index build; inspect progress and cache warnings first.
 
-Include `Evals/references/search_indexes/` and its pinned manifest when packaging;
-also include `Evals/references/id_indexes/` and its manifest. These prepared
+Include `Evals/references/universes/` when packaging: each universe's
+`search_indexes/` and `id_indexes/` with their pinned manifests. These prepared
 artifacts move with the bundle and are verified after extraction.
 Exclude `.cache/`, `__pycache__/` and other generated runtime files. Prepared
 indexes must be regenerated and repinned when their source content or index

@@ -1,0 +1,28 @@
+{
+  "format_version": 1,
+  "purpose": "Supported ID contracts for Eval 0 Check A. A listed field that breaks its contract is FAIL; fields not listed here keep the 'numbering gap or few examples is not an invalid-ID finding' rule. Enforced statically by Evals/tools/hg_injection_lint.py (check id_contract).",
+  "verified": "2026-10-18 against every base value in HarmonyGames_Gmail and HarmonyGames_Other_Services (hg4-2026-08-31 export, 2026-09-28 download)",
+  "contracts": [
+    {
+      "id": "gmail_history_id",
+      "tables": ["gmail.gmail_messages", "gmail.gmail_threads", "gmail.gmail_users"],
+      "column": "history_id",
+      "allow_null": true,
+      "pattern": "^[0-9]+$",
+      "rule": "Gmail history_id is NULL or a decimal string (digits only), as the Gmail API defines it; labels such as 'hf_pf_reg_1' break Gmail search.",
+      "base_evidence": "No base record carries a non-null history id: 21,192 of 88,726 thread files have \"historyId\": null and the rest omit it; no message record has the field; 8 of 28 users.json entries have historyId null and the rest omit it. NULL therefore matches the base; a value must be digits.",
+      "failure_evidence": "Task 6aa8272b1b7a2df0fc0fea7b injected history_id 'hf_pf_reg_1'..'hf_pf_reg_3'; every Gmail search in its runs returned an error."
+    },
+    {
+      "id": "drive_content_path",
+      "tables": ["gdrive.drive_files"],
+      "column": "content_path",
+      "allow_null": true,
+      "pattern": "^(?!/)(?!root/)[^/]+/.+$",
+      "first_segment_equals": "owner_email",
+      "rule": "Drive content_path is relative to the Drive export root: '<owner_email>/<path>', with no leading '/' and no 'root/' prefix. NULL means the file has no bytes (see Eval 0 on unreadable files).",
+      "base_evidence": "All 30,436 non-null base content_path values (of 53,866 drive_files) start with the row's owner_email as the first segment; none starts with '/' or 'root/'. 30,421 resolve to bytes under gdrive/root/; the other 15 are filename-encoding losses in the local copy.",
+      "failure_evidence": "Task 6abd857f96a9f77c7e518348 injected content_path 'root/marcus.bennett@harmonygames.co/UA Creative Recap - Jan 2026.pdf'; the agent's read returned 404."
+    }
+  ]
+}

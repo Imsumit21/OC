@@ -40,6 +40,7 @@ def tally(n, issues, quality, gate=None, unresolved=None, rubric=None):
                 coverage=dict(required_outcomes=n + len(missing), covered_outcomes=n),
                 hard_gates={g: dict(result="FAIL" if g in failing else "PASS", reason="Reviewed boundary fixture.") for g in GATES},
                 hard_gate_score=None, unresolved=unresolved or [], predicted_all_fail=[],
+                oe_cross_check=dict(oe_present=False),
                 weight_reviews=[dict(row=i, expected_weight=r["weight"], work_kind=kinds[r["weight"]],
                                      source_ids=["P1"], reason="Weight-neutral fixture for a separate scoring boundary.")
                                 for i, r in enumerate(rubric, 1)],
@@ -232,7 +233,8 @@ class ScoringRulesTests(unittest.TestCase):
             calculate(tally(2, [], 5), rubric)
 
     def test_strict_specificity_severities_do_not_depend_on_impact_labels(self):
-        for kind, severity in (("overly_specific", "Major"), ("overly_broad", "Moderate"),
+        # Local override 2026-10-17: Overly Broad is Major, the same level as Overly Specific.
+        for kind, severity in (("overly_specific", "Major"), ("overly_broad", "Major"),
                                ("harmless_specificity", "Minor")):
             for impact in ("precision_only", "accepts_wrong", "rejects_correct"):
                 with self.subTest(kind=kind, impact=impact):
@@ -317,9 +319,9 @@ class ScoringRulesTests(unittest.TestCase):
 
     def test_legacy_score_format_cannot_authorize_current_policy(self):
         record = tally(1, [], 5)
-        for old_version in (2, 3, True):
+        for old_version in (2, 3, 4, True):
             record["format_version"] = old_version
-            with self.subTest(version=old_version), self.assertRaisesRegex(ValueError, "format 4"):
+            with self.subTest(version=old_version), self.assertRaisesRegex(ValueError, "format 5"):
                 calculate(record, json.loads(candidate()))
 
 
@@ -331,6 +333,7 @@ class EvidenceAndRubricTests(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer, "REPOSITORY", self.root).start()
         patch.object(inputs, "REPOSITORY", self.root).start()
+        inputs.save_input("universe", content=b"2026-02-14\n")  # task date (hg_universe.py)
         inputs.save_input("prompt", content=b"Report the current download size.")
         inputs.save_input("golden", content=b"The current download size is 214 MB.")
         inputs.save_input("task-details", content=b"Robert, Executive")
@@ -472,6 +475,7 @@ class GoldenEvidenceTests(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer, "REPOSITORY", self.root).start()
         patch.object(inputs, "REPOSITORY", self.root).start()
+        inputs.save_input("universe", content=b"2026-02-14\n")  # task date (hg_universe.py)
         inputs.save_input("prompt", content=b"Report the current size.")
         inputs.save_input("task-details", content=b"Robert, Executive")
         inputs.save_input("golden", content=b"Current size is 214 MB.")

@@ -18,6 +18,7 @@ spec = importlib.util.spec_from_file_location('search_under_test', TOOLS / 'hg_s
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
 import hg_search_index as cache
+from universe_fixture import routing, select
 
 
 class IndexedSearchTests(unittest.TestCase):
@@ -29,7 +30,7 @@ class IndexedSearchTests(unittest.TestCase):
         self.folder.mkdir(parents=True)
         refs = self.root / 'Evals/references'
         refs.mkdir(parents=True)
-        (refs / 'universe_manifest.json').write_text(json.dumps({'services': {'gmail': {'path': 'Base/gmail'}}}))
+        select(self.root).write_text(json.dumps({'services': {'gmail': {'path': 'Base/gmail'}}}))
         self.records = []
 
     def tearDown(self):

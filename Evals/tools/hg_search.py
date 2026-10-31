@@ -9,6 +9,7 @@ import sqlite3
 import sys
 from types import SimpleNamespace
 from hg_compact_index import manifest_operation, watch_manifest
+import hg_universe
 
 ROOT = Path(__file__).resolve().parents[2]
 DECODER = json.JSONDecoder()
@@ -127,13 +128,18 @@ def parse_pointer(value):
     return tuple(s.replace('~1', '/').replace('~0', '~') for s in value[1:].split('/'))
 
 
+def manifest_path():
+    """Routing manifest of the universe selected by this task's saved date."""
+    return hg_universe.manifest_path(ROOT)
+
+
 def manifest():
-    return json.loads((ROOT / 'Evals/references/universe_manifest.json').read_text())
+    return json.loads(manifest_path().read_text())
 
 
 @manifest_operation()
 def service_info(service):
-    watch_manifest(ROOT / 'Evals/references/universe_manifest.json')
+    watch_manifest(manifest_path())
     services = manifest()['services']
     if service not in services:
         raise ValueError('Unknown service: ' + service)
@@ -145,7 +151,7 @@ def service_info(service):
 
 
 def compact_api():
-    return SimpleNamespace(ROOT=ROOT, manifest=manifest, candidates=candidates,
+    return SimpleNamespace(ROOT=ROOT, manifest=manifest, manifest_path=manifest_path, candidates=candidates,
         safe_file=safe_file, Stream=Stream, pointer=pointer, parse_pointer=parse_pointer,
         snippet=snippet, decoded_gmail=decoded_gmail, render_subtree=render_subtree)
 
@@ -592,7 +598,8 @@ def main():
                     'manifest_present': (p / 'source_manifest.json').is_file(),
                     'source_file_count': info['file_count'], 'source_bytes': info['total_bytes'],
                     'empty_export': info.get('empty_export')})
-            result = {'archive': m['archive'], 'archive_sha256': m['archive_sha256'],
+            result = {'universe': hg_universe.describe(hg_universe.selected(ROOT)),
+                      'archive': m['archive'], 'archive_sha256': m['archive_sha256'],
                       'services': rows, 'individual_files_verified': False, 'persona_filtered': False}
         elif args.command == 'files':
             folder, records = service_info(args.service)

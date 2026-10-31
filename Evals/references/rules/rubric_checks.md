@@ -1,6 +1,6 @@
 # Evidence-linked rubric checks (rubric-revision-v10)
 
-Every scored AUDIT needs the `checks` object below inside its format-4 scoring
+Every scored AUDIT needs the `checks` object below inside its format-5 scoring
 record. Reuse the source, assertion and judgment ledgers; do not run another
 reviewer or invent a second task answer. Preserve the supplied rubric unchanged.
 
@@ -13,7 +13,12 @@ fields with generic PASS judgments to get a receipt.
 ## Sources and instruction coverage
 
 `checks.sources` uses the existing EvidenceReader anchors: `id`, `path`,
-`sha256`, `quote`, `visibility` (VISIBLE/INACCESSIBLE/UNRESOLVED), and `access`.
+`sha256`, `quote`, `visibility` (VISIBLE/INACCESSIBLE/UNRESOLVED), and `access`,
+plus `reachability` (Eval 3 §2.4): PROMPT_LINKED (reachable from a prompt noun,
+directly or through linked records, readable as content, and outside Trash/Spam
+unless the prompt points there), TRASH, ATTACHMENT_ONLY or UNLINKED. A fact claim
+citing a source that is not PROMPT_LINKED stays unresolved, and the row needs an
+`unobservable` issue.
 Optional exact JSON `pointer` or inclusive `line_start`/`line_end` selects a
 record/excerpt. Incorporated instructions additionally record `incorporated_by`
 and `incorporation_reason`. Requirement authority starts at the actual saved
@@ -116,7 +121,7 @@ Each row also contains:
    example cannot be cleared by relabelling the test ONE_RESULT. Every declared
    independent bundle outside the documented QC exceptions needs a `non_atomic`
    Major issue and a failed atomicity repair gate.
-4. `assertion_inventory`: the existing format-4 inventory: `complete`, `reason`,
+4. `assertion_inventory`: the existing inventory (unchanged since format 4): `complete`, `reason`,
    and `assertions` with exact field quotes, roles, entities/properties and outcome
    links. Each assertion includes `id`, `field` (title/justification/evidence),
    `quote`, `role`, `outcome_id` and `reason`. Roles: REQUIRED_RESULT, QUALIFIER,
@@ -139,6 +144,23 @@ Each row also contains:
    `rubric_factual_checks.md`. Every supplied row has this field.
    Exact source selections support NUMBER/DATE/LITERAL comparisons; SEMANTIC
    judgments remain evidence-backed judgments. Required unresolved facts keep the review incomplete. A stated PASS cannot override a computed mismatch.
+   ID-shaped and anonymized title tokens need LITERAL claims. A date the title
+   grades on a split PT/UTC day uses `pt_or_utc_date`; stating only one of the two
+   days requires an `overly_specific` issue. A LITERAL mismatch against an
+   anonymized source token requires `overly_specific` (or `incorrect`).
+7. `valid_case`: `{ "example", "result", "reason" }`, a prompt-allowed answer the
+   row must ACCEPT (Eval 3 §5.3). Build it from what the prompt actually asks:
+   "keep it short" allows a compact reply of any line count. A REJECT requires an
+   `overly_specific` issue on the row (`incorrect` when the row's expected value
+   is wrong, `unauthorized` when it adds a duty). UNRESOLVED keeps the review
+   incomplete.
+8. `do_nothing_case`: `{ "result", "reason", "quote" }` for an Agent that makes no
+   writes and gives no answer (Eval 3 §2.9). It must REJECT, with `quote` the
+   exact title text of the write or artifact an idle Agent never produces ("records
+   the close-out total of $1,570.00 on ENG-2558", "in its close-out pay email to
+   …"). The quote cannot be a preserved state or prohibition. An ACCEPT is a
+   negative in disguise: classify `negative` as PROHIBITION, which fails Negative
+   Criteria.
 
 If other criteria already grade every component of a non-atomic row, record those
 controls as duplicate-coverage evidence; they do not waive its Major atomicity
@@ -147,10 +169,21 @@ reason}` for each REQUIRED_RESULT assertion, but are not a severity override.
 The same row cannot be its own catching control. Use the highest severity once
 per authored row and the canonical overlap-group rule in `qc_rubric_v10.md`.
 
+## Final-reply test
+
+`checks.final_reply_test` records Eval 3 §3.7's correct-delivery plus concise
+final reply: `example`, `authority` (the prompt text that sets what the reply must
+carry), `result` (ACCEPT/REJECT/UNRESOLVED), `rejecting_rows` and `reason`. Each
+rejecting row needs an `overly_specific` (or `unauthorized`) issue; ACCEPT has no
+rejecting rows.
+
 ## Non-overridable results
 
 - Recognized NON_AGENT/MCP wording requires Agent-Centric FAIL (1–2).
 - A supported prohibition without explicit instruction requires Negative FAIL.
+- A `do_nothing_case` ACCEPT requires PROHIBITION and Negative FAIL; a rejected
+  `valid_case` or final reply requires its Major acceptance issue.
+- An unreachable deciding record requires `unobservable`.
 - Recorded independent results outside a documented QC exception require an
   atomicity issue and failed repair gate.
 - Computed factual mismatches cannot be cleared by declared semantic PASS labels.

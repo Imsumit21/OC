@@ -26,6 +26,7 @@ class FactualAuditTests(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer, "REPOSITORY", self.root).start()
         patch.object(inputs, "REPOSITORY", self.root).start()
+        inputs.save_input("universe", content=b"2026-02-14\n")  # task date (hg_universe.py)
         inputs.save_input("prompt", content=b"Report the current download size.")
         inputs.save_input("task-details", content=b"Synthetic public-writer regression")
         inputs.clear_input("injection", confirmed_unused=True)
@@ -40,7 +41,7 @@ class FactualAuditTests(unittest.TestCase):
         raw = json.dumps(payload, sort_keys=True).encode()
         path.write_bytes(raw)
         return dict(id="INDEPENDENT", path=str(path), sha256=digest(raw), quote=raw.decode(),
-                    visibility="VISIBLE", access="Task-accessible synthetic primary source.")
+                    visibility="VISIBLE", access="Task-accessible synthetic primary source.", reachability="PROMPT_LINKED")
 
     def facts(self, record, source, claim):
         ledger = record["checks"]
@@ -155,7 +156,7 @@ class FactualAuditTests(unittest.TestCase):
         text, score = self.prepare()
         raw = (self.root / "Evals/task_inputs/08_Golden_Answer.md").read_bytes()
         source = dict(id="GOLDEN_ONLY", path="Evals/task_inputs/08_Golden_Answer.md", sha256=digest(raw),
-                      quote=raw.decode(), visibility="VISIBLE", access="Supplied golden, not primary evidence.")
+                      quote=raw.decode(), visibility="VISIBLE", access="Supplied golden, not primary evidence.", reachability="PROMPT_LINKED")
         claim = dict(id="SIZE", quote="214 MB", kind="NUMBER", source_ids=[source["id"]],
                      reason="Golden repeats the same measurement.",
                      calculation=dict(op="direct", operands=[dict(source_id=source["id"], pointer="/size_mb")],

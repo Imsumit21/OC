@@ -1,6 +1,6 @@
 # Prompt and rubric evidence reliability
 
-The shared `prompt-ugt-v1` package retains `prompt-rubric-reliability-v1` source
+The shared `task-quality-v1` package retains `prompt-rubric-reliability-v1` source
 safeguards and release binding. Its prompt policy is `prompt-source-checks-v2`:
 format-2 premise records also bind the mandatory Unique Ground Truth comparison.
 Existing QC scores, severities, weights, atomicity exceptions and sampling policy
@@ -165,6 +165,20 @@ In a complete `unique_ground_truth` object:
   (`EXPLICIT_DELEGATION` or `OBJECTIVE_ACCEPTANCE_BOUNDARY`), `acceptance_boundary`
   and `acceptance_checks` explaining how both leading and alternate reading IDs
   satisfy that boundary. Merely listing options is not delegation.
+- `BOTH_FAIR_FIGURE` (Eval 1 §2.1 local override, 2026-10-17) is the only PASS
+  for a fork no source settles. It needs decision, writes and destinations
+  `SAME` and stated word for word the same in both readings, contents
+  `DIFFERENT`, no `authority_chain`, `delegation_basis: NOT_CLAIMED`, and a
+  `figure` object: `kind` (AMOUNT, COUNT, RATE or DATE); `label` (one fork per
+  label); `values`, exactly two, leading reading first, each `{reading_id, value,
+  evidence, derivation}`, where `evidence` quotes a visible primary record other
+  than the prompt, `derivation` is required when no quote contains the value,
+  and each reading's `contents` contains its value; `checks` with
+  `newer_source`, `authority`, `source_identity`, `scope` and
+  `same_material_result`, each `{settles: false, reason}` (`settles: true`
+  rejects the label); and `asks_completed` and `next_step_unchanged` reasons.
+  The rendered section prints `Rubric must accept: X or Y`, and
+  `hg_prompt_checks.py` returns the pairs as `both_fair_figures`.
 - `option_inventory` has `complete: true`, `reason`, `evidence` citing the actual
   prompt, and `options`. Every explicit option has `id`, `option`, `source_id`,
   exact `quote`, `reading_ids`, `disposition` (RETAINED/EXCLUDED) and `reason`.

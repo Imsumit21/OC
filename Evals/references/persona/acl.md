@@ -35,8 +35,8 @@ HarmonyGames evaluation environment.
 
 | Service | Persona-scoped reads | Visibility |
 |---|:---:|---|
-| Gmail | Yes | Acting user's mailbox-visible messages, threads, labels, profile, and attachments |
-| Slack | Yes | Conversations, messages, threads, files, and related records visible to the acting Slack user |
+| Gmail | Yes | Acting user's mailbox-visible messages, threads, labels, profile, and attachment names and metadata |
+| Slack | Yes | Conversations, messages, threads, file names and metadata, and related records visible to the acting Slack user |
 | GCal | Yes | Calendars, events, and free/busy data visible to the acting user |
 | Contacts | No | Unscoped |
 | GDrive | Yes | Files and folders the acting user owns or that are shared with them, including metadata, content, and search results |
@@ -48,6 +48,17 @@ HarmonyGames evaluation environment.
 | Linear | No | Unscoped |
 | Snowflake | No | Unscoped |
 | Confluence | No | Unscoped |
+
+**Attachment content (2026-10-17).** The tool catalog lists
+`gmail_get_attachment`, `slack_read_file`, `linear_get_attachment` and
+`trello_get_attachment` but not what they return, so this note rests on export
+and run evidence. Gmail attachment reads return no bytes
+(`no_attachment_root_configured` in the HarmonyGames runs), although the local
+export keeps the files under `root/attachments/`. Slack file records carry no
+content (`content_path` and `content_inline` are null on all 53,422 records).
+Linear attachments (2,027 files) and Drive-family files ship real content;
+Trello ships bytes for 42 of its 106 attachments. Evidence that exists only
+inside a Gmail or Slack attachment is not readable by the Agent as content.
 
 Contacts, GitHub, Trello, Linear, Snowflake, and Confluence form the
 **public-service group**. This is a read-filtering classification, not an

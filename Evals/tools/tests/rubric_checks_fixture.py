@@ -8,7 +8,8 @@ def fact_source():
     path=Path(__file__).parent/'fixtures/measurement_source.json'
     raw=path.read_bytes()
     return dict(id='F_SOURCE',path=str(path.resolve()),sha256=hashlib.sha256(raw).hexdigest(),
-        quote=raw.decode(),visibility='VISIBLE',access='Immutable synthetic source for focused helper tests.')
+        quote=raw.decode(),visibility='VISIBLE',access='Immutable synthetic source for focused helper tests.',
+        reachability='PROMPT_LINKED')
 
 
 def facts_fixture(title):
@@ -29,11 +30,21 @@ def facts_fixture(title):
     return dict(complete=True,reason='Explicit fixture facts; uncovered numbers remain unresolved.',claims=claims)
 
 
+def idle_case(title):
+    """Do-nothing case from the title's own syntax; a fixture, not a semantic grader."""
+    from hg_rubric_checks import title_facts
+    facts = title_facts(title)
+    if facts["negative_action"] or facts["disguised_negative"]:
+        return dict(result="ACCEPT", reason="An Agent that does nothing satisfies this prohibition or preserved state.")
+    return dict(result="REJECT", quote=title, reason="An Agent that does nothing never makes the required report.")
+
+
 def checks_fixture(rubric, prompt="Report the current download size."):
     from hg_rubric_checks import title_facts
     result = dict(sources=[dict(id="P1", path="Evals/task_inputs/04_Prompt.txt",
                   sha256=hashlib.sha256(prompt.encode()).hexdigest(), quote=prompt,
-                  visibility="VISIBLE", access="Actual saved prompt"),fact_source()], rows=[], requirements=[])
+                  visibility="VISIBLE", access="Actual saved prompt", reachability="PROMPT_LINKED"),fact_source()],
+                  rows=[], requirements=[])
     for i, row in enumerate(rubric, 1):
         rid = f"Q{i}-O1"
         req = dict(id=rid, entity=f"Build {i}", property="download size", output="Reply",
@@ -54,9 +65,14 @@ def checks_fixture(rubric, prompt="Report the current download size."):
             assertion_inventory=dict(complete=True, reason="One fixture measurement.", assertions=[dict(
                 id="A1", field="title", quote=row["title"], role="REQUIRED_RESULT", outcome_id=rid,
                 kind="ENTITY_PROPERTY", entities=[f"Build {i}"], property="download size", reason="Requested value.")]),
-            supporting_fields=dict(status="PASS", reason="Supporting fields add no constraint.")))
+            supporting_fields=dict(status="PASS", reason="Supporting fields add no constraint."),
+            valid_case=dict(example="The current download size is 214.0 MB.", result="ACCEPT",
+                            reason="An equivalent rendering of the requested value."),
+            do_nothing_case=idle_case(row["title"])))
     result["instruction_reviews"] = [dict(source_id="P1", clauses=[dict(start=0, end=len(prompt), quote=prompt,
         role="REQUIREMENT", outcome_ids=[r["id"] for r in result["requirements"]], reason="The fixture requests each reviewed measurement.")])]
     result['alternative_review']=dict(complete=True,source_ids=['P1'],reason='Single measurement fixture has no advertised alternative branches.',branches=[])
     result['overlap_review']=dict(complete=True,reason='Fixture compares semantic outcome ownership.')
+    result['final_reply_test']=dict(example='The current download size is 214 MB.', result='ACCEPT', rejecting_rows=[],
+        authority='The prompt asks only for the measurement.', reason='A one-line reply with the value passes every row.')
     return result

@@ -13,7 +13,7 @@ import hg_write_output as writer
 from hg_review_score import calculate, validate_score
 from hg_rubric_checks import title_facts, validate_checks
 from hg_rubric_loop import digest, review_context, FINAL
-from rubric_checks_fixture import checks_fixture, facts_fixture
+from rubric_checks_fixture import checks_fixture, facts_fixture, idle_case
 from test_hg_review_enforcement import tally
 from test_hg_rubric_loop import candidate, score_record
 
@@ -35,6 +35,7 @@ class RubricChecksTests(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer, "REPOSITORY", self.root).start()
         patch.object(inputs, "REPOSITORY", self.root).start()
+        inputs.save_input("universe", content=b"2026-02-14\n")  # task date (hg_universe.py)
         self.prompt = "Report the current download size."
         inputs.save_input("prompt", content=self.prompt.encode())
         self.rubric = json.loads(candidate())
@@ -174,7 +175,7 @@ class RubricChecksTests(unittest.TestCase):
             self.rubric.append(json.loads(candidate(title))[0])
             req["rows"].append(i)
             row = copy.deepcopy(bundle)
-            row.update(row=i, title=title, fact_review=facts_fixture(title))
+            row.update(row=i, title=title, fact_review=facts_fixture(title), do_nothing_case=idle_case(title))
             row["atomicity"]["outcome_ids"] = [req["id"]]
             row["atomicity"]["independence_test"].update(classification="ONE_RESULT", satisfied_outcome_ids=[], failed_outcome_ids=[])
             row["assertion_inventory"]["assertions"] = [copy.deepcopy(bundle["assertion_inventory"]["assertions"][i-2])]
@@ -197,7 +198,7 @@ class RubricChecksTests(unittest.TestCase):
             title = "The Agent reports source-supported " + req["property"] + " for Zombie Match 3D."
             self.rubric.append(json.loads(candidate(title))[0])
             row = copy.deepcopy(template)
-            row.update(row=i, title=title, fact_review=facts_fixture(title))
+            row.update(row=i, title=title, fact_review=facts_fixture(title), do_nothing_case=idle_case(title))
             req["rows"] = [i]
             for name in ("omission_test", "wrong_result_test"):
                 req[name]["caught_by"] = [dict(row=i, quote=title)]
@@ -355,7 +356,7 @@ class RubricChecksTests(unittest.TestCase):
         raw = json.dumps([source]).encode()
         (self.root / "pr.json").write_bytes(raw)
         self.checks["sources"].append(dict(id="S1", path="pr.json", sha256=digest(raw), pointer="/0",
-            quote="2026-02-10", visibility="VISIBLE", access="Shared repository record"))
+            quote="2026-02-10", visibility="VISIBLE", access="Shared repository record", reachability="PROMPT_LINKED"))
         row = self.checks["rows"][0]
         row["atomicity"]["exception"] = dict(kind="coherent_record", record_kind="pull_request", source_id="S1",
             entity="repo#10", fields=["number", "merged_at"], reason="Attributes of one verified selected record.")

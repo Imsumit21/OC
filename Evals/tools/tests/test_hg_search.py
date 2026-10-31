@@ -11,6 +11,7 @@ from unittest.mock import patch
 from contextlib import redirect_stdout
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from universe_fixture import routing, select
 spec = importlib.util.spec_from_file_location('hg_search', Path(__file__).resolve().parents[1] / 'hg_search.py')
 h = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(h)
@@ -28,7 +29,7 @@ class SearchTests(unittest.TestCase):
                 if empty is not None:
                     info['empty_export'] = empty
                 services[service] = info
-            (refs / 'universe_manifest.json').write_text(json.dumps({
+            select(refs.parent.parent).write_text(json.dumps({
                 'archive': 'refreshed.zip', 'archive_sha256': 'fixture', 'services': services}))
             output = io.StringIO()
             with patch.object(h, 'ROOT', root), patch.object(sys, 'argv', ['hg_search.py', 'inventory']), redirect_stdout(output):
@@ -68,7 +69,7 @@ class SearchTests(unittest.TestCase):
                 (folder/'thread.json').write_text(json.dumps(data))
                 records = [{'path': 'thread.json', 'bytes': 1}]
                 (folder/'source_manifest.json').write_text(json.dumps({'files': records}))
-                (refs/'universe_manifest.json').write_text(json.dumps({'services': {'gmail': {'path': 'Base/gmail'}}}))
+                select(refs.parent.parent).write_text(json.dumps({'services': {'gmail': {'path': 'Base/gmail'}}}))
                 args = SimpleNamespace(service='gmail', query='needle', file=None, pointer='', key=None, case_sensitive=False, limit=20)
                 found = h.search(args)
                 self.assertTrue(found['scan_complete'])

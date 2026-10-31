@@ -7,6 +7,7 @@ different databases:
 |---|---|
 | `injection.json` | Backing database targeted by universe injection SQL: 58 tables. |
 | `snowflake.json` | Analytical tables exposed by the Snowflake service: 40 tables and 454 columns. |
+| `id_contracts.json` | Supported ID contracts for Eval 0 Check A (Gmail history_id, Drive content_path), with base evidence; enforced by `tools/hg_injection_lint.py`. |
 
 `manifest.json` records provenance, hashes, coverage and verification limits
 under `references.injection` and `references.snowflake`. These files support

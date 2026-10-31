@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import hg_records as records
+from universe_fixture import routing, select
 
 
 class RecordChecks(unittest.TestCase):
@@ -16,7 +17,7 @@ class RecordChecks(unittest.TestCase):
         (self.root / 'Evals/references').mkdir(parents=True)
         self.folder = self.root / 'Base/linear'
         self.folder.mkdir(parents=True)
-        (self.root / 'Evals/references/universe_manifest.json').write_text(json.dumps(
+        select(self.root).write_text(json.dumps(
             {'services': {'linear': {'path': 'Base/linear'}}}))
         (self.folder / 'source_manifest.json').write_text(json.dumps(
             {'files': [{'path': 'data.json'}]}))

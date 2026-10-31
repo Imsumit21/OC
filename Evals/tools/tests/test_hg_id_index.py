@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import hg_search as h
 import hg_id_index as idx
 import hg_compact_index as compact
+from universe_fixture import routing, select
 
 
 class IdentityIndexTests(unittest.TestCase):
@@ -20,7 +21,7 @@ class IdentityIndexTests(unittest.TestCase):
         self.folder = self.root / 'Base'
         self.folder.mkdir()
         (self.root / 'Evals/references').mkdir(parents=True)
-        self.universe = self.root / 'Evals/references/universe_manifest.json'
+        self.universe = select(self.root)
         self.universe.write_text(json.dumps({'services': {'linear': {'path': 'Base'}}}))
         self.source = self.folder / 'data.json'
         self.source.write_text(json.dumps({'rows': [{'id': 'A', 'nested': {'id': 'B'}},
@@ -102,7 +103,7 @@ class IdentityIndexTests(unittest.TestCase):
 
     def test_corrupt_artifact_and_manifest_fall_back(self):
         entry = idx.package(h, 'linear', 'data.json')
-        path = self.root / 'Evals/references/id_indexes' / entry['path']
+        path = self.universe.parent / 'id_indexes' / entry['path']
         path.write_text('{}')
         self.assertEqual(self.lookup()['backend'], 'batch-exact-id-scan')
         self.assertEqual(len(self.lookup()['matches']['A']), 2)
@@ -134,7 +135,7 @@ class IdentityIndexTests(unittest.TestCase):
     def test_missing_index_never_builds_during_lookup(self):
         result = self.lookup()
         self.assertEqual(result['backend'], 'batch-exact-id-scan')
-        self.assertFalse((self.root / 'Evals/references/id_indexes').exists())
+        self.assertFalse((self.universe.parent / 'id_indexes').exists())
 
     def test_cache_directory_symlink_falls_back_without_writing_target(self):
         idx.package(h, 'linear', 'data.json')

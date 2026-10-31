@@ -84,6 +84,12 @@ def save_output(kind, content, golden_unverified=False):
         result = parse_result(kind, content)
         if kind != "golden" and "evaluator_model" not in result:
             raise ValueError("Verdict block needs an Evaluator model line naming the model and effort that produced this report.")
+        if kind != "golden":
+            import hg_universe
+            if "clock" not in result:
+                raise ValueError("Verdict block needs the task date line: "
+                                 + hg_universe.report_line(hg_universe.selected(REPOSITORY)))
+            hg_universe.check_report_clock(result["clock"], REPOSITORY)
         if kind == "rubric" and (result.get("review_mode") not in {None, "AUDIT"} or result.get("ready_for_prefill")):
             raise ValueError("Rubric is evaluation-only; CREATE and prefill reports cannot be saved.")
         if kind == "golden" and (result["verdict"] == "PASS" or "review_record_sha256" in result):
