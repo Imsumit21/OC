@@ -3,7 +3,7 @@
 
 Deterministic, read-only, stdlib only (Python 3.9). Run from the workspace root:
 
-  python3 Task_Authoring/tools/entity.py build              # writes references/universe_kb/entities.json
+  python3 Task_Authoring/tools/entity.py build              # writes the task context's universe KB: references/universe_kb/by_universe/<universe>/entities.json
   python3 Task_Authoring/tools/entity.py resolve <query> [--json]
   python3 Task_Authoring/tools/entity.py collisions [--json]
   python3 Task_Authoring/tools/entity.py --self-test
@@ -251,7 +251,7 @@ def build() -> dict:
     for eid, ev in gc["events"].items():
         cal_n[ev[0]] += 1
         d = pv.parse_dt(ev[3])
-        if d and d <= pv.CLOCK:
+        if d and d <= getattr(pv, "DATA_CLOCK", pv.CLOCK):   # what exists/visible: the data horizon
             cal_last[ev[0]] = _max(cal_last[ev[0]], ev[3])
     for cid, c in sorted(gc["calendars"].items()):
         ident = {"calendar_id": cid, "owner_email": c["owner"], "summary": c["summary"], "events": cal_n[cid],
@@ -390,6 +390,7 @@ def build() -> dict:
     ents = sorted(b.ents.values(), key=lambda e: (e["persona"] is None, e["kind"] != "person",
                                                   (e["canonical_name"] or "~").casefold(), e["entity_id"]))
     data = {"_meta": {"generated_by": "Task_Authoring/tools/entity.py build", "clock": pv.CLOCK.isoformat(),
+                      "data_clock": getattr(pv, "DATA_CLOCK", pv.CLOCK).isoformat(),  # seed bound vs data horizon
                       "join_rules": ["roster", "exact_email", "exact_name", "exact_name+username_localpart",
                                      "own_record"],
                       "entity_count": len(ents), "kinds": dict(Counter(e["kind"] for e in ents)),
@@ -401,9 +402,14 @@ def build() -> dict:
             "entities": ents, "unresolved": b.unresolved, "integrity_flags": b.flags}
     context = globals().get("TASK_CONTEXT")
     if context:
-        data["_meta"].update(source_fingerprint=context["source"]["fingerprint"], context_hash=context["context_hash"])
-        if context["source"].get("mode") == "shared-universe":
-            data["_meta"].update(reference_clock=context["source"]["data_clock"], assigned_freeze=context["freeze_utc"])
+        source = context["source"]
+        # No context hash: it covers machine paths and the KB status, so it would change a committed KB on every rebuild.
+        data["_meta"].update(source_fingerprint=source["fingerprint"],
+                             universe=context.get("universe", {}).get("key") or source.get("universe"))
+        if source.get("mode") == "universe":
+            data["_meta"].update(clock=source.get("data_clock") or data["_meta"]["clock"], build="per-universe-v1",
+                                 data_clock=source.get("data_clock"), reference_clock=source.get("data_clock"),
+                                 assigned_freeze=context["freeze_utc"], seed_bound=context["freeze_utc"])
     data["collisions"] = collisions(data)
     unid = Counter()
     for e in ents:
@@ -412,9 +418,9 @@ def build() -> dict:
     data["_meta"]["counts"] = {"unidentified_entities_by_origin": dict(unid),"unresolved": Counter(x["type"] for x in data["unresolved"]),
                                "integrity_flags": Counter(x["type"] for x in data["integrity_flags"]),
                                "collisions": {k: len(v) for k, v in data["collisions"].items()}}
-    if context:
-        from runtime_context import validate_kb
-        data = validate_kb(data, globals())
+    if context and (context["source"].get("kb_status") != "unavailable"):
+        # A build may target a not-yet-bound universe (no KB to validate against); a read never may.
+        data = _validate(data)
     return data
 
 
@@ -522,15 +528,57 @@ def collisions(data: dict) -> dict:
 
 # ---------------------------------------------------------------- load / resolve
 
+def _validate(data):
+    """Apply the selected universe's KB contract; a missing KB is an explicit stop, never another KB."""
+    import runtime_context
+    unavailable = getattr(runtime_context, "KBUnavailable", runtime_context.ContextError)
+    try:
+        return runtime_context.validate_kb(data, globals())
+    except unavailable as exc:
+        raise SystemExit(f"error: {exc}") from exc
+
+
 def load() -> dict:
     path = OUT
     context = globals().get("TASK_CONTEXT")
-    if not path.exists() and context and context["source"].get("mode") == "shared-universe":
-        path = Path(context["source"]["kb_path"]) / "entities.json"
+    source = (context or {}).get("source") or {}
+    generated = _generated_entities(context)
+    if not path.exists() and generated:
+        path = generated
+    elif not path.exists() and context and source.get("mode") == "universe" \
+            and source.get("kb_status") != "unavailable" and source.get("kb_path"):
+        path = Path(source["kb_path"]) / "entities.json"
     if not path.exists():
+        reason = _kb_reason()
+        if reason:
+            raise SystemExit(f"error: {reason}")
         raise SystemExit(f"error: {OUT.relative_to(pv.WS)} missing; run `python3 Task_Authoring/tools/entity.py build`")
-    from runtime_context import validate_kb
-    return validate_kb(pv._load(path), globals())
+    data = pv._load(path)
+    if context and source.get("kb_status") == "unavailable":
+        if generated and Path(path).resolve() == Path(generated).resolve():
+            # A records-built entities file whose _meta matches the selected universe (entities_file).
+            return data
+        raise SystemExit(f"error: {_kb_reason()}")
+    return _validate(data)
+
+
+def _generated_entities(context):
+    if not context:
+        return None
+    try:
+        import runtime_context
+    except ImportError:
+        return None
+    return runtime_context.entities_file(context)
+
+
+def _kb_reason():
+    context = globals().get("TASK_CONTEXT")
+    source = (context or {}).get("source") or {}
+    if context and source.get("kb_status") == "unavailable":
+        return source.get("reason") or (f"No knowledge base is bound to the {source.get('universe') or 'selected'} "
+                                        "universe; rebuild it before using KB facts")
+    return None
 
 
 def _all_keys(e: dict) -> set:
@@ -658,9 +706,11 @@ def _self_test() -> int:
     check("EMPLOYEE_0025_SLACK_ID" in ids(ab, "slack") and ab["identities"]["slack"][0]["join"] == "exact_email",
           "Arthur Blake: Slack EMPLOYEE_0025_SLACK_ID joined by exact email")
     mb = E["email:marcus.bennett@harmonygames.co"]
-    check("gmail" not in mb["identities"], "Marcus Bennett has no Gmail mailbox")
-    check("marcus@harmonygames.co" in [m for e in data["entities"] for m in e["emails"] if e is not mb]
-          and E["email:marcus@harmonygames.co"]["identities"].get("gmail"), "marcus@ is a separate entity with a mailbox")
+    check([i.get("mailbox") for i in mb["identities"].get("gmail", [])] == ["marcus.bennett@harmonygames.co"],
+          "Marcus Bennett carries the gmail identity marcus.bennett@harmonygames.co")
+    check("email:marcus@harmonygames.co" not in E
+          and not any("marcus@harmonygames.co" == m for e in data["entities"] for m in e["emails"]),
+          "no separate marcus@ entity or email exists")
     tim = E["email:tim.steudler@harmonygames.co"]
     check(ids(tim, "slack") == ["UBF5AB53C96"] and not tim["persona"]["usable_in_tasks"],
           "Tim Steudler: Slack UBF5AB53C96, flagged not usable")
@@ -677,7 +727,7 @@ def _self_test() -> int:
           "exact_name+username_localpart", "Trello 'Thomas' joins Thomas via username corroboration")
     col = data["collisions"]
     mar = " ".join(col["shared_first_names"].get("marcus", []))
-    check(all(m in mar for m in ("marcus.bennett@", "marcus.lee@", "<marcus@")), "three Marcuses collision listed")
+    check(all(m in mar for m in ("marcus.bennett@", "marcus.lee@")), "Marcus collision lists Marcus Bennett and Marcus Lee")
     check("EMPLOYEE_0032" in col["tokens_mapping_to_several_entities"], "EMPLOYEE_0032 token maps to several entities")
     check(any("U05F0A0D12F" in x for x in col["lookalike_handles_and_aliases"]),
           "Slack handle 'thomas' (Thomas Baker) vs thomas@ lookalike flagged")
@@ -710,8 +760,12 @@ def main(argv: list) -> int:
     a = ap.parse_args(argv)
     if a.cmd == "build":
         context = globals().get("TASK_CONTEXT")
-        target = (Path(context["source"].get("kb_output_path", context["source"]["kb_path"])) / "entities.json"
-                  if context else OUT)
+        source = (context or {}).get("source") or {}
+        output = (source.get("kb_output_path") or source.get("kb_path")) if context else None
+        if context and not output:
+            raise SystemExit(f"error: no KB output path is configured for the {source.get('universe') or 'selected'} "
+                             "universe; set kb_output_path in references/universe_sources.json")
+        target = Path(output) / "entities.json" if context else OUT
         data = build()
         target.parent.mkdir(parents=True, exist_ok=True)
         tmp = target.with_suffix(".tmp")

@@ -11,6 +11,89 @@ def H(cat, hid, service, title, count, examples, guidance, denominator=None, sou
             "examples": examples[:10] if isinstance(examples, list) else examples, "keep_out_guidance": guidance, "source": source, **({"detail": detail} if detail else {})}
 
 
+CHECKED_AND_CLEAN_FEB14 = [
+    "Slack: 0 orphan reply groups, 0 replies earlier than parent, 0 messages on/after clock, 0 posts by unknown users",
+    "Linear: 0 Done without completed_at, 0 Canceled without canceled_at, 0 dates after clock, 0 missing parents/assignees",
+    "GitHub: 0 merged without merged_at, 0 merged_at < created_at, every PR comment has a 'commented' timeline event",
+    "Confluence: versions contiguous, latest version == page body/title on all 31 pages",
+    "Trello: badges.comments/checkItems agree with actions/check items on all 803 cards",
+    "GCal: 0 end<=start, every copy has self:true on the owner, 0 instances missing an attendee copy",
+    "Drive family: sharing/owner/modified agree between Drive and Docs/Sheets/Slides rows",
+    "Snowflake: CASH_BALANCE rolls forward (cash_n = cash_n-1 - monthly_net_burn) for all 34 months; mirrored tables agree row-for-row"]
+
+
+def checked_and_clean():
+    """Base-wide checks run on the Feb 14, 2026 data; their counts are no claim about another universe."""
+    if UNIVERSE_KEY == "normal":
+        return CHECKED_AND_CLEAN_FEB14
+    return ["Not recorded for this universe: the base-wide consistency checks were run on the Feb 14, 2026 data only."]
+
+
+SURNAME_TITLE = "Shared surnames: people in this universe who share a last name (each group is listed under ids)"
+
+
+HAND_WRITTEN_SOURCES = ("Scenario_Atlas", "Ask_Carriers")
+
+
+def without_hand_written(rows):
+    """(rows this universe emits, ids of the hand-written rows it leaves out): rows whose source cites Scenario_Atlas
+    or Ask_Carriers are emitted only where hand_written_allowed()."""
+    if hand_written_allowed():
+        return rows, []
+    hand = [any(s in r["source"] for s in HAND_WRITTEN_SOURCES) for r in rows]
+    return [r for r, h in zip(rows, hand) if not h], [r["id"] for r, h in zip(rows, hand) if h]
+
+
+def metadata_artifact_title_suffix():
+    """The normal-only #prototype artifact dates; empty for a universe without the shutdown storylines."""
+    return " (incl. 3 Slack messages dated 2026-02-13 in #prototype)" if shutdown_rules_apply() else ""
+
+
+def metadata_artifact_guidance():
+    if shutdown_rules_apply():
+        return "Never treat metadata/*.yaml as ground truth; the cited 2026-02-13 #prototype messages are absent from the export."
+    return "Never treat metadata/*.yaml as ground truth; cited artifact messages absent from this universe's export."
+
+
+def shutdown_hazards():
+    """Hard-coded Feb-2026 shutdown facts; emitted only where the universe applies shutdown rules."""
+    if not shutdown_rules_apply():
+        return []
+    return [H("state_lifecycle", "L13", "github+slack", "Work merged after the shutdown announcement (Combo-Fighters#37 merged 2026-02-13 by Oliver; CodeRabbit comment after cancellation); 16 repos never archived; 275 Linear issues still open", 3,
+              ["github:harmonygames-Games/Combo-Fighters#37", "github:harmonygames-Games/Combo-Fighters#37#c_1", "slack:C05KNDCHAAG:1770842137.835489"], "'Everything stopped on Feb 9' is false; define the cut-off explicitly.", source="Scenario_Atlas")]
+
+
+def stale_roadmap_fact():
+    """The normal-only Trello-vs-Linear staleness dates; None when the universe predates them."""
+    if not shutdown_rules_apply():
+        return None
+    return {"title": "Trello roadmap is stale against Linear (boards quiet since 2025-11-13; Linear last issue created 2025-11-07, updated to 2026-01-28)",
+            "risk": "Roadmap status on Trello disagrees with Linear state.",
+            "legit_use": "Ask which system governs status in the prompt."}
+
+
+def lookalike_app_titles():
+    """App-name lineage; TestFlight-only titles after the shutdown belong to the normal universe only."""
+    parts = ["App-name lineage: GoD -> Domino Delights -> '[ORG] DD' -> 'Harmony Games DD'",
+             "'Puzzles vs Zombies' / 'Match 3D' / 'Zombie Game 3D' -> Zombie Match 3D"]
+    examples = ["gmail distribution 'GoD iOS' 2023-04", "testflight 'Puzzles vs Zombies' 2025-03..07"]
+    if shutdown_rules_apply():
+        parts.append("'Combo Fighter' vs repo 'Combo-Fighters'")
+        parts.append("TestFlight-only 'Domino Adventure' (2023-12..2024-09) and 'Trump Billionaires Club' (2026-01-20..02-13)")
+        examples.append("testflight 'Trump Billionaires Club' 2026-01-20")
+    else:
+        parts.append("TestFlight-only 'Domino Adventure' (2023-12..2024-09)")
+    return "; ".join(parts), examples
+
+
+def calendar_lookalike_title():
+    """Calendar lookalike trap; the two 'All Hands' example is a normal-universe fact."""
+    prefix = "Calendar lookalikes: "
+    if shutdown_rules_apply():
+        prefix += "two 'All Hands' on 2025-10-24 (16:00Z and 16:30Z); "
+    return prefix + "recurring master + instance duplicates; reused ical_uids"
+
+
 def parse_invite_date(when):
     m = re.search(r"\b([A-Z][a-z]{2}) (\d{1,2}), (\d{4})\b", when or "")
     if not m or m.group(1) not in MON:
@@ -22,16 +105,16 @@ def parse_invite_date(when):
 
 
 def main():
-    S = jload(CACHE + "/kb_slack.json")
-    SC = jload(CACHE + "/kb_slack_claims.json")
-    GM = jload(CACHE + "/kb_gmail.json")
-    GC = jload(CACHE + "/kb_gmail_copies.json")
-    GH = jload(CACHE + "/kb_github.json")
-    LI = jload(CACHE + "/kb_linear.json")
-    O = jload(CACHE + "/kb_other.json")
-    B = jload(CACHE + "/kb_beats.json")
-    A = jload(OUT + "/activity.json")
-    E = jload(OUT + "/entities.json")
+    S = jload_cache("kb_slack.json")
+    SC = jload_cache("kb_slack_claims.json")
+    GM = jload_cache("kb_gmail.json")
+    GC = jload_cache("kb_gmail_copies.json")
+    GH = jload_cache("kb_github.json")
+    LI = jload_cache("kb_linear.json")
+    O = jload_cache("kb_other.json")
+    B = jload_cache("kb_beats.json")
+    A = jload_kb("activity.json")
+    E = jload_kb("entities.json")
     G = jload(GITHUB)
     pr_ids = {p["id"] for p in G["pull_requests"]}
     pr_by_repo_num = {(p["repo_id"].split("/")[1], p["number"]): p for p in G["pull_requests"]}
@@ -65,8 +148,8 @@ def main():
     hz.append(H("temporal", "T06", "trello", "Card has an action later than its dateLastActivity", th.get("card action later than dateLastActivity", {}).get("count", 0), th.get("card action later than dateLastActivity", {}).get("examples", []),
                 "When seeding a Trello comment, bump dateLastActivity; avoid these cards for 'last touched' questions."))
     miss_beats = [m for b in B for m in b["missing"]]
-    hz.append(H("temporal", "T07", "metadata", "Storyline YAML artifacts that do not exist in the base (incl. 3 Slack messages dated 2026-02-13 in #prototype)", len(miss_beats), miss_beats,
-                "Never treat metadata/*.yaml as ground truth; the cited 2026-02-13 #prototype messages are absent from the export.", denominator="%d artifact ids in 451 beats" % sum(len(b["artifacts"]) for b in B)))
+    hz.append(H("temporal", "T07", "metadata", "Storyline YAML artifacts that do not exist in the base" + metadata_artifact_title_suffix(), len(miss_beats), miss_beats,
+                metadata_artifact_guidance(), denominator="%d artifact ids in 451 beats" % sum(len(b["artifacts"]) for b in B)))
     # confluence activity after the person is otherwise silent
     late_conf = []
     for em, v in A["people"].items():
@@ -111,7 +194,7 @@ def main():
     gm_red = [g for g in GM["github_mails"] if g[0] not in known_repos]
     hz.append(H("cross_service_referential", "R03", "gmail+github", "GitHub notification mails whose subject has the repo name redacted ('[[SOURCE_ORG_0001]-Games/[USERNAME_0351]] ...'): %d mails; mails naming a PR absent from the export: %d" % (len(gm_red), len(gm_ghost)), len(gm_red), [g[6] for g in gm_ghost[:6]] + [g[6] for g in gm_red[:4]], "The PR is recoverable only from the Message-ID (<org/repo/pull/N/...@github.com>); do not rely on subject parsing.",
                 denominator="%d GitHub notification mails" % len(GM["github_mails"])))
-    hz.append(H("cross_service_referential", "R04", "slack+drive", "Slack links to Google Docs/Sheets/Slides use Google-native ids (docs.google.com/.../d/1X...) that never equal the export's f_ ids", S["gdoc_links"], ["#winddown folder link 1XQAild72BAz_A-Wo-bvTBX7oZjygP53H (Scenario_Atlas)"],
+    hz.append(H("cross_service_referential", "R04", "slack+drive", "Slack links to Google Docs/Sheets/Slides use Google-native ids (docs.google.com/.../d/1X...) that never equal the export's f_ ids", S["gdoc_links"], hand_written(["#winddown folder link 1XQAild72BAz_A-Wo-bvTBX7oZjygP53H (Scenario_Atlas)"]),
                 "A Slack link never resolves to a Drive record by id; a task must name the file by title or path. Seeded links should mimic this (Google-native id) and be paired with an exact title.", source="computed"))
     hz.append(H("cross_service_referential", "R05", "github", "Branch head_sha values are pre-rewrite SHAs (present only as commit_map.old_sha)", gh.get("branch head_sha is a pre-rewrite SHA (commit_map.old_sha), not in commits", {}).get("count", 0),
                 gh.get("branch head_sha is a pre-rewrite SHA (commit_map.old_sha), not in commits", {}).get("examples", []), "Do not ask for the commit at a branch head; use PR head_sha.", denominator="2,011 branches"))
@@ -209,8 +292,7 @@ def main():
     for k, hid in (("open card in closed (archived) list", "L11"), ("card in Done list with incomplete checklist items", "L12")):
         v = th.get(k, {"count": 0, "examples": []})
         hz.append(H("state_lifecycle", hid, "trello", k[0].upper() + k[1:], v["count"], v["examples"], "Exclude from list-based cohorts."))
-    hz.append(H("state_lifecycle", "L13", "github+slack", "Work merged after the shutdown announcement (Combo-Fighters#37 merged 2026-02-13 by Oliver; CodeRabbit comment after cancellation); 16 repos never archived; 275 Linear issues still open", 3,
-                ["github:harmonygames-Games/Combo-Fighters#37", "github:harmonygames-Games/Combo-Fighters#37#c_1", "slack:C05KNDCHAAG:1770842137.835489"], "'Everything stopped on Feb 9' is false; define the cut-off explicitly.", source="Scenario_Atlas"))
+    hz.extend(shutdown_hazards())
     hz.append(H("state_lifecycle", "L14", "snowflake+slack", "Warehouse rows 'completed' where Slack reports outages (EVT-0324/0325 29 Jun 2025; EVT-0592 27 Oct; EVT-0608/0625/0640/0656 Nov leaderboards)", 7,
                 ["snowflake:LIVE_EVENT_PERFORMANCE/EVT-0324", "snowflake:LIVE_EVENT_PERFORMANCE/EVT-0592", "slack:C080X4GTZ0E:1751200739.524289", "slack:C080X4GTZ0E:1764532627.291559"],
                 "System-vs-claim: allowed only if the task makes reconciling them the job.", source="Scenario_Atlas"))
@@ -248,20 +330,16 @@ def main():
                 [l["name"] for l in O["trello"]["lists"].values() if "PERSON_NAME" in l["name"]], "Name lists by id in tasks."))
     hz.append(H("identifier_format", "I18", "slack", "In-place retractions written as ~strikethrough~ (claims withdrawn inside the same message)", strikes["count"], ["slack:%s:%s" % (x[0], x[1]) for x in strikes["examples"][:10]],
                 "A struck-through clause is not a live claim; never quote it as one.", detail=strikes["by_year"]))
+    hz, dropped_hazards = without_hand_written(hz)
     cats = collections.defaultdict(list)
     for h in hz:
         cats[h["category"]].append(h)
-    out = {"_meta": {"generated_by": "Task_Authoring/references/universe_kb/_build/assemble_hazards_traps.py", "clock": "2026-02-14T00:00:00Z",
+    out = {"_meta": {"generated_by": "Task_Authoring/references/universe_kb/_build/assemble_hazards_traps.py", "clock": CLOCK_ISO,
                      "use": "Pre-existing inconsistencies. The Evals fail Cross-Service Coherence on any inconsistency in task-touched data, so keep these records out of a task's scope, or make reconciling them the explicit, incorporated job.",
-                     "sources": "kb_cache passes over every export (computed) plus Scenario_Atlas.md items re-cited with ids (source=Scenario_Atlas).",
-                     "checked_and_clean": ["Slack: 0 orphan reply groups, 0 replies earlier than parent, 0 messages on/after clock, 0 posts by unknown users",
-                                           "Linear: 0 Done without completed_at, 0 Canceled without canceled_at, 0 dates after clock, 0 missing parents/assignees",
-                                           "GitHub: 0 merged without merged_at, 0 merged_at < created_at, every PR comment has a 'commented' timeline event",
-                                           "Confluence: versions contiguous, latest version == page body/title on all 31 pages",
-                                           "Trello: badges.comments/checkItems agree with actions/check items on all 803 cards",
-                                           "GCal: 0 end<=start, every copy has self:true on the owner, 0 instances missing an attendee copy",
-                                           "Drive family: sharing/owner/modified agree between Drive and Docs/Sheets/Slides rows",
-                                           "Snowflake: CASH_BALANCE rolls forward (cash_n = cash_n-1 - monthly_net_burn) for all 34 months; mirrored tables agree row-for-row"]},
+                     "sources": "kb_cache passes over every export (computed) plus Scenario_Atlas.md items re-cited with ids (source=Scenario_Atlas); "
+                                "those were written from the Feb 14, 2026 data, so only the normal universe emits them (elsewhere listed under hand_written_rows_not_emitted).",
+                     "hand_written_rows_not_emitted": dropped_hazards,
+                     "checked_and_clean": checked_and_clean()},
            "categories": {k: v for k, v in cats.items()}, "index": [{"id": h["id"], "category": h["category"], "title": h["title"], "count": h["count"]} for h in hz]}
     jdump(out, OUT + "/coherence_hazards.json", indent=1)
 
@@ -278,10 +356,10 @@ def main():
         if len(nm) >= 2:
             surn[nm[-1].lower()].add(v["name"] + " <" + em + ">")
     sh_ = {k: sorted(v) for k, v in surn.items() if len(v) > 1}
-    T("P02", "lookalike_people", "Shared surnames (Bennett: Marcus/Oscar; Brooks: Oliver/Lauren; Baker: Owen/Thomas Baker; Lawson: Julia/Peter; Price: Calvin/Nathan)", [f"{k}: {v}" for k, v in sh_.items()],
+    T("P02", "lookalike_people", SURNAME_TITLE, [f"{k}: {v}" for k, v in sh_.items()],
       "Surname-only references ('Bennett said…', 'Brooks's PR') resolve wrongly.", "Use surname-only mentions in seeded human messages only when a second record disambiguates.", count=len(sh_))
-    T("P03", "lookalike_people", "marcus@harmonygames.co mailbox (a different Marcus, shown as 'Marcus Bennett <marcus@…>') vs persona Marcus Bennett (no mailbox) vs Marcus Lee (UA)", ["gmail mailbox marcus@harmonygames.co", "slack EMPLOYEE_0002_SLACK_ID", "linear usr_d7ae9de750a5640a", "linear usr_b501f018a4c5319f"],
-      "Mail evidence attributed to Marcus Bennett is really another person's.", "A trap where the agent must notice the address, not the display name.", source="Ask_Carriers+entities.json")
+    T("P03", "lookalike_people", "Three Marcuses: persona Marcus Bennett (mailbox marcus.bennett@harmonygames.co) vs Marcus Lee (marcus.lee@harmonygames.co; no mailbox) vs a mononym Trello member 'Marcus'", ["gmail mailbox marcus.bennett@harmonygames.co", "slack EMPLOYEE_0002_SLACK_ID", "contact marcus.lee@harmonygames.co", "linear usr_b501f018a4c5319f", "trello c48a210d5c5a4b59231c6873"],
+      "Mail or PR evidence attributed to 'Marcus' is really another person's; the mailbox is marcus.bennett@, and marcus@harmonygames.co does not exist.", "A trap where the agent must notice the address, not the display name.", source="Ask_Carriers+entities.json")
     T("P04", "lookalike_people", "Tokenised GitHub contributors whose real login only appears in the Slack GitHub-app mirror", ["%s -> %s" % (k, v) for k, v in GH["login_to_slack_mirror_actor"].items()],
       "Authorship questions answered from GitHub alone return tokens; mirrors reveal real logins (sometimes redacted again: '[PERSON_NAME_0212]').", "Authorship chains that require joining a PR to its Slack mirror (record-level join).", count=len(GH["login_to_slack_mirror_actor"]))
     both = sorted(int(k.split("-")[1]) for k in issues if k.startswith("ZOM-") and ("ENG-" + k.split("-")[1]) in issues)
@@ -320,8 +398,10 @@ def main():
     cpages = {pid: p for pid, p in O["confluence"]["pages"].items() if p["version"] and p["version"] > 1}
     T("D06", "stale_vs_current", "Confluence pages with version history and edit messages (old bodies readable via get_page_version / diff)", [{"page": pid, "versions": p["version"], "messages": p["version_messages"][:2]} for pid, p in list(cpages.items())[:12]],
       "An agent quoting v1 of a page reports a superseded fact.", "Effective-date regimes: the version in force at a record's date decides.", count=len(cpages))
-    T("D07", "stale_vs_current", "Trello roadmap is stale against Linear (boards quiet since 2025-11-13; Linear last issue created 2025-11-07, updated to 2026-01-28)", [b["name"] + " last " + (b["last_activity"] or "")[:10] for b in O["trello"]["boards"].values()],
-      "Roadmap status on Trello disagrees with Linear state.", "Ask which system governs status in the prompt.")
+    roadmap = stale_roadmap_fact()
+    if roadmap:
+        T("D07", "stale_vs_current", roadmap["title"], [b["name"] + " last " + (b["last_activity"] or "")[:10] for b in O["trello"]["boards"].values()],
+          roadmap["risk"], roadmap["legit_use"])
     T("D08", "stale_vs_current", "P&L workbook versions project different zero-cash months (Jun, Jul, Sep-30, Oct, Jan versions)", ["sheets:f_846ac…", "sheets:f_a5e9…", "sheets:f_dd0b…", "sheets:f_28ecc492b19f3696a19a97", "sheets:f_605121f4a36752645e0ac3"],
       "Latest-is-right fails if the question is 'what did the board see in October'.", "Board-date-scoped questions.", source="Scenario_Atlas")
     cand = [c for c in S["corrections"] if c["marker"] in ("correction", "scratch that", "my bad", "i was wrong", "turns out", "false alarm", "not true", "disregard", "that's wrong", "thats wrong", "ignore that", "ignore my", "revert that", "reverted that", "typo") and float(c["reply_ts"]) >= 1704067200]
@@ -363,16 +443,19 @@ def main():
     # similar containers
     fc = [c for c in chans.values() if (c.get("name") or "").startswith("FC:")]
     T("K01", "lookalike_containers", "Canvas pseudo-channels named 'FC:<file id>:<title>' (32) and per-title channel families (god-* vs zombie-*), 90 archived channels",
-      [c["id"] + " " + c["name"][:50] for c in fc[:8]] + ["C05V5FNLB9V god-bugs", "C08R27X0EAH zombie-bugs"], "Searching 'bugs' or 'season pass issues' returns sibling containers for another game.", "Distractor containers with the same vocabulary.", count=len(fc))
-    T("K02", "lookalike_containers", "App-name lineage: GoD -> Domino Delights -> '[ORG] DD' -> 'Harmony Games DD'; 'Puzzles vs Zombies' / 'Match 3D' / 'Zombie Game 3D' -> Zombie Match 3D; 'Combo Fighter' vs repo 'Combo-Fighters'; TestFlight-only 'Domino Adventure' (2023-12..2024-09) and 'Trump Billionaires Club' (2026-01-20..02-13)",
-      ["gmail distribution 'GoD iOS' 2023-04", "testflight 'Puzzles vs Zombies' 2025-03..07", "testflight 'Trump Billionaires Club' 2026-01-20"], "Name-based counts across eras undercount.", "Rename-aware questions (one record states the rename).")
-    T("K03", "lookalike_containers", "Calendar lookalikes: two 'All Hands' on 2025-10-24 (16:00Z and 16:30Z); recurring master + instance duplicates; reused ical_uids", ["gcal:evt_0a0658fbb9bbebae7f962a", "gcal:evt_11530fad245bf030e8563b"] + ["%s/%s" % (x[0], x[2]) for x in gch["duplicate_copy_same_calendar"]["examples"][:4]],
+      [c["id"] + " " + c["name"][:50] for c in fc[:8]] + hand_written(["C05V5FNLB9V god-bugs", "C08R27X0EAH zombie-bugs"]), "Searching 'bugs' or 'season pass issues' returns sibling containers for another game.", "Distractor containers with the same vocabulary.", count=len(fc))
+    k02_title, k02_examples = lookalike_app_titles()
+    T("K02", "lookalike_containers", k02_title,
+      k02_examples, "Name-based counts across eras undercount.", "Rename-aware questions (one record states the rename).")
+    T("K03", "lookalike_containers", calendar_lookalike_title(), hand_written(["gcal:evt_0a0658fbb9bbebae7f962a", "gcal:evt_11530fad245bf030e8563b"]) + ["%s/%s" % (x[0], x[2]) for x in gch["duplicate_copy_same_calendar"]["examples"][:4]],
       "Wrong meeting chosen.", "Meeting-selection traps decided by attendees or time.", source="Scenario_Atlas+computed")
+    traps, dropped_traps = without_hand_written(traps)
     tcat = collections.defaultdict(list)
     for t_ in traps:
         tcat[t_["kind"]].append(t_)
-    outt = {"_meta": {"generated_by": "Task_Authoring/references/universe_kb/_build/assemble_hazards_traps.py", "clock": "2026-02-14T00:00:00Z",
-                      "use": "Natural traps already in the data. Use them only as traps whose correct resolution is decidable from incorporated records; heuristic lists (C01, C02) must be read before use."},
+    outt = {"_meta": {"generated_by": "Task_Authoring/references/universe_kb/_build/assemble_hazards_traps.py", "clock": CLOCK_ISO,
+                      "use": "Natural traps already in the data. Use them only as traps whose correct resolution is decidable from incorporated records; heuristic lists (C01, C02) must be read before use.",
+                      "hand_written_rows_not_emitted": dropped_traps},
             "kinds": dict(tcat), "index": [{"id": t_["id"], "kind": t_["kind"], "title": t_["title"], "count": t_["count"]} for t_ in traps]}
     jdump(outt, OUT + "/trap_catalog.json", indent=1)
     # stats reused by integrations

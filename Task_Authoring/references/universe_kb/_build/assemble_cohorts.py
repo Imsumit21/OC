@@ -11,7 +11,10 @@ SURF = {
                      "bulk": "linear_list_issues returns state/labels/assignee/parent/relations/description(+truncated flag); NO comments. Only Linear comments are an honest one-call-per-record surface (verified, §6b).",
                      "honest_per_record_calls": "1 (list_comments) when the seeded fact lives in comments; else ~0"},
     "github_pr": {"per_record_surfaces": ["title/body/head_ref", "conversation comments", "reviews", "review comments", "timeline", "commits/files"],
-                  "bulk": "search/list return title/body/branch/merged_at. Comments and reviews are per PR in GitHub, BUT GameOfDominoes, game-of-dominoes-backend and match3d (2025-06-30..2025-10-24) are mirrored into Slack (#engineering-bots / #zombie-prs) and sweepable at ~50/page. Combo-Fighters, liveops, match3d-backend and other repos are NOT mirrored.",
+                  "bulk": "search/list return title/body/branch/merged_at. Comments and reviews are per PR in GitHub, BUT "
+                          + ("GameOfDominoes, game-of-dominoes-backend and match3d (2025-06-30..2025-10-24) are mirrored into Slack (#engineering-bots / #zombie-prs) and sweepable at ~50/page. Combo-Fighters, liveops, match3d-backend and other repos are NOT mirrored."
+                             if shutdown_rules_apply() else
+                             "repos with a Slack mirror (see integrations.json INT-01 for this universe's windows) are sweepable at ~50/page; unmirrored repos are per-PR reads."),
                   "honest_per_record_calls": "unmirrored repo: comments + reviews + timeline ~2-3; mirrored repo: timeline/files/commits only"},
     "slack_thread": {"per_record_surfaces": ["replies"], "bulk": "slack_conversations_search_messages returns replies; filter-only search (channel+user) pages everything (verified). Not per-record volume.",
                      "honest_per_record_calls": "0 against a determined agent; useful only as the A14 behavioural trap"},
@@ -47,12 +50,12 @@ def q(d):
 
 
 def main():
-    LI = jload(CACHE + "/kb_linear.json")
-    GH = jload(CACHE + "/kb_github.json")
-    S = jload(CACHE + "/kb_slack.json")
-    GM = jload(CACHE + "/kb_gmail.json")
-    O = jload(CACHE + "/kb_other.json")
-    HZ = jload(OUT + "/coherence_hazards.json")
+    LI = jload_cache("kb_linear.json")
+    GH = jload_cache("kb_github.json")
+    S = jload_cache("kb_slack.json")
+    GM = jload_cache("kb_gmail.json")
+    O = jload_cache("kb_other.json")
+    HZ = jload_kb("coherence_hazards.json")
     allhz = {h["id"]: h for v in HZ["categories"].values() for h in v}
     issues = LI["issue_index"]
     cohorts = []
@@ -62,7 +65,7 @@ def main():
         lhz["linear+github: " + k] = [x[0] for x in v["examples"]] if v["count"] <= 10 else [x[0] for x in v["examples"]]
     lhz["L08 open issue assigned to quiet/departed person"] = [x.split(" ")[0] for x in allhz["L08"]["examples"]]
     # recompute L08 fully
-    A = jload(OUT + "/activity.json")
+    A = jload_kb("activity.json")
     st = {em: v["status_at_clock"] for em, v in A["people"].items()}
     lue = {k: v.get("email") for k, v in LI["users"].items()}
     DONE = {"Done", "Canceled", "Duplicate"}
@@ -148,8 +151,11 @@ def main():
             cohorts.append(C("GH-Q%02d" % n, "github", "github_pr", "%s PRs created in %s" % (repo, qq), "repo=%s AND created_at in %s" % (repo, qq), ids, inter(ids, ghz),
                              notes="Slack-mirrored repo (window %s..%s)" % tuple(x[:10] for x in mirror_win[repo]) if mirrored else "NOT mirrored to Slack -> comments/reviews are per-PR reads"))
     m3 = [p["id"] for p in prs if p["repo_id"].endswith("/match3d") and mirror_win.get("match3d") and p["created_at"] >= mirror_win["match3d"][0][:10]]
-    m3_after = [p["id"] for p in prs if p["repo_id"].endswith("/match3d") and p["created_at"] > "2025-10-25"]
-    if m3_after: cohorts.append(C("GH-M3-AFTER", "github", "github_pr", "match3d PRs created after the Slack mirror stopped (2025-10-25+)", "repo=match3d AND created_at > 2025-10-25", m3_after, inter(m3_after, ghz), notes="unmirrored: comments/reviews only via per-PR GitHub reads"))
+    m3_win = mirror_win.get("match3d")
+    m3_after_from = (iso_to_dt(m3_win[1]) + datetime.timedelta(days=1)).date().isoformat() if m3_win else None
+    m3_after = [p["id"] for p in prs if p["repo_id"].endswith("/match3d") and m3_after_from and p["created_at"] > m3_after_from]
+    if m3_after:
+        cohorts.append(C("GH-M3-AFTER", "github", "github_pr", "match3d PRs created after the Slack mirror stopped (%s+)" % m3_after_from, "repo=match3d AND created_at > %s" % m3_after_from, m3_after, inter(m3_after, ghz), notes="unmirrored: comments/reviews only via per-PR GitHub reads"))
     unm = [p["id"] for p in prs if p["state"] == "closed" and not p["merged"]]
     cohorts.append(C("GH-CLOSED", "github", "github_pr", "PRs closed without merge (all repos)", "state=closed AND merged=false", unm, inter(unm, ghz)))
     keyed = list(GH["pr_linear_keys"].keys())

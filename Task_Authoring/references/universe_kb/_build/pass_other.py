@@ -60,10 +60,11 @@ def gcal_pass(out):
                         break
         att = set(a.get("email") for a in lst[0].get("attendees") or [])
         have = set(e["calendar_id"] for e in lst)
-        miss = [a for a in att if a in cals and a not in have]
+        # Sorted: set order (and so the first three ids kept) would otherwise follow the per-process string hash seed.
+        miss = sorted(a for a in att if a in cals and a not in have)
         if miss and len(missing_copy) < 2000:
             missing_copy.append([lst[0]["event_id"], miss[:3]])
-        extra = [c for c in have if c not in att]
+        extra = sorted(c for c in have if c not in att)
         if extra:
             extra_copy.append([lst[0]["event_id"], extra[:3]])
     # dup copies on same calendar
