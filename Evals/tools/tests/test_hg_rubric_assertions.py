@@ -129,6 +129,7 @@ class AssertionRecordTests(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer,'REPOSITORY',self.root).start()
         patch.object(inputs,'REPOSITORY',self.root).start()
+        inputs.save_input('universe', content=b'2026-02-14\n')  # task date (hg_universe.py)
         self.prompt='Create a Linear issue reporting the implementation status of begin_level, left_level and notification_permission individually.'
         inputs.save_input('prompt',content=self.prompt.encode())
         inputs.save_input('golden',content=b'Fixture facts: begin_level, left_level and notification_permission are implemented.')

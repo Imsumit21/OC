@@ -14,11 +14,22 @@ maps. Do not introduce numbered subtypes.
 `/rubric create` is retired: explain that this skill evaluates supplied criteria
 and request the existing rubric if missing. Never generate a substitute.
 
+**Task date first.** Before anything else, including other input questions, run
+`python3 Evals/tools/hg_store_input.py list` and read `universe_intake`. Unless it
+is `SELECTED`, ask only this and wait:
+**Which date is this task on: Oct 1, 2025 (synth-cut) or Feb 14, 2026 (normal)?**
+Save the answer with `python3 Evals/tools/hg_store_input.py universe "<answer>"`.
+Never guess, infer or default the date; it selects the universe folder and clock
+for every read (`Evals/INPUTS.md` **Task date — ask first**). A saved date is
+reused without asking. Copy `report_line` from `universe_intake` (or
+`hg_universe.py show`) into the verdict block as its `Clock:` line.
+
 Follow `Evals/INPUTS.md`: list saved inputs, save new submissions under their
 own keys, then read the actual relevant contents. Required: the existing rubric,
-exact prompt, assignment/persona and applicable prompt reference files. Use a
-supplied OE as a comparison reference; an OE PASS or OE repair is
-not a prerequisite. Verify acceptance-bearing facts against primary sources.
+exact prompt, assignment/persona and applicable prompt reference files. When the
+task has OEs, save the OE too: map every row to its OE steps and record OE
+conflicts (Eval 3 §3.1); an OE PASS or OE repair is not a prerequisite.
+Verify acceptance-bearing facts against primary sources.
 Optional injection SQL needs saved SQL or an explicit no-injection decision.
 If unresolved, ask with the other missing inputs: **Injection SQL (optional): does
 this task use any? If yes, paste or attach it; if not, say no injection.** Save an
@@ -76,7 +87,7 @@ for explicit acceptance bands. Include release fingerprints in the report.
    unscoped reads (acl.md). Use local files and static SQL; do not
    execute SQL, replay workplace tools or launch model runs.
 3. **Evaluate every criterion and the set.** Apply Eval 3's six review checks,
-   six static QC dimensions and factual checks. Complete the format-4 scoring
+   six static QC dimensions and factual checks. Complete the format-5 scoring
    record in `Evals/references/rules/review_scoring.md`, including the mandatory
    `checks` ledger in `rubric_checks.md` and each row's `fact_review` under
    `rubric_factual_checks.md`. Test valid alternatives, plausible wrong answers,
@@ -88,9 +99,9 @@ for explicit acceptance bands. Include release fingerprints in the report.
    subjects, affirmative framing, weights and supporting-field consistency remain
    mandatory. Read `Evals/Docs` (QC spec, rating form, Rubric Writing) as the
    authority and apply the Local Overrides table at the top of Eval 3:
-   title-only self-containment, Major Overly Specific, Moderate Overly Broad,
-   cascading-failure overlap groups, prohibition-only titles failing Negative
-   Criteria, Major `non_agent_centric` for artifact-subject or tool-name titles, Category Balance failing only at zero Outcome, at most five spot
+   title-only self-containment, Major Overly Specific, Major Overly Broad,
+   cascading-failure overlap groups, prohibition-only titles and rows an Agent
+   passes by doing nothing failing Negative Criteria, Major `non_agent_centric` for artifact-subject or tool-name titles, Category Balance failing only at zero Outcome, at most five spot
    checks per group plus a volume criterion, and the `predicted_all_fail` record
    (two or more rows force FAIL).
    A PASS label cannot override a source-derived factual mismatch.

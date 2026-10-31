@@ -28,6 +28,9 @@ anchor with its JSON pointer or line range instead of quoting one convenient
 number from a larger record. Calculation/selection pointers are relative to
 that selected value, not the original file. An empty pointer selects the entire
 anchor. Sources must have current hashes and established persona visibility.
+In the rubric review each anchor also records `reachability` (Eval 3 §2.4): a
+claim citing a TRASH, ATTACHMENT_ONLY or UNLINKED source stays unresolved and
+is marked `unreachable`.
 
 Aggregates need the complete relevant candidate set. Record table/repository,
 record grain, filters, period/timezone, included record IDs and deduplication
@@ -83,12 +86,23 @@ Allowed kinds:
   a matching-source count of 15.
   Supported operations are `direct`, `count`, `distinct_count`, `sum`, `min`,
   `max`, `difference` and `ratio`. The last two take two operands; others take one.
-- `DATE`: an unambiguous ISO date or timezone-qualified instant, with
+- `DATE`: an unambiguous ISO date or timezone-qualified instant, or a prose date
+  with month name, day and four-digit year ("November 16, 2025"), with
   `selection: {source_id, pointer}`. `comparison` defaults to `exact`; use
-  `utc_date` only when the authorized requirement is a UTC calendar date.
+  `utc_date` only when the authorized requirement is a UTC calendar date. Use
+  `pt_or_utc_date` for a calendar day people in the story would write: it matches
+  the source instant's UTC day or its America/Los_Angeles day. When those days
+  differ, the row must state both (one claim per day on the same selection);
+  stating only one is `overly_specific` (Eval 3 §2.11). Instant comparisons
+  against the clock stay UTC.
 - `LITERAL`: an exact source string, with `selection: {source_id, pointer}`.
   This supports immutable names and IDs, not free-form response wording that may
   legitimately vary. A numeric JSON scalar cannot be coerced to a literal string.
+  Anonymized tokens are the source string. A row accepts the token as shown, and
+  the real name only when a persona-visible record maps it. A LITERAL quote of a
+  real name against a source showing `[PERSON_NAME_0854]` is a mismatch the helper
+  marks `anonymized_token`; record it as `overly_specific` (the row rejects the
+  answer the tools allow) or `incorrect`.
 - `SEMANTIC`: a source-backed judgment with `status` VERIFIED, CONTRADICTED or
   UNRESOLVED. Quote and explain the actual predicate and source evidence. This is
   a recorded judgment, not executable proof; it cannot satisfy numeric coverage.
@@ -108,8 +122,12 @@ Allowed kinds:
 The helper requires executable NUMBER/DATE/LITERAL coverage or an explicit
 UNRESOLVED or NOT_A_CLAIM claim for every complete numeric literal, supported English cardinal or digit-bearing
 title token. A complete ISO date needs one DATE/LITERAL/UNRESOLVED/NOT_A_CLAIM claim; separate
-fragments cannot substitute. A proper name such as One may instead use a verified
-exact LITERAL source claim. Unsupported quantity phrases stay unresolved. The
+fragments cannot substitute. In the rubric review, ID-shaped title tokens
+(snake_case event or field keys such as `quest_completed`, prefixed record IDs,
+ticket keys, Slack-style and long hexadecimal IDs) and anonymized tokens are
+treated like numbers: each needs a LITERAL claim (or an explicit UNRESOLVED or
+NOT_A_CLAIM claim). SEMANTIC cannot bind them. A proper name such as One may
+instead use a verified exact LITERAL source claim. Unsupported quantity phrases stay unresolved. The
 helper does not discover all English-language facts: ordinals, prose date
 interpretations, implied time comparisons and classifications still require
 explicit source-backed review. Never label a

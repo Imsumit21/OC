@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from universe_fixture import select
 from hg_report_contract import SCORED, STAGES, parse_result
 import hg_write_output
 
@@ -37,7 +38,7 @@ def report(verdict, status="COMPLETE", score=None, limits="None", stage=None, mo
             extra += f"\nPrediction basis: {prediction_basis}\n"
     return (
         f"### FINAL VERDICT: {verdict}\n\n{score_line}"
-        f"Execution status: {status}\n\nEvaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort\n\n"
+        f"Execution status: {status}\n\nClock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)\n\nEvaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort\n\n"
         "Next action: Review findings\n\n"
         f"Evidence limits: {limits}\n{extra}"
     )
@@ -49,7 +50,9 @@ class ReportContractTests(unittest.TestCase):
             for status in ("PARTIAL", "BLOCKED"):
                 for score in (None, "null"):
                     with self.subTest(stage=stage, status=status, score=score):
-                        expected = {"verdict": "NON-FAIL", "verdict_score": None, "execution_status": status}
+                        expected = {"verdict": "NON-FAIL", "verdict_score": None, "execution_status": status,
+                                    "evaluator_model": "Opus 5.5 (claude-opus-5-5), xhigh effort",
+                                    "clock": "2026-02-14 00:00 UTC, Feb 14, 2026 (normal)"}
                         if stage == "hardness":
                             expected.update(difficulty=None, gate_decision="HOLD", gate_reason="INSUFFICIENT_EVIDENCE", assessment_version="model-aware-v3", assessed_model="Opus", assessment_mode="OPUS_OBSERVED")
                         if stage == "oe":
@@ -120,6 +123,7 @@ class ReportContractTests(unittest.TestCase):
 
     def test_writer_keeps_fixed_paths_and_rejects_blank_before_overwrite(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(hg_write_output, "REPOSITORY", Path(folder)):
+            select(folder)  # task date (hg_universe.py)
             for stage in STAGES:
                 with self.subTest(stage=stage):
                     content = report("NON-FAIL", "PARTIAL", limits="Required evidence unavailable", stage=stage)
@@ -142,6 +146,7 @@ class ReportContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             parse_result("hardness", content.replace("Opus 5.5 (claude-opus-5-5), xhigh effort", ""))
         with tempfile.TemporaryDirectory() as folder, patch.object(hg_write_output, "REPOSITORY", Path(folder)):
+            select(folder)  # task date (hg_universe.py)
             for stage in set(STAGES) - {"golden"}:
                 with self.subTest(stage=stage):
                     content = report("NON-FAIL", "PARTIAL", limits="Required evidence unavailable", stage=stage)
@@ -196,6 +201,7 @@ class ReportContractTests(unittest.TestCase):
 
     def test_retired_gate_reasons_and_versions_cannot_overwrite_current_report(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(hg_write_output, "REPOSITORY", Path(folder)):
+            select(folder)  # task date (hg_universe.py)
             current = report("PASS", score=5, stage="hardness")
             receipt = hg_write_output.save_output("hardness", current)
             destination = Path(folder) / receipt["path"]
@@ -282,6 +288,7 @@ class ReportContractTests(unittest.TestCase):
 
     def test_prediction_replaced_by_observed_opus_at_same_fixed_path(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(hg_write_output, "REPOSITORY", Path(folder)):
+            select(folder)  # task date (hg_universe.py)
             # Equal scores still represent different claims and must keep their mode.
             haiku = report("NON-FAIL", score=4, limits="Opus prediction only; not observed",
                            stage="hardness", model="Haiku")
@@ -303,6 +310,7 @@ class ReportContractTests(unittest.TestCase):
 
     def test_writer_rejects_hardness_gate_bypass_before_overwrite(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(hg_write_output, "REPOSITORY", Path(folder)):
+            select(folder)  # task date (hg_universe.py)
             content = report("FAIL", score=1, stage="hardness")
             receipt = hg_write_output.save_output("hardness", content)
             destination = Path(folder) / receipt["path"]

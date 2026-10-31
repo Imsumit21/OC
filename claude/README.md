@@ -1,6 +1,6 @@
 # Claude skills — direct local search
 
-Keep `claude/`, `Evals/` and all three HarmonyGames base folders listed in `Evals/UNIVERSE_MAP.md` as siblings.
+Keep `claude/`, `Evals/`, `Universe_Normal/` and `Universe_SynthCut/` (each with the three HarmonyGames base folders listed in `Evals/UNIVERSE_MAP.md`) as siblings.
 From that workspace, have the agent run `python3 claude/install.py` once.
 This installs project-local relative links for the skills and CLAUDE.md.
 It is idempotent and refuses conflicts; it does not change global settings.
@@ -9,6 +9,23 @@ Reload the project if skills are not yet discovered. No `/setup` is needed.
 Available: `/injection`, `/prompt`, `/hardness`, `/oe`, `/rubric`. `/hint` was
 removed on 2026-09-26; rerunning the installer retires its link.
 Run the individual command for the stage you want to review.
+
+**Two-universe update — 2026-10-20 (`dual-universe-v1`):** Every task now names
+its date first: **Oct 1, 2025 (synth-cut)** or **Feb 14, 2026 (normal)**. Each
+skill asks before anything else and saves the answer with
+`Evals/tools/hg_store_input.py universe <answer>`; there is no default. The date picks
+`Universe_SynthCut/` (`hg4-synth-sep30cut` v16, clock 2025-10-01 00:00 PT) or
+`Universe_Normal/` (`hg4-2026-08-31` v37, clock 2026-02-14 00:00 UTC); search,
+lint and review tools refuse to read the universe until it is saved, and new
+reports carry a matching `Clock:` line. The February 11, 2026 shutdown rules
+apply to Feb 14 tasks only; on Oct 1 the company runs normally, people who had
+already left (Victor, April 2025) are still gone, and nothing after
+2025-09-30 23:59:59 PT exists. See `Evals/ENVIRONMENT.md` **Task date and universe**.
+
+**Task-quality update — 2026-10-18 (`task-quality-v1`):** `/prompt`, `/rubric`, `/oe`
+and `/injection` apply the new task-quality rules listed in
+[../Evals/README.md](../Evals/README.md). Replace Evals/ and claude/ together
+and reload the project.
 
 **Service update — 2026-09-23 (`service-availability-v1`):** all skills use
 the shared live-service rule in `Evals/ENVIRONMENT.md`. Snowflake and Confluence
@@ -35,7 +52,7 @@ inputs. `/prompt` does not request later Oracle Events, rubrics or agent runs.
 The existing search commands automatically validate matching prepared indexes
 on first use. Shared file routing and complete raw-record caching support all
 compatible service exports; four large structured exports also have prepared
-offsets. Keep `Evals/references/search_indexes/` in Evals.zip and omit runtime
+offsets. Keep `Evals/references/universes/` in Evals.zip and omit runtime
 `.cache/` directories. The agent does not need a new setup or indexing command.
 
 Batch related terms with `search-many`; use `get-many` for several known
@@ -48,7 +65,7 @@ requests. Exact-ID lookups can use verified prepared indexes for GitHub, Linear
 and GDrive; other scopes retain the complete scanner. Large Gmail routing lists
 use a bounded lossless cache. `hg_reference.py guide` can include the full
 requested route/schema views in the same call. Include both
-`Evals/references/search_indexes/` and `Evals/references/id_indexes/` when zipping;
+`Evals/references/universes/` (both universes' indexes) when zipping;
 exclude disposable runtime caches. See `Evals/SEARCH.md` for scope and freshness
 rules. No scoring check or instruction is shortened by these optimizations.
 

@@ -10,6 +10,16 @@ grading standard** in `Evals/WORKFLOW.md`: actively challenge acceptance,
 substantiate findings, and preserve this stage's scope, evidence limits and
 scoring rules.
 
+**Task date first.** Before anything else, including other input questions, run
+`python3 Evals/tools/hg_store_input.py list` and read `universe_intake`. Unless it
+is `SELECTED`, ask only this and wait:
+**Which date is this task on: Oct 1, 2025 (synth-cut) or Feb 14, 2026 (normal)?**
+Save the answer with `python3 Evals/tools/hg_store_input.py universe "<answer>"`.
+Never guess, infer or default the date; it selects the universe folder and clock
+for every read (`Evals/INPUTS.md` **Task date — ask first**). A saved date is
+reused without asking. Copy `report_line` from `universe_intake` (or
+`hg_universe.py show`) into the verdict block as its `Clock:` line.
+
 Follow `Evals/INPUTS.md` and `Evals/WORKFLOW.md`'s save/reuse contract before
 source checks or missing-input questions. Run
 `python3 Evals/tools/hg_store_input.py list` and save every newly supplied task
@@ -59,6 +69,12 @@ collections/fields in one pass. See SEARCH.md for request format and limits.
 
 ## Review
 
+First run `python3 Evals/tools/hg_injection_lint.py` on the saved SQL. It parses
+without running and flags future-dated event records, listed ID-contract breaks,
+unreadable Drive files, second accounts for existing people, grader-facing text
+and comments about tool calls, pass rate or gates. Resolve every flag in the
+report; a clean lint does not replace checks A–C.
+
 After reading SQL, group record checks by affected service and prepare one
 checks request under SEARCH.md. The route map resolves export filenames and
 array pointers directly (SQL table names are not filenames). Read all matching
@@ -72,13 +88,19 @@ updates/deletes and upsert behavior. Apply the three checks in Eval 0:
 
 - **A — Records, references and IDs:** resolve existing actors/parents/targets,
   inspect relevant history, and check new keys for collisions within the supported
-  scope. Preserve valid existing IDs and state representations.
+  scope. Preserve valid existing IDs and state representations. Apply the listed
+  ID contracts (`Evals/references/schema/id_contracts.json`), the readable-Drive-file
+  rule and one account per person per service.
 - **B — SQL structure and supported schema rules:** inspect statically determinable
   structure and applicable documented constraints. The bundled schema is provisional;
   a snapshot mismatch alone is advisory. Missing verified database definitions
   do not block this limited review or establish deployment compatibility.
 - **C — Dates, relationships and consistency:** compare the proposed state with
-  base records, using the fixed `2026-02-14 00:00` clock without assigning a timezone.
+  base records, using the task's fixed clock (`2026-02-14 00:00 UTC` for Feb 14
+  tasks, `2025-10-01 00:00 PT` for Oct 1 tasks; the lint reads the saved date): event timestamps at
+  or before it; only plan fields (due, scheduled start/end) may be later.
+  Unzoned persona-written times mean PT. Grader-facing text in injected records
+  fails here.
   Injected records may predate January 1, 2026; apply ENVIRONMENT.md's chronology
   rules without a global earliest-date cutoff.
   Distinguish introduced defects from supported historical/stale context and

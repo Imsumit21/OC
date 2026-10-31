@@ -2242,7 +2242,9 @@
         "column": "body_text_fts",
         "default": null,
         "nullable": "YES",
-        "position": 27
+        "position": 27,
+        "generated": "always",
+        "note": "computed by the database from the message body; leave it out of INSERT column lists and never UPDATE it (it fills itself)"
       }
     ],
     "table_name": "gmail_messages",
@@ -2737,14 +2739,18 @@
         "column": "created_at",
         "default": null,
         "nullable": "NO",
-        "position": 7
+        "position": 7,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "updated_at",
         "default": null,
         "nullable": "NO",
-        "position": 8
+        "position": 8,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       }
     ],
     "table_name": "linear_comments",
@@ -2855,35 +2861,45 @@
         "column": "due_date",
         "default": null,
         "nullable": "YES",
-        "position": 15
+        "position": 15,
+        "format": "date",
+        "note": "Text, not a date type: write exactly YYYY-MM-DD (e.g. 2025-10-03), the base-data format; anything else fails the Linear load."
       },
       {
         "type": "character varying",
         "column": "started_at",
         "default": null,
         "nullable": "YES",
-        "position": 16
+        "position": 16,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "completed_at",
         "default": null,
         "nullable": "YES",
-        "position": 17
+        "position": 17,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "canceled_at",
         "default": null,
         "nullable": "YES",
-        "position": 18
+        "position": 18,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "archived_at",
         "default": null,
         "nullable": "YES",
-        "position": 19
+        "position": 19,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "integer",
@@ -2925,14 +2941,26 @@
         "column": "created_at",
         "default": null,
         "nullable": "NO",
-        "position": 25
+        "position": 25,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "updated_at",
         "default": null,
         "nullable": "NO",
-        "position": 26
+        "position": 26,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
+      },
+      {
+        "type": "text",
+        "column": "state_history_json",
+        "default": null,
+        "nullable": "NO",
+        "position": 27,
+        "note": "Required by the live platform database (missing from the original schema dump; added 2026-10-22 after platform errors \"null value in column state_history_json violates not-null constraint\"). JSON array text; use '[]' for a new issue."
       }
     ],
     "table_name": "linear_issues",
@@ -3001,14 +3029,18 @@
         "column": "start_date",
         "default": null,
         "nullable": "YES",
-        "position": 9
+        "position": 9,
+        "format": "date",
+        "note": "Text, not a date type: write exactly YYYY-MM-DD (e.g. 2025-10-03), the base-data format; anything else fails the Linear load."
       },
       {
         "type": "character varying",
         "column": "target_date",
         "default": null,
         "nullable": "YES",
-        "position": 10
+        "position": 10,
+        "format": "date",
+        "note": "Text, not a date type: write exactly YYYY-MM-DD (e.g. 2025-10-03), the base-data format; anything else fails the Linear load."
       },
       {
         "type": "text",
@@ -3029,14 +3061,18 @@
         "column": "created_at",
         "default": null,
         "nullable": "NO",
-        "position": 13
+        "position": 13,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "updated_at",
         "default": null,
         "nullable": "NO",
-        "position": 14
+        "position": 14,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       }
     ],
     "table_name": "linear_projects",
@@ -3070,7 +3106,9 @@
         "column": "created_at",
         "default": null,
         "nullable": "NO",
-        "position": 4
+        "position": 4,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       }
     ],
     "table_name": "linear_team_memberships",
@@ -3118,14 +3156,18 @@
         "column": "created_at",
         "default": null,
         "nullable": "NO",
-        "position": 6
+        "position": 6,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "updated_at",
         "default": null,
         "nullable": "NO",
-        "position": 7
+        "position": 7,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       }
     ],
     "table_name": "linear_teams",
@@ -3180,14 +3222,18 @@
         "column": "created_at",
         "default": null,
         "nullable": "NO",
-        "position": 7
+        "position": 7,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       },
       {
         "type": "character varying",
         "column": "updated_at",
         "default": null,
         "nullable": "NO",
-        "position": 8
+        "position": 8,
+        "format": "iso_utc",
+        "note": "Text, not a timestamp type: write exactly YYYY-MM-DDTHH:MM:SSZ in UTC (e.g. 2025-09-30T14:12:09Z), the base-data format. Any other form (a space, +00, +00:00, milliseconds, a ::timestamptz cast or now()) is stored as written and the agent run then fails to load Linear (\"cannot parse timestamp\")."
       }
     ],
     "table_name": "linear_users",
@@ -3741,7 +3787,9 @@
         "column": "text_fts",
         "default": null,
         "nullable": "YES",
-        "position": 24
+        "position": 24,
+        "generated": "always",
+        "note": "computed by the database from text; leave it out of INSERT column lists and never UPDATE it (it fills itself)"
       }
     ],
     "table_name": "slack_messages",

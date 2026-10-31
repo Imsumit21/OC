@@ -7,6 +7,16 @@ effort: xhigh
 
 # Evaluate Oracle Events
 
+**Task date first.** Before anything else, including other input questions, run
+`python3 Evals/tools/hg_store_input.py list` and read `universe_intake`. Unless it
+is `SELECTED`, ask only this and wait:
+**Which date is this task on: Oct 1, 2025 (synth-cut) or Feb 14, 2026 (normal)?**
+Save the answer with `python3 Evals/tools/hg_store_input.py universe "<answer>"`.
+Never guess, infer or default the date; it selects the universe folder and clock
+for every read (`Evals/INPUTS.md` **Task date — ask first**). A saved date is
+reused without asking. Copy `report_line` from `universe_intake` (or
+`hg_universe.py show`) into the verdict block as its `Clock:` line.
+
 Follow `Evals/INPUTS.md`: save supplied OEs under `oe` (one complete original
 upload can use `source:oe`), list saved inputs and read their actual contents.
 Required: OEs, exact prompt, assignment/persona and applicable prompt references.
@@ -52,7 +62,10 @@ and `Evals/references/rules/oracle_events.md` for scoring and record mechanics.
    numbered subtypes. A reference path does not prohibit other task-valid paths. No rubric authoring
    or rubric PASS prerequisite is introduced.
 4. Start a bound record with `hg_oe_review.py start`, complete its source-linked
-   step, coverage and path checks (format 2 / oracle-events-v2) and save
+   step, coverage and path checks and the `expected_values` ledger (Eval 2.4:
+   every value on an Expected line quoted from a record character for character,
+   or not_a_claim; an absence claim needs a scope-bound evidence_check)
+   (format 2 / oracle-events-v2) and save
    `oe-review`. Save `oe` with `hg_write_output.py` only after the deep recheck
    in step 5. Following the Oracle Events guideline, a missing
    critical step or a wrong existing step FAILs (2); minor, non-action and

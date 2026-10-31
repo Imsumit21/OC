@@ -7,7 +7,8 @@ required.
 
 ## Required fields
 
-- format_version: 4.
+- format_version: 5 (2026-10-17: per-row `valid_case` and `do_nothing_case`,
+  `final_reply_test`, source `reachability` and `oe_cross_check`).
 - review_mode: AUDIT. CREATE records are rejected by the current writer.
 - eval_release: the current `hg_eval_release.py snapshot rubric` object. Report
   its Eval version and Eval release SHA-256; historical versions remain separate.
@@ -15,7 +16,8 @@ required.
 - reviewed_json_sha256 and review_context_sha256: actual current fingerprints.
 - checks: all exact-title, source, prompt-clause, coverage and assertion checks
   from rubric_checks.md, including each row's fact_review under
-  rubric_factual_checks.md. A valid object is not proof of semantic truth.
+  rubric_factual_checks.md, valid_case and do_nothing_case, and the
+  final_reply_test. A valid object is not proof of semantic truth.
 - coverage: required_outcomes, covered_outcomes, and unresolved_outcomes when
   applicable. Missing explicit outcomes are distinct set-level findings.
   For eligible sampling these count the actual control/sample/protected outcome
@@ -41,6 +43,16 @@ required.
   Basis is one of target_data_absent, required_tool_absent, filter_impossible or
   entity_unreachable. Two or more entries make the verdict FAIL with a score of
   at most 2. This is a pre-run prediction, not verifier all-failing input.
+- oe_cross_check (Eval 3 §3.1): `oe_present` (true exactly when an OE input is
+  saved). With OEs: `steps` (the saved OE's step labels), one `rows` entry per
+  authored row with `oe_step_ids` and `reason` (an empty list is `oe_unmapped`
+  and needs `unmapped: {resolution: ROW_DEFECT | OE_GAP | UNRESOLVED, reason}`),
+  and `conflicts` (each `{step, row, oe_quote, row_quote, resolution: FIX_ROW |
+  FIX_OE | UNRESOLVED, source_ids, reason}`). The writer checks the step labels
+  and OE quotes against the saved OE, the row quote against the title, and the
+  source IDs against the checks ledger. ROW_DEFECT and FIX_ROW need the row's
+  issue; OE_GAP and FIX_OE are reported as `oe_send_back` (an OE defect, not a
+  rubric score change); UNRESOLVED keeps the review PARTIAL.
 
 Record one Major per distinct missing explicit Outcome, using rows: [],
 outcome_id and criticality. Count it in the numerator only, not as a new authored
@@ -53,11 +65,13 @@ qc_rubric_v10.md for the authoritative overlap rule and evidence requirements.
 
 ## Scoring and suggested repairs
 
-Overall Quality has no non-fail band (2026-10-05). Any Major, any Moderate, or
-Minor on 5% or more of the rows is FAIL; no Major/Moderate and Minor <5% is PASS.
+Overall Quality follows the rubric-flow-v2 bands in the Eval 3 Local Overrides
+(2026-10-09): any Major or Moderate fails; Minor on 5-10% of rows is NON-FAIL 3;
+Minor on more than 10% fails; no Major/Moderate and Minor <5% is PASS.
 No three-row absolute rule or acceptance-changing gate overrides the QC score.
 
-Weights fail on any one- or two-level disagreement. All equal is PASS. The
+Weights are NON-FAIL 4 only when 10% or fewer rows are one level off and none
+are two levels off (Eval 3 Local Overrides); otherwise FAIL. All equal is PASS. The
 reviewer must substantiate work_kind; arithmetic alone cannot establish it.
 
 Artifact/model subjects or literal MCP tool names fail Agent-Centric and are a
@@ -65,11 +79,12 @@ Major `non_agent_centric` tally issue on each such row. Nonstandard Agent
 forms (possessives such as "The Agent's report states…", bare actions) also
 fail Agent-Centric (1–2) and add no tally issue. Under `hg-strict-overrides-v1`, any
 negatively framed graded action fails Negative Criteria, even with prompt
-authority; descriptive negative facts remain affirmative.
+authority; descriptive negative facts remain affirmative. A row an Agent passes
+by doing nothing (`do_nothing_case` ACCEPT) is a prohibition in disguise.
 
 Severity follows `hg-strict-overrides-v1`: overly_specific is Major,
-overly_broad is Moderate and harmless_specificity is Minor. Rows that would all
-fail on one Agent error because each embeds the same condition are one
+overly_broad is Major (2026-10-17) and harmless_specificity is Minor. Rows that
+would all fail on one Agent error because each embeds the same condition are one
 OVERLAP_GROUP.
 
 Save rubric-score through hg_write_output.py. Its receipt reports the QC verdict,

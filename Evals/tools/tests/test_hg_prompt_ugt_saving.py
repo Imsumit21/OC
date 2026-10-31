@@ -7,7 +7,7 @@ import sys
 import unittest
 
 import test_hg_prompt_rubric_reliability as reliability
-from test_hg_prompt_ugt import same_result_review
+from test_hg_prompt_ugt import same_result_review, both_fair_review, PROMPT_50, NOTE_50, TOTALS_50, ZOM_673
 
 inputs = reliability.inputs
 writer = reliability.writer
@@ -61,6 +61,22 @@ class UGTSaving(unittest.TestCase):
                                           evidence=evidence)
         record.update(unique_ground_truth=review, verdict='FAIL', verdict_score=2,
                       verdict_reason='Two materially different calls survive.')
+        return record
+
+    def both_fair_record(self):
+        """#50-style both-fair rate fork bound to real record text (local override 2026-10-17)."""
+        record = self.record()
+        self.prompt = PROMPT_50
+        inputs.save_input('prompt', content=self.prompt.encode())
+        record.update(checks.start(self.root))
+        record['sources'][1].update(quote=self.prompt, sha256=hashlib.sha256(self.prompt.encode()).hexdigest())
+        record['clauses'][0].update(end=len(self.prompt), quote=self.prompt)
+        for sid, name, text in (('NOTE', 'analytics.txt', NOTE_50), ('TOTALS', 'perf.json', TOTALS_50),
+                                ('ZOM673', 'zom673.txt', ZOM_673)):
+            (self.root / name).write_text(text)
+            record['sources'].append(dict(id=sid, path=name, sha256=hashlib.sha256(text.encode()).hexdigest(), quote=text,
+                                          visibility='VISIBLE', access='Persona-visible record copied from task #50.'))
+        record.update(unique_ground_truth=both_fair_review(), verdict_reason='One reported rate has two fair values.')
         return record
 
     def save_record(self, record):
@@ -133,12 +149,12 @@ class UGTSaving(unittest.TestCase):
 
     def test_no_score_partial_report_can_still_save_without_record(self):
         report = ('Unique Ground Truth: UNVERIFIED (unscored)\n\n'
-                  '### FINAL VERDICT: NON-FAIL\nExecution status: PARTIAL\nEvaluator model: Opus 5.5\n'
+                  '### FINAL VERDICT: NON-FAIL\nExecution status: PARTIAL\nClock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)\nEvaluator model: Opus 5.5\n'
                   'Next action: Read signed decision\nEvidence limits: Signed decision missing\n')
         self.assertIsNone(writer.save_output('prompt', report)['verdict_score'])
 
     def test_partial_aggregate_cannot_smuggle_a_definitive_ugt_without_record(self):
-        final = ('### FINAL VERDICT: NON-FAIL\nExecution status: PARTIAL\nEvaluator model: Opus 5.5\n'
+        final = ('### FINAL VERDICT: NON-FAIL\nExecution status: PARTIAL\nClock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)\nEvaluator model: Opus 5.5\n'
                  'Next action: Complete feasibility\nEvidence limits: Feasibility checks pending\n')
         for declaration in ('Unique Ground Truth: PASS 5', 'UGT: PASS', 'UGT: FAIL',
                             '| Prompt | Unique Ground Truth | 5/5 | Clear |',
@@ -183,6 +199,26 @@ class UGTSaving(unittest.TestCase):
         self.assertEqual(release.classify_report(path, 'prompt')['classification'], 'CURRENT_RELEASE')
         path.write_text(path.read_text().replace(receipt['ugt_report_section'], ''))
         self.assertNotEqual(release.classify_report(path, 'prompt')['classification'], 'CURRENT_RELEASE')
+
+    def test_both_fair_figure_saves_renders_and_classifies_current(self):
+        receipt = self.save_record(self.both_fair_record())
+        self.assertEqual((receipt['verdict'], receipt['unique_ground_truth']['score']), ('PASS', 5))
+        self.assertIn('Rubric must accept: 32.8% or 28.5%', receipt['ugt_report_section'])
+        self.assertEqual(receipt['both_fair_figures'], [dict(label='2-day Win & Collect completion rate', kind='RATE',
+                                                             accept=['32.8%', '28.5%'])])
+        result = writer.save_output('prompt', self.rendered(receipt))
+        self.assertEqual(release.classify_report(Path(result['absolute_path']), 'prompt')['classification'],
+                         'CURRENT_RELEASE')
+
+    def test_other_resolutions_list_no_both_fair_figure(self):
+        self.assertEqual(self.save_record(self.record())['both_fair_figures'], [])
+        self.assertEqual(self.save_record(self.failure_record())['both_fair_figures'], [])
+
+    def test_mislabelled_both_fair_figure_cannot_be_saved(self):
+        record = self.both_fair_record()
+        record['unique_ground_truth']['comparisons'][0]['figure']['checks']['newer_source']['settles'] = True
+        with self.assertRaisesRegex(ValueError, 'newer source check settles'):
+            self.save_record(record)
 
     def test_fresh_process_renders_the_exact_validated_section(self):
         receipt = self.save_record(self.record())

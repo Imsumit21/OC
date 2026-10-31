@@ -2,11 +2,12 @@
 
 QC percentages determine the audit grade. Repair/readiness checks do not silently
 escalate that grade. This module implements rubric-revision-v10 with the local
-hg-strict-overrides-v1 severities and the predicted all-fail gate.
+hg-strict-overrides-v1 severities, the predicted all-fail gate and the OE
+cross-check (each row maps to the OE steps that reach it; OE conflicts recorded).
 """
 import re
 
-FORMAT_VERSION = 4
+FORMAT_VERSION = 5
 DIMENSIONS = ('overall_quality', 'criteria_weights', 'category_balance', 'process',
               'agent_centric', 'negative')
 GATES = ('schema', 'self_containment', 'accuracy_acceptance', 'atomicity', 'coverage',
@@ -15,8 +16,9 @@ SEVERITIES = {
     'incorrect': 'Major', 'unauthorized': 'Major', 'unobservable': 'Major',
     'non_atomic': 'Major', 'not_self_contained': 'Major', 'missing_coverage': 'Major',
     'overly_specific': 'Major', 'non_agent_centric': 'Major',
+    'overly_broad': 'Major',  # local override 2026-10-17: same level as Overly Specific
     'duplicate': 'Moderate', 'category': 'Moderate',
-    'vague_exemplar': 'Moderate', 'overly_broad': 'Moderate', 'harmless_specificity': 'Minor',
+    'vague_exemplar': 'Moderate', 'harmless_specificity': 'Minor',
 }
 ALL_FAIL_BASES = ('target_data_absent', 'required_tool_absent', 'filter_impossible',
                   'entity_unreachable')
@@ -25,6 +27,11 @@ WORK_WEIGHTS = {
     'interpretation': 3, 'calculation': 3, 'comparison': 3, 'limited_reconciliation': 3,
     'multi_source_reconciliation': 5, 'deep_reasoning': 5, 'cross_modal': 5, 'tracing': 5,
 }
+# OE cross-check (Eval 3 §3.1): an unmapped row is a rubric defect or an OE gap; a
+# conflict is settled from the records by fixing the row or sending the OE back.
+UNMAPPED_RESOLUTIONS = ('ROW_DEFECT', 'OE_GAP', 'UNRESOLVED')
+CONFLICT_RESOLUTIONS = ('FIX_ROW', 'FIX_OE', 'UNRESOLVED')
+ROW_DEFECTS = ('incorrect', 'unauthorized', 'unobservable', 'overly_specific', 'overly_broad')
 VAGUE = re.compile(r'\bsuch\s+as\b|\bfor\s+example\b|\be\.g\.(?=\s|,|$)', re.I)
 
 
@@ -76,10 +83,81 @@ def weight_tally(reviews, rubric):
                 unresolved_rows=pending, denominator=n)
 
 
+def oe_tally(cross, rubric, issues):
+    """Both-way OE mapping and recorded OE conflicts; the OE eval itself stays blind to the rubric."""
+    require(isinstance(cross, dict) and type(cross.get('oe_present')) is bool,
+            'record oe_cross_check with Boolean oe_present')
+    result = dict(oe_present=cross['oe_present'], unmapped_rows=[], conflicts=[], send_back=[], pending=[])
+    if not cross['oe_present']:
+        require(not cross.get('steps') and not cross.get('rows') and not cross.get('conflicts'),
+                'oe_cross_check steps/rows/conflicts need oe_present true')
+        return result
+    n = len(rubric)
+    steps = cross.get('steps')
+    require(isinstance(steps, list) and bool(steps) and all(isinstance(s, str) and s.strip() for s in steps)
+            and len(steps) == len(set(steps)), 'oe_cross_check.steps must list the saved OE step labels once each')
+
+    def has_issue(row, kinds):
+        return any(i['type'] in kinds and row in i['rows'] for i in issues)
+
+    rows = cross.get('rows')
+    require(isinstance(rows, list) and len(rows) == n, 'oe_cross_check needs one oe_step_ids entry per criterion')
+    mapped, seen = {}, set()
+    for entry in rows:
+        require(isinstance(entry, dict), 'oe_cross_check row must be an object')
+        row = entry.get('row')
+        require(type(row) is int and 1 <= row <= n and row not in seen, 'oe_cross_check rows must match the actual array')
+        seen.add(row)
+        ids = entry.get('oe_step_ids')
+        require(isinstance(ids, list) and all(s in steps for s in ids) and len(ids) == len(set(ids)),
+                f'R{row}: oe_step_ids must be unique saved OE step labels')
+        prose(entry.get('reason'), f'R{row} OE mapping')
+        mapped[row] = set(ids)
+        if ids:
+            require('unmapped' not in entry, f'R{row}: a mapped row has no oe_unmapped disposition')
+            continue
+        # oe_unmapped: no OE step reads or writes the record this row grades.
+        gap = entry.get('unmapped')
+        require(isinstance(gap, dict) and gap.get('resolution') in UNMAPPED_RESOLUTIONS,
+                f'R{row} is oe_unmapped: no OE step reaches it; record ROW_DEFECT, OE_GAP or UNRESOLVED')
+        prose(gap.get('reason'), f'R{row} oe_unmapped')
+        result['unmapped_rows'].append(row)
+        if gap['resolution'] == 'ROW_DEFECT':
+            require(has_issue(row, ROW_DEFECTS), f'R{row}: an oe_unmapped row defect needs its recorded issue')
+        elif gap['resolution'] == 'OE_GAP':
+            result['send_back'].append(dict(row=row, reason=gap['reason']))
+        else:
+            result['pending'].append(f'R{row}: unresolved oe_unmapped row')
+    conflicts = cross.get('conflicts')
+    require(isinstance(conflicts, list), 'oe_cross_check.conflicts must be an array (empty when none)')
+    for conflict in conflicts:
+        require(isinstance(conflict, dict), 'OE conflict must be an object')
+        row, step = conflict.get('row'), conflict.get('step')
+        require(type(row) is int and 1 <= row <= n and step in mapped.get(row, ()),
+                'OE conflict needs a criterion row and one of its mapped OE steps')
+        for key in ('oe_quote', 'row_quote', 'reason'):
+            prose(conflict.get(key), 'OE conflict ' + key)
+        require(conflict['row_quote'] in rubric[row-1].get('title', ''), f'R{row}: OE conflict row_quote must be in the title')
+        resolution = conflict.get('resolution')
+        require(resolution in CONFLICT_RESOLUTIONS, 'OE conflict needs FIX_ROW, FIX_OE or UNRESOLVED')
+        if resolution != 'UNRESOLVED':
+            source_ids = conflict.get('source_ids')
+            require(isinstance(source_ids, list) and bool(source_ids) and all(isinstance(s, str) and s for s in source_ids),
+                    'a settled OE conflict cites the deciding records')
+        if resolution == 'FIX_ROW':
+            require(has_issue(row, ROW_DEFECTS), f'R{row}: an OE conflict settled against the row needs its recorded issue')
+        elif resolution == 'FIX_OE':
+            result['send_back'].append(dict(row=row, step=step, reason=conflict['reason']))
+        else:
+            result['pending'].append(f'R{row}: unresolved OE conflict with {step}')
+        result['conflicts'].append({k: conflict[k] for k in ('step', 'row', 'oe_quote', 'row_quote', 'resolution')})
+    return result
+
+
 def calculate(record, rubric, checked=None):
     from hg_rubric_checks import title_facts
     require(type(record.get('format_version')) is int and record['format_version'] == FORMAT_VERSION,
-            'v10 requires scoring record format 4')
+            'v10 requires scoring record format 5')
     require(isinstance(rubric, list) and rubric and all(isinstance(r, dict) for r in rubric),
             'need actual nonempty criterion array')
     require(not any(k in record for k in ('platform_defects', 'all_failing', 'baseline_verifier')),
@@ -151,6 +229,7 @@ def calculate(record, rubric, checked=None):
         require(row in rows, f'R{row}: a predicted all-fail criterion needs its recorded defect')
         all_fail_rows.append(row)
     all_fail_gate = 'FAIL' if len(all_fail_rows) >= 2 else 'PASS'
+    oe = oe_tally(record.get('oe_cross_check'), rubric, issues)
     # Obvious syntax cannot disappear merely because a reviewer omitted an issue.
     # A phrase inside an exact source name still counts (C9 over C8, local override).
     for row, criterion in enumerate(rubric, 1):
@@ -256,7 +335,7 @@ def calculate(record, rubric, checked=None):
     require(isinstance(unresolved, list) and all(isinstance(v, str) and v.strip() for v in unresolved),
             'unresolved must describe remaining checks')
     check_pending = checked['unresolved'] if checked else []
-    partial = bool(unresolved or check_pending or outstanding or weights['unresolved_rows']) or any(
+    partial = bool(unresolved or check_pending or outstanding or weights['unresolved_rows'] or oe['pending']) or any(
         g['result'] == 'UNRESOLVED' for g in gates.values())
     score = min(d['score'] for d in dims.values())
     if all_fail_gate == 'FAIL':
@@ -276,5 +355,7 @@ def calculate(record, rubric, checked=None):
         catastrophic_reasons=[], provenance_counts=provenance, wording_fail_rows=sorted(bad),
         check_unresolved=check_pending, fact_results=checked.get('fact_results', []) if checked else [],
         predicted_all_fail_rows=sorted(all_fail_rows), all_fail_gate=all_fail_gate,
+        oe_present=oe['oe_present'], oe_unmapped_rows=oe['unmapped_rows'], oe_conflicts=oe['conflicts'],
+        oe_send_back=oe['send_back'], oe_unresolved=oe['pending'],
         repairs=repairs, verdict=verdict, verdict_score=score,
         execution_status='PARTIAL' if partial else 'COMPLETE', repair_free=ready)

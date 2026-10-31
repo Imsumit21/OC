@@ -10,6 +10,16 @@ grading standard** in `Evals/WORKFLOW.md`: actively challenge acceptance,
 substantiate findings, and preserve this stage's scope, evidence limits and
 scoring rules.
 
+**Task date first.** Before anything else, including other input questions, run
+`python3 Evals/tools/hg_store_input.py list` and read `universe_intake`. Unless it
+is `SELECTED`, ask only this and wait:
+**Which date is this task on: Oct 1, 2025 (synth-cut) or Feb 14, 2026 (normal)?**
+Save the answer with `python3 Evals/tools/hg_store_input.py universe "<answer>"`.
+Never guess, infer or default the date; it selects the universe folder and clock
+for every read (`Evals/INPUTS.md` **Task date — ask first**). A saved date is
+reused without asking. Copy `report_line` from `universe_intake` (or
+`hg_universe.py show`) into the verdict block as its `Clock:` line.
+
 Follow `Evals/INPUTS.md`: run `python3 Evals/tools/hg_store_input.py list`, save
 newly supplied inputs and read relevant saved contents. New versions replace
 their own key; omitted inputs stay saved. Reuse them before asking again.

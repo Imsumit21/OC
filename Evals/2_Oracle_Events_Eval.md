@@ -29,7 +29,7 @@ Oracle Events are the key steps a correct Agent takes, from discovery to complet
 | Accuracy band | §10 grades an inaccurate solution path **Fail** and a minor inaccuracy **Non-fail**. QC Rating Form V12 grades both `Inaccurate Oracle Event` and `Minor Oracle Event Inaccuracies` Non-Fail 3. | A **wrong existing step FAILs and blocks** (score **2**). A **minor imprecision that cannot change the outcome is NON-FAIL 3**. |
 | Existence of a NON-FAIL band | Guideline §9 states plainly that "/oe does not issue NON-FAIL. It either passes or it blocks", which contradicts §10's own Non-fail and Moderate rows. | This package **does** issue NON-FAIL 3, for the cases named above only (non-action or final-response events, harmless imprecision, and Format & Standardization defects). This is a deliberate local departure from §9, not a derivation from it, adopted so that a non-action or a harmless imprecision is reported without blocking a solvable path. |
 | Format & Standardization | Not in QC Rating Form V12 or the QC spec; it comes from the proposed Oracle Events guideline edits (Common Errors row, Non-fail). The guideline's FORMAT section: free text, not JSON; numbered; a few lines each; each names the action, the service, the details and the expected values. | A **shape defect is NON-FAIL 3** (Accuracy 3), recorded in `format_review` (2.7). It never FAILs on its own and never softens a content failure. Five defects count: no details and no `Expected:` line, an arrow chain, several actions in one OE, JSON, no number or no service. Tool names, IDs and query-style wording are not defects. |
-| Clock | QC form text says February 28, 2026 | **2026-02-14 00:00 UTC**. |
+| Clock | QC form text says February 28, 2026 | The task date's clock: **2026-02-14 00:00 UTC** for Feb 14 tasks or **2025-10-01 00:00 PT (07:00 UTC)** for Oct 1 tasks (ENVIRONMENT.md **Task date and universe**). |
 | Deep recheck (2026-10-06) | — | Passes O1 (Accuracy) and O2 (Completeness) in `references/rules/deep_recheck.md` run before the report is saved (Phase 5). |
 | Deep recheck revision (2026-10-09) | — | O1 also checks each value's qualifiers (window, cohort, branch, label). New pass O3 lists every item an open instruction covers without seeing the OEs; a confirmed item with no OE is a missing step and cannot be made optional. Proposed fix OEs are verified before the report is saved. |
 
@@ -54,8 +54,8 @@ TODO:
 - [ ] Phase 2.2: Service verification (the data actually lives there)
 - [ ] Phase 2.3: Parameter and identifier verification
 - [ ] Phase 2.3A: Numeric observability (HARD GATE)
-- [ ] Phase 2.4: Expected-data verification sign-off table (HARD GATE, every step)
-- [ ] Phase 2.5: Date/time consistency against 2026-02-14 00:00 UTC
+- [ ] Phase 2.4: Expected-data verification sign-off table (HARD GATE, every step) and the `expected_values` ledger
+- [ ] Phase 2.5: Date/time consistency against the task clock (2026-02-14 00:00 UTC or 2025-10-01 00:00 PT)
 - [ ] Phase 2.6: Act-vs-defer (HARD GATE for writes based on a proposed resolution)
 - [ ] Phase 2.7: Format & Standardization (every OE; shape defects are NON-FAIL 3)
 - [ ] Phase 3.1: Critical path completeness (discovery, retrieval)
@@ -87,7 +87,7 @@ TODO:
 | **Universe and Tools** | `Evals/Docs/Original_Conference_Guidelines_-_Universe_and_Tools.pdf` | Where data lives, scoped reads, clock |
 | **Persona ACL Policy** | `Evals/Docs/Original_Conference_Guidelines_-_Persona_ACL_Policy.pdf` | Reads the persona can and cannot make |
 | **Example Task** | `Evals/Docs/Original_Conference_Guidelines_Example_Task.pdf` | A complete OE set for a Long-Horizon task |
-| **Company and storylines** | `HarmonyGames_Other_Services/metadata/*.resolved.yaml` | Scenario background for the 80 source storylines. Context only: it cannot override the rules, the roster or the clock, and it is never evidence for a finding. |
+| **Company and storylines** | `<P>_HarmonyGames_Other_Services/metadata/*.resolved.yaml` (`<P>` = `Normal` or `SynthCut`) | Scenario background for the source storylines (76 on Feb 14, 70 on Oct 1). Context only: it cannot override the rules, the roster or the clock, and it is never evidence for a finding. |
 | **Persona context** | `Evals/references/persona/roster.json`, plus Contacts, Slack users and Linear users in the service exports | Identity, role, team and relationships |
 | **Tool catalog (authoritative)** | `Evals/references/tools/catalog.json` | Exact tool names, parameters, required fields |
 | **Persona roster and ACL** | `Evals/references/persona/roster.json`, `acl.md` | The 17 selectable personas; scoped services |
@@ -261,9 +261,13 @@ Expected data that promises precision the Agent cannot observe, or that needs an
 
 Verify against primary sources. OEs, golden answers, dynamic context, difficulty notes, rubrics and prior audit output cannot prove themselves. Inspect attachment bytes before an absence finding; missing evaluator evidence is UNRESOLVED, not inaccuracy.
 
+Record every value on an Expected line with a quote, or mark it not_a_claim. An absence claim ('no fixes exist') needs a scope-bound evidence_check. Quote event names, field values and IDs character for character.
+
+An Expected line is the text after an `Expected:` label, or the "The agent finds …" sentence when the author wrote no label. The entries go in the record's `expected_values` ledger (`oracle_events.md`). The validator lists every value and every absence word ("none", "never", "no later commit") on those lines; any that no entry covers leaves the review PARTIAL. A value the record contradicts, or an absence claim one record refutes, is `WRONG_EXPECTED_DATA` and fails Accuracy. Quote the record that shows the fact, not one that only names it: `quest_completion` is declared in match3d's AnalyticsManager.cs but never called, and the event that fires is `quest_completed`. "None of the 33 flagged pull requests shows a later commit" is refuted by CodeRabbit's "✅ Addressed in commit 77cf03f" on one of them (calibration cases in `oracle_events_qc_examples.md`).
+
 ### 2.5 Date/Time Consistency
 
-Resolve dates against **2026-02-14 00:00 UTC** and the source's own context. An event after the clock cannot be expected as already completed.
+Resolve dates against the task clock (**2026-02-14 00:00 UTC** for Feb 14 tasks or **2025-10-01 00:00 PT (07:00 UTC)** for Oct 1 tasks) and the source's own context. An event after the clock cannot be expected as already completed.
 
 ### 2.6 Act-vs-Defer (HARD GATE)
 
@@ -374,7 +378,7 @@ This note is about writing style. Shape defects belong in 2.7, not here. This no
 ### 4.2 Save the Record and Report
 
 1. `python3 Evals/tools/hg_oe_review.py start` returns the binding fields.
-2. Complete the format-2 record in `references/rules/oracle_events.md` (sources, segments, steps, coverage, `path_review`) and save it: `hg_write_output.py oe-review --source <record.json>`.
+2. Complete the format-2 record in `references/rules/oracle_events.md` (sources, segments, steps, coverage, `expected_values`, `path_review`) and save it: `hg_write_output.py oe-review --source <record.json>`.
 3. Do not save the report yet. Run Phase 5 first.
 4. After Phase 5, save the report: `hg_write_output.py oe --source <report.md>`. It must match the computed verdict, scores and diagnostics. Return `Evals/task_inputs/reports/2_oe.md`. Preserve the supplied OEs; suggest corrections without applying them.
 
@@ -488,6 +492,8 @@ passes; `## Deep Recheck` says why, then gives the verdict block.
 | Wrong service | Data lives elsewhere (Sheets vs Snowflake) | FAIL (Accuracy) |
 | Wrong ID, channel, filter or recipient | Contradicted by the records, and following the step would change or prevent the result | FAIL (Accuracy) |
 | Wrong count or amount | Expected data does not match the source | FAIL (Accuracy) |
+| Wrong event name, field value or ID | Not in the record character for character (`quest_completion` vs the live `quest_completed`) | FAIL (Accuracy) |
+| Absence claim a record refutes | "none of the 33 … shows a later commit" while a fix commit exists | FAIL (Accuracy); without a scope-bound search it stays unresolved |
 | Unobservable precision | Tool path renders less precision | FAIL (Accuracy) |
 | Write overridden by a human decision | Accessible defer/accept-timing decision | FAIL (Accuracy) |
 | Unreachable scoped read | Persona cannot see the record | FAIL (Accuracy) |

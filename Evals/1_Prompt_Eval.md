@@ -86,7 +86,7 @@ These user-approved decisions supersede the Docs where they conflict.
 | Topic | Docs say | This Eval applies |
 |---|---|---|
 | Relative dates | Universe and Tools and Prompt Writing: "write dates absolutely"; relative dates are errors | Relative dates are **allowed**. Only material ambiguity or a temporal contradiction is a defect (Phase 2.8). |
-| Clock | QC form text says February 28, 2026 | **2026-02-14 00:00 UTC** (Universe and Tools). |
+| Clock | QC form text says February 28, 2026 | The task date's clock: **2026-02-14 00:00 UTC** (Universe and Tools) for Feb 14 tasks, **2025-10-01 00:00 PT (07:00 UTC)** for Oct 1 tasks (ENVIRONMENT.md **Task date and universe**). |
 | Competency and Task Skill | QC form and Overall Task Flow: Non-Fail only | **Hard FAIL** on a clear mismatch or a missing assigned skill (Phase 1.5). |
 | Alignment with Today's Date | QC form: Non-Fail only | A material temporal contradiction can **FAIL** (Phase 2.8). |
 | Feasibility | QC form: Non-Fail for an impractical secondary request | **No middle band.** Any explicit ask that cannot be fully fulfilled fails. |
@@ -99,6 +99,9 @@ These user-approved decisions supersede the Docs where they conflict.
 | Injection gate (2026-10-09) | — | Before Phase 1, `hg_injection_gate.py` checks that the saved SQL is the version /injection last reviewed. A changed or never-reviewed SQL gets Eval 0 run on it first (STEP 0.5). |
 | Deep recheck revision (2026-10-09) | — | P1 computes each reading at its edge values and reports every fork once, with the record that settles it or what is missing. P2 scores hidden records and broken derived columns as coherence and applies one date-slip severity rule. A UGT finding is rejected only on a quoted record. Known platform defects (FD-2880, FD-3785, Slack paste artifacts) are tagged, not scored. Proposed rewrites are verified before the report is saved. |
 | Personas | Universe and Tools: 19 staff personas | The **17** selectable personas in `Evals/references/persona/roster.json`. |
+| Typing (2026-10-17) | Prompt Writing: reads like fast, unproofread typing | Clean typing is not a defect; staged typos, made-up emoji or broken punctuation fail Contrived. |
+| Riddles (2026-10-17) | QC form: constraint-laden riddles are not contrived | A riddle or hint aimed at the trap fails Contrived. Naming the symptom is fine. |
+| UGT both-fair figure (2026-10-17) | QC form: two correct answers fail even with a leading interpretation | PASS when only one reported figure differs, both values are on persona-visible records, nothing ranks them and the rubric accepts either. All other forks unchanged. |
 
 ---
 
@@ -117,7 +120,7 @@ TODO:
 - [ ] Phase 1.1: Persona Coherence - Verify supplied assignment, the bundled roster and local records
   - [ ] HARD GATE: Persona ACL Identity & Feasibility - exact assigned roster match and supported access; AMV dropdown does not override identity; no later runner/verifier output required
 - [ ] Phase 1.2: Naturalness & Voice - Anti-pattern detection
-  - [ ] AI-Text / LLM-Sounding Check - uniform capitalisation and punctuation, document formatting, enumerated specs; scored under Contrived / Unnatural
+  - [ ] AI-Text / LLM-Sounding Check - document formatting, enumerated specs, staged errors; scored under Contrived / Unnatural
 - [ ] Phase 1.3: Structural Anti-Patterns - Command list, bolt-on, pre-solving, tool mention (including MCP server names and "the X tool")
 - [ ] Phase 1.4: Prompt Diversity - Is this meaningfully different from "investigate + post one Slack message"?
 - [ ] Phase 1.5: Assignment & Complexity Dimensions
@@ -126,7 +129,7 @@ TODO:
   - [ ] HARD GATE: Complexity Dimensions — at least one of Ambiguity / Dynamic Change / Multi-Source is load-bearing; record which
   - [ ] HARD GATE: Data Seeding — operating details live in the environment, not a long recipe prompt
 - [ ] Phase 2.1: Unique Ground Truth - Ambiguity analysis
-  - [ ] HARD GATE: End-State Divergence - Compare concrete decisions, writes and contents; supported, materially incompatible required outcomes with no resolving authority → FAIL UGT
+  - [ ] HARD GATE: End-State Divergence - Compare concrete decisions, writes and contents; supported, materially incompatible required outcomes with no resolving authority → FAIL UGT (except a both-fair figure, which passes as BOTH_FAIR_FIGURE)
   - [ ] HARD GATE (T11): UGT Precision Guardrail - Complete and report the two-reading table before every scored UGT verdict, including PASS within an overall FAIL; test the strongest plausible alternative and account for every explicit option
   - [ ] Semantic challenge - Verify that cited passages resolve the actual difference; reject strawman alternatives, irrelevant citations and option lists mislabeled as authorized alternatives
   - [ ] Report contract - Save the structured comparison and include the generated UGT section verbatim; source-authorized alternatives and immaterial wording differences do not fail
@@ -138,7 +141,7 @@ TODO:
   - [ ] STRONG HARD GATE: Persona-Scoped Read Feasibility & Ask-Level ACL Violation - Derive the scoped-service set live from the `Evals/references/persona/acl.md` access matrix (do not hardcode); confirm every required scoped-service read is visible to the assigned persona, and flag any prompt ask that directs the persona to read scoped data outside their view (unless affirmative-denial or authorized alternate). Any unreachable required scoped read = standalone FAIL, non-waivable
 - [ ] Phase 2.3: Truthfulness - EXHAUSTIVE universe data verification (CRITICAL)
   - [ ] HARD GATE: Phantom Tight-Identifier Search - Verify every tight identifier against local records, SQL and applicable attachments; confirmed missing asserted sources fail, incomplete access remains unverified
-  - [ ] HARD GATE: State-Premise Verification - Extract every declarative claim about current state (still no reply, hasn't been merged, rolling window, I own/approve this) and verify against universe; contradicted premise = Major FAIL
+  - [ ] HARD GATE: State-Premise Verification - Extract every declarative claim about current state (still no reply, hasn't been merged, rolling window, I own/approve this, business as usual after the Feb 11 shutdown on a Feb 14 task, a departed person still acting, anything that does not exist yet on an Oct 1 task) and verify against universe; contradicted premise = Major FAIL
 - [ ] Phase 2.4: Cross-Service Requirement - Service mapping
 - [ ] Phase 2.5: Investigation + Action - Read/Write balance
   - [ ] Complexity Hygiene - blocked/denied/repeated calls and set_acting_user environment configuration are not necessary work; no call-count estimate is scored at this stage
@@ -147,7 +150,8 @@ TODO:
   - [ ] HARD GATE: Delegation Clarity - Scan for "I'll [verb]" statements; if ambiguous delegation vs self-action → FAIL (Action Decision Ambiguity)
 - [ ] Phase 2.7: Contrived vs Natural Difficulty - Pattern analysis
   - [ ] HARD GATE: Spec-Sheet Register Escalation - 2+ register triggers (enumerated deliverable contents, preservation/format rules, prescribed reply format, contents-driven length) escalates the soft over-stacking flag to a Contrived FAIL
-- [ ] Phase 2.8: Alignment with Today's Date - Resolve explicit or relative references using context and the fixed date/time (2026-02-14 00:00 UTC); flag only material ambiguity or contradiction, never relative wording alone
+  - [ ] Trap hint or riddle, hidden destination the persona would know, audit-form wording, long if-chains - each fails Contrived on its own (2026-10-17)
+- [ ] Phase 2.8: Alignment with Today's Date - Resolve explicit or relative references using context and the task's fixed date/time (2026-02-14 00:00 UTC or 2025-10-01 00:00 PT); flag only material ambiguity or contradiction, never relative wording alone
 - [ ] Phase 2.9: Sample Similarity / Originality - Compare candidate against explicitly supplied samples; N/A when none are supplied
   - [ ] HARD GATE: Sample-Clone Detection - Fingerprint scenario/persona/entities/asks/services/writes/phrasing vs each sample; a clone or light paraphrase of any single sample = FAIL (non-waivable)
 - [ ] Phase 3.1: Data Existence - Per-entity verification in universe files
@@ -179,7 +183,7 @@ Read `Evals/Docs/README.md` for the guideline index and `Evals/references/README
 | **Persona ACL Policy** | `Evals/Docs/Original_Conference_Guidelines_-_Persona_ACL_Policy.pdf` | Voice, remit and read access for the assigned persona. |
 | **Common Errors and Pre-QC** | `Evals/Docs/Original_Conference_Guidelines_-_Common_Errors_and_Pre-QC.pdf` | Frequent prompt failures (entity trap, compounding inaccuracies). |
 | **Example Task** | `Evals/Docs/Original_Conference_Guidelines_Example_Task.pdf` | A complete ML-selected Long-Horizon task, for calibration. |
-| **Company and storylines** | `HarmonyGames_Other_Services/metadata/*.resolved.yaml` | Scenario background for the 80 source storylines. Context only: it cannot override the rules, the roster or the clock, and it is never evidence for a finding. |
+| **Company and storylines** | `<P>_HarmonyGames_Other_Services/metadata/*.resolved.yaml` (`<P>` = `Normal` or `SynthCut`) | Scenario background for the source storylines (76 on Feb 14, 70 on Oct 1). Context only: it cannot override the rules, the roster or the clock, and it is never evidence for a finding. |
 | **Persona context** | `Evals/references/persona/roster.json`, plus Contacts, Slack users and Linear users in the service exports | Identity, role, team, relationships and open threads. |
 | Scoring definitions | `Evals/references/rules/scoring.json` | Stage dimensions, selectable error labels and thresholds. |
 | Scoring interpretation | `Evals/references/rules/scoring_notes.md` | Evidence limits and explicit stage overrides. |
@@ -372,7 +376,7 @@ supplied assignment details and local records for role, relationship, and voice 
 | Check | Question | Finding |
 |-------|----------|---------|
 | Role Plausibility | Would this person realistically make this request? | Yes/No - [reason] |
-| Voice Match | Does the tone and vocabulary fit this persona's role? `roster.json` carries only persona_key, name, email, role and department, so there is no Style line to compare against; judge against the role and the persona's own messages in the Slack and Gmail exports. | Yes/No - [reason] |
+| Voice Match | Does the tone and vocabulary fit this persona's role? `roster.json` carries only persona_key, name, email, role and department, so there is no Style line to compare against. Judge against the role only; the persona's own Slack or mail style is not a standard. | Yes/No - [reason] |
 | Access Plausibility | Would this persona know about this situation (portfolio/entity access)? | Yes/No - [reason] |
 | Responsibility Scope | Does request fall within persona's department/level (prepare/review/approve)? | Yes/No - [reason] |
 
@@ -419,17 +423,19 @@ are not prerequisites for `/prompt`.
 
 #### AI-Text / LLM-Sounding Check
 
-Prompt Writing prohibits LLM-drafted or LLM-polished prompts, and an AI-text detector runs before anything else in the pipeline; an LLM-sounding prompt is the most common rejection. Real people type fast and unproofread.
+Prompt Writing prohibits LLM-drafted or LLM-polished prompts, and an AI-text detector runs before anything else in the pipeline; an LLM-sounding prompt is the most common rejection. A prompt is a plain natural request: readable, not polished into a document, not roughed up on purpose.
 
 | Red flag | Found? | Quote |
 |---|---|---|
-| Perfectly capitalised and punctuated throughout | Yes/No | "..." |
 | Document formatting: headings, bullets, numbered lists, bold | Yes/No | "..." |
 | Polished connective phrasing ("Additionally", "Furthermore", "Please ensure") | Yes/No | "..." |
 | Enumerated deliverable specs or preservation rules | Yes/No | "..." |
 | Even, symmetric sentence lengths with no natural shortcuts | Yes/No | "..." |
+| Staged errors: misspellings, made-up emoji or broken punctuation a person typing normally would not leave | Yes/No | "..." |
 
 Score the result under **Contrived / Unnatural (2.7)**: any red flag fails, including one mild flag on an otherwise real situation. Do not claim to run a detector; report the observable features.
+
+Clean, correctly spelled writing raises no flag (Local Overrides, Typing). A few natural slips are not staged errors; there is no fixed count, so judge whether the errors read as planted. Calibration: #11 (6abc06a6…073708) packs 11 misspellings into about 120 words ("breakdiwn", "wirk", "testd", "chanel", "calndars", "telll") and fails; the same prompt spelled correctly raises no flag.
 
 #### Requirements Incorporated from Reference Files or the Environment
 
@@ -572,7 +578,7 @@ A task may use one, two, or all three — **FAIL** only when **none** is load-be
 
 | Dimension | What it requires | Present? | Evidence |
 |-----------|------------------|----------|----------|
-| **Ambiguity** | Prompt is under-specified on purpose; key details (dates, names, priorities, destinations) are planted in the environment; the unhinted prompt + persona-reachable evidence still resolve to one defensible end-state | Yes/No | |
+| **Ambiguity** | Prompt is under-specified on purpose; key details (dates, names, priorities) are planted in the environment. Where the output goes is named when the persona would know it. It is left to the environment only when finding it is the task, and then each place must be findable from a record the persona can see (for example, the message where someone asked). The unhinted prompt + persona-reachable evidence still resolve to one defensible end-state | Yes/No | |
 | **Dynamic Change** | A later-discovered source supersedes an earlier one (discovery order, not live mid-run mutation). Name the stale fact, the newer fact, and why a plausible path hits the stale one first | Yes/No | |
 | **Multi-Source** | Needed facts split across 3+ systems, with at least one distractor or a resolvable disagreement | Yes/No | |
 
@@ -633,7 +639,8 @@ not the event unless the prompt says it is. Readings that differ on this are a
 material difference until a cited passage settles it.
 
 Accept alternatives actually authorized by the request; do not invent them
-from a later Oracle Events or grading criterion. Listing candidate calls and
+from a later Oracle Events or grading criterion. The only exception is a
+both-fair figure (below). Listing candidate calls and
 asking the agent to choose one does not, by itself, authorize materially
 different final calls as interchangeable outcomes. Different writes,
 act-versus-defer decisions, or materially different required contents without
@@ -656,6 +663,27 @@ a resolving rule are ambiguity.
   fall within explicitly authorized alternatives or cited objective acceptance
   boundaries. One coherent procedure, a leading interpretation, or resolving
   only one part of the task is insufficient for PASS.
+- **PASS (5): both-fair figure (local override 2026-10-17).** Applies only when
+  all five hold: (1) the readings make the same decision, writes, destinations
+  and recipients and differ only in one reported figure (amount, count, rate or
+  date); (2) each value is stated in a record the assigned persona can open;
+  (3) none of the five checks settles it; (4) each reading completes every
+  explicit ask; (5) the figure does not change what the agent does next.
+  Record it as BOTH_FAIR_FIGURE with both values and citations; the rubric must
+  accept either. Every other fork follows the FAIL and PASS rules above unchanged.
+  The same fork is not scored again under Clarity (2.6): the writes are the same
+  and the two values come from the records, not from the prompt's wording.
+  In the record, both readings state the same decision, writes and destinations
+  word for word, each reading's contents states its value, and the
+  comparison's `figure` holds the kind, a label, the two
+  values (leading reading first) each with its record quote (and a derivation
+  when the record gives the operands, not the value), a reason for each of the
+  five checks, and the reasons for conditions 4 and 5; the generated section
+  then prints "Rubric must accept: X or Y". Calibration: #50 (6aa8272b…fea8d),
+  where the 2-day completion rate is 32.8% under the #analytics roll-up note
+  the thread points to and 28.5% from the ZOM-673 operands, passes as
+  BOTH_FAIR_FIGURE. #49's $8.5K (2026-01-22) versus $8K (2026-01-23) does not:
+  the newer source settles it. A file-now versus defer fork is not a figure.
 - This sub-dimension has no scored NON-FAIL band. Required missing source evidence
   follows `WORKFLOW.md` § "Ruthless grading standard", not an invented ambiguity finding.
 
@@ -828,6 +856,7 @@ record before a scored prompt report; retain every existing phase and score.
   - existence / absence claims: "there's no ticket for this", "I never got the invoice", "we have no record of X"
   - temporal-window claims: "for the past two weeks", "since Monday nothing has…", "over the last sprint"
   - relationship / ownership state: "I own this", "this is assigned to me", "I'm the approver on it"
+  - company and people state: work that assumes HarmonyGames still runs normally after the February 11, 2026 shutdown announcement, or that a person who has left reviews, approves or replies. #43 (6a83fa91…3deb) fails: its premise has Victor, who left in April 2025, holding a current art-canon handoff control. Cite the records that show the shutdown or the departure, not the storyline YAML. The shutdown part applies to Feb 14 tasks only. On an Oct 1 task the company runs normally, so business as usual is not a false premise; a person who left before 2025-10-01 (Victor) still is, and so is anything the prompt treats as existing that only appears after 2025-09-30 23:59:59 PT (for example Combo Fighter or Zombie Match Lite work).
 
   Any state premise the universe **contradicts** is **Major (FAIL)** — treat it exactly like a phantom identifier, because it breaks the task the same way. A premise that is merely **unverifiable** (no supporting record either way) is a truthfulness risk: flag it and confirm the task is still solvable without it.
 
@@ -854,7 +883,7 @@ record before a scored prompt report; retain every existing phase and score.
 - [ ] All dates mentioned align with universe timeline
 - [ ] All dollar amounts match universe data
 - [ ] No misleading statements that would send agent down wrong path
-- [ ] No grammar errors or typos that change meaning or break feasibility or truthfulness (e.g., wrong person name "Samra" vs "Samira", wrong month "March" vs "April", wrong entity "Vectral" vs "Vectoral") - cosmetic typos that don't affect meaning are fine
+- [ ] No grammar errors or typos that change meaning or break feasibility or truthfulness (e.g., wrong person name "Samra" vs "Samira", wrong month "March" vs "April", wrong entity "Vectral" vs "Vectoral") - cosmetic typos that don't affect meaning are fine. Staged typos fail Contrived (1.2).
 
 **Scoring:**
 - FAIL (1-2): 1+ **major** factual errors (tight-identifier errors — see classification above) OR 1+ **minor** factual errors
@@ -971,7 +1000,23 @@ If ANY such statement appears alongside imperatives directed at the agent (e.g.,
 | Difficulty from precision, not complexity | Yes/No | "..." |
 | Arbitrary checkpoints, repeated reads, or unnecessary writes added to increase calls | Yes/No | "..." |
 | Unnatural opaque IDs, generated filenames, full agent IDs or similar references a person would not type (2026-09-26 update) | Yes/No | "..." |
-| LLM-sounding text from the AI-Text check in 1.2 | Yes/No | "..." |
+| LLM-sounding text or staged errors from the AI-Text check in 1.2 | Yes/No | "..." |
+| Trap hint or riddle: wording that points at the trap without naming it | Yes/No | "..." |
+| Hidden destination the persona would know ('wherever that's been asked for', 'the same place the rest of these calls have been going') | Yes/No | "..." |
+
+**Trap hints and hidden destinations (2026-10-17).** A Yes on either row fails
+Contrived, like the other rows. A hidden cause is good difficulty only when the
+prompt does not hint at it; naming the symptom stays fine (Local Overrides,
+Riddles). #31 (6aaae611…2a2b) fails on "I have a nagging feeling the thing that
+actually bites us is not on anybody's list" and "at least a couple of the
+conclusions people settled on in Slack do not survive contact with the code";
+"CPI jumped last week and I don't know which test did it" passes. A destination
+may be left to the data only when finding it is the task and a persona-visible
+record names each place (1.5 Ambiguity). #42 (6abd857f…8348, "get it on record
+wherever that's actually been asked for"), #47 (6abcef4d…025c, "landed in the
+same place the rest of these wind down calls have been going") and #44
+(6ac674e1…ecbf, "answer him there too", where nothing leads to the PR comment)
+fail; "post the summary in #winddown" passes.
 
 **Realistic human requests (2026-09-26 update).** Prompts should read like realistic workplace requests. Exact titles and values are fine when they are naturally human-readable ("the Q1 Launch Plan doc", "$4,180"). An unnatural opaque ID, generated filename, full agent ID, or exact timestamp ("January 15 at 3:47 PM") **fails** Contrived unless the task is about that ID or timestamp.
 
@@ -984,6 +1029,28 @@ If ANY such statement appears alongside imperatives directed at the agent (e.g.,
 | Prescribes the reply format ("respond with a table with these columns", "give me back exactly these fields") | Yes/No | "..." |
 | Length driven by exhaustively listing contents rather than by scenario complexity | Yes/No | "..." |
 
+**Audit forms and if-chains (2026-10-17).** Each of these red flags fails
+Contrived on its own; it does not need a second trigger. There is no word list
+and no count: judge whether the prompt reads as a person asking for help, and
+calibrate on the examples below. A per-case rule belongs in a seeded record,
+not in the prompt.
+
+| Red flag | Found? | Quote |
+|-----------|--------|-------|
+| Reads like an audit or compliance form, not a person asking for help | Yes/No | "..." |
+| Long chains of if / but-not / then-also clauses dictating what the Agent does per case | Yes/No | "..." |
+
+#1 (6a7f62da…6b43, "Find the current governing control he meant, reconcile
+its evidence, and complete the decision record, remediation, and handoff it
+requires") and #43 (6a83fa91…3deb, "apply it to the full in-scope upload-thread
+cohort, reconcile the decisions chronologically, classify the outcomes, rank
+the outstanding channels and evidence, and complete the review artifacts and
+handoff it requires") read as forms and fail. #44 (6ac674e1…ecbf, "If he asked
+me somewhere else, not the rules or his posts about them, to shut something off
+or hand it over, answer him there too") is an if-chain and fails. "Arthur wants
+the merge-review stuff sorted before the next push, can you check what's still
+open and close it out?" passes.
+
 **Naturalness reference:** use `Evals/references/rules/long_horizon.md` for natural delegation and moving validly incorporated operating detail into the environment. Judge the actual task's wording and necessary work; no historical task file is required.
 
 **Natural Difficulty Indicators (GOOD):**
@@ -993,12 +1060,12 @@ If ANY such statement appears alongside imperatives directed at the agent (e.g.,
 | Entity confusion (similar names, overlapping roles) | Yes/No | "..." |
 | Information scattered across services | Yes/No | "..." |
 | Conflicting data between systems | Yes/No | "..." |
-| Hidden root causes | Yes/No | "..." |
+| Hidden root causes the prompt does not hint at | Yes/No | "..." |
 | Multiple related issues to connect | Yes/No | "..." |
-| Implicit requirements | Yes/No | "..." |
+| Implicit requirements carried by records, not by prompt wording | Yes/No | "..." |
 
 **Scoring:**
-- FAIL (1-2): Contrived or unnatural prompt, including a spec-like or polished draft whose situation is real, or an unneeded opaque ID, generated filename, full agent ID or exact timestamp
+- FAIL (1-2): Contrived or unnatural prompt, including a spec-like or polished draft whose situation is real, or an unneeded opaque ID, generated filename, full agent ID or exact timestamp; or staged errors, a trap hint or riddle, a hidden destination the persona would know, audit-form wording or a long if-chain (2026-10-17)
 - NON-FAIL (3-4): **Not used.** A limited artificial or LLM-sounding element fails.
 - PASS (5): All difficulty comes from natural business complexity, and the prompt reads like a real employee message
 
@@ -1008,7 +1075,9 @@ If ANY such statement appears alongside imperatives directed at the agent (e.g.,
 
 ### 2.8 Alignment with Today's Date Check
 
-The fixed universe date and time is **2026-02-14 00:00 UTC** (Universe and Tools).
+The fixed universe date and time is the task date's clock: **2026-02-14 00:00 UTC**
+(Universe and Tools) for Feb 14 tasks and **2025-10-01 00:00 PT (2025-10-01 07:00 UTC)**
+for Oct 1 tasks. Read the saved date (`hg_universe.py show`); never assume one.
 **Relative wording is allowed (local override).** Universe and Tools and Prompt
 Writing tell authors to write dates absolutely; this Eval does not fail relative
 wording. Expressions such as "Friday", "today", "yesterday", "last week" and
@@ -1021,11 +1090,16 @@ the task's current "today" or "now". Interpret relative wording inside a histori
 message against that message's own date/context. Preserve explicit source timezones;
 the universe clock itself is UTC. Record the resolved date or window
 in the review when it matters to scope, a deadline, current state or an action.
+In persona-written text, 'today' means Saturday, February 14, 2026, the date of
+the fixed clock (2026-02-14 00:00 UTC, the current date set in the taxonomy).
+'Yesterday' is February 13. On an Oct 1 task, 'today' means Wednesday,
+October 1, 2025 (the clock is 2025-10-01 00:00 PT) and 'yesterday' is
+Tuesday, September 30, 2025.
 
 | Reference | Review action |
 |-----------|---------------|
 | "Friday", "yesterday", "last week" | Resolve using the task clock and incorporated source context; accept when the intended event/window is clear. |
-| "today", "now", "still open" | Check the requested state at 2026-02-14 00:00 UTC; historical quotations retain their own temporal context. |
+| "today", "now", "still open" | Check the requested state at the task clock (2026-02-14 00:00 UTC or 2025-10-01 00:00 PT); historical quotations retain their own temporal context. |
 | "this morning", "EOD", "an hour ago" | Resolve the time boundary only to the precision the request needs; use supplied timezone information where necessary. |
 | Explicit date or named event | Verify it against the source; explicit wording does not excuse a wrong date or nonexistent asserted event. |
 
@@ -1132,7 +1206,7 @@ All entity/fact existence was verified in Phase 2.2B (Data Feasibility) and Phas
 
 | Category | What fails |
 |---|---|
-| Temporal Field Inconsistency | Date-bearing fields contradict each other or the 2026-02-14 00:00 UTC clock (including seeded records dated after the clock) |
+| Temporal Field Inconsistency | Date-bearing fields contradict each other or the task clock (2026-02-14 00:00 UTC or 2025-10-01 00:00 PT), including seeded records dated after the clock |
 | Semantic / Category Inconsistency | A categorical or descriptive field does not match the underlying work or entity, or names overlap ambiguously. **A naming overlap is only a defect when it misdescribes a record.** An overlap that the task requires the Agent to reconcile is designed friction, and this stage cannot read the Oracle Events to learn the author's intent, so treat a consistent overlap between two correctly named records as intentional and note it rather than failing it. A field that names the wrong entity is still a defect. |
 | Cross-service Referential Inconsistency | The same entity or fact differs across services, or a required reference does not resolve |
 | Quantitative / Reconciliation Inconsistency | Line items do not sum to totals; aggregates do not match records |
@@ -1380,8 +1454,9 @@ the report yet. Follow [deep_recheck.md](references/rules/deep_recheck.md):
 2. Open every record a finding cites. Mark each finding CONFIRMED or REJECTED
    with a reason. Do not accept a finding on the pass's word. A UGT finding is
    REJECTED only by quoting a prompt sentence or persona-visible record that
-   rules out Reading B; otherwise it stays CONFIRMED. A `PLATFORM:` finding is
-   recorded, not scored.
+   rules out Reading B; otherwise it stays CONFIRMED. A fork that meets every
+   both-fair figure condition (§2.1) is recorded as BOTH_FAIR_FIGURE instead. A
+   `PLATFORM:` finding is recorded, not scored.
 3. Put each confirmed finding into the check record under its existing rule:
    Truthfulness as a premise check, UGT in `unique_ground_truth`, any other
    dimension in `other_failures`. Rescore under Phase 4. A confirmed fail-level
@@ -1401,7 +1476,7 @@ passes; `## Deep Recheck` says why, then gives the verdict block.
 | Mistake | How to Detect | Severity |
 |---------|---------------|----------|
 | Phantom entity / tight identifier | Asserted existing entity or tight ID is confirmed absent from local records, SQL and applicable task attachments | Major (Truthfulness) |
-| **False state premise** | **A stated claim about current state ("still no reply", "hasn't been merged", "rolling window", "assigned to me") is contradicted by the universe — greps clean but breaks the task** | **Major (Truthfulness)** |
+| **False state premise** | **A stated claim about current state ("still no reply", "hasn't been merged", "rolling window", "assigned to me") is contradicted by the universe — greps clean but breaks the task. Includes work that assumes normal operations after the Feb 11 shutdown announcement (Feb 14 tasks only), a person who has left reviewing, approving or replying (#43), or, on an Oct 1 task, anything that does not exist yet by 2025-09-30 23:59:59 PT** | **Major (Truthfulness)** |
 | Wrong relationships | Verify preparer→reviewer→approver and entity/portfolio mappings against supplied assignment context and local records | Major (Truthfulness) |
 | Pre-solved prompt | Root cause stated in prompt | Major (Pre-Solving) |
 | Bolt-on asks | Remove sentence test - rest still makes sense | Major (Coherence) |
@@ -1412,10 +1487,14 @@ passes; `## Deep Recheck` says why, then gives the verdict block.
 | **Spec-sheet register** | **~600-word prompt that enumerates each deliverable's contents + preservation rules + reply format (2+ triggers) — natural scenario, unnatural voice** | **Major (Contrived)** |
 | Persona mismatch | Request outside persona's scope | Major (Persona) |
 | Persona ACL violation | Prompt requires (or directs) reading scoped-service data outside the persona's view — scoped set derived live from the `Evals/references/persona/acl.md` Access matrix; no affirmative-denial or authorized alternate | Major (Feasibility) |
-| Ambiguous end-state | Two supported readings require different decisions, writes or contents, and prompt/source authority does not resolve the choice | Major (Unique Ground Truth) |
+| Ambiguous end-state | Two supported readings require different decisions, writes or contents, and prompt/source authority does not resolve the choice (a both-fair figure under §2.1 passes instead) | Major (Unique Ground Truth) |
 | Action decision ambiguity | Two readings → different write actions (or write vs no-write / act vs defer) | Major (Clarity - 06/09) |
 | Wrong business function | Category doesn't match the task categories | Non-Fail (Business Function; the QC form has no fail option) |
-| **LLM-sounding or spec-like prompt** | **Uniform capitalisation and punctuation, document formatting, polished connectives, or a deliverable spec — even when the situation is real** | **FAIL (Contrived)** |
+| **LLM-sounding or spec-like prompt** | **Document formatting, polished connectives, or a deliverable spec — even when the situation is real** | **FAIL (Contrived)** |
+| **Staged errors** | **Misspellings, made-up emoji or broken punctuation planted to look human (#11); clean writing is fine** | **FAIL (Contrived, local override)** |
+| **Trap hint or riddle** | **Wording that points at the trap without naming it (#31); naming the symptom is fine** | **FAIL (Contrived, local override)** |
+| **Hidden destination** | **The persona would know where the output goes but the prompt hides it (#42, #47, #44)** | **FAIL (Contrived)** |
+| **Audit form or if-chain** | **Reads like an audit or compliance form (#1, #43), or long if / but-not / then-also chains dictate per-case actions (#44)** | **FAIL (Contrived)** |
 | **Opaque IDs / generated filenames / exact timestamps** | **Full agent IDs, hash-like IDs, generated filenames or exact timestamps a person would not type, when not necessary** | **FAIL (Contrived)** |
 | **MCP server or "tool" wording** | **"use the Linear MCP server", "use the GitHub tool"** | **FAIL (Explicit Tool Mention, local override)** |
 | **Universe inconsistency** | **Task-touched data contradicts itself or the clock (dates, categories, references, totals, states, IDs)** | **FAIL, or Non-Fail for one minor that is not a lifecycle or sum mismatch (Cross-Service Coherence)** |

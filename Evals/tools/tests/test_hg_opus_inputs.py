@@ -16,7 +16,7 @@ class OpusInputTests(unittest.TestCase):
         self.root = Path(self.temp.name).resolve()
         (self.root / 'Evals/tools').mkdir(parents=True)
         (self.root / 'claude').mkdir()
-        for name in ('hg_store_input.py', 'hg_preflight.py'):
+        for name in ('hg_store_input.py', 'hg_preflight.py', 'hg_universe.py'):
             shutil.copy2(TOOLS / name, self.root / 'Evals/tools' / name)
 
     def tearDown(self):

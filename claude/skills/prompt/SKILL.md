@@ -12,6 +12,16 @@ grading standard** in `Evals/WORKFLOW.md`: actively challenge acceptance,
 substantiate findings, and preserve this stage's scope, evidence limits and
 scoring rules.
 
+**Task date first.** Before anything else, including other input questions, run
+`python3 Evals/tools/hg_store_input.py list` and read `universe_intake`. Unless it
+is `SELECTED`, ask only this and wait:
+**Which date is this task on: Oct 1, 2025 (synth-cut) or Feb 14, 2026 (normal)?**
+Save the answer with `python3 Evals/tools/hg_store_input.py universe "<answer>"`.
+Never guess, infer or default the date; it selects the universe folder and clock
+for every read (`Evals/INPUTS.md` **Task date — ask first**). A saved date is
+reused without asking. Copy `report_line` from `universe_intake` (or
+`hg_universe.py show`) into the verdict block as its `Clock:` line.
+
 Before source checks or missing-input questions, follow `Evals/INPUTS.md` and
 `WORKFLOW.md`'s **Save and reuse supplied inputs** contract. Run
 `python3 Evals/tools/hg_store_input.py list`, then save every newly supplied
@@ -112,7 +122,7 @@ challenges in the existing phases. Historical cases are calibration only;
 the prompt-only corpus has no rubric/OE/run inputs and cannot prove task facts.
 
 Apply `Evals/references/rules/prompt_rubric_reliability.md` from the shared
-`prompt-ugt-v1` release. Verify it with `hg_eval_release.py snapshot prompt`;
+`task-quality-v1` release. Verify it with `hg_eval_release.py snapshot prompt`;
 do not run copied historical task-folder helpers. Bind `prompt-source-checks-v2`
 checks with `hg_prompt_checks.py start` and complete the format-2 premise and UGT
 record while reviewing the existing phases. Separate asserted existing facts
@@ -128,7 +138,11 @@ same material result. A later applicable update for the same issue and scope can
 resolve an earlier statement without explicitly announcing replacement; respect
 cutoff dates and prompt-specified source priority, and retain unaffected requirements.
 A leading reading, the same destination, or resolving only one part of the task
-does not prove uniqueness. Cite the evidence that actually excludes an alternative
+does not prove uniqueness. The one exception is Eval 1 §2.1's both-fair figure
+(local override 2026-10-17): only one reported figure differs, both values are
+on persona-visible records, none of the five checks settles it, and decision,
+writes and destinations are the same. Record it as BOTH_FAIR_FIGURE; every other
+fork keeps the rules here. Cite the evidence that actually excludes an alternative
 or the authority that authorizes its objective acceptance boundary; a list
 of candidate calls does not itself delegate interchangeable final decisions.
 Challenge strawman alternatives, irrelevant citations and unsupported delegation.
@@ -186,6 +200,12 @@ Keep these distinctions explicit:
   substitute one for another.
 - Apply the fixed universe clock and contextual date-resolution rule. Relative
   wording such as Friday, today or yesterday is allowed when it resolves clearly.
+  In persona-written text, today is Saturday, February 14, 2026 and yesterday
+  is February 13 on a Feb 14 task; on an Oct 1 task, today is Wednesday,
+  October 1, 2025 and yesterday is September 30 (clock 2025-10-01 00:00 PT).
+  The February 11, 2026 shutdown premise check applies to Feb 14 tasks only; on
+  an Oct 1 task, check premises against what exists by 2025-09-30 23:59:59 PT
+  (people who left before then, such as Victor, are still gone).
   Flag only material ambiguity or source/clock contradictions; do not require
   explicit dates merely because the prompt uses relative wording.
 
@@ -260,8 +280,9 @@ section then says why.
    for that pass and repeat until it returns one.
 2. Open every record each finding cites. Mark it CONFIRMED or REJECTED with a
    reason; the pass's word is not evidence. Reject a UGT finding only by quoting
-   a prompt sentence or persona-visible record that rules out Reading B. Record
-   `PLATFORM:` findings without scoring them.
+   a prompt sentence or persona-visible record that rules out Reading B. A fork
+   that meets every Eval 1 §2.1 both-fair figure condition is recorded as
+   BOTH_FAIR_FIGURE, not rejected. Record `PLATFORM:` findings without scoring them.
 3. Add confirmed findings to the check record: Truthfulness as premise checks,
    UGT in `unique_ground_truth`, anything else in `other_failures`. Rescore and
    save with `prompt-checks`. A confirmed fail-level finding makes the verdict FAIL.
@@ -269,7 +290,8 @@ section then says why.
    value, id and label quoted from a record, every covered item named, no new
    lock-in. Replace a rewrite you cannot verify with a plain description.
 5. Save the report. It ends with `## Deep Recheck` with the fork list (every
-   fork, with the record that settles it or what is missing); its last part is
+   fork, with the record that settles it, what is missing, or its two both-fair
+   values); its last part is
    the report's only verdict block, matching the recomputed record.
 
 Then return the verdict/status, blockers, and report path.

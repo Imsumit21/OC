@@ -1,19 +1,57 @@
 # Direct local search environment
 
 This contract applies to every numbered Eval and Claude skill in this pack.
-The evaluator reads the five sibling folders in [UNIVERSE_MAP.md](UNIVERSE_MAP.md).
+The evaluator reads the sibling folders in [UNIVERSE_MAP.md](UNIVERSE_MAP.md): `Evals/`, `claude/` and the universe folder of the task's date.
 There is no `/setup`, deployment, AgentEnvHub or live MCP prerequisite. Do not
 call workplace connectors or configure a live connection for these evals.
 
+## Task date and universe
+
+Every task runs on one of two universes, chosen by the task's date. Ask for the
+date first, before reading the universe or any other input (INPUTS.md **Task
+date**), and save the answer with `tools/hg_store_input.py universe <answer>`.
+There is no default: if no date is saved, the search helpers and review tools
+stop with the question. Never infer the date from the prompt, the data or the
+task ID. `tools/hg_universe.py show` prints the saved choice.
+
+- **Feb 14, 2026 (normal).** Folder `Universe_Normal/`, built from
+  `hg4-2026-08-31` v37 (downloaded 2026-10-20). Clock **2026-02-14 00:00 UTC**,
+  which is Friday, February 13, 2026, 4:00 PM PT. In persona-written text,
+  "today" is Saturday, February 14, 2026 and "yesterday" is February 13. The
+  studio announced its shutdown on February 11, 2026, so the shutdown and
+  departed-person rules apply.
+- **Oct 1, 2025 (synth-cut).** Folder `Universe_SynthCut/`, built from
+  `hg4-synth-sep30cut` v16 (downloaded 2026-10-20): `hg4-2026-08-31` v36 cut at
+  2025-09-30 23:59:59 PT, plus the later persona merge and Snowflake comment
+  fixes. Clock **2025-10-01 00:00 PT (2025-10-01 07:00 UTC)**. Both the Pacific
+  and the UTC date are Wednesday, October 1, 2025. In persona-written text,
+  "today" is Wednesday, October 1, 2025 and "yesterday" is Tuesday, September 30.
+  The company is operating normally: the February 2026 shutdown and its
+  terminations have not happened, so the shutdown rules do not apply. People who
+  left before the cut are still gone, so the departed-person rule applies to
+  them: Victor Barnes left in April 2025 (last Slack message 2025-04-15); every
+  other roster persona is active through September 30, 2025. Nothing after the
+  cut exists yet, including six whole storylines:
+  Combo Fighter, Zombie Match Lite, the Telegram Domino Delights port, the UI
+  sprite optimization sprint, the Mattel Barbie idle life sim pitch and the web
+  distribution partnership.
+
+Rules elsewhere in this pack that name February 2026 events (the February 11
+shutdown announcement, terminations backdated to December 25, 2025, Google
+accounts archived by February 15, departed personas) describe the Feb 14 universe
+only. For a synth-cut task, apply the same check against the Oct 1 state instead:
+a premise is false if it relies on something that does not exist by
+2025-09-30 23:59:59 PT, or on a person who had left by then, never because the
+studio later shut down.
+
 ## Selected base and evidence
 
-All service data comes from `hg4-2026-08-31.zip` (2026-09-28 download), a newer build that replaced the v28 base files.
-`references/universe_manifest.json` records the archive hash, original internal
-metadata, service paths and extracted coverage. Each service's
-`source_manifest.json` records original file paths, sizes and SHA-256 hashes.
-The archive name does not establish a verified August 31 internal version;
-preserve its internal metadata rather than rewriting it. The refreshed archive
-contains populated GCal and GSlides collections. Check actual source records
+`references/universes/<normal|synthcut>/universe_manifest.json` records each
+universe's archive hash, internal metadata, service paths and extracted coverage;
+`source_layout.json`, `search_indexes/` and `id_indexes/` beside it belong to the
+same universe. Each service's `source_manifest.json` records original file paths,
+sizes and SHA-256 hashes. Archive names do not establish internal versions;
+preserve internal metadata rather than rewriting it. Check actual source records
 and the current manifest rather than carrying forward earlier empty-export assumptions.
 
 Use [SEARCH.md](SEARCH.md) and `tools/hg_search.py` for targeted local discovery.
@@ -102,27 +140,40 @@ proven defect. Other stages retain their own applicable evidence requirements.
 ## Snowflake table schema reference
 
 `references/schema/snowflake.json` supplies explicit analytics table metadata
-from the selected archive. The full service data is in `HarmonyGames_Other_Services/Services_Data/snowflake/`.
+from the selected archive. The full service data is in `Universe_Normal/Normal_HarmonyGames_Other_Services/Services_Data/snowflake/` (Feb 14) or `Universe_SynthCut/SynthCut_HarmonyGames_Other_Services/Services_Data/snowflake/` (Oct 1).
 Use those tables and rows for supported local checks; do not claim a SQL query
 was executed. Analytics definitions do not validate the injection database.
 
 ## Clock and outputs
 
-The fixed universe date/time is **2026-02-14 00:00 UTC** (Universe and Tools).
+The fixed universe date/time is the clock of the task's universe (**Task date and
+universe** above): **2026-02-14 00:00 UTC** for Feb 14 tasks (Universe and Tools)
+and **2025-10-01 00:00 PT (07:00 UTC)** for Oct 1 tasks. "The clock" anywhere in
+this pack means that value.
 Do not replace it with the machine clock, gateway get_time, export date or review
-date. Preserve source timezone information and compare against the UTC clock.
+date. Preserve source timezone information. Tools show UTC, but people in the
+story use Pacific time; at the Feb 14 clock it is Friday, February 13, 2026, 4:00 PM PT.
+Write dates in Pacific time. If the Pacific date and the UTC date are different,
+accept either. Checks against the clock itself stay in UTC.
 
 Base and injected records have no global earliest allowed date. SQL may add or
 update records dated before January 1, 2026. Check their chronology, consistency
 and the task's actual date scope; age alone is not a defect. Records presented
 as already existing or completed must be consistent with the fixed clock.
 Future deadlines and scheduled events are valid when represented as future.
+Event timestamps (created, sent, posted, commented, modified, dateLastActivity,
+action date) must be at or before the clock. Only plan fields (due,
+scheduled start/end, deadline) may be later. Calling a record "scheduled" does
+not exempt its event timestamps.
 
 Relative dates such as "Friday", "today" and "yesterday" are allowed. Resolve
 them using the task context and fixed universe clock; relative words in historical
-messages use those messages’ own context. Do not require explicit calendar dates
-or fail a prompt for relative wording alone. Report only material unresolved
-ambiguity or demonstrated temporal contradictions under the selected Eval.
+messages use those messages’ own context. In persona-written text, "today" is
+Saturday, February 14, 2026 for Feb 14 tasks and Wednesday, October 1, 2025 for
+Oct 1 tasks; "yesterday" is the day before. Do not require
+explicit calendar dates or fail a prompt for relative wording alone. Report only
+material unresolved ambiguity or demonstrated temporal contradictions under the
+selected Eval.
 
 Save supplied inputs and replacements under `INPUTS.md`; write reports and
 internal evidence/scoring records through the fixed output helper. `/rubric`

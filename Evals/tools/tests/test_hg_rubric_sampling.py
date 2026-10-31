@@ -14,7 +14,7 @@ from hg_review_score import calculate, validate_score
 from hg_rubric_checks import validate_checks
 from hg_rubric_loop import digest, review_context, REFERENCES
 from hg_rubric_sampling import validate_sampling
-from rubric_checks_fixture import checks_fixture
+from rubric_checks_fixture import checks_fixture, idle_case
 from test_hg_review_enforcement import tally
 from test_hg_rubric_loop import candidate, score_record, audit_report
 
@@ -26,6 +26,7 @@ class SamplingChecks(unittest.TestCase):
         self.root = Path(tmp.name)
         self.addCleanup(patch.stopall)
         patch.object(inputs, 'REPOSITORY', self.root).start()
+        inputs.save_input('universe', content=b'2026-02-14\n')  # task date (hg_universe.py)
         patch.object(writer, 'REPOSITORY', self.root).start()
         self.prompt = ('Report download sizes for all builds in the approved register, '
                        'including the unusual deployment, and send the report to the release channel.')
@@ -66,7 +67,7 @@ class SamplingChecks(unittest.TestCase):
                               field='download size', edge='Build Edge')).encode()
         (self.root / 'scope.json').write_bytes(raw)
         source = dict(id='SCOPE', path='scope.json', sha256=digest(raw), quote=raw.decode(),
-                      visibility='VISIBLE', access='Immutable synthetic register.')
+                      visibility='VISIBLE', access='Immutable synthetic register.', reachability='PROMPT_LINKED')
         self.checks['sources'] = [s for s in self.checks['sources'] if s['id'] != 'SCOPE'] + [source]
 
     def check(self, issues=None):
@@ -196,6 +197,7 @@ class SamplingChecks(unittest.TestCase):
         self.rubric[3]['title'] = title
         self.checks['rows'][3]['title'] = title
         self.checks['rows'][3]['assertion_inventory']['assertions'][0]['quote'] = title
+        self.checks['rows'][3]['do_nothing_case'] = idle_case(title)
         req = self.checks['requirements'][3]
         req['coverage'] = 'MENTION_ONLY'
         for name in ('omission_test', 'wrong_result_test'):

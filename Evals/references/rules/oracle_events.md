@@ -78,6 +78,29 @@ The current record is format 2 (`oracle-events-v2`). Copy its binding fields, th
   an exact `quote` from the OE text and a `reason`. Any finding caps Accuracy at
   NON-FAIL 3; it never FAILs and never replaces a content result. Tool names, IDs
   and query-style wording are not format defects.
+- `expected_values`: the value ledger for Eval 2 §2.4 (golden-audit G3, ported).
+  An Expected line is the text after an `Expected:` label, or after "The agent
+  finds" when the author wrote no label, up to the next blank line, OE heading or
+  Expected label. Each entry has `step_id`, `oe_quote` (exact OE text; it covers
+  every value inside it) and `reason`, plus `not_a_claim: true` (an OE
+  cross-reference, a value the Agent will create) or a `result`:
+  - `VERIFIED`: `source_ids` whose anchor quotes hold every ID, event name, field
+    value, channel, SHA and version in the quote character for character. A figure
+    (amount, count, date, time) is in a cited quote once thousands separators are
+    dropped, or the entry records the `calculation` (a PT rendering of a UTC
+    timestamp, a sum). Absence wording ("none", "never", "nothing", "no later
+    commit") needs `evidence_check` with method ABSENCE under
+    [prompt_rubric_reliability.md](prompt_rubric_reliability.md), unless the quote
+    repeats a record's own words (three or more words found in a cited quote, such
+    as "Ads: None in MVP"). A VERIFIED entry cannot carry a counterexample.
+  - `INACCURATE` or `MINOR`: `source_ids` plus `source_value` (the record's
+    differing value, quoted exactly) or `counterexample` (`source_id` among them
+    and an exact `quote`) refuting an absence claim. INACCURATE records
+    `WRONG_EXPECTED_DATA` and fails Accuracy; MINOR is NON-FAIL 3.
+  - `UNRESOLVED`: a reason; the review stays unscored.
+  The validator lists every value and absence word on Expected lines. Any that no
+  entry covers is unresolved. Use an empty list only when no Expected line
+  carries one. Registered rubric, golden and OE files are never a source here.
 
 The validator computes scores; a self-written PASS field cannot override its
 findings. It verifies exact hashes and source quotations, not arbitrary semantic

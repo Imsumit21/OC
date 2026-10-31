@@ -14,6 +14,11 @@ are not established ground-truth labels. Some disagree with exported scores.
 Two FAILs have no explanation: …9cb3d (Multiple Valid Answers, CSV row 93) and
 …965faf (Feasibility, row 98). Do not invent a diagnosis for either.
 
+The same file also carries `calibration_cases`: 15 cases (9 FAIL, 6 PASS) from
+9 tasks in Kelvin's 50-task review, for the rules agreed on 2026-10-17. Each task
+case binds its exact prompt by `prompt_sha256`; each control is a short text that
+must raise no flag. See [Calibration from the 50-task review](#calibration-from-the-50-task-review-2026-10-17).
+
 Read relevant cases only when useful. The prompt case file intentionally omits
 rubrics, OEs and run results. Do not load those later artifacts to interpret or
 grade the current prompt. Historical feedback is a source lead, never evidence
@@ -58,6 +63,20 @@ Use the existing Unique Ground Truth and Action Decision Ambiguity rules.
   persona evidence. A better-fitting colleague does not itself prove the
   assigned persona cannot act. Separate realism, business-function fit and
   confirmed access blockers under their current dimensions.
+
+## Calibration from the 50-task review (2026-10-17)
+
+These are judgment calls with no word list and no count. Use the cases to
+calibrate, then judge the actual wording under the Eval 1 phase named.
+
+| Rule (Eval 1) | Fails | Passes |
+|---|---|---|
+| Staged errors (§1.2, Typing override) | #11: "breakdiwn", "wirk", "calndars", "telll", 11 misspellings in about 120 words | The same #11 prompt spelled correctly |
+| Trap hint or riddle (§2.7, Riddles override) | #31: "the thing that actually bites us is not on anybody's list" | "CPI jumped last week and I don't know which test did it" |
+| Hidden destination (§1.5 Ambiguity, §2.7) | #42 "wherever that's actually been asked for"; #47 "the same place the rest of these wind down calls have been going"; #44 "answer him there too" | "post the summary in #winddown" |
+| Audit form or if-chain (§2.7) | #1 and #43 "…complete the … handoff it requires"; #44 "If he asked me somewhere else, not the rules or his posts about them, …" | "Arthur wants the merge-review stuff sorted before the next push, can you check what's still open and close it out?" |
+| Shutdown or departed-person premise (§2.3) | #43: Victor, who left in April 2025, holds a "current" control | None given |
+| Both-fair figure (§2.1, UGT override) | The BOTH_FAIR_FIGURE label on #49: $8.5K (2026-01-22) vs $8K (2026-01-23) is settled by the newer source as today, and a file-now versus defer fork is never a figure | #50: 32.8% or 28.5%, recorded as BOTH_FAIR_FIGURE; the rubric must accept either |
 
 ## Avoid importing old policy
 

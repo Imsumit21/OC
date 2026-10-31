@@ -62,6 +62,7 @@ class GoldenReviewTests(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer, "REPOSITORY", self.root).start()
         patch.object(inputs, "REPOSITORY", self.root).start()
+        inputs.save_input("universe", content=b"2026-02-14\n")  # task date (hg_universe.py)
         inputs.save_input("prompt", content=b"Report the current size.")
         inputs.save_input("task-details", content=b"Robert, Executive")
         inputs.save_input("golden", content=b"Current size is 214 MB.")

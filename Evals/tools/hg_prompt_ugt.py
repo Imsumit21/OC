@@ -5,6 +5,13 @@ the task. A judge must still choose a strong alternative, assess whether a cited
 passage actually resolves it, and distinguish delegated choice from an option
 list. Field comparison reasons deliberately allow equivalent material results
 whose prose differs; string equality is not a semantic equivalence test.
+
+BOTH_FAIR_FIGURE (Eval 1 §2.1 local override, 2026-10-17) is the one narrow
+PASS for a fork no source settles: the readings share decision, writes and
+destinations, differ only in one reported figure (amount, count, rate or date),
+and each of the two values is cited to a visible primary record. The review
+must state why each of the five checks does not settle it. Every other fork
+keeps its existing resolutions.
 """
 from copy import deepcopy
 from html import escape
@@ -16,7 +23,12 @@ from hg_source_checks import metadata_source
 
 MATERIAL_FIELDS = ('decision', 'writes', 'destinations', 'contents')
 RESOLUTIONS = {'EXCLUDED', 'SAME_MATERIAL_RESULT', 'AUTHORIZED_VARIATION',
-               'UNRESOLVED_MATERIAL_DIFFERENCE'}
+               'UNRESOLVED_MATERIAL_DIFFERENCE', 'BOTH_FAIR_FIGURE'}
+FIGURE_KINDS = {'AMOUNT', 'COUNT', 'RATE', 'DATE'}
+# The five checks of Eval 1 §2.1, in its order, with their report labels.
+FIGURE_CHECKS = (('newer_source', 'Newer source'), ('authority', 'Authority'),
+                 ('source_identity', 'Source identity'), ('scope', 'Scope'),
+                 ('same_material_result', 'Same material result'))
 HEADING = '### Unique Ground Truth comparison'
 
 
@@ -27,6 +39,13 @@ def _need(ok, message):
 
 def _text(value):
     return isinstance(value, str) and bool(value.strip())
+
+
+def _prompt_paths(root, context):
+    paths = {(Path(root) / f['path']).resolve()
+             for k in ('prompt', 'source:prompt')
+             for f in context.get('inputs', {}).get(k, {}).get('files', [])}
+    return paths or {(Path(root) / 'Evals/task_inputs/04_Prompt.txt').resolve()}
 
 
 def validate_review(review, known, root, context):
@@ -91,6 +110,7 @@ def validate_review(review, known, root, context):
         by_id[reading['id']] = reading
     lead_id = readings[0]['id']
     alternatives = set(by_id) - {lead_id}
+    figure_labels = set()
     challenge = review.get('challenge_review')
     _need(isinstance(challenge, dict) and isinstance(challenge.get('strongest_alternative_id'), str) and
           challenge['strongest_alternative_id'] in alternatives,
@@ -126,6 +146,54 @@ def validate_review(review, known, root, context):
             _need(not differs, 'same destination alone cannot establish the same material result')
         if resolution == 'UNRESOLVED_MATERIAL_DIFFERENCE':
             _need(differs, 'unresolved ambiguity needs a concrete material difference')
+        if resolution == 'BOTH_FAIR_FIGURE':
+            # Narrow local override (Eval 1 §2.1, 2026-10-17). Every condition is
+            # required; nothing here relaxes any other resolution.
+            _need(all(fields[f]['relation'] == 'SAME' for f in ('decision', 'writes', 'destinations')) and
+                  fields['contents']['relation'] == 'DIFFERENT',
+                  'BOTH_FAIR_FIGURE needs the same decision, writes and destinations (recipients included); '
+                  'only contents may differ')
+            # Stricter than SAME elsewhere: the narrow exception needs the identical
+            # concrete outcome, not prose the reviewer calls equivalent.
+            _need(all(by_id[lead_id]['material_result'][f].strip() == by_id[alternate]['material_result'][f].strip()
+                      for f in ('decision', 'writes', 'destinations')),
+                  'BOTH_FAIR_FIGURE readings must state the identical decision, writes and destinations')
+            _need('authority_chain' not in comparison,
+                  'BOTH_FAIR_FIGURE has no resolving authority; a fork an authority settles is EXCLUDED')
+            figure = comparison.get('figure')
+            _need(isinstance(figure, dict) and figure.get('kind') in FIGURE_KINDS and _text(figure.get('label')),
+                  'BOTH_FAIR_FIGURE needs a figure with kind AMOUNT, COUNT, RATE or DATE and a label')
+            label = figure['label'].strip().casefold()
+            _need(label not in figure_labels, 'a both-fair figure has exactly two values; record one fork per figure')
+            figure_labels.add(label)
+            values = figure.get('values')
+            _need(isinstance(values, list) and len(values) == 2 and all(isinstance(v, dict) for v in values) and
+                  [v.get('reading_id') for v in values] == [lead_id, alternate],
+                  'BOTH_FAIR_FIGURE needs exactly two values, the leading reading first, then the alternative')
+            for value in values:
+                _need(_text(value.get('value')), 'state each figure value')
+                value_refs = evidence(value.get('evidence'), 'figure value')
+                _need(all((Path(root) / known[sid]['path']).resolve() not in _prompt_paths(root, context)
+                          for sid in value_refs),
+                      'cite each figure value to a record the persona can open, not the prompt')
+                _need(any(value['value'] in e['quote'] for e in value['evidence']) or _text(value.get('derivation')),
+                      'quote the figure value or explain how it follows from the cited record')
+                _need(value['value'] in by_id[value['reading_id']]['material_result']['contents'],
+                      "each reading's contents must state its figure value")
+            _need(values[0]['value'].strip().casefold() != values[1]['value'].strip().casefold(),
+                  'BOTH_FAIR_FIGURE needs two different values')
+            settled = figure.get('checks')
+            _need(isinstance(settled, dict) and set(settled) == {key for key, _ in FIGURE_CHECKS},
+                  'give a reason for each of the five checks')
+            for key, name in FIGURE_CHECKS:
+                item = settled[key]
+                _need(isinstance(item, dict) and type(item.get('settles')) is bool and _text(item.get('reason')),
+                      'explain the ' + name.lower() + ' check')
+                _need(item['settles'] is False,
+                      'the ' + name.lower() + ' check settles this fork; it is not BOTH_FAIR_FIGURE')
+            _need(_text(figure.get('asks_completed')), 'show that each reading completes every explicit ask')
+            _need(_text(figure.get('next_step_unchanged')),
+                  'show that the figure does not change what the Agent does next')
         check = comparison.get('challenge')
         _need(isinstance(check, dict) and _text(check.get('resolution_relevance')),
               'challenge whether cited evidence resolves this actual alternative')
@@ -157,11 +225,7 @@ def validate_review(review, known, root, context):
           'inventory every explicit option, or explain why no explicit option list exists')
     inventory_refs = evidence(inventory.get('evidence'), 'option inventory')
     # Even a declaration that no options occur must cite the actual prompt.
-    prompt_paths = {(Path(root) / f['path']).resolve()
-                    for k in ('prompt', 'source:prompt')
-                    for f in context.get('inputs', {}).get(k, {}).get('files', [])}
-    if not prompt_paths:
-        prompt_paths = {(Path(root) / 'Evals/task_inputs/04_Prompt.txt').resolve()}
+    prompt_paths = _prompt_paths(root, context)
     _need(any((Path(root) / known[sid]['path']).resolve() in prompt_paths for sid in inventory_refs),
           'option inventory must cite the actual prompt')
     options = inventory.get('options')
@@ -242,6 +306,20 @@ def render_review(review, known):
         for field in MATERIAL_FIELDS:
             item = comparison['field_comparison'][field]
             lines.append('| ' + ' | '.join(_cell(v) for v in (field, item['relation'], item['reason'])) + ' |')
+        if comparison['resolution'] == 'BOTH_FAIR_FIGURE':
+            figure = comparison['figure']
+            lines += ['', 'Both-fair figure: ' + figure['kind'] + ', ' + _cell(figure['label'])]
+            for value in figure['values']:
+                line = ('Value for ' + _cell(value['reading_id']) + ': ' + _cell(value['value']) +
+                        '. Evidence: ' + _cell(_citations(value['evidence'], known)))
+                if _text(value.get('derivation')):
+                    line += '. Derivation: ' + _cell(value['derivation'])
+                lines.append(line)
+            lines += [name + ' check does not settle it: ' + _cell(figure['checks'][key]['reason'])
+                      for key, name in FIGURE_CHECKS]
+            lines += ['Every explicit ask: ' + _cell(figure['asks_completed']),
+                      'Next step unchanged: ' + _cell(figure['next_step_unchanged']),
+                      'Rubric must accept: ' + ' or '.join(_cell(v['value']) for v in figure['values'])]
         if 'authority_chain' in comparison:
             lines += ['', 'Authority chain: ' + _cell(' → '.join(comparison['authority_chain']))]
         if comparison['resolution'] == 'AUTHORIZED_VARIATION':

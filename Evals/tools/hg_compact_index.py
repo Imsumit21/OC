@@ -99,7 +99,8 @@ def compact_cache(h, kind, request):
         if cursor == cursor.parent:
             raise OSError('Compact cache must stay inside workspace')
         cursor = cursor.parent
-    path = folder / (batch.digest([kind, request]) + '.json')
+    # Keyed by universe too, so each task date keeps its own cache.
+    path = folder / (batch.digest([kind, request, str(h.manifest_path())]) + '.json')
     if path.is_symlink():
         raise OSError('Compact cache must not be a symbolic link')
     return path
@@ -137,7 +138,7 @@ def unpack_manifest(saved):
 
 @manifest_operation()
 def structured_info(h, service):
-    universe = h.ROOT / 'Evals/references/universe_manifest.json'
+    universe = h.manifest_path()
     watch_manifest(universe)
     services = h.manifest()['services']
     if service not in services:
@@ -169,7 +170,7 @@ def index_path(h, service, rel):
 
 def source_signature(h, folder, info):
     return {'version': VERSION, 'source': batch.fingerprint(h, folder, [info]),
-            'universe': stat_signature(h.ROOT / 'Evals/references/universe_manifest.json'),
+            'universe': stat_signature(h.manifest_path()),
             'manifest': stat_signature(folder / 'source_manifest.json'),
             'helpers': helper_signature(h)}
 
@@ -233,7 +234,7 @@ def build(h, service, rel):
 
 
 def package_entry(h, service, rel):
-    directory = h.ROOT / 'Evals/references/search_indexes'
+    directory = h.manifest_path().parent / 'search_indexes'
     manifest = directory / 'manifest.json'
     if not manifest.exists():
         return None

@@ -45,7 +45,7 @@ class BatchReadTests(unittest.TestCase):
         tools = self.root / 'Evals/tools'
         tools.mkdir(exist_ok=True)
         for name in ('hg_search.py', 'hg_compact_index.py', 'hg_search_batch.py',
-                     'hg_search_index.py', 'hg_get_many.py'):
+                     'hg_search_index.py', 'hg_get_many.py', 'hg_universe.py'):
             shutil.copy2(Path(h.__file__).parent / name, tools / name)
         source = self.root / 'reads.json'
         source.write_text(json.dumps(request))

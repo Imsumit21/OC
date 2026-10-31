@@ -16,7 +16,7 @@ Overrides in `3_Rubrics_Eval.md` are unchanged. Only the run flow changes.
 
 | Mode | When | What to do |
 |---|---|---|
-| `FULL` | No ledger in this workspace, or the prompt, OE, injection SQL or task details changed | Run 1 below |
+| `FULL` | No ledger in this workspace, a ledger saved under older rules (format before 2026-10-17), or the prompt, OE, injection SQL or task details changed | Run 1 below |
 | `DELTA` | Same task context; some rows edited, added, removed or previously flagged | Run 2 below |
 | `UNCHANGED` | Rubric and task context are byte-identical to the last run | Do not re-review. Say so, restate the previous verdict from the existing report, and stop |
 
@@ -29,6 +29,10 @@ Run `python3 Evals/tools/hg_rubric_lint.py` on the saved rubric. Every
 `vague_exemplar`, `tool_name`, `schema` and `prohibition_title` hit is a finding
 you must record (code does not miss word-list defects, so reviewers need not hunt
 for them); `markdown_artifact` and `whitespace` hits are non-failing repairs.
+Resolve every `disguised_negative` (do-nothing test, Eval 3 §2.9), `format_lock`
+(does the prompt state that count? Eval 3 §2.7), `anon_token` (bind as LITERAL,
+accept as shown) and `evidence_no_record` (name the record, Eval 3 §2.3) hit in
+the record; each becomes a finding when the check fails.
 Run it again on every candidate fix (see "Fixes").
 
 ## Run 1 (FULL): find everything, with a fix for every issue
@@ -101,8 +105,9 @@ or page writes), confirm the rubric has:
 - a row that grades the required targets (directly or by spot checks plus a
   volume row); and
 - a row that fails a run doing that write to the wrong targets: out-of-scope
-  tickets or records, decoys, other people's items, or extra targets (an exact
-  count or scope row usually covers this).
+  tickets or records, decoys, other people's items, or extra targets, as a count
+  or scope condition on the required write ("comments on exactly these 6
+  tickets"). Never a standalone row an Agent passes by doing nothing (Eval 3 §2.9).
 
 A missing guard is `missing_coverage`. Work through every write kind one by one
 and record the result in the requirement ledger; do not rely on a reviewer
@@ -116,7 +121,8 @@ as much as it needs to be correct (reword, redesign, split, merge or add rows).
 1. **Draft each fix** so it is correct against the data and the prompt, follows
    every rule (title-only self-containment, atomicity including quantifier-compressed
    "every / each / all" titles, overly specific and overly broad, Agent-centric and
-   negative-criteria rules, sampling limits, correct QC work-kind weight), and is
+   negative-criteria rules including the do-nothing test, sampling limits, correct
+   QC work-kind weight, a valid answer the prompt allows still passes), and is
    non-regressing (everything the old row covered stays covered; valid answers
    still pass and wrong ones still fail; no new duplicate, overlap or cascade with
    any row; related weights stay consistent). If reviewers disagreed on the

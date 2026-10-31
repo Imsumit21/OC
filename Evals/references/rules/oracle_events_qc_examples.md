@@ -36,6 +36,24 @@ and its consequence. Use this table as a review aid, not a fixed error quota.
 | Absence, exclusivity and designed gaps | …965fae calls a normally absent CRM deal a tracking defect and prescribes a write; …965fa7 says a contact exists only in CRM although another valid source has it. | Verify the applicable relationship/design before declaring a missing record erroneous. Use scoped absence evidence, including relevant attachments. A false “only” claim and the feasibility of its otherwise valid lookup are separate questions. Do not infer a needed repair solely from a missing link. |
 | Consequence and severity | …1fbbd misstates how many trap values are wrong while its actual steps and values remain correct. | Explain whether the imprecision changes execution/results. Preserve Minor for harmless imprecision and Inaccurate for wrong existing steps/expected data with consequential errors. Do not import inconsistent historical labels as new rules. |
 
+## HarmonyGames calibration cases (2026-10-17)
+
+From the 50-task review, checked against the base universe. They are listed under
+`calibration_cases` in the case file, separate from the 39 historical flags, and
+tested in `tools/tests/test_hg_oe_values.py`.
+
+- **#7, wrong event key.** Expected: claiming a quest logs `quest_completion`. The
+  method that declares `quest_completion` has no caller; the handler that fires
+  logs `quest_completed` (AnalyticsManager.cs:849-856). The ledger entry is
+  INACCURATE with `source_value` `quest_completed`. Quote the call site, not the
+  declaration.
+- **#47, refuted absence.** OE 15: "The agent finds that none of the 33 flagged
+  pull requests shows a later commit … every one is still correctly disclosed as
+  open, not remediated." 24 of the 99 Critical comments end with CodeRabbit's
+  "✅ Addressed in commit X", and b254afcc fixes Combo-Fighters #18. One such record
+  is the counterexample; the entry is INACCURATE. The injected register's own
+  "Open" wording is not a search.
+
 ## Avoid false alarms when using this corpus
 
 - **No blanket hardcoded-ID requirement.** The feedback for CSV row 13 asks for
@@ -60,7 +78,8 @@ and its consequence. Use this table as a review aid, not a fixed error quota.
 
 `hg_oe_path.py` already checks declared tools/service membership, primitive
 argument types, source-selected expected values, downstream bindings and cycles.
-`hg_oe_review.py` scores recorded missing, inaccurate and minor findings. Neither
+`hg_oe_review.py` scores recorded missing, inaccurate and minor findings, and
+checks that every value on an Expected line is ledgered in `expected_values`. Neither
 extracts every obligation from prose or proves query meaning, tool effects,
 population completeness, chronology, intended relationships or arbitrary joins.
 Those require the explicit evidence review above. Record the result in the

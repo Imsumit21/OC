@@ -4,12 +4,14 @@ All required local references are inside `Evals/` and `claude/`. Read this index
 with `Evals/WORKFLOW.md` and `Evals/ENVIRONMENT.md`. Those shared contracts and
 the selected numbered Eval contain the current procedure and explicit policy
 overrides. No external guide, template or sample folder is required. The three sibling
-base folders in `../UNIVERSE_MAP.md` supply universe data for direct search.
+base folders inside the task date's universe folder (`../UNIVERSE_MAP.md`)
+supply universe data for direct search.
 
 | Reference | Purpose and when to read |
 |---|---|
-| `source_layout.json` | Export filenames and array pointers for direct navigation; use `hg_reference.py routes`. Not a SQL schema or a guarantee that data is present. |
-| `search_indexes/manifest.json` and indexed artifacts | Helper-managed prepared record offsets for GitHub/GDrive/Linear/Snowflake. Include in uploads; the helper validates them automatically. Do not dump these machine artifacts into the evaluation context. |
+| `universes/<normal|synthcut>/` | One folder per universe: `universe_manifest.json` (archive provenance, service paths, coverage), `source_layout.json`, `search_indexes/`, `id_indexes/`. Tools pick the folder from the saved task date (`tools/hg_universe.py`). |
+| `universes/*/source_layout.json` | Export filenames and array pointers for direct navigation; use `hg_reference.py routes`. Not a SQL schema or a guarantee that data is present. |
+| `universes/*/search_indexes/` and `id_indexes/` | Helper-managed prepared record offsets for GitHub/GDrive/Linear/Snowflake. Include in uploads; the helper validates them automatically. Do not dump these machine artifacts into the evaluation context. |
 | `rules/scoring.json` | Existing scored dimensions, error labels and thresholds; read the selected stage's dimensions. |
 | `rules/oracle_events.md` | OE completeness/accuracy scoring and evidence record for `/oe`; replaces the active golden stage. |
 | `rules/scoring_notes.md` | Interpret scored dimensions, stage overrides and evidence limits. |
@@ -48,7 +50,7 @@ Snowflake snapshot describes analytical tables exposed through that service.
 Other service exports contain record shapes but no equivalent explicit table
 definitions, so they were not converted into invented SQL schemas.
 
-Use `../SEARCH.md` for local search commands and `universe_manifest.json` for
+Use `../SEARCH.md` for local search commands and the task universe's `universe_manifest.json` for
 archive provenance, service locations, and extracted coverage.
 
 `rules/rubric_checks.md`: mandatory v10 evidence-linked scoring checks for

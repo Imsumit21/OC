@@ -32,7 +32,8 @@ check under `../../ENVIRONMENT.md`; do not initiate a live connection.
 
 The gateway export contains only `get_time`; the evaluator does not call it.
 Local search uses `../../tools/hg_search.py` under `../../SEARCH.md`, not MCP.
-The fixed evaluation clock remains `2026-02-14 00:00 UTC`.
+The fixed evaluation clock is the task date's: `2026-02-14 00:00 UTC` for Feb 14
+tasks, `2025-10-01 00:00 PT` for Oct 1 tasks (`../../ENVIRONMENT.md`).
 
 Confluence and Snowflake are confirmed live in the current project iteration.
 Use their cataloged capabilities and inspect task-relevant local exported data.

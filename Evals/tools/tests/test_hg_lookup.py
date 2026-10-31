@@ -13,6 +13,7 @@ import unittest
 TOOLS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLS))
 import hg_search_batch
+from universe_fixture import routing, select
 
 class ProductionLookup:
     @staticmethod
@@ -31,11 +32,11 @@ class ExactIDTests(unittest.TestCase):
         self.root = Path(self.temp.name).resolve()
         (self.root / 'Evals/tools').mkdir(parents=True)
         (self.root / 'Evals/references').mkdir()
-        for name in ['hg_search.py', 'hg_search_index.py', 'hg_search_batch.py', 'hg_compact_index.py']:
+        for name in ['hg_search.py', 'hg_search_index.py', 'hg_search_batch.py', 'hg_compact_index.py', 'hg_universe.py']:
             shutil.copy2(TOOLS / name, self.root / 'Evals/tools' / name)
         self.folder = self.root / 'Base/slack'
         self.folder.mkdir(parents=True)
-        (self.root / 'Evals/references/universe_manifest.json').write_text(
+        select(self.root).write_text(
             json.dumps({'services': {'slack': {'path': 'Base/slack'}}}))
         self.files = []
 

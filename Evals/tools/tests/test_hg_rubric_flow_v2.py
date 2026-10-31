@@ -66,7 +66,7 @@ class LedgerIdentityTests(unittest.TestCase):
 class LintTests(unittest.TestCase):
     def row(self, **kw):
         base = dict(title='The Agent moves ENG-1 to Done.', weight=3, category='Outcome',
-                    justification='Merged PR #1 closes it.', evidence='Check the state.')
+                    justification='Merged PR #1 closes it.', evidence="Check ENG-1's state in Linear.")
         return {**base, **kw}
 
     def test_vague_exemplar_in_any_field(self):

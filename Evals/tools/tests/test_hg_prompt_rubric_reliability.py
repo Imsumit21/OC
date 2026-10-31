@@ -207,6 +207,7 @@ class PromptAndRelease(unittest.TestCase):
         self.addCleanup(patch.stopall)
         patch.object(writer, 'REPOSITORY', self.root).start()
         patch.object(inputs, 'REPOSITORY', self.root).start()
+        inputs.save_input('universe', content=b'2026-02-14\n')  # task date (hg_universe.py)
         self.prompt = 'The launch shipped 2025-02-01.'
         inputs.save_input('prompt', content=self.prompt.encode())
         inputs.save_input('task-details', content=b'Synthetic task: assigned identity and fields are test data.')
@@ -232,7 +233,7 @@ class PromptAndRelease(unittest.TestCase):
 
     def rendered(self, receipt):
         return (f"### FINAL VERDICT: {receipt['verdict']}\nScore: {receipt['verdict_score'] if receipt['verdict_score'] is not None else 'null'}\n"
-                f"Execution status: {receipt['execution_status']}\nEvaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort\n"
+                f"Execution status: {receipt['execution_status']}\nClock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)\nEvaluator model: Opus 5.5 (claude-opus-5-5), xhigh effort\n"
                 "Next action: Review findings\n"
                 f"Evidence limits: {'; '.join(receipt['unresolved']) or 'None'}\n"
                 f"Reviewed prompt SHA-256: {receipt['reviewed_prompt_sha256']}\nReview context SHA-256: {receipt['review_context_sha256']}\n"
@@ -302,7 +303,7 @@ class PromptAndRelease(unittest.TestCase):
 
     def test_scored_prompt_report_requires_record_and_exact_hashes(self):
         with self.assertRaisesRegex(ValueError, 'Save prompt-checks'):
-            writer.save_output('prompt', '### FINAL VERDICT: PASS\nScore: 5\nExecution status: COMPLETE\nEvaluator model: Opus 5.5\nNext action: Done\nEvidence limits: None\n')
+            writer.save_output('prompt', '### FINAL VERDICT: PASS\nScore: 5\nExecution status: COMPLETE\nClock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)\nEvaluator model: Opus 5.5\nNext action: Done\nEvidence limits: None\n')
         receipt = writer.save_output('prompt-checks', json.dumps(self.record()))
         report = self.rendered(receipt)
         writer.save_output('prompt', report)

@@ -44,7 +44,7 @@ def cache_path(request, threshold):
         if current.is_symlink():
             raise OSError('Record cache directories must not be symbolic links')
         current = current.parent
-    path = folder / (batch.digest([CACHE_POLICY, request, threshold]) + '.json')
+    path = folder / (batch.digest([CACHE_POLICY, request, threshold, str(h.manifest_path())]) + '.json')
     if path.is_symlink():
         raise OSError('Record cache must not be a symbolic link')
     return path
@@ -271,7 +271,7 @@ def individual_path(check, threshold):
 
 def run(request, threshold=32 * 1024 * 1024, no_cache=False):
     checks = validate(request)
-    universe_path = h.ROOT / 'Evals/references/universe_manifest.json'
+    universe_path = h.manifest_path()
     manifest_paths = [universe_path]
     manifest_states = [stat_identity(universe_path)]
     routing = h.manifest()['services']
@@ -481,11 +481,11 @@ def run(request, threshold=32 * 1024 * 1024, no_cache=False):
             if data is None:
                 continue
             canonical, path, binding, keys, required = data
+            wanted = {(all_jobs[key]['folder'] / all_jobs[key]['info']['path']).relative_to(h.ROOT).as_posix()
+                      for key in keys}
             one = {**result, 'checks': {'check': {**results[check['id']], 'scope': canonical}},
                    'scan_complete': results[check['id']]['scan_complete'],
-                   'sources': [row for row in receipts if row['file'] in
-                               {(all_jobs[key]['folder'] / all_jobs[key]['info']['path']).relative_to(h.ROOT).as_posix()
-                                for key in keys}]}
+                   'sources': [row for row in receipts if row['file'] in wanted]}
             if complete_result(one, [canonical]) and binding == individual_binding(canonical, threshold, keys, required, current):
                 try:
                     write_record_cache(path, binding, one)

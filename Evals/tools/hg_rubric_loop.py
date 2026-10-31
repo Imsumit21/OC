@@ -16,7 +16,7 @@ REPORT = Path("Evals/task_inputs/reports/3_rubric.md")
 REVIEW_RECORD = DRAFT.with_name("rubric_review_record.json")
 HISTORY = DRAFT.parent / "rubric_history"
 INPUT_KEYS = frozenset({
-    "task-details", "prompt", "oe", "golden", "injection", "error-async",
+    "task-details", "universe", "prompt", "oe", "golden", "injection", "error-async",
     "dynamic-context", "rubric",
 })
 REFERENCES = (
@@ -27,7 +27,7 @@ REFERENCES = (
     "Evals/references/rules/long_horizon.md",
     "Evals/references/persona/roster.json", "Evals/references/persona/acl.md",
     "Evals/references/tools/catalog.json", "Evals/references/tools/manifest.json",
-    "Evals/references/universe_manifest.json", "Evals/references/source_layout.json",
+    "{universe}/universe_manifest.json", "{universe}/source_layout.json",
     "Evals/references/schema/manifest.json",
     "Evals/references/rules/rubric_review_record.md",
     "Evals/references/rules/review_scoring.md", "Evals/references/rules/qc_rubric_v10.md",
@@ -78,6 +78,16 @@ def fingerprint(path):
     return h.hexdigest()
 
 
+def universe_paths(root, names):
+    """Resolve {universe}/ references to the folder of the task's saved date."""
+    if not any(name.startswith("{universe}/") for name in names):
+        return list(names)
+    from hg_universe import references
+    folder = references(root).relative_to(root).as_posix()
+    return [folder + name.removeprefix("{universe}") if name.startswith("{universe}/") else name
+            for name in names]
+
+
 def review_context(root, *, input_filter=relevant_input, reference_paths=REFERENCES, policy=POLICY):
     # Import lazily: input saving also calls invalidate_prefill below.
     from hg_store_input import SLOTS, BATCHES, destinations
@@ -115,7 +125,7 @@ def review_context(root, *, input_filter=relevant_input, reference_paths=REFEREN
                 if candidate.is_file():
                     relative = candidate.relative_to(root).as_posix()
                     files[relative] = fingerprint(local(root, Path(relative)))
-    references = {name: fingerprint(local(root, Path(name))) for name in reference_paths}
+    references = {name: fingerprint(local(root, Path(name))) for name in universe_paths(root, reference_paths)}
     manifest = {"review_policy": policy, "inputs": states, "files": files,
                 "references": references}
     raw = json.dumps(manifest, sort_keys=True, ensure_ascii=False).encode("utf-8")

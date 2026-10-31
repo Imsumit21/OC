@@ -711,5 +711,43 @@
       ],
       "interpretation_note": "Verify this reported pattern against the actual task, OEs, current service contract and source data before scoring."
     }
+  ],
+  "calibration_source": {
+    "name": "Kelvin task-quality review, author-side verification (2026-10-17)",
+    "files": [
+      {
+        "path": "verification/tasks/6aa8272b1b7a2df0fc0fea90/kelvin_check/VERIFIED.md",
+        "sha256": "66627841dfbbba2968631a5ec5eaaf251ad8d3eedb7e481fa477544d3e164aba"
+      },
+      {
+        "path": "verification/tasks/6abcef4dc5b130fe26c6025c/kelvin_check/VERIFIED.md",
+        "sha256": "ad44396c9b170f87fc401c788c35cb9de82dbc0ef064c5d87987cd504858b051"
+      },
+      {
+        "path": "verification/tasks/6abcef4dc5b130fe26c6025c/oe.txt",
+        "sha256": "1f3d3e415a3831087a5d74768efa17f816e2b68adc515ededc2ccc9d07aee09f"
+      }
+    ],
+    "scope": "HarmonyGames tasks checked against the base universe. Calibration for the expected_values ledger (Eval 2 section 2.4); regression tests in tools/tests/test_hg_oe_values.py. Not counted in the historical counts above."
+  },
+  "calibration_cases": [
+    {
+      "kelvin_number": 7,
+      "TASK_ID": "6aa8272b1b7a2df0fc0fea90",
+      "pattern": "EXPECTED_DATA",
+      "expected_text": "claiming a quest logs `quest_completion` with quest_id and reward_content",
+      "record_evidence": "AnalyticsManager.cs:849-856 (harmonygames-Games/match3d): OnQuestCompletion logs const string QuestCompletionEvent = \"quest_completed\"; the QuestCompletion method that declares \"quest_completion\" (:606-618) has no caller.",
+      "expected_result": "INACCURATE with source_value quest_completed: WRONG_EXPECTED_DATA, Accuracy FAIL (2). Recording it VERIFIED against the live call is rejected.",
+      "note": "The task has no saved OE file; the wrong key was in its answer key. The fixture step restates that claim as an Expected line. The OE review itself never reads the rubric."
+    },
+    {
+      "kelvin_number": 47,
+      "TASK_ID": "6abcef4dc5b130fe26c6025c",
+      "pattern": "ABSENCE_AND_DESIGN",
+      "expected_text": "The agent finds that none of the 33 flagged pull requests shows a later commit or merged follow-up PR that addresses the specific finding named in its Critical comment, every one is still correctly disclosed as open, not remediated.",
+      "record_evidence": "Base GitHub data: 24 of the 99 Critical comments end with a CodeRabbit '\u2705 Addressed in commit X' note (GameOfDominoes #1912 rc_1: 77cf03f 'Wait on all assets to download.'), and commit b254afcc fixes Combo-Fighters #18.",
+      "expected_result": "INACCURATE with a counterexample quote: the absence claim is refuted, WRONG_EXPECTED_DATA, Accuracy FAIL (2). VERIFIED needs a scope-bound ABSENCE evidence_check; a DIRECT quote of the injected register policy is rejected.",
+      "note": "OE 15 is written without an Expected: label; the 'The agent finds' sentence is its Expected line."
+    }
   ]
 }

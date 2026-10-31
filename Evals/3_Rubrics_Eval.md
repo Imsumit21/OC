@@ -8,7 +8,7 @@ Rubrics are yes/no criteria an LLM judge uses to grade an Agent's trajectory and
 
 `/rubric` evaluates the supplied criteria only; `/rubric audit` is an alias. `/rubric create` is retired. Never generate, rewrite or prefill rubric JSON, and never repeat evaluation until PASS. Report findings and suggested fixes, then stop.
 
-Review policy: `rubric-revision-v10` with local overrides `hg-strict-overrides-v1`. Scoring record format 4 under the evaluation-only `rubric-eval-only-v1` workflow.
+Review policy: `rubric-revision-v10` with local overrides `hg-strict-overrides-v1`. Scoring record format 5 under the evaluation-only `rubric-eval-only-v1` workflow.
 
 **CRITICAL PRINCIPLES:**
 - **The Docs are the authority.** `Evals/Docs/` holds the QC spec, the QC rating form and the project guidelines. Where this Eval departs from them, the departure is listed in the local-override table below and nowhere else.
@@ -30,19 +30,21 @@ These user-approved decisions supersede the Docs where they conflict. The helper
 | Topic | Docs say | This Eval applies |
 |---|---|---|
 | Overly Specific | QC Appendix B8: Moderate | **Major** (`overly_specific`) when the row rejects a valid prompt-authorized answer. A wording preference that rejects no valid answer is Minor (`harmless_specificity`). |
-| Overly Broad | QC Appendix B11: Minor | **Moderate** (`overly_broad`). |
+| Overly Broad (2026-10-17) | QC Appendix B11: Minor | **Major** (`overly_broad`), the same level as Overly Specific. Never repair an overly broad row with a count, format or phrasing; name the value. |
 | Cascading failure | QC Appendix B6 counts overlapping rows once | Rows that would all fail on one Agent error because each embeds the same acceptance condition form one Moderate overlap group. |
 | Agent-centric format | QC spec Appendix (added 09/27): Minor rubric issue; QC form V12 also scores the Agent Centric Phrasing dimension | **Major** (`non_agent_centric`) in the tally for every row whose title subject is not The Agent or that names a tool, in addition to the Agent-Centric FAIL. A valid nonstandard Agent form ("The Agent's report states…") is NON-FAIL 3 on Agent-Centric when it affects 10% or fewer rows (more fails) and adds no tally issue. |
 | Quality non-fail bands (rubric-flow-v2, 2026-10-09; replaces the 2026-10-05 no-band rule) | QC form: Overall Quality ≤10% Major / ≤15% Moderate / 5–20% Minor, Weights <30% one-level / <15% two-level, missing Process, and off-pattern Agent titles are Non-Fail | **Non-Fail allowed, stricter than QC.** Overall Quality: any Major or Moderate issue fails; Minor issues on 5–10% of rows are NON-FAIL 3; over 10% fails. Criteria Weights: NON-FAIL 4 only when 10% or fewer rows are one level off and none are two levels off; otherwise FAIL. Agent-Centric: off-pattern but agent-centric titles on 10% or fewer rows are NON-FAIL 3; more fails; artifact subjects and tool names still fail. Process: exactly one genuinely missing ordering check (record `missing_process_checks: 1`) is NON-FAIL 3; two or more, or any invalid Process row, fails. Every Non-Fail issue is still reported with a checked fix. A clean set is PASS 5. Unresolved evidence stays provisional NON-FAIL with no score. |
-| Negative criteria | QC form and Rubric Writing §4 allow a negative when the prompt explicitly prohibits the action | Prohibition-only or absence-only acceptance **always** fails Negative Criteria. Rewrite as a preserved state or scope boundary; the exclusion still needs its own row. |
+| Negative criteria | QC form and Rubric Writing §4 allow a negative when the prompt explicitly prohibits the action | Prohibition-only or absence-only acceptance **always** fails Negative Criteria, and so does any row an agent passes by doing nothing, however it is worded (2.9). The exclusion is still covered: as a condition on a write the Agent must make (an exact count or scope), or a requirement inside a required artifact. Never a standalone row an agent passes by doing nothing. |
 | Self-containment | QC Appendix B3: judge sees the prompt and all criteria | **Title-only**, as Rubric Writing states ("a judge evaluates the criterion without the prompt in hand"). |
 | Multi-recipient content | QC Appendix B4 `shared_email_content` permits bundling content across recipients | The exception applies **only** when one message addressed to everyone is the graded artifact. A row of the form "…in the assessments delivered to both X and Y…" is **Major** (`non_atomic`) whenever sibling delivery rows accept separate routes per person, because the two assessments can then diverge and each content claim fails independently. Repeated across rows it is also one cascading-failure overlap group. See the 2.2 worked examples. |
-| Scope-admitting qualifier | No Docs rule | A ranking word in a title (`primary`, `main`, `chief`, `principal`) admits everything it outranks. **Major** (`not_self_contained`) when only a supporting field states the exclusion; otherwise Moderate (`overly_broad`). See 2.5. |
+| Scope-admitting qualifier | No Docs rule | A ranking word in a title (`primary`, `main`, `chief`, `principal`) admits everything it outranks. **Major** (`not_self_contained`) when only a supporting field states the exclusion; otherwise Major (`overly_broad`). See 2.5. |
 | Category balance | QC form and Rubric Writing: Process >50% fails | Ratio rules removed (2026-09-26 update). Only **zero Outcome rows** fails. |
 | Predicted all-fail | QC form scores all-fail only after runs | Two or more rows predicted to fail every run, from defects already found, make the rubric FAIL. |
 | Spot checks | QC spec: no count requirement | Rubric Writing §8 applies: at most **five samples per group** plus **one output-volume criterion**. |
 | Weights | Rubric Writing §5 counts difficulty axes | The QC spec's work-kind definition applies (Appendix C18–C20). |
-| Clock | QC form text says February 28, 2026 | **2026-02-14 00:00 UTC** (Universe and Tools). |
+| Clock | QC form text says February 28, 2026 | The task date's clock: **2026-02-14 00:00 UTC** (Universe and Tools) for Feb 14 tasks, **2025-10-01 00:00 PT (07:00 UTC)** for Oct 1 tasks. Dates (2026-10-17): personas use Pacific time and tools return UTC; when an instant falls on different PT and UTC days, a row grading the day accepts both (2.11). |
+| UGT both-fair figure (2026-10-17) | QC form: two correct answers fail Multiple Valid Answers | Each `BOTH_FAIR_FIGURE` the saved prompt report records (`Rubric must accept: X or Y`) is a required alternative: a row that grades that figure must accept either value, or it is `overly_specific` (1.4, 2.8). |
+| OE cross-check (2026-10-17) | QC: OEs drive rubric coverage (Oracle Events §8) | The rubric eval reads the saved OE both ways: every row maps to the OE steps that reach it (`oe_step_ids`) and every OE conflict is settled from the records (3.1). The OE eval stays blind to the rubric. |
 | Vague exemplar in a record name | QC Appendix C8 permits exact source strings; C9 prohibits exemplar phrases | **Moderate** (`vague_exemplar`) even inside a verified record name (common errors checklist, 2026-10-04). |
 | Deep recheck | — | The deep recheck in `references/rules/deep_recheck.md` runs before the report is saved (Phase 5.5). It replaces the single blind common-errors reviewer. |
 | Run flow (rubric-flow-v2, 2026-10-09) | — | `references/rules/rubric_flow_v2.md`: `hg_rubric_ledger.py plan` picks the mode. Code checks (`hg_rubric_lint.py`) first. FULL = three independent full reviews (F1 this session, F2/F3 background subagents) plus R1–R7 and the scope checklist, every finding combined into one list (no voting), a fix for every finding, fixes checked once. DELTA = rows that passed or copy a `(checked)` fix exactly are locked and fail only on a provable factual error (other observations are QM notes); edited, new and previously flagged rows are fully reviewed. Grading rules are unchanged. |
@@ -55,7 +57,7 @@ Before ANY evaluation, create this TODO list. **Do NOT proceed without it.**
 
 ```
 TODO:
-- [ ] Intake: saved rubric, exact prompt, assignment/persona, prompt reference files, injection SQL or explicit no-injection; OE optional
+- [ ] Intake: saved rubric, exact prompt, assignment/persona, prompt reference files, injection SQL or explicit no-injection; OE required when the task has OEs
 - [ ] Run plan: `hg_rubric_ledger.py plan` → FULL (start F2/F3 now), DELTA (target rows only) or UNCHANGED (stop); see references/rules/rubric_flow_v2.md
 - [ ] Phase 0.1: Read Evals/Docs (QC spec, rating form, Rubric Writing, Oracle Events, Universe and Tools, Persona ACL Policy) and relevant catalog.json entries
 - [ ] Phase 0.2: DEEP exploration of the local universe records the task touches (hg_search), plus the injection overlay
@@ -75,22 +77,22 @@ TODO:
 - [ ] Phase 2.8: What not to grade (unstated expectations, forced conclusions, distractors, hard-coded titles, disjunctive rows)
 - [ ] Phase 2.9: Agent-centric phrasing and negative criteria (lexical pre-scan)
 - [ ] Phase 2.10: Flexibility patterns
-- [ ] Phase 2.11: Date/time alignment against 2026-02-14 00:00 UTC
+- [ ] Phase 2.11: Date/time alignment against the task clock (2026-02-14 00:00 UTC or 2025-10-01 00:00 PT)
 - [ ] Phase 2.12: Weight review for every row
-- [ ] Phase 3.1: Completeness by artifact and actor (write result/content, user-facing findings, verdict vs evidence, destination, exclusions)
+- [ ] Phase 3.1: Completeness by artifact and actor (write result/content, user-facing findings, verdict vs evidence, destination, exclusions), the both-way OE mapping (`oe_step_ids`) and the OE conflict check
 - [ ] Phase 3.2: Process audit (three-condition test)
 - [ ] Phase 3.3: Duplicates, overlaps and cascading failures
 - [ ] Phase 3.4: Category balance (zero Outcome only)
 - [ ] Phase 3.5: Contradictions
 - [ ] Phase 3.6: Spot-check sampling (cap five per group, volume criterion, no core requirement sampled)
-- [ ] Phase 3.7: Whole-set mutation tests
+- [ ] Phase 3.7: Whole-set mutation tests, each row's `valid_case` and `do_nothing_case`, and the final-reply test
 - [ ] Phase 4: Issue tally and thresholds
 - [ ] Phase 5.0: Pre-verdict sweep
 - [ ] Phase 5.1: Predicted all-fail (HARD GATE)
 - [ ] Phase 5.2: Scoring table, save the scoring record
 - [ ] Phase 5.5: Deep recheck (references/rules/deep_recheck.md): passes R1–R7 at once (DELTA: target rows only), check each finding, rescore, re-save record, then save the report ending in ## Deep Recheck
 - [ ] FULL: combine F1/F2/F3/R1–R7 findings into one list (merge duplicates, no voting), `## All Findings` in the report. DELTA: `## Changes Since Last Run`
-- [ ] Code checks: `hg_rubric_lint.py` on the rubric (record every vague_exemplar/tool_name/schema/prohibition hit)
+- [ ] Code checks: `hg_rubric_lint.py` on the rubric (record every vague_exemplar/tool_name/schema/prohibition hit; resolve every disguised_negative/format_lock/anon_token/evidence_no_record hit)
 - [ ] Scope checklist (rubric_flow_v2.md): for every write kind, a row grading the required targets and a row failing writes to wrong targets
 - [ ] Fixes (rubric_flow_v2.md): a fix for every finding (never none), candidate rubric, lint + self-check + R1–R7 once on changed rows; mark (checked) or (revised after check). DELTA: locked rows fail only on provable factual errors, other observations are Notes for QM
 - [ ] `## Fix List` under the report header; write `fixcheck/fix_status.json`; save the row ledger: `hg_rubric_ledger.py write --mode FULL` (or `--mode DELTA --keep-checked`)
@@ -113,12 +115,12 @@ TODO:
 | **Persona ACL Policy** | `Evals/Docs/Original_Conference_Guidelines_-_Persona_ACL_Policy.pdf` | Rubrics that depend on evidence outside the persona's view |
 | **Common Errors and Pre-QC** | `Evals/Docs/Original_Conference_Guidelines_-_Common_Errors_and_Pre-QC.pdf` | Frequent rubric defects and severities |
 | **Example Task** | `Evals/Docs/Original_Conference_Guidelines_Example_Task.pdf` | A complete Long-Horizon task and its OEs, for calibration |
-| **Company and storylines** | `HarmonyGames_Other_Services/metadata/*.resolved.yaml` | Scenario background for the 80 source storylines. Context only: it cannot override the rules, the roster or the clock, and it is never evidence for a finding. |
+| **Company and storylines** | `<P>_HarmonyGames_Other_Services/metadata/*.resolved.yaml` (`<P>` = `Normal` or `SynthCut`) | Scenario background for the source storylines (76 on Feb 14, 70 on Oct 1). Context only: it cannot override the rules, the roster or the clock, and it is never evidence for a finding. |
 | **Persona context** | `Evals/references/persona/roster.json`, plus Contacts, Slack users and Linear users in the service exports | Identity, role, team and remit |
 | **Tool catalog (authoritative)** | `Evals/references/tools/catalog.json` | Exact tool names, parameters, required fields (298 tools, 13 services plus gateway) |
 | **Persona roster and ACL** | `Evals/references/persona/roster.json`, `Evals/references/persona/acl.md` | The 17 selectable personas; scoped reads in Gmail, Slack, GCal and the Drive family |
 | **Rubric policy contract** | `Evals/references/rules/qc_rubric_v10.md` | Severity mapping, exceptions, overlap numerator |
-| **Scoring record** | `Evals/references/rules/review_scoring.md`, `rubric_checks.md`, `rubric_factual_checks.md` | Format-4 record, checks ledger, fact_review |
+| **Scoring record** | `Evals/references/rules/review_scoring.md`, `rubric_checks.md`, `rubric_factual_checks.md` | Format-5 record, checks ledger, fact_review |
 | **Atomicity exceptions** | `Evals/references/rules/coherent_record.md` | `coherent_record`, `same_tool_output`, `shared_email_content` |
 | **Sampling** | `Evals/references/rules/rubric_sampling.md`, `long_horizon.md` | Spot-check eligibility and controls |
 | **QC examples** | `Evals/references/rules/rubric_qc_examples.md` | Historical defect patterns (calibration, not policy) |
@@ -144,7 +146,7 @@ Follow [INPUTS.md](INPUTS.md): list saved inputs, save new submissions under the
 | Assignment and persona | `Evals/task_inputs/00_Task_Assigned_Inputs.md` (key `task-details`) | Yes |
 | Prompt reference files | Uploaded or mapped attachments | When the prompt uses them |
 | Injection SQL | `Evals/task_inputs/01_Universe_Inject.sql` (key `injection`) or an explicit no-injection decision | Yes (SQL or the decision) |
-| Oracle Events | `Evals/task_inputs/08_Oracle_Events.md` (key `oe`) | Optional reference path; no OE PASS required |
+| Oracle Events | `Evals/task_inputs/08_Oracle_Events.md` (key `oe`) | Required when the task has OEs (both-way cross-check, 3.1); no OE PASS required |
 
 Verifier results, all-fail justifications and batch metrics are **not** inputs to this stage. No model run is a prerequisite.
 
@@ -188,12 +190,12 @@ Read the Example Task in `Evals/Docs`. Note how its rows embed expected values, 
 | Unobservable acceptance | `unobservable` | The value is not reachable at the required precision through the Agent's tools, or only another persona can see the evidence |
 | Not Agent-centric (local override) | `non_agent_centric` | The title's subject is an artifact or model ("The response states…", "The write-up addresses…") or the title names a tool. The helper requires this issue on every row it detects. |
 | Overly Specific (local override) | `overly_specific` | The row rejects a valid prompt-authorized answer: channel, method, owner, format, structured value, hard-coded title or heading, a forced single conclusion, or a hidden condition in supporting fields |
+| Overly Broad (local override) | `overly_broad` | The title accepts a plausible wrong answer |
 
 ### Moderate Issues
 
 | Issue | `type` | When to flag |
 |---|---|---|
-| Overly Broad (local override) | `overly_broad` | The title accepts a plausible wrong answer |
 | Overlapping / Redundant | `duplicate` | `COMPLETELY_REDUNDANT` for a wholly redundant row; `OVERLAP_GROUP` for rows that grade the same result or fail together on one embedded condition (counted once) |
 | Incorrectly Labeled Category | `category` | A write or observable result labeled Process; a Process row a stricter Outcome could capture |
 | Vague Exemplar Language | `vague_exemplar` | `such as`, `e.g.` or `for example` in any field (once per row) |
@@ -227,7 +229,7 @@ Every row must have non-blank `title`, `category`, `weight`, `justification` and
 
 ### 1.3 Bind the Exact Saved Rubric
 
-The format-4 record binds `rubric_path`, `reviewed_json_sha256` and `review_context_sha256` to the saved input and current dependencies through `hg_rubric_loop.review_context`. A historical export is not an input unless the user selects it and it is saved under the `rubric` key.
+The format-5 record binds `rubric_path`, `reviewed_json_sha256` and `review_context_sha256` to the saved input and current dependencies through `hg_rubric_loop.review_context`. A historical export is not an input unless the user selects it and it is saved under the `rubric` key.
 
 ### 1.4 Requirement Ledger and Forward Coverage (HARD GATE)
 
@@ -238,6 +240,8 @@ Build the ledger from the prompt and its validly incorporated sources **before**
 | Stable ID | Exact prompt passage or incorporated chain | Expected value or objective semantic rule, with valid alternatives | Entity, property, condition, time | Where it must appear | R# | Yes/No |
 
 Decompose compound asks into independently required outcomes in `checks.requirements`. Per-ticket statuses are separate outcomes even with one shared rule. Reporting a status and changing it are separate only when both are requested. Merge repeated descriptions of one obligation. Reuse current source-backed OE facts only with matching dependencies; an OE's route is not authority for an exclusive artifact or owner list.
+
+**Both-fair figures from the prompt review (local override 2026-10-17).** Each `BOTH_FAIR_FIGURE` in the saved prompt report (`Rubric must accept: X or Y`) is a required alternative. Record it as a SUPPORTED `checks.alternative_review` branch tested on every row. A row that grades that figure must accept either value, or it is `overly_specific`. Example (task …fea8d): the event completion rate is 32.8% by the method in the note the thread points to and 28.5% from the operands on ZOM-673/674; a row accepting only 28.5% is `overly_specific`. Every other fork follows the prompt report's UGT result unchanged.
 
 ---
 
@@ -303,6 +307,7 @@ Record each row's `atomicity` block in the scoring record: outcome IDs, exceptio
 
 **Checklist:**
 - [ ] Entity names, emails, IDs, amounts, dates and statuses match the records exactly.
+- [ ] **Cited record:** evidence names the record holding each expected value; names, emails, IDs, statuses and event keys bind as LITERAL; SEMANTIC is for conclusions only. The helper treats ID-shaped title tokens (snake_case keys such as `quest_completed`, ticket keys, record IDs) and anonymized tokens like numbers: each needs a LITERAL claim. The lint flags evidence that names no record (`evidence_no_record`). Example (task …fea90): a row keyed `quest_completion` where the live event is `quest_completed` is a LITERAL mismatch.
 - [ ] **Reverse-groundedness:** every literal traces to the prompt or the universe. Found nowhere and never asked for → `incorrect`.
 - [ ] **Numeric observability (HARD GATE):** record the raw value, the value the cataloged tool path exposes, and any prompt-authorized derivation. Inaccessible precision or a hidden recomputation → `unobservable`. "One decimal place" permits formatting; it does not require deriving a value from other columns.
 - [ ] **Impossible derivation (HARD GATE):** a per-X breakdown needs an X field; a comparison needs both operands; a qualifier absent from the prompt ("differ from April", "from the books") is imported → `incorrect`.
@@ -313,13 +318,15 @@ Record each row's `atomicity` block in the scoring record: outcome IDs, exceptio
 - [ ] **Classification vs mutation:** a recorded decision does not require a state change unless authorized; an explicit mutation request cannot be satisfied by prose.
 - [ ] **Injected values:** a value that comes from the injection is verified against the supplied SQL. Without SQL it stays UNRESOLVED; a base-versus-injected mismatch alone is not a defect. Identify which layer each figure belongs to before checking it, because an injection often rewrites ticket state while leaving the warehouse untouched. Worked example from the 2026-09-27 dry run: a rubric asserted that ENG-2402 is in Done and that every Win & Collect performance record belongs to Domino Delights. The Done state exists only in the injection SQL, which supersedes the base `Bugs` state, while the 213 Win & Collect rows in `LIVE_OPS.EVENTS.LIVE_EVENT_PERFORMANCE` are untouched base data. Both held, but only after being checked against different layers.
 
-**Binding a large table.** `HarmonyGames_Other_Services/Services_Data/snowflake/snowflake.json` is about 2.4 GB, and `EvidenceReader` parses a whole file when an anchor carries a pointer, so a native table cannot anchor an aggregate over thousands of rows. Build a derived source extract instead, register it as an `extra:<id>` input, and record in it the original file's SHA-256, the derivation method and the partition evidence that proves the selection complete, per `rubric_factual_checks.md`. Never register an extract under a `reference:` or `source:` key that the metadata rule treats as non-primary.
+**Binding a large table.** `<P>_HarmonyGames_Other_Services/Services_Data/snowflake/snowflake.json` in the task's universe folder is about 2.3-2.6 GB, and `EvidenceReader` parses a whole file when an anchor carries a pointer, so a native table cannot anchor an aggregate over thousands of rows. Build a derived source extract instead, register it as an `extra:<id>` input, and record in it the original file's SHA-256, the derivation method and the partition evidence that proves the selection complete, per `rubric_factual_checks.md`. Never register an extract under a `reference:` or `source:` key that the metadata rule treats as non-primary.
 
-**Prose dates.** A `DATE` claim must quote an unambiguous ISO date, so a title that states a cutoff as "July 7, 2025" cannot be bound as one. Record calendar projections of the same source instant in the extract and compare the day and year as `NUMBER` claims, explaining the projection in each claim's reason. Do not invent a source string that merely reproduces the title's prose.
+**Prose dates.** A `DATE` claim quotes an ISO date or a prose date with month name, day and four-digit year ("July 7, 2025", "7 Jul 2025"). A prose date without a year ("Nov 16") cannot be bound as one: record calendar projections of the same source instant in the extract and compare the day and year as `NUMBER` claims, explaining the projection in each claim's reason. Do not invent a source string that merely reproduces the title's prose.
 
 ### 2.4 Verifiability Check
 
 **Test:** can the judge grade the row from the trajectory, the final response, visible write arguments, or evidence visible to the same assigned persona? Hidden tool-return content, "the tool reported success", environment state and another persona's private records cannot define passing. A successful write needs visible action evidence; do not require a redundant read-back.
+
+**Reachable evidence (2026-10-17).** The record a row's expected value depends on must be (a) outside Gmail Trash and Spam, unless the prompt points there; (b) readable as content, not only inside an attachment (Gmail and Slack serve attachment names and metadata only; `acl.md`); and (c) reachable from a prompt noun, directly or through records that link to it. Otherwise the row is `unobservable` (Major). Each `checks.sources` anchor records `reachability`: `PROMPT_LINKED`, `TRASH`, `ATTACHMENT_ONLY` or `UNLINKED`. A fact claim citing any value but `PROMPT_LINKED` stays unresolved, and the helper requires the row's `unobservable` issue. Example: a due date that only the Trash copy of Google's newest notice states (task …073712) is unresolved and unobservable.
 
 ### 2.5 Objectivity Check
 
@@ -328,7 +335,7 @@ Search each title for `enough`, `professional`, `thorough`, `helpful`, `appropri
 **Scope-admitting qualifiers.** Then search each title for `primary`, `main`, `chief`, `principal`, `leading`, `mainly`, `largely`, `generally` and `overall`. These are not vague-quality words; they are ranking words, and a ranking admits everything it outranks. "Retains X as the **primary** remediation issue" is satisfied by an Agent that opens a second tracking issue and leaves X ranked first, which is the outcome the criterion exists to prevent. Record both issue labels on the row until the title is fixed:
 
 - `not_self_contained` (**Major**) when only `justification` or `evidence` says what the ranking excludes. The title-only rule in the overrides applies with no exception here: a judge without the supporting fields cannot tell whether the runner-up is allowed.
-- `overly_broad` (**Moderate**) under the 2.7 test, because the outranked answer is a plausible wrong path rather than a very unlikely one.
+- `overly_broad` (**Major**, local override) under the 2.7 test, because the outranked answer is a plausible wrong path rather than a very unlikely one.
 
 Severity is per row, so a row carrying both counts once at Major. The repair is to state the exclusion in the title — "tracked solely on X", "X and no other issue" — not to explain it in `evidence`.
 
@@ -339,6 +346,8 @@ Outcome is the default: the final state, what exists, what was sent, what the re
 ### 2.7 Over-Specificity & Valid-Path Preservation ⚠️ RUN ON EVERY ROW
 
 **HARD GATE — Prompt specificity ceiling.** No field may add a method, channel, owner, format, threshold, timing rule, qualifier or content item the authorized request did not require. An exact, uniquely correct answer to an authorized finding is not over-specific. Keep numerical truth separate from representation (`214 MB` equals `214.0 MB`). Facts required in a document do not automatically belong in the reply.
+
+A length, line, sentence or section count is a format. Grade one only when the prompt states the count; "keep it short" grades no count. The lint flags count phrases (`format_lock`: "5 lines", "at most 3", "one sentence per line"); resolve each hit against the prompt. Example (task …df2ec): "keep it short" became "at most five other lines, and every line is one sentence or less", which rejects a compact 10-line reply carrying all 32 figures and a 3-sentence source note.
 
 **Decision rule (local override):** if a valid prompt-authorized alternative exists that the row would fail → `overly_specific` (**Major**). If no valid answer is rejected → `harmless_specificity` (Minor).
 
@@ -359,7 +368,7 @@ Outcome is the default: the final state, what exists, what was sent, what the re
 | 11 | Exact value rendered at lower precision by the tool path | `unobservable` |
 | 12 | Hard-coded title, heading or phrasing the prompt did not require | `overly_specific` |
 
-**HARD GATE — Overly Broad test (per row, in isolation).** Could a factually wrong response still pass this title? If yes and the wrong path is plausible → `overly_broad` (**Moderate**). Exception (QC Appendix B11): do not flag when the accepted invalid paths are very unlikely. **Never argue that a sibling row catches the wrong answer.**
+**HARD GATE — Overly Broad test (per row, in isolation).** Could a factually wrong response still pass this title? If yes and the wrong path is plausible → `overly_broad` (**Major**, local override). Exception (QC Appendix B11): do not flag when the accepted invalid paths are very unlikely. **Never argue that a sibling row catches the wrong answer.** Never repair an overly broad row with a count, format or phrasing; name the value. The `valid_case` and `do_nothing_case` tests (5.3) keep the repair from making the row stricter than the prompt.
 
 ### 2.7A Vague Exemplar Language Check (MODERATE)
 
@@ -370,7 +379,7 @@ Scan every field for `such as`, `e.g.` and `for example`. Count one `vague_exemp
 | Pattern | Classification |
 |---|---|
 | Grades an expectation the prompt never stated | `unauthorized` |
-| Requires one specific conclusion when the evidence reasonably supports several interpretations | `overly_specific` |
+| Requires one specific conclusion when the prompt or the evidence reasonably supports several interpretations. Each `BOTH_FAIR_FIGURE` in the saved prompt report is a required alternative: a row that grades that figure must accept either value, or it is `overly_specific` | `overly_specific` |
 | Grades the distractor itself instead of whether the Agent handles it correctly when handling it matters | `unauthorized` |
 | Hard-codes an exact title, heading or phrasing the prompt or a real external/company standard did not require. Valid: prompt says *Create a Google Doc titled "Combo Fighters Launch Record"*. Invalid: prompt says *Create a launch record for Combo Fighters* and the row requires that exact title | `overly_specific` |
 | Grades the same fact several times only because it appears in several places | `duplicate` |
@@ -380,20 +389,28 @@ Scan every field for `such as`, `e.g.` and `for example`. Count one `vague_exemp
 
 - The Agent is the actor. "Agent posts…" and "The Agent posts…" are both standard (QC spec: "Agent" + action + necessary context); never flag or recommend changing one to the other. "The Agent's status update covers…" is agent-centric but nonstandard: NON-FAIL 3 on Agent-Centric when 10% or fewer rows use such forms, FAIL when more do. An artifact or model subject ("The write-up addresses…", "The response states…") fails Agent-Centric and is recorded as a Major `non_agent_centric` issue on that row.
 - No tool name anywhere in the title. Supporting fields may name a real tool to locate evidence.
-- **Negative criteria (local override):** prohibition-only or absence-only acceptance fails Negative Criteria **even when the prompt explicitly forbids the action**. "The Agent does not close ENG-123" becomes "The Agent leaves ENG-123 open".
-- **Mandatory lexical pre-scan** of every title, case-insensitive: `does not`, `do not`, `makes no`, `has no`, standalone `no`/`not`, `never`, `without`, `avoid`, `refrain`, `fail to`. Review every hit. Reported negative facts ("The Agent reports that PR #438 had no human-submitted review") and exact immutable entity titles remain valid.
-- Affirmative wording never removes exclusion coverage: a required exclusion, decoy or prohibited write still needs its own row, phrased as a classification, a scope boundary or a preserved state.
+- **Negative criteria (local override):** prohibition-only or absence-only acceptance fails Negative Criteria **even when the prompt explicitly forbids the action**. A row an agent passes by doing nothing fails Negative Criteria however it's worded ('does not close', 'leaves ENG-123 open', 'leaves the sheet as found', 'keeps X off the ticket'). **Do-nothing test:** for each row, would an Agent that makes no writes and gives no answer pass it? Yes → Negative Criteria FAIL (`negative.classification: PROHIBITION`). Record it as each row's `do_nothing_case` (5.3).
+- **Mandatory lexical pre-scan** of every title, case-insensitive: `does not`, `do not`, `makes no`, `has no`, standalone `no`/`not`, `never`, `without`, `avoid`, `refrain`, `fail to`, `leaves … as found / as is / unchanged / untouched / open / off`, `keeps … off`. Review every hit (the lint reports `prohibition_title` and `disguised_negative`). Reported negative facts ("The Agent reports that PR #438 had no human-submitted review") and exact immutable entity titles remain valid.
+- Affirmative wording never removes exclusion coverage: a required exclusion, decoy or prohibited write is still covered, as a classification, or as a condition on a write the Agent must make (an exact count or scope), or a requirement inside a required artifact. Never a standalone row an agent passes by doing nothing. A row like "leaves the sheet as found", where nobody asked about the sheet, is usually just dropped.
+
+| Row (task …eccb) | Do nothing passes? | Result |
+|---|---|---|
+| C26 "The Agent leaves Arthur's Close-out chores spreadsheet (…) as found, …" | Yes | Negative Criteria FAIL; nothing in the prompt asks about the sheet, so drop it |
+| C52 "The Agent leaves every payee's own hours and amount off ENG-2558 (…)" | Yes | Negative Criteria FAIL; put the scope inside the required ticket write |
+| C47 "The Agent records the close-out total of $1,570.00 on ENG-2558 (…), in a comment or in the ticket's description" | No | Valid |
+| C32 "The Agent keeps the pay figures in its close-out pay email to oliver.brooks@harmonygames.co to Oliver Brooks's own, leaving every other payee's hours and amount out of it" | No (tied to the email the Agent must send) | Valid |
 
 | Row | Title subject | Affirmative? | Tool name? | Agent-centric? | Fix |
 |---|---|---|---|---|---|
 | R# | "The Slack update mentions…" | Yes | No | **No** | "The Agent's Slack update mentions…" |
-| R# | "The Agent does not update page Y" | **No** | No | Yes | "The Agent leaves page Y unchanged" |
+| R# | "The Agent does not update page Y" | **No** | No | Yes | Put the boundary inside the required write ("The Agent updates page X and no other page"), or drop the row |
 
 ### 2.10 Flexibility Check
 
 | Situation | Pattern |
 |---|---|
-| One correct value (email, ID, date, exact source string) | Exact |
+| One correct value (email, ID, date, exact source string) | Exact value; accept every rendering the tools return (prefix, case, repo-qualified, short SHA, anonymized token) |
+| Anonymized token in the data (`[PERSON_NAME_0854]`) | Accept the token as shown, and the real name only when a persona-visible record maps it. Bind it as LITERAL (`rubric_factual_checks.md`); a row that names only "HOMA" where the roster shows `[PERSON_NAME_0854]` rejects a valid answer |
 | Agent-generated free text | Objective semantic rule stating the meaning a paraphrase must keep |
 | Several valid values | Complete closed set, or an objective eligibility rule |
 | Required content items | Required elements (a), (b), (c) — each independently required item still needs atomic treatment |
@@ -403,7 +420,7 @@ Scan every field for `such as`, `e.g.` and `for example`. Count one `vague_exemp
 
 ### 2.11 Date/Time Alignment Check
 
-The fixed clock is **2026-02-14 00:00 UTC**. Resolve relative dates in their original context. Recompute time-relative values when dependencies change. Future events cannot be reported as completed. Preserve source timezones.
+The fixed clock is the task date's: **2026-02-14 00:00 UTC** (2026-02-13 16:00 PT) for Feb 14 tasks, **2025-10-01 00:00 PT** (2025-10-01 07:00 UTC) for Oct 1 tasks. Tools return UTC and personas use Pacific time. When an instant falls on different PT and UTC days, a row grading the day accepts both; accepting only one is `overly_specific`. Bind such a date with `comparison: pt_or_utc_date` (`rubric_factual_checks.md`); the helper requires the `overly_specific` issue when the title states only one of the two days. Example (task …fea7a): Arthur's "Total download size is 276mb" was posted 2025-11-17 00:58 UTC, Sunday November 16, 4:58 PM PT; a row requiring only "November 17, 2025" fails the runs that wrote November 16. Comparisons against the clock itself stay in UTC. Resolve relative dates in their original context. Recompute time-relative values when dependencies change. Future events cannot be reported as completed. Preserve source timezones.
 
 ### 2.12 Weight Check (every row)
 
@@ -433,7 +450,8 @@ Map every requirement from Phase 1.4 to a row that tests it **on the correct art
 - **Action alignment:** every write row matches an action the prompt assigns to the Agent. "I'll post it" assigns the post to the user → `unauthorized`.
 - **Write-as-deliverable preservation:** before calling a write row unauthorized because of a framing clause ("before I start writing things up"), check whether the prompt names the artifact and its content. If so, it is a deliverable.
 - **Exclusions and decoys:** when filtering has plausible non-matching records, a row must reject the all-inclusive answer.
-- **OE cross-reference:** each authorized write OE should map to a write row and each user-asked discovery OE to a reply row. An unauthorized OE is an OE defect, not a missing criterion.
+- **OE cross-reference (both ways):** each authorized write OE should map to a write row and each user-asked discovery OE to a reply row. An unauthorized OE is an OE defect, not a missing criterion. In reverse, each row maps back to the OE steps that read or write its record (`oe_cross_check.rows[].oe_step_ids`, step labels exactly as in the saved OE). A row no step reaches is `oe_unmapped`: record it as `ROW_DEFECT` (the row grades something off the solution path; record its issue), `OE_GAP` (the row is authorized and the OE missed the step; send the OE back to `/oe`) or `UNRESOLVED`. Example: a row grading a ticket that no OE step reads.
+- **OE conflict:** follow the saved OE exactly. A row that would fail an Agent doing exactly what the OE says is a conflict. Settle it from the records (cite them): if they back the OE, fix the row (`FIX_ROW`, with the row's issue); if they back the row, send the OE back to `/oe` (`FIX_OE`). Record each in `oe_cross_check.conflicts` with the step, the row and both quotes. Examples: OE 14 creates the settlement sheet in the Wind Down folder while a row says that folder is inaccessible (task …3954); OE 21's model reply would fail R85 (task …ecca). The OE eval itself never reads the rubric; an OE edit makes this review stale (`hg_rubric_loop` input binding), so the cross-check reruns.
 
 A missing authorized Outcome is **Major** (`missing_coverage`). A missing unmentioned-handbook obligation or optional Process row is not a hole.
 
@@ -480,7 +498,7 @@ Apply `rubric-sampling-v1` (`references/rules/rubric_sampling.md`) and Rubric Wr
 
 ### 3.7 Whole-Set Mutation Tests
 
-Test a complete valid solution against the whole rubric; it must pass. Then change one required value, status, recipient or output at a time and record which row rejects it. Include a correct-delivery plus concise-final-reply test unless the prompt requires more in the reply. Compare title-only acceptance with all five fields to expose hidden conditions.
+Test a complete valid solution against the whole rubric; it must pass. Then change one required value, status, recipient or output at a time and record which row rejects it. Include a correct-delivery plus concise-final-reply test unless the prompt requires more in the reply (`checks.final_reply_test`; a rejecting row needs its `overly_specific` issue). Compare title-only acceptance with all five fields to expose hidden conditions.
 
 ---
 
@@ -524,7 +542,7 @@ One Major or Moderate row fails the set. Minor issues fail once they reach 5% of
 | 5 | One over-specific requirement or hard-coded title | PASS / flag |
 | 6 | One duplicate or cascade group | PASS / flag |
 | 7 | One vague exemplar | PASS / flag |
-| 8 | One prohibition-only title | PASS / flag |
+| 8 | One prohibition-only title, or a row an Agent passes by doing nothing | PASS / flag |
 
 Add any finding to the tally before scoring.
 
@@ -550,14 +568,14 @@ Predict which rows would fail every run because of a defect already recorded. Re
 | Rubric Category Balance | 1–2 or 5 | Fails only with zero Outcome rows |
 | Process Rubrics | 1–2, 3 or 5 | Any invalid Process row, or two or more genuinely missing ordering checks, fails; exactly one missing is NON-FAIL 3 |
 | Agent-Centric Phrasing | 1–2, 3 or 5 | Artifact subject or tool name fails; off-pattern Agent titles on 10% or fewer rows are NON-FAIL 3, more fail |
-| Negative Criteria | 1–2 or 5 | Any prohibition-only title fails (local override) |
+| Negative Criteria | 1–2 or 5 | Any prohibition-only title, or any row an Agent passes by doing nothing, fails (local override) |
 | Predicted All-Fail gate | FAIL or PASS | Two or more predicted rows fail |
 
 The lowest score controls the verdict. Static repair gates (schema, self-containment, accuracy/acceptance, atomicity, coverage, duplicates, weights, contradiction) are mandatory checks but add no numeric score; `hard_gate_score` is null. Missing evidence stays provisional NON-FAIL / PARTIAL unless an established failure proves FAIL.
 
 ### 5.3 Save the Scoring Record and Report
 
-1. Complete the format-4 record under `references/rules/review_scoring.md`, including `checks` (`rubric_checks.md`), each row's `fact_review`, `weight_reviews`, `hard_gates`, `dimensions`, `predicted_all_fail` and the `eval_release` from `hg_eval_release.py snapshot rubric`.
+1. Complete the format-5 record under `references/rules/review_scoring.md`, including `checks` (`rubric_checks.md`), each row's `fact_review`, `weight_reviews`, `hard_gates`, `dimensions`, `predicted_all_fail`, `oe_cross_check` and the `eval_release` from `hg_eval_release.py snapshot rubric`. Each `checks.rows` entry has a `valid_case`: a prompt-allowed answer the row must ACCEPT. A REJECT forces `overly_specific` on that row (or `incorrect` when its expected value is wrong). Each also has a `do_nothing_case` that must REJECT, quoting the title's required write or artifact; an ACCEPT is a negative in disguise (2.9). Example (task …df2ec): run 1's compact reply (about 10 lines, all 32 figures, a 3-sentence source note) is a valid case R2 rejects, so R2 is `overly_specific`.
 2. Save it: `python3 Evals/tools/hg_write_output.py rubric-score --source "<record.json>"`. The helper assigns severities, deduplicates rows, computes the fractions and returns the verdict, score and `Scoring record SHA-256`.
 3. Do not save the report yet. Run 5.5 first.
 4. After 5.5, save the report: `python3 Evals/tools/hg_write_output.py rubric --source "<report.md>"`. It is rejected if it contradicts the scoring record. Return `Evals/task_inputs/reports/3_rubric.md`. The evidence ledger stays at `Evals/task_inputs/reports/drafts/rubric_score_record.json`. Then stop; do not revise criteria.
@@ -682,8 +700,8 @@ passes; `## Deep Recheck` says why, then gives the verdict block.
 | Channel/method lock-in | Prompt said "notify"; row requires Slack | **Major** (local override) |
 | Hard-coded title or phrasing | Prompt did not specify the exact wording | **Major** (local override) |
 | Forced single conclusion | Evidence supports several readings | **Major** (local override) |
-| Scope-admitting qualifier | `primary`, `main`, `chief`, `principal` — the ranking admits the runner-up | Major if only `evidence` states the exclusion, else Moderate (2.5) |
-| Overly broad | A plausible wrong answer passes | **Moderate** (local override) |
+| Scope-admitting qualifier | `primary`, `main`, `chief`, `principal` — the ranking admits the runner-up | Major (2.5) |
+| Overly broad | A plausible wrong answer passes | **Major** (local override) |
 | Cascading failure | One Agent error fails several rows through a shared condition | Moderate (one group) |
 | Redundant | Same requirement graded twice | Moderate |
 | Write labeled Process | Write or observable result in Process | Moderate |
@@ -691,6 +709,10 @@ passes; `## Deep Recheck` says why, then gives the verdict block.
 | Harmless specificity | Wording preference that rejects nothing | Minor |
 | Artifact subject / tool name | "The response states…", `slack_send_message` | Agent-Centric FAIL plus Major `non_agent_centric` (local override) |
 | Prohibition-only title | "The Agent does not…" | Negative Criteria FAIL (local override) |
+| Negative in disguise | "leaves X as found", "keeps X off Y": an Agent that does nothing passes | Negative Criteria FAIL (local override) |
+| Count format nobody asked for | "at most five lines" for "keep it short" | **Major** (`overly_specific`) |
+| Unreachable deciding record | Only in Trash, only inside an attachment, or nothing points to it | Major (`unobservable`) |
+| OE conflict | An Agent doing exactly what the OE says fails the row | Fix the row or send the OE back |
 | Zero Outcome rows | Only Process rows | Category Balance FAIL |
 | Spot-checked core requirement or >5 samples | Sampling misused | Major / Moderate |
 | Two or more predicted all-fail rows | Unreachable data or tool | FAIL |

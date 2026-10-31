@@ -17,6 +17,7 @@ RUBRIC_FIELDS = ("Review policy", "Review mode", "Review iteration", "Reviewed J
 RECORD_FIELD = "Review record SHA-256"
 # Model that produced the report; distinct from hardness "Assessed model" (the run under review).
 EVALUATOR_FIELD = "Evaluator model"
+CLOCK_FIELD = "Clock"
 GOLDEN_FIELDS = ("Review policy", "Review mode", "Review iteration", "Reviewed golden SHA-256",
                  "Review context SHA-256", RECORD_FIELD)
 RUBRIC_V8_FIELDS = ("Gate tier", "Golden verified", "Coverage ratio", "Repairs")
@@ -54,7 +55,7 @@ def parse_result(stage, content):
         raise ValueError("Verdict must be PASS, NON-FAIL or FAIL; put any score on its own line.")
     verdict = match.group(1)
     fields = {}
-    names = ("Score", "Execution status", "Next action", "Evidence limits", EVALUATOR_FIELD)
+    names = ("Score", "Execution status", "Next action", "Evidence limits", EVALUATOR_FIELD, CLOCK_FIELD)
     if stage == "hardness":
         names += HARDNESS_FIELDS + ("Prediction basis",)
     if stage == "rubric":
@@ -116,6 +117,8 @@ def parse_result(stage, content):
     result = {"verdict": verdict, "verdict_score": score, "execution_status": status}
     if EVALUATOR_FIELD in fields:
         result["evaluator_model"] = fields[EVALUATOR_FIELD]
+    if CLOCK_FIELD in fields:
+        result["clock"] = fields[CLOCK_FIELD]
     if stage in {"prompt", "rubric", "oe"}:
         for label, key in (("Eval version", "eval_version"), ("Eval release SHA-256", "eval_release_sha256"),
                            ("Reviewed prompt SHA-256", "reviewed_prompt_sha256"),

@@ -93,6 +93,7 @@ class InjectionIntakeTests(unittest.TestCase):
         tool = self.root / 'Evals/tools/hg_store_input.py'
         tool.parent.mkdir(parents=True)
         shutil.copy2(Path(store.__file__), tool)
+        shutil.copy2(Path(store.__file__).with_name('hg_universe.py'), tool.with_name('hg_universe.py'))
         def cli(*args):
             result = subprocess.run([sys.executable, str(tool), *args],
                                     capture_output=True, text=True, check=True)

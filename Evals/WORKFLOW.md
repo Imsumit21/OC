@@ -473,9 +473,15 @@ Read supplied task evidence and current assignment details when they change.
   remain PENDING; missing runtime evidence alone is not a quality FAIL. Apply
   only the selected Eval's required scope: `/injection` discloses live behavior,
   task visibility and unverified database compatibility as outside-scope limits.
-- Keep the universe clock **2026-02-14 00:00 UTC**.
+- Keep the task date's universe clock: **2026-02-14 00:00 UTC** for Feb 14 tasks,
+  **2025-10-01 00:00 PT (07:00 UTC)** for Oct 1 tasks (ENVIRONMENT.md).
   Preserve source timestamps and their stated zones; flag a comparison that
-  requires an unstated zone. Record the actual review date separately.
+  requires an unstated zone (unzoned persona-written times mean PT). Tools show
+  UTC; people in the story use Pacific time. Dates are written in PT; when the
+  PT and UTC dates differ, accept either. Checks against the clock itself stay
+  in UTC. In persona-written text "today" is Saturday, February 14, 2026 on a
+  Feb 14 task and Wednesday, October 1, 2025 on an Oct 1 task.
+  Record the actual review date separately.
 - Do not modify source exports, execute injection SQL, call workplace
   connectors, or replay agent/verifier actions. Input/report writes use the
   supplied helpers and are allowed. Do not create environment_session.json.
@@ -589,7 +595,7 @@ and an earlier PASS are not evidence. A supported good result should still pass.
 
 Prompt and rubric audits retain
 [prompt-rubric-reliability-v1](references/rules/prompt_rubric_reliability.md)
-source safeguards in the shared `prompt-ugt-v1` package. Prompt records use
+source safeguards in the shared `task-quality-v1` package. Prompt records use
 `prompt-source-checks-v2` and format 2. Verify the installed package, bind scored
 reports to its release fingerprint, and keep historical-version results separate
 in batch summaries. Rubric score records include the current `eval_release`.
@@ -714,7 +720,7 @@ For OEs, start with `hg_oe_review.py start`, complete the evidence record under
 reports must match the actual OE/context/source/release hashes and computed
 component scores. Historical golden input/report keys remain compatibility-only;
 they are never aliases for OEs.
-`rubric-score` saves a format-4 evaluation record with the actual input and
+`rubric-score` saves a format-5 evaluation record with the actual input and
 context hashes. `rubric` saves the matching report. `rubric-draft`, `rubric-review`
 and `rubric-json` are retired and reject writes. `task-details` saves assignment
 inputs through the input store. The source is a completed temporary file; the
@@ -764,7 +770,8 @@ update the current stage's input mappings/check metadata while retaining the
 other stages' provenance. Each stage report also records its own fingerprints
 and source/check details so replacing shared metadata does not erase them.
 
-Reference `Evals/references/universe_manifest.json` in each stage report.
+Reference the task universe's `Evals/references/universes/<normal|synthcut>/universe_manifest.json`
+in each stage report, and show the task date in the report's `Clock:` line.
 Record the local files/JSON pointers, relevant hashes, SQL overlay and task
 attachments used, plus incomplete source checks. Do not create a live-session
 file; this bundle has no connection or expiry requirement.
@@ -930,7 +937,7 @@ or other contemporaneous provenance; leave that gate unverified if absent.
 Rubric uses `rubric-revision-v10`. Its current contracts retain exact source
 anchors, prompt/incorporation authority, restrictive-clause review, supported
 alternative tests and whole-set outcome ownership. Evaluation requires
-format-4 scoring under `references/rules/review_scoring.md`, including the exact
+format-5 scoring under `references/rules/review_scoring.md`, including the exact
 row/outcome checks and `fact_review` source comparisons. No creation/publication
 record is required. The score-record path remains
 `Evals/task_inputs/reports/drafts/rubric_score_record.json`.
@@ -941,8 +948,8 @@ entries and canonical overlap-group counts. No absolute three-row override or
 failed repair gate changes QC percentages. Six static dimensions are scored;
 there is no verifier/all-failing/batch input or score in this stage. The local
 `hg-strict-overrides-v1` rules in Eval 3 apply: Overly Specific that rejects a
-valid answer is Major, Overly Broad is Moderate, cascading-failure rows form one
-overlap group, prohibition-only titles fail Negative Criteria, and two or more
+valid answer is Major, Overly Broad is Major (2026-10-17), cascading-failure rows form one
+overlap group, prohibition-only titles and rows an agent passes by doing nothing fail Negative Criteria, and two or more
 predicted all-fail rows force FAIL.
 
 Inventory every independently required assertion before applying documented QC

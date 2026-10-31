@@ -5,10 +5,11 @@ from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import hg_search as h
 import hg_compact_index as c
+from universe_fixture import routing, select
 class CompactTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name).resolve();self.folder=self.root/'Base';self.folder.mkdir()
-  refs=self.root/'Evals/references';refs.mkdir(parents=True);(refs/'universe_manifest.json').write_text(json.dumps({'services':{'github':{'path':'Base'}}}))
+  refs=self.root/'Evals/references';refs.mkdir(parents=True);select(self.root).write_text(json.dumps({'services':{'github':{'path':'Base'}}}))
   self.path=self.folder/'data.json';self.path.write_text('{"rows":[{"id":"A","text":"needle café"},{"id":"B","text":"needle two"}],"end":42}')
   self.manifest=self.folder/'source_manifest.json';self.manifest.write_text(json.dumps({'files':[{'path':'data.json','sha256':'declared'}]}))
   self.p=patch.object(h,'ROOT',self.root);self.p.start()
@@ -90,7 +91,7 @@ class PortableTests(unittest.TestCase):
   import shutil
   out=self.prepare_portable()
   with tempfile.TemporaryDirectory() as relocated:
-   other=Path(relocated).resolve();shutil.copytree(self.root/'Base',other/'Base');shutil.copytree(self.root/'Evals/references',other/'Evals/references')
+   other=Path(relocated).resolve();shutil.copytree(self.root/'Base',other/'Base');shutil.copytree(self.root/'Evals/references',other/'Evals/references');shutil.copytree(self.root/'Evals/task_inputs',other/'Evals/task_inputs')
    with patch.object(h,'ROOT',other):
     self.assertTrue(c.import_portable(h,out,self.artifact_hash)['complete']);self.assertEqual(h.search(self.args())['backend'],'compact-offset');self.assertEqual(self.stripped(h.search(self.args())),h.scan_search(self.args()))
  def test_portable_changed_source_rejected(self):
@@ -123,7 +124,7 @@ class ManifestRaceTests(unittest.TestCase):
   c.build(h,'github','data.json');original=c.scoped_events
   def change(*args):
    yield from original(*args)
-   (self.root/'Evals/references/universe_manifest.json').write_text(json.dumps({'services':{'github':{'path':'Gone'}}}))
+   routing(self.root).write_text(json.dumps({'services':{'github':{'path':'Gone'}}}))
   with patch.object(c,'scoped_events',change):
    self.assertIsNone(c.search_existing(h,self.args()))
 
@@ -137,7 +138,7 @@ class AutomaticPackageTests(unittest.TestCase):
     def package(self):
         import shutil
         artifact = self.prepare_portable()
-        directory = self.root / 'Evals/references/search_indexes'
+        directory = routing(self.root).parent / 'search_indexes'
         directory.mkdir(parents=True)
         self.artifact = directory / 'github-data.json'
         shutil.copy2(artifact, self.artifact)
