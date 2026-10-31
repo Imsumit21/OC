@@ -265,17 +265,20 @@ gone (`task_context.v2_export_root`); data drift in the persona facts (Marcus Be
 KB generator; KB determinism: `_build/pass_other.py` iterated sets of email strings (order and the three ids
 kept followed the per-process hash seed), now sorted; the assignment parser no longer lets a label with a
 deleted value capture the next heading; `--help` exits 0 for `hg.py` and `base_check.py`; tests no longer depend
-on the live task folder or scratch files. The synth-cut KB no longer carries Feb 14 evidence: hand-written
-(`Scenario_Atlas`) rows are emitted there only when every id they cite resolves in the synth-cut exports, and
-storyline beats that the data's own metadata flags with an editorial note are left out (both listed in `_meta`).
-The source fingerprint and the KB stamp are machine-independent (workspace-relative manifest path, no context
-hash, no absolute paths), so the committed KBs stay `bound` on a clone with the same data.
+on the live task folder or scratch files (they skip what needs installed data or the git-ignored task folders).
+Hand-written KB knowledge (`Scenario_Atlas` and `Ask_Carriers` rows, hand-picked example ids, static narrative
+titles) is emitted only on the normal universe, and storyline beats that the data's own metadata flags with an
+editorial note are left out (both listed in `_meta`). Every builder read of a KB file or `kb_cache` intermediate
+checks its build stamp, and a build writes only to its own `by_universe/<key>/`. The source fingerprint and the
+KB stamp are machine-independent (workspace-relative manifest path, no context hash, no absolute paths), so the
+committed KBs stay `bound` on a clone with the same data. The fingerprint covers manifests, not file contents:
+`verify_universe_data.py --sha256` is the content check.
 
 **Evidence.**
 - Determinism: 68 files (both KBs and the `kb_cache` intermediates) byte-identical across Python hash seeds
-  101/202 and 303/404, and 72 after the leakage fix (505/606 vs 707/808). After the stamp change the final
-  build equals the previous one in all 28 KB files across seeds 707/808 vs 909/1010, the only difference being
-  the removed `_meta.context_hash` (Python 3.15.0, macOS 25.6; `entity.py --task-dir <t> build`, then
+  101/202 and 303/404, and 72 after the leakage fix (505/606 vs 707/808). With the final builder two clean
+  builds are byte-identical in all 28 KB files (seeds 111/222 vs 333/444), and the committed build (555/666)
+  reproduces the normal KB byte for byte (Python 3.15.0, macOS 25.6; `entity.py --task-dir <t> build`, then
   `_build/run_all.py --task-dir <t>`). Both real tasks resolve `kb_status: bound` (normal fingerprint
   `56f200f90f8a`, synth-cut `35ef23cdb4f6`); the KB files contain no machine paths.
 - Access audit (a `sys.addaudithook` hook in every Python process of the run): both KB builds, 18 read-side
@@ -292,10 +295,12 @@ hash, no absolute paths), so the committed KBs stay `bound` on a clone with the 
 - Leakage (synth-cut KB against the normal KB as control): the six post-cut storylines and the shutdown
   premises occur 0 times (e.g. Combo Fighter 0 vs 249, Telegram 0 vs 17, Mattel 0 vs 20, `2026-02-11` 0 vs 103);
   the only 2026 dates left are one scheduled board meeting that exists in the synth-cut calendar. The audit
-  found Feb 14 evidence reaching synth-cut through hand-written hazard/trap rows and four flagged beats; after
-  the fix, hazards S05–S07, Q06–Q08, L14 and traps D08, C04, X03 are not emitted on synth-cut, the four beats are
-  excluded, and the 15 leaked ids/strings occur 0 times in the synth-cut KB (all still present in the normal
-  one). The audit is lexical plus id resolution, not a semantic review of every entry.
+  found Feb 14 evidence reaching synth-cut through hand-written hazard/trap rows and four flagged beats. After
+  the fix synth-cut emits no hand-written knowledge (hazards S05–S08, Q06–Q08, L14 and traps P03, D08, C04, X03,
+  K03 left out; no static narrative titles; the hand-picked K01 and INT-01 example ids dropped), the four beats
+  are excluded, and the leaked ids/strings occur 0 times in the synth-cut KB (all still present in the normal
+  one). Synth-cut: 59 hazards, 25 traps; normal unchanged (68, 31). The audit is lexical plus id resolution, not
+  a semantic review of every entry.
 - Tests: Evals 799 OK; Task_Authoring 149 OK (`test_v3_stage_gate` 45, `test_skill_registration` 13,
   `test_difficulty_v3` 13, `test_task_context` 29, `test_universe_seam` 33, `test_v3_build_context` 16); all
   tool self-tests ok, sandboxed.
@@ -312,4 +317,13 @@ KB rebuild (`kb_status: reference-only`); tools recompute the context on every r
 `support/local_search/contexts/` folders are now ignored, but the ~1,660 context files committed earlier stay
 tracked until someone untracks them (`git rm -r --cached Task_Authoring/support/local_search/contexts`), a
 separate decision. (3) `Eval-new/` (the supplied bundle) is removed once this work is committed; git history
-is the record of both bundles.
+is the record of both bundles. (4) Open review findings, committed anyway on the user's decision (hook bypass,
+redteam skipped): the last code gate on the KB builder FAILED because about 45 places in
+`references/universe_kb/_build/assemble_*.py` still hard-code example ids or factual titles picked from the Feb 14
+data inside otherwise computed rows (only P03, K01 and INT-01 are fixed). Port each to values computed from the
+selected universe, or gate it with `hand_written()` / `HAND_WRITTEN_SOURCES`, and add an assembly-level test;
+until then treat synth-cut hazards, traps and integrations as orientation and check ids in the data. The cache
+stamp, symlinked-output and partial-run findings of that round are fixed with tests but were not re-reviewed.
+The methodology review also FAILED: it asks for claim-level (not id-level) checks of any hand-written content
+kept on synth-cut and for revision-linked reproduction runs. The task-context code was last reviewed in rounds
+1–4.

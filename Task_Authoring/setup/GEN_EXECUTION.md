@@ -143,17 +143,24 @@ list it; `TASK_AUTHORING_TASK_DIR=<task_dir>` is equivalent), then
 4 min, normal 13 min). Rebuild after any universe data refresh; a stale build stops being
 `bound` because its fingerprint no longer matches. Builds are deterministic (identical
 bytes across rebuilds and Python hash seeds); a new pass must iterate sorted, never over a
-raw set of strings. Hand-written KB rows (`source` containing `Scenario_Atlas`) were written
-from the Feb 14 data: on synth-cut a row is emitted only when every id it cites resolves in
-the synth-cut exports, and the rest are listed in `_meta.hand_written_rows_not_emitted`;
-storyline beats that the data's own metadata flags with an editorial note are left out and
-listed in `timeline.json` `_meta.beats_excluded`.
+raw set of strings. Hand-written KB knowledge was written from the Feb 14 data, so only the
+normal universe emits it: rows whose `source` cites `Scenario_Atlas` or `Ask_Carriers`,
+hand-picked example ids and the static narrative titles (rows left out are listed in
+`_meta.hand_written_rows_not_emitted`). Storyline beats that the data's own metadata flags
+with an editorial note are left out and listed in `timeline.json` `_meta.beats_excluded`.
+Some computed rows still quote ids hand-picked from the Feb 14 data (a known follow-up), so
+on synth-cut treat hazards, traps and integrations as orientation and check any id in the
+data before relying on it. Each build step refuses a KB file or `kb_cache` intermediate
+stamped for another universe, source or builder version, and writes only to
+`by_universe/<its universe>/`.
 
 **What binds what.** The source fingerprint is a digest over the universe key, the Evals
 routing manifest (which pins every export's file count, bytes and archive SHA-256) and
 the bytes of every service's `source_manifest.json` (per-file sizes and SHA-256);
 `verify_universe_data.py --sha256` checks the installed files against those manifests
-and the manifests against the routing pins. The task's `context_hash` is a digest of the
+and the manifests against the routing pins. The fingerprint covers the manifests, not the
+file contents: a file edited under an unchanged manifest is caught only by that `--sha256`
+check, one more reason never to edit the data. The task's `context_hash` is a digest of the
 whole normalized context: the raw assignment, persona, seed bound, universe block (with
 the data clock), policy, roster and the full source block (paths, fingerprint, KB
 status). Every tool cache is keyed by it (`support/local_search/cache/<hash>/`, patched
