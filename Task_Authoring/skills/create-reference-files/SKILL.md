@@ -15,10 +15,9 @@ never execute SQL.
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`.
 Use the shared `Working_Files/00_Task_Context.json` (all eight assigned fields,
-registered shared data source and assigned freeze). Both dates use the same local
-data; validate relied-on record dates and earlier state before grounding. V3
-changed-topic rules govern over older Evals text. The existing Long→extreme and
-Normal design limits remain local policy; Eval Portal is handled by the user.
+registered shared data source and assigned freeze). The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Validate relied-on record dates and earlier state before grounding. V3 changed-topic rules govern over older Evals text. The existing Long→extreme and Normal design limits remain local policy; Eval Portal is handled by the user.
+
+Every file fact must be true in the selected universe and dated at or before its seed bound; a Drive file the agent must read needs body text or real bytes at `content_path` `<owner_email>/<path>`, and no deciding fact may live only in a Gmail or Slack attachment (A-26, A-08/B-07, B-19).
 
 Required in `Task_Authoring/task_inputs/`: `00_Assigments.md`, `01_Grounding_Dossier.md` and
 `01_Universe_Inject.sql`. If one is missing, stop and name it.

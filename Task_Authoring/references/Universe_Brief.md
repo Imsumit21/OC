@@ -1,11 +1,12 @@
 # HarmonyGames — Universe Brief (Spec V2)
 
-> **V3 use:** both freeze dates use the same local universe data. This orientation
-> spans events on both sides of an October freeze. Normalize the assignment and pass
+> **V3 use:** The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default.
+> Compiled from the older Feb 14 export; reference-only for both universes until re-verified against the selected universe. Lines tagged [normal-only] do not exist on Oct 1 (synth-cut).
+> Normalize the assignment and pass
 > `task_context.py --task-dir <task_dir> --write --require-source` before grounding.
-> Use the shared source/KB as leads and validate each fact at the assigned freeze.
-> Later events cannot be completed facts; later-edited bodies need dated earlier
-> evidence. No separate October dataset/KB build is required. V3 overrides old rules.
+> Use the selected universe's source and KB as leads and validate each fact at the
+> assigned freeze. Later events cannot be completed facts; later-edited bodies need
+> dated earlier evidence. V3 overrides old rules.
 
 > One reference replacing V1's `0_Universe_One-Pager.md`, `1_Universe_Summary.md`, `3_Task_Categories_Business_Functions.md` and `5_Reference_Sheet.md`. Refreshed 2026-10-03: clock, service count, persona count, Gmail send capability, Snowflake/Confluence and GCal/GSlides corrected; counts re-measured where marked ✓. Orientation only — verify anything a task relies on with `Task_Authoring/tools/hg.py search`.
 
@@ -16,19 +17,19 @@ games. Founded 2023; the founders rejected an NFT concept and pivoted to a
 domino-matcher — **Game of Dominoes**, shipped as **Domino Delights** — then raised a
 **$3M Series Seed at $10M post** led by **Griffin Gaming Partners**. **Zombie Match 3D**
 (`match3d`) followed in 2025, and **Combo Fighter** (fighting-meets-match-3) is the
-most recently launched title. Late 2025 into early 2026 is existential: runway
-collapse, a **failed $2.5M bridge round**, a run of prototypes (Combo Fighter,
-Zombie Match Lite, a Barbie/Mattel pitch, a 4X crypto concept), and a wind-down
-under way by February 2026. Many arcs end unresolved — good material for
+most recently launched title [normal-only]. Late 2025 into early 2026 is existential: runway
+collapse, a **failed $2.5M bridge round**, a run of prototypes (Combo Fighter [normal-only],
+Zombie Match Lite [normal-only], a Barbie/Mattel pitch [normal-only], a 4X crypto concept), and a wind-down
+under way by February 2026 [normal-only]. Many arcs end unresolved — good material for
 "reconstruct what actually happened / what is still open" tasks.
 
 | Fact | Value |
 |---|---|
-| Fixed clock | **2026-02-14T00:00:00Z**, a Saturday. Nothing on or after it has happened |
+| Fixed clock | Feb 14, 2026 → **2026-02-14T00:00:00Z**, a Saturday (seed bound). Oct 1, 2025 → seed bound **2025-10-01T00:00:00Z** (Tue Sep 30, 5:00 PM PT), eval clock **2025-10-01T07:00:00Z** (Wed Oct 1, 2025), persona "today" Wednesday, October 1, 2025. Nothing after the selected universe's seed bound has happened; only plan fields (due, scheduled start/end, deadline) may be later |
 | Domain | `harmonygames.co`; GitHub org `harmonygames-Games` |
 | Task personas | 17 usable (`Evals/references/persona/roster.json`); the taxonomy lists 19 (`persona_roster_v2.json`) — `thomas` and `tim_steudler` fail `/prompt`'s identity gate; briefs in `Persona_Briefs.md` |
 | Assignment axes (V2) | Business function (the persona's department: Design, Engineering, Executive, Product, Sales) · Competency (Product Management, Engineering Ops, Marketing and GTM, Corporate Ops, Finance) · Task skill (Retrieval, Analysis and Synthesis, Planning and Decision Support, Authoring, Actions) · Task type (normal, long-horizon) |
-| Environment | `env_id` `hg4-with-gsuite-bundle-1174`, `universe_id` `hg4-2026-08-31` (from the V2 upload template) |
+| Environment | `env_id` `hg4-with-gsuite-bundle-1174`; `universe_id` `hg4-2026-08-31` v37 (normal) / `hg4-synth-sep30cut` v16 (synth-cut) |
 
 V1's six weighted "business functions" (Engineering & Live-Ops 25%, …) are retired.
 In V2 the business function is the persona's department and the kind of work is
@@ -86,18 +87,18 @@ Snowflake. Tasks that read only Slack and Gmail miss half the story.
 - **Snowflake** — derived figures; answers usually need a query and an aggregation.
 - **Confluence** — conventions and process documents that can resolve an otherwise ambiguous instruction.
 
-## Storylines (76 across 10 lenses)
+## Storylines (76 on Feb 14 / 70 on Oct 1, across 10 lenses)
 
-- **founders-exec (5)** — vetting Arthur Blake and sizing founding bets · contractor pay cadence / equity philosophy / Delaware incorporation · cash-conscious retreat planning · NFT/hypercasual pivot debate · the Mattel Barbie "Dream Life Glow" pitch.
+- **founders-exec (5)** — vetting Arthur Blake and sizing founding bets · contractor pay cadence / equity philosophy / Delaware incorporation · cash-conscious retreat planning · NFT/hypercasual pivot debate · the Mattel Barbie "Dream Life Glow" pitch [normal-only].
 - **fundraising-finance-legal (8)** — 2023 seed model · competing term sheets, Griffin wins · Series Seed close (SPA/IRA/voting) · founder bridge loans · Superplay/TYZ Law patent threat · advisor equity via Carta · 2024 board cadence and investor reporting · 2025 Crownfall crypto pivot and the failed bridge.
 - **marketing-growth-gtm (8)** — female-35+ TAM thesis via Solsten · naming Domino Delights · harmonygames.co build · inbound BD after the seed · Marcus Bennett's in-house UA video pipeline · AppLovin soft launch (AU/NZ/CA) · ASO readiness and Node-managed UA · Zombie Match 3D naming, store assets, alpha→beta.
 - **analytics-data-stack (8)** — Firebase→BigQuery pipeline · S3→BigQuery · Singular attribution and the cross-platform discrepancy hunt · Remote Config A/B infra · funnel-driven tutorial redesign · stalled player-compensation tool · Bayesian pity/win-rate optimisation · rebuilding match3d instrumentation.
 - **live-ops-events-economy (8)** — Quests · Collect & Win · Win Streak "Nathan's Treasure" · Leaderboards (Dec 2024) · offers/IAP store · ad monetisation · Season Pass (GoD → match3d) · match3d daily login rewards.
-- **product-prototypes (7)** — Tile Dozer · Dominoes & Dragons RPG · River Rush · 4X Crypto Conquerors · Barbie "Dream Life Glow" · Zombie Match Lite · Combo Fighter.
-- **gmail (9)** — Solsten · AppLovin (deal → sunset) · TYZ Law · Google Ads onboarding · Node Media playables · PlayableX · Mattel licensing · web-distribution negotiation · Adjoe incentivised UA.
+- **product-prototypes (7)** — Tile Dozer · Dominoes & Dragons RPG · River Rush · 4X Crypto Conquerors · Barbie "Dream Life Glow" [normal-only] · Zombie Match Lite [normal-only] · Combo Fighter [normal-only].
+- **gmail (9)** — Solsten · AppLovin (deal → sunset) · TYZ Law · Google Ads onboarding · Node Media playables · PlayableX · Mattel licensing [normal-only] · web-distribution negotiation [normal-only] · Adjoe incentivised UA.
 - **designart (7)** — designing Sophie · character selection/profile UI · Sophie/Nathan ability VFX · scaling the puzzle pipeline to 1,200 levels · freelancer Ozhan for ZM3D · adaptive difficulty · Progression Philosophy GDD.
-- **epics (8)** — Arthur Blake's puzzle editor and bot tooling · backend infra from scratch · Quests backend (Felix + Douglas) · Tutorial Editor backlog · VFX handoff (match3d PR #408) · match3d vision bot for QA · Telegram Domino Delights mini-app · UI sprite optimisation for the CrazyGames WebGL deal.
-- **hrfinance (8)** — Deel for contractor payroll · Elliot Mercer termination and backfill · Leapblock art vendor · hiring Douglas · pay-per-prototype build-vs-buy · Samuel Galdámez referral · two Unity hires (Aug 2024) · Helpshift adopt/expand/terminate.
+- **epics (8)** — Arthur Blake's puzzle editor and bot tooling · backend infra from scratch · Quests backend (Felix + Douglas) · Tutorial Editor backlog · VFX handoff (match3d PR #408) · match3d vision bot for QA · Telegram Domino Delights mini-app [normal-only] · UI sprite optimisation for the CrazyGames WebGL deal [normal-only].
+- **hrfinance (8)** — Deel for contractor payroll · Elliot Mercer termination (2024-08-19) and backfill · Leapblock art vendor · hiring Douglas · pay-per-prototype build-vs-buy · Samuel Galdámez referral · two Unity hires (Aug 2024) · Helpshift adopt/expand/terminate.
 
 ## Traps worth knowing before you seed or write
 

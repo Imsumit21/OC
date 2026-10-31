@@ -1,9 +1,12 @@
 # Scenario Atlas — verified HarmonyGames storylines for extreme tasks
+`<U>/<P>_HarmonyGames_*` = the selected universe folder and prefix (`Universe_Normal/Normal_…` for Feb 14, 2026; `Universe_SynthCut/SynthCut_…` for Oct 1, 2025).
 
-> **V3 use:** both freeze dates use the same local universe data. Storylines below
-> span dates before and after October; verify every selected fact at the assigned
+> **V3 use:** The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default.
+> Compiled from the older Feb 14 export; reference-only for both universes until re-verified against the selected universe. Lines tagged [normal-only] do not exist on Oct 1 (synth-cut).
+> Storylines below
+> span dates before and after the cut; verify every selected fact at the assigned
 > freeze. Later-edited bodies need dated history or independent earlier evidence.
-> Shared KB/Atlas summaries are leads, with no separate October dataset/KB gate.
+> Atlas summaries are leads, not a dataset gate.
 > Accept every fair outcome and use V3 prompt/rubric rules from GEN_EXECUTION.
 > Existing extreme/normal design targets are preserved local policy.
 
@@ -11,16 +14,16 @@
 
 ## Read before using any storyline
 
-1. **Persona gate.** Only the 17 personas in `Evals/references/persona/roster.json` pass `/prompt`. Tim Steudler (0 Slack channels, no mailbox, no Drive) and Thomas (mail ends Apr 2025, no 2025 calendar) cannot carry these. Marcus Bennett has no Gmail mailbox; Simon Walker has no Drive root and reaches little beyond `#analytics`.
+1. **Persona gate.** Only the 17 personas in `Evals/references/persona/roster.json` pass `/prompt`. Tim Steudler (0 Slack channels, no mailbox, no Drive) and Thomas (mail ends Apr 2025, no 2025 calendar) cannot carry these. Simon Walker has no Drive root and reaches little beyond `#analytics`. Victor Barnes departed April 2025 (last Slack 2025-04-15) — cannot review, approve or reply in either universe.
 2. **Coherence risk.** The Evals fail Cross-Service Coherence on *any* inconsistency in task-touched data, even pre-existing. The contradictions listed below are powerful traps **only** when they are framed as dated human claims overturned by records (a Slack summary vs Snowflake rows). Where two system fields silently disagree (e.g. Snowflake `CASH_BALANCE` vs the P&L sheets, ~$37K/month apart; warehouse rows `completed` where Slack reports outages), either keep the task off that field, or make the reconciliation the explicit, incorporated job and record it as an intended disagreement — expect reviewer scrutiny.
 3. **Unreadable files.** Drive-family files owned by `Resource: -6481757892984311338` with empty sharing are readable by **no** persona (several GDDs, the Wind Down folder, some P&L versions, the Season Pass economy workbooks). They are access boundaries, not evidence. `domain`/`anyone` visibility is unverified — do not count it as reach.
 4. **Private channels.** `#season-pass`, `#leaderboards`, `#difficulty-optimization`, `#dd_economy_v2`, `#4day-quests`, `#winandcollect`, `#winddown`, `#admin_foundersonly`, `#executives` — check membership for the persona.
 5. **Originality.** Do not reuse the ML-selected Combo Fighters launch record or the calibration tasks (133-PR residue register, RC-flag gate, art-canon handoff control). Combo Fighter data can be used from a different angle (Reserve A).
 6. **Sensitive content.** `#winddown` ts `1770858495.115779` and its next reply `1770858501.263569` contain a pasted OAuth client secret. Never make a requirement, fact or seeded record depend on or repeat them.
-7. **Storyline YAMLs are not ground truth** (`HarmonyGames_Other_Services/metadata/*.yaml`): their figures disagree with the data (e.g. the fundraising cash figures). Ground every fact in the exports.
+7. **Storyline YAMLs are not ground truth** (`<U>/<P>_HarmonyGames_Other_Services/metadata/*.yaml`): their figures disagree with the data (e.g. the fundraising cash figures). Ground every fact in the exports.
 8. **Calendar is the most common gap** for engineering storylines; most need GCal injection to carry weight (one row per attendee calendar).
 9. **Overlap.** Storylines 1 and 2 share ENG-1892 and the quest outage — use one angle per task.
-10. **Who is active at the clock.** Vincent Parker left in Nov 2025; Douglas is silent after Aug 2025. Give a seeded Feb 2026 message only to someone still active (founders, Julia, Brian, Oliver, Owen …) — check their last activity first.
+10. **Who is active at the clock.** Vincent Parker left in Nov 2025; Douglas is silent after Aug 2025. Give a seeded Feb 2026 message only to someone still active (founders, Julia, Brian, Oliver, Owen …) — check their last activity first. [normal-only] On Oct 1, 2025 every roster persona except Victor Barnes (departed April 2025) is active through 2025-09-30.
 11. **Mailbox file names ≠ roster emails.** Gmail exports are filed by mailbox (`blake@harmonygames.co_…` for Arthur, `leonard@harmonygames.co_…`) while thread ids and headers use the roster address (`arthur.blake@…`). Search by both when proving reach.
 12. **Contradiction types.** Below, "contradiction" covers two kinds. **Human claim vs record** (a Slack/mail statement that a record later overturns) is usable as an A1 trap. **System field vs system field** (warehouse rows vs Slack outage reports, Snowflake cash vs P&L sheets, two Confluence pages giving different root causes as fact) fails Cross-Service Coherence on presence — keep those records out of the task, or make reconciling them the explicit, incorporated job.
 
@@ -58,14 +61,14 @@
 | # | Storyline | Window | Services with natural records | Best persona |
 |---|---|---|---|---|
 | 1 | Domino Delights live-ops reliability and player-compensation record | Nov 2024 – Dec 2025 | 12–13 | Arthur Blake (Douglas, Vincent Parker) |
-| 2 | Quest system lifecycle (Domino Delights → Zombie Match 3D → Zombie Lite) | Feb 2024 – Nov 2025 | 12–13 | Douglas or Oliver Brooks |
+| 2 | Quest system lifecycle (Domino Delights → Zombie Match 3D → Zombie Lite) [after 2025-09-30: normal-only] | Feb 2024 – Nov 2025 | 12–13 | Douglas or Oliver Brooks |
 | 3 | Season Pass (Domino Delights dry run → match3d PR #438 → $0 seasons) | Jan 2025 – Feb 2026 | 12 (calendar thin) | Oliver Brooks or Brian Foster |
 | 4 | Leaderboards and leagues | Aug 2024 – Nov 2025 | 12 | Douglas or Vincent Parker |
 | 5 | Domino Delights economy v2: April 2025 coin cut → Dec 2025 lives-to-tickets change | Mar – Dec 2025 | 11–12 (Linear thin) | Brian Foster, Owen Baker, Arthur Blake |
-| 6 | Difficulty optimisation: Bayesian pity → bot auto-tuning → Zombie Match 3D dynamic difficulty | Mar – Oct 2025 | 12 | Julia Lawson or Brian Foster |
+| 6 | Difficulty optimisation: Bayesian pity → bot auto-tuning → Zombie Match 3D dynamic difficulty [after 2025-09-30: normal-only] | Mar – Oct 2025 | 12 | Julia Lawson or Brian Foster |
 | 7 | Collect & Win: Domino Delights 2024 → Zombie Match 3D rebuild → Magical Wings | Jul 2024 – Nov 2025 | 11 | Brian Foster |
 | 8 | Domino Delights web port: Telegram → CrazyGames/BoomBit WebGL under 250 MB | Oct 2025 – Feb 2026 | 9–10 (no Trello, Confluence or Snowflake) | Arthur Blake or Owen Baker |
-| Reserve A | Combo Fighter monetisation readiness (shop, IAP, push), not the calibration launch record | Nov 2025 – Feb 2026 | 10 (no Linear or Trello) | Brian Foster or Martin Walsh |
+| Reserve A | Combo Fighter monetisation readiness (shop, IAP, push) [normal-only], not the calibration launch record | Nov 2025 – Feb 2026 | 10 (no Linear or Trello) | Brian Foster or Martin Walsh |
 | Reserve B | Ad monetisation (Nov 2024 build → Apr 2025 interstitial silencing) | Sep 2024 – Apr 2025 | about 11 | Vincent Parker |
 
 **Reading-reach counts per persona.** These count, inside each storyline's window and topic search, readable Slack messages, Gmail threads, GCal events and Drive-family files (title or body match). They are rough indicators:
@@ -383,7 +386,7 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 
 ## Reserves
 
-**A. Combo Fighter monetisation readiness** (a different angle from the calibration task)
+**A. Combo Fighter monetisation readiness** (a different angle from the calibration task) [normal-only — every record in Reserve A post-dates 2025-09-30 and does not exist on Oct 1]
 - **Slack:** `C09UHHN6PFZ` (12,172 messages); `C0AA36TV9QA`.
 - **GitHub:** Combo-Fighters, 37 PRs, including `#34` "IAP" merged 2026-01-27.
 - **Gmail:** 14 "Review of your Combo Fighter (iOS) submission is complete" emails.
@@ -414,14 +417,14 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 # Part B — Business, finance, legal and wind-down
 
 ### 10-line summary
-1. **Rank 1, Orderly wind-down, Feb 9–13 2026.** Fully natural in 12 services; adding vendor records to Contacts makes 13. Core sources are #winddown `C0ADGSZKR3R` (206 msgs), the Sherwood Partners "wind-down support request" email thread (9 msgs), the Drive "Wind Down" folder, the Task List sheet, a Sunset fee row in Snowflake, 275 open Linear issues and 16 GitHub repos that were never archived.
+1. **Rank 1, Orderly wind-down, Feb 9–13 2026.** [normal-only] Fully natural in 12 services; adding vendor records to Contacts makes 13. Core sources are #winddown `C0ADGSZKR3R` (206 msgs), the Sherwood Partners "wind-down support request" email thread (9 msgs), the Drive "Wind Down" folder, the Task List sheet, a Sunset fee row in Snowflake, 275 open Linear issues and 16 GitHub repos that were never archived.
 2. **Rank 2, October 2025 layoffs and final contractor terminations.** Natural in all 13 services. The core is a three-way payroll reconciliation: `PAYROLL_ROSTER`/`FINANCE_LEDGER`, Carta "Termination details" emails, and termination letters.
 3. **Rank 3, UA (user acquisition) spend and attribution reconciliation for 2025.** 12 natural; GCal events in 2025 need to be added. Volume comes from 2,590 daily spend rows, 93 Meta receipt threads from two ad accounts, and the Adjoe billing dispute.
 4. **Rank 4, Publisher and web-distribution canvass, Oct 2025–Feb 2026** (CrazyGames, BoomBit, about 10 other publishers, Telegram). 12 natural. It is the only arc a non-founder (Julia Lawson or Brian Foster) can carry.
 5. **Rank 5, Vendor liability and SaaS termination register** (Helpshift, Singular, Unity and the "HG Costs" tab). 10–11 natural.
 6. **Rank 6, Bridge round to recapitalisation to board cadence, Jul 2025–Jan 2026.** 11 natural; Linear and GitHub would need injected records.
-7. **Rank 7, Mattel Barbie "Dream Life Glow".** Only 7–8 natural, so it needs about 5 injections.
-8. **Data disagrees with itself in useful ways.** Snowflake cash and the P&L sheets differ by about $37K a month in late 2025, and the storyline yamls' cash figures are wrong. Helpshift's balance is quoted three ways ($1,500 / $1,200 / $300) and Sunset's fee as $11.7K, $13–15K and ~$15K. A Feb 11 letter says "effective January 31, 2025", which is a typo.
+7. **Rank 7, Mattel Barbie "Dream Life Glow".** [after 2025-09-30: normal-only] Only 7–8 natural, so it needs about 5 injections.
+8. **Data disagrees with itself in useful ways.** Snowflake cash and the P&L sheets differ by about $37K a month in late 2025, and the storyline yamls' cash figures are wrong. Helpshift's balance is quoted three ways ($1,500 / $1,200 / $300) and Sunset's fee as $11.7K, $13–15K and ~$15K. A Feb 11 letter says "effective January 31, 2025", which is a typo [normal-only].
 9. **Tim Steudler cannot carry any of these** without heavy injection: no Slack membership, no Gmail mailbox, no Drive files owned or shared, 0 Linear issues, 0 Trello activity, and 1 calendar event. **Thomas is also weak**: his mailbox ends 2025-04-25 and he has no calendar events after Sep 2025.
 10. **Check access first.** Drive files owned by a "Resource:…" account with empty sharing lists (the Wind Down folder, P&L Jun/Jul/Sep-2025, the Bridge Round sheet) may be readable by no persona; confirm from the persona's view before relying on them.
 
@@ -436,17 +439,19 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 
 | Rank | Storyline | Natural services | Coupling | Volume | Best personas |
 |---|---|---|---|---|---|
-| 1 | Feb-2026 orderly wind-down | 12 (+Contacts) | very high | high | Leonard, Arthur, Robert |
-| 2 | Oct-2025 layoffs → Feb-2026 terminations | 13 | very high | high (payroll ledger) | Arthur, Leonard, Robert |
+| 1 | Feb-2026 orderly wind-down [normal-only] | 12 (+Contacts) | very high | high | Leonard, Arthur, Robert |
+| 2 | Oct-2025 layoffs → Feb-2026 terminations [normal-only] | 13 | very high | high (payroll ledger) | Arthur, Leonard, Robert |
 | 3 | 2025 UA spend & attribution reconciliation | 12 (+GCal 2025) | high | very high | Leonard, Robert (Frederick, with a caveat) |
-| 4 | Publisher / web distribution canvass | 12 (+Contacts) | high | high | Julia, Brian, Leonard |
-| 5 | Vendor liability & SaaS termination register | 10–11 | high | medium-high | Leonard, Arthur |
-| 6 | Bridge → recap → board cadence | 11 | medium-high | high | Leonard, Robert, Arthur |
-| 7 | Mattel Barbie pitch | 7–8 | medium | medium | Julia, Leonard |
+| 4 | Publisher / web distribution canvass [normal-only] | 12 (+Contacts) | high | high | Julia, Brian, Leonard |
+| 5 | Vendor liability & SaaS termination register [after 2025-09-30: normal-only] | 10–11 | high | medium-high | Leonard, Arthur |
+| 6 | Bridge → recap → board cadence [after 2025-09-30: normal-only] | 11 | medium-high | high | Leonard, Robert, Arthur |
+| 7 | Mattel Barbie pitch [after 2025-09-30: normal-only] | 7–8 | medium | medium | Julia, Leonard |
 
 ---
 
-## 1. Orderly wind-down of Harmony Games Inc. (Dec 2025 prelude, decided Feb 9, executed Feb 9–13 2026)
+## 1. Orderly wind-down of Harmony Games Inc. (Dec 2025 prelude, decided Feb 9, executed Feb 9–13 2026) [normal-only]
+
+> Everything in this section is normal-only: the wind-down does not exist in the Oct 1, 2025 (synth-cut) universe.
 
 **(1) Summary.**
 - **Lead-up.** On Dec 3 2025 Leonard quoted a ChatGPT estimate that shutdown would cost $30–50K. On Dec 18 he said December would be the last salaries. On Jan 12 he reported "$25K in the bank". The Jan 23 recapitalisation email to Griffin offered two paths: a cap-table reset or shutdown.
@@ -503,7 +508,7 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 **(3) Who can read it.**
 - **Leonard** can read everything.
 - **Robert and Arthur** can read everything except Leonard-private items: the Gemini notes `f_0c37…`, the reset term sheet `f_1104…` and the Helpshift invoices, which are in Leonard's mailbox only. Their workaround is #winddown `1770911000.728559` plus the Gmail copies in their own mailboxes.
-- **No non-founder** is a member of #winddown, #admin_foundersonly or #executives (except Frederick, who was terminated Oct 24).
+- **No non-founder** is a member of #winddown, #admin_foundersonly or #executives (except Frederick, who was terminated Oct 24 [normal-only]).
 
 **(4) Contradictions and distractors.**
 - **Cash.** January figures: $25K cash / $6K card debt (Jan 12) versus $25K / $8K card debt (Jan 23). Snowflake: Dec-25 $25,031 and Jan-26 $8,096. The Jan-2026 P&L sheet shows Dec ending $52,686 but Jan beginning $29,636, so it breaks internally.
@@ -512,7 +517,7 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 - **Data value.** "$25K" (Feb 10) versus a $22,500 cash offer (Feb 12).
 - **Slack message volume.** "300,000" (Gemini notes) versus "220K in 365 days / 660K total" (#winddown) versus about 586K in the universe brief.
 - **AWS cost.** "DD production ~$1k/mo" (Slack) versus Confluence ~$1,550 versus ledger AWS $1,485 versus the P&L "Servers (AWS)" line at 0.
-- **"Shut down" vs still working.** Combo Fighter PRs were still merged after the shutdown announcement.
+- **"Shut down" vs still working.** Combo Fighter PRs were still merged after the shutdown announcement [normal-only].
 - **Lookalike entity.** "Robert Incorporated" in the Gemini notes.
 
 **(5) Volume.** #executives Dec–Feb: 2,959 msgs. Leonard's mailbox has 2,315 threads active since Oct 2025. 275 open Linear issues. 16 repos. 89 ledger rows since Sep 2025. Roughly 25 SaaS lines in HG Costs.
@@ -526,24 +531,26 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 
 ---
 
-## 2. Downsizing and offboarding: salary freeze → Oct 24 2025 layoffs → Dec "last salaries" → Feb 11 2026 terminations
+## 2. Downsizing and offboarding: salary freeze → Oct 24 2025 layoffs → Dec "last salaries" → Feb 11 2026 terminations [after 2025-09-30: normal-only]
+
+> The May 2025 salary freeze exists on Oct 1; the Oct 24 2025 layoffs and everything after them do not.
 
 **(1) Summary.** Executive salaries were frozen (board consent, May 2025). In October one contractor was terminated for moonlighting. The marketing department was eliminated: Frederick Stone received an "involuntary termination" notice effective Oct 24. Terminations were processed in Carta (equity), Deel (international contractors) and Gusto (US payroll). The remaining contractors were terminated by letter on Feb 11 2026.
 
 **(2) Anchors by service.**
 - **Snowflake.**
-  - `PAYROLL_ROSTER` (371 rows, 22 people). End months 2025-10-31 for Felix, Victor Barnes, Josh Dempsey (`EMPLOYEE_0032`), Frederick Stone and Artist 5.
+  - `PAYROLL_ROSTER` (371 rows, 22 people). End months 2025-10-31 for Felix, Victor Barnes, Josh Dempsey (`EMPLOYEE_0032`), Frederick Stone and Artist 5 [normal-only].
   - `HEADCOUNT` comment: one engineer was terminated 2025-10-20 for dual employment and is not identified.
   - `FINANCE_LEDGER` salaries (~470 rows): Oct-25 still pays Frederick in full (`FIN-000651`, −3,089.81).
   - `CASH_BALANCE` headcount column.
 - **Gmail.**
-  - Carta emails (sender `SVC_0077` = Carta) titled "Termination details for…":
+  - Carta emails (sender `SVC_0077` = Carta) titled "Termination details for…" [normal-only]:
     - `leonard@harmonygames.co_1847333347700620793.json`: Calvin Price, terminated as of Oct 24 2025, grant ES-3 of 8,138 shares with 4,408 vested, last day to exercise Jan 24 2026.
     - Siblings `…1847333272519888206`, `…1847333318158821452`, `…1847333395311994879`.
-  - "Notice of Involuntary Termination" to Frederick: Robert copy `00015796.json` (Oct 29). The Feb 11 version is `leonard@harmonygames.co_1856858053929740799.json`.
+  - "Notice of Involuntary Termination" to Frederick: Robert copy `00015796.json` (Oct 29). The Feb 11 version is `leonard@harmonygames.co_1856858053929740799.json` [normal-only].
   - "Notice of Termination of Consulting Agreement" (breach of the competitors clause): `00015795.json`.
-  - Lauren Brooks termination: `leonard@harmonygames.co_1853596374263642118.json` (Jan 6).
-  - Six "Termination of Independent Contractor Agreement" letters, Feb 11.
+  - Lauren Brooks termination: `leonard@harmonygames.co_1853596374263642118.json` (Jan 6) [normal-only].
+  - Six "Termination of Independent Contractor Agreement" letters, Feb 11 [normal-only].
   - Gusto: 66 threads since Apr 2025, mostly Arthur's.
 - **Slack.**
   - #admin_foundersonly Oct-2025 (564 msgs): `1760994356.272729` ("let him go"), `1761168059.583569` ("dual gig… since June"), `1761702344.371469` (terminations in Carta), `1761844344.664939` (Deel terminations as of 10/24), `1761924828.820549` (Deel account misassociated).
@@ -562,12 +569,12 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 **(3) Who can read it.** Leonard fully. Arthur and Robert can read Slack, the Gmail termination letters (cc'd), Drive and Sheets, but the Carta "Termination details" emails sit in Leonard's mailbox only; their workaround is #admin_foundersonly `1761702344.371469`.
 
 **(4) Contradictions and distractors.**
-- **Calvin Price.** Carta says terminated Oct 24 with 4,408 vested shares, but `PAYROLL_ROSTER` shows him as a contractor for a single month (2025-04).
-- **Moonlighting date.** `HEADCOUNT` says 2025-10-20; the consulting-agreement notice says effective Oct 24.
-- **Frederick Stone's role.** The persona roster calls him "Co-founder"; the roster table has `is_founder=False` with a start of 2024-09; he was terminated Oct 24 yet is invited to the Jan 14 2026 board meeting.
+- **Calvin Price.** Carta says terminated Oct 24 with 4,408 vested shares, but `PAYROLL_ROSTER` shows him as a contractor for a single month (2025-04) [normal-only].
+- **Moonlighting date.** `HEADCOUNT` says 2025-10-20; the consulting-agreement notice says effective Oct 24 [normal-only].
+- **Frederick Stone's role.** The persona roster calls him "Co-founder"; the roster table has `is_founder=False` with a start of 2024-09; he was terminated Oct 24 yet is invited to the Jan 14 2026 board meeting [normal-only].
 - **Josh Dempsey.** `EMPLOYEE_0032` is "Josh Dempsey, product" in the ledger, while the persona brief says `EMPLOYEE_0032` is a Senior Unity Engineer.
 - **Julia Lawson.** `full_time` in the roster, but she receives Deel payouts and a "Validate your US tax forms" email.
-- **Date typo.** One Feb 11 letter says "effective January 31, 2025".
+- **Date typo.** One Feb 11 letter says "effective January 31, 2025" [normal-only].
 - **Lookalike events.** Two "All Hands" events on the same day.
 
 **(5) Volume.** 371 + 371 + 704 Snowflake rows. 25+ termination emails. 564 founder-channel messages in October. Five P&L scenario tabs.
@@ -578,13 +585,15 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 
 ---
 
-## 3. 2025 UA spend and attribution reconciliation (Domino Delights incent test Apr–Jun → ZM3D → Combo Fighter Meta, Dec–Feb)
+## 3. 2025 UA spend and attribution reconciliation (Domino Delights incent test Apr–Jun → ZM3D → Combo Fighter Meta, Dec–Feb) [after 2025-09-30: normal-only]
 
-**(1) Summary.** In April–June 2025 Domino Delights ran an incentivised UA test, mainly on Adjoe. AppLovin underperformed. In Sep 2025 Adjoe switched a campaign back on without approval, and an invoice was sent anyway. A Unity→Singular cost connector reported $0. Singular went past due. Combo Fighter ran Meta campaigns from Dec 2025 to Feb 2026, and in Jan 2026 the CPI was claimed to be "~$5".
+> The Apr–Jun 2025 incent test and the 2025 spend rows exist on Oct 1; the Combo Fighter Meta campaigns (Dec 2025 – Feb 2026) and their figures do not.
+
+**(1) Summary.** In April–June 2025 Domino Delights ran an incentivised UA test, mainly on Adjoe. AppLovin underperformed. In Sep 2025 Adjoe switched a campaign back on without approval, and an invoice was sent anyway. A Unity→Singular cost connector reported $0. Singular went past due. Combo Fighter ran Meta campaigns from Dec 2025 to Feb 2026, and in Jan 2026 the CPI was claimed to be "~$5" [normal-only].
 
 **(2) Anchors by service.**
 - **Snowflake.**
-  - `ANALYTICS.MARKETING.AD_SPEND_DAILY` (2,590 rows). Domino Delights Apr–Jul 2025: Adjoe $46,202 / 8,730 installs; AppLovin $6,086; Meta $1,005; total $53,305. Combo Fighter CPI: Dec $5.26, Jan $7.02 ($2,843.84 / 405 installs), Feb $12.75.
+  - `ANALYTICS.MARKETING.AD_SPEND_DAILY` (2,590 rows). Domino Delights Apr–Jul 2025: Adjoe $46,202 / 8,730 installs; AppLovin $6,086; Meta $1,005; total $53,305. Combo Fighter CPI: Dec $5.26, Jan $7.02 ($2,843.84 / 405 installs), Feb $12.75 [normal-only].
   - `AD_SPEND` and `UA_SPEND_UNIFIED_V2` (2,590 each); `INSTALL_ATTRIBUTION`; `DIM_PLAYER` channel mix; `FINANCE_LEDGER` `marketing_ua` (34 rows, no Unity Ads rows).
 - **Gmail.**
   - Meta ad receipts: 93 threads in Leonard's mailbox (62 unique since Apr 2025) from two ad accounts, `[IDENTIFIER_5351]` and `[IDENTIFIER_3125]`. Examples: `leonard@harmonygames.co_1856612239565121370.json`, `…1856974663738001623.json`.
@@ -602,19 +611,19 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 - **Docs.** `f_af99b76ff4da59a710edba` Board Meeting Jul 25 ("$50K in UA spend"); `f_27a041fdb116695b01c566` Video Production Plan.
 - **Slides.** `f_7793bb93e59e9c0dee5129` BoD Jul 16 2025.
 - **Linear.** ENG-2361 (Adjoe ad frequency, completed 2025-10-27), ENG-2362 (Singular deep links, open), ZOM-467, ZOM-618, ART-790.
-- **GitHub.** `GameOfDominoes#1860` (Singular links), `match3d#269`, `Combo-Fighters#24` (AppLovin MAX integration, merged 2026-01-13).
+- **GitHub.** `GameOfDominoes#1860` (Singular links), `match3d#269`, `Combo-Fighters#24` (AppLovin MAX integration, merged 2026-01-13) [normal-only].
 - **Confluence.** `page_product_okrs` (Unity→Singular connector reported $0, so blended CPI is "not measurable"); `page_analytics_dashboards`.
 - **Trello.** UA/BD board `66da196af476ab78deaa0cef` (40 cards; "ZM 3d Technical Launch / Alpha" list has 16); `688c4d14c312a27fa2747e40` "Playable Kickoff" (backlog).
 - **GCal.** Only 2024 UA syncs exist: `evt_8818fda620c38d2b81ef07`, `evt_1625cc9aeded5e62f4a97c`.
 - **Contacts.** Internal UA managers only: Marcus Lee, George Miller, Megan Wilson, Victoria Lane.
 
-**(3) Who can read it.** Leonard fully. Robert can read the applovin and adjoe channels and his own receipt copies. Frederick has strong access (vendor channels and 22 receipt copies), but was terminated Oct 24, which makes him an awkward choice of persona.
+**(3) Who can read it.** Leonard fully. Robert can read the applovin and adjoe channels and his own receipt copies. Frederick has strong access (vendor channels and 22 receipt copies), but was terminated Oct 24, which makes him an awkward choice of persona [normal-only].
 
 **(4) Contradictions and distractors.**
 - **CPI.** "CPI ~$5" (Jan 23 email) versus Snowflake January $7.02.
 - **Adjoe totals.** "$50K Adjoe / 10K installs" (Slack) versus Snowflake $46,202 / 8,730.
 - **Adjoe September dispute.** Unresolved: the invoice was sent and a credit was promised but never shown.
-- **Meta, three sources.** February receipts total about $1,257 versus Snowflake/ledger $956.45.
+- **Meta, three sources.** February receipts total about $1,257 versus Snowflake/ledger $956.45 [normal-only].
 - **AppLovin soft launch.** The marketing yaml has an AU/NZ/CA soft launch in 2024, but Snowflake has no AppLovin spend before 2025-04.
 
 **(5) Volume.** 2,590 × 3 spend rows, 93 receipt threads, and channel histories of 360–846 messages.
@@ -625,7 +634,9 @@ This overlaps storyline 1 on ENG-1892. Use one angle or the other in a task, not
 
 ---
 
-## 4. Publisher and web-distribution canvass (Oct 2025–Feb 2026)
+## 4. Publisher and web-distribution canvass (Oct 2025–Feb 2026) [normal-only]
+
+> Everything in this section is normal-only: the publisher canvass and web-distribution partnership do not exist in the Oct 1, 2025 (synth-cut) universe.
 
 **(1) Summary.**
 - **The canvass.** Eleven 29-page publisher pitch decks went out.
@@ -758,7 +769,9 @@ This overlaps rank 1; it is the vendor slice extended back to 2024.
 
 ---
 
-## 7. Mattel Barbie "Dream Life Glow" (Aug–Dec 2025)
+## 7. Mattel Barbie "Dream Life Glow" (Aug–Dec 2025) [after 2025-09-30: normal-only]
+
+> The Aug–Sep 2025 speaker notes and the M3 request-for-proposal thread exist on Oct 1; the pitch itself and everything after 2025-09-30 are normal-only.
 
 **Anchors.**
 - **Gmail.** M3 request-for-proposal thread from Tim: `leonard@harmonygames.co_1842359642190933488.json` (14 msgs, Sep 4–Dec 2); Robert copy `00015226.json`. Pitch email: `jlawson@harmonygames.co_1850507818902089538.json`.
@@ -786,9 +799,9 @@ This overlaps rank 1; it is the vendor slice extended back to 2024.
   - A Mattel task from his view would need Slack membership in #mattel_proposal and a seeded mailbox.
 - **Thomas: weak for this scope.**
   - Gmail runs 2024-05 to 2025-04-25 (2,318 threads). GCal has 197 events, none after Sep 2025.
-  - He is in 42 Slack channels, but not #executives or #winddown, and he left #company-internal at `1770839906.134099`, one minute before the account-archive announcement.
+  - He is in 42 Slack channels, but not #executives or #winddown, and he left #company-internal at `1770839906.134099`, one minute before the account-archive announcement [normal-only].
   - Linear: 17 issues (Plinko / Lucky Drop, 2024). Drive: 111 files shared with him.
-  - The only plausible business task is a personal "save your data before Feb 15" offboarding inventory, and it is unclear whether he can still read the announcement after leaving the channel.
+  - The only plausible business task is a personal "save your data before Feb 15" offboarding inventory, and it is unclear whether he can still read the announcement after leaving the channel [normal-only].
 
 ### Lower-value arcs in scope (each 7 services or fewer)
 Superplay/TYZ patent threat (Slack, Gmail, Drive); Solsten (Slack, Gmail, Trello, HG Costs); Node Media (Slack, Gmail, GCal 2024); advisor equity / Carta (fold into ranks 2 and 6).

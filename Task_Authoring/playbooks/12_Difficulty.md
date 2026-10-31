@@ -17,7 +17,10 @@ confirm screen 61.
 Inputs (all required unless marked; stop and name what is missing)
 - `task_inputs/10_Baseline_Verifier_Results.md`, `07_Baseline_Trajectories/`, `09_Rubrics.json` (same version the verifier graded).
 - `task_inputs/00_Assigments.md` and its normalized task context — assigned mode, horizon,
-  role and freeze. Never infer a mode or switch it to pass a cap.
+  role, freeze (`freeze_utc`, the seed bound) and universe (`key`, `clock_utc`, shutdown rules).
+  Never infer a mode or switch it to pass a cap. Per universe: normal applies the Feb 11, 2026
+  shutdown and departed-person rules; synth-cut has neither, Victor Barnes departed April 2025,
+  and nothing after 2025-09-30 23:59:59 PT exists.
 - `task_inputs/03_Error_Async_Config.txt` — friction to verify.
 - `task_inputs/11_AF_Justification.md` — its hand-off line (invalid rubrics, judge
   corrections). If all-fails exist and 11 does not, run `/create-allfail` first.
@@ -38,6 +41,10 @@ Output
 | Per-rollout spread | population SD of per-rollout weighted pass rates in 0.1–0.3, edges inclusive | Retained local Evals check; V3 does not restate it · < 0.1 deterministic, > 0.3 ambiguous rubrics (Fail) |
 | Failure patterns | ≥ 2 patterns; same pattern unless results differ on ≥ 2 rubrics; largest ≤ 50% of failing rollouts (exactly 50% passes) | QC, screen 59 Rule 2 · Too Few Signatures / Signature Over-Concentrated (Fail) |
 | Horizon | counted calls of the golden run if any rollout scored 100%, else the completed-rollout average; Normal 50–100, Long 100–500+ | QC Task Type & Horizon · Wrong Horizon (Fail, under) · Borderline Horizon (Non-fail, over) |
+
+Rubric-shape readings that are **not** difficulty failures:
+- **Narrow NON-FAIL bands.** A rubric landing NON-FAIL 3 on `hg-strict-overrides-v1` (Minor on 5–10% of rows, 10% or fewer weights one level off, exactly one missing ordering check, off-pattern agent-centric titles on 10% or fewer rows) is still a valid rubric; report it and never change criteria to move a number.
+- **Both-fair figures.** A `BOTH_FAIR_FIGURE` fork the saved prompt report records is intended. Runs splitting between X and Y are not an ambiguous rubric; do not collapse the fork, narrow a row to one value, or treat the split as a failure-pattern defect.
 
 Readings the rules leave open — the calculator applies the strictest and prints the other:
 - **Pattern grouping.** "Same pattern" is pairwise; grouping can be transitive (single-linkage,
@@ -127,6 +134,7 @@ which records the outcomes in the ledger. It stays advisory and UNCALIBRATED unt
 
 ```
 Task type: <normal | long-horizon>   Difficulty mode: <assigned easy | medium | hard>   Completed: <n>/6   Errored: <ids + reason>   Invalid rubrics: <ids>   Judge corrections: <run:R>
+Clock: <universe.clock_line from 00_Task_Context.json, verbatim>   Seed bound: <freeze_utc>
 <calculator markdown output, unchanged>
 Readings: <pattern / pass@1 / SD / golden notes from the verdicts, or none>
 Tool-call notes: <raw vs counted per rollout; ACL-denied or padded calls found by hand>

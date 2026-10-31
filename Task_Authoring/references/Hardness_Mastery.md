@@ -4,9 +4,14 @@
 > older <75% score target, unique-answer rejection, duplicated-fact grading and
 > prompt-style advice. Use assigned mode caps after fair regrading, accept all fair
 > outcomes and never grade one fact in three or more rows. The existing user-set
-> extreme/normal design targets remain unchanged (GEN_EXECUTION §3a). Validate the
-> shared context and date-check facts before adopting a storyline. Both freeze dates
-> use the same local data; no separate October export or KB build is required.
+> extreme/normal design targets remain unchanged (GEN_EXECUTION §3a). The assigned
+> universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1,
+> 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if
+> the date is missing — there is no default. Compiled from the older Feb 14 export:
+> reference-only for both universes until re-verified against the selected universe.
+> Eval release `task-quality-v1` also fails trap hints and riddles, staged typos, hidden
+> destinations the persona would know, audit-form wording and if-chains in the prompt;
+> makes Overly Broad a Major rubric issue; and fails any rubric row an idle agent passes.
 
 The technique library behind `/create-scenario`, `/create-injection` and
 `/create-hardening`. It ranks every known hardness technique by **measured** effect on
@@ -409,7 +414,11 @@ for the same scope supersede earlier ones without announcing it.
    wants the totals in the board-pack tab", "copy whoever owns each vendor (contacts)".
 3. **Spokes (≥ 10 fragments, ≥ 7 services, ≥ 10 distinct containers)** — each carries one
    requirement: a rule clause, a destination, a recipient subset, a format convention, a
-   deadline, an exclusion, a reuse instruction.
+   deadline, an exclusion, a reuse instruction. A destination the persona would know goes
+   in the prompt; a spoke may carry it only when finding it is part of the task and the
+   record is persona-visible (`Evals/1_Prompt_Eval.md`, hidden-destination rule). An
+   exclusion is graded as an exact count or scope on a required write, never as a
+   "leaves X as found" row (`Evals/3_Rubrics_Eval.md` §2.9 do-nothing test).
 4. **Amendments** — later records in a *different* service that change one clause of one
    spoke (Gmail from the hub owner, a Slack thread reply, a GCal reschedule, a Confluence
    v3). Retain unaffected clauses.
@@ -552,7 +561,7 @@ Format: **Mech** (weakness exploited) · **Build** · **Evidence** · **Guard**.
 | S5 | Failure surfaces before the admission | **M** (A11) |
 | S6 | Later reply changes the unit or restates a figure | M (77% task — use inside a chain, not alone) |
 | S7 | Response pairing | **M** (A9) |
-| S8 | Superseded value must be named as superseded (incorporated rule) | M (needed in a hint) |
+| S8 | Superseded value must be named as superseded (incorporated rule) | M (measured with a prompt hint; a hint aimed at the trap now fails Contrived under `task-quality-v1` — the incorporated rule must carry it) |
 | S9 | Moved deadline / newer tab / revised spec / rescheduled event | P |
 | S10 | Exclusion settled by the other side within seconds | **M** (A10) |
 | S11 | Effective-date dual regime (v1 before date D, v2 after) across the cohort | P — pair with A2 |
@@ -613,7 +622,8 @@ rate 1.0 = route around. Async only on searches whose target is not named. Acces
 restricted source summarised where the persona can read; expected source invisible → find
 the equivalent; escalation as the correct action. Never hide the only copy behind the ACL
 (invalid all-fails), never require the agent to say a record "exists but is restricted".
-Some personas have no Gmail mailbox — verify presence and reach per record.
+Every roster persona has a Gmail mailbox in both universes — check `users.json`
+for non-roster people before assuming a mailbox, and verify reach per record.
 
 ### 6.8 Deliverables and grading levers
 One register with closed vocabulary, checked-absence states ("NONE FOUND" vs "NOT
@@ -662,7 +672,7 @@ volume row; never tune rubrics to the baseline.
 | Judge reliability | a verifier missed a late write in a long trajectory (V4-NF1 r5) — keep writes few, distinctive and verifiable from the final state |
 | Hardness validity (`/hardness` 1A §2–§3) | a failure counts only if four things hold: the rule is incorporated, the evidence was returned by an ordinary call, one end state exists, and the verifier judged it right. Otherwise it is a defect, not hardness (§11: a 48.7% task was ≈ 80% once unincorporated-handbook rows were removed) |
 | Run validity | record mixed-model rollouts (Haiku or Sonnet subagents), compaction, background work after the final answer, and missing or duplicate rollout files. Exclude them from the horizon count and from attribution (`01a` B0) |
-| Evals rubric overrides | prohibition-only titles always fail; artifact-subject or tool-named titles = Major + FAIL; overly specific = Major; predicted all-fail on ≥ 2 rows = FAIL; spot-check groups need a volume criterion (`Evals/3_Rubrics_Eval.md`, `hg-strict-overrides-v1`) |
+| Evals rubric overrides | prohibition-only titles always fail, and so does any row an agent passes by doing nothing ("leaves X as found"); artifact-subject or tool-named titles = Major + FAIL; overly specific = Major; overly broad = Major (`task-quality-v1`); every row needs a `valid_case` it accepts and a `do_nothing_case` it rejects; predicted all-fail on ≥ 2 rows = FAIL; spot-check groups need a volume criterion (`Evals/3_Rubrics_Eval.md`, `hg-strict-overrides-v1`) |
 
 ---
 

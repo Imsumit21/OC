@@ -17,8 +17,7 @@ Authorship (GEN_EXECUTION §2): the repository preserves model drafting/revision
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`.
 Use the shared `Working_Files/00_Task_Context.json` (all eight assigned fields,
-registered shared data source and assigned freeze). Both dates use the same local
-data; validate relied-on record dates and earlier state before grounding. V3
+registered shared data source and assigned freeze). The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Validate relied-on record dates and earlier state before grounding. V3
 changed-topic rules govern over older Evals text. The existing Long→extreme and
 Normal design limits remain local policy; Eval Portal is handled by the user.
 
@@ -28,7 +27,7 @@ Parse and bind with `python3 Task_Authoring/tools/difficulty_stats.py --build �
 apply the persona ACL yourself (search does not).
 
 ## Output
-`task_inputs/11_AF_Justification.md` (or `NONE`): one verdict per all-fail (VALID · INVALID — rubric · INVALID — environment · JUDGE ERROR · UNRESOLVED; invalid only when the defect causes the failure), justifications for VALID rows, the tally, the `--invalid` / `--judge-correction` hand-off line, and the **Self-review** section (playbook; GEN_EXECUTION §6a).
+`task_inputs/11_AF_Justification.md` (or `NONE`): one verdict per all-fail (VALID · INVALID — rubric · INVALID — environment · JUDGE ERROR · UNRESOLVED; invalid only when the defect causes the failure — including `unobservable` deciding evidence, a rejected fair alternative and a row an idle Agent passes), justifications for VALID rows, the tally, the `--invalid` / `--judge-correction` hand-off line, and the **Self-review** section (playbook; GEN_EXECUTION §6a). Keep the baseline verifier's `Clock:` line wherever its results are quoted.
 
 A forecast's `P(fails all six)` is workload, not an all-fail verdict or a block: decide each rubric on the trajectory evidence and the rubric defect.
 

@@ -17,8 +17,7 @@ Authorship (GEN_EXECUTION §2): the repository preserves model drafting/revision
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`.
 Use the shared `Working_Files/00_Task_Context.json` (all eight assigned fields,
-registered shared data source and assigned freeze). Both dates use the same local
-data; validate relied-on record dates and earlier state before grounding. V3
+registered universe source, `universe` block and `freeze_utc` seed bound). The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Validate relied-on record dates and earlier state before grounding. V3
 changed-topic rules govern over older Evals text. The existing Long→extreme and
 Normal design limits remain local policy; Eval Portal is handled by the user.
 
@@ -26,6 +25,8 @@ Upstream slots in `Task_Authoring/task_inputs/`: `04_Prompt.txt` (required), `00
 missing, stop and name it. Ground every fact through `Task_Authoring/tools/hg.py search` and
 apply the persona ACL yourself (search does not).
 Visibility per fact is proven with `tools/persona_view.py can-see` (base) or `check-sql --load-bearing` (seeded) and the YES lines are pasted under §B; the gate also re-checks every scoped id in §B itself. Every opaque locator carries a Locator origin (`prompt`, an earlier `F-n`, or a natural `search "<query>"` the gate re-runs as the persona). Dates are typed (record time vs semantic future date) before the clock is applied. The act-vs-defer search covers every service governing the entity, with population, pagination and governing version recorded, or it is UNRESOLVED. Every expected value is re-read through `tools/hg.py`.
+
+Eval `task-quality-v1` (`Evals/2_Oracle_Events_Eval.md` §2.4, `Evals/references/rules/oracle_events.md` `expected_values`): label every expected-data line `Expected:`; each ID, event name, field value, channel, SHA, version, figure and date on it is quoted character for character from a cited record — the call site or live record, never a declaration, config or policy file (calibration #7: `quest_completed`, not `quest_completion`); narrative values are `not_a_claim`; an absence claim ("none", "no later commit") needs a scope-bound check of the whole population (calibration #47). The ledger carries one row per Expected value. Every record a rubric row grades needs an OE step with a stable label (the rubric review cites it verbatim; an OE edit makes that review stale). No step reads a Gmail or Slack attachment's content (no bytes are served). A Linear create-issue step must be satisfiable with `state_history_json`; Linear dates are exact `YYYY-MM-DDTHH:MM:SSZ` text. A `BOTH_FAIR_FIGURE` in the prompt report puts both values and their records in the OE. Never cite the placeholder `threads/00000000.json`.
 
 ## Output
 prep mode: `task_inputs/Working_Files/08_OE_Writing_Ledger.md` · draft mode: `task_inputs/08_Oracle_Events.md` · check mode: `task_inputs/Working_Files/08_OE_Check.md`. Both end with the playbook's **Self-review** (GEN_EXECUTION §6a): counter-readings for every completeness and accuracy judgement, every expected value re-read through `tools/hg.py`.

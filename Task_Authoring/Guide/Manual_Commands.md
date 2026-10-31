@@ -31,9 +31,12 @@ python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inpu
 ```
 
 Every manual command below first uses the shared `Working_Files/00_Task_Context.json`
-and rechecks `--require-source` before grounding. Both dates use the same local
-universe data. The freeze scopes facts and seeded timestamps; later events cannot
-be treated as completed, and later-edited bodies need dated earlier evidence.
+and rechecks `--require-source` before grounding. The assigned universe date selects
+the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut.
+Read only that universe, apply its state rules and clock, and stop if the date is
+missing — there is no default. The seed bound scopes facts, seeded timestamps and
+completed events; later events cannot be treated as completed, and later-edited
+bodies need dated earlier evidence.
 Use `--task-dir <task_dir>` consistently for another workspace. Keep the role/outcome
 reviews and per-criterion source/variant evidence in
 `Working_Files/00_V3_Authoring_Evidence.json`; schema and artifact-hash command are
@@ -45,6 +48,26 @@ positional task directory and propagates context to child checks. Normalizing a
 context file does not change the shell environment; also replace the artifact
 paths in the manual prompts below with that task workspace's paths.
 
+Universe data install, merge/move and verification are documented in the repo root
+`README.md` — [Install the universe data](../../README.md#install-the-universe-data),
+[Already unzipped? Move, merge and store the data](../../README.md#already-unzipped-move-merge-and-store-the-data)
+and [Verify](../../README.md#verify). The two universe folders are real folders at
+the repo root, never edited and git-ignored; a symlink to another disk is refused by
+the tools.
+
+Universe helpers:
+
+```sh
+python3 Task_Authoring/tools/hg.py universe [show|list]                 # selected universe, clock, folders
+python3 -B Task_Authoring/tools/verify_universe_data.py [--universe normal|synthcut] [--sha256]  # data vs source_manifest.json
+python3 Task_Authoring/tools/hg.py lint [--sql PATH] [--checks a,b] [--no-base] [--summary]
+python3 Task_Authoring/tools/hg.py rubric-lint <rubric.json>
+```
+
+`lint` runs the eval's `hg_injection_lint.py` and defaults `--sql` to
+`<task_dir>/01_Universe_Inject.sql`; `rubric-lint` runs the eval's
+`hg_rubric_lint.py`. Run both beside the local `sql_lint.py` / `hardness_gate.py`.
+
 ## 0.5 · Scenario design · `/create-scenario`
 
 ```
@@ -54,7 +77,7 @@ Read Task_Authoring/setup/GEN_EXECUTION.md (§3a hardness targets) and Task_Auth
 ## 1 · Universe injection · `/create-injection`
 
 ```
-Read Task_Authoring/setup/GEN_EXECUTION.md, then follow Task_Authoring/playbooks/01_Universe_Injection.md in full. Implement task_inputs/Working_Files/01_Scenario_Design.md and its manifest: write task_inputs/01_Universe_Inject.sql, task_inputs/Working_Files/01_Grounding_Dossier.md (including "Facts for the human") and the final task_inputs/Working_Files/01_Hardness_Manifest.json with every planned id replaced by the minted id. Ground everything through Task_Authoring/tools/hg.py search, prove persona reach and findability, seed speakers, text and companions by references/universe_kb/activity.json, conventions.json and integrations.json, declare every load-bearing fact in the manifest's facts, then run sql_lint.py, base_check.py, fact_check.py, persona_view.py check-sql --load-bearing and hardness_gate.py on the manifest + SQL until all pass. Never execute SQL; write only under Task_Authoring/. Before handoff run python3 Task_Authoring/tools/stage_gate.py injection Task_Authoring/task_inputs --paste and fix the artifact until it prints STAGE GATE injection: PASS.
+Read Task_Authoring/setup/GEN_EXECUTION.md, then follow Task_Authoring/playbooks/01_Universe_Injection.md in full. Implement task_inputs/Working_Files/01_Scenario_Design.md and its manifest: write task_inputs/01_Universe_Inject.sql, task_inputs/Working_Files/01_Grounding_Dossier.md (including "Facts for the human") and the final task_inputs/Working_Files/01_Hardness_Manifest.json with every planned id replaced by the minted id. Ground everything through Task_Authoring/tools/hg.py search, prove persona reach and findability, seed speakers, text and companions by references/universe_kb/activity.json, conventions.json and integrations.json, declare every load-bearing fact in the manifest's facts, then run sql_lint.py, base_check.py, fact_check.py, persona_view.py check-sql --load-bearing, hardness_gate.py and python3 Task_Authoring/tools/hg.py lint on the manifest + SQL until all pass. Never execute SQL; write only under Task_Authoring/. Before handoff run python3 Task_Authoring/tools/stage_gate.py injection Task_Authoring/task_inputs --paste and fix the artifact until it prints STAGE GATE injection: PASS.
 ```
 
 ## 2 · Error / async friction (optional) · `/create-error-async`
@@ -114,7 +137,7 @@ Then draft the criteria (ask Claude or Codex: follow draft mode in `playbooks/09
 ## 10 · Rubric check · `/create-rubric-writing check`
 
 ```
-Read Task_Authoring/setup/GEN_EXECUTION.md, then follow check mode in Task_Authoring/playbooks/09_Rubric_Writing.md. Lint task_inputs/09_Rubrics.json against the plan, the V3 fair-reading/source/date/duplicate rules plus unchanged V2/Evals checks (Evals/3_Rubrics_Eval.md), tally against the thresholds (any incorrect, unauthorized, unobservable, contradictory, missing-coverage or predicted all-fail item blocks on its own, whatever the tally), and write task_inputs/Working_Files/09_Rubric_Check.md. Quote spans and name rules; update current sidecar hashes and per-row evidence. Correct unfair rows and re-grade before assessing the assigned mode cap; replacement wording may be proposed. Before handoff run python3 Task_Authoring/tools/stage_gate.py rubric-check Task_Authoring/task_inputs --paste and fix the artifact until it prints STAGE GATE rubric-check: PASS.
+Read Task_Authoring/setup/GEN_EXECUTION.md, then follow check mode in Task_Authoring/playbooks/09_Rubric_Writing.md. Lint task_inputs/09_Rubrics.json with python3 Task_Authoring/tools/hg.py rubric-lint task_inputs/09_Rubrics.json against the plan, the V3 fair-reading/source/date/duplicate rules plus unchanged V2/Evals checks (Evals/3_Rubrics_Eval.md), tally against the thresholds (any incorrect, unauthorized, unobservable, contradictory, missing-coverage or predicted all-fail item blocks on its own, whatever the tally), and write task_inputs/Working_Files/09_Rubric_Check.md. Quote spans and name rules; update current sidecar hashes and per-row evidence. Correct unfair rows and re-grade before assessing the assigned mode cap; replacement wording may be proposed. Before handoff run python3 Task_Authoring/tools/stage_gate.py rubric-check Task_Authoring/task_inputs --paste and fix the artifact until it prints STAGE GATE rubric-check: PASS.
 ```
 
 ## 11 · All-fail analysis · `/create-allfail`

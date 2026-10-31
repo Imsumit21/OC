@@ -1,3 +1,5 @@
+> V2 source document. For V3 tasks the assignment's universe date selects Feb 14, 2026 (normal) or Oct 1, 2025 (synth-cut) — see `Task_Authoring/setup/GEN_EXECUTION.md` § 0a.
+
 **Original Conference \- Overall Task Flow**
 
 **The 20 steps that need your input**

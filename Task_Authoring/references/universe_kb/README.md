@@ -1,4 +1,13 @@
 
+> **Two builds.** Per-universe KB outputs live in `by_universe/{normal,synthcut}/`, selected
+> by the task context (`source.kb_output_path`; `source.kb_status` = `bound`) and rebuilt per
+> `setup/GEN_EXECUTION.md` § 0a:
+> `python3 Task_Authoring/tools/entity.py --task-dir <task_dir> build`, then
+> `python3 Task_Authoring/references/universe_kb/_build/run_all.py --task-dir <task_dir>`.
+> The `*.json` / `*.md` files in this directory are the legacy Feb-14 KB: reference-only,
+> never written by the per-universe build. Counts, clock and dates below describe that
+> legacy build unless they say otherwise.
+
 ## Persona view and entity resolution (`tools/persona_view.py`, `tools/entity.py`, `entities.json`)
 
 Two deterministic, read-only, stdlib-only tools. Run them from the workspace root with `python3`.
@@ -56,7 +65,7 @@ Records that match more than one entity, or that only share a token number, are 
 `unresolved`. They are never merged.
 
 ```sh
-python3 Task_Authoring/tools/entity.py build                 # regenerate entities.json (~3 s)
+python3 Task_Authoring/tools/entity.py build                 # root entities.json (~3 s); with a task context, by_universe/<key>/entities.json
 python3 Task_Authoring/tools/entity.py resolve "usr_Victor Barnes"
 python3 Task_Authoring/tools/entity.py resolve marcus        # every Marcus, with join evidence
 python3 Task_Authoring/tools/entity.py collisions            # traps: shared names, lookalikes, token conflicts
@@ -65,7 +74,7 @@ python3 Task_Authoring/tools/entity.py --self-test           # includes a check 
 
 ## Universe knowledge base: timeline, activity, hazards, traps, cohorts, integrations, conventions
 
-Built by `_build/run_all.py` (stdlib only, read-only on every export, about 10 minutes, peak memory under 2 GB). Caches are written to `Task_Authoring/support/local_search/cache/kb_cache/`. Each `.md` file is rendered from its `.json` twin, so all numbers come from the generator. Clock: 2026-02-14T00:00:00Z. These files extend `Scenario_Atlas.md`, `Ask_Carriers.md` (§6a/§6b) and `Hardness_Mastery.md` §2.5–2.6. They do not repeat those documents.
+Built by `_build/run_all.py` (stdlib only, read-only on every export, about 10 minutes, peak memory under 2 GB). Caches are written to `Task_Authoring/support/local_search/cache/kb_cache/`. Each `.md` file is rendered from its `.json` twin, so all numbers come from the generator. Clock (legacy root build): 2026-02-14T00:00:00Z. These files extend `Scenario_Atlas.md`, `Ask_Carriers.md` (§6a/§6b) and `Hardness_Mastery.md` §2.5–2.6. They do not repeat those documents.
 
 | File | What it is | Use it when |
 |---|---|---|

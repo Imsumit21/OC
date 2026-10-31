@@ -119,9 +119,9 @@ Gmail, Slack, Google Calendar, and the Google Drive family (Drive / Docs / Sheet
 
 ###### 📅 Current date
 
-The universe is frozen at **February 14, 2026, 12:00 AM** — a Saturday. 
+The universe is frozen at **February 14, 2026, 12:00 AM** — a Saturday. (Feb 14 universe; Oct 1 tasks use the synth-cut clock — GEN_EXECUTION § 0a)
 
-Everything before this instant is the past; everything after is the future. **State every date explicitly** (e.g., "February 20, 2026"), never relative ("next week", "yesterday").
+Everything before this instant is the past; everything after is the future. **State every date explicitly** (e.g., "February 20, 2026"), never relative ("next week", "yesterday"). (Feb 14 universe; Oct 1 tasks use the synth-cut clock — GEN_EXECUTION § 0a)
 
 ### Screen 3 — Your Task Type & Horizon: {{task_type}}
 
@@ -508,7 +508,7 @@ Add missing context to make the task richer and harder — for example:
 
 Injected data has to hold up under investigation. Before you rely on anything you add, make sure it's:
 
-1. **On the clock.** No date/time is ever after the frozen "now" — **February 14, 2026, 12:00 AM**. No future events written as already done; business messages on weekdays at plausible hours; a record's created time is never after its updated time.
+1. **On the clock.** No date/time is ever after the frozen "now" — **February 14, 2026, 12:00 AM**. No future events written as already done; business messages on weekdays at plausible hours; a record's created time is never after its updated time. (Feb 14 universe; Oct 1 tasks use the synth-cut clock — GEN_EXECUTION § 0a)
 2. **Consistent across services.** If you add a Slack thread about a pull request, that PR must actually exist in GitHub. Names, IDs, dates, and facts must line up everywhere they appear — edit one side, fix the other.
 3. **Coherent with the universe.** New data fits HarmonyGames' existing storylines, people, games, and relationships, and doesn't contradict what's already there (e.g., don't set a doc to $65 while a linked sheet still says $35).
 4. **Structurally valid.** Records fit the real table schema ([click here](https://static.remotasks.com/uploads/6a5595596cf3031de47f0ea2/7_Universe_Schema.json)) and follow the universe's existing ID formats (e.g., `ENG-####`, `ZOM-###`). No invented fields or malformed IDs.
@@ -541,7 +541,7 @@ Injected data has to hold up under investigation. Before you rely on anything yo
 Think about how you actually type when you're messaging Claude or ChatGPT in your day-to-day life. You don't capitalize every sentence perfectly. You don't proofread. You just type what you need and hit enter. **That's what your prompt should feel like.**
 
 - **Don't capitalize every sentence start.** Real people typing fast don't bother. Mix it up — some caps, some not.
-- **Leave in small typos.** A misspelling here and there, a missing word, an autocorrect that didn't quite land — that's how real typing looks. Don't polish it to perfection.
+- **Leave in small typos.** A misspelling here and there, a missing word, an autocorrect that didn't quite land — that's how real typing looks. Don't polish it to perfection. [Superseded by V3 §8 + Evals task-quality-v1: clean spelling is fine; staged typos fail Contrived]
 - **Be vague where a real person would be.** Don't spell out every detail. Say "the numbers look off" instead of naming exactly which metric in which spreadsheet. Being vague about *where* things are is good; being vague about *what you want* is not.
 - **Be imprecise and casual.** "can you check on the launch stuff" — not "Please investigate the Q1 product launch status across all relevant project management and communication channels."
 - **Skip obvious steps.** A real person doesn't say "First look up X, then cross-reference Y, then compose Z." They just say what they need and trust their assistant to figure out how.
@@ -558,7 +558,7 @@ Think about how you actually type when you're messaging Claude or ChatGPT in you
 - Unnaturally complete — nothing left unsaid, every requirement spelled out
 - Formal or corporate phrasing ("Please ensure," "It is imperative that," "Kindly proceed to")
 - Markdown formatting — headers, bold, bullet points, horizontal rules
-- Zero typos, zero messiness — too clean to be real
+- Zero typos, zero messiness — too clean to be real [Superseded by V3 §8 + Evals task-quality-v1: clean spelling is fine; staged typos fail Contrived]
 
 ---
 
@@ -648,7 +648,7 @@ Reconcile the revenue numbers.
 
 ##### 📅 Dates
 
-The task's current date is **February 14, 2026, 00:00 UTC** ⚠️. Write any date as an **absolute** value anchored to it (e.g., "February 13, 2026") rather than a relative reference like "yesterday" or "last week." Relative phrasing is fragile in a replayed task and will be flagged.
+The task's current date is **February 14, 2026, 00:00 UTC** ⚠️. Write any date as an **absolute** value anchored to it (e.g., "February 13, 2026") rather than a relative reference like "yesterday" or "last week." Relative phrasing is fragile in a replayed task and will be flagged. (Feb 14 universe; Oct 1 tasks use the synth-cut clock — GEN_EXECUTION § 0a)
 
 --- 
 

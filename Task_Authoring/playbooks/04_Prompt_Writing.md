@@ -1,6 +1,6 @@
 # 04 — Prompt Writing: brief (prep) + prompt check (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-prompt-writing` (brief) · `/create-prompt-writing draft` (draft) · `/create-prompt-writing check` (check) · Writes: `task_inputs/Working_Files/04_Prompt_Writing_Brief.md` / `task_inputs/Working_Files/04_Prompt_Check.md` · Paired eval: `/prompt` (`Evals/1_Prompt_Eval.md`) · Gates: **`tools/stage_gate.py prompt-writing` / `prompt-check` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
+> Command: `/create-prompt-writing` (brief) · `/create-prompt-writing draft` (draft) · `/create-prompt-writing check` (check) · Writes: `task_inputs/Working_Files/04_Prompt_Writing_Brief.md` / `task_inputs/Working_Files/04_Prompt_Check.md` · Paired eval: `/prompt` (`Evals/1_Prompt_Eval.md`, release `task-quality-v1`) · Gates: **`tools/stage_gate.py prompt-writing` / `prompt-check` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
 
 > **Claude, Codex or the human writes the prompt.** This stage prepares the facts, drafts the prompt on request, and checks whatever was written — GEN_EXECUTION §2.
 
@@ -37,17 +37,20 @@ V3 changed-topic rules govern over conflicting Docs/Evals; unchanged local check
 
 - The brief describes requirements as facts, noun phrases and record locators; it may also carry draft wording.
 - A drafted prompt follows the assigned person's plausible role and register: ordinary colleague request, clean spelling, no spec-sheet layout, no trap hints, riddles or answer-key clauses. Name a destination the sender would know.
-- Check mode may propose replacement wording under the preserved local authorship exception. Clean spelling, normal capitals and punctuation pass; planted mistakes, broken spacing and invented emoji codes fail.
+- Check mode may propose replacement wording under the preserved local authorship exception. Clean spelling, normal capitals and punctuation pass; planted mistakes, broken spacing and invented emoji codes fail (Eval 1 §1.2 AI-Text, §2.7).
+- No line may point at the trap or hedge the prompt's own facts: a riddle or hint fails, naming the symptom is fine, and "if my date or channel is off, use the message that is actually there" is a hint and fails. Audit/compliance-form wording and long if / but-not / then-also chains fail on their own; a per-case rule belongs in a seeded record, not the prompt (Eval 1 §2.7, A-13/A-15/B-14).
 
 ## Inputs / Output
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`
 and read `Working_Files/00_Task_Context.json` (GEN_EXECUTION § 0). Use all eight
-assignment fields, the assigned freeze and the context's registered universe/KB source.
-Both freeze dates use the same local universe data. Check each relied-on fact at
-the assigned freeze; shared KB summaries are leads, not a separate dataset gate.
+assignment fields, the assigned freeze (`freeze_utc`, the seed bound) and the context's
+`universe` block and registered KB source.
+The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Check each relied-on fact at
+the assigned freeze; shared KB summaries are leads, not a separate dataset gate
+(`source.kb_status`: `reference-only` means leads only; `unavailable` means no KB — ground every fact in records).
 V3 changed-topic rules take
-precedence over older Evals/V2 references; local authorship and hardness-profile
+precedence over the older V2 reference documents in `references/Docs/`; local authorship and hardness-profile
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Brief-mode inputs (stop and name any missing required slot)
@@ -64,7 +67,7 @@ Brief-mode inputs (stop and name any missing required slot)
 Check-mode inputs
 - `task_inputs/04_Prompt.txt` (required), human-written and exactly as it will be submitted.
 - `task_inputs/Working_Files/04_Prompt_Writing_Brief.md` (required).
-- The brief-mode inputs, for verification; `Evals/1_Prompt_Eval.md`, `Evals/references/rules/scoring.json` (Prompt and Universe groups), `prompt_qc_examples.md`, `long_horizon.md`.
+- The brief-mode inputs, for verification; `Evals/1_Prompt_Eval.md`, `Evals/references/rules/scoring.json` (Prompt and Universe groups), `prompt_qc_examples.md`, `Evals/references/rules/prompt_qc_cases.json` (the 15 `calibration_cases`), `long_horizon.md`.
 
 Output: brief mode writes only `04_Prompt_Writing_Brief.md`, draft mode writes `04_Prompt.txt`, and check mode writes only
 `04_Prompt_Check.md`.
@@ -81,7 +84,7 @@ Output: brief mode writes only `04_Prompt_Writing_Brief.md`, draft mode writes `
    Prove it with `python3 Task_Authoring/tools/persona_view.py can-see <persona> <service> <id>` (base records) or
    `persona_view.py check-sql <persona> 01_Universe_Inject.sql --load-bearing <ids>` (seeded records); the gate re-runs
    it on every scoped id in §5 and §5a.
-4. **Assigned clock.** Recompute relative dates against the shared context's freeze. Seeded record timestamps and completed events must not be after it; later deadlines and scheduled future events are allowed. Human-facing dates use Pacific, with UTC beside them when calendar days differ; do not prescribe an exact time for a date-only request.
+4. **Assigned clock.** Recompute relative dates against the shared context's `freeze_utc`, the seed bound: seeded record timestamps and completed events must not be after it, only plan fields (due date, scheduled start/end, deadline) may be later, and the eval clock `universe.clock_utc` is recorded beside it for each report's `Clock:` line. Human-facing dates use Pacific, with UTC beside them when calendar days differ; "today" and "yesterday" come from `universe.persona_today` (Sat Feb 14, 2026 / Wed Oct 1, 2025); do not prescribe an exact time for a date-only request. Ignore the QC form row 128 / spec Audit Workflow "today is February 28, 2026" — the task clock wins (A-30). **State premises** (Eval 1 §2.3, A-26/B-16): every actor is active at the clock and every object exists by then. On Feb 14, business as usual after the Feb 11, 2026 shutdown announcement is a false premise; on either date a departed person acting (Victor, gone since April 2025) is false; on Oct 1 anything first appearing after 2025-09-30 23:59:59 PT is false. A single loose factual slip is a Fail.
 5. **Every fair outcome.** Brief §4b is the common acceptance table for 04, 08 and 09. List requested deliverables, destinations and recipients, fixed values or closed sets of accepted fair values, delegated choices (quote the span), allowed variants and material/representational fields. Multiple defensible outcomes are allowed when all pass the rubric. Never add answer-key clauses just to eliminate alternatives. The structure remains a canonical outcome table, but the old one-acceptance-class requirement is superseded. Supply `outcome_reviews` for prompt-writing and prompt-check in `Working_Files/00_V3_Authoring_Evidence.json` (Guide schema).
 6. **Symptom, not cause.** The root cause appears only in the discovery map, flagged "never in the prompt". The situation section says what is visibly wrong, never why.
 7. **Check findings.** Every finding gives a verbatim span of `04_Prompt.txt` (verified as an exact substring), the rule and its source, the severity and the defect, and may add suggested wording.
@@ -166,7 +169,7 @@ a locator or a requirement.
 - `## 6 · Triggers, incorporation and implicit requirements`. Table: Graded requirement · Seeded where · Trigger category the prompt must carry · Incorporating source (locator · persona-readable · unique · instructions-not-answer) · Inferable (yes, or gotcha → needs a trigger or is dropped). Then the anchor-name table `Anchor · May be named` (noun phrases of ≤ 6 words only, `;`-separated synonyms; the gate checks each entry).
 - `## 7 · Dates and constraints`. Table: Item · Absolute date or value · Source · Past fact or deadline.
 - `## 8 · Difficulty levers`. Table: Lever · Used · Load-bearing · Where it lives · Prompt-side condition. The conditions to test:
-  - Ambiguity: the prompt is vague about where the answer lives, never about what is asked; the destination is pinned.
+  - Ambiguity: the prompt is vague about where the answer lives, never about what is asked; the destination is named when the persona would know it, and left to the data only when finding it is the task and each place is findable from a persona-visible record (Eval 1 §1.5, §2.7; A-14).
   - Dynamic change: the correction is met second in discovery order (Prompt Writing §05). The prompt gives a reason to check the first summary but names neither the summary nor the correction.
   - Multi-source: 3+ systems carry weight, and no source is named as an exact artifact.
   - Async: discovery is unavoidable. Name no artifact on a waited search service and do not mention the wait.
@@ -184,7 +187,8 @@ Every row of §2, §4, §5, §7 and §10 carries a record id, email or pointer; 
 
 - [ ] Read GEN_EXECUTION, this playbook, the brief, and `04_Prompt.txt` byte for byte. Never normalise whitespace, case or spelling. Record the word count (whitespace-delimited) and a 12-character sha256 prefix, which ties the report to this exact text.
 - [ ] Run C1–C24 in order. For C17, extract every proper noun, ID, figure, date, relationship, state premise and asserted event from the prompt; look each one up with `tools/hg.py search` and check it against brief §10.
-- [ ] Record each finding with a quoted span, the rule and its source, the severity and the defect. Do not quote clean spans.
+- [ ] Self-test the text against the 15 `calibration_cases` in `Evals/references/rules/prompt_qc_cases.json` (rules `staged_errors`, `trap_hint_or_riddle`, `hidden_destination`, `audit_form`, `if_chain`, `false_state_premise`, `ugt_both_fair_figure`) and `prompt_qc_examples.md`; report each as matched / not matched, never as a defect by itself.
+- [ ] Record each finding with a quoted span, the rule and its source, the severity and the defect, under release `task-quality-v1` (a `prompt-ugt-v1` record is historical and needs a fresh review, A-31). Do not quote clean spans.
 - [ ] Run the Self-review, then route (see the report template).
 
 Severity words: **Fail** (scores 1–2 at `/prompt`), **Non-fail** (3–4), **Advisory** (no `/prompt` dimension; a hardness or later-stage risk), **UNVERIFIED** (evidence incomplete — never reported as Fail).
@@ -193,7 +197,7 @@ Severity words: **Fail** (scores 1–2 at `/prompt`), **Non-fail** (3–4), **Ad
 |---|---|---|
 | C1 | Field: 20–4,000 words | Field limit · Fail (the field rejects it) |
 | C2 | Assignment bound: all eight V3 fields in the shared context; persona resolves; source supports freeze | Intake BLOCKED until complete and supported; never change assigned fields |
-| C3 | Persona (§1.1): role plausibility, voice against the persona's own Slack/Gmail messages, would they know this situation, is it inside their remit (prepare / review / approve) | Persona · Fail (implausible) / Non-fail (fits another persona better). A better-fitting colleague alone is not a Fail |
+| C3 | Persona (§1.1) and voice (§1.2): role plausibility, voice judged against the role only — the persona's own Slack/mail style is not a standard (A-27); would they know this situation, is it inside their remit (prepare / review / approve) | Persona · Fail (implausible) / Non-fail (fits another persona better). A better-fitting colleague alone is not a Fail |
 | C4 | Competency, task skill, business function: assess the actual work independently from role; Authoring calls for an authored artifact | Mismatch alone is Non-fail / quality reduction under V3; role implausibility is C3 Fail |
 | C5 | Complexity and seeding (§1.5): ≥ 1 of Ambiguity / Dynamic Change / Multi-Source is load-bearing (brief §8, cite where it lives); the prompt does not restate operating details that live, or should live, in records | Complexity Dimensions and Data Seeding · **Fail** (No Load-Bearing Complexity / Prompt Carries the Recipe) |
 | C6 | Fair outcomes: test the strongest alternative for every deliverable against §4b and sidecar outcome reviews | Rejecting a fair reading fails; multiple valid answers alone does not |
@@ -206,11 +210,11 @@ Severity words: **Fail** (scores 1–2 at `/prompt`), **Non-fail** (3–4), **Ad
 | C13 | Coherence (§1.3.2): deleting any sentence changes something else. Several asks serving one stated purpose (one review, deadline, account or handoff) are stacking, not bolt-ons; a list of unrelated items joined only by the persona's to-do list is | Coherence · Fail (Bolt-on) · stacking alone: Advisory |
 | C14 | Tool mention (§1.3.4): no function or parameter name, no MCP server name, no "the X tool". Natural product names ("in QuickBooks", "the Linear ticket") are clean (`prompt_qc_examples.md`, row 103) | Explicit Tool Mention · **Fail** (Evals override; QC form Non-fail for server/"tool") |
 | C15 | Command list (§1.3.1): the prompt scripts the method in ≥ 2 sequenced steps — which sources, in which order, numbered or "first… then… finally". One check-before-acting constraint, or the order of deliverables and who to tell (the screen 24 skeleton), is not a command list | Contrived · Fail |
-| C16 | Ordinary request: no spec-sheet/audit wording, riddle, trap hint, answer-key clause, planted typo/emoji code/broken spacing, arbitrary format constraint or call-inflation choreography; name a destination the sender knows | Contrived / hinting · Fail where present. Clean spelling, normal capitals and punctuation are acceptable |
-| C17 | Truthfulness (§2.3): every tight identifier (channel, file/doc/repo name, ticket ID, entity name, email, amount, date), relationship, state premise ("still no reply", "there's no ticket", "for two weeks", "I own this") and narrative claim (who emailed whom when, what the persona has been working on, people said to be in a channel). A near-match is a phantom; a misspelt tight identifier that matches no record is a finding (quote it, give no correction). Hypotheses ("I think it's fixed, check") and requested new outputs are not premises. Absence needs the absence rule below | Truthfulness · Fail (1 major — wrong or phantom tight identifier, contradicted state premise — or 2+ minor) / Non-fail (1 minor loose descriptor). A loose error that causes failure is major. Unverifiable premise: UNVERIFIED, and confirm the task is solvable without it |
+| C16 | Ordinary request (§2.7, §1.2): no spec-sheet layout, answer-key clause, arbitrary format constraint or call-inflation choreography. Each of these fails on its own: staged errors (misspellings, made-up emoji, broken punctuation — clean spelling, capitals and punctuation are fine); a riddle or hint aimed at the trap ("Hidden root causes the prompt does not hint at" is the good indicator, naming the symptom is fine, "a nagging feeling the thing that actually bites us is not on anybody's list" fails); a plausibility hedge letting a record correct the prompt ("If my date or channel is off, use the message that is actually there"); a hidden destination the persona would know (name it; leave it to the data only when finding it is the task and each place is findable from a persona-visible record); audit or compliance-form wording (deliverable-catalogue verbs: "reconcile…, classify…, rank…, complete the review artifacts and handoff it requires"); long if / but-not / then-also chains (a per-case rule belongs in a seeded record — "Can you sort out the leftover reviews before Friday? Arthur posted how he wants each kind handled." passes) | Contrived / hinting · Fail where present; two or more spec-sheet triggers also fail (§2.7 hard gate). Calibration: `prompt_qc_cases.json` rules `staged_errors`, `trap_hint_or_riddle`, `hidden_destination`, `audit_form`, `if_chain` |
+| C17 | Truthfulness (§2.3): every tight identifier (channel, file/doc/repo name, ticket ID, entity name, email, amount, date), relationship, state premise ("still no reply", "there's no ticket", "for two weeks", "I own this"), company/people premise (business as usual after the Feb 11, 2026 shutdown on a Feb 14 task, a departed person still acting — Victor since April 2025, anything not existing by 2025-09-30 23:59:59 PT on an Oct 1 task; A-26/B-16) and narrative claim (who emailed whom when, what the persona has been working on, people said to be in a channel). A near-match is a phantom; a misspelt tight identifier that matches no record is a finding (quote it, give no correction). Hypotheses ("I think it's fixed, check") and requested new outputs are not premises. Absence needs the absence rule below | Truthfulness · Fail (1 major — wrong or phantom tight identifier, contradicted state premise, one loose factual slip — or 2+ minor) / Non-fail (none for a loose descriptor). Unverifiable premise: UNVERIFIED, and confirm the task is solvable without it |
 | C18 | Feasibility (§2.2 A–D, §3.1): per deliverable, the catalog can create, format and deliver it (a draft is not a send); every needed fact exists and has a cataloged read; every per-X breakdown has an X field; every exact value or precision survives the tool path; no conflicting instructions; no human-judgement, physical or beyond-tool asks | Feasibility · **Fail** (no middle band, Evals override; any explicit ask). Incomplete capability or rendering evidence: UNVERIFIED |
 | C19 | Persona ACL (§2.2 E, standalone): lens 1 — every required Gmail / Slack / GCal / Drive-family read is visible to the persona, or an unscoped alternate exists, or the intended outcome is an affirmative denial finding plus report/escalation; lens 2 — no ask directs the persona to read someone else's scoped data. Writes are never ACL-scoped | Feasibility (Persona ACL) · **Fail**, non-waivable |
-| C20 | Today's date (§2.8): past events fall before the clock; later dates only as semantic future dates for events that have not happened (deadline, meeting start, scheduled send — 08 hard gate 4); relative wording resolves to one window | Alignment with Today's Date · **Fail** on a material contradiction (a post-clock event described as done is also C17). Relative wording alone: Advisory (Prompt Writing §4.2 asks for absolute dates; `/prompt` allows it) |
+| C20 | Today's date (§2.8): past events fall before the clock; later dates only as semantic future dates for events that have not happened (deadline, meeting start, scheduled send — 08 hard gate 4); relative wording resolves to one window; "today"/"yesterday" are `universe.persona_today` (Sat Feb 14, 2026 / Wed Oct 1, 2025) and the day before; dates are Pacific, both days when PT and UTC differ; the QC form's "today is February 28, 2026" does not apply (A-30) | Alignment with Today's Date · **Fail** on a material contradiction (a post-clock event described as done is also C17). Relative wording alone: Advisory (Prompt Writing §4.2 asks for absolute dates; `/prompt` allows it) |
 | C21 | Injected friction (§3.2): no injected failure or wait is announced; every forced error leaves a persona-readable alternate path; no forced error on a scoped tool whose denial the task turns on | Announced: Contrived Non-fail (Pre-solved Fail if it hands over the workaround) · a configuration that removes the only route: Cross-Service Coherence Fail |
 | C22 | Universe coherence (§3.2) on records the prompt touches: reuse a matching `/injection` PASS; report any inconsistency met during C17–C18 | Cross-Service Coherence · Fail / Non-fail (one minor) |
 | C23 | Originality (§2.9): fingerprint (scenario, persona + scenario, entities, asks, services + writes, shape, phrasing) against each sample supplied with the task and against the guideline, taxonomy and `long_horizon.md` examples | Supplied sample: Originality · **Fail** at a verbatim / near-verbatim sentence, same scenario + entities, ≥ 4 of 7, or persona + scenario + ask lift; Non-fail at 2–3. Guideline examples only: Advisory (`/prompt` §2.9 is N/A without supplied samples) |
@@ -222,13 +226,15 @@ Severity words: **Fail** (scores 1–2 at `/prompt`), **Non-fail** (3–4), **Ad
 3. If both readings remain fair, include both in §4b and the sidecar `accepted_outcomes`; record why each is defensible. Multiple results, rounding, anonymized source tokens and Pacific/UTC date variants do not fail solely for differing. An unsupported premise or impossible write is still a truthfulness/feasibility defect. Test the cheapest valid reading for a shortcut; if it makes the task too easy, change the universe/design rather than excluding that reading in the rubric.
 4. Record both readings, resolving or accepting evidence, and the current outcome-review artifact hash in the sidecar. In prompt-check also supply the assigned-role review with source IDs and an explicit remit rationale. The Guide defines the schema.
 
+**`BOTH_FAIR_FIGURE`** (Eval 1 §2.1, A-24/B-15) is the only PASS for a single reported figure that no source settles, and only when all five hold: the decision, writes, destinations and recipients are identical and only that figure differs; each value sits on a persona-visible record other than the prompt; no newer source, authority check, source identity or scope check settles it; each reading completes every ask; the figure does not change the next action. Record it with both quotes, leading reading first (`kind` AMOUNT / COUNT / RATE / DATE), so the report prints "Rubric must accept: X or Y". Never add a "go with the most recent" line (it settles the fork), a file-now-versus-defer fork is not a figure, and a newer source still settles (#49).
+
 **Absence rule (C17, C18).** "Does not exist" needs the search scope (service, file, query), the surfaces searched (records, attachments, repository files and refs, table metadata, the SQL overlay) and a positive control showing the lookup works; otherwise it is UNVERIFIED. One counter-example refutes an absence.
 
 ## Check report template
 
 ```
 # Prompt Check — <task slug>
-> Prompt: 04_Prompt.txt · <n> words · sha256 <12 chars> · checked <date> against 04_Prompt_Writing_Brief.md (<date>)
+> Prompt: 04_Prompt.txt · <n> words · sha256 <12 chars> · Clock: <universe.clock_line> · checked <date> against 04_Prompt_Writing_Brief.md (<date>) · release task-quality-v1
 > Suggested wording is allowed under the repository exception. Check clean ordinary writing, role plausibility, no hints/riddles and every fair outcome.
 ```
 
@@ -262,7 +268,7 @@ Every mode ends with this loop and records it under `## Self-review` in its outp
    | Incorporation (C8) | Does the pointed-to record exist, readable by the persona, unique, and state the rule attributed to it — or does it hand over the answer? | Is the requirement actually incorporated by the prompt, or only found during research (then it adds no obligation and no defect)? |
    | Truthfulness (C17) | Was every tight identifier, state premise and narrative claim looked up in this run, near-matches included? | Is it a hypothesis or a requested new output? Does the absence claim meet the absence rule? Is a misspelling harmless to lookup? |
    | Feasibility and ACL (C18–C19) | Can the persona read every required scoped record (sender, membership, share)? Does the tool path keep the asked precision, field and delivery (draft ≠ send)? | Is there an unscoped alternate, an affirmative-denial outcome, or only incomplete capability evidence (UNVERIFIED, not Fail)? |
-   | Contrived register (C15–C16) | Does the request hint at a trap/cause, read as a riddle/specification, or use planted mistakes? | Is it an ordinary request with clean spelling and a known named destination? |
+   | Contrived register (C15–C16) | Does the request hint at a trap/cause, read as a riddle, an audit form or an if-chain, use planted mistakes, hide a destination the persona knows, or hedge a fact a record then corrects? | Is it an ordinary request with clean spelling, one plain ask and a known named destination? |
 
 3. **Re-verify facts, not notes.** Re-read every load-bearing value through `tools/hg.py`; a value
    carried from the brief, dossier or an earlier check is a lead, not evidence.
@@ -289,3 +295,4 @@ Every mode ends with this loop and records it under `## Self-review` in its outp
 - **Both modes.** Handoff is blocked until `stage_gate.py prompt-writing` / `prompt-check` prints PASS; its output sits in the Self-review.
 - **Brief mode.** Report the path, the routed blockers and any unverified facts. Next step: `/create-prompt-writing draft` (or the human writes `04_Prompt.txt`), then `/create-prompt-writing check`.
 - **Check mode.** Report the path, the Fail findings by C-id, the predicted band and the route. Next step: edit the prompt (Claude, Codex or the human) and re-check, or, with no Fail, runs `/injection` + `/prompt`. After that comes `/create-humantime`.
+- **Task date.** `/prompt` and `/injection` ask the task date first; answer with the assignment's universe date (the selected universe, GEN_EXECUTION § 0a), never inferred.
