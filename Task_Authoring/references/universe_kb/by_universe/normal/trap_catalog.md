@@ -12,7 +12,7 @@
 - **Legitimate use:** Ask for the person by role or by a record they authored; make the right one decidable by an exact email/id in an incorporated record.
 - **Ids / examples:** `claire: ['Claire Morgan <claire.morgan@harmonygames.co> [persona claire_morgan]', 'Claire <github:PERSON_2360_GITHUB_USERNAME>']`, `marcus: ['Marcus Bennett <marcus.bennett@harmonygames.co> [persona marcus_bennett]', 'Marcus Lee <marcus.lee@harmonygames.co>', 'Marcus <git`, `martin: ['Martin Lewis <PERSON_0394_EMAIL>', 'Martin Walsh <martin.walsh@harmonygames.co> [persona martin_walsh]']`, `thomas: ['Thomas Baker <thomas.baker@harmonygames.co>', 'Thomas <thomas@harmonygames.co> [persona thomas]']`
 
-### P02 — Shared surnames (Bennett: Marcus/Oscar; Brooks: Oliver/Lauren — the second Brooks is named only on Feb 14 [normal-only]; other shared-surname groups are computed per universe)
+### P02 — Shared surnames: people in this universe who share a last name (each group is listed under ids)
 
 - **Count:** 2
 - **Risk:** Surname-only references ('Bennett said…', 'Brooks's PR') resolve wrongly.

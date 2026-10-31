@@ -12,19 +12,12 @@
 - **Legitimate use:** Ask for the person by role or by a record they authored; make the right one decidable by an exact email/id in an incorporated record.
 - **Ids / examples:** `claire: ['Claire Morgan <claire.morgan@harmonygames.co> [persona claire_morgan]', 'Claire <github:PERSON_2360_GITHUB_USERNAME>']`, `marcus: ['Marcus Bennett <marcus.bennett@harmonygames.co> [persona marcus_bennett]', 'Marcus Lee <marcus.lee@harmonygames.co>', 'Marcus <tre`, `martin: ['Martin Lewis <PERSON_0394_EMAIL>', 'Martin Walsh <martin.walsh@harmonygames.co> [persona martin_walsh]']`, `thomas: ['Thomas Baker <thomas.baker@harmonygames.co>', 'Thomas <thomas@harmonygames.co> [persona thomas]']`
 
-### P02 — Shared surnames (Bennett: Marcus/Oscar; Brooks: Oliver/Lauren — the second Brooks is named only on Feb 14 [normal-only]; other shared-surname groups are computed per universe)
+### P02 — Shared surnames: people in this universe who share a last name (each group is listed under ids)
 
 - **Count:** 1
 - **Risk:** Surname-only references ('Bennett said…', 'Brooks's PR') resolve wrongly.
 - **Legitimate use:** Use surname-only mentions in seeded human messages only when a second record disambiguates.
 - **Ids / examples:** `bennett: ['Marcus Bennett <marcus.bennett@harmonygames.co>', 'Oscar Bennett <oscar.bennett@harmonygames.co>']`
-
-### P03 — Three Marcuses: persona Marcus Bennett (mailbox marcus.bennett@harmonygames.co) vs Marcus Lee (marcus.lee@harmonygames.co; no mailbox) vs a mononym Trello member 'Marcus'
-
-- **Count:** None
-- **Risk:** Mail or PR evidence attributed to 'Marcus' is really another person's; the mailbox is marcus.bennett@, and marcus@harmonygames.co does not exist.
-- **Legitimate use:** A trap where the agent must notice the address, not the display name.
-- **Ids / examples:** `gmail mailbox marcus.bennett@harmonygames.co`, `slack EMPLOYEE_0002_SLACK_ID`, `contact marcus.lee@harmonygames.co`, `linear usr_b501f018a4c5319f`, `trello c48a210d5c5a4b59231c6873`
 
 ### P04 — Tokenised GitHub contributors whose real login only appears in the Slack GitHub-app mirror
 
@@ -200,11 +193,4 @@
 - **Risk:** Name-based counts across eras undercount.
 - **Legitimate use:** Rename-aware questions (one record states the rename).
 - **Ids / examples:** `gmail distribution 'GoD iOS' 2023-04`, `testflight 'Puzzles vs Zombies' 2025-03..07`
-
-### K03 — Calendar lookalikes: recurring master + instance duplicates; reused ical_uids
-
-- **Count:** None
-- **Risk:** Wrong meeting chosen.
-- **Legitimate use:** Meeting-selection traps decided by attendees or time.
-- **Ids / examples:** `martin.walsh@harmonygames.co/2024-11-18T17:30:00Z`, `owen.baker@harmonygames.co/2024-06-04T16:00:00Z`, `leonard.hayes@harmonygames.co/2024-07-08T17:30:00Z`, `leonard.hayes@harmonygames.co/2024-09-05T16:00:00Z`
 
