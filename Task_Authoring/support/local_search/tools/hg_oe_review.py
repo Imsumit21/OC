@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 
 from hg_eval_release import snapshot, report_binding
 from hg_preflight import reject_constant, unique_object
@@ -16,18 +17,171 @@ from hg_source_checks import metadata_source, check_absence
 from hg_oe_path import validate_path
 
 POLICY = 'oracle-events-v2'
-RECORD = Path('Evals/task_inputs/reports/drafts/oe_review_record.json')
-REPORT = Path('Evals/task_inputs/reports/2_oe.md')
-INPUT = Path('Evals/task_inputs/08_Oracle_Events.md')
+RECORD = Path('Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/drafts/oe_review_record.json')
+REPORT = Path('Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/2_oe.md')
+INPUT = Path('Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/08_Oracle_Events.md')
 FIELDS = ('action', 'information', 'tool_service', 'parameters', 'expected_data', 'dependencies')
 FORMAT_DEFECTS = {'NO_DETAILS_OR_EXPECTED', 'ARROW_CHAIN', 'MULTIPLE_ACTIONS', 'JSON', 'NO_NUMBER_OR_SERVICE'}
-INPUT_KEYS = {'task-details', 'prompt', 'oe', 'injection', 'error-async'}
+INPUT_KEYS = {'task-details', 'universe', 'prompt', 'oe', 'injection', 'error-async'}
 REFERENCES = ('Evals/2_Oracle_Events_Eval.md', 'claude/skills/oe/SKILL.md',
               'Evals/WORKFLOW.md', 'Evals/INPUTS.md', 'Evals/ENVIRONMENT.md',
               'Evals/references/rules/oracle_events.md', 'Evals/references/persona/acl.md',
               'Evals/references/persona/roster.json', 'Evals/references/tools/catalog.json',
               'Evals/references/tools/manifest.json', 'Evals/tools/hg_oe_review.py',
               'Evals/tools/hg_oe_path.py')
+
+# Expected-line value ledger (Eval 2 §2.4; port of golden-audit G3). An Expected line
+# is the text after an `Expected:` label, or after "The agent finds" when the author
+# wrote no label, up to the next blank line, OE heading or Expected label.
+EXPECTED_CUE = re.compile(r'\bExpected(?:[ \t]+(?:data|results?|outputs?|values?))?[ \t]*:|\b(?:the[ \t]+)?agent[ \t]+finds\b', re.I)
+EXPECTED_END = re.compile(r'\n[ \t]*\n|\n(?=[ \t]*(?:#{1,6}[ \t]|OE[ \t]*\d|Step[ \t]*\d))', re.I)
+OE_REFERENCE = re.compile(r'\bOEs?[ \t]*\d+(?:[ \t]*(?:[-–+,&]|and|to|or)[ \t]*(?:OEs?[ \t]*)?\d+)*', re.I)
+# Identifiers must appear in a cited source quote character for character.
+LITERAL_VALUES = tuple(re.compile(p) for p in (
+    r'`[^`\n]+`',                                                # code literal
+    r'[\w.+-]+@[\w-]+(?:\.[\w-]+)+',                             # email
+    r'(?<![\w.-])[A-Za-z0-9]+(?:_[A-Za-z0-9]+)+(?!\w)',         # event/field/table/file ID: quest_completed
+    r'\b[A-Z][A-Z0-9]{1,9}-\d{1,6}\b',                           # ticket: ZOM-387
+    r'\b(?=[A-Z0-9]*\d)(?=[A-Z0-9]*[A-Z])[A-Z0-9]{9,12}\b',      # Slack ID: C0ADGSZKR3R
+    r'\b(?=[0-9a-f]*\d)(?=[0-9a-f]*[a-f])[0-9a-f]{7,40}\b',      # commit SHA
+    r'(?<![\w.])\d{10,}(?:\.\d+)?(?![\w.])',                     # thread ID, Slack ts
+    r'(?<![\w.])\d+\.\d+\.\d+(?:\.\d+)?(?![\w.])',               # version: 1.0.56
+    r'(?<![\w#])#[a-z][a-z0-9_-]{2,}\b',                         # channel: #winddown
+))
+# Figures may be rendered (4,510.33 for 4510.33; 17:31 from a timestamp): found in a
+# cited quote once thousands separators are dropped, or derived by a recorded calculation.
+FIGURE_VALUES = tuple(re.compile(p) for p in (
+    r'\$[ \t]?\d[\d,]*(?:\.\d+)?',
+    r'\b\d[\d,]*(?:\.\d+)?[ \t]?%',
+    r'\b\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?Z?)?',
+    r'\b\d{1,2}:\d{2}(?::\d{2})?(?!\d)',
+    r'(?<![\w#])#\d{1,6}\b',
+    r'(?<![\w.,:$#])\d[\d,]*(?:\.\d+)?(?![\w%:]|[.,]\d)',
+))
+ABSENCE_CUE = re.compile(r"\b(?:none|nothing|nobody|no[ \t]+one|nowhere|never|absent|missing|not[ \t]+found|"
+                         r"no[ \t]+(?:other|such|later|further|newer|known|records?|fix(?:es)?|commits?|follow-ups?|"
+                         r"repl(?:y|ies)|response|evidence|trace|mention)|do(?:es)?[ \t]+not[ \t]+exist|"
+                         r"do(?:es)?n't[ \t]+exist|no[ \t]+longer[ \t]+exists?)\b", re.I)
+VALUE_RESULTS = {'VERIFIED', 'MINOR', 'INACCURATE', 'UNRESOLVED'}
+
+
+def expected_spans(raw):
+    spans = []
+    for cue in EXPECTED_CUE.finditer(raw):
+        stop = len(raw)
+        for pattern in (EXPECTED_END, EXPECTED_CUE):
+            found = pattern.search(raw, cue.end())
+            if found:
+                stop = min(stop, found.start())
+        spans.append((cue.end(), stop))
+    return spans
+
+
+def expected_items(raw):
+    """Value tokens and absence wording on Expected lines, as (start, end, kind, text)."""
+    values, absences = [], []
+    for start, stop in expected_spans(raw):
+        taken = [m.span() for m in OE_REFERENCE.finditer(raw, start, stop)]  # "OE 16" is not data
+        for kind, patterns in (('LITERAL', LITERAL_VALUES), ('FIGURE', FIGURE_VALUES)):
+            for pattern in patterns:
+                for m in pattern.finditer(raw, start, stop):
+                    if not any(m.start() < b and a < m.end() for a, b in taken):
+                        taken.append(m.span())
+                        values.append((m.start(), m.end(), kind, m.group(0)))
+        absences.extend((m.start(), m.end(), 'ABSENCE', m.group(0)) for m in ABSENCE_CUE.finditer(raw, start, stop))
+    return sorted(values), absences
+
+
+def _literal_in(token, quotes):
+    value = token.strip('`')
+    value = value[1:] if value.startswith('#') else value
+    return any(value in quote for quote in quotes)
+
+
+def _figure_in(token, quotes):
+    value = re.sub(r'[\s$,%#]', '', token).rstrip('Z')
+    pattern = re.compile(r'(?<!\d)' + re.escape(value) + r'(?!\d)')
+    return any(pattern.search(quote.replace(',', '')) for quote in quotes)
+
+
+def check_expected_values(entries, raw, step_ids, known, reader, root, ctx):
+    """Every value on an Expected line is quoted from a record or marked not_a_claim."""
+    def need(ok, message):
+        if not ok:
+            raise ValueError('OE review: ' + message)
+    def text(value):
+        return isinstance(value, str) and bool(value.strip())
+    need(isinstance(entries, list), 'expected_values must be an array (empty when no Expected line carries a value)')
+    values, absences = expected_items(raw)
+    covered, inaccurate, minor, pending = set(), [], [], []
+    for n, entry in enumerate(entries):
+        label = 'expected_values[' + str(n) + ']'
+        need(isinstance(entry, dict) and entry.get('step_id') in step_ids, label + ' needs a known step_id')
+        quote = entry.get('oe_quote')
+        need(text(quote) and quote in raw and text(entry.get('reason')),
+             label + ' needs a reason and an exact quote from the supplied OE')
+        spots, at = [], raw.find(quote)
+        while at >= 0:
+            spots.append((at, at + len(quote)))
+            at = raw.find(quote, at + 1)
+        inside = [item for item in values + absences if any(a <= item[0] and item[1] <= b for a, b in spots)]
+        covered.update(item[:2] for item in inside)
+        if entry.get('not_a_claim') is not None:
+            need(entry['not_a_claim'] is True and 'result' not in entry,
+                 label + ': not_a_claim is true with a reason and no result')
+            continue
+        result = entry.get('result')
+        need(result in VALUE_RESULTS, label + ': result must be VERIFIED, MINOR, INACCURATE or UNRESOLVED')
+        if result == 'UNRESOLVED':
+            pending.append(label + ': ' + entry['reason'])
+            continue
+        refs = links(entry.get('source_ids'), known, label + '.source_ids')
+        quotes = [s['quote'] for s in refs]
+        usable = all(s['visibility'] == 'VISIBLE' and not metadata_source(s, root, ctx) for s in refs)
+        counter = entry.get('counterexample')
+        if result == 'VERIFIED':
+            need(counter is None, label + ': a counterexample refutes the claim; record it INACCURATE')
+            for _, _, kind, token in inside:
+                if kind == 'LITERAL':
+                    need(_literal_in(token, quotes), label + ': ' + token + ' is not in any cited source quote character for '
+                         'character; cite the record that holds it, or record INACCURATE with source_value')
+                elif kind == 'FIGURE' and not text(entry.get('calculation')):
+                    need(_figure_in(token, quotes), label + ': ' + token + ' is not in any cited source quote; '
+                         'quote the record or record the calculation')
+            bare = quote.strip(' \t\n"\'“”‘’')
+            quoted_record = len(bare.split()) >= 3 and any(bare in q for q in quotes)
+            if any(item[2] == 'ABSENCE' for item in inside) and not quoted_record:
+                check = entry.get('evidence_check')
+                need(isinstance(check, dict) and check.get('method') == 'ABSENCE',
+                     label + ': an absence claim needs a scope-bound evidence_check (method ABSENCE)')
+                gaps = check_absence(check, reader, known, root, ctx)
+                pending.extend(label + ': ' + gap for gap in gaps)
+                usable = usable and not gaps
+        else:
+            if counter is not None:
+                need(isinstance(counter, dict) and counter.get('source_id') in entry['source_ids'] and
+                     text(counter.get('quote')) and counter['quote'] in known[counter['source_id']]['quote'],
+                     label + ': a counterexample quotes one of the cited sources exactly')
+            else:
+                actual = entry.get('source_value')
+                need(text(actual) and any(actual in q for q in quotes) and actual not in quote,
+                     label + ': record source_value, the differing value quoted exactly from a cited source')
+            code = 'WRONG_EXPECTED_DATA' if result == 'INACCURATE' else 'IMPRECISE_EXPECTED_DATA'
+            finding = code + ': ' + entry['step_id'] + ': "' + quote + '" ' + (
+                'is refuted by "' + counter['quote'] + '"' if counter is not None else
+                'differs from the record\'s "' + entry['source_value'] + '"')
+            if usable:
+                (inaccurate if result == 'INACCURATE' else minor).append(finding)
+        if not usable:
+            pending.append(label + ': unavailable or non-primary evidence')
+    unledgered = []
+    for start, end, kind, token in values + absences:
+        if (start, end) not in covered:
+            unledgered.append(token)
+            pending.append(('unledgered absence claim: ' if kind == 'ABSENCE' else 'unledgered expected value: ')
+                           + token + ' (OE offset ' + str(start) + ')')
+    return dict(inaccurate=inaccurate, minor=minor, pending=pending, values=len(values),
+                absence_claims=len(absences), unledgered=unledgered)
 
 
 def context(root):
@@ -41,7 +195,7 @@ def start(root):
     entries = ctx['manifest']['inputs']
     def supplied(key):
         return any(entries.get(k, {}).get('state') == 'saved' for k in (key, 'source:' + key)) or (
-            key not in entries and local(root, Path('Evals/task_inputs') / SLOTS[key]).is_file())
+            key not in entries and local(root, Path('Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS') / SLOTS[key]).is_file())
     for key in ('prompt', 'task-details'):
         if not supplied(key):
             raise ValueError('Save the required ' + key + ' input before reviewing OEs')
@@ -196,6 +350,11 @@ def validate_record(root, content):
         format_defects.append('format:' + finding['defect'] + ': ' + finding['reason'])
     minor.extend(format_defects)
 
+    ledger = check_expected_values(record.get('expected_values'), raw, ids, known, reader, root, ctx)
+    inaccurate.extend(ledger['inaccurate'])
+    minor.extend(ledger['minor'])
+    pending.extend(ledger['pending'])
+
     path = validate_path(record.get('path_review'), record, reader, known, root, ctx)
     inaccurate.extend('path:' + item['code'] + ': ' + item['detail'] for item in path['inaccurate'])
     minor.extend('path:' + item['code'] + ': ' + item['detail'] for item in path['minor'])
@@ -218,6 +377,7 @@ def validate_record(root, content):
                 prompt_follow_up='REQUIRED' if path['upstream_blockers'] else 'NONE', path_checks=path,
                 missing=missing, inaccurate=inaccurate, minor=minor, format_defects=format_defects,
                 soft_defects=soft, unresolved=pending,
+                expected_values={k: ledger[k] for k in ('values', 'absence_claims', 'unledgered')},
                 oe_record_sha256=hashlib.sha256(content.encode()).hexdigest())
 
 

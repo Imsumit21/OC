@@ -1,0 +1,1784 @@
+{
+ "_meta": {
+  "generated_by": "Task_Authoring/references/universe_kb/_build/assemble_hazards_traps.py",
+  "clock": "2025-10-01T07:00:00Z",
+  "use": "Natural traps already in the data. Use them only as traps whose correct resolution is decidable from incorporated records; heuristic lists (C01, C02) must be read before use.",
+  "hand_written_rows_not_emitted": [
+   "D08",
+   "C04",
+   "X03"
+  ],
+  "universe": "synthcut",
+  "seed_bound": "2025-10-01T00:00:00Z",
+  "source_fingerprint": "35ef23cdb4f61763cdac79443c6bd19c1d93e766e3602a246575f8cdf199ba09",
+  "build": "per-universe-v1",
+  "source_manifest": "Evals/references/universes/synthcut/universe_manifest.json"
+ },
+ "kinds": {
+  "lookalike_people": [
+   {
+    "id": "P01",
+    "kind": "lookalike_people",
+    "title": "Shared first names across people and tokens (entities.json collisions)",
+    "count": 4,
+    "ids": [
+     "claire: ['Claire Morgan <claire.morgan@harmonygames.co> [persona claire_morgan]', 'Claire <github:PERSON_2360_GITHUB_USERNAME>']",
+     "marcus: ['Marcus Bennett <marcus.bennett@harmonygames.co> [persona marcus_bennett]', 'Marcus Lee <marcus.lee@harmonygames.co>', 'Marcus <trello:c48a210d5c5a4b59231c6873>']",
+     "martin: ['Martin Lewis <PERSON_0394_EMAIL>', 'Martin Walsh <martin.walsh@harmonygames.co> [persona martin_walsh]']",
+     "thomas: ['Thomas Baker <thomas.baker@harmonygames.co>', 'Thomas <thomas@harmonygames.co> [persona thomas]']"
+    ],
+    "risk": "An agent resolves 'Marcus'/'Claire'/'Thomas' to the wrong person or the wrong mailbox.",
+    "legitimate_use": "Ask for the person by role or by a record they authored; make the right one decidable by an exact email/id in an incorporated record.",
+    "source": "entities.json"
+   },
+   {
+    "id": "P02",
+    "kind": "lookalike_people",
+    "title": "Shared surnames (Bennett: Marcus/Oscar; Brooks: Oliver/Lauren — the second Brooks is named only on Feb 14 [normal-only]; other shared-surname groups are computed per universe)",
+    "count": 1,
+    "ids": [
+     "bennett: ['Marcus Bennett <marcus.bennett@harmonygames.co>', 'Oscar Bennett <oscar.bennett@harmonygames.co>']"
+    ],
+    "risk": "Surname-only references ('Bennett said…', 'Brooks's PR') resolve wrongly.",
+    "legitimate_use": "Use surname-only mentions in seeded human messages only when a second record disambiguates.",
+    "source": "computed"
+   },
+   {
+    "id": "P03",
+    "kind": "lookalike_people",
+    "title": "Three Marcuses: persona Marcus Bennett (mailbox marcus.bennett@harmonygames.co) vs Marcus Lee (marcus.lee@harmonygames.co; no mailbox) vs a mononym Trello member 'Marcus'",
+    "count": null,
+    "ids": [
+     "gmail mailbox marcus.bennett@harmonygames.co",
+     "slack EMPLOYEE_0002_SLACK_ID",
+     "contact marcus.lee@harmonygames.co",
+     "linear usr_b501f018a4c5319f",
+     "trello c48a210d5c5a4b59231c6873"
+    ],
+    "risk": "Mail or PR evidence attributed to 'Marcus' is really another person's; the mailbox is marcus.bennett@, and marcus@harmonygames.co does not exist.",
+    "legitimate_use": "A trap where the agent must notice the address, not the display name.",
+    "source": "Ask_Carriers+entities.json"
+   },
+   {
+    "id": "P04",
+    "kind": "lookalike_people",
+    "title": "Tokenised GitHub contributors whose real login only appears in the Slack GitHub-app mirror",
+    "count": 19,
+    "ids": [
+     "EMPLOYEE_0001_GITHUB_USERNAME -> {'employee_0001': 166}",
+     "EMPLOYEE_0025_GITHUB_USERNAME -> {'arthur.blake': 1567, '[PERSON_NAME_0212]': 32, '[USERNAME_67551]': 13}",
+     "PERSON_0003_GITHUB_USERNAME -> {'calvin.price': 354}",
+     "PERSON_5877_GITHUB_USERNAME -> {'owen.baker': 717, '[USERNAME_7671]': 6}",
+     "PERSON_0396_GITHUB_USERNAME -> {'MarcusBennett': 81, '[PERSON_NAME_9698]': 68, '[ACCOUNT_0407]': 1}",
+     "PERSON_5760_GITHUB_USERNAME -> {'douglas': 84, '[USERNAME_25611]': 1}",
+     "EMPLOYEE_0004_GITHUB_USERNAME -> {'samuel.turner': 241}",
+     "PERSON_2218_GITHUB_USERNAME -> {'person_6065': 195}",
+     "PERSON_0180_GITHUB_USERNAME -> {'brian.foster': 27, '[USERNAME_67601]': 3, '[PERSON_NAME_1901]': 1}",
+     "PERSON_3233_GITHUB_USERNAME -> {'person_3233': 31, '[USERNAME_0952]': 1}",
+     "EMPLOYEE_0012_GITHUB_USERNAME -> {'vincent.parker': 18}",
+     "EMPLOYEE_0032_GITHUB_USERNAME -> {'EMPLOYEE_0032-Harmony': 156, '[PERSON_NAME_1499]-Harmony': 27, 'EMPLOYEE_0032-[SOURCE_ORG_0001]': 2}"
+    ],
+    "risk": "Authorship questions answered from GitHub alone return tokens; mirrors reveal real logins (sometimes redacted again: '[PERSON_NAME_0212]').",
+    "legitimate_use": "Authorship chains that require joining a PR to its Slack mirror (record-level join).",
+    "source": "computed"
+   }
+  ],
+  "ticket_series_collision": [
+   {
+    "id": "N01",
+    "kind": "ticket_series_collision",
+    "title": "ENG-n and ZOM-n both exist for 521 numbers (every ZOM number has an unrelated ENG twin); ART/DES/EPI numbers overlap too",
+    "count": 521,
+    "ids": [
+     [
+      "ENG-11",
+      "Core Domino Matching Game Mechanic",
+      "ZOM-11",
+      "Create complete suite of hit impact VFX for common"
+     ],
+     [
+      "ENG-67",
+      "Animate Domino Movements",
+      "ZOM-67",
+      "Complete level endpoint"
+     ],
+     [
+      "ENG-131",
+      "New Algo Implementation",
+      "ZOM-131",
+      "Upgrade level editor to nest the color variants in"
+     ],
+     [
+      "ENG-184",
+      "Bomb tile now works but is too powerful - can we r",
+      "ZOM-184",
+      "11.Curling Iron (Maybe Drop the item)"
+     ],
+     [
+      "ENG-239",
+      "Transition Placeholder Screen",
+      "ZOM-239",
+      "Infinite Lifes Animation Implementation"
+     ],
+     [
+      "ENG-295",
+      "There is some artifact text on the bottom corner o",
+      "ZOM-295",
+      "Refill health and push monster back should reset A"
+     ],
+     [
+      "ENG-349",
+      "Tutorial Action Drives UI Clicks",
+      "ZOM-349",
+      "Add tool tips to the leaderboard and quests chests"
+     ],
+     [
+      "ENG-402",
+      "Chapter Transition Screen Blank. Can't Switch Chap",
+      "ZOM-402",
+      "FTUE Issues"
+     ],
+     [
+      "ENG-458",
+      "UI needs to be removed at end screens",
+      "ZOM-458",
+      "Quitting algo levels still makes the level change "
+     ],
+     [
+      "ENG-512",
+      "Levels Does not start properly, tile stuck in air,",
+      "ZOM-512",
+      "Fix the jiggly items in the board"
+     ]
+    ],
+    "risk": "A bare number ('ticket 412') or a mis-keyed PR (S01) lands on the wrong issue.",
+    "legitimate_use": "Use full keys in prompts; a trap that relies on a team-key mismatch must be decidable by title/assignee.",
+    "source": "computed"
+   },
+   {
+    "id": "N02",
+    "kind": "ticket_series_collision",
+    "title": "GameOfDominoes PR numbers overlap ENG issue numbers (#1458 vs ENG-1458) and Helpshift issue numbers (#118)",
+    "count": 1765,
+    "ids": [
+     "github:harmonygames-Games/GameOfDominoes#1458",
+     "linear:ENG-1458",
+     "gmail helpshift issue #118 00000543.json"
+    ],
+    "risk": "'#1458' is ambiguous across three systems.",
+    "legitimate_use": "Name the system with every number.",
+    "source": "computed"
+   },
+   {
+    "id": "N03",
+    "kind": "ticket_series_collision",
+    "title": "Branch keys without hyphen ('ENG1229QuestCollectChapterRewards') and redacted owners ('[PERSON_NAME_0067]/ENG-1622-1')",
+    "count": null,
+    "ids": [
+     [
+      "harmonygames-Games/GameOfDominoes#10",
+      "[PERSON_NAME_0099]/HAR-67"
+     ],
+     [
+      "harmonygames-Games/GameOfDominoes#100",
+      "[PERSON_NAME_0067]/characterselection"
+     ],
+     [
+      "harmonygames-Games/GameOfDominoes#1001",
+      "[PERSON_NAME_0067]/ENG-1301"
+     ],
+     [
+      "harmonygames-Games/GameOfDominoes#1002",
+      "[PERSON_NAME_0120]/tile-dozer-rewards"
+     ],
+     [
+      "harmonygames-Games/GameOfDominoes#1003",
+      "[PERSON_NAME_0120]/tile-dozer-localization"
+     ]
+    ],
+    "risk": "Regex joins on 'ENG-\\d+' miss hyphen-less branch keys.",
+    "legitimate_use": "Linear<->GitHub reconciliation through branch names is real friction (links_json is empty on all issues).",
+    "source": "computed"
+   }
+  ],
+  "near_duplicate_documents": [
+   {
+    "id": "D01",
+    "kind": "near_duplicate_documents",
+    "title": "Drive titles that normalise to the same name under different owners (129 groups; 344 groups overall)",
+    "count": 129,
+    "ids": [
+     {
+      "norm": "untitled document",
+      "owners": [
+       "Resource: -6481757892984311338",
+       "arthur.blake@harmonygames.co",
+       "brian.foster@harmonygames.co",
+       "calvin.price@harmonygames.co"
+      ],
+      "ids": [
+       "f_4a304a4e4c0bd1e12ed24b",
+       "f_b043f93d1a3e458e59e92f",
+       "f_07f6e883e92d4e56585814",
+       "f_2208e02f83f0d5a97c62c0"
+      ]
+     },
+     {
+      "norm": "untitled spreadsheet",
+      "owners": [
+       "Resource: -6481757892984311338",
+       "claire.morgan@harmonygames.co",
+       "julia.lawson@harmonygames.co",
+       "leonard.hayes@harmonygames.co"
+      ],
+      "ids": [
+       "f_db40b99d8ef9f1f7b462de",
+       "f_059e4a95b2c8ceeb41ca2c",
+       "f_52c1be31a485de2a675386",
+       "f_ad9e2616ca88521127f048"
+      ]
+     },
+     {
+      "norm": "auto correct preferences",
+      "owners": [
+       "leonard.hayes@harmonygames.co",
+       "oliver.brooks@harmonygames.co",
+       "robert@harmonygames.co",
+       "vincent.parker@harmonygames.co"
+      ],
+      "ids": [
+       "f_1e29a5baa90f9de5145fbd",
+       "f_660731e5a7ae6ee477b4af",
+       "f_8bc7262c01e57d78fe15cb",
+       "f_6759d90d284a0193d0130a"
+      ]
+     },
+     {
+      "norm": "i2loc domino adventures localization",
+      "owners": [
+       "arthur.blake@harmonygames.co",
+       "leonard.hayes@harmonygames.co",
+       "vincent.parker@harmonygames.co"
+      ],
+      "ids": [
+       "f_49c8e457a81c13ed635c28",
+       "f_a60398b3704ce3d0289a12",
+       "f_c1f4e5f9a017708416e8e7",
+       "f_2bf55d9d52a88adc7e2206"
+      ]
+     },
+     {
+      "norm": "index html",
+      "owners": [
+       "Resource: -6481757892984311338",
+       "calvin.price@harmonygames.co",
+       "marcus.bennett@harmonygames.co"
+      ],
+      "ids": [
+       "f_9c9fa6b7a8f9203ae50207",
+       "f_43a648451d44e9b5d4021f",
+       "f_c91c7acb62b30413b48cfa",
+       "f_f06ed9e3b20213e204a8d3"
+      ]
+     },
+     {
+      "norm": "alpha progression",
+      "owners": [
+       "Resource: -6481757892984311338",
+       "julia.lawson@harmonygames.co",
+       "thomas@harmonygames.co"
+      ],
+      "ids": [
+       "f_92fce023017de0de146ffe",
+       "f_d590a9bd87b56c4b094705",
+       "f_ee1d33abcbf59ed8e677a6"
+      ]
+     },
+     {
+      "norm": "readme",
+      "owners": [
+       "Resource: -6481757892984311338",
+       "marcus.bennett@harmonygames.co"
+      ],
+      "ids": [
+       "f_0aa63c8b0b2b0db7d9dba3",
+       "f_715336b05815ffbcdd6a10",
+       "f_f0c67ec4c2afd2a74ba3de",
+       "f_106d227d8761dee79d7d2c"
+      ]
+     },
+     {
+      "norm": "harmony games inc series seed preferred sto",
+      "owners": [
+       "arthur.blake@harmonygames.co",
+       "leonard.hayes@harmonygames.co"
+      ],
+      "ids": [
+       "f_95d91c8c1c1dcf7ea62075",
+       "f_966445655f653d26dc8537",
+       "f_a88d16b9d56fc334ec06db",
+       "f_db43a508b73390077f33c5"
+      ]
+     },
+     {
+      "norm": "harmony games inc right of first refusal an",
+      "owners": [
+       "arthur.blake@harmonygames.co",
+       "leonard.hayes@harmonygames.co"
+      ],
+      "ids": [
+       "f_1873ca10847a3d3a1b398c",
+       "f_52b1e7102e62f2c348cc5d",
+       "f_89940cacd34a0341efd8b5",
+       "f_94f82ff79a5d30bddcfac7"
+      ]
+     },
+     {
+      "norm": "hayes harmony games confidentiality intellect",
+      "owners": [
+       "Resource: 7240535625619857401",
+       "leonard.hayes@harmonygames.co"
+      ],
+      "ids": [
+       "f_2288983e8e002942252c86",
+       "f_7310ad1c0a6c39d2fd8a71",
+       "f_2e74ba06c5ee6340979360",
+       "f_36fecb5bcfb50e1ff7a232"
+      ]
+     },
+     {
+      "norm": "harmony games inc investors rights agreeme",
+      "owners": [
+       "arthur.blake@harmonygames.co",
+       "leonard.hayes@harmonygames.co"
+      ],
+      "ids": [
+       "f_26ebd72629102267a14b91",
+       "f_6e5e980d9827e16128c8b5",
+       "f_85e9d00132841d8ee2992e",
+       "f_b4a31e52cb00aad21acb65"
+      ]
+     },
+     {
+      "norm": "person name 0085 harmony games confidentiality intellectu",
+      "owners": [
+       "Resource: 7240535625619857401",
+       "leonard.hayes@harmonygames.co"
+      ],
+      "ids": [
+       "f_4652a1efb65fb71c3605d9",
+       "f_b711bc669653cfdfda873f",
+       "f_3b7024cb6e7ce9bc5997eb",
+       "f_bb0b2e0f2d103796f295da"
+      ]
+     }
+    ],
+    "risk": "Search returns the wrong owner's copy; persona may only see one of them.",
+    "legitimate_use": "A12-style decoy: same purpose, different issuer; the incorporated rule (owner/date/scope) decides.",
+    "source": "computed"
+   },
+   {
+    "id": "D02",
+    "kind": "near_duplicate_documents",
+    "title": "Docs with identical bodies under different ids/owners",
+    "count": 12,
+    "ids": [
+     [
+      "f_2887e38206f165c0712450",
+      "f_b6d910d181eb5824301e22",
+      "ES"
+     ],
+     [
+      "f_335060e5083cb2f8ab75db",
+      "f_4a900355b373fef0cbe6ed",
+      "export_a"
+     ],
+     [
+      "f_3c75e7f2b847efc55a5288",
+      "f_abcc0419fca0ed2b2ced9d",
+      "EN_and 241001"
+     ],
+     [
+      "f_449c3c155fd6963c4c63de",
+      "f_75bcde09523dbbb7a9f647",
+      "Harmony Games mnda copy"
+     ],
+     [
+      "f_5009f387f57f12b8746467",
+      "f_a4e419e36b5ae355e60406",
+      "Harmony Games Statement of Incorporator"
+     ],
+     [
+      "f_5993d78e77e359f3a7b5a2",
+      "f_c304dd4a5f399d2cbcfd11",
+      "f_d690045a2f2bf47108ae99",
+      "Harmony Games Inc Disclosure Schedule(1)"
+     ],
+     [
+      "f_6b9b14f9cb113d0df914ee",
+      "f_b20a4ae43154e3c98a53c4",
+      "export"
+     ],
+     [
+      "f_793bb08446c8e330dec825",
+      "f_aafe8001b750afecce13a7",
+      "troubleshooting-at-2023-07-14T10_45_35.2"
+     ],
+     [
+      "f_87e228ffa8dd1e49773d88",
+      "f_f0e24075b3a95210843ef5",
+      "Hayes - Harmony Games Confidentiality, I"
+     ],
+     [
+      "f_8d31bf9bab68eff56a6811",
+      "f_fd45cd772e70e6e1b89dbf",
+      "EN_iOS 241015_2"
+     ],
+     [
+      "f_9e0e236d8188eb123fee25",
+      "f_afa17ba01d23e48b1a322c",
+      "intro-at-2023-07-14T10_45_35.127Z-pinned"
+     ],
+     [
+      "f_b0e408e1d051cec9dc7183",
+      "f_b757380ff1e896371e4a50",
+      "Harmony Games Inc. - Amended and Restate"
+     ]
+    ],
+    "risk": "Two ids, one content: citing either may be judged wrong if the rubric names one.",
+    "legitimate_use": "Pick the persona-readable copy explicitly.",
+    "source": "computed"
+   },
+   {
+    "id": "D03",
+    "kind": "near_duplicate_documents",
+    "title": "Slide decks that share a title family (Weekly Update, publisher pitch decks, BoD decks)",
+    "count": 5,
+    "ids": [
+     [
+      "f_1cc9c0f1ec2588eb1ef8ef",
+      "f_677ce0c4b9d6cf7e1ba8a1",
+      "f_86aec9dd2ce74a445e987f",
+      "f_88095c29cdcdb8afd00f49",
+      "f_9fa74dc076e3dccd8a3c2f",
+      "Netflix-Harmony Games - Jan 2025 v2"
+     ],
+     [
+      "f_3fefe030e44b3738ba0966",
+      "f_9da2d3e1681acbde245e63",
+      "f_c45705549df075eee586d4",
+      "f_d957ed0b9cefdea3736714",
+      "Copy of Harmony Games BoD Jul 17 2024"
+     ],
+     [
+      "f_5b528a4dc951601e3f9caf",
+      "f_bdc12b9d9100e26b8031a4",
+      "f_d062f702452abe59f4c271",
+      "Untitled presentation(1)"
+     ],
+     [
+      "f_5e75e7077df7a64eb6cf51",
+      "f_abf562aa02139a8690a250",
+      "f_ddaa096a0371876295010f",
+      "Harmony Games Alpha+ Update"
+     ],
+     [
+      "f_772a42421f3d589bf0f7a3",
+      "f_7d37c41b30cf7797bd0b6d",
+      "f_995453726682ed7d87e5c8",
+      "f_fc207e9c92ab7d3494eab8",
+      "Harmony Games February Update"
+     ]
+    ],
+    "risk": "Eleven 29-page publisher decks and many 'Weekly Update' decks look alike.",
+    "legitimate_use": "Per-deck differences (partner name, date) are legitimate evidence; define which deck governs.",
+    "source": "computed"
+   },
+   {
+    "id": "D04",
+    "kind": "near_duplicate_documents",
+    "title": "Spreadsheets whose titles normalise to the same name (P&L versions, investor lists, KPI exports)",
+    "count": 26,
+    "ids": [
+     {
+      "norm": "dda simulator",
+      "ids": [
+       "f_045a7dfe82031d129f64aa",
+       "f_8bdb3c6c7742bb481169a0"
+      ],
+      "owners": [
+       "vincent.parker@harmonygames.co"
+      ],
+      "titles": [
+       "Copy of DDA Simulator",
+       "DDA Simulator"
+      ]
+     },
+     {
+      "norm": "untitled spreadsheet",
+      "ids": [
+       "f_059e4a95b2c8ceeb41ca2c",
+       "f_152d98e00165591ac93a01",
+       "f_2e8c259648049e92df981b",
+       "f_356cae50ca6dee889ce0f7",
+       "f_39c02ae97a19f10f5d1655"
+      ],
+      "owners": [
+       "Resource: -6481757892984311338",
+       "claire.morgan@harmonygames.co",
+       "julia.lawson@harmonygames.co",
+       "leonard.hayes@harmonygames.co"
+      ],
+      "titles": [
+       "Untitled spreadsheet",
+       "Untitled spreadsheet(1)",
+       "Untitled spreadsheet(2)",
+       "Untitled spreadsheet(3)"
+      ]
+     },
+     {
+      "norm": "complete translation table",
+      "ids": [
+       "f_0ee3d59d5c4b05d7a956cb",
+       "f_6a94c55570549de51d521a"
+      ],
+      "owners": [
+       "samuel.turner@harmonygames.co"
+      ],
+      "titles": [
+       "Complete_Translation_Table",
+       "Complete_Translation_Table(1)"
+      ]
+     },
+     {
+      "norm": "baklava issues",
+      "ids": [
+       "f_10cb88ad83c2067a7a6293",
+       "f_676a9d5f8a1597e5ec07db"
+      ],
+      "owners": [
+       "vincent.parker@harmonygames.co"
+      ],
+      "titles": [
+       "Baklava Issues",
+       "Baklava Issues(1)"
+      ]
+     },
+     {
+      "norm": "pca data",
+      "ids": [
+       "f_175c2c803570f69794d551",
+       "f_b7b51e939fd842e4f59948",
+       "f_f40db870465055578e4ae2"
+      ],
+      "owners": [
+       "arthur.blake@harmonygames.co"
+      ],
+      "titles": [
+       "pca_data",
+       "pca_data(1)",
+       "pca_data(2)"
+      ]
+     },
+     {
+      "norm": "cardpackssimulation",
+      "ids": [
+       "f_27395f35cbad79a75dc2fe",
+       "f_974b5e095e4aa39bb6602c"
+      ],
+      "owners": [
+       "robert@harmonygames.co",
+       "vincent.parker@harmonygames.co"
+      ],
+      "titles": [
+       "CardPacksSimulation"
+      ]
+     },
+     {
+      "norm": "harmony games p l and forecast",
+      "ids": [
+       "f_29467f8365d566d7bb2e76",
+       "f_2cb4e217609f00a8ecf416",
+       "f_44ea2c36d71239ae75cc84",
+       "f_779b6777b8ffc4acecc2d1",
+       "f_846ac36bcfd5d2fb5be232"
+      ],
+      "owners": [
+       "Resource: 7240535625619857401"
+      ],
+      "titles": [
+       "Harmony Games P&L and forecast - Apr 2024",
+       "Harmony Games P&L and forecast - Apr 2025",
+       "Harmony Games P&L and forecast - April 2024",
+       "Harmony Games P&L and forecast - Jan 2024"
+      ]
+     },
+     {
+      "norm": "concept testing god midjourney prompts",
+      "ids": [
+       "f_29e5d35ccba5c4b4a1200d",
+       "f_59aedc5aaebe2c5b9e5a6e",
+       "f_97ed48e20fbb4e426f3589",
+       "f_a8986c9c9d9df772a6696a"
+      ],
+      "owners": [
+       "Resource: -6481757892984311338",
+       "arthur.blake@harmonygames.co"
+      ],
+      "titles": [
+       "Concept Testing - GoD Midjourney Prompts",
+       "Copy of Concept Testing - GoD Midjourney Prompts",
+       "Copy of Concept Testing - GoD Midjourney Prompts(1)",
+       "Copy of Concept Testing - GoD Midjourney Prompts(2)"
+      ]
+     },
+     {
+      "norm": "harmony games invoice template",
+      "ids": [
+       "f_2a7b8d14de31b77d165051",
+       "f_3302f30e1d3f5c3d0a90a8"
+      ],
+      "owners": [
+       "Resource: 7240535625619857401",
+       "arthur.blake@harmonygames.co"
+      ],
+      "titles": [
+       "Harmony Games Invoice Template"
+      ]
+     },
+     {
+      "norm": "i2loc domino adventures localization",
+      "ids": [
+       "f_2bf55d9d52a88adc7e2206",
+       "f_49c8e457a81c13ed635c28",
+       "f_a60398b3704ce3d0289a12",
+       "f_a80395e57c5a0fc258a087",
+       "f_c1f4e5f9a017708416e8e7"
+      ],
+      "owners": [
+       "arthur.blake@harmonygames.co",
+       "leonard.hayes@harmonygames.co",
+       "vincent.parker@harmonygames.co"
+      ],
+      "titles": [
+       "Copy of I2Loc Domino Adventures Localization",
+       "Copy of I2Loc Domino Adventures Localization - May",
+       "Copy of I2Loc Domino Adventures Localization - May(1)",
+       "I2Loc Domino Adventures Localization"
+      ]
+     },
+     {
+      "norm": "retention by device model 2024 01 28t18 59 31",
+      "ids": [
+       "f_2e4c74de45579f7c40f27b",
+       "f_f9b828e018144d07b05d94"
+      ],
+      "owners": [
+       "leonard.hayes@harmonygames.co"
+      ],
+      "titles": [
+       "retention_by_device_model_2024-01-28T18_59_31.",
+       "retention_by_device_model_2024-01-28T18_59_31.(1)"
+      ]
+     },
+     {
+      "norm": "optimized statswfavors first10levels",
+      "ids": [
+       "f_3a8a2c64a46af6eabe9280",
+       "f_44a5930f9bfc4694b990aa",
+       "f_49dea8b3230e8df62f85c7"
+      ],
+      "owners": [
+       "leonard.hayes@harmonygames.co"
+      ],
+      "titles": [
+       "Optimized_StatsWFavors_First10Levels",
+       "Optimized_StatsWFavors_First10Levels(1)",
+       "Optimized_StatsWFavors_First10Levels(2)"
+      ]
+     }
+    ],
+    "risk": "Agent reads the wrong version or owner.",
+    "legitimate_use": "Stale-vs-current trap: same title family, the governing one picked by an incorporated rule (latest closed month, owner).",
+    "source": "computed"
+   }
+  ],
+  "stale_vs_current": [
+   {
+    "id": "D05",
+    "kind": "stale_vs_current",
+    "title": "Drive title families with version markers (v1/v2/final/draft/copy of/updated)",
+    "count": 32,
+    "ids": [
+     {
+      "names": [
+       "Copy of Untitled document.docx",
+       "Untitled document(1).docx",
+       "Untitled document(2).docx",
+       "Untitled document(3).docx"
+      ],
+      "ids": [
+       "f_4a304a4e4c0bd1e12ed24b",
+       "f_b043f93d1a3e458e59e92f",
+       "f_07f6e883e92d4e56585814",
+       "f_2208e02f83f0d5a97c62c0"
+      ],
+      "modified": [
+       "2023-10-11T00:03:48Z",
+       "2024-08-05T16:34:43Z",
+       "2024-08-05T19:24:23Z",
+       "2024-08-05T19:24:23Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of I2Loc Domino Adventures Localization - May(1).xlsx",
+       "Copy of I2Loc Domino Adventures Localization - May.xlsx",
+       "Copy of I2Loc Domino Adventures Localization.xlsx",
+       "I2Loc Domino Adventures Localization(1).xlsx"
+      ],
+      "ids": [
+       "f_49c8e457a81c13ed635c28",
+       "f_a60398b3704ce3d0289a12",
+       "f_c1f4e5f9a017708416e8e7",
+       "f_2bf55d9d52a88adc7e2206"
+      ],
+      "modified": [
+       "2024-05-14T18:17:24Z",
+       "2024-05-14T18:17:24Z",
+       "2024-05-14T18:17:24Z",
+       "2024-10-14T16:36:47Z"
+      ]
+     },
+     {
+      "names": [
+       "Alpha Progression.xlsx",
+       "Copy of Alpha Progression.xlsx"
+      ],
+      "ids": [
+       "f_92fce023017de0de146ffe",
+       "f_d590a9bd87b56c4b094705",
+       "f_ee1d33abcbf59ed8e677a6"
+      ],
+      "modified": [
+       "2023-08-04T17:25:49Z",
+       "2024-10-02T04:43:13Z",
+       "2025-04-22T18:51:19Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of Harmony Games BoD Jul 17 2024.presentation.pdf",
+       "Copy of Harmony Games BoD Oct 17 2024.presentation.pdf",
+       "Harmony Games BoD Jul 17 2024.presentation.pdf",
+       "Harmony Games BoD Oct 17 2024.presentation.pdf"
+      ],
+      "ids": [
+       "f_b7b661ebada591f034b160",
+       "f_25fefd440f8a15a2266e0a",
+       "f_111768baae37abedb52408",
+       "f_43c91e5a6e8ec5adce6acf"
+      ],
+      "modified": [
+       "2024-07-17T02:19:13Z",
+       "2024-07-30T17:52:58Z",
+       "2024-10-12T21:55:22Z",
+       "2024-10-17T05:41:56Z"
+      ]
+     },
+     {
+      "names": [
+       "Concept Testing - GoD Midjourney Prompts.xlsx",
+       "Copy of Concept Testing - GoD Midjourney Prompts(1).xlsx",
+       "Copy of Concept Testing - GoD Midjourney Prompts(2).xlsx",
+       "Copy of Concept Testing - GoD Midjourney Prompts.xlsx"
+      ],
+      "ids": [
+       "f_29e5d35ccba5c4b4a1200d",
+       "f_97ed48e20fbb4e426f3589",
+       "f_a8986c9c9d9df772a6696a",
+       "f_59aedc5aaebe2c5b9e5a6e"
+      ],
+      "modified": [
+       "2023-06-06T14:45:58Z",
+       "2023-06-06T14:45:58Z",
+       "2023-06-06T14:45:58Z",
+       "2023-10-06T06:14:54Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of Harmony Games BoD Jul 17 2024",
+       "Copy of Harmony Games BoD Oct 17 2024",
+       "Harmony Games BoD Jul 17 2024",
+       "Harmony Games BoD Oct 17 2024"
+      ],
+      "ids": [
+       "f_c45705549df075eee586d4",
+       "f_3fefe030e44b3738ba0966",
+       "f_9da2d3e1681acbde245e63",
+       "f_d957ed0b9cefdea3736714"
+      ],
+      "modified": [
+       "2024-07-17T02:19:13Z",
+       "2024-07-30T17:52:58Z",
+       "2024-10-12T21:55:22Z",
+       "2024-10-17T05:41:56Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of Loc files(1).xlsx",
+       "Copy of Loc files.xlsx",
+       "Loc files.xlsx"
+      ],
+      "ids": [
+       "f_b82d4d41386fe0a90da5bd",
+       "f_45d6d1f99cd275c7b56986",
+       "f_bd9be34bfd655b3f935972"
+      ],
+      "modified": [
+       "2025-04-02T01:41:59Z",
+       "2025-04-09T04:31:32Z",
+       "2025-04-09T04:31:32Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of Harmony Games v2.0.presentation.pdf",
+       "Harmony Games Presentation",
+       "Harmony Games(1).presentation.pdf"
+      ],
+      "ids": [
+       "f_8632a9715a9433070418bf",
+       "f_f1e07358c68ecea38ebf22",
+       "f_5cbd109262d2d9b1348fd6"
+      ],
+      "modified": [
+       "2023-04-12T19:07:36Z",
+       "2023-07-27T15:21:25Z",
+       "2023-07-31T20:53:13Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of Harmony Games v2.0",
+       "Harmony Games(1)"
+      ],
+      "ids": [
+       "f_4721a42841c5d00c6ca6a2",
+       "f_0bd24290a578ac43b94774"
+      ],
+      "modified": [
+       "2023-04-12T19:07:36Z",
+       "2023-07-31T20:53:13Z"
+      ]
+     },
+     {
+      "names": [
+       "4X Game Proposal_ Crownfall.presentation.pdf",
+       "Copy of 4X Game Proposal_ Crownfall.presentation.pdf"
+      ],
+      "ids": [
+       "f_1ede64d16e9020d53cdae1",
+       "f_2f81eca43e86df3d7dbc18"
+      ],
+      "modified": [
+       "2025-05-05T15:00:37Z",
+       "2025-05-09T15:42:21Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of QA Checklist For Every Release.docx",
+       "QA Checklist For Every Release.docx"
+      ],
+      "ids": [
+       "f_4425abc665c6aba6256234",
+       "f_323ec75614900f3906ef85"
+      ],
+      "modified": [
+       "2024-04-15T16:45:11Z",
+       "2024-04-17T17:02:44Z"
+      ]
+     },
+     {
+      "names": [
+       "Copy of Level Data.xlsx",
+       "Level Data.xlsx"
+      ],
+      "ids": [
+       "f_3d2faf0441c75fc7634b18",
+       "f_fba97759b3b9b85a7aa896"
+      ],
+      "modified": [
+       "2024-08-21T18:48:07Z",
+       "2025-03-24T20:35:26Z"
+      ]
+     }
+    ],
+    "risk": "'final' is not the latest; latest is not authoritative.",
+    "legitimate_use": "Supersession traps: make the winning version decidable by an incorporated rule, never by the label (Hardness_Mastery §2.6 #4).",
+    "source": "computed"
+   },
+   {
+    "id": "D06",
+    "kind": "stale_vs_current",
+    "title": "Confluence pages with version history and edit messages (old bodies readable via get_page_version / diff)",
+    "count": 24,
+    "ids": [
+     {
+      "page": "page_eng_home",
+      "versions": 2,
+      "messages": [
+       "Imported"
+      ]
+     },
+     {
+      "page": "page_arch_overview",
+      "versions": 3,
+      "messages": [
+       "Imported",
+       "Reviewed against the stack/ports/counts pass - nothing to align on this page."
+      ]
+     },
+     {
+      "page": "page_aws_infra",
+      "versions": 2,
+      "messages": [
+       "Imported",
+       "Align stack, ports, and counts across live wiki pages"
+      ]
+     },
+     {
+      "page": "page_nakama_setup",
+      "versions": 2,
+      "messages": [
+       "Imported"
+      ]
+     },
+     {
+      "page": "page_analytics_integration",
+      "versions": 2,
+      "messages": [
+       "Imported",
+       "Reviewed against the stack/ledger/session-stats pass - nothing to align on this page."
+      ]
+     },
+     {
+      "page": "page_quest_postmortem",
+      "versions": 2,
+      "messages": [
+       "Initial design writeup of the quest system (design-only, pre-incident).",
+       "Add postmortem for the Nov 15 2024 quest outage (ENG-1892); timeline + lessons."
+      ]
+     },
+     {
+      "page": "page_qa_runbook",
+      "versions": 2,
+      "messages": [
+       "Imported"
+      ]
+     },
+     {
+      "page": "page_backend_services",
+      "versions": 2,
+      "messages": [
+       "Imported",
+       "Align stack, ports, and counts across live wiki pages"
+      ]
+     },
+     {
+      "page": "page_local_dev_setup",
+      "versions": 3,
+      "messages": [
+       "Imported",
+       "Reviewed against the stack/ports/counts pass - nothing to align on this page."
+      ]
+     },
+     {
+      "page": "page_api_reference",
+      "versions": 4,
+      "messages": [
+       "Clarify Nakama session auth",
+       "Add liveops events endpoint"
+      ]
+     },
+     {
+      "page": "page_cicd_pipeline",
+      "versions": 2,
+      "messages": [
+       "Imported"
+      ]
+     },
+     {
+      "page": "page_observability",
+      "versions": 2,
+      "messages": [
+       "Imported"
+      ]
+     }
+    ],
+    "risk": "An agent quoting v1 of a page reports a superseded fact.",
+    "legitimate_use": "Effective-date regimes: the version in force at a record's date decides.",
+    "source": "computed"
+   }
+  ],
+  "superseded_claims": [
+   {
+    "id": "C01",
+    "kind": "superseded_claims",
+    "title": "Thread replies that correct or retract (marker phrases; heuristic candidates from 1352 marker hits, 100 strong markers since 2024)",
+    "count": 100,
+    "ids": [
+     {
+      "thread": "slack:C04UEQVDVB7:1733190395.838719",
+      "reply": "1733190455.167619",
+      "marker": "my bad",
+      "parent": "I don’t want to exclude [PERSON_NAME_0036] from these convos btw, better to talk in the ot",
+      "reply_text": "yea, my bad"
+     },
+     {
+      "thread": "slack:C04UTBZL6AX:1708305311.860619",
+      "reply": "1708308395.088839",
+      "marker": "my bad",
+      "parent": "<@EMPLOYEE_0016_SLACK_ID> do you think that’s the right next move? Make conveyor belt grea",
+      "reply_text": "but yeah my bad"
+     },
+     {
+      "thread": "slack:C04UTBZL6AX:1708380728.314289",
+      "reply": "1708390221.341909",
+      "marker": "my bad",
+      "parent": "0.1.53 launched Saturday\n0.1.55 launches Today ([PERSON_NAME_0029]'s change)",
+      "reply_text": "Nah I overreacted without doing verification. I was under the assumption Blake was gonna P"
+     },
+     {
+      "thread": "slack:C04UTBZL6AX:1708966910.284449",
+      "reply": "1708968586.843689",
+      "marker": "my bad",
+      "parent": "<@EMPLOYEE_0016_SLACK_ID> can you help with slide 7 to highlights the drops and the planne",
+      "reply_text": "sorry, my bad"
+     },
+     {
+      "thread": "slack:C04V7N09LE7:1706306548.575519",
+      "reply": "1706306916.902599",
+      "marker": "that's wrong",
+      "parent": "Btw I think Le qi should really mean \"happy jade\" not quite sure why it's music jade",
+      "reply_text": "And finally, I know why the translation is [USERNAME_31441]. And I'm 100% that's wrong"
+     },
+     {
+      "thread": "slack:C050WGU41HR:1712681221.200919",
+      "reply": "1712681984.858509",
+      "marker": "revert that",
+      "parent": "ok, I have a plan in mind, a plan that might change as I explore a bit more the code.\nI wa",
+      "reply_text": "And we can't revert it because we decided we shouldn't revert that action or maybe we are "
+     },
+     {
+      "thread": "slack:C050WGU41HR:1712779625.625329",
+      "reply": "1712779795.956869",
+      "marker": "my bad",
+      "parent": "<@EMPLOYEE_0028_SLACK_ID> <@EMPLOYEE_0025_SLACK_ID> About the issue that <@EMPLOYEE_0005_S",
+      "reply_text": "My bad!"
+     },
+     {
+      "thread": "slack:C050WGU41HR:1713552012.158759",
+      "reply": "1713554594.342939",
+      "marker": "my bad",
+      "parent": "<@EMPLOYEE_0021_SLACK_ID> <@EMPLOYEE_0006_SLACK_ID> <@EMPLOYEE_0004_SLACK_ID> is linear up",
+      "reply_text": "My bad.. i had most of them in To do haha"
+     },
+     {
+      "thread": "slack:C050WGU41HR:1713976161.597449",
+      "reply": "1713976192.281199",
+      "marker": "correction",
+      "parent": "",
+      "reply_text": "Thank you for the fast correction, Samuel :[USERNAME_23609]:"
+     },
+     {
+      "thread": "slack:C050WGU41HR:1715718354.737389",
+      "reply": "1715719588.566679",
+      "marker": "i was wrong",
+      "parent": "Are the boosts on the bottom supposed to be buttons ? I am using the rewind one as a butto",
+      "reply_text": "I reverted my changes. I was wrong and changed the boost on the bottom bar."
+     },
+     {
+      "thread": "slack:C050WGU41HR:1718343811.940139",
+      "reply": "1718347033.982969",
+      "marker": "correction",
+      "parent": "also, I noticed the prefab for the bundle tile has a different shade <@EMPLOYEE_0009_SLACK",
+      "reply_text": "The tile it's being affected by the color correction that tints the rest of the tile. Spec"
+     },
+     {
+      "thread": "slack:C050WGU41HR:1718566672.211619",
+      "reply": "1718566946.904599",
+      "marker": "my bad",
+      "parent": "<@EMPLOYEE_0021_SLACK_ID> how hard would it be to have Julius skill be \"Increase vanishing",
+      "reply_text": "Ah  yeah my bad "
+     }
+    ],
+    "risk": "An agent that reads only the parent reports the withdrawn claim.",
+    "legitimate_use": "A14 behavioural trap: put the correction in a reply (most runs never open replies). Verify each candidate by reading the thread; markers are noisy.",
+    "source": "computed"
+   },
+   {
+    "id": "C02",
+    "kind": "superseded_claims",
+    "title": "Thread parent states a resolution ('done', 'fixed', 'deployed') and another person replies it still fails",
+    "count": 20,
+    "ids": [
+     {
+      "thread": "slack:C04UTBZL6AX:1687447802.692389",
+      "reply": "1687455881.102919",
+      "parent": "This week after Libra was done felt part time tbh. My daughter got sick and I had to spend",
+      "reply_text": "I can say it's not linear"
+     },
+     {
+      "thread": "slack:C04UTBZL6AX:1688136192.667239",
+      "reply": "1688136842.371789",
+      "parent": "My phone is about to die. You guys need to pay $200 each with the proof of purchase for yo",
+      "reply_text": "Hmm, but when I transfer it's not ach"
+     },
+     {
+      "thread": "slack:C05KNDCHAAG:1700252426.511299",
+      "reply": "1700252697.075629",
+      "parent": "<@EMPLOYEE_0002_SLACK_ID> your new lighting for mini game 1 is done but didn't make it int",
+      "reply_text": "Just few issues with the animation. That I asked <@EMPLOYEE_0028_SLACK_ID> but it's not re"
+     },
+     {
+      "thread": "slack:C05V5FNLB9V:1711228225.237819",
+      "reply": "1711384333.657699",
+      "parent": "Summarizing what’s verified and what needs to fixed\n\n*Verified*\n• loading screen progress ",
+      "reply_text": "<@EMPLOYEE_0038_SLACK_ID> , <@EMPLOYEE_0016_SLACK_ID> It's not a bug... this SFX is trigge"
+     },
+     {
+      "thread": "slack:C05UQKDLGAU:1722291978.094099",
+      "reply": "1722373162.936749",
+      "parent": "This is the current implementation for Bundle Tile, fixed text display and added the bundl",
+      "reply_text": "<@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0006_SLACK_ID> perhaps it's the new camera issue we h"
+     },
+     {
+      "thread": "slack:C05UQKDLGAU:1722291978.094099",
+      "reply": "1722373354.306389",
+      "parent": "This is the current implementation for Bundle Tile, fixed text display and added the bundl",
+      "reply_text": "<@EMPLOYEE_0006_SLACK_ID> i guess the helix thing its not so much visibile when the bundle"
+     },
+     {
+      "thread": "slack:C05V5FNLB9V:1726031911.836379",
+      "reply": "1726032338.388309",
+      "parent": "I’m running out of battery on my cell phone too but want to summarize what we need to fix ",
+      "reply_text": "I meant the new rewards\n\n<https://docs.google.com/spreadsheets/d/1D3j_CpC5Y2K3l3W_VIZQ_mjr"
+     },
+     {
+      "thread": "slack:C05V5FNLB9V:1726179755.089479",
+      "reply": "1726180815.281309",
+      "parent": "So I am playing one of the later android builds, and I think some of these bugs are probab",
+      "reply_text": "I think number one should be already fixed.\n\nAbout number two, I don’t think it is fixed d"
+     },
+     {
+      "thread": "slack:C07KGNR5M29:1729181227.836659",
+      "reply": "1729182491.178149",
+      "parent": "What do you guys think about banning Figma importer? The textures/assets in our project ar",
+      "reply_text": "i used it during tile dozer screens import.\ni see many issues w this guy. the layout it pr"
+     },
+     {
+      "thread": "slack:C07SXEMDA6T:1729778123.761289",
+      "reply": "1729779543.138359",
+      "parent": "`I am not sure if it's interval based or not but the reconnect pop up appears too late whe",
+      "reply_text": "6. It's not wrong but sometimes upgrading the character can be delayed and the actual upgr"
+     },
+     {
+      "thread": "slack:C05V5FNLB9V:1732565205.063189",
+      "reply": "1732569270.200779",
+      "parent": "<@EMPLOYEE_0003_SLACK_ID> unfortunately not fixed",
+      "reply_text": "hope it works\nI'll return to this tomorrow if it doesnt work, need to have progress on ach"
+     },
+     {
+      "thread": "slack:C07F4G84XV4:1734707612.132369",
+      "reply": "1734737831.063269",
+      "parent": "thanks <@EMPLOYEE_0031_SLACK_ID> it's done on client already",
+      "reply_text": "I restarted the app but still the same exact list for me. "
+     }
+    ],
+    "risk": "Parent says fixed; replies say not.",
+    "legitimate_use": "Strongest natural precedent for 'conclusion overturned in replies' (e.g. mpdm 1750275343.826629 'Deployment done…' -> 'still not working').",
+    "source": "computed"
+   },
+   {
+    "id": "C03",
+    "kind": "superseded_claims",
+    "title": "Struck-through in-place retractions (~text~)",
+    "count": 147,
+    "ids": [
+     "slack:C04UEQVDVB7:1683248435.748409",
+     "slack:C04UEQVDVB7:1684260840.537739",
+     "slack:C04UEQVDVB7:1698436632.335299",
+     "slack:C04UM32UWKD:1684882432.345459",
+     "slack:C04UM32UWKD:1685042781.204509",
+     "slack:C04UTBZL6AX:1693350796.037809",
+     "slack:C04UTBZL6AX:1693543058.646359",
+     "slack:C04UTBZL6AX:1696487713.893139",
+     "slack:C04UTBZL6AX:1696487724.527469",
+     "slack:C04UTBZL6AX:1699732596.669629",
+     "slack:C04UTBZL6AX:1705179714.980229",
+     "slack:C04UTBZL6AX:1705807603.353539"
+    ],
+    "risk": "Struck text read as a live statement.",
+    "legitimate_use": "Seeded supersession inside one message; low realism risk because the base has 147.",
+    "source": "computed"
+   }
+  ],
+  "bot_noise": [
+   {
+    "id": "B01",
+    "kind": "bot_noise",
+    "title": "Slack bot volume by integration",
+    "count": 72497,
+    "ids": {
+     "jenkins": 24802,
+     "qa_monkey_bot": 14690,
+     "github_app": 11653,
+     "jenkins_buildscript": 8217,
+     "standup_bot": 5412,
+     "harmony_gpt_bot": 2851,
+     "linear_app": 2089,
+     "zapier_helpshift": 1046,
+     "github_app_legacy_text": 782,
+     "google_drive_app": 722,
+     "slack_connect_notice": 83,
+     "giphy": 78,
+     "other_bot:?": 20,
+     "cursor_app": 19,
+     "metabase_app": 13
+    },
+    "risk": "Bot messages swamp channel histories and searches (#builds ~38K, #[ORG]-monkey ~15K, #engineering-bots ~10K).",
+    "legitimate_use": "Volume that must be filtered, not read; never place a load-bearing fact in a bot-shaped message unless the integration's exact shape is copied (integrations.json).",
+    "source": "computed"
+   },
+   {
+    "id": "B02",
+    "kind": "bot_noise",
+    "title": "Gmail automated senders (Firebase App Distribution svc_0107 ~44K, TestFlight/App Store Connect svc_4131, Crashlytics svc_2398, Linear svc_0251, Helpshift svc_0143, GitHub svc_0248, Slack svc_0240, Meta svc_0521, SVB svc_4249)",
+    "count": 63452,
+    "ids": {
+     "svc_0107_email": 44109,
+     "svc_4131_email": 5555,
+     "svc_2398_email": 3351,
+     "svc_0251_email": 1278,
+     "svc_0248_email": 966,
+     "svc_0260_email": 942,
+     "svc_4249_email": 766,
+     "svc_0521_email": 639,
+     "svc_0240_email": 552,
+     "svc_0143_email": 412,
+     "svc_0530_email": 412,
+     "person_3555_email": 243,
+     "svc_0178_email": 193,
+     "svc_0065_email": 184,
+     "svc_1004_email": 183
+    },
+    "risk": "Inbox searches return notification floods; tokenised senders hide the service name.",
+    "legitimate_use": "Decode senders via subject patterns (conventions.json gmail.subject_patterns).",
+    "source": "computed"
+   },
+   {
+    "id": "B03",
+    "kind": "bot_noise",
+    "title": "GitHub bot activity: CodeRabbit (PERSON_6026, Organization) 266 PR comments, 833 review comments, 182 reviews; linear[bot] 328 PR comments",
+    "count": null,
+    "ids": [
+     "github:harmonygames-Games/GameOfDominoes#1867#c_1",
+     "github:harmonygames-Games/auth-game-backend#2#c_1",
+     "github:harmonygames-Games/game-of-dominoes-backend#79#c_1",
+     "github:harmonygames-Games/GameOfDominoes#1000#c_1",
+     "github:harmonygames-Games/GameOfDominoes#1001#c_1",
+     "github:harmonygames-Games/GameOfDominoes#1003#c_1"
+    ],
+    "risk": "Bot reviews look like approvals; bot comments dominate PR conversation.",
+    "legitimate_use": "Criteria about human review must exclude bots explicitly.",
+    "source": "computed"
+   },
+   {
+    "id": "B04",
+    "kind": "bot_noise",
+    "title": "Jenkins in #builds: 24802 job messages + 8217 build-script messages; statuses {'started': 11173, 'success': 10493, 'unknown': 1646, 'failure': 919, 'other': 571}",
+    "count": null,
+    "ids": [
+     "C05433XK267/1690645565.203229",
+     "C05433XK267/1690647273.330659",
+     "C05433XK267/1690647661.756459",
+     "C05433XK267/1690648581.874779",
+     "C05433XK267/1690650264.837659"
+    ],
+    "risk": "'Unknown after N' and 'Started' rows look like failures/successes.",
+    "legitimate_use": "Build-history questions need the status vocabulary defined.",
+    "source": "computed"
+   },
+   {
+    "id": "B05",
+    "kind": "bot_noise",
+    "title": "Helpshift issues via Zapier in #issuefeed often have empty payloads ('#ZapierBot: Issue Update has arrived. author: ; Message:')",
+    "count": 1046,
+    "ids": [
+     "C083AEP6NBA/1732676141.928539",
+     "C083AEP6NBA/1732676904.534489",
+     "C083AEP6NBA/1732676959.556209",
+     "C083AEP6NBA/1732676972.612119",
+     "C083AEP6NBA/1732676977.996109"
+    ],
+    "risk": "Counts of 'issues' from Slack differ from Helpshift mails.",
+    "legitimate_use": "Use Gmail Helpshift mails as the issue-of-record; Slack is noise.",
+    "source": "computed"
+   }
+  ],
+  "redaction": [
+   {
+    "id": "X01",
+    "kind": "redaction",
+    "title": "Redaction tokens by service",
+    "count": null,
+    "ids": {
+     "slack_human": {
+      "[EMAIL_n]": 742,
+      "[PERSON_NAME_n]": 46422,
+      "[IDENTIFIER_n]": 1440,
+      "[SOURCE_ORG_n]": 338,
+      "[PHONE_n]": 518,
+      "PERSON_n_<FIELD> token": 307,
+      "SVC_n_<FIELD> token": 166,
+      "<REDACTED*>": 133,
+      "EMPLOYEE_n_<FIELD> token (in text)": 20
+     },
+     "slack_bot": {
+      "[PERSON_NAME_n]": 32192,
+      "EMPLOYEE_n_<FIELD> token (in text)": 2575,
+      "SVC_n_<FIELD> token": 2156,
+      "[IDENTIFIER_n]": 4355,
+      "<REDACTED*>": 193,
+      "PERSON_n_<FIELD> token": 101,
+      "[SOURCE_ORG_n]": 2297,
+      "[EMAIL_n]": 283,
+      "[PHONE_n]": 1
+     },
+     "gmail": {
+      "[PERSON_NAME_n]": 140407,
+      "[EMAIL_n]": 27337,
+      "PERSON_n_<FIELD> token": 124789,
+      "SVC_n_<FIELD> token": 5398,
+      "[PHONE_n]": 23807,
+      "[IDENTIFIER_n]": 19845,
+      "<REDACTED*>": 3415,
+      "[SOURCE_ORG_n]": 104712,
+      "EMPLOYEE_n_<FIELD> token (in text)": 10092
+     }
+    },
+    "risk": "Names, orgs, emails, phones and ids replaced by [PERSON_NAME_n], PERSON_n_<FIELD>, [SOURCE_ORG_n], [EMAIL_n], [IDENTIFIER_n]: name resolution, joins and full-text search break (searching 'Harmony Games' misses '[SOURCE_ORG_0001]' copies).",
+    "legitimate_use": "Never build unique ground truth on a token; a token can be a legitimate 'unresolvable – say so' trap.",
+    "source": "computed",
+    "detail": {
+     "slack_examples": {
+      "[EMAIL_n]": [
+       "slack:C017C8D7AD41/1732673712.490039",
+       "slack:C03201E9A967/1701277445.354919",
+       "slack:C04RYU8TJ8K/1685037747.972239",
+       "slack:C04RYU8TJ8K/1693861669.244849",
+       "slack:C04RYU8TJ8K/1696100568.657129"
+      ],
+      "[PERSON_NAME_n]": [
+       "slack:C017C8D7AD41/1732674831.211029",
+       "slack:C02493024DA9/1723744315.471319",
+       "slack:C02493024DA9/1723745080.321419",
+       "slack:C02493024DA9/1723754588.571989",
+       "slack:C02493024DA9/1723754612.982059"
+      ],
+      "[IDENTIFIER_n]": [
+       "slack:C02493024DA9/1747760584.205359",
+       "slack:C02493024DA9/1748006417.963439",
+       "slack:C02493024DA9/1748008232.652029",
+       "slack:C04RYU8TJ8K/1686335731.265009",
+       "slack:C04SDRCEBU3/1680454117.342639"
+      ],
+      "[SOURCE_ORG_n]": [
+       "slack:C04RSEB8K0W/1681511004.009659",
+       "slack:C04RSEB8K0W/1681513145.059459",
+       "slack:C04RSEB8K0W/1681513580.444929",
+       "slack:C04RSEB8K0W/1681513780.257499",
+       "slack:C04RSEB8K0W/1681514569.888919"
+      ],
+      "[PHONE_n]": [
+       "slack:C04RYU8TJ8K/1685228797.466039",
+       "slack:C04UEQVDVB7/1683669434.608579",
+       "slack:C04UEQVDVB7/1683829318.639639",
+       "slack:C04UEQVDVB7/1690583659.041219",
+       "slack:C04UEQVDVB7/1696457381.130679"
+      ],
+      "PERSON_n_<FIELD> token": [
+       "slack:C04UEQVDVB7/1680108869.322469",
+       "slack:C04UEQVDVB7/1680244647.547279",
+       "slack:C04UEQVDVB7/1692392167.743149",
+       "slack:C04UEQVDVB7/1692392201.672819",
+       "slack:C04UEQVDVB7/1701544458.115849"
+      ],
+      "SVC_n_<FIELD> token": [
+       "slack:C04UEQVDVB7/1680201601.696279",
+       "slack:C04UEQVDVB7/1681863604.570379",
+       "slack:C04UEQVDVB7/1681868336.955059",
+       "slack:C04UEQVDVB7/1681870314.013729",
+       "slack:C04UEQVDVB7/1682204635.600879"
+      ],
+      "<REDACTED*>": [
+       "slack:C04UEQVDVB7/1681863604.570379",
+       "slack:C04UEQVDVB7/1684176585.661039",
+       "slack:C04UEQVDVB7/1718642160.014609",
+       "slack:C04UTBZL6AX/1682968635.772809",
+       "slack:C04UTBZL6AX/1682968747.308259"
+      ],
+      "EMPLOYEE_n_<FIELD> token (in text)": [
+       "slack:C050WGU41HR/1709779505.001499",
+       "slack:C05KNDCHAAG/1742297705.613089",
+       "slack:C05V5FNLB9V/1705000335.031989",
+       "slack:C07RBFB9WR3/1735838697.701609",
+       "slack:C07T0BRAVK8/1736803317.146719"
+      ]
+     },
+     "gmail_examples": {
+      "[PERSON_NAME_n]": [
+       "gmail:EMPLOYEE_0011_EMAIL/<CAGkro_OsBbnyiirp5A72V=6Xmyrz5B9bWq+sp43Jm18pH9M4+g@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7kWZeFKLFs=HXEeXZTE4Pf7uk5gOoNOjSvYoyrMoKeLg@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a5j-PUGhzgXRbUU0KN33QX9qTP+TtiG-J87zBtTBum0Tw@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a6kavV4egp4B0+KKFSs+GERAC6mYNjL=rWvWOjrV67PQA@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7nsf_p4j2x5MXp+QGnZ9ZB3mHMQ97KU=CSvvyAUyYaBw@mail.gmail.com>"
+      ],
+      "[EMAIL_n]": [
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7kWZeFKLFs=HXEeXZTE4Pf7uk5gOoNOjSvYoyrMoKeLg@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAGkro_Mr9_R0W6G_N8gKVVdkyLmh0jbVuVdHiXzu92pJ9qyq8g@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7hwVoJLUqroEHS5bnC8wVVqcuUMB_i0x8C5r89YQ9Q9Q@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a4mx0usPh9bjWHz_5NsS13m2ZWO312nYdPs+bJ3QjXdAQ@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7eK-VnMjFsLo+-HeXZK8FBgvzz4XqOkGzy2x0ZKpJ=ig@mail.gmail.com>"
+      ],
+      "PERSON_n_<FIELD> token": [
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a5j-PUGhzgXRbUU0KN33QX9qTP+TtiG-J87zBtTBum0Tw@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a6kavV4egp4B0+KKFSs+GERAC6mYNjL=rWvWOjrV67PQA@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7nsf_p4j2x5MXp+QGnZ9ZB3mHMQ97KU=CSvvyAUyYaBw@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a4Hjq_u7L8J8qVs32xf5Va2y6MVY7BX=5XQ1LzDY0qUyQ@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a6FVXHvZtxJN+TGVJ2k9Q1Cd-dO1sC7of_RsfzeRdPpQA@mail.gmail.com>"
+      ],
+      "SVC_n_<FIELD> token": [
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a6FVXHvZtxJN+TGVJ2k9Q1Cd-dO1sC7of_RsfzeRdPpQA@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a5DW1bv2GRwsi=XX8fMDR+NfppE2v1BT199WnEj0cRSSA@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a64DYeAd_nJVJc6BBMjEw7S2kXZn8dmSyKC4LTZMdj=ZA@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7pTpZOC+fKVNGUKHvxi5eSg-v_3QxD2mhL17p-D8o4NQ@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a74yguSfes39CHApTRbZuj-ABe6jGTU-QqgNNioJC8hMw@mail.gmail.com>"
+      ],
+      "[PHONE_n]": [
+       "gmail:EMPLOYEE_0011_EMAIL/<CABLwjWrRDcmnM-9Xu+fOn8E=emLsBcRdrmYm65-vx9ovBBVpSw@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CABLwjWqMMX1=6tJMEFC8f=AwbLDJ-7KKUmOaRkaJXuGVcOACJg@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a5ifzxTD=1ezbMrAhjuCv6Wk48XM+_8g79ea3oy5Hs2Pg@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<BL0PR1501MB209972BC05223CF8AA7E91EE99989@BL0PR1501MB2099.namprd15.prod.outlook.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7Aoxsa2bAE0jjZN+yWvN2V-gCz0s_LCbfbAH6DS_ny1w@mail.gmail.com>"
+      ],
+      "[IDENTIFIER_n]": [
+       "gmail:EMPLOYEE_0011_EMAIL/<KsugYF1rS0i7zinQhMLbnA@geopod-ismtpd-15>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a6wn9vaa5_rpNC_+O7b7rtWyzPW7pGeMEvh9sDK8bnZmQ@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a49dn3hXfpWd2ieBRreRg2aWMXCkJVKbWbwXPS3nqP-HA@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7w_XCK8NpASUvXDLEXXA44dURd9E34B1NvTozg45Tu=Q@mail.gmail.com>",
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a5J-6w_YyvQTn_CjGG=ATOq4TRP9cqFMcB8EsA5SCEqPg@mail.gmail.com>"
+      ],
+      "<REDACTED*>": [
+       "gmail:EMPLOYEE_0011_EMAIL/<CAPBs_a7tpPKQHw=dRbZ6rUsJiwDx5w=oLezKmwakE_z0bBf5_A@mail.gmail.com>",
+       "gmail:EMPLOYEE_0020_EMAIL/<CAG=MWp6iVM=cqUmZ6hEQUgaVeRWFD9B9jXy4sdoGQ+1apiCWrw@mail.gmail.com>",
+       "gmail:SVC_0009_EMAIL/<233da06f04d92be48565891a2e7e4819@platform.ironsrc.com>",
+       "gmail:SVC_0009_EMAIL/<0fc713bcdfb4807a372b3737407f7953f4c6654b-20085735-110945236@google.com>",
+       "gmail:robert@harmonygames.co/<6423493110ee1_22adbba957624973b7@b9353f78-09a6-4ec8-a3cb-3f119fdb1dc3.mail>"
+      ],
+      "[SOURCE_ORG_n]": [
+       "gmail:robert@harmonygames.co/<CAPBs_a4J_t-yqNBWM-6F4zbBOPhRN24=hgyhXsK5raa_rR_iMQ@mail.gmail.com>",
+       "gmail:robert@harmonygames.co/<BYAPR02MB435848E561EA8B5C7CB7D372C450A@BYAPR02MB4358.namprd02.prod.outlook.com>",
+       "gmail:robert@harmonygames.co/<CAPBs_a5GmPVgM8U2CumPdD5QUndiR-bnsGgcOOZ5mO1dofa1Vw@mail.gmail.com>",
+       "gmail:robert@harmonygames.co/<CAPBs_a49tSSBE1+L+h=EkovturaH3y1LPq45O8ORg9PKz-Y7QA@mail.gmail.com>",
+       "gmail:robert@harmonygames.co/<6611cc5c6246e_2c2a2620282db@902bc47d-6876-4bc6-8052-cb50a03faf4d.mail>"
+      ],
+      "EMPLOYEE_n_<FIELD> token (in text)": [
+       "gmail:robert@harmonygames.co/<6b3bfb5a.BAAABGC5Rb4AAAAAAAAAAAUcd3UAAAA6pnMAAAAAAAvpOQBkxtw-@mailjet.com>",
+       "gmail:robert@harmonygames.co/<67f90a59.EAAABGUA6VsAAAAAAAAAAAUcd3UAAAA6pnMAAAAAAAvpOQBkzAap@mailjet.com>",
+       "gmail:robert@harmonygames.co/<0d78b828.CAAABGWsgOgAAAAAAAAAAAUcd3UAAAA6pnMAAAAAAAvpOQBkzSd-@mailjet.com>",
+       "gmail:robert@harmonygames.co/<f4195df4.CAAABGc3cVEAAAAAAAAAAAUcd3UAAAA6pnMAAAAAAAvpOQBk0EMw@mailjet.com>",
+       "gmail:robert@harmonygames.co/<9b2898a9.BAAABGcqgM4AAAAAAAAAAAUcd3UAAAA6pnMAAAAAAAvpOQBk0Er_@mailjet.com>"
+      ]
+     }
+    }
+   },
+   {
+    "id": "X02",
+    "kind": "redaction",
+    "title": "Same token used for different things across services (EMPLOYEE_0032 is a Slack user, a Gmail mailbox, Josh Dempsey in PAYROLL_ROSTER and a GitHub login; numbers do not align: Brian is EMPLOYEE_0026 in Slack but PERSON_0180 in GitHub)",
+    "count": null,
+    "ids": [
+     "EMPLOYEE_0032_SLACK_ID",
+     "EMPLOYEE_0032_EMAIL",
+     "EMPLOYEE_0032_GITHUB_USERNAME",
+     "snowflake PAYROLL_ROSTER EMPLOYEE_0032",
+     "PERSON_0180_GITHUB_USERNAME"
+    ],
+    "risk": "Joining on token numbers is wrong.",
+    "legitimate_use": "Only exact email / Slack id joins (entities.json).",
+    "source": "computed+entities.json"
+   },
+   {
+    "id": "X04",
+    "kind": "redaction",
+    "title": "Company name masked unevenly across copies of the same mail ('Harmony Games' vs '[SOURCE_ORG_0001]')",
+    "count": 361,
+    "ids": [
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1763472856296482546.json",
+      "<CAPBs_a71tntJQzT+qFSsbTecGDvu2t-6+PRM0i-gwd9_cfM6YQ@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1763472856296482546.json",
+      "<BL0PR1501MB20991033DFFFBE201FD7AD31996B9@BL0PR1501MB2099.namprd15.prod.outlook.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1763472856296482546.json",
+      "<CAPBs_a54D2RdLB0thsK+CRZS3gRC69DNRXHbm9erJGVEt9rimA@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1763472856296482546.json",
+      "<CAPBs_a4qgE2ECLykn+BVaEDFCeCgqBgfeon7geTfA83dO=VSZA@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1763472856296482546.json",
+      "<CAPBs_a7Cd=_7jUyDn1YeGvhW-tKvFxNgui18gRcGrBpPa0psUw@mail.gmail.com>"
+     ],
+     [
+      "EMPLOYEE_0011_EMAIL 00000008.json",
+      "arthur.blake@harmonygames.co blake@harmonygames.co_1763472856296482546.json",
+      "<BL0PR1501MB2099148D34C11C6759FD4169996D9@BL0PR1501MB2099.namprd15.prod.outlook.com>"
+     ]
+    ],
+    "risk": "Exact-quote rubrics fail depending on which mailbox copy the agent read.",
+    "legitimate_use": "Quote-free criteria, or the persona's own copy.",
+    "source": "computed"
+   }
+  ],
+  "lookalike_containers": [
+   {
+    "id": "K01",
+    "kind": "lookalike_containers",
+    "title": "Canvas pseudo-channels named 'FC:<file id>:<title>' (32) and per-title channel families (god-* vs zombie-*), 90 archived channels",
+    "count": 28,
+    "ids": [
+     "C2CCFA447BC1 FC:F0842S5B2BE:PR Builds",
+     "C0B1220E9042 FC:F07RQDCM7DY:Team & Profile Issues",
+     "C127CE64C71B FC:F09716QNHFT:Endless Horde Issues and Improvemen",
+     "C2E63247C2F4 FC:F082L7223UL:Reporting instructions",
+     "C3DD99314033 FC:F09FNQM8EBZ:Collect&Win issues - zm - ios 1730",
+     "C4208B207A1A FC:F0A2FSC416J:EconomyChanges Bugs",
+     "C425A886E258 FC:F07PWFF0N5R:Issues based on Dev_Android_1743",
+     "C56B8EBF8A6B FC:F082C5NTFK8:Copy of Crashlytics Issues",
+     "C05V5FNLB9V god-bugs",
+     "C08R27X0EAH zombie-bugs"
+    ],
+    "risk": "Searching 'bugs' or 'season pass issues' returns sibling containers for another game.",
+    "legitimate_use": "Distractor containers with the same vocabulary.",
+    "source": "computed"
+   },
+   {
+    "id": "K02",
+    "kind": "lookalike_containers",
+    "title": "App-name lineage: GoD -> Domino Delights -> '[ORG] DD' -> 'Harmony Games DD'; 'Puzzles vs Zombies' / 'Match 3D' / 'Zombie Game 3D' -> Zombie Match 3D; TestFlight-only 'Domino Adventure' (2023-12..2024-09)",
+    "count": null,
+    "ids": [
+     "gmail distribution 'GoD iOS' 2023-04",
+     "testflight 'Puzzles vs Zombies' 2025-03..07"
+    ],
+    "risk": "Name-based counts across eras undercount.",
+    "legitimate_use": "Rename-aware questions (one record states the rename).",
+    "source": "computed"
+   },
+   {
+    "id": "K03",
+    "kind": "lookalike_containers",
+    "title": "Calendar lookalikes: recurring master + instance duplicates; reused ical_uids",
+    "count": null,
+    "ids": [
+     "martin.walsh@harmonygames.co/2024-11-18T17:30:00Z",
+     "owen.baker@harmonygames.co/2024-06-04T16:00:00Z",
+     "leonard.hayes@harmonygames.co/2024-07-08T17:30:00Z",
+     "leonard.hayes@harmonygames.co/2024-09-05T16:00:00Z"
+    ],
+    "risk": "Wrong meeting chosen.",
+    "legitimate_use": "Meeting-selection traps decided by attendees or time.",
+    "source": "Scenario_Atlas+computed"
+   }
+  ]
+ },
+ "index": [
+  {
+   "id": "P01",
+   "kind": "lookalike_people",
+   "title": "Shared first names across people and tokens (entities.json collisions)",
+   "count": 4
+  },
+  {
+   "id": "P02",
+   "kind": "lookalike_people",
+   "title": "Shared surnames (Bennett: Marcus/Oscar; Brooks: Oliver/Lauren — the second Brooks is named only on Feb 14 [normal-only]; other shared-surname groups are computed per universe)",
+   "count": 1
+  },
+  {
+   "id": "P03",
+   "kind": "lookalike_people",
+   "title": "Three Marcuses: persona Marcus Bennett (mailbox marcus.bennett@harmonygames.co) vs Marcus Lee (marcus.lee@harmonygames.co; no mailbox) vs a mononym Trello member 'Marcus'",
+   "count": null
+  },
+  {
+   "id": "P04",
+   "kind": "lookalike_people",
+   "title": "Tokenised GitHub contributors whose real login only appears in the Slack GitHub-app mirror",
+   "count": 19
+  },
+  {
+   "id": "N01",
+   "kind": "ticket_series_collision",
+   "title": "ENG-n and ZOM-n both exist for 521 numbers (every ZOM number has an unrelated ENG twin); ART/DES/EPI numbers overlap too",
+   "count": 521
+  },
+  {
+   "id": "N02",
+   "kind": "ticket_series_collision",
+   "title": "GameOfDominoes PR numbers overlap ENG issue numbers (#1458 vs ENG-1458) and Helpshift issue numbers (#118)",
+   "count": 1765
+  },
+  {
+   "id": "N03",
+   "kind": "ticket_series_collision",
+   "title": "Branch keys without hyphen ('ENG1229QuestCollectChapterRewards') and redacted owners ('[PERSON_NAME_0067]/ENG-1622-1')",
+   "count": null
+  },
+  {
+   "id": "D01",
+   "kind": "near_duplicate_documents",
+   "title": "Drive titles that normalise to the same name under different owners (129 groups; 344 groups overall)",
+   "count": 129
+  },
+  {
+   "id": "D02",
+   "kind": "near_duplicate_documents",
+   "title": "Docs with identical bodies under different ids/owners",
+   "count": 12
+  },
+  {
+   "id": "D03",
+   "kind": "near_duplicate_documents",
+   "title": "Slide decks that share a title family (Weekly Update, publisher pitch decks, BoD decks)",
+   "count": 5
+  },
+  {
+   "id": "D04",
+   "kind": "near_duplicate_documents",
+   "title": "Spreadsheets whose titles normalise to the same name (P&L versions, investor lists, KPI exports)",
+   "count": 26
+  },
+  {
+   "id": "D05",
+   "kind": "stale_vs_current",
+   "title": "Drive title families with version markers (v1/v2/final/draft/copy of/updated)",
+   "count": 32
+  },
+  {
+   "id": "D06",
+   "kind": "stale_vs_current",
+   "title": "Confluence pages with version history and edit messages (old bodies readable via get_page_version / diff)",
+   "count": 24
+  },
+  {
+   "id": "C01",
+   "kind": "superseded_claims",
+   "title": "Thread replies that correct or retract (marker phrases; heuristic candidates from 1352 marker hits, 100 strong markers since 2024)",
+   "count": 100
+  },
+  {
+   "id": "C02",
+   "kind": "superseded_claims",
+   "title": "Thread parent states a resolution ('done', 'fixed', 'deployed') and another person replies it still fails",
+   "count": 20
+  },
+  {
+   "id": "C03",
+   "kind": "superseded_claims",
+   "title": "Struck-through in-place retractions (~text~)",
+   "count": 147
+  },
+  {
+   "id": "B01",
+   "kind": "bot_noise",
+   "title": "Slack bot volume by integration",
+   "count": 72497
+  },
+  {
+   "id": "B02",
+   "kind": "bot_noise",
+   "title": "Gmail automated senders (Firebase App Distribution svc_0107 ~44K, TestFlight/App Store Connect svc_4131, Crashlytics svc_2398, Linear svc_0251, Helpshift svc_0143, GitHub svc_0248, Slack svc_0240, Meta svc_0521, SVB svc_4249)",
+   "count": 63452
+  },
+  {
+   "id": "B03",
+   "kind": "bot_noise",
+   "title": "GitHub bot activity: CodeRabbit (PERSON_6026, Organization) 266 PR comments, 833 review comments, 182 reviews; linear[bot] 328 PR comments",
+   "count": null
+  },
+  {
+   "id": "B04",
+   "kind": "bot_noise",
+   "title": "Jenkins in #builds: 24802 job messages + 8217 build-script messages; statuses {'started': 11173, 'success': 10493, 'unknown': 1646, 'failure': 919, 'other': 571}",
+   "count": null
+  },
+  {
+   "id": "B05",
+   "kind": "bot_noise",
+   "title": "Helpshift issues via Zapier in #issuefeed often have empty payloads ('#ZapierBot: Issue Update has arrived. author: ; Message:')",
+   "count": 1046
+  },
+  {
+   "id": "X01",
+   "kind": "redaction",
+   "title": "Redaction tokens by service",
+   "count": null
+  },
+  {
+   "id": "X02",
+   "kind": "redaction",
+   "title": "Same token used for different things across services (EMPLOYEE_0032 is a Slack user, a Gmail mailbox, Josh Dempsey in PAYROLL_ROSTER and a GitHub login; numbers do not align: Brian is EMPLOYEE_0026 in Slack but PERSON_0180 in GitHub)",
+   "count": null
+  },
+  {
+   "id": "X04",
+   "kind": "redaction",
+   "title": "Company name masked unevenly across copies of the same mail ('Harmony Games' vs '[SOURCE_ORG_0001]')",
+   "count": 361
+  },
+  {
+   "id": "K01",
+   "kind": "lookalike_containers",
+   "title": "Canvas pseudo-channels named 'FC:<file id>:<title>' (32) and per-title channel families (god-* vs zombie-*), 90 archived channels",
+   "count": 28
+  },
+  {
+   "id": "K02",
+   "kind": "lookalike_containers",
+   "title": "App-name lineage: GoD -> Domino Delights -> '[ORG] DD' -> 'Harmony Games DD'; 'Puzzles vs Zombies' / 'Match 3D' / 'Zombie Game 3D' -> Zombie Match 3D; TestFlight-only 'Domino Adventure' (2023-12..2024-09)",
+   "count": null
+  },
+  {
+   "id": "K03",
+   "kind": "lookalike_containers",
+   "title": "Calendar lookalikes: recurring master + instance duplicates; reused ical_uids",
+   "count": null
+  }
+ ]
+}

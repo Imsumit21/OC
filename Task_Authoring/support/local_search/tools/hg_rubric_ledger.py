@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
-INPUTS = ROOT / 'Evals/task_inputs'
+INPUTS = ROOT / 'Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS'
 DRAFTS = INPUTS / 'reports/drafts'
 LEDGER = DRAFTS / 'rubric_ledger.json'
 PLAN = DRAFTS / 'rubric_delta_plan.json'
@@ -29,7 +29,9 @@ RECORD = DRAFTS / 'rubric_score_record.json'
 CANDIDATE = INPUTS / 'fixcheck/rubric_candidate.json'
 FIX_STATUS = INPUTS / 'fixcheck/fix_status.json'
 CONTEXT_KEYS = ('task-details', 'prompt', 'injection', 'oe')
-FORMAT = 1
+# 2 (2026-10-17): rows locked under the old rules (no do-nothing, valid-case, PT-day or OE
+# cross-check) cannot carry forward; the first run on the new release is FULL.
+FORMAT = 2
 
 
 def sha(data):

@@ -83,7 +83,7 @@ def authority(ids, known, root, context):
     prompt_paths = [f["path"] for k in ("prompt", "source:prompt")
                     for f in inputs.get(k, {}).get("files", [])]
     if not prompt_paths:
-        prompt_paths = ["Evals/task_inputs/04_Prompt.txt"]
+        prompt_paths = ["Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/04_Prompt.txt"]
     if (Path(root) / chain[0]["path"]).resolve() not in {
             (Path(root) / p).resolve() for p in prompt_paths}:
         raise ValueError("Authority chain must begin with the actual saved prompt")

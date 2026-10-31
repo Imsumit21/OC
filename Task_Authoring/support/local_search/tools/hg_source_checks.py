@@ -26,7 +26,7 @@ def metadata_source(source, root, context):
     path = (Path(root) / source['path']).resolve()
     if source.get('source_role') in {'AUTHORING_METADATA', 'AUDIT_REPORT', 'MODEL_OUTPUT'}:
         return True
-    if path.name in METADATA_NAMES or 'Evals/task_inputs/reports/' in path.as_posix():
+    if path.name in METADATA_NAMES or 'Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/' in path.as_posix():
         return True
     for key, entry in context.get('inputs', {}).items():
         if key.removeprefix('source:') in METADATA_KEYS:

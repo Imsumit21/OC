@@ -12,6 +12,7 @@ from datetime import date, datetime, timezone
 from decimal import Decimal, InvalidOperation, localcontext, ROUND_HALF_UP, ROUND_HALF_EVEN, ROUND_DOWN
 import json
 import re
+from zoneinfo import ZoneInfo
 
 
 KINDS = {"NUMBER", "RANGE", "DATE", "LITERAL", "SEMANTIC", "UNRESOLVED", "NOT_A_CLAIM"}
@@ -50,6 +51,26 @@ _CARDINAL_PATTERN = "(?:" + "|".join(sorted(CARDINAL_WORDS | UNSUPPORTED_QUANTIT
 _CARDINAL_START = "(?:" + "|".join(sorted(CARDINAL_WORDS | {"billion", "trillion", "quadrillion"}, key=len, reverse=True)) + ")"
 SPELLED_TOKEN = re.compile(r"(?<![\w-])(?:(?:minus|negative)\s+)?" + _CARDINAL_START +
                            r"(?:(?:\s+|-)(?:and\s+|point\s+)?" + _CARDINAL_PATTERN + r")*(?![\w-])", re.I)
+# Personas work on Pacific time; tools return UTC (ENVIRONMENT.md, Eval 3 §2.11).
+PACIFIC = ZoneInfo("America/Los_Angeles")
+DATE_COMPARISONS = {"exact", "utc_date", "pt_or_utc_date"}
+_MONTHS = {name: number for number, names in enumerate((
+    ("january", "jan"), ("february", "feb"), ("march", "mar"), ("april", "apr"), ("may",),
+    ("june", "jun"), ("july", "jul"), ("august", "aug"), ("september", "sep", "sept"),
+    ("october", "oct"), ("november", "nov"), ("december", "dec")), 1) for name in names}
+_MONTH_PATTERN = "(?:" + "|".join(sorted(_MONTHS, key=len, reverse=True)) + r")\.?"
+# A prose calendar date is unambiguous only with month name, day and four-digit year.
+PROSE_DATE = re.compile(r"(?:(?P<month>" + _MONTH_PATTERN + r")\s+(?P<day>\d{1,2}),?\s+(?P<year>\d{4})"
+                        r"|(?P<day2>\d{1,2})\s+(?P<month2>" + _MONTH_PATTERN + r"),?\s+(?P<year2>\d{4}))\Z", re.I)
+# Exact keys bind as LITERAL, like numbers bind as NUMBER (Eval 3 §2.3): snake_case event or
+# field keys and prefixed record IDs, ticket keys, Slack-style IDs and long hexadecimal IDs.
+ID_TOKEN = re.compile(r"(?<![\w@.-])(?:[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+|[A-Z][A-Z0-9]{1,9}-\d+"
+                      r"|(?=[A-Z0-9]*\d)[A-Z][A-Z0-9]{8,}"
+                      r"|(?=[0-9a-f]*[a-f])(?=[0-9a-f]*\d)[0-9a-f]{12,})(?![\w-])")
+# Anonymization placeholders are the source string (rubric_factual_checks.md).
+ANON_TOKEN = re.compile(r"\[[A-Z]+(?:_[A-Z]+)*_\d+\]|<REDACTED(?:_[A-Z]+)*>")
+REACHABLE = "PROMPT_LINKED"
+REACHABILITY = {"PROMPT_LINKED", "TRASH", "ATTACHMENT_ONLY", "UNLINKED"}
 
 
 def _require(condition, message):
@@ -345,11 +366,16 @@ def _number(claim, reader, known, title, start):
         "quantity_start": quantity_start, "quantity_end": quantity_end}
 
 
-def _date(value, label):
+def _date(value, label, prose=False):
     _require(isinstance(value, str), label + " must be an ISO date or timezone-qualified timestamp")
     try:
         if ISO_DATE.fullmatch(value):
             return date.fromisoformat(value)
+        written = PROSE_DATE.fullmatch(value.strip()) if prose else None
+        if written:
+            month = written["month"] or written["month2"]
+            return date(int(written["year"] or written["year2"]), _MONTHS[month.rstrip(".").casefold()],
+                        int(written["day"] or written["day2"]))
         _require(bool(ISO_INSTANT.fullmatch(value)), label + " must be ISO; timestamps need an explicit timezone")
         return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
     except (ValueError, OverflowError) as error:
@@ -388,22 +414,43 @@ def _selected_claim(claim, reader, known):
     value = _select(selection, reader, known, claim["source_ids"])
     if claim["kind"] == "LITERAL":
         _require(isinstance(value, str), "LITERAL source selection must be a string, not a number coerced to text")
-        return claim["quote"] == value, {"expected": claim["quote"], "actual": value}
-    expected, actual = _date(claim["quote"], "DATE quote"), _date(value, "DATE source")
+        details = {"expected": claim["quote"], "actual": value}
+        if claim["quote"] != value and ANON_TOKEN.search(value):
+            # The tools show the placeholder, not the real name; the row must accept it as shown.
+            details["anonymized_token"] = ANON_TOKEN.search(value).group()
+        return claim["quote"] == value, details
+    expected, actual = _date(claim["quote"], "DATE quote", prose=True), _date(value, "DATE source")
     comparison = claim.get("comparison", "exact")
-    _require(isinstance(comparison, str) and comparison in {"exact", "utc_date"}, "DATE comparison must be exact or utc_date")
+    _require(isinstance(comparison, str) and comparison in DATE_COMPARISONS,
+             "DATE comparison must be exact, utc_date or pt_or_utc_date")
+    details = {"comparison": comparison}
+    if comparison == "pt_or_utc_date":
+        # A calendar day written in PT or in UTC; the clock and instant comparisons stay UTC.
+        _require(not isinstance(expected, datetime), "pt_or_utc_date compares a calendar date quote, not an instant")
+        details["selection"] = [selection["source_id"], selection["pointer"]]
+        if isinstance(actual, datetime):
+            days = {actual.date(), actual.astimezone(PACIFIC).date()}
+            details.update(utc_day=actual.date().isoformat(), pt_day=actual.astimezone(PACIFIC).date().isoformat(),
+                           split_day=len(days) == 2)
+        else:
+            days = {actual}
+        return expected in days, {**details, "expected": expected.isoformat(), "actual": actual.isoformat()}
     if comparison == "utc_date":
         expected = expected.date() if isinstance(expected, datetime) else expected
         actual = actual.date() if isinstance(actual, datetime) else actual
-    return type(expected) is type(actual) and expected == actual, {"expected": expected.isoformat(), "actual": actual.isoformat(), "comparison": comparison}
+    return type(expected) is type(actual) and expected == actual, {**details, "expected": expected.isoformat(), "actual": actual.isoformat()}
 
 
-def validate_facts(review, criterion, reader, known):
+def validate_facts(review, criterion, reader, known, *, literal_tokens=False):
     """Return mismatches, unresolved items, and auditable computation details.
 
     Every item is an object with claim_id/reason and an exact quote when one is
     available. Unknown schema or invalid source/operation raises ValueError.
     Numeric-bearing title text omitted from the inventory remains unresolved.
+    With ``literal_tokens`` (the rubric review), ID-shaped and anonymized title
+    tokens likewise need LITERAL coverage or an explicit UNRESOLVED/NOT_A_CLAIM.
+    A source anchor whose ``reachability`` is not PROMPT_LINKED keeps its claims
+    unresolved and marks them ``unreachable``.
     """
     _object(review, "fact_review", {"complete", "reason", "claims"}, {"complete", "reason", "claims"})
     _require(type(review["complete"]) is bool, "fact_review.complete must be boolean")
@@ -450,11 +497,15 @@ def validate_facts(review, criterion, reader, known):
                  cid + " contains fields incompatible with its kind")
         if kind == "SEMANTIC":
             _require(isinstance(claim.get("status"), str) and claim["status"] in {"VERIFIED", "CONTRADICTED", "UNRESOLVED"}, cid + " needs a semantic status")
-        unavailable = []
+        unavailable, unreachable = [], []
         for sid in source_ids:
             anchor = known[sid]
             _object(anchor, "source anchor")
             _require(isinstance(anchor.get("visibility"), str) and anchor["visibility"] in {"VISIBLE", "INACCESSIBLE", "UNRESOLVED"}, "source visibility is invalid")
+            if "reachability" in anchor:
+                _require(anchor["reachability"] in REACHABILITY, "source reachability is invalid")
+                if anchor["reachability"] != REACHABLE:
+                    unreachable.append(sid + " (" + anchor["reachability"] + ")")
             if anchor["visibility"] != "VISIBLE":
                 unavailable.append(sid)
             else:
@@ -464,6 +515,12 @@ def validate_facts(review, criterion, reader, known):
             coverage.append((start, start + len(quote), kind))
         if not_a_claim:
             result["non_factual"].append({**base, "reason": claim["reason"]})
+            continue
+        if unreachable:
+            # Eval 3 §2.4: a deciding record the Agent cannot reach from the prompt
+            # (Trash/Spam, attachment-only, unlinked) cannot define a passing answer.
+            result["unresolved"].append({**base, "unreachable": unreachable,
+                                         "reason": "deciding record is not reachable by the Agent: " + ", ".join(unreachable)})
             continue
         if unavailable or unresolved_kind:
             reason = "source visibility is unresolved: " + ", ".join(unavailable) if unavailable else claim["reason"]
@@ -498,4 +555,14 @@ def validate_facts(review, criterion, reader, known):
                    (not is_date or kind in {"DATE", "LITERAL", "UNRESOLVED", "NOT_A_CLAIM"}) for start, end, kind in coverage):
             result["unresolved"].append({"claim_id": None, "quote": match.group(),
                                          "reason": "numeric title token (digit or English cardinal) lacks executable NUMBER/DATE/LITERAL coverage or an explicit UNRESOLVED or NOT_A_CLAIM claim"})
+    if literal_tokens:
+        anonymized = list(ANON_TOKEN.finditer(title))
+        keys = [m for m in ID_TOKEN.finditer(title)
+                if not any(a.start() <= m.start() and a.end() >= m.end() for a in anonymized)]
+        for match in anonymized + keys:
+            if not any(start <= match.start() and end >= match.end() and kind in {"LITERAL", "UNRESOLVED", "NOT_A_CLAIM"}
+                       for start, end, kind in coverage):
+                result["unresolved"].append({"claim_id": None, "quote": match.group(),
+                                             "reason": "ID-shaped or anonymized title token lacks an exact LITERAL claim "
+                                                       "(or an explicit UNRESOLVED or NOT_A_CLAIM claim); SEMANTIC cannot bind it"})
     return result
