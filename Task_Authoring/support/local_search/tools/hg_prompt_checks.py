@@ -13,9 +13,9 @@ from hg_source_checks import metadata_source
 import hg_prompt_ugt as ugt
 
 POLICY = 'prompt-source-checks-v2'
-RECORD = Path('Evals/task_inputs/reports/drafts/prompt_check_record.json')
-PROMPT = Path('Evals/task_inputs/04_Prompt.txt')
-INPUTS = {'task-details', 'prompt', 'injection', 'error-async', 'dynamic-context'}
+RECORD = Path('Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/drafts/prompt_check_record.json')
+PROMPT = Path('Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/04_Prompt.txt')
+INPUTS = {'task-details', 'universe', 'prompt', 'injection', 'error-async', 'dynamic-context'}
 REFERENCES = ('Evals/1_Prompt_Eval.md', 'claude/skills/prompt/SKILL.md', 'Evals/WORKFLOW.md',
               'Evals/ENVIRONMENT.md', 'Evals/EXECUTION.md', 'Evals/INPUTS.md', 'Evals/SEARCH.md',
               'Evals/references/rules/scoring.json', 'Evals/references/rules/prompt_rubric_reliability.md',
@@ -134,8 +134,13 @@ def validate_record(root, content):
         need(score <= outcome_review['score'], 'overall score cannot exceed the failed Unique Ground Truth score')
     if pending:
         need(status in {'PARTIAL', 'BLOCKED'}, 'unresolved evidence cannot establish COMPLETE')
+    # Eval 1 §2.1 both-fair figures, for the rubric review: each row grading the
+    # figure must accept either value (the report prints the same pair).
+    both_fair = [dict(label=c['figure']['label'], kind=c['figure']['kind'],
+                      accept=[v['value'] for v in c['figure']['values']])
+                 for c in outcome_review.get('comparisons', []) if c['resolution'] == 'BOTH_FAIR_FIGURE']
     return {**parsed, **current, 'eval_release': release, 'contradicted_premises': contradicted,
-            'unresolved': pending, 'unique_ground_truth': outcome_review,
+            'unresolved': pending, 'unique_ground_truth': outcome_review, 'both_fair_figures': both_fair,
             'ugt_report_section': ugt.render_review(outcome_review, known),
             'prompt_record_sha256': hashlib.sha256(content.encode()).hexdigest()}
 

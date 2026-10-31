@@ -60,6 +60,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -236,9 +237,47 @@ def record_of(pointer: str) -> str:
     return "/".join(segs[: idx[-1] + 1]) if idx else pointer
 
 
+def _data_root(path: Path) -> Path | None:
+    """The top-level `<Universe_*>/<Prefix>_HarmonyGames_*` folder holding a service path, if any."""
+    for parent in Path(path).parents:
+        if "_HarmonyGames_" in parent.name and parent.parent.name.startswith("Universe_"):
+            return parent
+    return None
+
+
+def _ensure_active():
+    """A late import (stage_gate.shortcut_check) must bind the already selected task before reading source paths."""
+    try:
+        from runtime_context import ensure_active
+    except ImportError:                     # a standalone copy without the seam keeps its caller's context
+        return
+    ensure_active(globals(), require_source=True)
+
+
+def _data_roots() -> list[Path]:
+    """The selected universe's data roots, from the active context's source paths (never a workspace glob).
+
+    The V2 fixture roots (task_context.v2_export_root) are used only behind TASK_AUTHORING_LEGACY_V2."""
+    if os.environ.get("TASK_AUTHORING_LEGACY_V2") == "1":
+        from task_context import v2_export_root
+        return [r for r in (v2_export_root(n, WS) for n in ("GitHub", "Gmail", "Other_Services")) if r.is_dir()]
+    _ensure_active()
+    context = globals().get("TASK_CONTEXT")
+    source = (context or {}).get("source") or {}
+    if not context or source.get("status") != "ready" or not source.get("paths"):
+        raise SystemExit("error: shortcut_probe needs an activated task context with a ready universe source; "
+                         "run it under the selected task (no default universe)")
+    roots = {_data_root(Path(p)) for p in source["paths"].values()}
+    roots.discard(None)
+    if not roots:
+        raise SystemExit("error: the selected source paths name no <Universe_*>/<Prefix>_HarmonyGames_* data root")
+    return sorted(roots)
+
+
 def _fingerprint() -> str:
+    _ensure_active()
     h = hashlib.sha256()
-    for root in sorted(WS.glob("HarmonyGames_*")):
+    for root in _data_roots():
         for f in sorted(root.glob("**/source_manifest.json")):
             try:
                 st = f.stat()
@@ -419,6 +458,7 @@ def render(r, values_name, sha, sql_name, skipped=()):
 
 
 def run(persona_q, values_path: Path, k=3, services=None, sql=None, use_cache=True):
+    _ensure_active()
     sys.path.insert(0, str(HERE))
     import persona_view  # noqa: E402
     p = persona_view.resolve_persona(persona_q)
@@ -487,6 +527,38 @@ def self_test(verbose=False) -> int:
         v, pops, sk = load_values(f)
         ok("list parsing", v == ["0.3.309", "loading screen", "app store"] and pops == {"defects": ["ENG-1", "ENG-2"]}
            and sk == ["ab"], (v, pops, sk))
+    # H1: stage_gate.shortcut_check imports this module late and calls run() in-process, so ensure_active must
+    # bind the importer's already selected context; a ready fake context proves the path no longer SystemExits.
+    import importlib
+    sys.path.insert(0, str(HERE))
+    import runtime_context  # noqa: E402
+    scratch = Path(__file__).resolve().parent.parent / "support" / "scratch"
+    scratch.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=scratch) as d:
+        root = Path(d) / "Universe_Normal" / "Normal_HarmonyGames_Other_Services"
+        (root / "Services_Data").mkdir(parents=True)
+        (root / "source_manifest.json").write_text("{}\n")
+        fake = {"context_hash": "0" * 64, "freeze_utc": "2026-02-14T00:00:00Z",
+                "universe": {"key": "normal", "clock_utc": "2026-02-14T00:00:00Z"},
+                "source": {"status": "ready", "mode": "universe",
+                           "paths": {"slack": str(root / "Services_Data"), "gmail": str(root / "Services_Data")}}}
+        saved = runtime_context.ensure_active
+        legacy = os.environ.pop("TASK_AUTHORING_LEGACY_V2", None)   # a gate run is not a self-test fixture run
+        runtime_context.ensure_active = lambda ns, require_source=True: ns.__setitem__("TASK_CONTEXT", fake)
+        try:
+            sp = importlib.import_module("shortcut_probe")
+            ok("H1 late-import root/fingerprint path", sp._data_roots() == [root] and len(sp._fingerprint()) == 16,
+               sp._data_roots())
+            values = Path(d) / "values.txt"
+            values.write_text("alpha\n")
+            ok("H1 run() binds the importer's context",
+               sp.run("arthur_blake", values, services=[], use_cache=False)[0]["verdict"]
+               in ("CLEAR", "HITS", "INCOMPLETE"))
+        finally:
+            runtime_context.ensure_active = saved
+            if legacy is not None:
+                os.environ["TASK_AUTHORING_LEGACY_V2"] = legacy
+            globals().pop("TASK_CONTEXT", None)
     # live: the persona's own DM holds three acceptance values (base, scoped, ACL applied)
     sys.path.insert(0, str(HERE))
     try:
@@ -496,9 +568,15 @@ def self_test(verbose=False) -> int:
         r = probe(pa, ["0.3.309", "loading screen", "app store"], {}, 3, ["slack"], None, s)
         ok("live slack hit (D04UGG61DUM/1770751702.596069)",
            any(h["record"] == "D04UGG61DUM/1770751702.596069" for h in r["hits"]), r["hits"][:3])
-        r = probe(pa, ["leonard.hayes@harmonygames.co", "Leonard", "Hayes"], {}, 3, ["contacts"], None, s)
-        ok("live unscoped hit (contacts record)", any(h["service"] == "contacts" and "/contacts/" in h["record"]
-                                                      for h in r["hits"]), r["hits"][:3])
+        if os.environ.get("TASK_AUTHORING_UNIVERSE"):
+            r = probe(pa, ["leonard.hayes@harmonygames.co", "Leonard", "Hayes"], {}, 3, ["contacts"], None, s)
+            ok("live unscoped hit (contacts record)", any(h["service"] == "contacts" and "/contacts/" in h["record"]
+                                                          for h in r["hits"]), r["hits"][:3])
+        else:
+            # Unscoped services go through hg.py, whose eval helpers refuse to search without a selected
+            # universe (GEN_EXECUTION § 0a); the legacy self-test has no task context. Visible, not silent.
+            print("self-test SKIP - live unscoped hit (contacts record): hg.py search needs a selected universe; "
+                  "run inside an activated V3 task context once its universe data is installed")
         sql = (FIXTURES / "01_Universe_Inject.sql").read_text()
         r = probe(pa, ["open defect list", "data room", "the sheet"], {}, 3, [], sql, s)
         ok("live SQL overlay hit (seeded, visible)", any(h["service"] == "sql:slack.slack_messages" for h in r["hits"]),

@@ -15,8 +15,7 @@ never execute SQL.
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`.
 Use the shared `Working_Files/00_Task_Context.json` (all eight assigned fields,
-registered shared data source and assigned freeze). Both dates use the same local
-data; validate relied-on record dates and earlier state before grounding. V3
+registered universe source, `universe` block and `freeze_utc` seed bound). The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Validate relied-on record dates and earlier state before grounding. V3
 changed-topic rules govern over older Evals text. The existing Long→extreme and
 Normal design limits remain local policy; Eval Portal is handled by the user.
 
@@ -30,7 +29,9 @@ On refresh, add `08_Oracle_Events.md`, `08_OE_Writing_Ledger.md`, `07_Baseline_T
 `12_Difficulty_Stats.txt`.
 
 Measure every volume through `Task_Authoring/tools/hg.py search`, and apply the persona ACL
-yourself (search does not).
+yourself (search does not). Volumes come from the selected universe only; the two universes' counts differ
+(e.g. Gmail 91,379 vs 83,727 files), so never carry a count across. Dates are Pacific, with UTC beside them when
+the day differs; "today" is `universe.persona_today`.
 
 ## Output
 `task_inputs/Working_Files/05_Human_Time_Worksheet.md`: hours, the sub-task table (kind, volume, rate, minutes),

@@ -40,10 +40,13 @@ that in its trajectory.
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`
 and read `Working_Files/00_Task_Context.json` (GEN_EXECUTION § 0). Use all eight
 assignment fields, the assigned freeze and the context's registered universe/KB source.
-Both freeze dates use the same local universe data. Check each relied-on fact at
-the assigned freeze; shared KB summaries are leads, not a separate dataset gate.
+The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14,
+2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state
+rules and clock, and stop if the date is missing — there is no default. Check
+each relied-on fact at the assigned freeze; shared KB summaries are leads, not a
+separate dataset gate.
 V3 changed-topic rules take
-precedence over older Evals/V2 references; local authorship and hardness-profile
+precedence over the older V2 reference documents in `references/Docs/`; local authorship and hardness-profile
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs
@@ -57,7 +60,9 @@ Output
 ## Hard gates
 
 1. **Default none; never a hardness or horizon lever.** Write a one-line reason for configuring anything (the realism it adds). "Make it harder" or "add calls" is not a reason.
+1a. **No padding.** Never add a filler record, field or SQL comment to raise tool-call counts or lower the pass rate; every injected record needs a task purpose (`Evals/0_Injection_Quality_Eval.md` Check C, A-06).
 2. **Exact picker values.** Every function comes from the table above and exists in `catalog.json`. Name the instant tool that each wait disables.
+2a. **Linear text formats.** If friction touches Linear, every timestamp is exactly `YYYY-MM-DDTHH:MM:SSZ` in UTC and every date `YYYY-MM-DD`; any other form fails the Linear load (B-05).
 3. **Mode and rate agree.** Use `persistent` with 1.0 to test a workaround or an escalation. Use `transient` with a rate below 1.0 (0.5 is the taxonomy's starting point) to test retries. `persistent` with a rate below 1.0 is contradictory, because the platform marks it transient. At 1.0 a retry never succeeds, so any expectation of a successful retry is unpassable. At a rate below 1.0 the task must still work in a run where every retry also fails.
 4. **The alternate path is proven.** For each errored function, name where the same facts live and cite the record (`hg.py` pointer or SQL row). Use the delete-on-paper test: remove every errored function and re-derive the task end to end. The alternate path must be persona-readable, findable without the errored tool, and must not itself be errored or async. If no alternate exists, do not configure the error (`Fail - Prompt Feasibility with Tools`).
 5. **The verifier hits the error too.** Never error a function the verifier needs to read required results. Never error a required write unless a natural feasible alternative remains. Record every fair alternate destination in acceptance; multiple fair routes alone do not fail. No feasible alternative is a Feasibility defect.
@@ -70,7 +75,7 @@ Output
     - `linear_list_issues` → `linear_submit_list_issues`
 
     In V1 (QC Task1, 6 of 6 rollouts) the agent met the 500 error on `linear_list_issues` and `slack_search_public_and_private`, then finished the same searches through `linear_submit_list_issues` and `slack_submit_search`. The designed alternate path is therefore only one valid route. The OE may show it, but no criterion may require it over the twin. The error still costs 2–9 wasted retries per rollout, and none of them count toward the horizon.
-7. **ACL.** Do not error a scoped tool (Gmail, Slack, Calendar, the Drive family) whose denial the task wants reasoned about: an error is indistinguishable from an ACL denial (`4_Persona ACL Policy - V2.md` §8). Prefer GitHub, Linear or Trello functions. Some personas have no Gmail mailbox (`references/Hardness_Mastery.md` §6.7): verify the mailbox before erroring a Gmail function, because without one the Gmail path is already dead and the error adds nothing.
+7. **ACL.** Do not error a scoped tool (Gmail, Slack, Calendar, the Drive family) whose denial the task wants reasoned about: an error is indistinguishable from an ACL denial (`4_Persona ACL Policy - V2.md` §8). Prefer GitHub, Linear or Trello functions. Every roster persona has a Gmail mailbox in both universes (`references/Hardness_Mastery.md` §6.7); check `users.json` for non-roster people, and verify the mailbox before erroring a Gmail function, because without one the Gmail path is already dead and the error adds nothing.
 8. **The prompt never announces friction.** "Gmail is down, so…" is a Never in `6_Prompt Writing Guidelines - V2.md` §4.2. Record this as a brief constraint.
 9. **Untested values.** Only an error rate of 1.0 and waits of 30/35 s have ever been exercised. Treat any other value as a test of the setting (V1 QC Task1 shipped an untested 20 s minimum wait). Confirm it in the pre-check trajectory: the failure rate is roughly as configured and the delay is as configured. If it is not, report it through the issue form and do not build on it.
 10. **Recovery is observable.** The recovery or wait path must be expressible as an explicit, affirmative Oracle Event (`/oe` Phase 3.5) and as an affirmative criterion (Negative Criteria = **Fail**). Record the locator and the expected data for the human. Do not write the event or the criterion.

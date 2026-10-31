@@ -60,6 +60,7 @@ WS = BUNDLE.parent
 SCRATCH = BUNDLE / "support" / "scratch"
 ENV_FLAG = "TA_SELFTEST_SANDBOX"
 LINKED = ("Evals", "HarmonyGames_GitHub", "HarmonyGames_Gmail", "HarmonyGames_Other_Services")
+UNIVERSE_LINKED = ("Universe_Normal", "Universe_SynthCut")      # the V3 data roots, linked when they exist
 COPY = ("tools", "setup", "references", "playbooks", "skills", "Guide", "README.md", "support/examples",
         "support/hardness_ledger", "support/fixtures/surface_formats",
         "support/fixtures/season_pass_rev13/00_Assigments.md")       # a V3 assignment for self-tests that need one
@@ -70,12 +71,16 @@ CACHE = Path("support") / "local_search" / "cache"
 # the path probe then asserts local_search.LOCAL, .TOOLS and .WORKSPACE/CACHE_REL resolve inside the sandbox.
 # The sandbox's copy of tools/task_context.py accepts the universe sources (manifest, service folders) in the real
 # workspace: the sandbox links them, and a link resolves outside the sandbox workspace, which the loader refuses. Only
-# these two read checks change; the KB paths (written) and DEFAULT_TASK stay the sandbox's.
+# these three read checks change; the KB paths (written) and DEFAULT_TASK stay the sandbox's.
 TASK_CONTEXT_PATCH = (
     ("        if WORKSPACE not in manifest_path.parents:\n",
      "        if WORKSPACE not in manifest_path.parents and Path({ws!r}) not in manifest_path.parents:  # selftest_sandbox\n"),
     ("        outside = [s for s, p in paths.items() if WORKSPACE not in p.parents]\n",
      "        outside = [s for s, p in paths.items() if WORKSPACE not in p.parents and Path({ws!r}) not in p.parents]"
+     "  # selftest_sandbox\n"),
+    # A linked Universe_*/ resolves into the real workspace: measure its layout from there.
+    ("                    rel = folder.relative_to(WORKSPACE)\n",
+     "                    rel = folder.relative_to(WORKSPACE if WORKSPACE in folder.parents else Path({ws!r}))"
      "  # selftest_sandbox\n"))
 LOCAL_SEARCH_PATCH = (("WORKSPACE = BUNDLE.parent ", "WORKSPACE = Path({ws!r})  # selftest_sandbox: the real workspace "),
                       ('CACHE_REL = f"{BUNDLE.name}/support/local_search/cache"',
@@ -112,6 +117,7 @@ for mod, attr in json.loads(sys.argv[2]):
 try:
     import local_search as ls
     out["local_search.WORKSPACE/CACHE_REL"] = str((ls.WORKSPACE / ls.CACHE_REL).resolve())
+    out["local_search.LOCAL/contexts"] = str((ls.LOCAL / "contexts").resolve())
 except ModuleNotFoundError:
     pass
 print(json.dumps(out))
@@ -157,7 +163,10 @@ class Sandbox:
             raise ValueError(f"layout {layout!r}: live or staged")
         self.layout, self.source, self.keep = layout, source, keep
         self.ignore_newer = tuple(ignore_newer)     # externally edited input folders (never read by the calling test)
-        self.linked = linked if linked is not None else {n: source.parent / n for n in LINKED}
+        # Evals/ is always linked; the legacy V2 roots and the V3 universe roots only while they exist (a workspace
+        # that has replaced the old root exports with Universe_*/ no longer has them).
+        optional = tuple(n for n in LINKED[1:] + UNIVERSE_LINKED if (source.parent / n).is_dir())
+        self.linked = linked if linked is not None else {n: source.parent / n for n in LINKED[:1] + optional}
         scratch = source / "support" / "scratch"
         scratch.mkdir(parents=True, exist_ok=True)
         self.root = Path(tempfile.mkdtemp(prefix=f"sandbox_{layout}_", dir=scratch))
@@ -221,9 +230,16 @@ class Sandbox:
             (self.ws / name).symlink_to(Path(target).resolve(), target_is_directory=True)
         self.tmp.mkdir()
 
-    def env(self) -> dict:
+    def env(self, extra: dict | None = None) -> dict:
         env = {k: v for k, v in os.environ.items() if not k.startswith("TASK_AUTHORING_")}
         env.update(PYTHONDONTWRITEBYTECODE="1", TMPDIR=str(self.tmp), **{ENV_FLAG: str(self.root)})
+        for key, value in (extra or {}).items():
+            if not key.startswith("TASK_AUTHORING_"):
+                raise Leak(f"env {key}: only TASK_AUTHORING_* variables may be injected into the sandbox")
+            if key == "TASK_AUTHORING_TASK_DIR" and not _inside(Path(value), self.root):
+                raise Leak(f"TASK_AUTHORING_TASK_DIR {value} is outside the sandbox: its universe index must be "
+                           "written under the sandbox's support/local_search/contexts/, never the real workspace")
+            env[key] = str(value)
         return env
 
     def check_paths(self) -> dict:
@@ -250,13 +266,13 @@ class Sandbox:
         return [ln for ln in r.stdout.splitlines() if ln.strip()
                 and not any(f"/{x.strip('/')}" in ln for x in self.ignore_newer)]
 
-    def run(self, argv: list, *, quiet: bool = False) -> int:
+    def run(self, argv: list, *, quiet: bool = False, extra_env: dict | None = None) -> int:
         """Run tools/<argv[0]> with argv[1:] inside the sandbox; raises Leak on an outside path or a linked write."""
         paths = self.check_paths()
         tool = self.bundle / "tools" / argv[0]
         if not tool.is_file():
             raise FileNotFoundError(f"{argv[0]} is not in the sandbox's tools/ ({self.layout} layout)")
-        r = subprocess.run([sys.executable, "-B", str(tool), *argv[1:]], cwd=str(self.ws), env=self.env(),
+        r = subprocess.run([sys.executable, "-B", str(tool), *argv[1:]], cwd=str(self.ws), env=self.env(extra_env),
                            capture_output=True, text=True, timeout=7200)
         if not quiet:
             sys.stdout.write(r.stdout)

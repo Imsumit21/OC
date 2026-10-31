@@ -1,20 +1,48 @@
-"""Shared paths and helpers for the universe_kb build (stdlib only, read-only on sources)."""
+"""Shared paths and helpers for the per-universe universe_kb build (stdlib only, read-only on sources).
+
+One build serves one universe, selected by the activated task context (``universe`` and
+``source``). Every data path, the prepared Snowflake index and the storyline metadata come
+from that universe; outputs go only to ``source.kb_output_path`` and never to the legacy KB
+root at ``references/universe_kb/``.
+"""
 import json, os, re, datetime, hashlib, sys
 from pathlib import Path
 
 BUNDLE = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-ROOT = os.path.dirname(BUNDLE)  # the workspace that holds Evals/ and the HarmonyGames_* folders
+ROOT = os.path.dirname(BUNDLE)  # the workspace root (holds the eval bundle)
 sys.path.insert(0, BUNDLE + "/tools")
 from task_context import load_context, ContextError
+
+BUILD_ID = "per-universe-v1"
 
 try:
     CONTEXT = load_context(os.environ.get("TASK_AUTHORING_TASK_DIR", BUNDLE + "/task_inputs"), require_source=True)
     SOURCE = CONTEXT["source"]
+    UNIVERSE = CONTEXT.get("universe") or {}
     with open(SOURCE["manifest"]) as source_file:
         SOURCE_MANIFEST = json.load(source_file)
     BUILD_PATHS = SOURCE_MANIFEST.get("kb_build_paths") or {}
-except (ContextError, OSError, ValueError) as error:
+except (ContextError, OSError, ValueError, KeyError, TypeError) as error:
     raise SystemExit("KB SOURCE BLOCKED: " + str(error))
+
+UNIVERSE_KEY = UNIVERSE.get("key") or SOURCE.get("universe")
+
+
+def universe_install_hint(universe=None, key=None):
+    """Name the universe data folder that has to be installed before a build can run."""
+    universe, key = universe or UNIVERSE, key or UNIVERSE_KEY
+    folder, prefix = universe.get("folder"), universe.get("prefix")
+    if folder and prefix:
+        return "install %s/%s_HarmonyGames_* per Evals/UNIVERSE_MAP.md" % (folder, prefix)
+    return "install the %s universe data per Evals/UNIVERSE_MAP.md" % key
+
+
+if not UNIVERSE_KEY:
+    raise SystemExit("KB SOURCE BLOCKED: the task context has no universe; run task_context.load_context first")
+if SOURCE.get("status") != "ready":
+    raise SystemExit("KB SOURCE BLOCKED: %s source is %s (%s); %s"
+                     % (UNIVERSE_KEY, SOURCE.get("status") or "missing",
+                        SOURCE.get("reason") or "no validated export", universe_install_hint()))
 
 PATHS = SOURCE["paths"]
 OS = str(Path(PATHS["slack"]).parent)
@@ -25,26 +53,68 @@ CONF, CONTACTS = PATHS["confluence"] + "/confluence_working.json", PATHS["contac
 GDOCS, GSHEETS, GSLIDES, GDRIVE = (PATHS[service] + "/data.json" for service in ("gdocs", "gsheets", "gslides", "gdrive"))
 SNOW = PATHS["snowflake"] + "/snowflake.json"
 
+
 def source_path(value):
     path = Path(value)
     return str(path if path.is_absolute() else Path(ROOT) / path)
 
-SNOW_IDX = source_path(BUILD_PATHS.get("snowflake_index", "Evals/references/search_indexes/snowflake-snowflake.json"))
-META = source_path(BUILD_PATHS.get("metadata_path", "HarmonyGames_Other_Services/metadata"))
-CACHE = BUNDLE + "/support/local_search/cache/kb_cache/" + CONTEXT["universe_date_key"] + "/" + SOURCE["fingerprint"][:20]
-OUT = SOURCE.get("kb_output_path") or SOURCE["kb_path"]
-CLOCK_ISO = CONTEXT["freeze_utc"]
+
+def other_services_root(paths):
+    """The universe's *_Other_Services folder, derived from its configured service paths."""
+    return Path(paths.get("contacts") or paths["slack"]).parent.parent
+
+
+def universe_snowflake_index(workspace, key):
+    """The selected universe's prepared Snowflake index (never a shared/legacy index folder)."""
+    return Path(workspace) / "Evals" / "references" / "universes" / key / "search_indexes" / "snowflake-snowflake.json"
+
+
+SNOW_IDX = source_path(BUILD_PATHS.get("snowflake_index") or universe_snowflake_index(ROOT, UNIVERSE_KEY))
+META = source_path(BUILD_PATHS.get("metadata_path") or (other_services_root(PATHS) / "metadata"))
+CACHE = BUNDLE + "/support/local_search/cache/kb_cache/" + UNIVERSE_KEY + "/" + SOURCE["fingerprint"][:20]
+if not SOURCE.get("kb_output_path"):
+    raise SystemExit("KB SOURCE BLOCKED: universe %s has no source.kb_output_path; a per-universe build writes "
+                     "only to references/universe_kb/by_universe/%s" % (UNIVERSE_KEY, UNIVERSE_KEY))
+OUT = SOURCE["kb_output_path"]
+CLOCK_ISO = UNIVERSE.get("clock_utc") or SOURCE.get("data_clock") or CONTEXT["freeze_utc"]
+SEED_BOUND_ISO = CONTEXT["freeze_utc"]
 CLOCK = datetime.datetime.fromisoformat(CLOCK_ISO.replace("Z", "+00:00"))
 CLOCK_TS = CLOCK.timestamp()
-if SOURCE.get("mode") == "shared-universe" and SOURCE.get("data_clock") != CLOCK_ISO and not SOURCE.get("kb_output_path"):
-    OUT = str(Path(SOURCE["kb_path"]) / "by_date" / CONTEXT["universe_date_key"])
+LEGACY_KB = os.path.join(BUNDLE, "references", "universe_kb")
 
+if Path(LEGACY_KB).resolve().is_relative_to(Path(OUT).resolve()):
+    raise SystemExit("KB SOURCE BLOCKED: refusing to write the %s build into the legacy KB root; "
+                     "source.kb_output_path must be references/universe_kb/by_universe/%s"
+                     % (UNIVERSE_KEY, UNIVERSE_KEY))
 if any(Path(OUT).resolve().is_relative_to(Path(path).resolve()) for path in PATHS.values()):
-    raise SystemExit("KB SOURCE BLOCKED: kb_path must not be inside any read-only service export")
+    raise SystemExit("KB SOURCE BLOCKED: kb_output_path must not be inside any read-only service export")
+# Checked as written and as resolved, so a link named by_universe/<key> cannot lead into another folder.
+if any(path.name != UNIVERSE_KEY or path.parent.name != "by_universe" for path in (Path(OUT), Path(OUT).resolve())):
+    raise SystemExit("KB SOURCE BLOCKED: kb_output_path %s is not a by_universe/%s folder; a build writes only its own "
+                     "universe's references/universe_kb/by_universe/%s" % (OUT, UNIVERSE_KEY, UNIVERSE_KEY))
 if not os.path.isdir(META) or not os.path.isfile(SNOW_IDX):
-    raise SystemExit("KB SOURCE BLOCKED: selected metadata_path or snowflake_index does not exist")
+    raise SystemExit("KB SOURCE BLOCKED: %s metadata or Snowflake index missing (%s, %s); %s"
+                     % (UNIVERSE_KEY, META, SNOW_IDX, universe_install_hint()))
 os.makedirs(CACHE, exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
+
+
+def shutdown_rules_apply():
+    """True only for a universe whose February-2026 shutdown rules apply (the normal universe)."""
+    return bool(UNIVERSE.get("shutdown_rules_apply"))
+
+
+def hand_written_allowed():
+    """True only on the normal universe: hand-written KB knowledge (Scenario_Atlas rows, hand-picked example ids,
+    static narrative titles) was written from its Feb 14, 2026 data. On another universe an id can exist while its
+    content or version differs, so none of it is carried over."""
+    return UNIVERSE_KEY == "normal"
+
+
+def hand_written(refs):
+    """Example ids hand-picked in this builder from the Feb 14 data: kept only where hand_written_allowed()."""
+    return list(refs) if hand_written_allowed() else []
+
 
 REDACT_PATTERNS = [
     ("[PERSON_NAME_n]", re.compile(r"\[PERSON_NAME_\d+\]")),
@@ -63,30 +133,52 @@ LINEAR_KEY = re.compile(r"\b(ENG|ZOM|ART|DES|EPI)-(\d{1,4})\b")
 
 
 def jload(p):
-    path = Path(p)
-    shared_reference = False
-    if not path.exists() and SOURCE.get("mode") == "shared-universe" and path.resolve().is_relative_to(Path(OUT).resolve()):
-        # Identity/reference dependencies can be read from the existing shared KB
-        # while new earlier-date outputs are kept in their separate output folder.
-        path = Path(SOURCE["kb_path"]) / path.resolve().relative_to(Path(OUT).resolve())
-        shared_reference = True
-    with open(path) as f:
-        data = json.load(f)
-    if shared_reference or (SOURCE.get("mode") == "shared-universe" and path.resolve().is_relative_to(Path(OUT).resolve())):
-        from runtime_context import validate_kb
-        return validate_kb(data, {"TASK_CONTEXT": CONTEXT})
+    """Read a JSON artifact of this build. Never falls back to another universe's KB."""
+    with open(p) as f:
+        return json.load(f)
+
+
+def build_stamp():
+    """The fields a KB file is bound by (task_context._kb_binding compares the same ones)."""
+    return {"universe": UNIVERSE_KEY, "clock": CLOCK_ISO, "seed_bound": SEED_BOUND_ISO,
+            "source_fingerprint": SOURCE["fingerprint"], "build": BUILD_ID}
+
+
+def jload_kb(name):
+    """Read a KB file this build depends on (entities.json from entity.py, or an earlier step's output) and refuse one
+    stamped for another universe, clock, seed bound, source or build instead of carrying it into new outputs."""
+    data = jload(os.path.join(OUT, name))
+    meta = (data.get("_meta") if isinstance(data, dict) else None) or {}
+    stale = sorted(k for k, v in build_stamp().items() if meta.get(k) != v)
+    if stale:
+        raise SystemExit("KB SOURCE BLOCKED: %s in %s does not carry this build's %s; rebuild it in this task context "
+                         "(entity.py build, then run_all.py)" % (name, OUT, ", ".join(stale)))
     return data
+
+
+def jload_cache(name):
+    """Read a kb_cache intermediate and refuse it unless its sidecar (written by jdump) carries this build's stamp,
+    so a partial rebuild never mixes caches of another universe, source or builder version into new outputs."""
+    path = os.path.join(CACHE, name)
+    try:
+        meta = jload(path + ".meta.json").get("_meta") or {}
+    except (OSError, ValueError, AttributeError):
+        meta = {}
+    stale = sorted(k for k, v in build_stamp().items() if meta.get(k) != v)
+    if stale:
+        raise SystemExit("KB SOURCE BLOCKED: kb_cache/%s does not carry this build's %s; run run_all.py without a "
+                         "step list to rebuild the caches" % (name, ", ".join(stale)))
+    return jload(path)
 
 
 def jdump(obj, p, indent=None):
     p = str(p)
-    metadata = {"clock": CLOCK_ISO, "source_fingerprint": SOURCE["fingerprint"],
-                "source_manifest": SOURCE["manifest"], "context_hash": CONTEXT["context_hash"]}
-    if SOURCE.get("mode") == "shared-universe":
-        reference_clock = SOURCE.get("data_clock", CLOCK_ISO)
-        metadata.update(reference_clock=reference_clock, assigned_freeze=CLOCK_ISO,
-                        reference_only=reference_clock != CLOCK_ISO,
-                        requires_record_verification=reference_clock != CLOCK_ISO)
+    manifest = SOURCE["manifest"]
+    workspace = os.path.dirname(BUNDLE)
+    if os.path.isabs(manifest) and os.path.commonpath([workspace, manifest]) == workspace:
+        manifest = os.path.relpath(manifest, workspace)       # no machine-specific path in a committed KB file
+    # No context hash: it covers machine paths and the KB status.
+    metadata = {**build_stamp(), "source_manifest": manifest}
     published_mapping = isinstance(obj, dict) and Path(p).resolve().is_relative_to(Path(OUT).resolve())
     if published_mapping:
         obj = dict(obj, _meta={**obj.get("_meta", {}), **metadata})
@@ -102,9 +194,15 @@ def jdump(obj, p, indent=None):
 
 
 def before_clock(value):
-    """Only dated evidence before the freeze can support a completed event."""
+    """A record dated before the universe data horizon (the KB clock)."""
     when = iso_to_dt(value)
     return when is not None and when < CLOCK
+
+
+def within_horizon(value):
+    """Evidence at or before the selected universe's data horizon can support a listed fact."""
+    when = iso_to_dt(value)
+    return when is not None and when <= CLOCK
 
 
 def ts_to_dt(ts):

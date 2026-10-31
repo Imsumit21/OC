@@ -689,7 +689,7 @@ class RecordText:
     def __init__(self, sql_text: str, design: bool = False):
         from base_check import parse_sql
         from fact_check import _field_text
-        self.design, self.rows, self._base = design, [], {}
+        self.design, self.rows, self._base, self._hg_error = design, [], {}, ""
         for s in parse_sql(sql_text or ""):
             if s["op"] != "insert":
                 continue
@@ -727,8 +727,14 @@ class RecordText:
         try:
             r = subprocess.run([sys.executable, str(here / "hg.py"), "search", *args], cwd=str(here.parent.parent),
                                capture_output=True, text=True, timeout=300)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            self._hg_error = f"{type(exc).__name__}: {exc}"
+            return {}
+        self._hg_error = "" if r.returncode == 0 else (r.stderr or r.stdout).strip()[-400:]
+        try:
             return json.loads(r.stdout)
-        except (OSError, ValueError, subprocess.TimeoutExpired):
+        except ValueError:
+            self._hg_error = self._hg_error or (r.stderr or r.stdout).strip()[-400:] or "hg.py returned no JSON"
             return {}
 
     def _get(self, svc, f, ptr):
@@ -1150,6 +1156,27 @@ INSERT INTO gmail.gmail_messages (id, thread_id, user_email, label_ids_json, sub
     return man, sql, sid2
 
 
+UNAVAILABLE = ("Install Universe_", "SOURCE BLOCKED", "Cannot read assignment", "No task date is saved",
+               "UniverseNotSelected")
+
+
+def _universe_missing(text: str = "") -> str | None:
+    """The reason the selected universe's data is not installed; only then may a live self-check skip."""
+    if any(marker in str(text) for marker in UNAVAILABLE):
+        return str(text)[-200:]
+    context = globals().get("TASK_CONTEXT")
+    if context is None:
+        try:
+            import task_context as tc
+            context = tc.load_context(tc.DEFAULT_TASK)
+        except Exception:  # noqa: BLE001 - no assignment at all is not a data-install skip
+            return None
+    source = (context or {}).get("source") or {}
+    if context and source.get("status") not in (None, "ready"):
+        return source.get("reason") or f"source status {source.get('status')!r}"
+    return None
+
+
 def _self_test_redteam_a() -> int:
     """Red team A (2026-10-05): every mechanical item planted once; each must fail its own check and only it."""
     man, sql, decoy = _fixture_a()
@@ -1216,9 +1243,14 @@ def _self_test_redteam_a() -> int:
     # design mode: a seeded delegating record cannot be read yet (not failed), a base one is read through hg.py
     dr = RecordText("", design=True)
     assert dr.contains("C09R0KXFX71/1768231200.000100", "anything")[0] is None
-    base_ok = RecordText("").contains("D04UGG61DUM/1770751702.596069", "stuck at the loading screen at 8%")
-    base_no = RecordText("").contains("D04UGG61DUM/1770751702.596069", "the hub delegates the list")
-    assert base_ok[0] is True and base_no[0] is False, (base_ok, base_no)
+    rt = RecordText("")
+    base_ok = rt.contains("D04UGG61DUM/1770751702.596069", "stuck at the loading screen at 8%")
+    missing = _universe_missing(rt._hg_error)
+    if base_ok[0] is not True and missing:
+        print(f"self-test SKIP - base Slack record text: selected universe data not installed ({missing})")
+    else:
+        base_no = rt.contains("D04UGG61DUM/1770751702.596069", "the hub delegates the list")
+        assert base_ok[0] is True and base_no[0] is False, (base_ok, base_no)
     return len(cases)
 
 

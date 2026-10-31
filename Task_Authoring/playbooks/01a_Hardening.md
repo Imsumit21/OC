@@ -16,10 +16,13 @@ This step measures and proposes; it changes no other stage's artifact. Universe 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`
 and read `Working_Files/00_Task_Context.json` (GEN_EXECUTION § 0). Use all eight
 assignment fields, the assigned freeze and the context's registered universe/KB source.
-Both freeze dates use the same local universe data. Check each relied-on fact at
-the assigned freeze; shared KB summaries are leads, not a separate dataset gate.
+The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14,
+2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state
+rules and clock, and stop if the date is missing — there is no default. Check
+each relied-on fact at the assigned freeze; shared KB summaries are leads, not a
+separate dataset gate.
 V3 changed-topic rules take
-precedence over older Evals/V2 references; local authorship and hardness-profile
+precedence over the older V2 reference documents in `references/Docs/`; local authorship and hardness-profile
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 All modes read:
@@ -112,6 +115,7 @@ The design steps now run where the design is made (plan §2). For a legacy task 
 - [ ] **B0 Run validity and provenance**, per trajectory, before any verdict. `trajectory_ledger.py` reports each item
       below; confirm it, and add what the tool cannot see.
   - **Model and route.** Record the main-agent model and every subagent model. Subagents on another model, such as a Haiku or Sonnet sweep, make a mixed run. Record it and do not credit its failures to Opus without saying so.
+  - **Report provenance.** Keep each quoted eval report's `Clock:` line and cite the universe manifest at `Evals/references/universes/<key>/universe_manifest.json`, never the retired root manifest (A-28).
   - **Hint status and source match.** The export carries no user prompt, so match on the content the run touched.
   - **Re-applied injection.** Check that the injected records actually appear in the results.
   - **Completeness.** Look for context compaction, truncation and result events after the final answer, such as background agents still reporting. Calls whose results never reached the deliverable are excluded from the horizon count.
@@ -175,6 +179,13 @@ Give counts per node: runs LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REA
 - [ ] **B3e Verifier sanity.** For every all-fail criterion, every run whose score collapses (≥ 25 points below the median) and every criterion that fails a run with the required write present, open the judge text and the trajectory side by side.
   - Classify each as genuine, verifier error (the judge concedes the fact and still fails it) or rubric defect (unauthorized, over-specific, unincorporated).
   - Feed rubric defects to `/create-allfail` and `/create-rubric-writing check`, with proposed wording where it helps.
+- [ ] **B3f New-release FAIL classes to attribute** (`Evals/3_Rubrics_Eval.md`, `1_Prompt_Eval.md`):
+  - `overly_broad` is Major: one broad row that a plausible wrong answer can pass fails the rubric outright (B-09).
+  - A row an idle agent passes (no writes, no answer) is a Negative Criteria FAIL; test every row's `do_nothing_case` (B-11).
+  - Prompt Contrived: staged typos, trap hints/riddles, a destination the persona knows hidden, audit-form wording, if-chains (B-14).
+  - False premise by universe: a departed person acting, business as usual after the Feb 11 shutdown on Feb 14, post-cut objects on Oct 1 (A-26, B-16).
+  - Evidence only on Trash, in an attachment or in an unlinked record is `unobservable` (Major) (A-20).
+  - An OE edit makes the rubric review stale, and `prompt-ugt-v1` records, rubric format-4 records and rubric ledger format 1 are not reusable: expect a FULL re-review (A-19, C-13, C-11, C-22).
 - [ ] **B4 Explain why Opus passed.** For each passed criterion or scored point in `10`, name the mechanism and classify it:
   - *Genuine capability.* Out-design it with a deeper node, never by obstructing it.
   - *Universe leak.* The answer was over-findable; the decoy was obviously wrong or never returned by the real query; the correction was met before the claim; the deciding fact was reachable from chat; the ACL did not bind; or the node was off the path.

@@ -1,3 +1,5 @@
+> V2 source document. For V3 tasks the assignment's universe date selects Feb 14, 2026 (normal) or Oct 1, 2025 (synth-cut) — see `Task_Authoring/setup/GEN_EXECUTION.md` § 0a.
+
 **HarmonyGames Universe and MCP Tool Overview**
 
 HarmonyGames · Fixed environment date: February 14, 2026, 00:00 UTC · Updated September 26, 2026

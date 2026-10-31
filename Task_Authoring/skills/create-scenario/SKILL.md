@@ -20,8 +20,7 @@ This command designs the scenario, the records and the difficulty; the prompt, O
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`.
 Use the shared `Working_Files/00_Task_Context.json` (all eight assigned fields,
-registered shared data source and assigned freeze). Both dates use the same local
-data; validate relied-on record dates and earlier state before grounding. V3
+`universe.key`, the `freeze_utc` seed bound, `source.kb_status`). The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Validate relied-on record dates and earlier state at the seed bound before grounding; no seeded event timestamp is after it and nothing after it is treated as completed. V3
 changed-topic rules govern over older Evals text. The existing Long→extreme and
 Normal design limits remain local policy; Eval Portal is handled by the user.
 
@@ -31,6 +30,7 @@ Normal design limits remain local policy; Eval Portal is handled by the user.
 `task_inputs/Working_Files/01_Scenario_Design.md` and the draft manifest `task_inputs/Working_Files/01_Hardness_Manifest.draft.json` (with `horizon`, the resolved `effective_profile`, the `mechanism_portfolio` — one entry per future solver rule, each with its natural-reading fallback — and, for a requester-confirmed extreme design on a Normal Horizon, `profile_exception`); the gradable surface `task_inputs/Working_Files/01_Gradable_Surface.json` (this stage owns it; `/create-injection` never rewrites it); `task_inputs/Working_Files/01b_Redteam_Review.md` + `.second.md`.
 
 ## Checks
+- Universe (playbook S0/S1): record the universe key, label, clock line, seed bound and `shutdown_rules_apply` before any storyline research; candidates must exist in that universe. Synth-cut excludes the six post-cut storylines and anything after 2025-09-30 23:59:59 PT, with no shutdown premise; on normal, business as usual after the Feb 11, 2026 shutdown is a false premise unless the wind-down is acknowledged; Victor Barnes is not active in either universe (`Evals/1_Prompt_Eval.md` §2.3). Storyline census 76 / 70, never 80.
 - `python3 Task_Authoring/tools/hardness_gate.py Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.draft.json --design` → PASS. The profile comes from the manifest's `effective_profile` (Long Horizon → extreme; Normal → normal unless the requester confirms extreme, recorded in `profile_exception`); a disagreeing `--profile` fails.
 - Manifest contract (`references/Hardness_Manifest_Spec.md`): verbatim `delegation_quote` per fragment, `requirement_ids` (no orphan requirement), `names_authorities` (no orphan authority), surface `requirement` + `decides` (no manufactured columns), `decoy_scope` or a superseded decoy, `root_cause` from the `Hardness_Mastery.md` mechanism enum, conditional budget rows counting 0, designed denials as `denied_probes` with YES alternates, anchors named by noun phrases of ≤ 6 words.
 - Lazy-solver pass (playbook S9) with every leak fixed.

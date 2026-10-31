@@ -24,11 +24,13 @@ after the baseline if the solution path or the count basis moved.
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`
 and read `Working_Files/00_Task_Context.json` (GEN_EXECUTION § 0). Use all eight
-assignment fields, the assigned freeze and the context's registered universe/KB source.
-Both freeze dates use the same local universe data. Check each relied-on fact at
-the assigned freeze; shared KB summaries are leads, not a separate dataset gate.
+assignment fields, the assigned freeze (`freeze_utc`, the seed bound) and the context's
+`universe` block and registered KB source.
+The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Check each relied-on fact at
+the assigned freeze; shared KB summaries are leads, not a separate dataset gate
+(`source.kb_status`: `reference-only` means leads only; `unavailable` means no KB — ground every fact in records).
 V3 changed-topic rules take
-precedence over older Evals/V2 references; local authorship and hardness-profile
+precedence over the older V2 reference documents in `references/Docs/`; local authorship and hardness-profile
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs
@@ -36,7 +38,7 @@ Inputs
 - `task_inputs/00_Assigments.md` (required: tier and persona).
 - `01_Grounding_Dossier.md`, `01_Hardness_Manifest.json` (traps → dead ends), `04_Prompt_Writing_Brief.md`, `03_Error_Async_Config.txt`, `02_Reference_Files_Manifest.md`.
 - Refresh: `08_Oracle_Events.md`, `08_OE_Writing_Ledger.md`, then `07_Baseline_Trajectories/` and `12_Difficulty_Stats.txt` (count basis).
-- The universe, through `tools/hg.py search`, for volumes.
+- The universe, only the selected one, through `tools/hg.py search`, for volumes.
 
 Output
 - `task_inputs/Working_Files/05_Human_Time_Worksheet.md`: hours, the sub-task table, the tier check and a self-review.
@@ -44,7 +46,7 @@ Output
 ## Hard gates
 
 1. **Manual effort only, and the same work.** The person scrolls channels, opens records one by one and computes by hand. Count only the work the prompt requires the agent to do. Do not count learning the universe from scratch.
-2. **Volumes are measured from the persona's view.** Each sub-task names what is read, computed or written, with its real size from `hg.py` (messages in the window, rows, tickets, PRs, cards, documents, pages). Search is evaluator-wide, so filter the scoped services (Gmail, Slack, Calendar, Drive family) to what the persona can see. Never take a volume from memory or the dossier. (Per-persona Slack membership in `references/Ask_Carriers.md` runs from 0 to 293 of the 985 channels.)
+2. **Volumes are measured from the persona's view.** Each sub-task names what is read, computed or written, with its real size from `hg.py` (messages in the window, rows, tickets, PRs, cards, documents, pages). Search is evaluator-wide, so filter the scoped services (Gmail, Slack, Calendar, Drive family) to what the persona can see. Never take a volume from memory or the dossier. Every count comes from the selected universe (`Evals/references/universes/<key>/`); the two archives differ (Gmail 91,379 vs 83,727 files, Slack 5,357 vs 4,844 messages), so a figure from the other universe is wrong (A-02). Windows use Pacific dates and `universe.persona_today` (Sat Feb 14, 2026 / Wed Oct 1, 2025), not the QC form's February 28 (A-04/A-30). (Per-persona Slack membership in `references/Ask_Carriers.md` runs from 0 to 293 of the 985 channels.)
 3. **Rates are stated and anchored.** The only official calibration is the ten-hour Long-Horizon worked example (`10_Long Horizon Guidelines - V2.md` §4):
 
    | Work | Anchor |
@@ -103,6 +105,7 @@ Output
 
 ```
 Pass: first | post-OE refresh | post-baseline refresh        Tier: <Normal | Long-Horizon>
+Universe: <normal | synth-cut> · Clock: <universe.clock_line>
 Hours: <n.nn>
 
 | Sub-task | Kind (read / dead end / workaround / re-read / write) | Volume (measured, persona view) | Rate | Minutes |

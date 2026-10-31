@@ -15,10 +15,7 @@ never execute SQL.
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`.
 Use the shared `Working_Files/00_Task_Context.json` (all eight assigned fields,
-registered shared data source and assigned freeze). Both dates use the same local
-data; validate relied-on record dates and earlier state before grounding. V3
-changed-topic rules govern over older Evals text. The existing Long→extreme and
-Normal design limits remain local policy; Eval Portal is handled by the user.
+registered shared data source and assigned freeze). The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Validate relied-on record dates and earlier state before grounding. V3 changed-topic rules govern over older Evals text. Never add a filler record, field or SQL comment to inflate calls or depress the pass rate; every injected record needs a task purpose, and any Linear timestamp is exactly `YYYY-MM-DDTHH:MM:SSZ` (A-06, B-05). The existing Long→extreme and Normal design limits remain local policy; Eval Portal is handled by the user.
 
 Required in `Task_Authoring/task_inputs/`: `00_Assigments.md`, `01_Grounding_Dossier.md` and
 `01_Universe_Inject.sql`. If one is missing, stop and name it.

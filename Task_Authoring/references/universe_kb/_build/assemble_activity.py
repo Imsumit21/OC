@@ -16,12 +16,12 @@ ACTIVE_COLUMN, RECENT_COLUMN = ACTIVE_YM.replace("-", "_"), RECENT_YM.replace("-
 
 
 def main():
-    S = jload(CACHE + "/kb_slack.json")
-    GM = jload(CACHE + "/kb_gmail.json")
-    GH = jload(CACHE + "/kb_github.json")
-    LI = jload(CACHE + "/kb_linear.json")
-    O = jload(CACHE + "/kb_other.json")
-    E = jload(OUT + "/entities.json")
+    S = jload_cache("kb_slack.json")
+    GM = jload_cache("kb_gmail.json")
+    GH = jload_cache("kb_github.json")
+    LI = jload_cache("kb_linear.json")
+    O = jload_cache("kb_other.json")
+    E = jload_kb("entities.json")
     susers = {u["id"]: u for u in jload(SLACK + "/users.json")}
     chans = {c["id"]: c for c in jload(SLACK + "/channels.json")}
     roster = {}

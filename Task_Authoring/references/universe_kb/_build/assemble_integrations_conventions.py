@@ -91,14 +91,35 @@ def tz_shift(hist_utc, tz):
     return [hist_utc[(h - off) % 24] for h in range(24)]
 
 
+def jenkins_seeding_note(last_build=None):
+    """Jenkins seeding rule; the Combo Fighter tail is a normal-universe (shutdown) fact."""
+    note = ("A seeded 'build N shipped/failed' fact needs the Started + result pair for that job/number; "
+            "builds continue%s" % ((" to " + last_build) if last_build else ""))
+    return note + " (Combo Fighter)." if shutdown_rules_apply() else note + "."
+
+
+def coderabbit_seeding_note():
+    """CodeRabbit mirror rule; its cancellation date is a normal-universe (shutdown) fact."""
+    if shutdown_rules_apply():
+        return ("CodeRabbit was cancelled 2026-02-12 22:50Z (Scenario_Atlas); no CodeRabbit activity should be seeded after that. "
+                "Mirrored to Slack like any comment in mirrored repos.")
+    return "Mirrored to Slack like any comment in mirrored repos; seed only inside the tool's active window in this universe."
+
+
+def mirror_seeding_note():
+    """Slack-mirror rule stated without hard-coded repo windows (they differ per universe)."""
+    return ("A seeded PR comment/review/merge inside a repo's `window` below needs its Slack copy, threaded under the PR's 'opened' parent, using the real login. "
+            "Repos outside that list/window must NOT get a mirror. COMMENTED reviews on GameOfDominoes are mirrored only ~17% of the time.")
+
+
 def main():
-    S = jload(CACHE + "/kb_slack.json")
-    GM = jload(CACHE + "/kb_gmail.json")
-    GH = jload(CACHE + "/kb_github.json")
-    LI = jload(CACHE + "/kb_linear.json")
-    O = jload(CACHE + "/kb_other.json")
-    J = jload(CACHE + "/kb_join_stats.json")
-    A = jload(OUT + "/activity.json")
+    S = jload_cache("kb_slack.json")
+    GM = jload_cache("kb_gmail.json")
+    GH = jload_cache("kb_github.json")
+    LI = jload_cache("kb_linear.json")
+    O = jload_cache("kb_other.json")
+    J = jload_cache("kb_join_stats.json")
+    A = jload_kb("activity.json")
     si = S["integrations"]
     mirror = S["gh_mirror"]
     # ---------- GitHub app mirror shape ----------
@@ -129,8 +150,9 @@ def main():
        "logins": "real GitHub logins (arthur.blake, owen.baker) - the GitHub export uses tokens (EMPLOYEE_0025_GITHUB_USERNAME)", "per_kind": gh_kinds,
        "org_redacted_copies": sm["org_redacted_copies"]},
       {"per_repo": sm["per_repo"], "comment_and_review_copy_rates": GH["comment_mirror_rates"], "not_mirrored": [r for r, v in sm["per_repo"].items() if not v["mirror_window"]]},
-      "A seeded PR comment/review/merge in GameOfDominoes or game-of-dominoes-backend (to 2025-12-26) or match3d (2025-06-30..2025-10-24) needs its Slack copy, threaded under the PR's 'opened' parent, using the real login. Repos outside that list/window must NOT get a mirror. COMMENTED reviews on GameOfDominoes are mirrored only ~17% of the time.",
-      ["slack:C050WGU41HR:1738798578.389259", "slack:C050WGU41HR:1739210677.768059", "slack:C093LEZGF6J:1756761203.851799"],
+      mirror_seeding_note(),
+      hand_written(["slack:C050WGU41HR:1738798578.389259", "slack:C050WGU41HR:1739210677.768059",
+                    "slack:C093LEZGF6J:1756761203.851799"]),
       window={r: v["mirror_window"] for r, v in sm["per_repo"].items() if v["mirror_window"]})
     I("INT-02", "github", "slack", "GitHub app push notifications (top-level, not threaded)", {"pretext": "<N new commit(s)> pushed to `<develop|master|main>` by <login>", "per_kind": {k: v for k, v in gh_kinds.items() if "pushed" in k}},
       {"messages": sum(v["messages"] for k, v in gh_kinds.items() if "pushed" in k)}, "Seed only for the mirrored repos/branches; one message per push.", [v["example_id"] for k, v in gh_kinds.items() if "pushed" in k][:2])
@@ -168,7 +190,7 @@ def main():
       {"job_post": {"user": "SLACK_BOT_0005_SLACK_ID or null with subtype bot_message", "attachments[0].fallback": "<Job> - #<n> Started by changes from <person> (<k> file(s) changed) (<http://blake.tplinkdns.com:9009/job/...|Open>)", "result": "<Job> - #<n> - <branch> Success|Failure|Unknown after <t> (<...|Open>)", "colors": "2eb886 success / others"},
        "build_script_post": {"subtype": "bot_message", "text": "Android Build <n> Notes: QA Build | Android Build Size <n> MB | Build Errors:"}},
       {"jobs": job_out, "status_totals": si.get("jenkins", {}).get("detail"), "build_script_kinds": si.get("jenkins_buildscript", {}).get("detail"), "window": [ts_to_dt(float(si["jenkins"]["first"])).date().isoformat(), ts_to_dt(float(si["jenkins"]["last"])).date().isoformat()]},
-      "A seeded 'build N shipped/failed' fact needs the Started + result pair for that job/number; builds continue to 2026-02-12 (Combo Fighter).", si.get("jenkins", {}).get("samples", [])[:3])
+      jenkins_seeding_note(max((v["last"] for v in job_out.values()), default=None)), si.get("jenkins", {}).get("samples", [])[:3])
     dist = collections.defaultdict(lambda: {"n": 0, "first": None, "last": None, "mailboxes": collections.Counter()})
     for app, plat, ver, b, mb, d, rid in GM["distribution_mails"]:
         x = dist[app]
@@ -233,7 +255,7 @@ def main():
     I("INT-23", "coderabbit", "github(+slack)", "CodeRabbit reviews and comments (PERSON_6026_GITHUB_USERNAME, type Organization; timeline actor SVC_0321)",
       {"pr_body": "auto-inserted '<!-- This is an auto-generated comment: release notes by coderabbit.ai --> ## Summary by CodeRabbit'", "comments": "walkthrough / 'Review skipped: Draft detected'", "review_comments": "'_⚠️ Potential issue_ | _🔴 Critical_' with analysis chains"},
       {"pr_comments": J["coderabbit"][0], "review_comments": J["coderabbit"][1], "reviews": J["coderabbit"][2], "pr_bodies_with_summary": GH["conventions"]["pr_body_has_coderabbit_summary"]},
-      "CodeRabbit was cancelled 2026-02-12 22:50Z (Scenario_Atlas); no CodeRabbit activity should be seeded after that. Mirrored to Slack like any comment in mirrored repos.", [])
+      coderabbit_seeding_note(), [])
     out = {"_meta": {"generated_by": "Task_Authoring/references/universe_kb/_build/assemble_integrations_conventions.py",
                      "use": "Every automated mirror/integration with its exact shape and base rate, so a seeded record carries its required companions (and only in the windows where they existed)."},
            "integrations": ints, "gmail_samples": gmail_samples(), "index": [{"id": i["id"], "name": i["name"], "source": i["source"], "destination": i["destination"]} for i in ints]}

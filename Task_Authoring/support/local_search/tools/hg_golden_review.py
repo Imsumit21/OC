@@ -9,7 +9,6 @@ import argparse
 import json
 import os
 from pathlib import Path
-import os as _ta_os
 import re
 import tempfile
 
@@ -40,15 +39,15 @@ VALUE_PATTERNS = (
     re.compile(r"\b[A-Z]{2,6}-\d{2,5}\b"),                 # ticket ids
     re.compile(r"(?<![\w#])#\d{1,6}\b"),                    # PR / issue numbers
 )
-REPORT = Path("Evals/task_inputs/reports/2_golden.md")
+REPORT = Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/2_golden.md")
 CONTEXT = REPORT.parent / "drafts/golden_review_context.json"
 RECORD = CONTEXT.with_name("golden_review_record.json")
 HISTORY = CONTEXT.parent / "golden_history"
-ANSWER = Path("Evals/task_inputs/08_Golden_Answer.md")
+ANSWER = Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/08_Golden_Answer.md")
 EXPLICIT_DRAFT = CONTEXT.parent / "08_Golden_Answer.md"
 CHECKS = ("completeness", "accuracy", "authority", "valid_solutions",
           "wrong_solutions", "consistency_feasibility")
-INPUT_KEYS = {"task-details", "prompt", "golden", "injection", "error-async", "dynamic-context"}
+INPUT_KEYS = {"task-details", "universe", "prompt", "golden", "injection", "error-async", "dynamic-context"}
 REFERENCES = (
     "Evals/2_Golden_Response_Eval.md", "claude/skills/golden/SKILL.md",
     "Evals/WORKFLOW.md", "Evals/INPUTS.md", "Evals/EXECUTION.md", "Evals/ENVIRONMENT.md",
@@ -57,7 +56,7 @@ REFERENCES = (
     "Evals/references/rules/scoring.json", "Evals/references/rules/long_horizon.md",
     "Evals/references/persona/roster.json", "Evals/references/persona/acl.md",
     "Evals/references/tools/catalog.json", "Evals/references/tools/manifest.json",
-    "Evals/references/universe_manifest.json", "Evals/references/source_layout.json",
+    "{universe}/universe_manifest.json", "{universe}/source_layout.json",
     "Evals/tools/hg_review_evidence.py",
     "Evals/tools/hg_golden_review.py", "Evals/tools/hg_report_contract.py",
     "Evals/tools/hg_write_output.py", "Evals/tools/hg_rubric_loop.py",
@@ -187,7 +186,7 @@ def start_review(root, answer=None, draft=False, accept_ending=None):
     def supplied(key):
         return any(states.get(k, {}).get("state") == "saved" and states[k].get("files")
                    for k in (key, "source:" + key)) or (
-                       key not in states and local(root, Path("Evals/task_inputs") / SLOTS[key]).is_file())
+                       key not in states and local(root, Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS") / SLOTS[key]).is_file())
     for key in ("prompt", "task-details"):
         if not supplied(key):
             raise ValueError("Save the required " + key + " input before starting the golden audit.")
@@ -211,7 +210,7 @@ def start_review(root, answer=None, draft=False, accept_ending=None):
         if files:
             candidate = local(root, Path(files[0]["path"]))
         else:
-            candidate = local(root, Path("Evals/task_inputs") / SLOTS[key])
+            candidate = local(root, Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS") / SLOTS[key])
         return candidate.read_text(encoding="utf-8", errors="replace") if candidate.is_file() else None
     prompt_text, dynamic_text = saved_text("prompt"), saved_text("dynamic-context")
     findings = integrity_findings(golden_text, prompt_text, dynamic_text, accept_ending)

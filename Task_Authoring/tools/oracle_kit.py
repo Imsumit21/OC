@@ -564,6 +564,27 @@ def evidence(rows, key, field):
 '''
 
 
+UNAVAILABLE = ("Install Universe_", "SOURCE BLOCKED", "Cannot read assignment", "No task date is saved",
+               "UniverseNotSelected")
+
+
+def _universe_missing(text: str = "") -> str | None:
+    """The reason the selected universe's data is not installed; only then may a live self-check skip."""
+    if any(marker in str(text) for marker in UNAVAILABLE):
+        return str(text)[-200:]
+    context = globals().get("TASK_CONTEXT")
+    if context is None:
+        try:
+            import task_context as tc
+            context = tc.load_context(tc.DEFAULT_TASK)
+        except Exception:  # noqa: BLE001 - no assignment at all is not a data-install skip
+            return None
+    source = (context or {}).get("source") or {}
+    if context and source.get("status") not in (None, "ready"):
+        return source.get("reason") or f"source status {source.get('status')!r}"
+    return None
+
+
 def _self_test() -> None:
     import selftest_sandbox as sb
     if not sb.in_sandbox(BUNDLE):              # its golden check runs tools/hg.py, whose caches are shared
@@ -657,9 +678,14 @@ def _self_test() -> None:
             gp.write_text(base_solver.replace("TEAM", team).replace("BASE_ID", rid))
             res = contract(gp, sql, manifest=manifest, surface=surface, task_dir=ctx)
             golden[name] = {c["check"]: c for c in res["checks"]}["contract.golden"]
-        assert golden["found"]["status"] == "PASS" and "through tools/hg.py records" in golden["found"]["detail"], golden["found"]
-        assert golden["wrong"]["status"] == "FAIL" and "not in" in golden["wrong"]["detail"], golden["wrong"]
-        assert golden["absent"]["status"] == "FAIL" and "absent from the exports" in golden["absent"]["detail"], golden["absent"]
+        golden_detail = json.dumps(golden)
+        missing = _universe_missing(golden_detail)
+        if missing:
+            print(f"self-test SKIP - base Linear golden values: selected universe data not installed ({missing})")
+        else:
+            assert golden["found"]["status"] == "PASS" and "through tools/hg.py records" in golden["found"]["detail"], golden["found"]
+            assert golden["wrong"]["status"] == "FAIL" and "not in" in golden["wrong"]["detail"], golden["wrong"]
+            assert golden["absent"]["status"] == "FAIL" and "absent from the exports" in golden["absent"]["detail"], golden["absent"]
 
         # M5: every routed id is read and must resolve; a read error or an incomplete scan FAILs the blocking check
         def routed_solver(ids):

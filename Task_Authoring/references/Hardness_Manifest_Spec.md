@@ -4,8 +4,11 @@ Before designing or implementing a manifest, run
 `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`
 and use `Working_Files/00_Task_Context.json`. The exact eight-field assignment,
 assigned role, canonical freeze, difficulty mode/cap and shared data source are
-bound across stages. Both dates use the same local export; the freeze scopes
-relied-on facts and seeded timestamps. Later-edited bodies need dated versions or
+bound across stages. The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default.
+Compiled from the older Feb 14 export; reference-only for both universes until re-verified against the selected universe. Lines tagged [normal-only] do not exist on Oct 1 (synth-cut).
+The freeze (`freeze_utc`) is the seed bound: it scopes relied-on facts and seeded
+event timestamps; only plan fields (due, scheduled start/end, deadline) may be
+later. Later-edited bodies need dated versions or
 independent before-freeze evidence to establish earlier state. V3 rules govern fair
 outcomes, prompt style, source evidence and empirical difficulty.
 
@@ -46,6 +49,7 @@ Opus pre-check decide whether the difficulty is real.
 | `horizon` | `"Normal Horizon"` \| `"Long Horizon"` | the assigned tier, verbatim |
 | `effective_profile` | `"extreme"` \| `"normal"` | **required**, resolved once at scenario time; every gate reads it. Long Horizon → `extreme`; Normal Horizon → `normal`, or `extreme` only with `profile_exception` |
 | `profile_exception` | `{reason, requester_confirmation}` | required when a Normal Horizon task uses `extreme` (Borderline Horizon, score capped at 3): why, and the requester's confirmation (who, when, where recorded) |
+| `volume_exception` | `{reason, requester_confirmation, call_budget_floor, per_record_floor}` | optional, `extreme` only: a requester-confirmed lower volume floor for one task. `reason` and `requester_confirmation` are nonblank strings; it replaces exactly two numeric minima — `call_budget` (`call_budget_floor`, integer 100–500; 100 is the platform's Long Horizon minimum) and `per_record_calls` (`per_record_floor`, integer 0–300); every other extreme target and the necessity reason on every budget row still apply. Present but null, partial, mistyped (bool, float, string number) or out of range FAILs `effective_profile` and leaves both minima at 500/300 |
 | `design_delta` | `[{id, change, reason}]` | final manifest only: every draft id the final manifest drops or renames, with the reason (the injection gate fails a missing draft id without one) |
 | `services` | `{svc: {role, weight_reason}}` | every service that carries weight; `weight_reason` = the fact/rule/write the answer cannot do without. Keys: `slack gmail gcal gdrive gdocs gsheets gslides contacts github linear trello confluence snowflake` |
 | `requirements` | `{R-id: one-line summary}` (or `[{id, summary}]`) | every graded requirement; every `trap.requirement`, `authority.governs`, `chain.ends_in` and surface `requirement` must be declared here. The summary states the output columns/decisions a cohort surface may serve (`decides`) |
@@ -82,7 +86,7 @@ Opus pre-check decide whether the difficulty is real.
 | SQL lint | clean (`tools/sql_lint.py`) |
 | Services injected / carrying weight | ≥ 10 / ≥ 10 |
 | SQL rows | ≥ 120 INSERTed rows (UPDATE companions do not count) |
-| Effective profile | `effective_profile` set; Long Horizon = extreme; Normal Horizon at extreme only with `profile_exception`; `--profile` agrees |
+| Effective profile | `effective_profile` set; Long Horizon = extreme; Normal Horizon at extreme only with `profile_exception`; `--profile` agrees; a complete `volume_exception` lowers only the call-budget and per-record minima |
 | Requirements | all referenced R-ids declared; ≥ 6 declared; every declared requirement named by an incorporated fragment or anchor (`requirement_coverage`) |
 | Orphan injection | none (every injected schema appears in `services`) |
 | Anchors | 1–3, each with a plain-language `prompt_reference` |

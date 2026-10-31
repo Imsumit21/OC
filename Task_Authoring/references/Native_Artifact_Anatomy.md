@@ -1,12 +1,13 @@
 # Native Artifact Anatomy — HarmonyGames
+`<U>/<P>_HarmonyGames_*` = the selected universe folder and prefix (`Universe_Normal/Normal_…` for Feb 14, 2026; `Universe_SynthCut/SynthCut_…` for Oct 1, 2025).
 
-> What "native" looks like in each service: on-disk location, record shape, size bands, naming and tone. Used by `playbooks/02_Reference_Files.md` (uploaded files must read like real exports) and `playbooks/01_Universe_Injection.md` (seeded records must match their siblings).
+> What "native" looks like in each service: on-disk location, record shape, size bands, naming and tone. Used by `playbooks/02_Reference_Files.md` (uploaded files must read like real exports) and `playbooks/01_Universe_Injection.md` (seeded records must match their siblings). Compiled from the older Feb 14 export; reference-only for both universes until re-verified against the selected universe — read the record in the selected universe (`Universe_Normal/` or `Universe_SynthCut/`) before mirroring it.
 > Moved from the V1 reference-files playbook and corrected on 2026-10-03: GCal and GSlides are populated (they were empty in the V1 read); Contacts carry name/job/email. Counts are from the Sep 2026 export. **Confluence and Snowflake are being regenerated** — re-verify any count or value from them.
 > Always open 2–3 real sibling records with `Task_Authoring/tools/hg.py search` before mirroring a shape; this file is the index, not a substitute.
 
 > This is the authoritative "what does native look like" reference, derived from a full read of the HarmonyGames corpus. For each service: the on-disk location, the verbatim record shape, the realistic size/count bands, section/naming/tone conventions, and cited real exemplars to open and mirror. **Always open the cited exemplars before authoring.** Company tokens throughout: `Harmony Games` / `HARMONY GAMES`; games `Game of Dominoes` (GoD), `Domino Delights`, `Domino Dreams`, `Zombie Match 3D`/`Zombie Lite`, `Crownfall`, `Plinko`; domain `@harmonygames.co`; PII appears as redacted tokens (`PERSON_####_NAME/EMAIL`, `EMPLOYEE_00NN_*`, `SVC_####_*`, `[PERSON_NAME_####]`, `[IP_ADDRESS_####]`).
 
-### A. Gmail — `HarmonyGames_Gmail/Services_Data/gmail`
+### A. Gmail — `<U>/<P>_HarmonyGames_Gmail/Services_Data/gmail`
 Threads live in `threads/` under **two** filename forms (identical schema): zero-padded `NNNNNNNN.json` and `<localpart>@harmonygames.co_<threadNumericId>.json`. Materialized attachment blobs live under `root/attachments/…`.
 
 - **Thread object:** `{ id, user_email, historyId (null in practice), messages: [ … ] }`. `id` = `<mailbox>/<X-GM-THRID>`.
@@ -17,7 +18,7 @@ Threads live in `threads/` under **two** filename forms (identical schema): zero
 - **Attachment object:** `{ attachment_id:"att_0001", content_type, rel_path:"attachments/<mailbox>/<threadId>/<msgid-folder>/att_0001.<ext>", size_bytes }`. If `rel_path` starts `attachments/`, the blob is materialized at `root/` + `rel_path` (you must drop the real blob there). `gmail/dwt-takeout-…` paths are NOT materialized. **Materialized types only:** pdf (2,243), docx (250), csv (68), xlsx (37), txt (34), doc (18) — `.ics`/calendar is referenced but never a real blob, so never ship one.
 - **Exemplars to open:** `threads/00000379.json` (vendor invoice + materialized PDF), `threads/00001092.json` (5-msg investor/term-sheet thread, 3 PDFs, real `>`-quoting), `threads/00000791.json` (9-msg internal "Fwd: Documents" with 5 docx), `threads/00000050.json` (single-msg 409a/Carta note, no attachment).
 
-### B. Google Docs — `HarmonyGames_Other_Services/Services_Data/gdocs` (key `docs_documents`, 633 docs)
+### B. Google Docs — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/gdocs` (key `docs_documents`, 633 docs)
 - **Record shape:** `body_text, created_time, document_id (== drive_file_id, `f_`+22hex), modified_time, owner_email, revision_id, shared_with_emails ([…@harmonygames.co]), style_runs, title, visibility (private|domain|anyone)`. Times ISO-8601 Z.
 - **Headings are encoded in `style_runs`** — list of `{start,end,named_style,list_id,list_nesting}` with `named_style` ∈ `TITLE, HEADING_1..3` (no separate outline field).
 - **Size:** median ~5,069 chars / ~831 words (~2 pages); p90 ~7,210 words (~15 pp); legal tail 30+ pp. Most docs are short notes/specs.
@@ -27,46 +28,46 @@ Threads live in `threads/` under **two** filename forms (identical schema): zero
   - **Investor/board update:** salutation `Dear partners and investors,` then `HEADING_3` sections `Company Building → Product Development → Marketing → Conclusion`. (Open `f_5a4fb6c74aab30e85771e5`.)
   - **Meeting notes:** title-cased `Company Stand Up (2023-08-25 13_13 GMT-4)`, often `- Notes by Gemini`.
 
-### C. Google Sheets — `HarmonyGames_Other_Services/Services_Data/gsheets` (key `sheets_spreadsheets`, 398 files / 1,553 tabs; 378 MB — STREAM/grep, never full-read)
+### C. Google Sheets — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/gsheets` (key `sheets_spreadsheets`, 398 files / 1,553 tabs; 378 MB — STREAM/grep, never full-read)
 - **Spreadsheet shape:** `created_time, drive_file_id, modified_time, owner_email, shared_with_emails, sheets, spreadsheet_id, title, visibility`. **Per-tab:** `{ column_count, grid (list of rows, each a list of string cells; `""` empty), index, row_count, sheet_id, title }`. `row_count`/`column_count` are the padded declared grid — real footprint is much smaller (median ~40 non-empty rows in a ~1000-row grid).
 - **Tabs/file:** median 1 (ad-hoc exports); finance models ~4-10; economy models 20-52 (max 52).
 - **Finance layout:** lead tab `HG P&L` with monthly date column headers and a Column-B row spine (`Cash P&L, Mobile revenue (cash in), COGS, Gross Margin, OpEx, Salary & Benefits, …, EBITDA, Cash Flows, Beginning Balance, Funding (Preferred Shares), Ending Balance`); companion tabs `HG Salary & Benefits`, `HG Costs`, `Key Assumptions` (full-sentence prose with concrete numbers/CPI/ARPDAU). (Open `f_28ecc492b19f3696a19a97`, `f_438130df7c32bce9388d58` GoD model.)
 - **Economy layout:** many tabs of grids headed `ProductID, Cost, CostSubtype, Count, Category, Container, Title, DisplayName, Value, …` plus `Value In`/`Alpha Shop Items` reward tabs. (Open `f_42484f82f5ee0afe3a6704` 52-tab Domino Delights economy.) Model card-pack/cap-table economics as an economy-style grid — there is no literal "Card Packs"/"Cap Table" tab natively.
 - **Analytics export:** single tab, SQL-export headers like `step_name, completions, ratio, order_num`; title `query_result_<ISO>Z`.
 
-### D. Google Slides — `HarmonyGames_Other_Services/Services_Data/gslides/data.json` (key `slides_presentations`, 164 decks)
+### D. Google Slides — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/gslides/data.json` (key `slides_presentations`, 164 decks)
 - **Record shape:** `presentation_id (== drive_file_id, `f_`+22hex), title, owner_email, shared_with_emails, visibility, pages[] (each with object_id, index, layout, …), drive_file_id, revision_id, created_time, modified_time`.
 - Common titles are recurring reviews ("Weekly Update"), pitch and board decks. Drive also carries exported `*.presentation.pdf` decks (~15–16 slides), named `Harmony Games <Audience> <Pitch|BoD|Update|Intro> <Mon YY>.presentation.pdf`. For an uploaded reference file, ship a deck as PDF; for seeded universe data, mirror the `slides_presentations` record shape.
-### E. Google Drive envelope — `HarmonyGames_Other_Services/Services_Data/gdrive`
+### E. Google Drive envelope — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/gdrive`
 - **File record shape:** `id (files `f_`+22hex — 30,600; folders `d_`+22hex with a `…folder` mime type — 23,266; a Docs/Sheets/Slides file shares its `f_` id with its Drive record), name, mime_type, parents, owner_email, shared_with_emails, visibility, owners, modified_time, created_time, size, content_path, web_view_link, icon_link, description, trashed, starred`. `content_path` = on-disk path under `gdrive/root/` (null for pure Google-native).
 - **Uploads carry a sidecar `<name>-info.json`** (the native metadata envelope): `content_last_modified, created, download_url, drive_id (real 28-44 char id), editors_can_edit_access, expected_item_size, [gmail_message_id/gmail_part_id if arrived by email], mime_type (full OOXML string e.g. …spreadsheetml.sheet), permissions[] (role owner|writer, type user, domain "Harmony Games", email …@harmonygames.co), starred, title`. When you seed a real Drive blob (docx/xlsx/pdf) into the universe, write the matching sidecar too. This is takeout metadata. Never put a sidecar in the reference-file upload folder (§M).
 - Google-native Docs/Sheets surface with a Google mime but are stored on disk as `.html`/`.docx`/`.xlsx`; true uploads keep their real mime (pdf/csv/doc).
 
-### F. GitHub — `HarmonyGames_GitHub/Services_Data/github` (`data.json` metadata store + `root/harmonygames-Games/<repo>/` blob tree)
+### F. GitHub — `<U>/<P>_HarmonyGames_GitHub/Services_Data/github` (`data.json` metadata store + `root/harmonygames-Games/<repo>/` blob tree)
 - **Shapes (verbatim keys).** Repository: `id (owner/name slug), name, full_name, owner_login, description, default_branch, language, topics, visibility, license_key, archived, disabled, is_template, fork, parent_full_name, size, stargazers_count, watchers_count, forks_count, open_issues_count, created_at, updated_at, pushed_at, html_url` (most nullable fields are `null`; `visibility:"private"`; counters `0`). PR: `id (<repo>#<n>), repo_id, number, title, state, merged, draft, locked, author_login, merged_by_login, body, base_ref, base_sha, head_ref, head_sha (40-hex), additions, deletions, changed_files, labels, assignee_logins, requested_reviewer_logins, created_at, updated_at, merged_at, closed_at, html_url`. Review: `id (<pr_id>#rev_N), pr_id, author_login, state, body, submitted_at, commit_id`. Review comment: `id (<pr_id>#rc_N), pr_id, author_login, body, path, diff_hunk (real @@ hunk), line, position, commit_id, in_reply_to_id, created_at`. PR comment: `id (<pr_id>#c_N), pr_id, author_login, body, created_at, updated_at`.
 - **Conventions:** 16 repos (owner `harmonygames-Games`, all private, default branch `main`). **PR body median 97 chars, 26% empty**, informal single sentences; 337 bodies carry an auto CodeRabbit `## Summary by CodeRabbit` block inside `<!-- auto-generated … coderabbit.ai -->` HTML-comment fences. Reviews: 75% empty bare `APPROVED`; states `APPROVED/COMMENTED/CHANGES_REQUESTED/DISMISSED`. **CodeRabbit bot = `PERSON_6026_GITHUB_USERNAME` (type `Organization`)** authoring structured markdown comments (severity header `_⚠️ Potential issue_ | _🔴 Critical_`, `<details><summary>🧩 Analysis chain</summary>` shell blocks, code suggestion, `<details>🤖 Prompt for AI Agents`, `<!-- fingerprinting:phantom:… -->` footer, rabbit-poem walkthroughs). `head_ref` = `Person/FeatureName` onto `main`; commit messages short/imperative.
 - **Blob tree:** Unity monorepo — `.meta`/`.json`/`.png`/`.prefab`/`.cs`/`.fbx` dominate. C# lives at `<repo>/Assets/Scripts/<Area>/<Name>.cs` (global-namespace `MonoBehaviour`, `[SerializeField]` fields, `<summary>` XML doc, `#if UNITY_EDITOR` guards). READMEs short (`#`/`##`, bulleted install, ```` ```bash ```` fences). Spec docs use `###` numbered sections + backtick-typed markdown tables (`| Field | Type | Description |`). Config = nested Nakama `.yml` with secrets `"<REDACTED>"`. (Open `Combo-Fighters#1` PR, `Combo-Fighters#18#rc_1` bot comment, `ZM-Liveops-Docs/SeasonPass.md`, `match3d-backend/nakama/config/production.yml`, `Combo-Fighters/Assets/Scripts/Managers/ComboController.cs`.)
 
-### G. Confluence — `HarmonyGames_Other_Services/Services_Data/confluence/confluence_working.json`
+### G. Confluence — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/confluence/confluence_working.json`
 - 4 spaces (`space_ENG` Engineering, `space_PROD` Product & Design, `space_COMPANY` Company, `space_OPS` Operations & Live Ops), 31 pages.
 - **Page shape:** `{ id (`page_<slug>`), space_id (`space_<KEY>`), parent_id (tree: home→overview→leaf), title, body_format:"storage", status:"current", version, author_id (`user_EMPLOYEE_00NN`), created_at, updated_at, body }`.
 - **Body = Confluence storage XHTML:** `<p>`, `<h2>`, `<h3>`, `<strong>`, `<em>`, `<table><tbody><tr><th>/<td>`; cross-page links `<ac:link><ri:page ri:content-title="…"/><ac:link-body>…</ac:link-body></ac:link>`; admonitions `<ac:structured-macro ac:name="info|note|warning|code">…</ac:structured-macro>`; entities escaped (`&amp;`).
 - **Length:** index/home pages ~30-40 words; real spec/handbook/runbook pages **250-1125 words**. (Open `page_qa_runbook`, `page_aws_infra`, `page_season_pass_spec`, `page_support_playbook`.)
 
-### H. Snowflake — `HarmonyGames_Other_Services/Services_Data/snowflake/snowflake.json` (2.36 GB — grep/stream ONLY)
+### H. Snowflake — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/snowflake/snowflake.json` (2.36 GB — grep/stream ONLY)
 - One object with `databases` (3: `ANALYTICS`, `FINANCE`, `LIVE_OPS`), `schemas` (6), `tables` (40; 5.38M rows total). Table shape: `{ database, schema, name, table_type:"BASE TABLE", comment (rich analytic caveats), columns:[{name,data_type,is_nullable}], created_at, id (DB.SCHEMA.TABLE), rows:[{…inline row objects…}] }`.
 - **Conventions:** SCREAMING_SNAKE names; types `DATE/VARCHAR/BOOLEAN/NUMBER(38,x)`; ID prefixes `TXN-/PLR-/EVT-/ROSTER-`; `game_id` ∈ `domino_delights/zombie_match_3d/combo_fighter`; dates `YYYY-MM-DD`, timestamps `…T00:00:00Z`. Finance tables are small (CASH_BALANCE 34, MONTHLY_BURN 240); telemetry tables are millions of rows. (Grep `ANALYTICS.MARKETING.AD_SPEND_DAILY`, `ANALYTICS.MONETIZATION.IAP_TRANSACTIONS`, `FINANCE.EXPENSES.CASH_BALANCE`.)
 
-### I. Slack — `HarmonyGames_Other_Services/Services_Data/slack`
+### I. Slack — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/slack`
 - `channels.json` (985; lowercase-hyphen names `pitch-deck`, `financial-model-1881`, `mpdm-…` group DMs), `users.json` (219). Messages sharded on disk: `messages/<CHANNEL_ID>/<YYYY-MM>.json`.
 - **Message shape:** `{ id, ts (epoch.micros string, also thread key), type, subtype, user (`EMPLOYEE_00NN_SLACK_ID`), text, channel, thread_ts, reply_count, reply_users_count, latest_reply, is_activity_message, reactions:[{count,name,users[]}], files:[], attachments:[] }`. Threads: parent has `thread_ts == ts`, `reply_count>0`.
 - **Tone:** casual, lowercase, fragmentary, one thought/line; mean ~75 chars, median ~48, p90 ~141. Many empty-`text` media posts.
 
-### J. Linear — `HarmonyGames_Other_Services/Services_Data/linear/data.json`
+### J. Linear — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/linear/data.json`
 - 5 teams (`ART, DES, ENG, EPI, ZOM`), 3,852 issues. **Issue shape:** `{ id (`<KEY>-<n>`), project_id, team_id (`team_<KEY>`), parent_id, assignee_id, creator_id, state_id, cycle_id, identifier, number, title, description (Markdown), priority (int 0-4), estimate, due_date, started_at, completed_at, canceled_at, archived_at, time_in_status_minutes, labels (free-text strings incl. sprint names), links, relations:[{target,type}], is_archived, created_at, updated_at }`.
 - **Quirks to mirror:** `state_id` holds the state NAME directly (enum: `Done, Canceled, Todo, Backlog, Bugs, In Progress, PR, In Validation, In Review, Duplicate, Regression, Team Epic, Validation`); `assignee_id` usually a hash (`usr_51f5f16d46e8cf55`) but `creator_id` often name-embedded (`usr_Victor Barnes`).
 
-### K. Trello — `HarmonyGames_Other_Services/Services_Data/trello/data.json`
+### K. Trello — `<U>/<P>_HarmonyGames_Other_Services/Services_Data/trello/data.json`
 - 5 boards ("Harmony Games" 449 cards, "DD Product Roadmap" 216, "ZM ROADMAP" 79, "UA/BD" 40, "Welcome Board" 19), 803 cards. **Card shape:** `{ id (24-hex), name, idBoard, idList, desc, pos (large float), closed, due, dueComplete, idMembers, idLabels, idShort, shortLink, shortUrl, url, dateLastActivity, cover, badges:{attachments,checkItems,checkItemsChecked,comments,description,…} }`. Card names use bracketed type tags + short imperatives (`[Slides] Financial Model of Harmony Games`, `[GDD] Game of Dominoes (GoD)`). Lists are kanban (`To Do/Doing/Done/Backlog`) or release-dated columns (`Rebirth (June)`, `BETA: Oct 10`).
 
 ### L. Google Calendar and Contacts
@@ -89,5 +90,5 @@ An uploaded file is something the persona has on their own machine: an export, a
 | Repository file | The raw file exactly as it sits in the blob tree (§F) |
 
 - **Never ship:** a JSON slice of a service export (`data.json` records, Slack shards); a Drive `-info.json` sidecar (§E); a zip.
-- **Names** may carry timestamps; the agent's system prompt expects them. Use the cross-service date idioms above, and keep every date before 2026-02-14.
+- **Names** may carry timestamps; the agent's system prompt expects them. Use the cross-service date idioms above, and keep every date at or before the task's seed bound (`freeze_utc`), true for the selected universe: 2025-10-01T00:00:00Z (Oct 1) or 2026-02-14T00:00:00Z (Feb 14); only plan fields may be later.
 - **Redaction tokens** (`PERSON_####_NAME`, `SVC_####_EMAIL`, `[PERSON_NAME_####]`) appear exactly as they do in the records the file mirrors.

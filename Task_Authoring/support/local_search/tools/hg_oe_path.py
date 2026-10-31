@@ -89,7 +89,7 @@ def task_fingerprints(context):
     keys = {'prompt', 'task-details', 'injection', 'error-async'}
     paths = {f['path'] for k, entry in context['inputs'].items() if k.removeprefix('source:') in keys
              for f in entry.get('files', [])}
-    paths.update('Evals/task_inputs/' + SLOTS[k] for k in keys)
+    paths.update('Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/' + SLOTS[k] for k in keys)
     return {name: value for name, value in context['files'].items() if name in paths}
 
 

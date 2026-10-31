@@ -1,3 +1,5 @@
+> V2 source document. For V3 tasks the assignment's universe date selects Feb 14, 2026 (normal) or Oct 1, 2025 (synth-cut) — see `Task_Authoring/setup/GEN_EXECUTION.md` § 0a.
+
 **Prompt Writing Guidelines**
 
 *How to write a prompt that is hard because the universe is hard — and that reads like a colleague typed it, because under Spec V2 you have to type it yourself.*

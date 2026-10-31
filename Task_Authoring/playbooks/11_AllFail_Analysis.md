@@ -21,10 +21,10 @@ model-authorable.
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`
 and read `Working_Files/00_Task_Context.json` (GEN_EXECUTION § 0). Use all eight
 assignment fields, the assigned freeze and the context's registered universe/KB source.
-Both freeze dates use the same local universe data. Check each relied-on fact at
+The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. `freeze_utc` is the seed bound; the eval clock `universe.clock_utc` sits beside it and supplies the `Clock:` line. Check each relied-on fact at
 the assigned freeze; shared KB summaries are leads, not a separate dataset gate.
 V3 changed-topic rules take
-precedence over older Evals/V2 references; local authorship and hardness-profile
+precedence over the older V2 reference documents in `references/Docs/`; local authorship and hardness-profile
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs (all required unless marked; stop and name what is missing)
@@ -85,6 +85,9 @@ trajectory is empty; a trajectory is truncated JSON. Never bind by guesswork. A 
      Drive family: persona-exact; Explorer-only or another persona's view is not reach;
      GitHub, Linear, Trello, Contacts, Confluence, Snowflake unscoped). Discoverable through the
      catalog tools as the runs actually used them (search coverage, pagination, filters).
+     **Deciding record:** its `reachability` must be `PROMPT_LINKED`; a value stated only by a
+     Trash/Spam copy, readable only inside an attachment, or unlinked from every prompt noun is an
+     `unobservable` rubric defect (Eval 3 §2.4) — INVALID — rubric, never a valid all-fail.
    - **Capability** — for any create/export/deliver ask, classify the path SUPPORTED,
      UNSUPPORTED or UNVERIFIED (WORKFLOW "Output capability and failure attribution"); writes
      need a catalog write tool.
@@ -94,8 +97,13 @@ trajectory is empty; a trajectory is truncated JSON. Never bind by guesswork. A 
    - **Precision / flexibility** — exact values for IDs, dates, counts and discrete fields;
      "approximately" only for calculated or rounded values; equivalent free text accepted; no
      route, wording, title, count or format the prompt did not ask for (214 MB = 214.0 MB).
+     A row that rejects a fair alternative — a `BOTH_FAIR_FIGURE` value the saved prompt report
+     records, the other day of a split PT/UTC date, an anonymized source token, or a format/count the
+     prompt never states — is `overly_specific` (Major): INVALID — rubric, not a valid all-fail.
    - **Phrasing** — affirmative, Agent-centric, no tool name, title self-contained. Process rows
-     pass the three-condition test (`all_failing.md` § Process).
+     pass the three-condition test (`all_failing.md` § Process). A row an idle Agent passes
+     (`do_nothing_case` ACCEPT, e.g. "leaves X open" or "as found") fails Negative Criteria:
+     INVALID — rubric.
    - **Friction** — a configured forced error actually fired and its recovery path exists; a
      configured async wait was actually taken (submit → check → get) by the runs.
 4. **Classify** (the four classes of `all_failing.md`, plus unresolved):
@@ -108,6 +116,7 @@ trajectory is empty; a trajectory is truncated JSON. Never bind by guesswork. A 
    | JUDGE ERROR | a run's trajectory satisfies the valid criterion but the verifier failed it | not an all-fail; flag for the reviewer; hand to `/create-difficulty` as a judge correction |
    | UNRESOLVED | evidence is missing (UNVERIFIED capability, unreadable record) | not a demonstrated model failure; never justified; blocks handoff until resolved |
 
+   Three rubric-defect classes make an all-fail INVALID — rubric when they cause the failure: `unobservable` (the deciding record is not `PROMPT_LINKED`), `overly_specific` (the row rejects a fair alternative), and a do-nothing negative (the row accepts an idle Agent).
    A defect that does **not** cause the failure (e.g. a non-atomic row whose every part every
    run missed) leaves the all-fail VALID for this dimension (QC: invalid = "a quality issue that
    causes the failure"), but it is still a rubric-quality finding: report it to be
@@ -134,6 +143,7 @@ trajectory is empty; a trajectory is truncated JSON. Never bind by guesswork. A 
 
 ```
 Completed rollouts: <n>/6 (excluded: <ids + reason> | none)   Rubric binding: <ok | warning text>
+Clock: <universe.clock_line>
 All-fail rubrics: <ids or NONE>
 
 ### R<n> — VALID | INVALID — rubric | INVALID — environment | JUDGE ERROR | UNRESOLVED   (weight <w>)

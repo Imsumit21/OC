@@ -49,7 +49,7 @@ def package(h, service, rel):
     raw = json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode()
     if len(raw) > MAX_BYTES:
         raise ValueError('Identity index exceeds portable size cap')
-    folder = h.ROOT / 'Evals/references/id_indexes'
+    folder = h.manifest_path().parent / 'id_indexes'
     folder.mkdir(parents=True, exist_ok=True)
     filename = batch.digest([service, rel]) + '.json'
     (folder / filename).write_bytes(raw)
@@ -108,7 +108,7 @@ def lookup(h, service, ids, pattern, pointer, key):
     """Return complete indexed evidence, or None so the strict scanner runs."""
     if key not in FIELDS:
         return None
-    path = h.ROOT / 'Evals/references/id_indexes/manifest.json'
+    path = h.manifest_path().parent / 'id_indexes/manifest.json'
     if not path.exists():
         return None
     compact.watch_manifest(path)

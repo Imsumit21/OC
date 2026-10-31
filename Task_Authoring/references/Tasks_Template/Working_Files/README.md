@@ -3,7 +3,7 @@
 `task_inputs/` holds only the platform slots, in the same layout as the task template.
 Every other file a `/create-*` command or `stage_gate.py` writes lands here, so the
 top level always shows exactly what goes to the platform. Start a task with
-`cp -R Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputs/`.
+`cp -Rn Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputs/` (`-n`: never overwrite an existing task).
 Slots are numbered in platform screen order; the full map (author, screen, command,
 Evals key) is in `setup/GEN_EXECUTION.md` §5.
 

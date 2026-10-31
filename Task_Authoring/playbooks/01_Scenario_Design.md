@@ -30,11 +30,10 @@ Oracle Event text or criterion text (GEN_EXECUTION §2).
 
 First run `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`
 and read `Working_Files/00_Task_Context.json` (GEN_EXECUTION § 0). Use all eight
-assignment fields, the assigned freeze and the context's registered universe/KB source.
-Both freeze dates use the same local universe data. Check each relied-on fact at
-the assigned freeze; shared KB summaries are leads, not a separate dataset gate.
+assignment fields and the context's registered universe/KB source (`universe.key`, the
+`freeze_utc` seed bound, `source.kb_status`). The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Check each relied-on fact at that universe's seed bound; the KB is authoritative data only when `kb_status` is `bound`, otherwise its summaries are leads.
 V3 changed-topic rules take
-precedence over older Evals/V2 references; local authorship and hardness-profile
+precedence over the older V2 reference documents in `references/Docs/`; local authorship and hardness-profile
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs
@@ -59,7 +58,7 @@ Output
 
 1. **Persona can carry it.** The persona is one of the 17 in `Evals/references/persona/roster.json`
    (the platform's `thomas` and `tim_steudler` fail `/prompt`'s identity gate — escalate instead).
-   Reach census done: Slack channel count, Gmail mailbox exists (Marcus Bennett has none),
+   Reach census done: Slack channel count, Gmail mailbox exists,
    Drive root exists (Simon Walker has none), calendar.
 2. **Storyline natively spans ≥ 8 services** before injection; injection lifts it to ≥ 10 (extreme; normal: ≥ 6 injected, ≥ 7 carrying weight).
 3. **Cohort spine** of 40–150 source-defined records × ≥ 3 per-record surfaces over ≥ 2 services
@@ -118,6 +117,9 @@ This step consumes that output and owns the decisions:
 - [ ] The Self-review then needs at least (LANDED + LEAKED rows in the intake) + 1 evidenced counter-readings.
 
 ### S0 — Assignment and persona reach
+- [ ] **Universe first.** Record `universe.key`, `universe.label`, `universe.clock_line`, `freeze_utc` (seed bound) and
+      `universe.shutdown_rules_apply` in section 0 before any storyline research. Every candidate, census and count is
+      derived in that universe only (`Evals/ENVIRONMENT.md`); no count or id carries across universes.
 - [ ] Copy all eight V3 assignment fields from the shared context. Map `business_function` to the Evals category
       (`Evals/references/rules/task_categories.md`).
 - [ ] **Loss budget from the mode.** Record the cap and the design target E[average] ≤ cap − 8 points: Easy ≤ 82 %,
@@ -141,7 +143,14 @@ This step consumes that output and owns the decisions:
 - [ ] Start from `references/Scenario_Atlas.md` (ranked, verified anchors per service, natural
       contradictions, persona reach). Or mine a new one: follow one storyline across services
       (decision in Slack → ticket in Linear → PR in GitHub → spec in Docs → numbers in
-      Sheets/Snowflake → partner thread in Gmail → meeting in Calendar).
+      Sheets/Snowflake → partner thread in Gmail → meeting in Calendar). The Atlas census is 76
+      storylines for Feb 14 and 70 for Oct 1 (`Evals/Docs/README.md`); never cite 80.
+- [ ] **State at the cut.** Synth-cut excludes the six post-cut storylines (Combo Fighter, Zombie Match Lite, the
+      Telegram Domino Delights port, the UI sprite optimization sprint, the Mattel Barbie idle life sim pitch, the web
+      distribution partnership) and anything after 2025-09-30 23:59:59 PT; never build a shutdown or wind-down premise
+      there. Normal: business as usual after the Feb 11, 2026 shutdown announcement is a false premise unless the
+      wind-down is acknowledged. In either universe Victor Barnes cannot review, approve or reply, and no departed or
+      terminated person acts after leaving (`Evals/1_Prompt_Eval.md` §2.3; `Evals/ENVIRONMENT.md`).
 - [ ] **Universe KB.** Place the storyline on `references/universe_kb/timeline.md` (spine events and beats in
       the window; cite the event dates). Take the cohort from `universe_kb/cohorts.json` and cite its id (e.g.
       `LIN-OPEN-ENG`), its selection rule and count, and drop its `hazards_inside` ids; if none fits, write
@@ -157,7 +166,9 @@ This step consumes that output and owns the decisions:
       or justify seeding someone after their actual departure. The gate uses the selected source's KB.
 - [ ] **Identity traps.** `python3 Task_Authoring/tools/entity.py collisions`, plus `entity.py resolve <name>` for
       every person the task names. Paste the output in section 1c and pin each correct entity against its
-      lookalikes (shared first names, token conflicts, lookalike handles).
+      lookalikes (shared first names, token conflicts, lookalike handles). No second account for an existing
+      person (cite a real namesake to keep one), no duplicate-mailbox device, and no trap that depends on a
+      malformed ID (`Evals/0_Injection_Quality_Eval.md` Check A; `Evals/references/schema/id_contracts.json`).
 - [ ] **Coherence audit.** List pre-existing inconsistencies in the data the task will touch.
       The Evals fail Cross-Service Coherence on *any* inconsistency in task-touched data, even
       pre-existing (`1_Prompt_Eval.md` §3.2; QC "fails based on the presence of the inconsistency
@@ -286,6 +297,10 @@ This step consumes that output and owns the decisions:
 - [ ] **Supersession chronology.** List each trap's `version_records` oldest first; the gate reads
       every record's own timestamp from the SQL row or base record and fails any order that is not
       strictly increasing — write the `at` values from the records, not from the plan.
+- [ ] **Seed bound.** Every seeded event timestamp (created, sent, posted, commented, modified,
+      `dateLastActivity`, action date) is at or before `freeze_utc`; only plan fields (due, scheduled start/end,
+      deadline) may be later, and calling a record "scheduled" does not exempt its event timestamps
+      (`Evals/0_Injection_Quality_Eval.md` Check C).
 - [ ] Trap list (family · records · requirement · expected wrong reading · resolver ·
       discovery order). ≥ 12 traps, ≥ 7 families, ≥ 6 requirements, ≥ 3 in rarely-opened
       services, ≥ 4 supersessions (≥ 2 cross-service, ≥ 1 with ≥ 3 versions), ≥ 6 distractors.
@@ -389,6 +404,8 @@ This step consumes that output and owns the decisions:
       authority singles out — `singled_out_by`; no fact in ≥ 3 slots). The mechanism share is reported, never gated.
 - [ ] Geometry needs room: the slots the designed mechanisms can flip must carry more than 1 − cap of the weight
       (`/create-injection` S5b′ proves it with the solver). Delivery slots fail only at a base rate and never count.
+- [ ] OE coverage: plan an OE step that reaches every slot. A row no step reaches is `oe_unmapped` and returns as
+      ROW_DEFECT, OE_GAP or UNRESOLVED (`Evals/3_Rubrics_Eval.md` OE cross-reference).
 
 ### S7 — Call budget
 - [ ] Table by phase × service (discovery · rules · enumeration · per-record · reconciliation ·
@@ -401,6 +418,11 @@ This step consumes that output and owns the decisions:
 - [ ] **Two-reading test** at every decision point (destination, recipient, act-vs-defer,
       inclusion edge): best reading vs strongest alternative, resolved by newer source /
       authority / identity / scope, or explicitly accepted as another fair outcome under V3.
+      One reading unless a single reported figure forks and meets all five BOTH_FAIR_FIGURE checks (same
+      decision, writes and destinations; both values on persona-visible primary records; no newer source,
+      authority, identity or scope settles it; every ask completed; next action unchanged) — then record
+      `Rubric must accept: X or Y`. Prefer values whose PT and UTC days agree; avoid anonymized tokens as
+      deciding values without a persona-visible mapping (`Evals/1_Prompt_Eval.md` §2.1).
 - [ ] **Incorporation**: every graded requirement has a chain to the prompt.
 - [ ] **Reach**: every scoped record readable by the persona (Gmail: copy in the persona's
       mailbox; Slack: member; GCal: owner/invitee; Drive family: owner/shared). List every load-bearing
@@ -412,6 +434,10 @@ This step consumes that output and owns the decisions:
       reachable records that are YES and carry the dependency instead; the gate blocks a probe without YES
       alternates. UNVERIFIED never satisfies a required dependency. In the manifest the same probe is a
       `denied_probes` entry, cited only by traps or decoys. Planned seeds are checked at the injection gate.
+      Every deciding fact also sits on a record reachable from a prompt noun, readable as content, outside Gmail
+      Trash/Spam. Never only inside a Gmail or Slack attachment (metadata only; Trello serves bytes for 42 of 106);
+      an unreferenced deciding comment needs a seeded link from a record the prompt gives a reason to open
+      (`Evals/3_Rubrics_Eval.md` reachability).
 - [ ] **Feasibility**: required writes exist in `Evals/references/tools/catalog.json` **and can
       produce the required shape** (e.g. tabs on creation); the persona can **edit** every write
       target (owner or shared as writer); external recipients have an authorized access path;
@@ -428,10 +454,16 @@ This step consumes that output and owns the decisions:
       Drive `content_text`, Slack file `content_inline`) holds supporting detail only until §6b verifies it.
 - [ ] **Prompt naturalness**: everything the prompt would otherwise enumerate lives in the
       lattice — list what the human's trigger must say (anchors, deadline, deliverable kinds)
-      and what it must not (locations, IDs, root cause, contents lists).
+      and what it must not (locations, IDs, root cause, contents lists). The sketch names a destination the
+      persona would know; a hidden destination is an explicit discovery ask backed by a persona-visible record that
+      names each place. No trap hint or riddle, no audit-form wording, and per-case rules are seeded authority
+      records, not prompt if-chains (`Evals/1_Prompt_Eval.md` §2.7).
 - [ ] **Grading devices** (for the human's rubric later): exact cohort multisets, aggregate
       invariants, ≤ 5 spot checks per group + a volume criterion, one criterion per required
       write/recipient.
+      No decoy or exclusion that only a `leaves X as found / open / unchanged` row could grade: each exclusion is an
+      exact count or scope on a required write, or a requirement inside a required artifact. No graded count, format
+      or line limit the prompt will not state (`Evals/3_Rubrics_Eval.md` Negative Criteria, Overly Specific).
 
 - [ ] **Coherence rail** (Cross-Service Coherence is a hard fail on presence): every S1 audit row
       dispositioned; every designed disagreement is a dated human claim with a named, later
@@ -514,6 +546,7 @@ record id or pointer):
 ## 14 Revision intake (S0r)   (--revise only: verdicts file · node · runs · proposed verdict · disposition · run-N event M)
 ```
 Section 5 also carries `### Mechanism portfolio (S5a)` and `### Liveness flags (S5b)` with a disposition per flag.
+Section 0 also records the universe key, label, clock line, seed bound and `shutdown_rules_apply`.
 
 **Self-review** (gate minimum): one evidenced counter-reading per QC coherence category (temporal, semantic,
 cross-service referential, quantitative, state/lifecycle, identifier/format, other) plus one per decision point

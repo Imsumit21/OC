@@ -14,7 +14,7 @@ def norm(s):
 
 
 def main():
-    G = jload(CACHE + "/kb_gmail.json")
+    G = jload_cache("kb_gmail.json")
     mc = G["multi_copy_files"]
     need = collections.defaultdict(set)
     for rfc, lst in mc.items():

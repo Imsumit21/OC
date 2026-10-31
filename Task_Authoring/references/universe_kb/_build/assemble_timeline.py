@@ -1,5 +1,6 @@
-"""timeline.json: dated event spine 2024 -> 2026-02-14. Every evidence id is re-verified against the base
-(and its own timestamp read back); events keep only verified evidence and must span 2+ services.
+"""timeline.json: dated event spine 2024 -> the selected universe's clock. Every evidence id is re-verified
+against that universe's data (and its own timestamp read back); narrative entries without in-universe
+evidence at or before the data horizon are dropped.
 Also appends the 2024+ storyline beats whose artifacts verify in 2+ services."""
 import os, re, json, subprocess, collections, datetime
 from common import *
@@ -150,14 +151,35 @@ def find_gmail_files(rfcs, mailboxes, alias_pairs):
     return {r: cache.get(r) for r in rfcs}
 
 
+def evidence_within_horizon(checks):
+    """Keep only verified evidence this universe's data actually holds at or before its horizon."""
+    return [c for c in checks if c and c["ok"] and within_horizon(c.get("when"))]
+
+
+def narrative_event(date, category, title, evidence, resolve, verify):
+    """One static narrative spine entry; None when the selected universe has no evidence for it."""
+    resolved = [resolve(e) for e in evidence]
+    checks = [verify(r) for r in resolved if r]
+    good = evidence_within_horizon(checks)
+    if not good:
+        return None
+    bad = [e for e, r in zip(evidence, resolved) if r is None] + [c["id"] for c in checks if c and not c["ok"]]
+    bad += [c["id"] + " (undated or after the data horizon)" for c in checks
+            if c and c["ok"] and not within_horizon(c.get("when"))]
+    services = sorted(set(c["service"] for c in good))
+    return {"date": date, "category": category, "title": title, "services": services, "evidence": good, "unresolved": bad,
+            "meets_2_service_rule": len(services) >= 2,
+            "orientation_only": SEED_BOUND_ISO != CLOCK_ISO}
+
+
 def main():
     V = Verifier()
     SR = snow_rows()
-    S = jload(CACHE + "/kb_slack.json")
-    GM = jload(CACHE + "/kb_gmail.json")
-    LI = jload(CACHE + "/kb_linear.json")
-    O = jload(CACHE + "/kb_other.json")
-    B = jload(CACHE + "/kb_beats.json")
+    S = jload_cache("kb_slack.json")
+    GM = jload_cache("kb_gmail.json")
+    LI = jload_cache("kb_linear.json")
+    O = jload_cache("kb_other.json")
+    B = jload_cache("kb_beats.json")
     # resolvers for @ tokens
     tf_first, tf_last, dist_first = {}, {}, {}
     for app, ver, b, mb, d, rid in GM["testflight_mails"]:
@@ -255,7 +277,7 @@ def main():
         if kind == "beat":
             return beat(arg)
         if kind == "first_pr_with":
-            GHc = jload(CACHE + "/kb_github.json")
+            GHc = jload_cache("kb_github.json")
             c = [(V.prs[p][0], p) for p, keys in GHc["pr_linear_keys"].items() if any(k.startswith(arg + "-") for k in keys) and p in V.prs]
             return "github:" + min(c)[1] if c else None
         return None
@@ -281,21 +303,16 @@ def main():
                 label = (ms[0].get("subject") or "")[:80] if ms else None
         return {"id": rid, "service": svc, "when": when, "label": label if isinstance(label, str) else label, "ok": ok}
     spine = []
-    for date, cat, title, ev in EVENTS:
+    # Static narrative titles were written from the Feb 14, 2026 data: another universe keeps only its own
+    # storyline beats and computed events.
+    for date, cat, title, ev in (EVENTS if hand_written_allowed() else ()):
         if not before_clock(date):
             continue
-        resolved = [resolve(e) for e in ev]
-        checks = [verify(r) for r in resolved if r]
-        good = [c for c in checks if c and c["ok"] and before_clock(c.get("when"))]
-        bad = [e for e, r in zip(ev, resolved) if r is None] + [c["id"] for c in checks if c and not c["ok"]]
-        bad += [c["id"] + " (undated or outside assigned freeze)" for c in checks
-                if c and c["ok"] and not before_clock(c.get("when"))]
-        svcs = sorted(set(c["service"] for c in good))
-        spine.append({"date": date, "category": cat, "title": title, "services": svcs, "evidence": good, "unresolved": bad,
-                      "meets_2_service_rule": len(svcs) >= 2,
-                      "orientation_only": CONTEXT["universe_date_key"] != "2026-02-14"})
+        event = narrative_event(date, cat, title, ev, resolve, verify)
+        if event:
+            spine.append(event)
     # departures (derived from activity.json)
-    A = jload(OUT + "/activity.json")
+    A = jload_kb("activity.json")
     deps = []
     for em, v in A["people"].items():
         if not v.get("persona") or not v["status_at_clock"].startswith("quiet_since_2025"):
@@ -329,9 +346,15 @@ def main():
                           "services": services, "evidence": [a["record_id"] for a in eligible][:8], "missing": b["missing"],
                           "orientation_only": True})
     beats.sort(key=lambda x: x["date"])
+    excluded = jload_cache("kb_beats_excluded.json")
     out = {"_meta": {"generated_by": "Task_Authoring/references/universe_kb/_build/assemble_timeline.py", "clock": CLOCK_ISO,
+                     "static_narrative_events": ("emitted" if hand_written_allowed()
+                                                 else "not emitted: written from the Feb 14, 2026 data"),
+                     "beats_excluded": {"rule": "Beats whose own metadata carries an editorial note (e.g. post-cutoff "
+                                                "references left in by the data's authors) are never used.",
+                                        "beats": excluded},
                      "rule": "Each spine event lists only evidence ids re-verified against the base exports (when = the record's own timestamp). meets_2_service_rule is false where fewer than two services verified.",
-                     "storyline_beats_note": "Beats come from selected source metadata; summaries/figures are orientation only, never ground truth. Undated/future evidence cannot support a completed event. Non-February static narrative titles remain orientation_only pending record-level checks.",
+                     "storyline_beats_note": "Beats come from the selected universe's metadata; summaries/figures are orientation only, never ground truth. Undated/future evidence cannot support a completed event and the entry is dropped. Static narrative titles need verified in-universe evidence at or before the data horizon.",
                      "prelude_2023": "Founded Mar 2023 (Slack/Linear/Trello start Feb-Mar 2023; GameOfDominoes#1 2023-04-12); $3M Series Seed at $10M post led by Griffin closed Jul-Aug 2023 (CASH_BALANCE: a $2.70M wire in 2023-07); see storyline beats for 2023."},
            "spine": spine, "storyline_beats_2024_plus": beats,
            "counts": {"spine_events": len(spine), "spine_meeting_rule": sum(1 for e in spine if e["meets_2_service_rule"]), "storyline_beats": len(beats)}}

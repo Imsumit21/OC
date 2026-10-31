@@ -1,20 +1,22 @@
 {
-  "format_version": 1,
-  "note": "The user confirmed that both V3 dates use the same supplied universe data. The assignment freeze governs task facts and seeded records; the archive's evaluation_clock remains source metadata and is not substituted for the assignment. Paths are workspace-relative or absolute within this workspace. Non-GitHub/Gmail services share one Services_Data parent. Shared KB material is a reference; verify dated facts and historical state against actual records during scenario/injection authoring.",
+  "format_version": 2,
+  "note": "The assignment date selects the Evals universe (Evals/ENVIRONMENT.md \"Task date and universe\", dual-universe-v1): 2026-02-14 -> normal (Universe_Normal/, hg4-2026-08-31 v37) and 2025-10-01 -> synthcut (Universe_SynthCut/, hg4-synth-sep30cut v16). This replaces the earlier note that both dates shared one supplied universe. Universe identity, folder, prefix and clock come from Evals/tools/hg_universe.py; the manifest's evaluation_clock is human-readable text and is never parsed. Paths are workspace-relative or absolute within this workspace. Non-GitHub/Gmail services share one Services_Data parent. A KB in kb_output_path is authoritative (bound) only when its timeline.json _meta matches the universe, the universe clock, the source fingerprint and build per-universe-v1. legacy_kb_path is a reference-only view of the older February KB (verify every fact against records); synth-cut has no legacy KB.",
   "sources": {
     "2025-10-01": {
-      "mode": "shared-universe",
-      "manifest": "Evals/references/universes/hg4-2026-08-31/universe_manifest.json",
-      "kb_path": "Task_Authoring/references/universe_kb",
-      "kb_output_path": "Task_Authoring/references/universe_kb/by_date/2025-10-01",
-      "verification_basis": "User confirmed in this session that the universe data is the same for both assigned dates."
+      "mode": "universe",
+      "universe": "synthcut",
+      "manifest": "Evals/references/universes/synthcut/universe_manifest.json",
+      "kb_output_path": "Task_Authoring/references/universe_kb/by_universe/synthcut",
+      "legacy_kb_path": null,
+      "verification_basis": "Evals dual-universe-v1 (Evals/ENVIRONMENT.md 'Task date and universe'): Oct 1, 2025 selects the synth-cut universe hg4-synth-sep30cut v16, clock 2025-10-01 00:00 PT (07:00 UTC). The date is the platform's assigned universe date."
     },
     "2026-02-14": {
-      "mode": "shared-universe",
-      "manifest": "Evals/references/universes/hg4-2026-08-31/universe_manifest.json",
-      "kb_path": "Task_Authoring/references/universe_kb",
-      "kb_output_path": "Task_Authoring/references/universe_kb",
-      "verification_basis": "User confirmed the shared universe; the bundled source metadata declares evaluation_clock 2026-02-14 00:00."
+      "mode": "universe",
+      "universe": "normal",
+      "manifest": "Evals/references/universes/normal/universe_manifest.json",
+      "kb_output_path": "Task_Authoring/references/universe_kb/by_universe/normal",
+      "legacy_kb_path": "Task_Authoring/references/universe_kb",
+      "verification_basis": "Evals dual-universe-v1 (Evals/ENVIRONMENT.md 'Task date and universe'): Feb 14, 2026 selects the normal universe hg4-2026-08-31 v37, clock 2026-02-14 00:00 UTC. The date is the platform's assigned universe date."
     }
   }
 }

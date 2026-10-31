@@ -26,8 +26,9 @@ UNVERIFIED with a reason, never YES.
 
 Gmail   A thread or message is visible iff its mailbox `user_email` equals the persona's
         exact roster email (each mailbox holds its own copy, with its own
-        `<mailbox>/<id>` thread and message ids). A persona whose email is not one of the
-        28 mailboxes in gmail/users.json (Marcus Bennett, Tim Steudler) sees no Gmail.
+        `<mailbox>/<id>` thread and message ids). A persona whose email is not a mailbox in
+        gmail/users.json (28 on normal, 27 on synth-cut; only Tim Steudler is such a
+        persona) sees no Gmail.
         The 6 tokenized mailboxes (EMPLOYEE_0011/0020/0032_EMAIL, SVC_0009/0019/0293_EMAIL)
         never equal a roster email, so they are NO for every persona; their owners are
         unknown (see entity.py).
@@ -100,15 +101,21 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))  # base_check / sql_lint live beside this file
 BUNDLE = HERE.parent
 WS = BUNDLE.parent
-OTHER = WS / "HarmonyGames_Other_Services" / "Services_Data"
-GMAIL = WS / "HarmonyGames_Gmail" / "Services_Data" / "gmail"
-GITHUB = WS / "HarmonyGames_GitHub" / "Services_Data" / "github" / "data.json"
+from task_context import v2_export_root  # noqa: E402
+OTHER = v2_export_root("Other_Services", WS) / "Services_Data"
+GMAIL = v2_export_root("Gmail", WS) / "Services_Data" / "gmail"
+GITHUB = v2_export_root("GitHub", WS) / "Services_Data" / "github" / "data.json"
 CACHE = BUNDLE / "support" / "local_search" / "cache"
 ROSTER_V1 = WS / "Evals" / "references" / "persona" / "roster.json"
 ROSTER_V2 = BUNDLE / "references" / "persona_roster_v2.json"
 GMAIL_INDEX = CACHE / "base_gmail_index.json"
 SLACK_MSGS = OTHER / "slack" / "messages"
 CLOCK = dt.datetime(2026, 2, 14, tzinfo=dt.timezone.utc)
+# Data horizon (universe.clock_utc): what exists in the base data and the persona can see. Equals CLOCK on
+# the normal universe, 7 h later on synth-cut. Reach/recency/activity windows read DATA_CLOCK; seeded-record
+# checks stay on CLOCK. runtime_context._apply overwrites both per task.
+DATA_CLOCK = CLOCK
+METADATA_ONLY = "metadata only — content not served (Evals/references/persona/acl.md, 2026-10-17)"
 CACHE_VERSION = 4
 
 SCOPED = ("gmail", "slack", "gcal", "gdrive", "gdocs", "gsheets", "gslides")
@@ -204,7 +211,13 @@ def parse_dt(v) -> dt.datetime | None:
 
 def days_before_clock(iso: str | None) -> int | None:
     d = parse_dt(iso)
-    return None if d is None else (CLOCK - d).days
+    return None if d is None else (DATA_CLOCK - d).days
+
+
+def _metadata_only(v: dict) -> dict:
+    """Attachment/file verdicts: ACL metadata is served, bytes are not."""
+    v["reason"] = f"{v['reason']}; {METADATA_ONLY}"
+    return v
 
 
 def _fingerprint(paths) -> list:
@@ -414,7 +427,15 @@ class Universe:
                     b["last"] = max(b["last"] or last, last)
                     b["months"][last[:7]] = b["months"].get(last[:7], 0) + 1
             return {"threads": threads, "mailboxes": boxes}
-        return self._get("gmail", lambda: cached("gmail", [GMAIL_INDEX, GMAIL / "users.json"], build))
+
+        def load():
+            # The base index is a fingerprinted source of this cache, so it must exist before cached()
+            # stats it (a fresh per-universe context starts with an empty cache folder).
+            if not GMAIL_INDEX.is_file():
+                from base_check import Base
+                Base().gmail()
+            return cached("gmail", [GMAIL_INDEX, GMAIL / "users.json"], build)
+        return self._get("gmail", load)
 
     def gmail_message_thread(self, mid: str) -> str | None:
         """Message id -> thread id via the full base index (loaded transiently)."""
@@ -540,13 +561,13 @@ def _see_slack(u: Universe, p: dict, oid: str) -> dict:
     if re.fullmatch(r"F[A-Z0-9]+", oid):
         f = u.slack_files().get(oid)
         if f is None:
-            return V("UNVERIFIED", f"file {oid} not in slack/files.json (U4)", file=oid)
+            return _metadata_only(V("UNVERIFIED", f"file {oid} not in slack/files.json (U4)", file=oid))
         if not f[0]:
-            return V("UNVERIFIED", f"file {oid} has no channel_id (U7)", file=oid)
+            return _metadata_only(V("UNVERIFIED", f"file {oid} has no channel_id (U7)", file=oid))
         r = _channel_verdict(u, p, f[0])
         r["reason"] = f"file inherits channel: {r['reason']}"
         r["evidence"].update(file=oid, message_ts=f[1])
-        return r
+        return _metadata_only(r)
     if re.fullmatch(r"[0-9a-f]{32}", oid):
         hit = u.slack_find_ids([oid]).get(oid)
         if not hit:
@@ -672,7 +693,7 @@ def who_can_see(u: Universe, service: str, oid: str, calendar: str | None = None
 def reach(u: Universe, p: dict, top: int = 10, correspondents: bool = True) -> dict:
     pe = p["email"]
     res = {"persona": {k: p[k] for k in ("persona_key", "name", "email", "role", "department", "usable_in_tasks")},
-           "clock": CLOCK.isoformat(), "services": {}}
+           "clock": DATA_CLOCK.isoformat(), "services": {}}
 
     # slack
     s = u.slack()
@@ -715,8 +736,8 @@ def reach(u: Universe, p: dict, top: int = 10, correspondents: bool = True) -> d
     shared = [c for c, x in g["calendars"].items() if pe in (x["shared"] or []) and x["owner"] != pe]
     evs = [(eid, e) for eid, e in g["events"].items() if e[0] in own or e[0] in shared]
     months = Counter((e[3] or "")[:7] for _, e in evs)
-    past = [e[3] for _, e in evs if e[3] and parse_dt(e[3]) and parse_dt(e[3]) <= CLOCK]
-    fut = [e[3] for _, e in evs if e[3] and parse_dt(e[3]) and parse_dt(e[3]) > CLOCK]
+    past = [e[3] for _, e in evs if e[3] and parse_dt(e[3]) and parse_dt(e[3]) <= DATA_CLOCK]
+    fut = [e[3] for _, e in evs if e[3] and parse_dt(e[3]) and parse_dt(e[3]) > DATA_CLOCK]
     res["services"]["gcal"] = {"calendars_owned": own, "calendars_shared_with": shared, "events_visible": len(evs),
                                "distinct_ical_uids": len({e[1] for _, e in evs}),
                                "cancelled": sum(1 for _, e in evs if e[4] == "cancelled"),
@@ -1126,7 +1147,7 @@ def check_sql(u: Universe, p: dict, sql: str, load_bearing: set | None = None, a
             if not cid and fid:
                 cid = (u.slack_files().get(fid) or [None])[0]
             keys = [fid]
-            v = chan_v(cid) if cid else V("UNVERIFIED", f"file {fid} has no channel (U7)")
+            v = _metadata_only(chan_v(cid)) if cid else _metadata_only(V("UNVERIFIED", f"file {fid} has no channel (U7)"))
         elif t.startswith("slack."):
             keys = [x for x in (r.get("id"), w.get("id")) if x]
             who = r.get("user_id")
@@ -1146,9 +1167,9 @@ def check_sql(u: Universe, p: dict, sql: str, load_bearing: set | None = None, a
             mid = r.get("message_id")
             mb = gm_msgs.get(mid) or (mid.split("/", 1)[0] if mid and "/" in mid else None)
             keys = [x for x in (r.get("id"), mid) if x]
-            v = (V("YES", "attachment's message is in the persona's mailbox", user_email=mb) if mb == pe else
-                 V("NO", f"attachment's message is in mailbox {mb}", user_email=mb) if mb else
-                 V("UNVERIFIED", "attachment's message mailbox unknown (U6)"))
+            v = _metadata_only(V("YES", "attachment's message is in the persona's mailbox", user_email=mb) if mb == pe else
+                               V("NO", f"attachment's message is in mailbox {mb}", user_email=mb) if mb else
+                               V("UNVERIFIED", "attachment's message mailbox unknown (U6)"))
         elif t == "gmail.gmail_users":
             e = r.get("email_address") or w.get("email_address")
             keys = [e]
@@ -1347,15 +1368,17 @@ def _self_test() -> int:
 
     # gmail
     boxes = u.gmail_mailboxes()
-    check(P["marcus_bennett"]["email"] not in boxes and "marcus@harmonygames.co" in boxes,
-          "Marcus Bennett has no Gmail mailbox (marcus@ is a different mailbox)")
+    check(P["marcus_bennett"]["email"] in boxes and "marcus@harmonygames.co" not in boxes,
+          "Marcus Bennett's mailbox is marcus.bennett@harmonygames.co (marcus@ is not a mailbox)")
     g = u.gmail()["threads"]
     ab_tid = "arthur.blake@harmonygames.co/1826526974265913874"
     check(ab_tid in g, f"base thread {ab_tid} exists")
     check(can_see(u, ab, "gmail", ab_tid)["verdict"] == "YES", "Arthur sees his own mailbox thread")
     check(can_see(u, P["leonard_hayes"], "gmail", ab_tid)["verdict"] == "NO", "Leonard cannot see Arthur's copy")
-    mtid = next(t for t, e in g.items() if e[0] == "marcus@harmonygames.co")
-    check(can_see(u, P["marcus_bennett"], "gmail", mtid)["verdict"] == "NO", "Marcus Bennett cannot read the marcus@ mailbox")
+    mtid = next(t for t, e in g.items() if e[0] == P["marcus_bennett"]["email"])
+    check(can_see(u, P["marcus_bennett"], "gmail", mtid)["verdict"] == "YES",
+          "Marcus Bennett sees a thread in his own mailbox")
+    check(can_see(u, ab, "gmail", mtid)["verdict"] == "NO", "Arthur cannot read a thread only in Marcus's mailbox")
     ttid = next(t for t, e in g.items() if e[0] == "EMPLOYEE_0011_EMAIL")
     check(who_can_see(u, "gmail", ttid)["YES"] == [], "tokenized mailbox thread visible to no persona")
 

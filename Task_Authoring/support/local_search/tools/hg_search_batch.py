@@ -50,9 +50,10 @@ def digest(value):
 
 
 def cache_file(root, kind, request):
+    import hg_universe
     folder = root / 'Task_Authoring/support/local_search/cache/queries'
     folder.resolve().relative_to(root.resolve())
-    path = folder / (digest([kind, request]) + '.json')
+    path = folder / (digest([kind, request, hg_universe.selected(root)]) + '.json')
     if path.is_symlink():
         raise OSError('Query cache must not be a symbolic link')
     return path

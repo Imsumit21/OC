@@ -1438,8 +1438,14 @@ def main(argv) -> int:
             return 2
         rep = gradeable_report(load(path))
         if a.out:
-            a.out.parent.mkdir(parents=True, exist_ok=True)
-            a.out.write_text(json.dumps(rep, indent=1, ensure_ascii=False) + "\n")
+            from trajectory_ledger import safe_out  # outputs stay inside Task_Authoring/, like the branch below
+            try:
+                out = safe_out(a.out)
+            except ValueError as exc:
+                print(f"gradable_surface: refusing --out {a.out}: {exc}", file=sys.stderr)
+                return 2
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(json.dumps(rep, indent=1, ensure_ascii=False) + "\n")
         if not a.json:
             print(f"SURFACE.GRADEABLE {rep['verdict']} · {len(rep['slots'])} slot(s) · {rep['counts']}")
             for x in rep["slots"]:

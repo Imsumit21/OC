@@ -78,10 +78,14 @@ template is copied into `task_inputs/`.
 - Freeze mapping: October 1, 2025 → `2025-10-01T00:00:00Z`; February 14, 2026 →
   `2026-02-14T00:00:00Z`. Preserve the displayed time above. This mapping comes
   from the course's assigned dates, not an inferred conversion of the display time.
-- Both V3 dates use the supplied shared universe. Verify task evidence against the
-  assigned freeze during scenario and injection creation. Nothing seeded may be
-  dated after it; future deadlines are allowed. Later completed events cannot be
-  treated as past, and earlier mutable state needs dated records/history.
+  The freeze is the seed bound; the eval clock is the universe's own: normal
+  2026-02-14 00:00 UTC, synth-cut 2025-10-01 00:00 PT = 07:00 UTC.
+- The date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal,
+  Oct 1, 2025 → synth-cut. Read only that universe and stop if the date is missing;
+  there is no default. Verify task evidence against the seed bound during scenario
+  and injection creation. Nothing seeded may be dated after it; future deadlines
+  are allowed. Later completed events cannot be treated as past, and earlier
+  mutable state needs dated records/history.
 - Difficulty: Easy average <90%; Medium <85%; Hard <70%. Equality fails. Use the
   assigned mode and corrected, fairly graded results; never switch modes.
 - Horizon: Normal ≥50 tool calls; Long-Horizon ≥100. Use the golden run when one

@@ -1,6 +1,7 @@
 # Ask & Evidence Carriers — all 13 HarmonyGames services
 
 > Where an ask, rule or fact can be injected, how the agent's tools surface it, what a per-item read costs, which bulk calls collapse volume, and exact-column SQL skeletons. Produced 2026-10-03 by a full read of the schema (updated to the live 144-table platform export on 2026-10-04 — §0a), the 298-tool catalog and every service export. Used by `playbooks/01_Scenario_Design.md` and `playbooks/01_Universe_Injection.md`; summarised in `Hardness_Mastery.md` §2 and §5.
+> Compiled from the older Feb 14 export; reference-only for both universes until re-verified against the selected universe. Lines tagged [normal-only] do not exist on Oct 1 (synth-cut). Read the selected universe's records before mirroring any shape, count or ID here.
 > **Rule of precedence:** put load-bearing facts only in carriers marked ● (base-data precedent). ○ carriers (no base rows, or unverified rendering) may hold supporting detail; confirm their rendering in the Opus pre-check trajectory before a criterion depends on them.
 
 **Labels used throughout:**
@@ -8,19 +9,19 @@
 - **[C]** The catalog shows only the tool name and its parameters. It has no descriptions, defaults or output schemas.
 - **[U]** Unverified or inferred. Confirm it before relying on it. Section 7 gives a SELECT to run in Universe Explorer for each one.
 
-**Workspace root:** the folder that holds `Evals/`, `claude/`, `Task_Authoring/` and the three `HarmonyGames_*` folders
+**Workspace root:** the folder that holds `Evals/`, `claude/`, `Task_Authoring/` and the selected universe's folder (`Universe_Normal/Normal_HarmonyGames_*` for Feb 14, 2026; `Universe_SynthCut/SynthCut_HarmonyGames_*` for Oct 1, 2025). Below, `<U>/<P>_HarmonyGames_*` means that universe folder and prefix (`Universe_Normal/Normal_…` or `Universe_SynthCut/SynthCut_…`).
 
 **Sources read:**
 - `Task_Authoring/references/universe_schema_live.json` (144 tables, platform export 2026-10-04 — the only schema of record; new NOT NULL columns without defaults: `linear_projects.links_json`, `linear_users.is_admin`, `linear_users.is_guest`; never write the generated `*_fts` columns)
 - `Evals/references/schema/{injection.json, snowflake.json, README.md}`
 - `Evals/references/tools/catalog.json` (298 tools)
-- `Evals/references/{source_layout.json, universe_manifest.json}`
+- `Evals/references/universes/<normal|synthcut>/{source_layout.json, universe_manifest.json}` (for the selected universe)
 - `Evals/SEARCH.md`
 - `Evals/references/persona/acl.md`
 - `Evals/references/rules/hardness_calibration.md` (the only recorded run evidence about tool behaviour)
 - `Task_Authoring/references/{Native_Artifact_Anatomy.md, persona_roster_v2.json, Docs/03,04,09,12, Taxonomy_V2_Step_Map.md}`
 - `Task_Authoring/tools/{sql_lint.py, hardness_gate.py}`
-- Every service export: streamed, sharded or loaded according to size. Snowflake was read by byte range using `Evals/references/search_indexes/snowflake-snowflake.json`. Gsheets was stream-decoded.
+- Every service export: streamed, sharded or loaded according to size. Snowflake was read by byte range using `Evals/references/universes/<normal|synthcut>/search_indexes/snowflake-snowflake.json`. Gsheets was stream-decoded.
 
 ---
 
@@ -52,7 +53,7 @@
 
 9. **Some personas are unreachable without injection** [V]:
    - **Tim Steudler** (`UBF5AB53C96`) belongs to 0 Slack channels, has no Gmail mailbox and has no Drive root.
-   - **Marcus Bennett** has no Gmail mailbox. The `marcus@harmonygames.co` mailbox is a different "Marcus", which is a trap.
+   - *Not a reach gap, but a lookalike trap:* **Marcus Bennett** has his own mailbox `marcus.bennett@harmonygames.co`. Marcus Lee (`marcus.lee@harmonygames.co`) and a mononym Trello member "Marcus" (`c48a210d5c5a4b59231c6873`) share his first name, and `marcus@harmonygames.co` does not exist in either universe.
    - **Simon Walker** has no Drive root folder.
 
 10. **The catalog has no pagination defaults** [C]. The only measured limit is the Slack page of about 50. The async `*_submit_*` → `*_get_job_status` → `*_get_job_result` pattern costs at least 3 calls, and when a wait is configured the instant search tool is disabled.
@@ -101,7 +102,7 @@ was dropped or retyped. `!` = NOT NULL without a default (must be supplied on IN
 
 ### Clock and latest base activity
 
-The clock is 2026-02-14T00:00:00Z, a Saturday. The last weekday is 2026-02-13. Latest base activity by service [V]:
+The clock is 2026-02-14T00:00:00Z, a Saturday. The last weekday is 2026-02-13. [normal-only values below] For Oct 1, 2025 (synth-cut) the seed bound is 2025-10-01T00:00:00Z = Tuesday, September 30, 2025, 5:00 PM PT; the eval clock is 2025-10-01T07:00:00Z (Wednesday, October 1, 2025); the persona's today is Wednesday, October 1, 2025 and yesterday is Tuesday, September 30. No seeded event timestamp may pass the selected universe's seed bound; only plan fields (due, scheduled start/end, deadline) may be later. Latest base activity by service [normal-only — the Feb values below; read the Oct 1 universe for its own coverage]:
 
 | Service | Latest base activity |
 |---|---|
@@ -115,20 +116,21 @@ The clock is 2026-02-14T00:00:00Z, a Saturday. The last weekday is 2026-02-13. L
 
 ### Read scoping
 
-- **[V] `Evals/references/persona/acl.md` (2026-09-27, citing QC Rating Form V12):**
+- **[V] `Evals/references/persona/acl.md` (2026-10-17 update, citing QC Rating Form V12; access matrix unchanged from 2026-09-27):**
   - Scoped services: Gmail, Slack, GCal, Drive, Docs, Sheets and Slides. Lists, searches and by-ID reads are all filtered, and a denied read returns "not found".
   - Unscoped services: Contacts, GitHub, Trello, Linear, Confluence and Snowflake.
+  - **Attachments (2026-10-17):** Gmail attachment reads return no bytes, and Slack file records carry no content (`content_path` and `content_inline` are null on all base records). Linear and Drive-family attachments ship real content; Trello ships bytes for 42 of its 106. Never place a load-bearing fact inside a Gmail or Slack attachment.
 - **Conflict:** the Spec-V2 docs (`Task_Authoring/references/Docs/4_Persona ACL Policy - V2.md`, dated 2026-09-26) still call Confluence and Snowflake "unclassified, verify from the persona's view". Treat them as unscoped but verify in the pre-check.
 - Writes are never ACL-governed.
 
 ### Persona ID map [V]
 
-Marcus Bennett has a GCal calendar but no Gmail mailbox.
+Marcus Bennett has a GCal calendar and his own Gmail mailbox (`marcus.bennett@harmonygames.co`).
 
 | Persona | Slack user_id | Gmail mailbox | Drive root folder | Linear user | Trello member | GitHub login | Confluence user | Contact id |
 |---|---|---|---|---|---|---|---|---|
 | Claire Morgan | EMPLOYEE_0009_SLACK_ID | yes | d_7fe31e7ec81996189e1f14 | usr_7fe31e7ec8199618 | 4bc5d398e54226f344ad3abc | EMPLOYEE_0009_GITHUB_USERNAME | user_EMPLOYEE_0009 | 7fe31e7ec81996189e1f14d6 |
-| Marcus Bennett | EMPLOYEE_0002_SLACK_ID | **NO** | d_c77c50cc15c5342d638ebb | usr_c77c50cc15c5342d | 7a20445f698bc5871ffd17f5 | — | user_EMPLOYEE_0002 | c77c50cc15c5342d638ebb21 |
+| Marcus Bennett | EMPLOYEE_0002_SLACK_ID | yes | d_c77c50cc15c5342d638ebb | usr_c77c50cc15c5342d | 7a20445f698bc5871ffd17f5 | — | user_EMPLOYEE_0002 | c77c50cc15c5342d638ebb21 |
 | Samuel Turner | EMPLOYEE_0004_SLACK_ID | yes | d_caafeec2804b3a67ce46aa | usr_caafeec2804b3a67 | 4ac40f0fbbad94d9e0e2df2a | EMPLOYEE_0004_GITHUB_USERNAME | user_STAFF_18 | caafeec2804b3a67ce46aabb |
 | Martin Walsh | EMPLOYEE_0033_SLACK_ID | yes | d_51f5f16d46e8cf55f5ee33 | usr_51f5f16d46e8cf55 | ba9cc333cefad99228d6757d | — | user_EMPLOYEE_0033 | 51f5f16d46e8cf55f5ee337b |
 | Simon Walker | EMPLOYEE_0037_SLACK_ID (13 channels) | yes | **—** | usr_eac7fcafa75e4935 | 60eb52a015fd4a1bf8837300 | — | user_STAFF_2 | a126ad1d54296023b4480445 |
@@ -147,7 +149,7 @@ Marcus Bennett has a GCal calendar but no Gmail mailbox.
 | Julia Lawson | EMPLOYEE_0005_SLACK_ID | yes | d_8140f09bf9f1b94cb8ee2d | usr_8140f09bf9f1b94c | 793af7ca6940bf18eb516c75 | PERSON_0005_GITHUB_USERNAME | user_EMPLOYEE_0005 | 8140f09bf9f1b94cb8ee2dd7 |
 | Tim Steudler | UBF5AB53C96 (0 channels) | **NO** | **—** | usr_bf5ab53c966f8ba7 | 29631c8d4796f104144bc1ab | — | user_STAFF_6 | 125371b9326ac40bee6368e6 |
 
-All 19 personas have a GCal calendar (`calendar_id` = the persona's email). Slack channel counts: Leonard 293, Robert 224, Arthur 216, Julia 158, Vincent 145, Brian 127, Douglas 124, Marcus Bennett 120, Owen 116, Calvin 108, Frederick 106, Oliver 103, Martin 99, Victor 88, Samuel 85, Claire 81, Thomas 42, Simon 13, Tim 0.
+All 19 personas have a GCal calendar (`calendar_id` = the persona's email). Victor Barnes departed April 2025 (last Slack 2025-04-15) — cannot review, approve or reply in either universe; his IDs stay valid for historical records only. Slack channel counts: Leonard 293, Robert 224, Arthur 216, Julia 158, Vincent 145, Brian 127, Douglas 124, Marcus Bennett 120, Owen 116, Calvin 108, Frederick 106, Oliver 103, Martin 99, Victor 88, Samuel 85, Claire 81, Thomas 42, Simon 13, Tim 0.
 
 ### Friction (Taxonomy step 16) [V]
 
@@ -161,14 +163,16 @@ All 19 personas have a GCal calendar (`calendar_id` = the persona's email). Slac
 From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 - Literal values only. No NOW() or random().
 - Parents are inserted before children, and UPDATEs are keyed on the primary key.
-- Confluence and Snowflake are live and unscoped (`service-availability-v1`); give every dependence on them a natural pointer from another record.
+- Confluence and Snowflake are live and unscoped (`service-availability-v1`, still the current policy in `Evals/ENVIRONMENT.md`); give every dependence on them a natural pointer from another record.
+- One person, one account per service: each author/creator/identity id must resolve to the person the record names, and a second account for an existing person is a FAIL.
+- Every event timestamp at or before the task's seed bound (`freeze_utc` — 2025-10-01T00:00:00Z for Oct 1, 2026-02-14T00:00:00Z for Feb 14); only plan fields (due, scheduled start/end, deadline) may be later.
 - Changelogs are retired in the V2 flow (the taxonomy collects only the SQL; Evals no longer reads changelogs).
 
 ---
 
 ## 2. Per-service sections
 
-### 2.1 Slack (`HarmonyGames_Other_Services/Services_Data/slack`)
+### 2.1 Slack (`<U>/<P>_HarmonyGames_Other_Services/Services_Data/slack`)
 
 **(a) Tables (live schema). `!` marks NOT NULL.**
 - `slack.slack_messages`, 24 columns:
@@ -249,6 +253,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 - To give the persona reach, UPDATE `members_json` and `num_members` together.
 
 **(f) Integrity [V unless noted]:**
+- `drives` in the export carry no readable content for Slack files (`content_path`/`content_inline` null on all base records), so a Slack file is metadata only. Put the fact in the message `text`.
 - `channel_id` must reference `slack_channels.id`, and `user_id` must reference `slack_users.id`.
 - For a thread:
   - The parent's export `thread_ts` equals its `ts`, and replies carry `thread_ts` = parent ts.
@@ -264,11 +269,11 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 **(h) Pitfalls:**
 - `ts` is a string with exactly 6 decimals and must be unique per channel. Check collisions on (channel, ts), because 101,657 base records have no id.
 - Export fields map to columns as follows: `user`→`user_id`, `channel`→`channel_id`, `reactions`/`files`/`attachments`→`*_json`, `created`→`created_ts` (a string like "1677721220.000000"; 246 channels have "0.000000"), `creator`→`creator_id`, `members`→`members_json`.
-- `text_fts` is a tsvector. Whether it is generated or maintained by a trigger is [U]. If it is neither, injected rows may never appear in search; check with SELECT 2.
+- `text_fts` is a generated column (2026-10-17 eval rule): never list it in an INSERT or UPDATE — the platform rejects anything but `DEFAULT`. Search still indexes injected rows because the database computes it.
 
 ---
 
-### 2.2 Gmail (`HarmonyGames_Gmail/Services_Data/gmail`)
+### 2.2 Gmail (`<U>/<P>_HarmonyGames_Gmail/Services_Data/gmail`)
 
 **(a) Tables (live schema):**
 - `gmail.gmail_messages`, 27 columns:
@@ -282,7 +287,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 - There is **no drafts table**.
 
 **Base counts [V]:**
-- 28 mailboxes and 36 labels.
+- 28 mailboxes and 36 labels. [normal-only count: synth-cut has 27 mailboxes — `lauren@harmonygames.co` exists only on Feb 14.]
 - 88,726 thread files. Filenames are either `NNNNNNNN.json` or `<alias>@harmonygames.co_<thrid>.json`.
 - 104,480 messages. 83,850 threads (94.5%) have one message; 271 have 12 or more.
 - 9,697 messages carry 10,430 attachments.
@@ -290,7 +295,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 **Sample IDs [V]:**
 - Messages:
   - `robert@harmonygames.co/<CAMx_T-qp+g840B6RZ8L=LkP9cOUp_0YHLqW_LvjLZNpYe3aSuw@mail.gmail.com>`
-  - `marcus@harmonygames.co/<b7ce4126.EAAABoiBq1sAAAAAAAAAAAU9h9IAAAA6pnMAAAAAAAvpOQBnia2w@mailjet.com>`
+  - `marcus.bennett@harmonygames.co/<b7ce4126.EAAABoiBq1sAAAAAAAAAAAU9h9IAAAA6pnMAAAAAAAvpOQBnia2w@mailjet.com>`
   - `SVC_0019_EMAIL/<CADuwL1jvxkoSThZONc3dLmWKSVTWXBTSdZjUz6UgWKCj+T5v-A@mail.gmail.com>`
 - Threads: `robert@harmonygames.co/1768521114428228854`, `leonard.hayes@harmonygames.co/1773639741566757840`, `arthur.blake@harmonygames.co/1826526974265913874`.
 - Labels: `INBOX`, `CATEGORY_UPDATES`, `Label_b19fb8d1b3`.
@@ -301,7 +306,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 - from, to and cc: who was asked.
 - `snippet`.
 - User labels.
-- **Attachment content** in `gmail_attachments.data_b64`, readable through `gmail_get_attachment`. How it is rendered (decoded or raw base64) is [U].
+- **Attachment content** in `gmail_attachments.data_b64`. **Attachment reads return no bytes** to the Agent (2026-10-17 acl note: `no_attachment_root_configured` in the HarmonyGames runs), although the local export keeps the files under `root/attachments/`. Never make a fact depend on a Gmail attachment's content.
 - `headers_json` (Date, Message-ID).
 - Drafts are not injectable. `gmail_list_drafts` probably reads DRAFT-labelled messages [U].
 
@@ -324,12 +329,13 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 - A row is visible only if `user_email` is the persona. The ID prefix must be `persona/` and the thread must be the persona's own thread ID.
 - Per-mailbox copies have different thread IDs. Example [V]: one Mandrill message is `leonard.hayes@…/1773639741566757840` in Leonard's mailbox and `robert@…/1773639742140893569` in Robert's.
 - The sender's copy is labelled SENT. Recipients' copies are labelled INBOX, plus UNREAD or categories.
-- For Marcus Bennett or Tim Steudler you would also need a `gmail_users` row; whether the tools require it is [U].
+- Only Tim Steudler lacks a `gmail_users` row (his email is not a mailbox); every other persona, Marcus Bennett included, has one. For a new mailbox you would also need the row; whether the tools require it is [U].
 
 **(f) Integrity:**
 - Insert the `gmail_threads` row for each mailbox before its messages. `message.thread_id` must equal that thread ID, and `user_email` must match.
 - A reply needs `in_reply_to` = the parent's RFC Message-ID, `"references"` = the chain, a later `date`, and a "Re: " subject.
 - `internal_date` (ms) must equal `date`.
+- `history_id` is NULL or a decimal string (digits only, `Evals/references/schema/id_contracts.json`); a label such as `hf_pf_reg_1` breaks every Gmail search.
 - `attachments_meta_json` must list the `gmail_attachments` rows.
 - `gmail_users.*_total` and `gmail_label_user_counters` are optional to bump [U whether tools read them].
 
@@ -338,8 +344,8 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 **(h) Pitfalls:**
 - The export's `to`/`cc` are plain strings (`"leonard hayes" <leonard.hayes@…>, x@y`), but the columns are `*_json` with an [U] shape. Mirror a sibling (SELECT 3).
 - The export `date` is a mix of ISO-Z and RFC-2822. `date_parsed` carries an offset, and the meaning of `date_parsed_source` is [U].
-- `body_text_fts` has the same [U] issue as Slack's `text_fts`.
-- Three Marcuses: `marcus@` displays as "Marcus Bennett <marcus@harmonygames.co>".
+- `body_text_fts` is a generated column (2026-10-17 eval rule): never list it in an INSERT or UPDATE — the platform rejects anything but `DEFAULT` and can roll back the whole script. The same holds for Slack `text_fts`.
+- Three Marcuses: **Marcus Bennett** (mailbox `marcus.bennett@harmonygames.co`, Slack `EMPLOYEE_0002_SLACK_ID`), **Marcus Lee** (`marcus.lee@harmonygames.co` — Slack `PERSON_2705_SLACK_ID`, Linear `usr_b501f018a4c5319f`, Confluence `user_STAFF_5`, Trello `54b24ad13c96c74bd0376532`, Contacts; no mailbox) and a mononym Trello member "Marcus" (`c48a210d5c5a4b59231c6873`). `marcus@harmonygames.co` exists in neither universe.
 
 ---
 
@@ -404,7 +410,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 
 **(b) Carriers:**
 - File `name`, `description`, folder path, modified_time.
-- **`content_text`.** This is the only SQL route to file body text, because base content is on disk. Whether `gdrive_read_file` serves `content_text` when `content_path` is null is [U].
+- **`content_text`.** Content on disk is reached through `content_path`; `content_text` is **not served by Drive reads** on its own (2026-10-17 eval rule). A seeded file must either carry a `content_path` pointing at real bytes or, for a Google Doc, a `docs_documents` row with non-empty `body_text`.
 - Sharing lists, since "who can see this" is itself a fact.
 
 **(c) Read tools [C]:**
@@ -425,6 +431,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 - `parents_json` must point to an existing `d_` folder; use the persona's root.
 - `owners_json` = `[owner_email]` (53,866 of 53,866 [V]).
 - A Google-native file needs a matching Docs, Sheets or Slides row with the same ID and the same sharing.
+- `content_path` is `<owner_email>/<path>`: no leading `/` and no `root/` prefix (`Evals/references/schema/id_contracts.json`). A file with null `content_path` and empty `content_text` is unreadable and fails the eval; `content_text` alone is not served, and a Google Doc needs a `docs_documents` row with non-empty `body_text`.
 
 **(g) Writes [C]:** create_file, create_folder, update_file_content, update_file_metadata, move_file, share_file, trash_file, restore_from_trash, delete_file.
 
@@ -533,7 +540,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 
 ---
 
-### 2.9 GitHub (`HarmonyGames_GitHub/Services_Data/github`: `data.json` plus git packs under `root/`)
+### 2.9 GitHub (`<U>/<P>_HarmonyGames_GitHub/Services_Data/github`: `data.json` plus git packs under `root/`)
 
 **(a) Tables (live schema; 21 GitHub tables — the 6 added ones are in §0a):**
 - `github_repositories`: 24 columns; id!, name!, full_name!, owner_login!.
@@ -636,7 +643,7 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 
 **Sample IDs:**
 - Issues: `ENG-1892`, `ART-383`, `ZOM-99`.
-- Users: `usr_cc3e90160f490686`, `usr_Robert`, `usr_Victor Barnes`.
+- Users: `usr_cc3e90160f490686`, `usr_Robert`, `usr_Victor Barnes` (Victor Barnes departed April 2025, last Slack 2025-04-15 — cannot review, approve or reply in either universe; historical records only).
 - Team: `team_ENG`.
 - Projects: `1061a4f4-bc6a-45ca-a5b6-7f73d5e0abe2`, `dbab77c7-f871-4888-abf8-d98b52a41624`.
 - Membership: `tmem_team_ZOM_usr_c77c50cc15c5342d`.
@@ -671,8 +678,8 @@ From playbooks/01_Universe_Injection.md and tools/sql_lint.py:
 **(g) Writes [C]:** create_comment(issueId, body, parentId), create_issue, update_issue, create_project, update_project, create_team, create_user, delete_issue, delete_project.
 
 **(h) Pitfalls:**
-- Timestamps are varchar ISO-Z.
-- `state_history_json` has no visible shape.
+- Text timestamps must be exactly `YYYY-MM-DDTHH:MM:SSZ` and date fields `YYYY-MM-DD` (no space, no `+00:00` offset, no milliseconds, no `::timestamptz`, CAST or `now()`): another form stores but fails the run at load-universe. Every event timestamp at or before the seed bound; `due_date` and other plan fields may be later.
+- `state_history_json` is NOT NULL with no default: a new issue needs `'[]'`. `linear_projects.links_json`, `linear_users.is_admin` and `linear_users.is_guest` are also NOT NULL without defaults.
 - Do not seed a lone Linear↔GitHub link; playbooks/01_Universe_Injection.md relies on the empty `links` field as real friction.
 - Keep the ENG-#### and ZOM-### series separate.
 
@@ -979,7 +986,7 @@ The count only counts if each call is necessary. Define the population with a pr
 
 ## 6. SQL INSERT skeletons
 
-These use exact schema-qualified names (valid against the live schema). Replace `<…>`. All timestamps must be before 2026-02-14T00:00:00Z. Nothing was executed.
+These use exact schema-qualified names (valid against the live schema). Replace `<…>`. Every event timestamp at or before the task's seed bound (`freeze_utc`: 2025-10-01T00:00:00Z for Oct 1, 2026-02-14T00:00:00Z for Feb 14); only plan fields (due, scheduled start/end, deadline) may be later. Nothing was executed.
 
 ```sql
 -- ===== SLACK: top-level message (id = sha256('<channel>|<ts>')[:32]) =====
@@ -998,7 +1005,7 @@ VALUES ('<sha256(C…|<reply_ts>)[:32]>', '<reply_ts>', '<C…>', 'message', '<U
 UPDATE slack.slack_messages SET reply_count = <n>, reply_users_count = <distinct repliers>, latest_reply = '<max reply ts>'
   WHERE id = '<parent id>';   -- if parent had no thread before, also set thread_ts_legacy per SELECT 1 pattern
 
--- ===== SLACK: file with readable content (rendering by slack_read_file [U]) =====
+-- ===== SLACK: file with readable content (slack files carry no content: keep facts in message text) =====
 INSERT INTO slack.slack_files (id, name, title, mimetype, filetype, size, user_id, channel_id, message_ts, created,
   is_public, url_private, permalink, preview, content_path, content_inline)
 VALUES ('F0AB12CD34E', '<name.txt>', '<title>', 'text/plain', 'text', <bytes>, '<U…>', '<C…>', '<message ts>',
@@ -1042,10 +1049,12 @@ INSERT INTO gdrive.drive_files (id, name, mime_type, parents_json, owner_email, 
   owners_json, modified_time, created_time, size, trashed, starred, content_path, web_view_link, icon_link,
   description, content_text)
 VALUES ('f_<22hex>', '<notes.md>', 'text/markdown', '["d_fc22d5941b2aeb5c03ad32"]', 'brian.foster@harmonygames.co',
-  '[]', 'private', '["brian.foster@harmonygames.co"]', '<ts>', '<ts>', <bytes>, false, false, NULL, NULL, NULL, NULL,
-  '<full text>');
+  '[]', 'private', '["brian.foster@harmonygames.co"]', '<ts>', '<ts>', <bytes>, false, false,
+  'brian.foster@harmonygames.co/notes/<notes.md>', NULL, NULL, NULL, NULL);
+-- content_path = '<owner_email>/<path>': no leading '/', no 'root/', and real bytes must exist at that path
+-- under the selected universe's gdrive root. content_text alone is not served by Drive reads.
 
--- ===== DOCS (drive row first, identical sharing) =====
+-- ===== DOCS (drive row first, identical sharing; body_text must be non-empty or the doc is unreadable) =====
 INSERT INTO gdrive.drive_files (id, name, mime_type, parents_json, owner_email, shared_with_emails_json, visibility,
   owners_json, modified_time, created_time, trashed, starred)
 VALUES ('f_<22hex>', '<Title>', 'application/vnd.google-apps.document', '["d_<owner root>"]', '<owner>',
@@ -1108,7 +1117,7 @@ INSERT INTO linear.linear_issues (id, project_id, team_id, parent_id, assignee_i
   created_at, updated_at)
 VALUES ('ENG-2438', '1061a4f4-bc6a-45ca-a5b6-7f73d5e0abe2', 'team_ENG', NULL, 'usr_fc22d5941b2aeb5c', 'usr_Robert',
   '<state per SELECT 5, e.g. Todo>', NULL, 'ENG-2438', 2438, '<title>', '<markdown>', 2, NULL, '2026-02-20', NULL,
-  NULL, NULL, NULL, NULL, '["Bug"]', '[]', '[{"target":"ENG-2404","type":"relates"}]', '<shape per SELECT 5>',
+  NULL, NULL, NULL, NULL, '["Bug"]', '[]', '[{"target":"ENG-2404","type":"relates"}]', '[]',  -- state_history_json: NOT NULL, no default -> '[]' for a new issue
   false, '2026-02-09T14:22:10Z', '2026-02-09T14:22:10Z');
 INSERT INTO linear.linear_comments (id, issue_id, author_id, parent_id, body, is_edited, created_at, updated_at, sequence)
 VALUES ('<new id; no base format — e.g. UUID literal>', 'ENG-2404', 'usr_fc22d5941b2aeb5c', NULL, '<markdown>', false,
@@ -1211,7 +1220,7 @@ These resolve earlier [U] items; prefer them over any older statement in this fi
 
 Gmail thread files are one **object** per file, so `lookup` cannot check Gmail ids ("Expected
 an array at the record pointer"). Check a minted Gmail id by searching the file names and
-contents of all mailboxes (read-only `grep -rl` over `HarmonyGames_Gmail/Services_Data/gmail`).
+contents of all mailboxes (read-only `grep -rl` over `<U>/<P>_HarmonyGames_Gmail/Services_Data/gmail`).
 `search` does not report a total hit count when `--limit` truncates: raise `--limit` or
 page with `--offset` until `truncated` is false before quoting a count.
 

@@ -14,7 +14,7 @@ def qkey(dt):
 def main():
     G = jload(GITHUB)
     L = jload(LINEAR)
-    S = jload(CACHE + "/kb_slack.json")
+    S = jload_cache("kb_slack.json")
 
     # ---------------- Linear -----------------
     lusers = {u["id"]: u for u in L["users"]}

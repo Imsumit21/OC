@@ -14,6 +14,7 @@ GEN_EXECUTION §1); never write to `Evals/`, `claude/` or `HarmonyGames_*`, and 
 ## Inputs
 Upstream slots in `Task_Authoring/task_inputs/`: `10_Baseline_Verifier_Results.md`, `07_Baseline_Trajectories/`, `09_Rubrics.json`, `00_Assigments.md`, `03_Error_Async_Config.txt`, `11_AF_Justification.md` (required when any rubric failed every completed run). If a required one is
 missing, stop and name it. Read the normalized eight-field assignment before the universe.
+The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Quote the context's `universe.clock_line` as the report's `Clock:` line. Under eval release `task-quality-v1` a rubric that lands NON-FAIL 3/4 on the narrow rubric-flow-v2 bands is still valid (not automatic rework), and a `BOTH_FAIR_FIGURE` fork recorded by the prompt review is intended, not a defect.
 Build the matrix with `python3 Task_Authoring/tools/difficulty_stats.py --build … --task-dir Task_Authoring/task_inputs`
 plus 11's `--invalid` / `--judge-correction` hand-off. Map each trajectory to its verifier `Run #N` by content, never by
 file order: `python3 Task_Authoring/tools/trajectory_ledger.py --task-dir Task_Authoring/task_inputs --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=Task_Authoring/task_inputs/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql …`

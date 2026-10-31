@@ -63,6 +63,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from base_check import (CLOCK, Base, _activity, _t, kb, parse_sql)  # noqa: E402
+try:  # data horizon; older base_check has no DATA_CLOCK
+    from base_check import DATA_CLOCK, KBUnavailable  # noqa: E402
+except ImportError:  # pragma: no cover
+    DATA_CLOCK = CLOCK
+
+    class KBUnavailable(RuntimeError):
+        """base_check predates the KB status contract."""
 
 # ---------------------------------------------------------------- text units
 
@@ -291,7 +298,7 @@ def dates(text: str) -> list:
         if t and t.group("tz") and (t.group("ap") or t.group("mi")):
             h = int(t.group("h")) % 12 + (12 if (t.group("ap") or "").lower() == "pm" else 0) if t.group("ap") else int(t.group("h"))
             try:
-                local = dt.datetime(y or CLOCK.year, mo, d, h, int(t.group("mi") or 0))
+                local = dt.datetime(y or DATA_CLOCK.year, mo, d, h, int(t.group("mi") or 0))
                 base = local - dt.timedelta(hours=TZ[t.group("tz").lower()])
                 utc, (mo, d) = base.strftime("%H:%M"), (base.month, base.day)
                 y = base.year if y else None
@@ -627,10 +634,13 @@ def check(sql: str, manifest: dict | None = None, base: Base | None = None, no_l
 
     # ---- undeclared drift (warnings)
     live = [u for u in units if not exempt(u)]
-    name_variants(live, lambda u, msg: emit(warnings, u, "entity_spelling", msg))
+    try:
+        name_variants(live, lambda u, msg: emit(warnings, u, "entity_spelling", msg))
+        people_in_text(live, lambda u, msg: emit(warnings, u, "inactive_person_named", msg),
+                       lambda u, msg: emit(warnings, u, "ambiguous_name", msg))
+    except KBUnavailable as exc:  # no KB for this universe: skip, loudly
+        notes.append(f"person-name heuristics skipped: {exc} — verify against records")
     subject_drift(live, lambda u, msg: emit(warnings, u, "value_drift", msg))
-    people_in_text(live, lambda u, msg: emit(warnings, u, "inactive_person_named", msg),
-                   lambda u, msg: emit(warnings, u, "ambiguous_name", msg))
 
     return {"verdict": "FAIL" if errors else "PASS", "errors": errors, "warnings": warnings, "notes": notes,
             "stats": {"statements": len(stmts), "text_units": len(units), "facts": len(facts),

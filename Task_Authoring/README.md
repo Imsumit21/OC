@@ -11,6 +11,10 @@ local model-authorship allowance and existing extreme/normal hardness targets;
 these are explicit local choices (`setup/GEN_EXECUTION.md` § 2 and § 3a). The user
 handles Eval Portal reviews and proof uploads outside this local pipeline.
 
+> **New here?** Read `Guide/00_Start_Here.md` first — one page for data
+> verification, the task folder and assignment, universe dates, the search helpers
+> and the stage order. Everything below assumes you have already run it.
+
 ## The two rules that shape everything
 
 1. **Claude or Codex may author every artifact.** The prompt, the Oracle Events and the rubric
@@ -32,7 +36,7 @@ handles Eval Portal reviews and proof uploads outside this local pipeline.
 ## Install
 
 From the workspace root that holds `Evals/`, `claude/`, `Task_Authoring/` and the
-three `HarmonyGames_*` folders:
+two universe folders (`Universe_Normal/`, `Universe_SynthCut/`):
 
 ```sh
 python3 Task_Authoring/setup/install.py --target both --dry-run  # preview Claude + Codex
@@ -66,7 +70,8 @@ The scripts follow the folder they live in, so the bundle folder may carry anoth
 the paths below write it as `Task_Authoring/`.
 
 Reload the project if the commands are not discovered. Then start a task:
-`cp -R Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputs/` and
+`cp -Rn Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputs/` (`-n` never
+overwrites a task already in that folder; use another folder and `--task-dir` for a second task) and
 paste the eight-field assignment exactly into `00_Assigments.md`: business function,
 persona, role, competency, task skill, task type, difficulty mode and universe date.
 The emoji-labelled paste and nested `Role:` line are accepted. Normalize it, then
@@ -81,12 +86,19 @@ Commands share `Working_Files/00_Task_Context.json`; use the same `--task-dir` f
 every direct tool command in another task workspace (or set
 `TASK_AUTHORING_TASK_DIR` for that shell). Stage gates retain their positional
 task directory and propagate it. Normalization does not change shell state.
-`references/universe_sources.json` maps both freeze dates to the same local universe
-data and shared KB. Archive labels describe source provenance, not the assigned
-clock. No separate October export or date-specific KB build is required. Validate
-each relied-on fact at the assigned freeze: later events cannot be completed facts,
-and mutable content edited later needs a dated version or independent earlier evidence.
-The displayed time remains traceable; the V3 freeze is the assigned date at 00:00 UTC.
+The assignment date selects the universe (`GEN_EXECUTION.md` § 0a): Feb 14, 2026 →
+`normal` (`Universe_Normal/`, clock 2026-02-14 00:00 UTC), Oct 1, 2025 →
+`synth-cut` (`Universe_SynthCut/`, clock 2025-10-01 00:00 PT = 07:00 UTC). There is
+no default; never read the other universe. Each universe has its own manifest under
+`Evals/references/universes/<key>/`. The V3 freeze (the assigned date at 00:00 UTC)
+is the seed bound; the universe clock writes the eval's `Clock:` line. Until the
+data folders are installed, `--require-source` stops with `SOURCE BLOCKED` — never
+fall back to the old root `HarmonyGames_*` folders. `source.kb_status` governs the
+KB: both universes' builds are `bound` (`references/universe_kb/by_universe/<key>/`), so
+KB leads are graded against the selected universe. The legacy root files are the old
+Feb-14 KB — `reference-only` advisory orientation, never validation authority, and never
+read for a synth-cut fact. A data refresh makes a build stale (`unavailable`) until it is
+rebuilt per § 0a. Verify every fact against records.
 
 Role, freeze and mode are enforced separately. Correct the rubric and re-grade
 before measuring difficulty: Easy must average <90%, Medium <85%, Hard <70%; equality
@@ -96,7 +108,9 @@ fails. Five or more fully passing baseline rollouts fails. Pre-check and baselin
 
 Platform slots (`01_Universe_Inject.sql`, `02_Reference_Files/`, `03_Error_Async_Config.txt`,
 `11_AF_Justification.md`) are written at the top of `task_inputs/`; every other file a command
-writes goes to `task_inputs/Working_Files/`.
+writes goes to `task_inputs/Working_Files/`. The template's `05_Human_Time.md` is the platform's
+human-time slot; `/create-humantime` writes the graded worksheet to
+`Working_Files/05_Human_Time_Worksheet.md`.
 
 | Command | Writes | Then |
 |---|---|---|
@@ -124,8 +138,9 @@ equivalents of every command: `Guide/Manual_Commands.md`.
 
 | Tool | What it does |
 |---|---|
-| `tools/task_context.py --task-dir <task_dir> --write [--require-source]` | Parses the exact eight-field paste, resolves persona and canonical freeze, binds assigned mode/cap and the shared universe source before grounding; writes `Working_Files/00_Task_Context.json`. Both freeze dates use the same data |
-| `tools/hg.py search` · `records` · `reference` | The Evals search helpers (same commands as `Evals/SEARCH.md`), run from patched copies so their caches land in `support/local_search/cache/` — never in the read-only `Evals/`. Use it for every universe lookup |
+| `tools/task_context.py --task-dir <task_dir> --write [--require-source]` | Parses the exact eight-field paste, resolves persona, canonical freeze and the date-selected universe (folder, clock, "today", KB status; § 0a), binds assigned mode/cap and validates the universe source before grounding; writes `Working_Files/00_Task_Context.json` |
+| `tools/verify_universe_data.py [--universe normal\|synthcut] [--sha256]` | Checks the installed universe data against each service's `source_manifest.json` (presence and sizes; SHA-256 with `--sha256`) and flags split ("X 2"), root-level and doubly nested base folders; `ALL OK` / exit 0 when everything matches. Run once after installing or refreshing data |
+| `tools/hg.py search` · `records` · `reference` · `universe` · `lint` · `rubric-lint` | The Evals search helpers (same commands as `Evals/SEARCH.md`), run from patched copies so their caches land in `support/local_search/cache/` — never in the read-only `Evals/`. `universe` shows the selected universe; `lint` runs the eval's `hg_injection_lint.py` (`--sql` defaults to the task SQL, `--no-base` needs no universe data); `rubric-lint` runs `hg_rubric_lint.py`. Use `search` for every universe lookup |
 | `tools/base_check.py <sql>` | `/injection` Checks A + C against the base data: new ids free, every reference resolves (channel, user, thread parent, issue, PR, mailbox thread, calendar, board/list/card, page, Drive parent), UPDATE targets exist, Slack/Gmail id contracts, replies after parents, events end after start; warns on PR comments missing their Slack mirror copy |
 | `setup/extract_schema.sql` | Read-only SELECTs to run in Universe Explorer: tables/columns/types, constraints, indexes, enums, triggers, row counts. Save Q1 as `references/universe_schema_live.json` and the linter uses it |
 | `tools/shortcut_probe.py <persona> <values>` | Searches every persona-visible service (plus the SQL overlay) for one record holding ≥ 3 of the task's acceptance values or ≥ 50% of a population's keys — a shallow answer source that collapses the task; required by the rubric-writing gate |
@@ -137,7 +152,7 @@ equivalents of every command: `Guide/Manual_Commands.md`.
 | `tools/build_taxonomy_map.py <Taxonomy.json>` | Regenerates `references/Taxonomy_V2_Step_Map.md` |
 | `tools/persona_view.py reach · can-see · who-can-see · search · check-sql` | The base as one persona sees it (ACL of `Evals/references/persona/acl.md`): reach census, YES/NO/UNVERIFIED per record, search-as-persona with hidden-hit counts, and `check-sql --load-bearing` on the injection's final state |
 | `tools/fact_check.py <sql> --manifest <manifest>` | Fact consistency inside an injection: the manifest's declared `facts` hold in every text the SQL writes; unresolved ids cited in text; drift warnings |
-| `tools/entity.py resolve · collisions` | One entity per person across every service (`references/universe_kb/entities.json`); shared names, lookalike handles and token conflicts |
+| `tools/entity.py resolve · collisions` | One entity per person across every service (`references/universe_kb/by_universe/<universe>/entities.json` for the task's universe); shared names, lookalike handles and token conflicts |
 | `tools/stage_gate.py <stage> <task_dir> [--paste]` | **Stage gates, blocking.** Per stage: outputs present and fresh, headings filled, no placeholders, evidence pointers per row, tool outputs pasted and re-run, persona reach of load-bearing records, universe-KB use, counter-readings in the self-review, and a current PASS from the upstream stage. Handoff is blocked until PASS; `--paste` writes the block into the Self-review (`setup/GEN_EXECUTION.md` § 6b; fixtures in `support/examples/calibration/stage_gate/`) |
 | `tools/gradable_surface.py validate · from-slots` | The gradable surface `Working_Files/01_Gradable_Surface.json` (scenario S6b): the fact slots the deliverables make gradable, validated against the V3 rubric rules (work-kind weights, ≤ 5 samples per group plus a volume slot, exceptions an authority singles out, no fact in ≥ 3 slots); mechanism share reported, never gated |
 | `tools/oracle_kit.py check · truth` | The solver contract (injection S4b): deterministic, reproduces the previous revision's truth on its SQL, rules ↔ `mechanism_portfolio` one-to-one, every direct and aggregate slot produced; writes `solver/truth.json` |
@@ -187,7 +202,7 @@ Single sources of truth stay in `Evals/`: the tool catalog
 (`Evals/references/tools/catalog.json`), the search helpers (`Evals/tools/`), the
 roster (`Evals/references/persona/roster.json`) and the ACL mechanics
 (`Evals/references/persona/acl.md`). This bundle never copies them.
-`Evals/`, `claude/` and the three `HarmonyGames_*` data folders are **read-only**: all work
+`Evals/`, `claude/` and the two universe data folders are **read-only**: all work
 happens inside `Task_Authoring/` (GEN_EXECUTION §1). The eval commands run in the
 user's Eval Portal workflow, not from here.
 

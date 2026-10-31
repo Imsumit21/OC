@@ -3,21 +3,20 @@
 import hashlib
 import json
 from pathlib import Path
-import os as _ta_os
 
 from hg_preflight import reject_constant, unique_object
 
 
 POLICY = "rubric-revision-v10"
 WORKFLOW_POLICY = "rubric-eval-only-v1"
-DRAFT = Path("Evals/task_inputs/reports/drafts/5_Rubric.proposal.json")
+DRAFT = Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/drafts/5_Rubric.proposal.json")
 CONTEXT = DRAFT.with_name("rubric_review_context.json")
-FINAL = Path("Evals/task_inputs/5_Rubric.json")
-REPORT = Path("Evals/task_inputs/reports/3_rubric.md")
+FINAL = Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/5_Rubric.json")
+REPORT = Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/3_rubric.md")
 REVIEW_RECORD = DRAFT.with_name("rubric_review_record.json")
 HISTORY = DRAFT.parent / "rubric_history"
 INPUT_KEYS = frozenset({
-    "task-details", "prompt", "oe", "golden", "injection", "error-async",
+    "task-details", "universe", "prompt", "oe", "golden", "injection", "error-async",
     "dynamic-context", "rubric",
 })
 REFERENCES = (
@@ -28,7 +27,7 @@ REFERENCES = (
     "Evals/references/rules/long_horizon.md",
     "Evals/references/persona/roster.json", "Evals/references/persona/acl.md",
     "Evals/references/tools/catalog.json", "Evals/references/tools/manifest.json",
-    "Evals/references/universe_manifest.json", "Evals/references/source_layout.json",
+    "{universe}/universe_manifest.json", "{universe}/source_layout.json",
     "Evals/references/schema/manifest.json",
     "Evals/references/rules/rubric_review_record.md",
     "Evals/references/rules/review_scoring.md", "Evals/references/rules/qc_rubric_v10.md",
@@ -79,11 +78,21 @@ def fingerprint(path):
     return h.hexdigest()
 
 
+def universe_paths(root, names):
+    """Resolve {universe}/ references to the folder of the task's saved date."""
+    if not any(name.startswith("{universe}/") for name in names):
+        return list(names)
+    from hg_universe import references
+    folder = references(root).relative_to(root).as_posix()
+    return [folder + name.removeprefix("{universe}") if name.startswith("{universe}/") else name
+            for name in names]
+
+
 def review_context(root, *, input_filter=relevant_input, reference_paths=REFERENCES, policy=POLICY):
     # Import lazily: input saving also calls invalidate_prefill below.
     from hg_store_input import SLOTS, BATCHES, destinations
 
-    index_path = local(root, Path("Evals/task_inputs/inputs.json"))
+    index_path = local(root, Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/inputs.json"))
     index = load_json(index_path) if index_path.exists() else {"inputs": {}}
     entries = index.get("inputs")
     if not isinstance(entries, dict):
@@ -110,13 +119,13 @@ def review_context(root, *, input_filter=relevant_input, reference_paths=REFEREN
     # Legacy canonical inputs are still fingerprinted; they cannot bypass binding.
     for key, name in {**SLOTS, **BATCHES}.items():
         if input_filter(key) and key not in entries:
-            path = local(root, Path("Evals/task_inputs") / name)
+            path = local(root, Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS") / name)
             candidates = sorted(path.rglob("*")) if path.is_dir() else [path]
             for candidate in candidates:
                 if candidate.is_file():
                     relative = candidate.relative_to(root).as_posix()
                     files[relative] = fingerprint(local(root, Path(relative)))
-    references = {name: fingerprint(local(root, Path(name))) for name in reference_paths}
+    references = {name: fingerprint(local(root, Path(name))) for name in universe_paths(root, reference_paths)}
     manifest = {"review_policy": policy, "inputs": states, "files": files,
                 "references": references}
     raw = json.dumps(manifest, sort_keys=True, ensure_ascii=False).encode("utf-8")

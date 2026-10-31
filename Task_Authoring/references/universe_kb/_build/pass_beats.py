@@ -4,6 +4,9 @@ import os, re, json, collections, glob
 from common import *
 
 _slack_cache = {}
+# An editorial note the data's authors left inside a beat (e.g. "[STILL CONTAINS POST-CUTOFF REFERENCES — REMOVE
+# THESE TOO: ]" in four synth-cut beats): the beat is flagged by its own source, so it is never used.
+EDITORIAL_NOTE = re.compile(r"\[\s*(?:STILL CONTAINS|REMOVE THESE|TODO|FIXME)\b", re.I)
 
 
 def slack_has(cid, ts):
@@ -41,14 +44,14 @@ class Verifier:
         R = jload(GDRIVE)
         self.drive = {f["id"]: (f.get("created_time"), f.get("modified_time"), f.get("name")) for f in R["drive_files"]}
         del R
-        gm = jload(CACHE + "/kb_gmail.json")
+        gm = jload_cache("kb_gmail.json")
         self.gthreads = {}
         for mb, lst in gm["thread_ids"].items():
             for t in lst:
                 self.gthreads.setdefault(t, []).append(mb)
         self.gmail_files = set(os.listdir(GMAIL + "/threads"))
         del gm
-        O = jload(CACHE + "/kb_other.json")
+        O = jload_cache("kb_other.json")
         self.snow_tables = {("%s.%s.%s" % (v.get("db"), v.get("schema"), k)) if v.get("db") else k: v.get("rows") for k, v in O["snowflake"]["tables"].items()}
         self.snow_names = set(O["snowflake"]["tables"])
         del O
@@ -119,6 +122,8 @@ def parse_yaml_beats(path):
             continue
         if cur is None:
             continue
+        if EDITORIAL_NOTE.search(ln):
+            cur["editorial_note"] = True        # in any field of the beat (action, summary, ...)
         m = re.match(r"^  (actor|action|summary): ?(.*)$", ln)
         if m:
             key = m.group(1)
@@ -153,7 +158,7 @@ def parse_yaml_beats(path):
 
 def main():
     V = Verifier()
-    out = []
+    out, excluded = [], []
     files = sorted(glob.glob(META + "/*/*.yaml"))
     for f in files:
         sid = os.path.basename(f)[:-5]
@@ -162,6 +167,9 @@ def main():
         name, beats = parse_yaml_beats(f)
         for b in beats:
             if not b["date"] or float(b["date"]) >= CLOCK_TS:
+                continue
+            if b.get("editorial_note"):
+                excluded.append({"storyline": sid, "beat": b["id"], "action": EDITORIAL_NOTE.split(b["action"])[0].strip()[:160]})
                 continue
             arts = []
             for a in b["artifacts"]:
@@ -178,9 +186,11 @@ def main():
                         "artifacts": arts, "verified_services": svcs,
                         "missing": [a["record_id"] for a in arts if not a["exists"]]})
     jdump(out, CACHE + "/kb_beats.json")
+    jdump(excluded, CACHE + "/kb_beats_excluded.json")
     n2 = sum(1 for b in out if len(b["verified_services"]) >= 2)
     miss = sum(len(b["missing"]) for b in out)
-    print("beats", len(out), "with 2+ verified services", n2, "missing artifact ids", miss, "storylines", len(set(b["storyline"] for b in out)))
+    print("beats", len(out), "with 2+ verified services", n2, "missing artifact ids", miss, "storylines",
+          len(set(b["storyline"] for b in out)), "excluded (editorial note in the data)", len(excluded))
 
 
 if __name__ == "__main__":

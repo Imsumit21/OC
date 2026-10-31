@@ -20,15 +20,16 @@ Run shell commands with that workspace as the working directory. In examples,
 prefix are bundle-relative. Use the selected task directory in place of the
 default `task_inputs/` paths, as described in § 0.
 
-Authority: `references/Docs/11_V3_Changes.md` supersedes conflicting V2 rules on its
-changed topics. For unchanged topics use the V2 taxonomy
-(`references/Taxonomy_V2_Step_Map.md`, generated from `Taxonomy.json`),
-`references/Docs/QC_Spec_Doc_Latest.csv` and the V2 guidelines. Local Evals are
-read-only reference implementations: their older clock, difficulty, unique-answer
-and prompt-style overrides do not override V3. Apply the stricter unchanged rule
-where sources still differ. § 2 records the explicit local authorship exception;
-§ 3a preserves the existing local hardness targets. Eval Portal operation is the
-user's responsibility, outside the local pipeline.
+Authority: `Evals/` (`task-quality-v1`, `dual-universe-v1`) is the bundle QC
+review runs; every artifact must pass it. `references/Docs/11_V3_Changes.md` still
+supersedes conflicting V2 rules on its changed topics; for unchanged topics use the
+V2 taxonomy (`references/Taxonomy_V2_Step_Map.md`, generated from `Taxonomy.json`),
+`references/Docs/QC_Spec_Doc_Latest.csv` and the V2 guidelines. Evals owns the
+selected universe, its state rules and the evaluation clock; V3 additionally limits
+seeded and completed facts (§ 0a's seed bound). "Stricter wins" applies only where
+the two constrain the same thing; it never swaps snapshots, clocks or access rules. § 2 records the explicit local authorship exception; § 3a preserves the
+existing local hardness targets. Eval Portal operation is the user's responsibility,
+outside the local pipeline.
 
 ## 0 · Assignment context (before any universe access)
 
@@ -43,8 +44,9 @@ python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inpu
 ```
 
 The first command normalizes the paste into
-`Working_Files/00_Task_Context.json`; the second validates the registered shared
-universe source. Both assigned freeze dates use the same local universe data.
+`Working_Files/00_Task_Context.json`; the second validates the selected
+universe's source. The assignment's `universe_date_key` selects the universe
+(§ 0a); there is no default.
 Every `/create-*` command uses this
 shared context and must pass source validation before grounding or writing a task.
 Use `--task-dir <task_dir>` for another task workspace; keep all its artifacts in
@@ -54,27 +56,17 @@ keep their positional `<task_dir>` argument and propagate the selected context t
 their child checks. Running `task_context.py --write` does not change the shell's
 environment. Do not silently default missing V3 fields, change the assigned
 mode/persona/date or infer a timezone for a displayed time. Source archive metadata
-is provenance, not the task's assigned clock; a February archive label does not
-make an October assignment unsupported.
+is provenance, not the task's assigned clock or universe; a February archive label
+never selects the universe.
 
-The canonical freeze is the assigned date at 00:00 UTC, either
-`2025-10-01T00:00:00Z` or `2026-02-14T00:00:00Z`. The original displayed date stays
-in the context for traceability. Scope facts, activity, cohorts, timelines and ACL
-claims to that freeze. Shared KB/brief summaries are leads: verify each relied-on
-fact's record dates. A later event cannot be treated as already completed; a mutable
-body edited after the freeze needs a dated version or independent before-freeze
-evidence to establish its earlier content. Assignment/context changes invalidate
-downstream certificates and require the affected stages to be repeated.
-
-`references/universe_sources.json` maps both assigned dates to the same local
-universe manifest and shared KB in shared-universe mode. Use the context's
-`source.manifest` and `source.kb_path`. No separate October export or date-specific
-KB build/review is required. The assigned freeze constrains task facts, completed
-events and seeded timestamps; it does not select a different underlying dataset.
-Source manifests and service folders must stay within this workspace because the
-bounded helpers use workspace-relative locators. The derived KB stays inside
-`Task_Authoring/`; exports remain read-only. Absolute registry paths are supported
-within that boundary.
+The assigned date selects the universe and sets both the seed bound and the eval
+clock; § 0a carries the mapping, clock rules, source paths and KB status. Scope
+facts, activity, cohorts, timelines and ACL claims to the seed bound. A later event
+cannot be treated as already completed; a mutable body edited after it needs a
+dated version or independent before-freeze evidence to establish its earlier
+content. Assignment/context changes invalidate downstream certificates and require
+the affected stages to be repeated. Source manifests and service folders must stay
+within this workspace because the bounded helpers use workspace-relative locators.
 
 Role plausibility is a failing requirement, independent of competency. Business
 function, competency and task-skill mismatches lower quality but do not fail a task
@@ -82,9 +74,117 @@ on their own. Authoring still calls for an authored artifact. Record the role
 review and rubric evidence in `Working_Files/00_V3_Authoring_Evidence.json`
 (§ 6b); its structured attestations support review, not semantic proof.
 
+## 0a · Task date and universe
+
+| `universe_date_key` | Universe | Data (`Evals/references/universes/<key>/`) | Clock | Persona "today" | Shutdown rules |
+|---|---|---|---|---|---|
+| `2026-02-14` | normal | `Universe_Normal/Normal_HarmonyGames_*`, hg4-2026-08-31 v37 | 2026-02-14 00:00 UTC = Fri Feb 13, 4:00 PM PT | Saturday, February 14, 2026 | apply |
+| `2025-10-01` | synthcut | `Universe_SynthCut/SynthCut_HarmonyGames_*`, hg4-synth-sep30cut v16 (v36 cut at 2025-09-30 23:59:59 PT, plus the persona merge and Snowflake comment fixes) | 2025-10-01 00:00 PT = 07:00 UTC | Wednesday, October 1, 2025 | do not apply |
+
+The assignment's date selects the universe. Missing or unrecognised: stop and ask;
+never infer it from the prompt, data or task ID, and never read the other universe
+for a task. `task_context.py` records `universe.{key,date,label,folder,prefix,clock_utc,clock_text,clock_line,shutdown_rules_apply,persona_today,persona_today_weekday,build_label}`,
+`source.mode: "universe"`, `source.universe: <key>` and `source.kb_status`;
+`hg.py universe [show|list]` prints the selection, and
+`TASK_AUTHORING_UNIVERSE` carries its key. Data paths come only from that
+universe's `universe_manifest.json` (with `source_layout.json`, `search_indexes/`
+and `id_indexes/` beside it). The original displayed date stays in the context for
+traceability.
+
+**Seed bound vs eval clock (stricter wins).** `freeze_utc` stays the V3 value
+(`2025-10-01T00:00:00Z` / `2026-02-14T00:00:00Z`) and is the seed bound: no seeded
+event timestamp after it, and nothing after it treated as completed. Only plan
+fields (due date, scheduled start/end, deadline) may be later; "scheduled" never
+exempts an event timestamp. `universe.clock_utc` is the eval clock recorded beside
+it (07:00Z on synth-cut) and is what the eval's `Clock:` line names. It is also the
+**data horizon**: synth-cut base records between 00:00Z and 07:00Z on Oct 1 exist and
+the agent sees them. Never rely on them as completed facts, and check them as possible
+superseding records: if one touches an entity a "current/latest" answer depends on,
+drop that dependency. Tools apply the seed bound (`CLOCK`) to seeded writes and
+completed facts, and the data horizon (`DATA_CLOCK`) to what exists in the data. The
+clock checks differ by tool: the eval lint (`hg.py lint`) tests `future_date` against
+`universe.clock_utc` (07:00Z on synth-cut), while `sql_lint.py` holds seeded rows to the
+seed bound (`freeze_utc`), so a synth-cut seeded timestamp between 00:00Z and 07:00Z passes
+the eval lint but fails `sql_lint.py` — keep every seeded timestamp before the seed bound
+(`stage_gate.py injection` runs both).
+
+**Dates.** Persona-written dates are Pacific; when the PT and UTC days differ, write
+both. "Today" means the universe date above, and "yesterday" the day before it
+(Fri Feb 13, 2026 / Tue Sep 30, 2025), never the authoring machine's date.
+
+**State rules.** The February 11, 2026 shutdown, terminations backdated to
+December 25, 2025 and Google accounts archived by February 15 apply to the normal
+universe only; synth-cut is a company operating normally with no shutdown rules.
+The departed-person rule applies in both: on synth-cut Victor Barnes left in April
+2025 (last Slack message 2025-04-15) and cannot act, while every other roster
+persona is active through 2025-09-30. Synth-cut has 70 storylines against 76 on
+Feb 14: Combo Fighter, Zombie Match Lite, the Telegram Domino Delights port, the UI
+sprite optimization sprint, the Mattel Barbie idle life sim pitch and the web
+distribution partnership do not exist there.
+
+**KB.** Both per-universe KBs are built and `bound` in
+`references/universe_kb/by_universe/{normal,synthcut}/`, each stamped with its universe,
+clock, seed bound, source fingerprint and `build: per-universe-v1`. The legacy root
+`references/universe_kb/*.json|md` is the old Feb-14 KB: reference-only (advisory
+orientation — leads to verify against records, never validation authority) and never
+written by the per-universe build. `task_context.py` shows a task's KB status in
+`source.kb_status`: `bound` — the selected universe's build in `source.kb_output_path`,
+its `_meta` matching universe, clock, source fingerprint and build; `reference-only` —
+normal tasks only, the legacy root as advisory orientation; `unavailable` — no usable KB
+(missing or stale build). Gates downgrade KB-membership checks to WARN unless `bound`
+and then require record locators. Rebuild a universe's KB from one of its tasks (one
+universe per run; outputs only to `universe_kb/by_universe/<key>/`; the legacy root is
+never written):
+`python3 Task_Authoring/tools/entity.py --task-dir <task_dir> build` (the shared task
+seam strips `--task-dir` before `entity.py`'s argparse, which is why `--help` does not
+list it; `TASK_AUTHORING_TASK_DIR=<task_dir>` is equivalent), then
+`python3 Task_Authoring/references/universe_kb/_build/run_all.py --task-dir <task_dir>`
+(about 4–13 minutes depending on the universe and machine load; measured: synth-cut
+4 min, normal 13 min). Rebuild after any universe data refresh; a stale build stops being
+`bound` because its fingerprint no longer matches. Builds are deterministic (identical
+bytes across rebuilds and Python hash seeds); a new pass must iterate sorted, never over a
+raw set of strings. Hand-written KB knowledge was written from the Feb 14 data, so only the
+normal universe emits it: rows whose `source` cites `Scenario_Atlas` or `Ask_Carriers`,
+hand-picked example ids and the static narrative titles (rows left out are listed in
+`_meta.hand_written_rows_not_emitted`). Storyline beats that the data's own metadata flags
+with an editorial note are left out and listed in `timeline.json` `_meta.beats_excluded`.
+Some computed rows still quote ids hand-picked from the Feb 14 data (a known follow-up), so
+on synth-cut treat hazards, traps and integrations as orientation and check any id in the
+data before relying on it. Each build step refuses a KB file or `kb_cache` intermediate
+stamped for another universe, source or builder version, and writes only to
+`by_universe/<its universe>/`.
+
+**What binds what.** The source fingerprint is a digest over the universe key, the Evals
+routing manifest (which pins every export's file count, bytes and archive SHA-256) and
+the bytes of every service's `source_manifest.json` (per-file sizes and SHA-256);
+`verify_universe_data.py --sha256` checks the installed files against those manifests
+and the manifests against the routing pins. The fingerprint covers the manifests, not the
+file contents: a file edited under an unchanged manifest is caught only by that `--sha256`
+check, one more reason never to edit the data. The task's `context_hash` is a digest of the
+whole normalized context: the raw assignment, persona, seed bound, universe block (with
+the data clock), policy, roster and the full source block (paths, fingerprint, KB
+status). Every tool cache is keyed by it (`support/local_search/cache/<hash>/`, patched
+helper copies in `support/local_search/contexts/<hash>/`; KB intermediates by universe
+and fingerprint), so a new date, data refresh, KB status or policy starts fresh caches.
+Two task folders with the same assignment share one cache folder, which holds only data
+derived from the universe: each task's SQL overlay is re-read from its own folder on every
+run, so one task never sees another task's seeded rows. Every tool recomputes the
+context from `00_Assigments.md` on each run: `Working_Files/00_Task_Context.json` is a
+record for people and manifests, never read back for routing (refresh it with `--write`
+after changing the assignment or the data).
+
+**Source blocked.** The new data folders are not installed in every workspace.
+Until `Universe_Normal/` and `Universe_SynthCut/` are installed per
+`Evals/UNIVERSE_MAP.md`, `task_context.py --require-source` stops with
+`SOURCE BLOCKED`; report it and stop. Check an installed universe against its manifests
+with `python3 -B Task_Authoring/tools/verify_universe_data.py [--universe normal|synthcut] [--sha256]`.
+Never fall back to the old root
+`HarmonyGames_*` folders or to the shared Feb data for a V3 task.
+
 ## 1 · Write boundary (HARD RULE)
 
-- `Evals/`, `claude/`, `HarmonyGames_GitHub/`, `HarmonyGames_Gmail/` and
+- `Evals/`, `claude/`, `Universe_Normal/`, `Universe_SynthCut/`, and the legacy
+  `HarmonyGames_GitHub/`, `HarmonyGames_Gmail/` and
   `HarmonyGames_Other_Services/` are **read-only**: read, search and quote them;
   never write, edit, move or delete anything in them (owner's standing rule).
   **Never run `git` inside them** either: git freshens pack-file timestamps even on
@@ -154,7 +254,7 @@ difficulty statistics, and hardening forensics.
 
 | Item | Value | Source / note |
 |---|---|---|
-| Assigned freeze | **2025-10-01T00:00:00Z** or **2026-02-14T00:00:00Z**, from `00_Task_Context.json`; source validation must pass first | V3 § 3. No seeded record or completed event after the freeze; future deadlines are allowed |
+| Assigned freeze | **2025-10-01T00:00:00Z** or **2026-02-14T00:00:00Z**, from `00_Task_Context.json`; source validation must pass first. Seed bound and eval clock (§ 0a): normal 2026-02-14 00:00 UTC; synth-cut 2025-10-01 00:00 PT = 07:00 UTC | V3 § 3; Evals `dual-universe-v1`. No seeded record or completed event after the freeze; future deadlines are allowed |
 | Model | **Opus 5.5** for the pre-check run and the baseline rollouts | Taxonomy steps 33–35; Change Log |
 | Horizon tiers | Normal **50–100** tool calls · Long **100–500+** · Super-Long **paused** | QC Spec V2; Evals `horizon-tiers-v1` |
 | Tool-call basis | The **golden run** (a baseline rollout scoring 100% on the rubric) if one exists, else the **rollout average**. Blocked/repeated calls add nothing. Under tier = Fail (Wrong Horizon); exceeding the displayed range is allowed by V3. Existing local profile limits remain in § 3a | V3 § 4. Oracle Events never enter this count |
@@ -163,11 +263,11 @@ difficulty statistics, and hardening forensics.
 | Per-rollout spread | Standard deviation of per-rollout pass rates **0.1–0.3** | Evals `scoring.json`: > 0.3 suggests ambiguous rubrics, < 0.1 a deterministic task needing friction |
 | Failure patterns | **≥ 2 distinct** patterns among failing rollouts; two rollouts are the same pattern unless they differ on **≥ 2** rubric results; largest pattern **≤ 50%** of failing rollouts | QC Spec V2; Evals `scoring.json`; taxonomy step 59 |
 | Errored runs | **≤ 2 of 6** (3+ errored = Fail) | QC Spec V2 "Error Rate" |
-| All-fail denominator | Completed (non-errored) rollouts only. ≥ 2 invalid all-fails = Fail; the Evals also fail a rubric with ≥ 2 rows **predicted** to fail every run. **Harness tolerance for predicted all-fail rows is 0** (stricter than `/rubric`): `stage_gate.py rubric-writing` / `rubric-check` block one | QC Spec V2; Evals `hg-strict-overrides-v1`; 09 hard gate 11 |
+| All-fail denominator | Completed (non-errored) rollouts only. ≥ 2 invalid all-fails = Fail; the Evals also fail a rubric with ≥ 2 rows **predicted** to fail every run. **Harness tolerance for predicted all-fail rows is 0** (stricter than `/rubric`): `stage_gate.py rubric-writing` / `rubric-check` block one | QC Spec V2; Evals `hg-strict-overrides-v1`, `task-quality-v1`; 09 hard gate 11 |
 | Rubric weights | **1 / 3 / 5 by the kind of work**: 1 = direct lookup / literal check from one source · 3 = interpretation, calculation, comparison, limited reconciliation · 5 = multi-source reconciliation, deeper reasoning, cross-modal, tracing | QC Spec V2 "Criteria Weights" (Evals override replaces the Rubric Writing §5 axis count) |
 | Rubric set | ≥ 1 Outcome row (zero Outcome = Fail; **no Process ratio**); builder minimum 5 criteria; ≤ 5 spot checks per group plus an output-volume row and direct exception rows (no bundled exact-set row); one fact per row and the same fact in **three or more rows fails**, across deliverables; every fair reading accepted | V3 § 9 supersedes conflicting UGT/duplicate rules; unchanged title-only, agent-centric and affirmative-title local checks still apply |
 | Rubric validity | Binary, outside the quality tally: any incorrect, unauthorized, unobservable / impossible, contradictory, missing-coverage or predicted all-fail item blocks handoff; the percentage thresholds below apply to the other issue types | 09 check mode; red team B (2026-10-04) |
-| Rubric quality | > 10% major, > 15% moderate-or-worse, or > 20% minor-or-worse issues = Fail | QC Spec V2 |
+| Rubric quality | Any **Major or Moderate** issue = Fail; Minor on **> 10%** of rows = Fail (5–10% is NON-FAIL 3); each row counted once at its highest severity | Evals `3_Rubrics_Eval.md` quality non-fail bands (`rubric-flow-v2`), stricter than the QC Spec V2 percentages |
 | Release | `stage_gate.py release` PASS before submit: every stage certificate present and current, one bundle digest (prompt, OEs, rubric JSON, SQL, reference-file bytes, error/async config, manifest, assignment + persona) matching every digest a stage recorded, no PROVISIONAL / UNRESOLVED / UNVERIFIED marker, OE check Task solvability SUPPORTED_BY_OE, difficulty gates clear, `06_PreCheck_Trajectory/trajectory.json` present | § 6b; red team B (2026-10-04) |
 | Prompt field | 20–4,000 words; plain prose, no markdown | Taxonomy step 24 |
 | Oracle Events field | 300–50,000 characters; pasting blocked | Taxonomy step 45 |
@@ -175,7 +275,7 @@ difficulty statistics, and hardening forensics.
 | Error injection | 18 selectable functions; mode `transient`/`persistent`; rate 0.1–1.0 (1.0 = permanent outage) | Taxonomy step 16 |
 | Async wait | 6 selectable `*_submit_*` search functions; 5–300 s (default 30–35). Only 1.0 / 30 / 35 have ever been exercised — verify any other value in the first trajectory | Taxonomy steps 15–16 |
 | Eval commands | `/injection` · `/prompt` · `/hardness` · `/oe` · `/rubric`. Verdicts **PASS · NON-FAIL · FAIL** (NON-FAIL with PARTIAL/BLOCKED = unresolved, does not clear a gate; NOT EVALUATED exists only on the platform record). `/oe`: wrong/missing step = FAIL 2, minor or final-response defects = NON-FAIL 3, clean = PASS 5. `/hardness`: score 1–2 = HOLD, 3–5 = PROCEED | Evals README / WORKFLOW; taxonomy steps 28–55 |
-| Personas | **17 usable**: the roster in `Evals/references/persona/roster.json`. `thomas` and `tim_steudler` are on the taxonomy's 19-person list (`references/persona_roster_v2.json`) but fail `/prompt`'s identity gate and lack the data to carry a task (`references/Scenario_Atlas.md`) — escalate an assignment that names them | Evals roster; taxonomy |
+| Personas | **17 usable**: the roster in `Evals/references/persona/roster.json`. `thomas` and `tim_steudler` are on the taxonomy's 19-person list (`references/persona_roster_v2.json`) but fail `/prompt`'s identity gate and lack the data to carry a task (`references/Scenario_Atlas.md`) — escalate an assignment that names them. **Victor Barnes cannot act in either universe**: he left in April 2025 (§ 0a) | Evals roster; taxonomy |
 
 **Counting conventions** (exactly what `tools/difficulty_stats.py` computes — verified against its code; red team A,
 R1 #12). A rollout is *completed* unless its trajectory is empty, has no final `result` event or ends in an error
@@ -224,6 +324,11 @@ house rules that override the natural reading and boundary records do. Breadth a
 volume make the run long; the authorities and chains make it fail; spreading them
 over several independent discoveries keeps the failures diverse.
 
+**Volume exception (per task, requester-confirmed).** An extreme manifest may carry `volume_exception {reason,
+requester_confirmation, call_budget_floor, per_record_floor}` (`references/Hardness_Manifest_Spec.md`). It lowers only
+the ≥ 500 call-budget and ≥ 300 per-record minima, never below the platform's 100-call Long Horizon floor; every other
+extreme target above still applies, and `hardness_gate.py` prints the exception in its notes.
+
 **Horizon fit — one effective profile per task.** A ≥ 500-call design suits a **Long Horizon**
 assignment. On a **Normal Horizon** assignment it scores Borderline Horizon (non-fail, task score
 capped at 3). `/create-scenario` resolves the profile once and writes it into the manifest as
@@ -237,9 +342,10 @@ result can replace.
 
 ## 4 · Universe access
 
-The shared universe is split across the folders in the validated context's
-`source.manifest` (the read-only Evals manifest for both assigned dates). Read the
-shared data through the Evals search
+The selected universe is split across the folders in its per-universe manifest,
+`Evals/references/universes/<key>/universe_manifest.json` (`source_layout.json`,
+`search_indexes/` and `id_indexes/` sit beside it). Read only the universe the
+assignment date selects (§ 0a), through the Evals search
 helpers — never bulk-read a large export — and **always through
 `Task_Authoring/tools/hg.py`**: it runs patched copies of `Evals/tools/hg_*.py`
 (`Task_Authoring/setup/local_search.py`) whose runtime caches land in
@@ -248,7 +354,7 @@ helpers — never bulk-read a large export — and **always through
 and arguments as `Evals/SEARCH.md`; run from the workspace root:
 
 ```sh
-python3 Task_Authoring/tools/hg.py search inventory
+python3 Task_Authoring/tools/hg.py search inventory --task-dir <task_dir>   # or set TASK_AUTHORING_TASK_DIR
 python3 Task_Authoring/tools/hg.py search files <service> [query]
 python3 Task_Authoring/tools/hg.py search search <service> "<query>" [--file F --pointer P --limit N]
 python3 Task_Authoring/tools/hg.py search get <service> --file <service-relative file> [--pointer P]
@@ -257,6 +363,9 @@ python3 Task_Authoring/tools/hg.py search search-many --request <req.json>
 python3 Task_Authoring/tools/hg.py search lookup <service> --ids-file F --file GLOB
 python3 Task_Authoring/tools/hg.py records --request <checks.json>      # related record checks in one pass
 python3 Task_Authoring/tools/hg.py reference routes <service> ...       # known export locations
+python3 Task_Authoring/tools/hg.py universe [show|list]                 # selected universe, clock, folders
+python3 Task_Authoring/tools/hg.py lint [--sql PATH] [--checks a,b] [--no-base] [--summary]  # eval injection lint
+python3 Task_Authoring/tools/hg.py rubric-lint <rubric.json>            # eval rubric lint
 ```
 
 `get` takes the service-relative file name (for example `--file contacts.json`),
@@ -268,14 +377,15 @@ not the workspace path printed by `search`. Finish paged results
 | Tool names, parameters, read/write capability | `Evals/references/tools/catalog.json` (298 tools, 13 services) |
 | Persona identity | `Evals/references/persona/roster.json` (17 usable) · `references/persona_roster_v2.json` (taxonomy's 19, exact emails) |
 | Read visibility (ACL) | `references/Docs/4_Persona ACL Policy - V2.md`; `Evals/references/persona/acl.md` for mechanics |
-| Injection SQL schema | `references/universe_schema_live.json` — **144 tables exported from the platform DB on 2026-10-04** (`setup/extract_schema.sql` Q1; generated columns `slack_messages.text_fts` and `gmail_messages.body_text_fts` must never be written), enforced by `tools/sql_lint.py`. Re-export when the platform changes. `Evals/references/schema/injection.json` is a 58-table snapshot without them — cross-check only |
+| Injection SQL schema | `references/universe_schema_live.json` — **144 tables exported from the platform DB on 2026-10-04** (`setup/extract_schema.sql` Q1; generated columns `slack_messages.text_fts` and `gmail_messages.body_text_fts` must never be written), enforced by `tools/sql_lint.py`. Re-export when the platform changes. `Evals/references/schema/injection.json` is a 58-table snapshot whose column entries now carry `generated` and `format` flags — cross-check only |
+| ID contracts | `Evals/references/schema/id_contracts.json` — per-service id formats, enforced by `tools/sql_lint.py` and the eval injection lint |
 | Where asks/facts can live, per-item call costs, bulk shortcuts | `references/Ask_Carriers.md` |
 | Verified storylines + per-service anchors | `references/Scenario_Atlas.md` |
 | Hardness techniques + evidence | `references/Hardness_Mastery.md` |
 | Universe narrative | `references/Universe_Brief.md`, `references/Persona_Briefs.md` |
 | What one persona can see / find (reach census, can-see, search-as-persona, check-sql on the injection) | `tools/persona_view.py` |
 | Who is who across services; shared names and token conflicts | `tools/entity.py` (`resolve`, `collisions`) |
-| Timeline, who is active at the clock, known coherence hazards, natural traps, cohorts, integrations/companions, writing and id conventions | `references/universe_kb/` (README first) |
+| Timeline, who is active at the clock, known coherence hazards, natural traps, cohorts, integrations/companions, writing and id conventions | `references/universe_kb/by_universe/<universe>/` (README first; the legacy `references/universe_kb/` root is the Feb-14 KB, reference-only) |
 | Fact consistency inside an injection (the manifest's `facts`) | `tools/fact_check.py` |
 
 Search is evaluator-wide and does **not** apply persona ACL. You apply it:
@@ -295,7 +405,9 @@ persona, and `domain` / `anyone` visibility is unverified — never count it as 
 ## 5 · Slot map — `task_inputs/` (numbered in platform screen order)
 
 Each slot maps to an Evals input key (`Evals/INPUTS.md`, last column), so a file can be
-pasted or saved under its key unchanged.
+pasted or saved under its key unchanged. The Evals saved-input table now holds
+`universe` → `02_Universe_Date.txt` between `injection` (01) and `error-async`
+(03); that is an eval input key, unrelated to our `02_Reference_Files/` slot (A-34).
 
 **Layout.** The top of `task_inputs/` holds only the platform slots, exactly as in
 `references/Tasks_Template/`: `00_Assigments.md`, `01_Universe_Inject.sql`,
@@ -408,7 +520,10 @@ under **Self-review**:
 1. **Re-read as the eval.** Open the paired Eval file (`Evals/0_Injection_Quality_Eval.md`,
    `1_Prompt_Eval.md`, `1A_Hardness_Eval.md`, `2_Oracle_Events_Eval.md`, `3_Rubrics_Eval.md`;
    for all-fail / difficulty: `Evals/references/rules/all_failing.md`, `scoring.json` and the
-   QC rows) and walk its checks in order against the output — not from memory.
+   QC rows) and walk its checks in order against the output — not from memory. For the prompt,
+   also run its `calibration_cases` from `Evals/references/rules/prompt_qc_cases.json`.
+   Old `prompt-ugt-v1` and format-4 rubric records are not reusable evidence under
+   `task-quality-v1`.
 2. **Strongest counter-reading.** For every PASS-direction judgement, write the best argument
    that it should FAIL (a rejected fair reading, a missing record, a looser/stricter rule, a
    reviewer case in `Evals/references/rules/*_qc_cases.json` / `*_qc_examples.md` that looks
@@ -416,9 +531,14 @@ under **Self-review**:
    positive. Resolve each with evidence (record pointer, rule §, case id), not opinion.
 3. **Re-verify facts, not notes.** Re-read every load-bearing value from the source record
    through `tools/hg.py`; a value carried over from a ledger, brief or dossier is a lead, not
-   evidence.
+   evidence. In the OE ledger, every value on an `Expected:` line is quoted from a cited
+   record in the `expected_values` ledger (the call site, not the declaration).
 4. **Mechanical checks again** after any change (`sql_lint`, `base_check`, `hardness_gate`,
-   `difficulty_stats`, and the injection preflight: `oracle_kit check`, `difficulty_mutation`, `preflight_report`).
+   `difficulty_stats`, `hg.py lint` for the injection — the eval's `hg_injection_lint.py`, which
+   exits 0 even with FAIL flags: read `counts.FAIL`, and disposition each CHECK flag as
+   `LINT <check> L<line>: <disposition>` —
+   `hg.py rubric-lint 09_Rubrics.json` for the rubric, and the injection preflight:
+   `oracle_kit check`, `difficulty_mutation`, `preflight_report`).
 5. **Record** the final verdict per check with its evidence, each counter-reading and how it
    was resolved, and anything left unresolved (named, never hidden). Never soften a finding to
    reach PASS; never invent a finding to look thorough.
@@ -526,14 +646,18 @@ The user handles Eval Portal. The bundle hands off the exact local artifacts and
 the eight-field assignment context; the table below describes the review inputs
 for that handoff. It does not authorize this bundle to operate Portal or collect
 screenshots/uploads. Supply the SQL or an explicit "no injection" answer where asked.
+Every review (`/injection`, `/prompt`, `/hardness`, `/oe`, `/rubric`) asks the task
+date first: answer with the assignment's universe date (Feb 14, 2026 → normal,
+Oct 1, 2025 → synth-cut; § 0a), never a guess. Every report carries a `Clock:`
+line naming the selected universe's eval clock.
 
 | Command | Supply |
 |---|---|
-| `/injection` | `01_Universe_Inject.sql` only (skip the command if the task has no injection) |
-| `/prompt` | `04_Prompt.txt` exactly as submitted · all eight assignment fields · SQL or "no injection" · `03_Error_Async_Config.txt` if configured · reference files the prompt uses |
-| `/hardness` | `04_Prompt.txt` · SQL or "no injection" · the unhinted Opus 5.5 pre-check trajectory JSON · reference files the prompt uses |
-| `/oe` | `08_Oracle_Events.md` · prompt · assignment + persona · SQL or "no injection" · reference files |
-| `/rubric` | `09_Rubrics.json` · prompt · assignment + persona · SQL or "no injection" · reference files. A supplied OE is a comparison reference only; no OE PASS is required |
+| `/injection` | the task date · `01_Universe_Inject.sql` only (skip the command if the task has no injection) |
+| `/prompt` | the task date · `04_Prompt.txt` exactly as submitted · all eight assignment fields · SQL or "no injection" · `03_Error_Async_Config.txt` if configured · reference files the prompt uses |
+| `/hardness` | the task date · `04_Prompt.txt` · SQL or "no injection" · the unhinted Opus 5.5 pre-check trajectory JSON · reference files the prompt uses |
+| `/oe` | the task date · `08_Oracle_Events.md` · prompt · assignment + persona · SQL or "no injection" · reference files |
+| `/rubric` | the task date · `09_Rubrics.json` · prompt · assignment + persona · SQL or "no injection" · reference files. A supplied OE is a comparison reference only; no OE PASS is required |
 
 Order: `/injection` + `/prompt` as a pair once the SQL and prompt exist; `/hardness` on
 the first Opus run (scores 1–2 = HOLD: return to `/create-hardening`); `/oe` once the

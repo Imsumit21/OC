@@ -4,6 +4,9 @@ In Codex, invoke the authoring skills as `$create-*` with the same arguments as
 the `/create-*` examples below. Run shell commands from the workspace root;
 path conventions are in `setup/GEN_EXECUTION.md`.
 
+> **First time here?** Start with `Guide/00_Start_Here.md` for setup, the task
+> folder and the stage order; this guide takes over from there.
+
 This guide owns the **order, gates and loop-backs**. The playbooks own the method;
 `setup/GEN_EXECUTION.md` owns the boundaries and the numbers. Platform screen
 numbers refer to `references/Taxonomy_V2_Step_Map.md`.
@@ -28,7 +31,7 @@ cohort spine, hidden authorities, delegation lattice, chains, traps, call budget
 
 ```mermaid
 flowchart TD
-  A["00 · Exact assignment paste<br/>8 fields · normalize context<br/>shared data · assigned freeze"] --> S["/create-scenario<br/>01 design + manifest + gradable surface<br/>gate --design · Red team · prior forecast"]
+  A["00 · Exact assignment paste<br/>8 fields · normalize context<br/>universe by date · assigned freeze"] --> S["/create-scenario<br/>01 design + manifest + gradable surface<br/>gate --design · Red team · prior forecast"]
   S -->|gate FAIL / leaks| S
   S --> I["/create-injection<br/>01 SQL + dossier + manifest + solver<br/>sql_lint + hardness_gate · preflight"]
   I -->|gate FAIL| I
@@ -113,7 +116,7 @@ assigned Easy/Medium/Hard changes the measured score cap, not the profile.
 
 | # | Step | Command / action | Gate to pass | On failure go to |
 |---|---|---|---|---|
-| 0 | Assignment | Exact paste of all eight fields into `00`; run `task_context.py --task-dir <task_dir> --write --require-source` | Persona resolves; role/mode/date present; shared local source validated | Fix incomplete input; use the same data for either freeze, and scope relied-on facts to the assigned date |
+| 0 | Assignment | Exact paste of all eight fields into `00`; run `task_context.py --task-dir <task_dir> --write --require-source` | Persona resolves; role/mode/date present; the date's universe source validated | Fix incomplete input; the date selects the universe, and scope relied-on facts to the seed bound |
 | 0.5 | Scenario | `/create-scenario` | `hardness_gate.py --design` PASS; mechanism portfolio with ledger priors; `gradable_surface.py validate` PASS; lazy-solver leaks fixed; dual red-team findings dispositioned (or a recorded `RED TEAM FALLBACK:`); liveness flags dispositioned and a prior forecast pre-registered (advisory); `stage_gate.py scenario` PASS | Redesign (never shrink the targets to pass) |
 | 0.5r | Revision intake | `/create-scenario --revise` after `/create-hardening` MODE B | Every proposed node verdict kept, purged or rebuilt; CONFOUNDED candidates confirmed or rejected; every export bound to its revision; `stage_gate.py scenario` PASS | `/create-hardening` for missing forensics |
 | 1 | Universe | `/create-injection` | Dossier cited; `sql_lint.py` clean; `base_check.py`, `fact_check.py`, `persona_view.py check-sql`, `hardness_gate.py` PASS; findability proven; solver contract PASS; a written disposition for every mutation result; geometry U > 1 − cap; preflight report current; `stage_gate.py injection` PASS | Step 0.5 if the design cannot be implemented |
@@ -216,22 +219,27 @@ prepares the artifacts; it does not collect review screenshots or upload proof.
 
 Before the first universe lookup, run
 `python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source`.
-Read `<task_dir>/Working_Files/00_Task_Context.json` and use its registered source
-and shared KB. Both freeze dates use the same local data; a February archive label
-is provenance, not an October-task blocker. The exact original assignment remains
-in `00_Assigments.md`; the context
-normalizes role, horizon, mode/cap and the assigned 00:00 UTC freeze. A displayed
-`07:00` is retained as input text, not silently interpreted as a new freeze.
+Read `<task_dir>/Working_Files/00_Task_Context.json` and use its selected universe
+and KB. The assigned date selects the universe (`GEN_EXECUTION § 0a`): Feb 14, 2026
+→ normal, Oct 1, 2025 → synth-cut. A February archive label is provenance, not an
+October-task blocker, but an Oct 1 task reads the synth-cut data. The exact original
+assignment remains in `00_Assigments.md`; the context normalizes role, horizon,
+mode/cap, the universe (folder, clock, "today") and the assigned 00:00 UTC freeze.
+On synth-cut a displayed `07:00` is the eval clock (00:00 PT) written on the
+`Clock:` line; the V3 freeze stays the 00:00Z seed bound.
 
 Pass `--task-dir <task_dir>` to every direct tool command for a nondefault task,
 or set the task-specific `TASK_AUTHORING_TASK_DIR` environment variable. Stage
 gates retain their positional task directory and pass context to child checks.
 Writing the context file does not change the current shell's environment.
 
-Use record dates to establish facts at the assigned freeze. Later events are not
-already completed. A current mutable body cannot by itself establish its earlier
-contents: use dated version/history or independent before-freeze evidence. Shared
-KB summaries are discovery leads; no separate October dataset or KB review is needed.
+Use record dates to establish facts at the seed bound (`GEN_EXECUTION § 0a`). Later
+events are not already completed. A current mutable body cannot by itself establish
+its earlier contents: use dated version/history or independent before-freeze
+evidence. `source.kb_status` governs KB use: `bound` after a per-universe rebuild;
+until then `reference-only` leads on normal tasks and `unavailable` (no KB) on synth-cut
+tasks — verify every fact against records. Oct 1 tasks need the synth-cut data, not the
+Feb data.
 
 Write `<task_dir>/Working_Files/00_V3_Authoring_Evidence.json` alongside the
 artifacts, with `spec_version: "V3"` and the shared `context_hash`. The sidecar is
@@ -241,7 +249,8 @@ the records or prove that semantic judgments are correct.
 Rubric evidence additionally binds top-level `rubric_hash` to `09_Rubrics.json`
 and `prompt_hash` to `04_Prompt.txt`, using the same artifact-hash command below.
 JSON source citations use absolute or workspace-relative paths within the shared
-source, for example `HarmonyGames_Other_Services/Services_Data/linear/data.json`;
+source, for example `Universe_Normal/Normal_HarmonyGames_Other_Services/Services_Data/linear/data.json`
+(or the `Universe_SynthCut/SynthCut_…` path for an Oct 1 task);
 they are not generally relative to the task folder. The exact task-relative SQL
 sentinel `01_Universe_Inject.sql` selects the current injection. Review `artifact`
 paths identify the corresponding task artifacts.
@@ -266,7 +275,7 @@ existence/visibility of supplied path records, and blocks a
 plausibility and a useful discovery path. Human-facing dates use Pacific with UTC
 beside it when the day differs; never require an exact time for a date-only ask.
 
-For shared-universe source evidence, the cited record's actual recorded/created
+For universe-source evidence, the cited record's actual recorded/created
 timestamp must be at or before the assigned freeze. `future_deadline` and
 `scheduled_event` allow the value itself to be a future date, not the record's
 creation. A fact timestamp after the freeze cannot be treated as completed.
@@ -288,7 +297,7 @@ does not establish mutable task state, historical employment or a role at the fr
 - **Paired reviews:** hand off `/injection` + `/prompt` inputs together; the user operates Eval Portal and handles screenshots/uploads outside this workflow.
 - **Paste the prompt exactly as submitted** into every eval, and answer the injection question (SQL or "no injection") every time.
 - **Keep pre-existing defects out of scope.** If the task touches a record listed in `universe_kb/coherence_hazards.json`, acknowledge it in the manifest (`hazard_acknowledgements`) with an incorporated reason, or choose other records — Cross-Service Coherence fails on presence.
-- **Activity is evaluated at the assigned freeze.** Use shared activity/KB as leads and verify status with dated records; a later summary label cannot establish an earlier status.
+- **Activity is evaluated at the seed bound.** Use the universe's activity/KB as leads and verify status with dated records; a later summary label cannot establish an earlier status.
 - **Never shrink the design to pass the gate.** If `hardness_gate.py` fails, add the missing breadth or difficulty in the universe; a lower `--profile` is only for a Normal Horizon assignment.
 - **Re-inject the SQL** before the pre-check and before the baseline; environments expire after 24 hours.
 - **Predictions are advisory until calibrated.** Liveness flags, the forecast and the pre-check go / no-go are

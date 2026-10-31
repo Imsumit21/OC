@@ -23,6 +23,17 @@ the fixed clock, so a long injection fails here instead of in Universe Explorer:
            scheduled events, but confirm) · business message on a weekend (UTC) ·
            Confluence/Snowflake statements (need a pointer from another record) · DELETE use
 
+Clock and rules of record follow the eval bundle (task-quality-v1):
+  * the seed-bound future-timestamp check covers the event inventory of
+    Evals/tools/hg_injection_lint.py (EVENT_FIELDS + the EVENT_NAME fallback), read with `ast`
+    (never imported, so Evals/ stays read-only and no bytecode is written), plus every local
+    created/updated-type column; it compares against CLOCK (the V3 freeze / seed bound).
+  * text date columns flagged `format` in references/schema/injection.json (Linear stores its
+    dates as text) must be written exactly `YYYY-MM-DDTHH:MM:SSZ` (iso_utc) or
+    `YYYY-MM-DD` (date): no space, no `+00`, no milliseconds, no cast or function.
+  * columns flagged `generated` in injection.json are treated as database-computed, like the
+    inferred *_fts columns.
+
 It also prints coverage stats (statements and rows per schema) that
 tools/hardness_gate.py cross-checks against the hardness manifest.
 
@@ -33,6 +44,8 @@ Usage:
 from __future__ import annotations
 
 import datetime as dt
+import ast
+import email.utils
 import json
 import re
 import sys
@@ -40,18 +53,120 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 CLOCK = dt.datetime(2026, 2, 14, tzinfo=dt.timezone.utc)
+# Data horizon (universe.clock_utc): what exists in the base data and what the agent can see.
+# On the normal universe it equals CLOCK; on synth-cut it is 7 h later. Seeded writes stay bound
+# to CLOCK (the V3 freeze); tools/runtime_context.py::_apply overwrites both globals per task.
+DATA_CLOCK = CLOCK
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "references" / "universe_schema_live.json"
 # Re-export with setup/extract_schema.sql (Q1 → this file, Q2 → the constraints file) when the platform changes.
 LIVE_SCHEMA = SCHEMA_PATH
 LIVE_CONSTRAINTS = SCHEMA_PATH.parent / "universe_constraints_live.json"
+# The eval bundle owns these two rule sources; a Task_Authoring copy of injection.json wins when present
+# (create-injection ships one), otherwise the eval bundle's file is read in place.
+WS = Path(__file__).resolve().parents[2]
+EVAL_LINT = WS / "Evals" / "tools" / "hg_injection_lint.py"
+INJECTION_SCHEMA = SCHEMA_PATH.parent / "injection.json"
+EVAL_INJECTION_SCHEMA = WS / "Evals" / "references" / "schema" / "injection.json"
 FORBIDDEN = re.compile(r"\b(now\s*\(|current_timestamp|current_date|localtimestamp|random\s*\(|gen_random_uuid|uuid_generate_v\d|clock_timestamp)", re.I)
 PAST_ONLY = re.compile(r"(^|_)(created|updated|sent|date|ts|time|timestamp|internal_date|submitted|merged|closed|completed|canceled|archived|edited|latest_reply|modified|added|posted|received|joined)($|_|at)", re.I)
 FUTURE_OK = re.compile(r"(due|start|end|deadline|scheduled|post_at|expires|original_start|effective)", re.I)
+TEXT_DATE_PATTERNS = {
+    "iso_utc": re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$"),
+    "date": re.compile(r"^\d{4}-\d{2}-\d{2}$"),
+}
+TEXT_DATE_SHOWN = {"iso_utc": "YYYY-MM-DDTHH:MM:SSZ (e.g. 2025-09-30T14:12:09Z)",
+                   "date": "YYYY-MM-DD (e.g. 2025-10-03)"}
+TIME_CAST = re.compile(r"::\s*(?:timestamp|timestamptz|date)\b|\bat\s+time\s+zone\b|\bto_timestamp\b|\bmake_timestamp|\bcast\s*\(", re.I)
 MESSAGE_TABLES = {"slack.slack_messages", "gmail.gmail_messages", "linear.linear_comments",
                   "github.github_pr_comments", "github.github_review_comments", "trello.trello_actions",
                   "confluence.confluence_comments"}
-ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?)?(Z|[+-]\d{2}:?\d{2})?$")
+ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d+))?)?)?\s*(Z|[+-]\d{2}(?::?\d{2})?)?$")
 EPOCH = re.compile(r"^\d{10}(\.\d{1,6})?$")
+EPOCH_MS = re.compile(r"^\d{13}$")
+RFC2822 = re.compile(r"^(?:[A-Za-z]{3},?\s+)?\d{1,2}\s+[A-Za-z]{3}\s+\d{4}\s+\d{1,2}:\d{2}")  # weekday optional (RFC 2822 §3.3)
+
+
+def _eval_constants(path: Path = EVAL_LINT) -> dict:
+    """Module-level constants of an eval tool, read with `ast`: never import it, never write into Evals/."""
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+    except (OSError, SyntaxError, ValueError):
+        return {}
+    out = {}
+    for node in tree.body:
+        if not (isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name)):
+            continue
+        value = node.value
+        try:
+            if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                out[node.targets[0].id] = value.value
+            elif isinstance(value, ast.Call) and getattr(value.func, "attr", "") == "compile" and value.args:
+                arg = value.args[0]
+                if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                    out[node.targets[0].id] = arg.value
+            else:
+                out[node.targets[0].id] = ast.literal_eval(value)
+        except (ValueError, SyntaxError, TypeError):
+            continue
+    return out
+
+
+def _upstream_events() -> tuple[dict, re.Pattern | None]:
+    """(EVENT_FIELDS, EVENT_NAME) from the eval's hg_injection_lint.py — the inventory this lint must cover."""
+    values = _eval_constants()
+    raw = values.get("EVENT_FIELDS")
+    fields = {str(t): tuple(str(c) for c in cols) for t, cols in raw.items()} if isinstance(raw, dict) else {}
+    pattern = values.get("EVENT_NAME")
+    return fields, (re.compile(pattern) if isinstance(pattern, str) else None)
+
+
+UPSTREAM_EVENT_FIELDS, UPSTREAM_EVENT_NAME = _upstream_events()
+
+
+def _injection_flags(path: Path | None = None) -> dict:
+    """({table: {column: format}}, {table: {column: generated}}, path) from references/schema/injection.json."""
+    path = path or (INJECTION_SCHEMA if INJECTION_SCHEMA.is_file() else EVAL_INJECTION_SCHEMA)
+    try:
+        tables = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"formats": {}, "generated": {}, "path": None}
+    formats, generated = defaultdict(dict), defaultdict(dict)
+    for t in tables if isinstance(tables, list) else []:
+        if not isinstance(t, dict):
+            continue
+        name = f"{t.get('table_schema')}.{t.get('table_name')}".lower()
+        for c in t.get("columns") or []:
+            if not isinstance(c, dict):
+                continue
+            col = str(c.get("column") or "").lower()
+            if c.get("format"):
+                formats[name][col] = str(c["format"]).lower()
+            if c.get("generated"):
+                generated[name][col] = str(c["generated"]).lower()
+    return {"formats": dict(formats), "generated": dict(generated), "path": str(path)}
+
+
+INJECTION_FLAGS = _injection_flags()
+TEXT_DATE = INJECTION_FLAGS["formats"]
+GENERATED = INJECTION_FLAGS["generated"]
+
+
+def is_event_column(table: str, col: str) -> bool:
+    """True for a column the eval linter treats as an event timestamp (listed, or EVENT_NAME match)."""
+    listed = UPSTREAM_EVENT_FIELDS.get(table)
+    if listed is not None:
+        return col in listed
+    return bool(UPSTREAM_EVENT_NAME and UPSTREAM_EVENT_NAME.match(col))
+
+
+def _merge_generated(tables: dict, generated: dict) -> None:
+    """Mark columns the database computes: the injection.json `generated` flag plus load_schema's *_fts inference."""
+    for table, cols in tables.items():
+        flags = generated.get(table) or {}
+        for col, meta in cols.items():
+            if col in flags:
+                meta["generated"] = True
+
 
 
 def load_schema(path: Path = SCHEMA_PATH) -> dict:
@@ -63,6 +178,7 @@ def load_schema(path: Path = SCHEMA_PATH) -> dict:
                           "generated": c.get("generated") == "ALWAYS" or (c.get("generated") is None and c["column"].endswith("_fts"))}
             for c in t["columns"]
         }
+    _merge_generated(tables, INJECTION_FLAGS["generated"])
     return tables
 
 
@@ -191,6 +307,8 @@ def tuples_after_values(s: str) -> list[str]:
 def literal(v: str) -> str | None:
     v = v.strip()
     v = re.sub(r"::[a-z_ ]+(\[\])?$", "", v, flags=re.I).strip()
+    # SQL typed literals (TIMESTAMPTZ '…', TIMESTAMP WITH TIME ZONE '…', DATE '…') carry the same value
+    v = re.sub(r"^(?:timestamp(?:tz)?(?:\s+with(?:out)?\s+time\s+zone)?|date|time(?:tz)?)\s+(?=')", "", v, flags=re.I)
     dq = re.fullmatch(r"(\$[A-Za-z_]*\$)(.*)\1", v, re.S)
     if dq:
         return dq.group(2)
@@ -209,14 +327,23 @@ def parse_time(raw: str | None) -> dt.datetime | None:
     raw = raw.strip()
     if EPOCH.match(raw):
         return dt.datetime.fromtimestamp(float(raw), tz=dt.timezone.utc)
+    if EPOCH_MS.match(raw):  # Gmail internal_date is epoch milliseconds
+        return dt.datetime.fromtimestamp(int(raw) / 1000, tz=dt.timezone.utc)
     m = ISO.match(raw)
     if not m:
+        if RFC2822.match(raw):  # Gmail date is RFC-2822 ('Wed, 01 Oct 2025 01:00:00 +0000')
+            try:
+                parsed = email.utils.parsedate_to_datetime(raw)
+            except (TypeError, ValueError, IndexError):
+                return None
+            return parsed.replace(tzinfo=dt.timezone.utc) if parsed.tzinfo is None else parsed.astimezone(dt.timezone.utc)
         return None
-    y, mo, d, h, mi, s, tz = m.groups()
-    t = dt.datetime(int(y), int(mo), int(d), int(h or 0), int(mi or 0), int(s or 0))
+    y, mo, d, h, mi, s, frac, tz = m.groups()
+    # keep fractional seconds: truncating 00:00:00.000001Z to the bound would let it pass as "at" the clock
+    t = dt.datetime(int(y), int(mo), int(d), int(h or 0), int(mi or 0), int(s or 0), int((frac or "0")[:6].ljust(6, "0")))
     if tz and tz != "Z":
         sign = 1 if tz[0] == "+" else -1
-        hh, mm = int(tz[1:3]), int(tz[-2:])
+        hh, mm = int(tz[1:3]), (int(tz[-2:]) if len(tz) > 3 else 0)  # '+00' is a valid short offset
         t = t - sign * dt.timedelta(hours=hh, minutes=mm)
     return t.replace(tzinfo=dt.timezone.utc)
 
@@ -469,6 +596,7 @@ def lint(sql: str, schema: dict) -> dict:
                     err(line, f"{table}: UPDATE sets generated column {col} — the database computes it")
                 val = literal(assign.split("=", 1)[1]) if "=" in assign else None
                 check_time(table, col, val, line, err, warn)
+                check_text_date(table, col, assign.split("=", 1)[1] if "=" in assign else "", val, line, err)
                 if val is not None and col.endswith("_json"):
                     row_rules(table, {col: val}, line, err, warn)
             if not re.search(r"\b(id|event_id|identifier|thread_id|calendar_id|contact_id|spreadsheet_id|document_id|presentation_id)\b\s*=", u.group(4), re.I):
@@ -500,6 +628,7 @@ def lint(sql: str, schema: dict) -> dict:
                 if v.strip().upper() == "NULL" and c in cols_def and not cols_def[c]["nullable"]:
                     err(line, f"{table}: NULL in NOT NULL column {c}")
                 check_time(table, c, lit, line, err, warn)
+                check_text_date(table, c, v, lit, line, err)
             row_rules(table, {c: literal(v) for c, v in row.items()}, line, err, warn)
             key_cols = PRIMARY_KEYS.get(table) or next(
                 ((k,) for k in ("id", "event_id", "contact_id", "document_id", "spreadsheet_id",
@@ -528,15 +657,49 @@ def after_clock(when):
 def check_time(table, col, lit, line, err, warn):
     t = parse_time(lit)
     if t is None:
+        if (lit and lit.strip().lower() not in ("null", "default", "true", "false", "t", "f", "yes", "no", "0", "1")
+                and is_event_column(table, col)):
+            # An event field the seed bound cannot be checked on must not pass silently.
+            err(line, f"{table}.{col} = {lit!r} is not a parseable timestamp, so the seed bound cannot be checked — "
+                      "write an ISO-8601 UTC literal (e.g. 2025-09-30T14:12:09Z)")
         return
     if after_clock(t):
-        if FUTURE_OK.search(col):
+        # The eval linter's event inventory is authoritative: a listed event field is seed-bound even when
+        # its name also matches the plan-field pattern (e.g. linear started_at). Only non-event plan fields
+        # (gcal start/end, due/start/target dates, scheduled posts, deadlines) may be after the clock.
+        if is_event_column(table, col):
+            relation = "after the assigned clock" if globals().get("TASK_CONTEXT") else "on/after the clock"
+            err(line, f"{table}.{col} = {lit} is {relation} {CLOCK.isoformat()} (an event field of the eval linter's "
+                      "inventory: seeded events are bound to the freeze)")
+        elif FUTURE_OK.search(col):
             warn(line, f"{table}.{col} = {lit} is on/after the clock — allowed only as a deadline or a not-yet-happened event")
         elif PAST_ONLY.search(col):
             relation = "after the assigned clock" if globals().get("TASK_CONTEXT") else "on/after the clock"
             err(line, f"{table}.{col} = {lit} is {relation} {CLOCK.isoformat()}")
     elif table in MESSAGE_TABLES and PAST_ONLY.search(col) and t.weekday() >= 5 and col in ("ts", "created_at", "date"):
         warn(line, f"{table}.{col} = {lit} falls on a weekend (UTC) — business messages should be on weekdays")
+
+
+def check_text_date(table, col, raw, lit, line, err):
+    """A text date column stores the literal exactly as written (Linear), so only the base format loads."""
+    fmt = TEXT_DATE.get(table, {}).get(col)
+    if not fmt:
+        return
+    value = (raw or "").strip()
+    if value.upper() in ("NULL", "DEFAULT"):
+        return
+    if TIME_CAST.search(value):
+        err(line, f"{table}.{col} is a text date column: write {TEXT_DATE_SHOWN.get(fmt, fmt)} — a cast stores the "
+                  "cast's own output, not the literal, and the agent run then cannot parse the record")
+        return
+    if lit is None:
+        err(line, f"{table}.{col} is a text date column: write a plain string literal {TEXT_DATE_SHOWN.get(fmt, fmt)} "
+                  "(no function, arithmetic or expression)")
+        return
+    pattern = TEXT_DATE_PATTERNS.get(fmt)
+    if pattern and not pattern.fullmatch(lit):
+        err(line, f"{table}.{col} = {lit!r} is a text date column: write exactly {TEXT_DATE_SHOWN.get(fmt, fmt)} "
+                  "(no space, no +00 / +00:00, no milliseconds)")
 
 
 def to_text(result: dict) -> str:
@@ -625,6 +788,96 @@ INSERT INTO slack.slack_messages (id, ts, channel_id, type, text, reply_count, r
     w = []
     row_rules("slack.slack_messages", {"reactions_json": "{}"}, 1, lambda l, m: None, lambda l, m: w.append(m))
     assert w and "use '[]'" in w[0], w
+
+    # eval-release alignment: upstream event inventory, Linear text-date formats, generated flags
+    assert UPSTREAM_EVENT_FIELDS.get("github.github_releases") == ("created_at", "published_at"), UPSTREAM_EVENT_FIELDS
+    assert is_event_column("github.github_releases", "published_at"), "listed event field not recognised"
+    assert is_event_column("gcal.gcal_events", "created"), "EVENT_FIELDS lookup broken"
+    assert UPSTREAM_EVENT_NAME and UPSTREAM_EVENT_NAME.match("published_at"), "EVENT_NAME fallback not loaded"
+    assert TEXT_DATE.get("linear.linear_issues", {}).get("due_date") == "date", TEXT_DATE
+    assert TEXT_DATE.get("linear.linear_issues", {}).get("updated_at") == "iso_utc", TEXT_DATE
+    assert GENERATED.get("slack.slack_messages", {}).get("text_fts") == "always", GENERATED
+    assert schema["slack.slack_messages"]["text_fts"]["generated"], "injection.json generated flag not merged"
+    synthetic = {"demo.table": {"body_fts": {"nullable": True, "default": None, "type": "text", "generated": False}}}
+    _merge_generated(synthetic, {"demo.table": {"body_fts": "always"}})
+    assert synthetic["demo.table"]["body_fts"]["generated"], "_merge_generated ignores the flag"
+    bad = """-- Are you planning to inject? Yes
+UPDATE github.github_releases SET published_at = '2027-01-01T00:00:00Z' WHERE id = 'r1';
+UPDATE linear.linear_issues SET updated_at = '2026-02-10 10:00:00+00' WHERE id = 'ENG-1';
+UPDATE linear.linear_issues SET updated_at = '2026-02-10T10:00:00Z'::timestamptz WHERE id = 'ENG-1';
+UPDATE linear.linear_issues SET due_date = '2026-02-10T10:00:00Z' WHERE id = 'ENG-1';
+INSERT INTO linear.linear_comments (id, issue_id, author_id, body, created_at) VALUES ('c1', 'ENG-1', 'u1', 'x', now());
+"""
+    r = lint(bad, schema)
+    msgs = " | ".join(e["msg"] for e in r["errors"])
+    assert "published_at = 2027-01-01T00:00:00Z is on/after the clock" in msgs, msgs
+    assert "event field of the eval linter's inventory" in msgs, msgs
+    assert "text date column" in msgs and "no space, no +00" in msgs, msgs
+    assert "cast stores the" in msgs, msgs
+    assert "run-time function" in msgs, msgs
+    good_td = """-- Are you planning to inject? Yes
+UPDATE linear.linear_issues SET updated_at = '2026-02-10T10:00:00Z', due_date = '2026-02-20' WHERE id = 'ENG-1';
+UPDATE github.github_releases SET published_at = '2026-02-10T10:00:00Z' WHERE id = 'r1';
+"""
+    r = lint(good_td, schema)
+    assert not r["errors"], r["errors"]
+
+    # synth-cut seed bound: listed event fields beat the plan-field name match; ms epochs and RFC-2822 parse
+    global CLOCK
+    saved_clock = CLOCK
+    CLOCK = dt.datetime(2025, 10, 1, tzinfo=dt.timezone.utc)
+    try:
+        bad = """-- Are you planning to inject? Yes
+UPDATE linear.linear_issues SET started_at = '2025-10-01T00:00:01Z' WHERE id = 'ENG-1';
+UPDATE linear.linear_issues SET completed_at = '2025-10-01T00:00:00Z' WHERE id = 'ENG-1';
+UPDATE gmail.gmail_messages SET date = 'Wed, 01 Oct 2025 01:00:00 +0000', internal_date = '1759276801000' WHERE id = 'x/1';
+"""
+        r = lint(bad, schema)
+        msgs = " | ".join(e["msg"] for e in r["errors"])
+        for needle in ("started_at = 2025-10-01T00:00:01Z is on/after the clock",
+                       "completed_at = 2025-10-01T00:00:00Z is on/after the clock",
+                       "date = Wed, 01 Oct 2025 01:00:00 +0000 is on/after the clock",
+                       "internal_date = 1759276801000 is on/after the clock"):
+            assert needle in msgs, (needle, msgs)
+        assert "event field of the eval linter's inventory" in msgs, msgs
+        assert parse_time("1759276801000") == dt.datetime(2025, 10, 1, 0, 0, 1, tzinfo=dt.timezone.utc), parse_time("1759276801000")
+        assert parse_time("Wed, 01 Oct 2025 01:00:00 +0000") == dt.datetime(2025, 10, 1, 1, 0, tzinfo=dt.timezone.utc), parse_time("Wed, 01 Oct 2025 01:00:00 +0000")
+        # the weekday is optional in RFC 2822: the weekday-less form must not skip the seed-bound check
+        assert parse_time("01 Oct 2025 01:00:00 +0000") == dt.datetime(2025, 10, 1, 1, 0, tzinfo=dt.timezone.utc), parse_time("01 Oct 2025 01:00:00 +0000")
+        nw_err, nw_warn = [], []
+        check_time("gmail.gmail_messages", "date", "01 Oct 2025 01:00:00 +0000", 1,
+                   lambda *x: nw_err.append(x), lambda *x: nw_warn.append(x))
+        assert nw_err, ("weekday-less RFC-2822 date after the synth-cut seed bound must error", nw_err, nw_warn)
+        # short '+00' offsets and SQL typed literals are parsed, never skipped; an unparseable event literal errors
+        assert parse_time("2025-10-01T01:00:00+00") == dt.datetime(2025, 10, 1, 1, 0, tzinfo=dt.timezone.utc), parse_time("2025-10-01T01:00:00+00")
+        assert literal("TIMESTAMPTZ '2025-10-01T02:00:00Z'") == "2025-10-01T02:00:00Z", literal("TIMESTAMPTZ '2025-10-01T02:00:00Z'")
+        assert literal("timestamp with time zone '2025-10-01 02:00:00+00'") == "2025-10-01 02:00:00+00"
+        r = lint("""-- Are you planning to inject? Yes
+UPDATE github.github_releases SET published_at = '2025-10-01T01:00:00+00' WHERE id = 'r1';
+UPDATE github.github_releases SET published_at = TIMESTAMPTZ '2025-10-01T02:00:00Z' WHERE id = 'r2';
+""", schema)
+        msgs = " | ".join(e["msg"] for e in r["errors"])
+        assert "published_at = 2025-10-01T01:00:00+00 is on/after the clock" in msgs, msgs
+        assert "published_at = 2025-10-01T02:00:00Z is on/after the clock" in msgs, msgs
+        un_err, un_warn = [], []
+        check_time("github.github_releases", "published_at", "next tuesday", 1,
+                   lambda *x: un_err.append(x), lambda *x: un_warn.append(x))
+        assert un_err and "not a parseable timestamp" in un_err[0][1], (un_err, un_warn)
+        bool_err = []
+        check_time("trello.trello_cards", "closed", "false", 1, lambda *x: bool_err.append(x), lambda *x: None)
+        assert not bool_err, bool_err
+        # fractional seconds are kept: one microsecond past the bound is past the bound
+        assert parse_time("2025-10-01T00:00:00.000001Z") == dt.datetime(2025, 10, 1, 0, 0, 0, 1, tzinfo=dt.timezone.utc)
+        for table, column in (("github.github_commits", "authored_date"), ("trello.trello_cards", "datelastactivity")):
+            fr_err, fr_warn = [], []
+            check_time(table, column, "2025-10-01T00:00:00.000001Z", 1,
+                       lambda *x: fr_err.append(x), lambda *x: fr_warn.append(x))
+            assert fr_err, (f"{table}.{column} one microsecond past the synth-cut seed bound must error", fr_err, fr_warn)
+        r = lint("-- Are you planning to inject? Yes\nUPDATE linear.linear_issues SET due_date = '2025-10-15' WHERE id = 'ENG-1';", schema)
+        assert not r["errors"], r["errors"]
+        assert any("deadline" in w["msg"] for w in r["warnings"]), r["warnings"]
+    finally:
+        CLOCK = saved_clock
     print("self-test: ok")
 
 

@@ -11,7 +11,7 @@ from pathlib import Path
 
 from hg_rubric_qc import DIMENSIONS, GATES, FORMAT_VERSION
 
-SCORE_PATH = Path("Evals/task_inputs/reports/drafts/rubric_score_record.json")
+SCORE_PATH = Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/reports/drafts/rubric_score_record.json")
 
 
 def calculate(record, rubric, check_result=None):
@@ -27,7 +27,7 @@ def validate_score(root, content):
     if not isinstance(record, dict) or not isinstance(record.get("rubric_path"), str):
         raise ValueError("Rubric scoring record needs rubric_path")
     if type(record.get("format_version")) is not int or record["format_version"] != FORMAT_VERSION:
-        raise ValueError("Unsupported rubric scoring record format_version; rubric-revision-v10 uses format 4 with evidence-linked checks")
+        raise ValueError("Unsupported rubric scoring record format_version; rubric-revision-v10 uses format 5 with evidence-linked checks")
     if record.get("review_mode") != "AUDIT":
         raise ValueError("Rubric is evaluation-only; scoring review_mode must be AUDIT")
     path = local(root, Path(record["rubric_path"]))
@@ -39,7 +39,7 @@ def validate_score(root, content):
     states = context["manifest"]["inputs"]
     allowed = [item["path"] for key in ("rubric", "source:rubric") for item in states.get(key, {}).get("files", [])]
     if "rubric" not in states:
-        allowed.append("Evals/task_inputs/09_Rubrics.json")
+        allowed.append("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/09_Rubrics.json")
     if path.resolve() not in {local(root, Path(p)).resolve() for p in allowed}:
         raise ValueError("Score the actual saved rubric input in AUDIT; generated drafts are not inputs")
     try:
@@ -81,9 +81,42 @@ def validate_score(root, content):
         for weight in record["weight_reviews"]:
             if not set(weight["source_ids"]) <= known:
                 raise ValueError("Weight evidence must use the verified source ledger")
+        check_oe_binding(root, record["oe_cross_check"], states, known)
     return {**computed, "eval_release": release, "review_mode": "AUDIT", "reviewed_json_sha256": record["reviewed_json_sha256"],
             "review_context_sha256": context["sha256"],
             "scoring_record_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest()}
+
+
+def saved_oe_text(root, states):
+    """Text of the saved Oracle Events input, or None when the task has no OE."""
+    from hg_rubric_loop import local
+    entry = states.get("oe")
+    if entry is not None:
+        files = entry.get("files", []) if entry.get("state") == "saved" else []
+    else:
+        legacy = Path("Task_Authoring/support/local_search/NO_EVAL_TASK_INPUTS/08_Oracle_Events.md")
+        files = [{"path": legacy.as_posix()}] if local(root, legacy).is_file() else []
+    if not files:
+        return None
+    return "\n".join(local(root, Path(item["path"])).read_text(encoding="utf-8") for item in files)
+
+
+def check_oe_binding(root, cross, states, known):
+    """Bind the OE cross-check to the saved OE: presence, step labels and quoted text."""
+    text = saved_oe_text(root, states)
+    if (text is not None) != cross["oe_present"]:
+        raise ValueError("oe_cross_check.oe_present contradicts the saved OE input; map every row to its OE steps when the task has OEs")
+    if text is None:
+        return
+    flat = " ".join(text.split())
+    for step in cross["steps"]:
+        if " ".join(step.split()) not in flat:
+            raise ValueError("OE step label is absent from the saved OE: " + step)
+    for conflict in cross["conflicts"]:
+        if " ".join(conflict["oe_quote"].split()) not in flat:
+            raise ValueError("OE conflict oe_quote is absent from the saved OE: " + conflict["oe_quote"][:60])
+        if not set(conflict.get("source_ids") or []) <= known:
+            raise ValueError("OE conflict evidence must use the verified source ledger")
 
 
 def approve_score(root, parsed):
