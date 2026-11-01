@@ -306,6 +306,15 @@ The engine is built so a single Opus run cannot pass by stacking easy steps. Eve
 task is designed in `/create-scenario`, implemented in `/create-injection`, and
 checked by `tools/hardness_gate.py` against the SQL itself.
 
+**Hardness v2 (Opus 5.5).** The profile floors below are horizon and coverage targets; they are not what makes a
+task hard. The client's Hardness v2 guideline (`references/Docs/13_Hardness_v2_Opus55.md`, mapped in
+`references/Hardness_Mastery.md` §13) found that volume, routine writes and plain arithmetic pass 6/6 for Opus 5.5 and
+that what beats it is the kind of decision: a done source with a missing piece elsewhere (A24), a correction off the
+first-read path, a follow-through rule, a boundary date, a hidden exception, an alias, items outside the obvious
+filter, a changed input to a total, a completion note elsewhere (A25). Every design names at least two of these as
+separate cross-source decisions that each flip a weight-5 row, and runs the advisory
+`tools/hardness_v2_check.py` (scenario S5b, injection, hardening MODE B).
+
 | Target | `effective_profile: extreme` — Long Horizon (default) | `effective_profile: normal` — Normal Horizon |
 |---|---|---|
 | Services carrying weight / injected | **≥ 10 of 13** / ≥ 10, every injected schema used | ≥ 7 / ≥ 6 |

@@ -37,6 +37,7 @@ V3 changed-topic rules govern over conflicting Docs/Evals; unchanged local check
 
 - The brief describes requirements as facts, noun phrases and record locators; it may also carry draft wording.
 - A drafted prompt follows the assigned person's plausible role and register: ordinary colleague request, clean spelling, no spec-sheet layout, no trap hints, riddles or answer-key clauses. Name a destination the sender would know.
+- Rules stay in the records (Hardness v2 Part 5 rule 5, Part 8): the prompt points at a natural starting place and never states a trap's resolver, exception or correction. One v2 task went from failing to 100 % once its rules were written into the prompt. `python3 -B Task_Authoring/tools/hardness_v2_check.py --task-dir Task_Authoring/task_inputs` flags RULE_IN_PROMPT when eight consecutive resolver words appear in `04_Prompt.txt`.
 - Check mode may propose replacement wording under the preserved local authorship exception. Clean spelling, normal capitals and punctuation pass; planted mistakes, broken spacing and invented emoji codes fail (Eval 1 §1.2 AI-Text, §2.7).
 - No line may point at the trap or hedge the prompt's own facts: a riddle or hint fails, naming the symptom is fine, and "if my date or channel is off, use the message that is actually there" is a hint and fails. Audit/compliance-form wording and long if / but-not / then-also chains fail on their own; a per-case rule belongs in a seeded record, not the prompt (Eval 1 §2.7, A-13/A-15/B-14).
 
