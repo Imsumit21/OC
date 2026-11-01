@@ -1,6 +1,6 @@
 # Task-authoring learnings
 
-Sections 1–9: dd-q4-claims-register (prompt failure, 30 October 2026). Sections 10–19: robert-vendor-schedule (injection failure, 31 October 2026). Sections 20–26: robert-vendor-schedule (prompt failure, 31 October 2026). The checklist at the end covers all three.
+Sections 1–9: dd-q4-claims-register (prompt failure, 30 October 2026). Sections 10–19: robert-vendor-schedule (injection failure, 31 October 2026). Sections 20–26: robert-vendor-schedule (prompt failure, 31 October 2026). Sections 27–34: robert-vendor-schedule (Opus 5.5 pre-check too easy, 31 October 2026). Sections 35–44: robert-vendor-schedule rev-7 rebuild (1 November 2026). The checklist after §26 covers the first three parts; the last two parts end with their own items, numbered across the file.
 
 Recorded: 30 October 2026
 Task: dd-q4-claims-register — Julia Lawson / Product Management / Retrieval
@@ -321,6 +321,137 @@ Before the next pre-check (sections 27–34):
 25. Fix and fixture-test the proxy grader before using it for a go/no-go.
 26. Record tool and policy hashes with every run; supersede wrong provenance instead of editing.
 
+# robert-vendor-schedule: rev-7 rebuild (scenario revise, injection, prompt)
+
+Recorded: 1 November 2026
+Status: rev 7 (local revision rev4, SQL sha256 `b4a1d8957697`) passes every local gate: scenario, injection (39 checks),
+error-async, prompt-writing and prompt-check (0 Fail, predicted /prompt PASS). The platform /injection and /prompt, the
+Opus 5.5 pre-check and /hardness are pending, so nothing here is platform-confirmed. No red-team or methodology review
+ran on the implemented rev 7, at the requester's instruction. Evidence: `Working_Files/01_Scenario_Design.md` §13 (the
+Rev 7 subsections), `01_Grounding_Dossier.md`, `04_Prompt_Writing_Brief.md`, `04_Prompt_Check.md`,
+`run_forensics/REVISIONS.md`; the rev-6 prompt, brief and check are kept in `run_forensics/rev3/design/`.
+
+## 35. `rg` silently skips the universe data
+
+- The workspace `.gitignore` whitelists only the tooling, so `Universe_Normal/` and `Universe_SynthCut/` are ignored, and
+  `rg` honours `.gitignore` by default. The generator's Gmail collision check (`plan/sql_gmail.py`) printed "0 hit(s)"
+  while reading no file; a token known to be in the base also returned 0 files.
+- Run `rg --no-ignore --hidden` (or `-uuu`) on base data, and give every absence check a positive control: a known base
+  id the same scan must find, or the check fails. The `hg.py` helpers read the files directly and were unaffected.
+- A 0-hit result without a positive control proves nothing (the absence rule in `04_Prompt_Writing.md`).
+
+## 36. The base can move under a task; re-derive, don't copy forward
+
+- Between revisions the universe moved into `Universe_Normal/` and `Universe_SynthCut/`. Generators with hard-coded
+  `HarmonyGames_*` paths skipped their base checks silently, and the dossier's base counts went stale: contacts 170 (not
+  171), calendar events 11,130 (not 11,233), Gmail messages 104,480 (not 102,176).
+- Resolve base paths from `00_Task_Context.json` (`universe.folder`) and fail when one is missing; compute base counts
+  from the current export each revision. The persona-scoped counts, re-checked, still held (16,233 Robert threads;
+  "intake" 5, "Eveline" 64, "Singular" 206).
+
+## 37. Two date stores can disagree; read with the task's universe
+
+- The Evals input store (`hg_store_input.py list`) said SELECTED Oct 1, 2025 (synth-cut), set by another session, while
+  the assignment and `00_Task_Context.json` said Feb 14, 2026 (normal). The Evals helpers would have searched the wrong
+  universe.
+- For authoring reads use `Task_Authoring/tools/hg.py`, which takes the universe from the task (`hg.py universe show`).
+  Leave a store another session may own alone, and re-select the assignment's date when /injection, /prompt or
+  /hardness asks for it.
+
+## 38. Substring search overcounts; read the matches and state the scope
+
+- `hg_search` matches case-insensitive substrings: "DeepL" hits "deeply" and "deeplink", "LocLab" hits the domain
+  bloclabz.com, "Rive" hits "drive". Read what matched before claiming a base footprint, and use a word-boundary scan
+  for short or common names.
+- Say whose view a count covers: "0 in Robert's mailbox, 1 in another" (Epidemic Sound) is a different claim from "0 in
+  the base".
+- "Visible" means `persona_view can-see` YES per record. The rev-6 dossier called 5 of 9 base checklist files
+  Robert-visible; per record he owns 2, 3 are shared only by domain or link (UNVERIFIED for him) and 4 are private to
+  others.
+
+## 39. Gates check structure and freshness, not whether the prose is still true
+
+- After the rev-7 truth change the old dossier still passed nearly every content check while saying 40 rows, 9
+  creditors, $12,820.45 and "send Sunset the notice list as a reply on their note"; only freshness and the pasted row
+  count failed. The generators carried rev-6 values too: hard-coded accepted-outcome lists, prompt spans, the check
+  report's "The same 40 rows" and "9 and $12,820.45", and the old text of Leonard's thread reply.
+- Drive every generator from `solver/truth.json` (`oracle_kit.py truth`) and assert against it. After any truth change,
+  grep every artifact for the old totals, counts, ids and texts (§19).
+- A pointer check accepts any id-shaped string: the rev-6 dossier cited Monotype's licence mail with one wrong
+  character (`73c54f4c…` for `73c54f5c…`) and still passed the injection gate. Resolve every cited id against the SQL or
+  the base.
+- Rebuild the check-sql load-bearing list from the plan on every revision (`plan/dossier/gen_lb.py`). A hand-built list
+  from the previous revision leaves the new records unmarked.
+
+## 40. Store each revision once; preserve every stage's artifacts
+
+- `rebuild7.sh` copied the SQL to `run_forensics/rev4/` on every run, so a later rebuild would have overwritten the
+  stored revision. It now refuses when the stored copy differs: a changed SQL is a new revision with a new label.
+- Re-assembling the prompt brief overwrote rev 6's brief before anyone saved it; it had to be rebuilt from section
+  backups. The generator backup came one edit late: rev 6's `gen_s1to4.py` had already been rewritten, so only its
+  outputs survive. Before the first edit of a revision, copy the previous revision's 03 and 04 artifacts (config, brief,
+  prompt, check) and their generators to `run_forensics/<rev>/design/`.
+
+## 41. Off-tracker deciding records (the rev-7 design, not yet tested by a run)
+
+- Twelve members whose deciding fact sits off the tracker: the vendor's later mail in the persona's inbox (a failed
+  charge after "nothing outstanding", a refused cancellation, a replaced billing contact), a founder's #winddown post on
+  the second page of the channel history, or a judgment after complete retrieval (a credit note against a different,
+  paid invoice; a move date splitting two failed bills).
+- Seed controls beside them: routine vendor mail that agrees with the tracker (six here), so finding a vendor's email
+  does not by itself mark a trap.
+- One thread per vendor email unless it is a reply; vendors send separate messages.
+- When one vendor's recurring price appears in both a receipt and a failed charge, list both records as the fact's
+  `home_ids`, or `fact_check --no-leak` reports a leak.
+- The mutation and forecast engines take at most eight rules (`k ≤ 8`). Rev 7 merged two never-live rules to add two;
+  plan the rule budget before adding mechanisms.
+- A design that relies on paging must record the page size it assumes: the posts sit at positions 111–129 newest first,
+  on page 2 only at 100 per page.
+
+## 42. Score whole policies on the real surface before injection
+
+- `plan/policy_scores.py` grades policy outcomes on the actual gradable surface: tracker and pointed hops 31.9 %, every
+  vendor mail but no paging 68.1 %, paging but no vendor mail 42.9 %, both 100 %. Before LogRocket's post moved past
+  page 1 and the reconciling slots were weighted 5, the mail-only policy scored 74.0 %, above the 0.70 cap.
+- The same tool shows the remaining risk. Missing a single member scores 71.4–91.2 %, and every vendor mail plus one post
+  found by a vendor search scores 73.6 %. The injection forecast agrees: the whole-mechanism views give an expected
+  average of 0.60–0.62, the per-record shard and slip views 0.80–0.86. The cap holds only if Opus fails whole policies.
+  Report every view, never only the favourable one.
+
+## 43. Every graded write needs a trigger the persona owns
+
+- The fourth write (a view-only share of the workbook with Sunset) was asked for only in Sunset's note to Leonard
+  (Robert cc'd), and the workbook also holds Leonard's tabs. Left to inference it would be an unauthorized requirement,
+  so the prompt names it.
+- Name a destination precisely enough to be unique in the persona's view: Robert's mailbox holds three Sunset addresses
+  (customer success, the CTO, a no-reply platform address). "like they asked" pins the requester, and "view-only" pins
+  the role, because "view only is fine" would also allow edit access.
+- The surface validator's dry run builds one cell per fixture, so a per-row binding (each notice recipient on its own
+  row) can't be certified as a selector. Record it in the surface's `known_gaps` and carry it in the rubric.
+
+## 44. A review waiver stays visible
+
+The requester skipped red-team and methodology review for rev 7. Record the waiver as a `RED TEAM FALLBACK:` line in
+the design, name what stood in for it (the plan's reviews, the gates, the policy scores), and keep "no independent
+review of the implemented revision" in every Unresolved line until a review or the pre-check covers it. Gate PASSes are
+not a substitute (§6).
+
+Before the next revision (sections 35–44):
+
+27. Scan base data with `rg --no-ignore --hidden` only, and give every absence check a positive control.
+28. Resolve base paths and counts from the current universe each revision; never copy base counts forward.
+29. Read with `hg.py` (the task's universe); re-select the assignment's date before the platform-review skills.
+30. Read substring matches before claiming a base footprint; state each count's scope; count only `can-see` YES records
+    as visible.
+31. Drive every generator from `truth.json`, resolve every cited id, regenerate the load-bearing list, and grep for
+    stale values.
+32. Store each revision once; before the first edit, preserve every stage's artifacts and their generators.
+33. Seed controls beside off-tracker traps, record the page size any paging design assumes, and stay within eight rules.
+34. Score whole policies and single-member misses on the real surface; if one miss clears the cap, say so and report
+    every forecast view.
+35. Give every graded write a trigger the persona owns and a destination unique in the persona's view.
+36. Record any review waiver and keep it in Unresolved until covered.
+
 # dd-2024-release-cost: Opus 5.5 pre-check too easy (rev1), and the Hardness v2 adoption
 
 Recorded: 1 November 2026
@@ -330,7 +461,7 @@ Status: rev1 passed /injection and scored /prompt NON-FAIL 3. One unhinted Opus 
 (`Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`), which explains the result; the pipeline now carries it
 (`references/Hardness_Mastery.md` §13, `tools/hardness_v2_check.py`). One run only: an observation, not a rate.
 
-## 35. A correction the agent passes on the way is no trap
+## 45. A correction the agent passes on the way is no trap
 
 - Every trap was settled on its first read. Ines's contractor_fees amendment (T1) was a reply in her own thread, the
   thread that delegates to the method doc, so reading the thread returned the original and the amendment together. Both
@@ -345,7 +476,7 @@ Status: rev1 passed /injection and scored /prompt NON-FAIL 3. One unhinted Opus 
   of v2 ("the same thread as the original") misses T1: the original is a doc, but the agent reaches it through the thread
   that holds the correction.
 
-## 36. Brute force beats per-record sampling traps
+## 46. Brute force beats per-record sampling traps
 
 - The run split all 1,425 Done tickets across six subagents and read every comment: 897 `linear_list_comments` calls,
   1,002 calls in all, 11 minutes, $22. Per-ticket pick notes cost money, not accuracy.
@@ -354,7 +485,7 @@ Status: rev1 passed /injection and scored /prompt NON-FAIL 3. One unhinted Opus 
 - v2 Part 4 agrees: long inventories, routine bulk writes and straight totals pass 6/6. Volume buys horizon calls, never
   failures. Build difficulty from the kind of decision (v2 Part 3), and keep the ≥ 500-call floor as a horizon target.
 
-## 37. Bind a hash to what the portal actually ingested
+## 47. Bind a hash to what the portal actually ingested
 
 - The portal's injection report records the SQL body it graded: from the first section comment (`-- slack`) to the
   end, with trailing blank lines stripped (349,107 bytes, sha256 `784bfe2f…`). The local file adds a five-line header
@@ -365,7 +496,7 @@ Status: rev1 passed /injection and scored /prompt NON-FAIL 3. One unhinted Opus 
 - The synth-cut clock is 2025-10-01 07:00 UTC (00:00 PT), not 00:00 UTC: the portal's lint ran at
   `clock 2025-10-01T07:00:00Z`. `11_V3_Changes.md` was corrected; the assignment's `freeze_utc` stays the user's call.
 
-## 38. Hardness v2 in the pipeline, and its four reconciliations
+## 48. Hardness v2 in the pipeline, and its four reconciliations
 
 - New mechanism ids A24 (done across services; family `done_gap`) and A25 (completion elsewhere;
   `completion_elsewhere`) cover v2 traps 1 and 9. Trap 8 (wrong inputs to a total) reuses existing correction mechanisms
@@ -381,12 +512,11 @@ Status: rev1 passed /injection and scored /prompt NON-FAIL 3. One unhinted Opus 
 
 Before the next design (sections 35–38):
 
-27. Run `tools/hardness_v2_check.py --design` at S5b and again on the SQL; disposition every SAME_PLACE, DONE_CHECK and
+37. Run `tools/hardness_v2_check.py --design` at S5b and again on the SQL; disposition every SAME_PLACE, DONE_CHECK and
     UNRESOLVED. No correction in the superseded record's container, an anchor's container or the delegating record's.
-28. Name at least two of the nine v2 traps as separate cross-source decisions, each flipping a weight-5 row; prefer a done
+38. Name at least two of the nine v2 traps as separate cross-source decisions, each flipping a weight-5 row; prefer a done
     source with a missing piece in another service (A24) and a correction somewhere else.
-29. Never count volume, bulk writes or clean arithmetic as difficulty; a trap must survive an agent that reads everything.
-30. Hash the SQL body the portal grades (from the first section comment, trailing blank lines stripped) before comparing
+39. Never count volume, bulk writes or clean arithmetic as difficulty; a trap must survive an agent that reads everything.
+40. Hash the SQL body the portal grades (from the first section comment, trailing blank lines stripped) before comparing
     with a portal report.
-31. Batch every `tools/*.py` change into one commit and announce the gate-policy change to any concurrent session.
-
+41. Batch every `tools/*.py` change into one commit and announce the gate-policy change to any concurrent session.

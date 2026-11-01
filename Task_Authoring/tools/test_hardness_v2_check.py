@@ -413,10 +413,15 @@ class LiveTask(unittest.TestCase):
     train-map versions on one card) on its first reads; the checker must flag both."""
 
     def test_live_corrections_flagged(self):
-        man = json.loads(
-            (LIVE / "Working_Files" / "01_Hardness_Manifest.json").read_text()
-        )
-        sql = (LIVE / "01_Universe_Inject.sql").read_text()
+        live_sql = LIVE / "01_Universe_Inject.sql"
+        rev1_sql = LIVE / "Working_Files" / "run_forensics" / "rev1" / "01_Universe_Inject.sql"
+        man_path = LIVE / "Working_Files" / "01_Hardness_Manifest.json"
+        if not (live_sql.is_file() and rev1_sql.is_file() and man_path.is_file()):
+            self.skipTest("needs Task_Authoring/task_inputs/ with the rev1 archive (git-ignored)")
+        if live_sql.read_bytes() != rev1_sql.read_bytes():
+            self.skipTest("the live task is no longer rev1 (a later revision is in progress)")
+        man = json.loads(man_path.read_text())
+        sql = live_sql.read_text()
         rep = hv.run(man, sql)
         got = {f["node"]: f["kind"] for f in flags(rep, "SAME_PLACE")}
         self.assertEqual(got.get("T1"), "on_delegation_path")

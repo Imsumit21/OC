@@ -5,9 +5,10 @@ command wraps. It pins what every command must get right: the write boundary,
 the authorship policy, the numbers of record, the hardness targets, and
 the slot map.
 
-**Agent invocation and paths.** The same skill sources serve Claude and Codex.
-In this contract, skills and guides, `/create-<name>` denotes the Claude command;
-in Codex invoke `$create-<name>` with the same arguments, for example
+**Agent invocation and paths.** The same skill sources serve Claude, Codex and
+OpenCode. In this contract, skills and guides, `/create-<name>` denotes the Claude
+command, which OpenCode runs as written from `.opencode/commands/`; in Codex invoke
+`$create-<name>` with the same arguments, for example
 `$create-prompt-writing draft` or `$create-rubric-writing check`. Eval Portal
 commands (`/injection`, `/prompt`, `/hardness`, `/oe`, `/rubric`) remain user-run
 Portal steps.
@@ -212,6 +213,9 @@ Never fall back to the old root
   `setup/install.py --target claude|codex|both`. These link to the same bundle
   sources; `setup/uninstall.py` removes only this bundle's selected links.
   Registration does not change the read-only data folders or global settings.
+  OpenCode reads both registries; its slash commands are tracked files,
+  `.opencode/commands/create-*.md` (one per skill), which change only when a skill
+  is added, renamed or removed.
 - `tools/redteam_review.py` sends design material (never the prompt, OE or criteria
   text) to the reviewer endpoint configured in the environment (`REDTEAM_*`); never
   print, copy or log the key.

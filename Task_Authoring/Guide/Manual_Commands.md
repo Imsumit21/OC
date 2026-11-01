@@ -1,7 +1,8 @@
 # Manual Commands — copy-paste equivalents (V3 assignments)
 
 In Codex, invoke the authoring skills as `$create-*` with the same arguments as
-the `/create-*` examples below. Run shell commands from the workspace root;
+the `/create-*` examples below; in OpenCode, the `/create-*` commands work as written
+(`.opencode/commands/`). Run shell commands from the workspace root;
 path conventions are in `setup/GEN_EXECUTION.md`.
 
 Use these when the `/create-*` skills are not installed, or to steer a step by hand.
@@ -67,6 +68,17 @@ python3 Task_Authoring/tools/hg.py rubric-lint <rubric.json>
 `lint` runs the eval's `hg_injection_lint.py` and defaults `--sql` to
 `<task_dir>/01_Universe_Inject.sql`; `rubric-lint` runs the eval's
 `hg_rubric_lint.py`. Run both beside the local `sql_lint.py` / `hardness_gate.py`.
+
+## 0.25 · Session goal (optional) · `/create-goal`
+
+Prints a short `/goal` for a fresh session that writes `Working_Files/00_Pre_Scenario_Analysis.md` and stops before
+`/create-scenario`. It is tailored to the assignment and the workspace state (other task folders, the Evals input store,
+`learnings`). It has no stage gate and writes only `Working_Files/00_Session_Goal.md` (nothing with `--stdout-only`):
+
+```sh
+python3 -B Task_Authoring/skills/create-goal/scripts/build_goal.py --task-dir <task_dir> [--note "<decision>"] [--stdout-only]
+python3 -B Task_Authoring/skills/create-goal/scripts/build_goal.py --list
+```
 
 ## 0.5 · Scenario design · `/create-scenario`
 

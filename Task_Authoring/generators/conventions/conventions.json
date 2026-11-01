@@ -1,0 +1,149 @@
+{
+ "format": "hg-gen-conventions/1",
+ "paths": "Relative to /Users/sumitkumar/Source/Outlier/OC unless they start with OC-old/ (= /Users/sumitkumar/Source/OC/).",
+ "conventions": {
+  "sql.literal_policy": {
+   "service": "*",
+   "rule": "Standard strings with '' doubling; an E'' string only when the text holds a raw line break (backslash, CR and LF escaped); NUL and other C0 controls except TAB/LF/CR refused; integers and exact decimals unquoted; booleans true/false.",
+   "value": "task-1 q() policy",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:298 (FINAL VERDICT PASS on task 1 rev 2, generated with the same q())",
+    "Task_Authoring/task_inputs/Working_Files/run_forensics/rev3/design/plan_generators/sql_common.py:72-84"
+   ],
+   "used_by": ["core/sqlvalue.py: literal"]
+  },
+  "sql.json_text": {
+   "service": "*",
+   "rule": "*_json columns hold json.dumps(value, ensure_ascii=False) with the default separators.",
+   "value": "json.dumps(ensure_ascii=False)",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:92 (every *_json value parses; task 1 rev 2 PASS)",
+    "Task_Authoring/task_inputs/Working_Files/run_forensics/rev3/design/plan_generators/sql_common.py:87-88"
+   ],
+   "used_by": ["core/sqlvalue.py: json_text"]
+  },
+  "linear.text_dates": {
+   "service": "linear",
+   "rule": "Linear stores dates as text: timestamps exactly YYYY-MM-DDTHH:MM:SSZ, calendar dates YYYY-MM-DD.",
+   "value": "%Y-%m-%dT%H:%M:%SZ",
+   "status": "base-verified",
+   "evidence": [
+    "base: 3,852/3,852 normal and 3,687/3,687 synth-cut issues pass (validate/invariants.py corroborate, rule L1)",
+    "Evals/0_Injection_Quality_Eval.md:189-196 (Check B: other formats FAIL)"
+   ],
+   "used_by": ["services/linear.py: _ts", "validate/invariants.py: L1"]
+  },
+  "linear.issue.identity": {
+   "service": "linear",
+   "rule": "id = identifier = <team key>-<number>; number is the integer suffix.",
+   "value": "<KEY>-<n>",
+   "status": "base-verified",
+   "evidence": [
+    "base: 3,852/3,852 normal and 3,687/3,687 synth-cut issues (generators README, corroboration 2026-11-01)",
+    "Task_Authoring/playbooks/01_Universe_Injection.md:140"
+   ],
+   "used_by": ["services/linear.py: ISSUE_ID", "validate/invariants.py: L2"]
+  },
+  "linear.issue.state_history_empty": {
+   "service": "linear",
+   "rule": "A new issue writes state_history_json = '[]' (NOT NULL, no default, absent from the export).",
+   "value": "[]",
+   "status": "platform-verified",
+   "evidence": [
+    "Evals/0_Injection_Quality_Eval.md:195",
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:68,92"
+   ],
+   "used_by": ["services/linear.py: NEW_ISSUE_DEFAULTS", "validate/invariants.py: L3"]
+  },
+  "linear.issue.links_empty": {
+   "service": "linear",
+   "rule": "A new issue writes links_json = '[]' unless the spec authors links; archived_at and time_in_status_minutes NULL; is_archived false.",
+   "value": "[]",
+   "status": "base-verified",
+   "evidence": [
+    "base: 0 of 3,852 normal and 0 of 3,687 synth-cut issues have links",
+    "Task_Authoring/playbooks/01_Universe_Injection.md:140 (keep links_json '[]')"
+   ],
+   "used_by": ["services/linear.py: NEW_ISSUE_DEFAULTS", "validate/invariants.py: L3"]
+  },
+  "linear.issue.lifecycle": {
+   "service": "linear",
+   "rule": "Completed-type states (Done, In Review) carry completed_at and no canceled_at; canceled-type states (Canceled, Duplicate) carry canceled_at and no completed_at; any other state carries neither; created <= started <= completed/canceled <= updated. Checked on the post-overlay state, so it covers issue_update records too.",
+   "value": "state types inferred from the base",
+   "status": "base-verified",
+   "evidence": [
+    "base: 3,851/3,852 normal and 3,686/3,687 synth-cut issues pass; exception ENG-127 (completed_at 1 s after updated_at) (rule L4)",
+    "base: 0 of 412 normal and 0 of 381 synth-cut canceled-type issues carry completed_at; none started after it was canceled",
+    "Task_Authoring/playbooks/01_Universe_Injection.md:140"
+   ],
+   "used_by": ["validate/invariants.py: L4"]
+  },
+  "linear.issue.updated_at_follows_comments": {
+   "service": "linear",
+   "rule": "An issue's updated_at is at least its lifecycle stamps and its newest comment: derived as max(created_at, started_at, completed_at, canceled_at, newest spec comment) for a new issue unless authored; a base issue receiving newer comments or stamps gets UPDATE ... SET updated_at = <newest of them>.",
+   "value": "max(created_at, started_at, completed_at, canceled_at, comments.created_at)",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:59,97 (330 updated_at shifts; 0 comments after their issue's updated_at; PASS)",
+    "Task_Authoring/playbooks/01_Universe_Injection.md:140 (bump updated_at)"
+   ],
+   "used_by": ["services/linear.py: expand", "validate/invariants.py: L8"]
+  },
+  "linear.comment.shape": {
+   "service": "linear",
+   "rule": "A new comment: updated_at = created_at, is_edited false, parent_id NULL unless authored, sequence = 1..n per issue in (created_at, id) order. The run-time sort key is not observed; the base has no comments.",
+   "value": "sequence 1..n by (created_at, id)",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:69,93,298 (608 comments; sequence an advisory snapshot column; PASS)",
+    "Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json (632 linear_list_comments calls returned the injected comments)",
+    "OC-old/Evals/task_inputs/reports/6acefd97f0ce49ad0751fb6a_0_injection.md (430 comments, FINAL VERDICT PASS)"
+   ],
+   "used_by": ["services/linear.py: expand", "validate/invariants.py: L5, L9"]
+  },
+  "linear.project.color_default": {
+   "service": "linear",
+   "rule": "A new project writes color = the live column default '#bec2c8' unless authored (the export has no color field).",
+   "value": "#bec2c8",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/references/universe_schema_live.json (linear.linear_projects.color default)",
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:67,298"
+   ],
+   "used_by": ["services/linear.py: PROJECT_DEFAULT_COLOR"]
+  },
+  "linear.project.updated_at_follows_issues": {
+   "service": "linear",
+   "rule": "A new project's updated_at is the newest of its own created_at and its issues' created_at/updated_at and their comments' created_at, unless authored.",
+   "value": "max(...)",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:67,97,298"
+   ],
+   "used_by": ["services/linear.py: expand", "validate/invariants.py: L11"]
+  },
+  "linear.team.issue_counter": {
+   "service": "linear",
+   "rule": "linear.team_update sets issue_counter = max(number of the team's base and spec issues) + 1. The export has no issue_counter, so the stored value and its run-time use are not observed; task 2 did not advance it, task 1 did.",
+   "value": "max(number) + 1",
+   "status": "unverified",
+   "evidence": [
+    "Task_Authoring/task_inputs/plateform_report/6adfee3bd201142a513cf910_0_injection.md:70 (accepted; 'column not in snapshot', advisory A7)"
+   ],
+   "used_by": ["services/linear.py: expand (team_update)", "validate/invariants.py: L10"]
+  },
+  "slack.thread_parent_id": {
+   "service": "slack",
+   "rule": "A thread reply sets thread_parent_id = the parent's row id and thread_ts_legacy = the parent's ts.",
+   "value": "row id",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json (mcp__hg__slack_read_thread(C0ADGSZKR3R, 1771006327.461681) returned the injected reply 1771006841.098192, whose row uses the parent's row id 0cbcebf08f183b2cfb72fcc63fa996f8)",
+    "OC-old/Task_Authoring-2/task_inputs/01_Universe_Inject.sql:11,13 with OC-old/Evals/task_inputs/reports/6acefd97f0ce49ad0751fb6a_0_injection.md (FINAL VERDICT PASS)"
+   ],
+   "used_by": ["(Phase 3 Slack emitter)"]
+  }
+ }
+}
