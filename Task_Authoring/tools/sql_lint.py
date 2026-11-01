@@ -58,6 +58,75 @@ CLOCK = dt.datetime(2026, 2, 14, tzinfo=dt.timezone.utc)
 # to CLOCK (the V3 freeze); tools/runtime_context.py::_apply overwrites both globals per task.
 DATA_CLOCK = CLOCK
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "references" / "universe_schema_live.json"
+# The 64 tables an injection may write (Injection Schema Guideline, 2026-10-22, references/Docs/
+# 2026-10_CB_Guidelines/08_*): Snowflake is "a separate analytics database, and the injection file cannot change it";
+# public._changelog and the other live-schema tables (workflow states, ACL rules, *_meta …) are not writable.
+WRITABLE_TABLES = frozenset((
+    "confluence.confluence_attachments",
+    "confluence.confluence_comments",
+    "confluence.confluence_labels",
+    "confluence.confluence_page_versions",
+    "confluence.confluence_pages",
+    "confluence.confluence_spaces",
+    "confluence.confluence_users",
+    "contacts.contacts",
+    "gcal.gcal_calendars",
+    "gcal.gcal_events",
+    "gdocs.docs_documents",
+    "gdrive.drive_files",
+    "gdrive.drive_sheets",
+    "gdrive.drive_users",
+    "github.github_branches",
+    "github.github_commit_map",
+    "github.github_commits",
+    "github.github_issues",
+    "github.github_labels",
+    "github.github_pr_comments",
+    "github.github_pull_request_commits",
+    "github.github_pull_requests",
+    "github.github_releases",
+    "github.github_repositories",
+    "github.github_review_comments",
+    "github.github_reviews",
+    "github.github_tags",
+    "github.github_timeline_events",
+    "github.github_users",
+    "gmail.gmail_attachments",
+    "gmail.gmail_label_user_counters",
+    "gmail.gmail_labels",
+    "gmail.gmail_messages",
+    "gmail.gmail_threads",
+    "gmail.gmail_users",
+    "gsheets.sheets_sheets",
+    "gsheets.sheets_spreadsheets",
+    "gslides.slides_page_elements",
+    "gslides.slides_pages",
+    "gslides.slides_presentations",
+    "linear.linear_attachments",
+    "linear.linear_comments",
+    "linear.linear_issues",
+    "linear.linear_projects",
+    "linear.linear_team_memberships",
+    "linear.linear_teams",
+    "linear.linear_users",
+    "slack.slack_channels",
+    "slack.slack_drafts",
+    "slack.slack_emojis",
+    "slack.slack_files",
+    "slack.slack_messages",
+    "slack.slack_scheduled_messages",
+    "slack.slack_users",
+    "trello.trello_actions",
+    "trello.trello_attachments",
+    "trello.trello_boards",
+    "trello.trello_cards",
+    "trello.trello_check_items",
+    "trello.trello_checklists",
+    "trello.trello_labels",
+    "trello.trello_lists",
+    "trello.trello_members",
+    "trello.trello_organizations",
+))
 # Re-export with setup/extract_schema.sql (Q1 → this file, Q2 → the constraints file) when the platform changes.
 LIVE_SCHEMA = SCHEMA_PATH
 LIVE_CONSTRAINTS = SCHEMA_PATH.parent / "universe_constraints_live.json"
@@ -578,11 +647,16 @@ def lint(sql: str, schema: dict) -> dict:
             continue
         schema_name = table.split(".")[0]
         stats["statements"][schema_name] += 1
-        if schema_name in ("confluence", "snowflake"):
-            warn(line, f"{schema_name} statement — unscoped and rarely opened by agents: make sure another record points here"
-                 + ("; keep mirrored warehouse tables in step" if schema_name == "snowflake" else ""))
+        if schema_name == "snowflake":
+            err(line, f"{table}: do not write Snowflake — the injection file cannot change it (Injection Schema Guideline 2026-10-22 §06)")
+            continue
+        if schema_name == "confluence":
+            warn(line, f"{schema_name} statement — unscoped and rarely opened by agents: make sure another record points here")
         if table not in schema:
             err(line, f"unknown table {table} (not in {SCHEMA_PATH.name})")
+            continue
+        if table not in WRITABLE_TABLES:
+            err(line, f"{table} is not one of the 64 writable tables (Injection Schema Guideline 2026-10-22)")
             continue
         cols_def = schema[table]
 
@@ -733,6 +807,14 @@ INSERT INTO slack.slack_messages (id, ts, channel_id, type, text, reply_count, r
     for needle in ("line 1 must", "unknown column bogus", "omits NOT NULL", "on/after the clock", "run-time function", "unknown table nope.t", "generated column"):
         assert needle in msgs, (needle, msgs)
     assert any("deadline" in w["msg"] for w in r["warnings"])
+    # Injection Schema Guideline 2026-10-22: Snowflake and non-allowlisted live tables are not writable
+    walled = lint("-- Are you planning to inject? Yes\n"
+                  "INSERT INTO snowflake.wh_x (a) VALUES (1);\n"
+                  "INSERT INTO public._changelog (id) VALUES (1);\n", schema)
+    wmsgs = " | ".join(e["msg"] for e in walled["errors"])
+    assert "do not write Snowflake" in wmsgs, wmsgs
+    assert "public._changelog" in wmsgs, wmsgs
+    assert len(WRITABLE_TABLES) == 64
 
     # row rules: each defect fires its rule; the matching valid row stays clean
     ol, br = "oliver.brooks@harmonygames.co", "brian.foster@harmonygames.co"

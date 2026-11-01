@@ -85,6 +85,10 @@ Readings the rules leave open — the calculator applies the strictest and print
    counts are shown beside it. ACL-denied reads return "not found" and are not detected:
    check by hand when a run hammers inaccessible records, and subtract them. Padding — many
    near-identical searches, re-opening the same record — is reported as a failure mode of its own.
+   When the padding comes from the task (filler records, steps or services added for volume) it is a **failing error
+   on its own** (Reaching the Tool-Call Minimum, 2026-10): route it to `/create-scenario --revise`, never accept it.
+   Report all six counts, the lowest and highest, and how many runs fall under the tier; with several 100 % runs the
+   lowest count governs. A fast 100 % run below the rollout mean is a shallow-path (too easy) signal.
 4. **Friction actually fired.** If `03_` configured errors or waits, confirm from the trajectories
    that the errored tool was called and failed and that submit → check → get appeared. If not,
    the friction added nothing and recovery criteria are ungradeable — flag it.

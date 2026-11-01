@@ -119,7 +119,7 @@ STAGE GATE prompt-writing: PASS — Task_Authoring/support/local_search/cache/st
 [PASS] structure.outputs: 1 output(s) present: 04_Prompt_Writing_Brief.md
 [PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
 [PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql, 03_Error_Async_Config.txt, 02_Reference_Files_Manifest.md, 01a_Hardening_Report.md)
-[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#07dc66233f21, 01_Hardness_Manifest.json#478336148743, 01_Grounding_Dossier.md#bb1aa413b80d)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#07dc66233f21, 01_Hardness_Manifest.json#478336148743, 01_Grounding_Dossier.md#e60eccb5cb64)
 [PASS] chain.error-async: upstream 'error-async' PASS pasted and current (03_Error_Async_Config.txt#c507ded42175)
 [PASS] chain.reference-files: upstream 'reference-files' PASS pasted and current (02_Reference_Files_Manifest.md#e9b203ccc16e)
 [PASS] structure.sections: 14 required sections present and non-empty (04_Prompt_Writing_Brief.md)

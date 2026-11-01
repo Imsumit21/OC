@@ -160,7 +160,7 @@ artifact's Self-review, which is what the next stage requires.
 |---|---|---|---|
 | 0 | — (paste assignment) | `00_Assigments.md`, `Working_Files/00_Task_Context.json` | `task_context.py --require-source` says `ready` |
 | 1 | `/create-scenario` | `01_Scenario_Design.md`, `01_Hardness_Manifest.draft.json`, `01_Gradable_Surface.json` | `hardness_gate.py --design`, `stage_gate.py scenario` |
-| 2 | `/create-injection` | `01_Universe_Inject.sql`, `01_Hardness_Manifest.json`, `01_Grounding_Dossier.md`, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` | `sql_lint`, `base_check`, `hardness_gate`, `stage_gate.py injection` |
+| 2 | `/create-injection` | `01_Universe_Inject.sql`, `01_Hardness_Manifest.json`, `01_Grounding_Dossier.md`, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` | `sql_lint`, `base_check`, `base_claims`, `hardness_gate`, `stage_gate.py injection` |
 | 3 | `/create-error-async` *(optional)* | `03_Error_Async_Config.txt` | `stage_gate.py error-async` |
 | 4 | `/create-reference-files` *(optional)* | `02_Reference_Files_Manifest.md` + `02_Reference_Files/` | `stage_gate.py reference-files` |
 | 5 | `/create-prompt-writing` → draft/human → check | `04_Prompt_Writing_Brief.md`, `04_Prompt.txt`, `04_Prompt_Check.md` | `stage_gate.py prompt-writing`, then `stage_gate.py prompt-check` |

@@ -487,7 +487,11 @@ This step consumes that output and owns the decisions:
       overturning record (never two silent fields); every record the plan seeds is planned with its
       companion fields (thread counters, issue/PR `updated_at`, Linear lifecycle stamps, Trello
       badges, Confluence version rows, one GCal copy per attendee calendar, Drive-family sharing
-      mirrored) so `base_check.py` will pass; every id in the record plan follows the base scheme
+      mirrored) so `base_check.py` will pass; every claim the plan makes about a base artifact (a git
+      branch a ticket was picked onto, a build, a release, a PR) agrees with the base: pick notes name a branch
+      that `git branch --contains` shows holding the ticket's commits, dated inside the branch's window from
+      `#builds` and git (`tools/base_claims.py`, blocking at injection); traps that need a branch git does not
+      show (backed-out picks, re-picks) go on tickets with no commit naming them; every id in the record plan follows the base scheme
       (`playbooks/01_Universe_Injection.md` S5 table). Companions come from
       `references/universe_kb/integrations.json`: for every service the manifest seeds, cite the `INT-nn`
       integrations that would mirror the record (GitHub app → Slack, linear[bot] → PR, invitation mails …) and

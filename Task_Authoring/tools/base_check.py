@@ -35,9 +35,9 @@ it against the **base data** in the three read-only HarmonyGames folders, the wa
       the comments / check items the SQL adds
     * Confluence versions continue 1..N contiguously, page.version = newest, and
       ri:content-title links resolve
-  Warnings: posts into archived channels, comments dated after their issue closed (QC
-  appendix "Closed with later activity" — disposition each), Linear state not used by
-  that team.
+    * FAIL: a seeded comment dated after its issue closed ("a closed ticket that still has
+      later activity … fails the task", Read This Before You Submit 2026-10-23)
+  Warnings: posts into archived channels, Linear state not used by that team.
   Integrity layer (references/universe_kb):
     * Hazard touch — the SQL updates, or seeds records referencing, an id listed in
       coherence_hazards.json: warning; FAIL when the SQL itself modifies a record of a
@@ -837,10 +837,10 @@ def cross_checks(stmts, ins, base, fa, fc, fw) -> None:
         if closed and ct > closed:
             late.append((x, f"{r.get('issue_id')}({iss.get('state_id')})"))
     if late:
-        fw(late[0][0], f"{len(late)} comment(s) dated after their issue closed: {', '.join(sorted({i for _, i in late})[:8])}"
-                       f"{' …' if len(late) > 8 else ''} — the QC appendix fails 'ticket Closed with later activity' when the "
-                       "activity contradicts the status (work resumed, a fix still pending, a promise to change state); "
-                       "neutral notes are fine — disposition each in the dossier")
+        fc(late[0][0], f"{len(late)} comment(s) dated after their issue closed: {', '.join(sorted({i for _, i in late})[:8])}"
+                       f"{' …' if len(late) > 8 else ''} — 'a closed ticket that still has later activity … fails the task even "
+                       "if no agent has missed it yet' (Read This Before You Submit, 2026-10-23): date the comment before "
+                       "completed_at/canceled_at, or put the note on another record")
     keys = sorted({t.split("_", 1)[1] for t in L["teams"]})
     known_ids = set(L["identifiers"]) | {r.get("identifier") or r.get("id") for _, r in _rows(ins, "linear.linear_issues")}
     rx = re.compile(r"\b(" + "|".join(keys) + r")-(\d{1,5})\b")

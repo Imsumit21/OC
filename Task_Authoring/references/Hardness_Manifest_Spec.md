@@ -111,7 +111,7 @@ place it; otherwise the check reports UNRESOLVED. No gate reads the field; `chai
 | Writes | ≥ 4 over ≥ 3 services, each depending on findings |
 
 The `normal` profile is for a **Normal Horizon** assignment, where the golden run must stay
-inside 50–100 calls: budget 60–100 necessary calls, ≥ 7 services carrying weight, ≥ 6 injected,
+inside 50–100 calls: budget 60–95 necessary calls (margin both ways: an average of 50–54 is one re-run from failing, and a Normal run above 100 is a NON-FAIL; Reaching the Tool-Call Minimum, 2026-10), ≥ 7 services carrying weight, ≥ 6 injected,
 ≥ 50 rows, cohort ≥ 10 × 2 surfaces, ≥ 7 fragments over ≥ 5 services, ≥ 1 hidden authority,
 ≥ 2 chains, ≥ 8 traps in ≥ 5 families. Difficulty there comes from authorities, chains and
 traps, not volume. The profile is the manifest's `effective_profile`: a Long Horizon task at

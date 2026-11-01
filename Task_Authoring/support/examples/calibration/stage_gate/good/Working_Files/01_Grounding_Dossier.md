@@ -144,6 +144,11 @@ Check C — dates and relationships: PASS
 ```
 
 ```
+BASE CLAIMS (injected text vs base git + #builds): PASS · 0 branch mentions · 0 fail · 0 warn · 0 date-only
+branch windows:
+```
+
+```
 HARDNESS GATE (extreme): PASS
   [ok] fixture: thin manifest, not re-run under --rerun lint
 ```
@@ -164,7 +169,7 @@ Walked /injection Check A, Check B and Check C in order against the SQL; touched
 Unresolved: none.
 
 ```
-STAGE GATE injection: PASS — Task_Authoring/support/local_search/cache/stage_gate_selftest/gen · 01_Universe_Inject.sql#07dc66233f21 · 01_Hardness_Manifest.json#478336148743 · 01_Grounding_Dossier.md#bb1aa413b80d · blocking 0 · warnings 0 · checks 28
+STAGE GATE injection: PASS — Task_Authoring/support/local_search/cache/stage_gate_selftest/gen · 01_Universe_Inject.sql#07dc66233f21 · 01_Hardness_Manifest.json#478336148743 · 01_Grounding_Dossier.md#e60eccb5cb64 · blocking 0 · warnings 0 · checks 28
 [PASS] structure.outputs: 3 output(s) present: 01_Universe_Inject.sql, 01_Hardness_Manifest.json, 01_Grounding_Dossier.md
 [PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Scenario_Design.md, 01_Hardness_Manifest.draft.json
 [PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Scenario_Design.md, 01_Hardness_Manifest.draft.json)

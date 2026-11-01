@@ -415,7 +415,9 @@ def _gates(completed: list[dict], errored: list[str], total_runs: int, rubrics: 
     else:
         basis = "average of completed rollouts"
         counts = [sum(r["tool_calls"] for r in per_rollout) / n] if n else [0]
-    horizon_low, horizon_high = min(counts), max(counts)
+    # "If more than one scored 100%, the lowest count among them is used" (Reaching the Tool-Call Minimum,
+    # 2026-10): one governing count for both the under-tier and the above-tier test
+    horizon_low = horizon_high = min(counts)
     if horizon_low < lo - EPS:
         horizon = "FAIL (Wrong Horizon)"
     elif hi is not None and horizon_high > hi + EPS:
@@ -1012,6 +1014,10 @@ def _self_test() -> None:
     g = six([set(), {"C1"}, {"C2", "C3"}, {"C4", "C5"}, {"C6", "C7"}, {"C8", "C1"}], 300, "long-horizon")
     g["rollouts"][0]["tool_calls"] = 90
     assert gate(g, "horizon").startswith("FAIL (Wrong") and "golden" in compute(g)["gates"]["horizon"]["value"]
+    # Two golden runs at 80 and 110 on a normal task: the lowest (80) governs both bounds -> PASS, not Borderline
+    g2 = six([set(), set(), {"C2", "C3"}, {"C4", "C5"}, {"C6", "C7"}, {"C8", "C1"}], 70, "normal")
+    g2["rollouts"][0]["tool_calls"], g2["rollouts"][1]["tool_calls"] = 80, 110
+    assert gate(g2, "horizon").startswith("PASS"), compute(g2)["gates"]["horizon"]
     # Weights other than 1/3/5, unknown judge-correction rubric, all rubrics invalid: rejected
     for broken in ({"rubrics": [{"id": "C1", "weight": 2}]},
                    {"rollouts": [dict(run("R1", set()), judge_corrections={"Q9": True})]},

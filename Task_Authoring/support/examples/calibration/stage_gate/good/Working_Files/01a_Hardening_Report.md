@@ -38,7 +38,7 @@ STAGE GATE hardening: PASS — Task_Authoring/support/local_search/cache/stage_g
 [PASS] structure.outputs: 1 output(s) present: 01a_Hardening_Report.md
 [PASS] structure.inputs: 2 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md
 [PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md)
-[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#07dc66233f21, 01_Hardness_Manifest.json#478336148743, 01_Grounding_Dossier.md#bb1aa413b80d)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#07dc66233f21, 01_Hardness_Manifest.json#478336148743, 01_Grounding_Dossier.md#e60eccb5cb64)
 [PASS] structure.sections: 6 required sections present and non-empty (01a_Hardening_Report.md)
 [PASS] structure.placeholders: no placeholders in 01a_Hardening_Report.md
 [PASS] structure.mode: MODE A declared

@@ -2506,6 +2506,9 @@ def st_injection(ctx):
                 f"every sql_lint warning class dispositioned ({', '.join(f'{k}×{v}' for k, v in classes.items())})")
     rerun_json_tool(ctx, "tool.base_check", [HERE / "base_check.py", ctx.p("01_Universe_Inject.sql"), "--json"],
                     r"BASE CHECK \(/injection A \+ C, static\): (PASS|FAIL)", doc, "base_check")
+    # /prompt 3.2 reads the base git history (`git branch --contains`); base_check never does
+    rerun_json_tool(ctx, "tool.base_claims", [HERE / "base_claims.py", ctx.p("01_Universe_Inject.sql"), "--json"],
+                    r"BASE CLAIMS \(injected text vs base git \+ #builds\): (PASS|FAIL)", doc, "base_claims")
     prof = manifest_profile(ctx)
     pasted_prof = re.findall(r"HARDNESS GATE \((extreme|normal)\): (?:PASS|FAIL)", doc.text)
     if pasted_prof and pasted_prof[-1] != prof:
@@ -2940,6 +2943,14 @@ def st_rubric_check(ctx):
     ctx.add("structure.criteria_count", bool(m) and n is not None and int(m.group(1)) == n,
             f"header Criteria {m.group(1) if m else '?'} vs 09_Rubrics.json {n if n is not None else 'unparseable'}")
     src = "\n".join(str(v) for c in (crit or []) if isinstance(c, dict) for v in c.values())
+    if isinstance(crit, list) and crit:
+        cats = [str(c.get("category") or "").strip().lower() for c in crit if isinstance(c, dict)]
+        n_out, n_proc = cats.count("outcome"), cats.count("process")
+        ok = n_out >= 1 and n_proc * 2 <= len(cats)
+        ctx.add("rubric.category_balance", ok,
+                f"{n_out} Outcome / {n_proc} Process of {len(cats)} rows: zero Outcome or more than 50 % Process fails "
+                f"(Rubric Writing 2026-10-19; Read This Before You Submit 2026-10-23)" if not ok else
+                f"{n_out} Outcome / {n_proc} Process of {len(cats)} rows: ≥ 1 Outcome and Process ≤ 50 %")
     F = rows_in(doc, r"findings")
     substr_check(ctx, "evidence.quoted_spans", doc, F, r"quoted span", src, "09_Rubrics.json")
     badt = [i for i, c, t in F if t.cell(c, t.col(r"/rubric. type|type")).strip("` ") not in RUBRIC_TYPES]

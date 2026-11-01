@@ -877,7 +877,13 @@ the inputs to a total are wrong, not when it adds.
 | 8 | Wrong inputs to a total | A1, A10, A13, A14 feeding an aggregate (no new id) | `superseding`, `cross_reference_gap` | adjustments, refunds, revised claims or rounding rules in normal billing records or messages | the corrected input and the final figure on **two separate rows** (legal: gate 6 forbids three or more) | INPUT_CHECK |
 | 9 | Work someone already did | **A25** (new) | `completion_elsewhere` (distractor type `already_done`) | a believable completion note in a different place from the original request | an exact count or scope on the required write ("creates records for exactly 17 of the 20 receipts") — never a "leaves X alone" row (§10) | — |
 
-Pick at least two of the nine (Appendix); the local ≥ 12 traps / ≥ 7 families floor still applies. A24 and A25 have no
+Pick at least two of the nine (Appendix); the local ≥ 12 traps / ≥ 7 families floor still applies. The Hardness Guide
+(2026-10-19) builds each task on 1–2 traps that carry the difficulty: keep the local floor as decoys and coverage, but
+name the 1–2 load-bearing traps, and keep a trap as load-bearing only when it fails more than one run for its designed
+reason. **Do not stack** information seeking with source evaluation, temporal reasoning or deliverable form on one fact
+(observed pass rates 0.68 / 0.63 / 0.77: stacking makes rows easier, not harder). Give each trap its own fact. Multimodal
+traps are skipped (0 % of observed failures). Gmail and Slack serve attachment metadata only: never put a deciding fact
+in an attachment body there. A24 and A25 have no
 ledger records yet: `hardness_ledger.py priors --family A24` returns Beta(1,1), UNCALIBRATED, so a forecast needs a
 disclosed `--channel-rate` or reports the rule as UNPARAMETERIZED.
 

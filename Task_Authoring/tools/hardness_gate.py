@@ -84,12 +84,13 @@ PROFILES = {
                     supersessions=4, supersession_cross_service=2, supersession_3_versions=1,
                     distractors=6, distractor_types=4, writes=4, write_services=3, shifts=4,
                     chains=3, chain_hops=3, authorities=2, rare_traps=3),
-    # Normal Horizon: the golden run must stay inside 50–100 calls, so the budget is capped;
+    # Normal Horizon: the golden run must stay inside 50–100 calls, so the budget is capped at 95 (margin: a
+    # Normal run above 100 is a NON-FAIL; Reaching the Tool-Call Minimum, 2026-10);
     # difficulty comes from authorities, chains and traps rather than volume.
     "normal": dict(services_weight=7, services_injected=6, rows=50, anchors_max=3,
                    fragments=7, fragment_services=5, fragment_containers=6,
                    cohort=10, surfaces=2, surface_services=2, per_record_calls=25,
-                   budget=60, budget_cap=100, budget_services=6, budget_max_share=0.40,
+                   budget=60, budget_cap=95, budget_services=6, budget_max_share=0.40,
                    traps=8, trap_families=5, trap_requirements=4,
                    supersessions=2, supersession_cross_service=1, supersession_3_versions=0,
                    distractors=4, distractor_types=3, writes=2, write_services=2, shifts=2,
@@ -475,7 +476,7 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
     unexplained = [f"{b.get('phase')}/{b.get('service')}" for b in budget if not b.get("reason")]
     check("call_budget", floor >= p["budget"] and (cap is None or total <= cap) and not unexplained,
           f"unconditional (verified) floor {floor} of {total} planned calls ({total - floor} conditional on unverified tool "
-          f"behaviour count 0); need floor ≥ {p['budget']}" + (f" and total ≤ {cap} (Normal Horizon 50–100)" if cap else " (Long Horizon; plan ~600 for headroom)")
+          f"behaviour count 0); need floor ≥ {p['budget']}" + (f" and total ≤ {cap} (Normal Horizon 50–100, with margin below the 100 NON-FAIL line)" if cap else " (Long Horizon; plan ~600 for headroom)")
           + (f"; rows without a necessity reason: {unexplained[:5]}" if unexplained else ""))
     check("call_budget_spread", len([s for s, c in by_service.items() if c > 0]) >= p["budget_services"]
           and share <= p["budget_max_share"],

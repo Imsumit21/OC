@@ -1624,6 +1624,49 @@
    "expect_pass": [
     "geometry.upper_bound"
    ]
+  },
+  {
+   "name": "injection-base-claims-not-pasted",
+   "stage": "injection",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "find": "BASE CLAIMS (injected text vs base git + #builds): PASS",
+     "replace": "base claims: not run"
+    }
+   ],
+   "expect": [
+    "tool.base_claims"
+   ]
+  },
+  {
+   "name": "injection-base-claims-pasted-fail",
+   "stage": "injection",
+   "mutate": [
+    {
+     "file": "01_Grounding_Dossier.md",
+     "find": "BASE CLAIMS (injected text vs base git + #builds): PASS",
+     "replace": "BASE CLAIMS (injected text vs base git + #builds): FAIL"
+    }
+   ],
+   "expect": [
+    "tool.base_claims"
+   ]
+  },
+  {
+   "name": "rubric-check-process-majority",
+   "stage": "rubric-check",
+   "mutate": [
+    {
+     "file": "09_Rubrics.json",
+     "find": "\"category\": \"Outcome\"",
+     "replace": "\"category\": \"Process\"",
+      "all": true
+    }
+   ],
+   "expect": [
+    "rubric.category_balance"
+   ]
   }
  ]
 }

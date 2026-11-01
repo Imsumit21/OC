@@ -89,8 +89,8 @@ template is copied into `task_inputs/`.
 - Difficulty: Easy average <90%; Medium <85%; Hard <70%. Equality fails. Use the
   assigned mode and corrected, fairly graded results; never switch modes.
 - Horizon: Normal ≥50 tool calls; Long-Horizon ≥100. Use the golden run when one
-  exists, otherwise the six-rollout average. Exceeding the displayed range is
-  allowed. Human effort: Normal under about 8 hours; Long-Horizon about 12–24 hours.
+  exists (the lowest count when several runs score 100%), otherwise the rollout
+  average. A Normal run above 100 is a NON-FAIL; padding fails on its own. Human effort: Normal under about 8 hours; Long-Horizon about 12–24 hours.
 - The existing local horizon design is retained at the user's request:
   Long-Horizon uses the extreme profile with at least 500 designed calls; Normal
   uses its existing normal profile and budget limits. Assigned difficulty mode
@@ -103,3 +103,18 @@ template is copied into `task_inputs/`.
 
 Eval Portal reviews and uploads are handled by the user. This file records inputs
 and constraints; it does not certify dated task evidence, completed runs or reviews.
+
+## Portal reviews and submission proof
+
+The user fills this as reviews pass (Eval Portal and L0 Review, 2026-10-26). Only the pass screen counts:
+report cards, chat messages and FAIL results are not proof. One review runs at a time per attempt.
+
+Attempt ID: [attempt id]
+
+| Review | Verdict | Verification code | Pass screen file | SQL / prompt sha256 reviewed |
+|---|---|---|---|---|
+| /injection | | EVP- | | |
+| /prompt | | EVP- | | |
+| /hardness | | EVP- | | |
+| /oe | | EVP- | | |
+| /rubric | | EVP- | | |
