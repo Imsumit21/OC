@@ -32,6 +32,9 @@ Check mode runs `python3 Task_Authoring/tools/hg.py rubric-lint Task_Authoring/t
 
 §G must cover every slot of `Working_Files/01_Gradable_Surface.json`: a covering row (P-n; C-n in check mode) or a disposition with its reason. A slot with neither, a bare label, a `gap` or a stale line blocks `surface.coverage` (gate 17). A criterion must not grade a control-explained field as a landing; a forecast's P(fails all six) is workload, never a block.
 
+## Hardness v2
+Trap rows earn weight 5 through the work they decide, never a raised weight; v2 trap 8 grades the corrected input and the final figure on two separate rows; v2 trap 9 and "guard rows" are an exact count or scope on the required write, never a leave-alone row (playbook gates 7–8; `Hardness_Mastery.md` §10, §13).
+
 ## Output
 prep mode: `task_inputs/Working_Files/09_Rubric_Writing_Plan.md` · draft mode: `task_inputs/09_Rubrics.json` · check mode: `task_inputs/Working_Files/09_Rubric_Check.md`.
 
