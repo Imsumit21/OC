@@ -1,7 +1,8 @@
 # How to Author a Task — Flow Guide (V3 assignments)
 
 In Codex, invoke the authoring skills as `$create-*` with the same arguments as
-the `/create-*` examples below. Run shell commands from the workspace root;
+the `/create-*` examples below; in OpenCode, the `/create-*` commands work as written
+(`.opencode/commands/`). Run shell commands from the workspace root;
 path conventions are in `setup/GEN_EXECUTION.md`.
 
 > **First time here?** Start with `Guide/00_Start_Here.md` for setup, the task

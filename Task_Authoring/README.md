@@ -66,6 +66,13 @@ use Claude's spelling; use `$create-*` in Codex with the same arguments. The
 steps handled by the user. Authoring with Codex does not change the required
 Opus 5.5 pre-check and baseline runs.
 
+OpenCode reads both registries, so the skills need no extra install step. Its
+`/create-*` slash commands are tracked files in `.opencode/commands/` at the workspace
+root, one per skill; each loads its skill and passes the arguments through, so
+`/create-prompt-writing draft` works as written. A new skill needs a matching command
+file; `Task_Authoring/tests/test_opencode_commands.py` fails until it has one. To load
+a skill without its command, type `@create-scenario` (or another skill's name).
+
 The scripts follow the folder they live in, so the bundle folder may carry another name;
 the paths below write it as `Task_Authoring/`.
 
