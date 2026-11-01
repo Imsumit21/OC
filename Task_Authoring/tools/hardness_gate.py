@@ -99,7 +99,7 @@ TRAP_FAMILIES = {"superseding", "distractor", "tool_surface", "scope_alias", "st
                  "reuse_exclusion", "effective_date", "authority", "pagination", "exact_predicate",
                  "acl_alternate", "friction", "synthesis_omission", "eliminating_evidence",
                  "conclusion_stop", "entity_collision", "unit_or_timezone", "cross_reference_gap",
-                 "near_miss_mention", "mutable_pointer"}
+                 "near_miss_mention", "mutable_pointer", "done_gap", "completion_elsewhere"}
 # Services Opus opened in fewer than half of 131 baseline runs (V0/V1 trajectory forensics).
 RARELY_OPENED = {"gmail", "gsheets", "trello", "snowflake", "gslides", "gcal"}
 AUTHORITY_HOMES = RARELY_OPENED | {"gdocs"}
@@ -108,8 +108,11 @@ AUTHORITY_HOMES = RARELY_OPENED | {"gdocs"}
 # A22 (cross-shard dependency: a record's value depends on evidence attached to another cohort member) and A23
 # (brief-transmission loss: an exception rule homed outside the main instructions, applying to an unpredictable
 # subset) are hypotheses in the library (plans/Fold_Hardening_Into_Scenario_And_Injection.md §6, §8): usable ids, not
-# yet measured mechanisms.
-MECHANISM_IDS = {f"A{i}" for i in range(1, 24)} | {f"2.6.{i}" for i in range(1, 15)}
+# yet measured mechanisms. A24 (done across services: one source says finished, another service shows a required
+# piece missing) and A25 (completion elsewhere: an item looks open but a record in another place shows it done) come
+# from Hardness v2 (references/Docs/13_Hardness_v2_Opus55.md, Part 3 traps 1 and 9: 46 Opus 5.5 tasks); their
+# families are done_gap and completion_elsewhere (Hardness_Mastery.md §13).
+MECHANISM_IDS = {f"A{i}" for i in range(1, 26)} | {f"2.6.{i}" for i in range(1, 15)}
 HYPOTHESIS_IDS = {"A22", "A23"}
 RX_SHA256 = re.compile(r"^[0-9a-f]{64}$")
 DECOY_DIMENSIONS = {"lot", "team", "game", "issuer"}
@@ -1061,8 +1064,10 @@ def _self_test() -> None:
     n = _self_test_redteam_a()
     _self_test_integrity()
     k = _self_test_portfolio()
+    _self_test_v2_ids()
     print(f"self-test: ok ({n} red-team-A planted defects each fail their own check; integrity layer incl. denied probes, "
-          f"hazard resolutions and no-leak; {k} mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted)")
+          f"hazard resolutions and no-leak; {k} mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted, "
+          f"A24/A25 and their v2 trap families accepted)")
 
 
 def _self_test_portfolio() -> int:
@@ -1116,6 +1121,30 @@ def _self_test_portfolio() -> int:
         others = [c for c in ("mechanism_portfolio", "artifact_fields") if c != want and not got[c]["ok"]]
         assert not others, (name, others)
     return len(cases)
+
+
+def _self_test_v2_ids() -> None:
+    """Hardness v2 (Opus 5.5): A24 (done across services) and A25 (completion elsewhere) are valid mechanism ids and
+    roots, and their trap families are known (references/Hardness_Mastery.md §13)."""
+    man, sql, _ = _fixture_a()
+    rt = RecordText(sql)
+
+    def run(m):
+        return {c["check"]: c for c in evaluate(m, sql, None, records=rt, integrity=False)["checks"]}
+    port = [{"id": "done_gap", "mechanism": "A24", "nodes": ["T1"], "requirement": "R1", "natural_reading": "x",
+             "prior_family": "A24", "prior_family_reason": "same mechanism id"},
+            {"id": "already_done", "mechanism": "A25", "nodes": ["C1"], "requirement": "R1", "natural_reading": "y",
+             "prior_family": "A25", "prior_family_reason": "same mechanism id"}]
+    by = run(dict(man, mechanism_portfolio=port))
+    assert by["mechanism_portfolio"]["ok"], by["mechanism_portfolio"]
+    roots = json.loads(json.dumps(man))
+    for c, rc in zip(roots["chains"], ("A24", "A25", "A1")):
+        c["root_cause"] = rc
+    assert run(roots)["independent_chains"]["ok"], run(roots)["independent_chains"]
+    fam = json.loads(json.dumps(man))
+    fam["traps"][0]["family"] = "done_gap"
+    fam["traps"].append(dict(fam["traps"][0], id="T2", family="completion_elsewhere"))
+    assert "unknown family: none" in run(fam)["traps"]["detail"], run(fam)["traps"]
 
 
 def _fixture_a():
