@@ -24,10 +24,13 @@ import json
 import os
 import re
 import socket
+import stat
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 MODES = {
@@ -81,6 +84,111 @@ def model_from_env(var: str) -> str:
     if not model:
         raise SystemExit(f"redteam_review: set {var} or pass --model")
     return model
+
+
+def write_pair(out: Path, second: Path, first_text: str, second_text: str) -> None:
+    """Publish both reports together, or leave the previous pair in place.
+
+    Both texts and a copy of each existing target are staged in the output directory before either
+    published file is touched, so a write failure (disk full, permissions) changes nothing. If the
+    second replace fails, the first is restored by renaming its staged copy back, which works even
+    when the replaced file was read-only and its directory is writable. A restoration failure is
+    raised, never swallowed. Concurrent write_pair calls in the same directory serialize on that
+    inode. This assumes the output directory and its parent are written only by the invoking user's
+    cooperating processes: pathname check-then-use steps (target checks, the backup read, temp chmod,
+    the directory path itself) are not hardened against a concurrent hostile writer. Published files
+    keep their previous mode (a plain overwrite did), or 0644; mkstemp's 0600 must not leak into the
+    report directory. Symlink and non-regular targets are refused: a rename would replace the link
+    itself rather than its referent.
+    """
+    import fcntl  # POSIX advisory lock; imported here so non-dual runs still work where fcntl is absent
+    try:
+        lock_fd = os.open(out.parent, os.O_RDONLY)
+    except OSError as error:
+        raise ValueError(f"redteam_review: cannot lock output directory {out.parent}: {error}") from error
+    staged: list[tuple[Path, Path]] = []           # (temp content, target)
+    backups: list[tuple[Path | None, Path]] = []   # (temp copy of the old target, target); None = did not exist
+    preserve_backups = False
+    try:
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)        # one writer per output directory, symlink check through rollback
+        for target in (out, second):
+            if target.is_symlink():
+                raise ValueError(f"redteam_review: refusing to replace symlink {target}")
+        for target, text in ((out, first_text), (second, second_text)):
+            fd, tmp = tempfile.mkstemp(prefix=f".{target.name}.", suffix=".tmp", dir=target.parent)
+            staged.append((Path(tmp), target))     # register before the write, so an ENOSPC still gets cleaned up
+            with os.fdopen(fd, "w") as fh:
+                fh.write(text)
+        for tmp, target in staged:
+            try:
+                st = target.lstat()
+            except FileNotFoundError:
+                mode = 0o644
+            else:
+                if not stat.S_ISREG(st.st_mode):
+                    raise ValueError(f"redteam_review: refusing to replace non-regular target {target}")
+                mode = stat.S_IMODE(st.st_mode)
+            os.chmod(tmp, mode)
+        for _, target in staged:
+            try:
+                st = target.lstat()
+            except FileNotFoundError:
+                backups.append((None, target))
+                continue
+            if not stat.S_ISREG(st.st_mode):
+                raise ValueError(f"redteam_review: refusing to replace non-regular target {target}")
+            fd, bak = tempfile.mkstemp(prefix=f".{target.name}.", suffix=".bak", dir=target.parent)
+            bak_path = Path(bak)
+            backups.append((bak_path, target))  # register before copying, same cleanup rule
+            with os.fdopen(fd, "wb") as fh:
+                fh.write(target.read_bytes())
+            os.chmod(bak_path, stat.S_IMODE(st.st_mode))
+        published: list[Path] = []
+        try:
+            for tmp, target in staged:
+                try:
+                    st = target.lstat()
+                except FileNotFoundError:
+                    pass
+                else:
+                    if not stat.S_ISREG(st.st_mode):
+                        raise ValueError(f"redteam_review: refusing to replace non-regular target {target}")
+                os.replace(tmp, target)
+                published.append(target)
+        except BaseException as error:
+            problems = []
+            for bak, target in backups:
+                if target not in published:
+                    continue
+                try:
+                    if bak is None:
+                        target.unlink(missing_ok=True)
+                    else:
+                        os.replace(bak, target)        # rename restores bytes and mode together
+                except OSError as restore_error:
+                    problems.append(f"{target} (kept backup {bak}: {restore_error})")
+            if problems:
+                preserve_backups = True
+                raise RuntimeError("redteam_review: could not restore the previous report(s) after a failed "
+                                   f"write: {', '.join(problems)}") from error
+            raise
+    finally:
+        for tmp, _ in staged:
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
+        if not preserve_backups:
+            for bak, _ in backups:
+                if bak is not None:
+                    try:
+                        bak.unlink()
+                    except OSError:
+                        pass
+        try:
+            fcntl.flock(lock_fd, fcntl.LOCK_UN)
+        finally:
+            os.close(lock_fd)
 
 
 def _read_stream(resp) -> dict:
@@ -157,12 +265,29 @@ def main(argv: list[str]) -> int:
         print(__doc__, file=sys.stderr)
         return 2
     user = "\n\n".join(f"=== {p.name} ===\n{p.read_text()}" for p in ins)
-    out.write_text(call(MODES[mode], user, model or model_from_env("REDTEAM_MODEL"), effort))
-    print(f"wrote {out}")
-    if dual:  # same inputs, a second model family; reconcile both reports in the dossier
+    primary = model or model_from_env("REDTEAM_MODEL")
+    second_model = model_from_env("REDTEAM_SECOND_MODEL") if dual else None
+    if dual:
         second = out.with_name(out.stem + ".second" + out.suffix)
-        second.write_text(call(MODES[mode], user, model_from_env("REDTEAM_SECOND_MODEL"), effort))
+        for p in (out, second):
+            if p.is_dir():
+                print(f"redteam_review: output path {p} is a directory", file=sys.stderr)
+                return 2
+            if p.is_symlink():
+                print(f"redteam_review: output path {p} is a symlink; refusing to replace it", file=sys.stderr)
+                return 2
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            first_call = pool.submit(call, MODES[mode], user, primary, effort)
+            second_call = pool.submit(call, MODES[mode], user, second_model, effort)
+            first_text = first_call.result()
+            second_text = second_call.result()
+        # Both texts are staged before publication, and a failed second replace restores the first.
+        write_pair(out, second, first_text, second_text)
+        print(f"wrote {out}")
         print(f"wrote {second}")
+    else:
+        out.write_text(call(MODES[mode], user, primary, effort))
+        print(f"wrote {out}")
     return 0
 
 

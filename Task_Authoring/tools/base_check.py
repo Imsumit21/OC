@@ -77,6 +77,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -132,13 +133,42 @@ def parse_sql(sql: str) -> list[dict]:
 
 # ---------------------------------------------------------------- base indexes
 
+def _atomic_json(path: Path, payload) -> None:
+    """Write JSON atomically: concurrent checks never read a half-written index.
+
+    The published inode keeps the destination's previous mode (a plain overwrite did), or 0644 for a new
+    cache file; mkstemp's 0600 must not leak into a shared cache directory. Assumes the cache directory is
+    written only by the invoking user's cooperating processes: the check-then-use mode read and the
+    post-close chmod are not hardened against a concurrent hostile writer."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        mode = path.stat().st_mode & 0o777
+    except FileNotFoundError:
+        mode = 0o644
+    fd, tmp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w") as fh:
+            json.dump(payload, fh)
+        os.chmod(tmp, mode)
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
 def _cached(name: str, build):
     CACHE.mkdir(parents=True, exist_ok=True)
     path = CACHE / f"base_{name}.json"
     if path.exists():
-        return json.loads(path.read_text())
+        try:
+            return json.loads(path.read_text())
+        except (ValueError, OSError):
+            pass  # a pre-fix partial cache is rebuilt below
     data = build()
-    path.write_text(json.dumps(data))
+    _atomic_json(path, data)
     return data
 
 

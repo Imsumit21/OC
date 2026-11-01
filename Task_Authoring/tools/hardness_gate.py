@@ -20,7 +20,11 @@ cross-check: a value that disagrees with the manifest FAILs check `effective_pro
 
 Red team A (2026-10-05, support/examples/calibration/harness_redteam/A_scenario_injection*.md) checks:
   effective_profile        effective_profile present; Long Horizon = extreme; Normal Horizon at extreme only with a
-                           profile_exception {reason, requester_confirmation}; --profile must agree
+                           profile_exception {reason, requester_confirmation}; --profile must agree. An extreme
+                           manifest may carry volume_exception {reason, requester_confirmation (nonblank strings),
+                           call_budget_floor (int 100-500), per_record_floor (int 0-300)}: it replaces only those two
+                           numeric minima; present but null, partial, mistyped, unknown-keyed or out of range =
+                           FAIL, minima unchanged
   incorporation_chains     + each fragment's `delegation_quote` is an exact substring of the text of its
                            delegated_by_record (seeded SQL row, or the base record read through tools/hg.py)
   requirement_coverage     every declared requirement is named by >= 1 incorporated fragment or anchor (requirement_ids)
@@ -132,6 +136,45 @@ def _has_token(code: str, token: str) -> bool:
     return bool(token) and re.search(r"(?<![A-Za-z0-9_.\-])" + re.escape(token) + r"(?![A-Za-z0-9_\-])", code) is not None
 
 
+VOLUME_EXCEPTION_MIN_BUDGET = 100   # the platform's Long Horizon minimum (counted calls); no exception goes below it
+
+
+def volume_exception(manifest: dict, eff) -> tuple:
+    """(floors, problems): a requester-confirmed lower call-budget floor for the extreme profile only.
+
+    It replaces exactly two numeric minima, `budget` and `per_record_calls`; every other check, including the necessity
+    reason each budget row needs, is unchanged. Absent -> (None, []); incomplete, unknown-keyed or out of range ->
+    (None, problems)."""
+    if "volume_exception" not in manifest:
+        return None, []
+    ex = manifest["volume_exception"]          # present: null, a non-object or a partial object all fail closed
+    if eff != "extreme":
+        return None, [f"volume_exception applies only to the extreme profile, not {eff!r}"]
+    if not isinstance(ex, dict):
+        return None, ["volume_exception must be an object {reason, requester_confirmation, call_budget_floor, per_record_floor}"]
+    known = {"reason", "requester_confirmation", "call_budget_floor", "per_record_floor"}
+    extra = sorted(str(k) for k in ex if k not in known)
+    probs = [f"volume_exception has unknown key(s) {', '.join(extra)}"] if extra else []
+    probs += [f"volume_exception.{k} must be a nonblank string" for k in ("reason", "requester_confirmation")
+              if not (isinstance(ex.get(k), str) and ex.get(k).strip())]
+    top = PROFILES["extreme"]
+    b, r = ex.get("call_budget_floor"), ex.get("per_record_floor")
+    if not (isinstance(b, int) and not isinstance(b, bool) and VOLUME_EXCEPTION_MIN_BUDGET <= b <= top["budget"]):
+        probs.append(f"volume_exception.call_budget_floor must be an integer {VOLUME_EXCEPTION_MIN_BUDGET}-{top['budget']}, got {b!r}")
+    if not (isinstance(r, int) and not isinstance(r, bool) and 0 <= r <= top["per_record_calls"]):
+        probs.append(f"volume_exception.per_record_floor must be an integer 0-{top['per_record_calls']}, got {r!r}")
+    return (None, probs) if probs else ({"budget": b, "per_record_calls": r}, [])
+
+
+def effective_thresholds(manifest: dict, profile: str) -> tuple:
+    """(thresholds, floors): the profile's thresholds with a complete volume_exception's two minima applied.
+
+    Applied only when the gate runs at the extreme profile and the manifest itself declares extreme; floors is None when
+    nothing was applied. PROFILES is never mutated."""
+    vex = volume_exception(manifest, manifest.get("effective_profile"))[0] if profile == "extreme" else None
+    return (dict(PROFILES[profile], **vex) if vex else dict(PROFILES[profile])), vex
+
+
 def resolve_profile(manifest: dict, cli_profile: str | None = None) -> tuple:
     """(profile, problems): the manifest's effective_profile is the task's single profile (red team A, R1 #17)."""
     eff = manifest.get("effective_profile")
@@ -150,6 +193,7 @@ def resolve_profile(manifest: dict, cli_profile: str | None = None) -> tuple:
         if not (isinstance(ex, dict) and str(ex.get("reason") or "").strip() and str(ex.get("requester_confirmation") or "").strip()):
             probs.append("Normal Horizon at the extreme profile (Borderline Horizon, score capped at 3) needs profile_exception "
                          "{reason, requester_confirmation} recording the requester's confirmation")
+    probs += volume_exception(manifest, eff)[1]
     profile = eff if eff in PROFILES else (cli_profile if cli_profile in PROFILES else "extreme")
     return profile, probs
 
@@ -246,7 +290,7 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
     from runtime_context import ensure_active
     ensure_active(globals(), require_source=True)
     profile, profile_probs = resolve_profile(manifest, profile)
-    p = PROFILES[profile]
+    p, vex = effective_thresholds(manifest, profile)   # a complete volume_exception changes only budget / per_record_calls
     checks: list[dict] = []
 
     sql_only = {"sql_lint_clean", "services_injected", "rows", "no_orphan_injection", "seeded_ids_exist_in_sql", "base_consistency",
@@ -476,7 +520,7 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
     unexplained = [f"{b.get('phase')}/{b.get('service')}" for b in budget if not b.get("reason")]
     check("call_budget", floor >= p["budget"] and (cap is None or total <= cap) and not unexplained,
           f"unconditional (verified) floor {floor} of {total} planned calls ({total - floor} conditional on unverified tool "
-          f"behaviour count 0); need floor ≥ {p['budget']}" + (f" and total ≤ {cap} (Normal Horizon 50–100, with margin below the 100 NON-FAIL line)" if cap else " (Long Horizon; plan ~600 for headroom)")
+          f"behaviour count 0); need floor ≥ {p['budget']}" + (f" and total ≤ {cap} (Normal Horizon 50–100, with margin below the 100 NON-FAIL line)" if cap else (" (requester-confirmed volume_exception)" if vex else " (Long Horizon; plan ~600 for headroom)"))
           + (f"; rows without a necessity reason: {unexplained[:5]}" if unexplained else ""))
     check("call_budget_spread", len([s for s, c in by_service.items() if c > 0]) >= p["budget_services"]
           and share <= p["budget_max_share"],
@@ -624,6 +668,13 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
     if manifest.get("horizon") == "Normal Horizon" and profile == "extreme" and not profile_probs:
         notes.append("Normal Horizon at the extreme profile scores Borderline Horizon (non-fail, task score capped at 3) — "
                      f"requester confirmation: {str((manifest.get('profile_exception') or {}).get('requester_confirmation'))[:80]}")
+
+    if vex:
+        ex = manifest["volume_exception"]
+        notes.append(f"volume_exception: call-budget floor {vex['budget']} and per-record floor {vex['per_record_calls']} replace "
+                     f"{PROFILES['extreme']['budget']} and {PROFILES['extreme']['per_record_calls']}; every other extreme target "
+                     f"applies — reason: {str(ex.get('reason'))[:80]}; requester confirmation: "
+                     f"{str(ex.get('requester_confirmation'))[:80]}")
 
     failed = [c for c in checks if not c["ok"]]
     return {"profile": profile + (" (design)" if design else ""), "verdict": "PASS" if not failed else "FAIL", "checks": checks,
@@ -1065,10 +1116,14 @@ def _self_test() -> None:
     n = _self_test_redteam_a()
     _self_test_integrity()
     k = _self_test_portfolio()
+    v = _self_test_volume_exception()
     _self_test_v2_ids()
     print(f"self-test: ok ({n} red-team-A planted defects each fail their own check; integrity layer incl. denied probes, "
           f"hazard resolutions and no-leak; {k} mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted, "
-          f"A24/A25 and their v2 trap families accepted)")
+          f"A24/A25 and their v2 trap families accepted; "
+          f"volume_exception: {v['malformed']} malformed or out-of-range values fail closed, {v['bounds']} boundary values "
+          f"accepted, {v['still_fail']} other defects still fail under a valid exception, {v['profile']} profile-resolution "
+          f"cases fail the gate, only the two minima change)")
 
 
 def _self_test_portfolio() -> int:
@@ -1184,6 +1239,103 @@ INSERT INTO gmail.gmail_messages (id, thread_id, user_email, label_ids_json, sub
                                           {"service": "gmail", "id": gm, "seeded": True, "at": "2026-01-12T16:00:00Z"}]}],
            "call_budget": [{"phase": "per-record", "service": "linear", "calls": 600, "reason": "x"}]}
     return man, sql, sid2
+
+
+def _self_test_volume_exception() -> dict:
+    """volume_exception: fails closed on any malformed value, lowers exactly two minima when complete, changes nothing else."""
+    import copy
+    profiles_before = copy.deepcopy(PROFILES)
+    man, sql, _ = _fixture_a()
+    rt = RecordText(sql)
+
+    def run(m, prof=None):
+        r = evaluate(m, sql, prof, records=rt, integrity=False)
+        return {c["check"]: c for c in r["checks"]}, r["notes"], r["verdict"]
+
+    def mut(base, f):
+        m = json.loads(json.dumps(base))
+        f(m)
+        return m
+    ext = PROFILES["extreme"]
+    small = mut(man, lambda m: m.update(call_budget=[{"phase": "per-record", "service": "linear", "calls": 160, "reason": "x"}]))
+    by, notes, _ = run(small)   # 160 < 500 and 40 per-record calls < 300: both minima fail without the exception
+    assert not by["call_budget"]["ok"] and not by["per_record_calls"]["ok"], (by["call_budget"]["detail"], by["per_record_calls"]["detail"])
+    valid = {"reason": "platform Long Horizon minimum is 100 counted calls", "requester_confirmation": "requester, 2026-11-01",
+             "call_budget_floor": 150, "per_record_floor": 30}
+    ok = mut(small, lambda m: m.update(volume_exception=dict(valid)))
+    by, notes, _ = run(ok)
+    assert by["call_budget"]["ok"] and by["per_record_calls"]["ok"] and by["effective_profile"]["ok"], \
+        (by["call_budget"]["detail"], by["per_record_calls"]["detail"], by["effective_profile"]["detail"])
+    assert any(n.startswith("volume_exception:") for n in notes), notes
+    # exact mapping: only the two minima change, PROFILES is not mutated
+    th, vex = effective_thresholds(ok, "extreme")
+    assert vex == {"budget": 150, "per_record_calls": 30} and th == dict(ext, budget=150, per_record_calls=30), (vex, th)
+
+    # 1. malformed or out-of-range exceptions fail closed: effective_profile fails, BOTH minima stay 500/300, no note
+    def setf(k, v):
+        return lambda m: m["volume_exception"].update({k: v})
+
+    def drop(k):
+        return lambda m: m["volume_exception"].pop(k)
+    malformed = [("null exception", lambda m: m.update(volume_exception=None)),
+                 ("non-object exception", lambda m: m.update(volume_exception="yes")),
+                 ("list exception", lambda m: m.update(volume_exception=[valid])),
+                 ("unknown key", lambda m: m["volume_exception"].update({"per_record_flor": -1}))]
+    for k in ("reason", "requester_confirmation"):
+        malformed += [(f"{k} missing", drop(k))] + [(f"{k}={v!r}", setf(k, v)) for v in (None, "", "  ", True, 1.5, 0, [], ["x"], {"a": 1})]
+    for k, lo, hi in (("call_budget_floor", VOLUME_EXCEPTION_MIN_BUDGET, ext["budget"]), ("per_record_floor", 0, ext["per_record_calls"])):
+        bad = (None, True, False, float(lo + 50), lo + 50.5, str(lo + 50), lo - 1, hi + 1, [lo])
+        malformed += [(f"{k} missing", drop(k))] + [(f"{k}={v!r}", setf(k, v)) for v in bad]
+    for name, f in malformed:
+        m = mut(ok, f)
+        got, nts, _ = run(m)
+        assert not got["effective_profile"]["ok"] and not got["call_budget"]["ok"] and not got["per_record_calls"]["ok"], name
+        assert f"need floor ≥ {ext['budget']}" in got["call_budget"]["detail"], (name, got["call_budget"]["detail"])
+        assert not any(n.startswith("volume_exception:") for n in nts), name
+        assert effective_thresholds(m, "extreme") == (dict(ext), None), name
+
+    # 2. accepted boundaries
+    bounds = [("call_budget_floor", VOLUME_EXCEPTION_MIN_BUDGET), ("call_budget_floor", ext["budget"]),
+              ("per_record_floor", 0), ("per_record_floor", ext["per_record_calls"])]
+    for k, v in bounds:
+        th, vex = effective_thresholds(mut(ok, setf(k, v)), "extreme")
+        want = {"call_budget_floor": "budget", "per_record_floor": "per_record_calls"}[k]
+        assert vex is not None and th[want] == v, (k, v, th[want])
+
+    # 3. a valid exception does not excuse anything else
+    still = [("budget under the lowered floor", lambda m: m["call_budget"][0].update(calls=140), "call_budget"),
+             ("budget row without a necessity reason", lambda m: m["call_budget"][0].pop("reason"), "call_budget"),
+             ("conditional rows still count 0", lambda m: m.update(call_budget=[
+                 {"phase": "per-record", "service": "linear", "calls": 100, "reason": "x"},
+                 {"phase": "per-record", "service": "slack", "calls": 100, "reason": "x", "conditional_on": "replies unswept"}]), "call_budget"),
+             ("per-record under the lowered floor", lambda m: m["volume_exception"].update(per_record_floor=41), "per_record_calls"),
+             ("cohort below 40", lambda m: m["cohort"].update(size=39), "cohort_size")]
+    for name, f, want in still:
+        got, _, _ = run(mut(ok, f))
+        assert not got[want]["ok"], (name, got[want]["detail"])
+
+    # 4. profile resolution: outside a manifest that declares extreme at an extreme run the floors are never applied, and
+    #    the one case that applies them (manifest extreme, CLI normal) still fails the gate on the disagreement
+    no_eff = mut(ok, lambda m: m.pop("effective_profile"))
+    for prof in (None, "extreme"):
+        got, nts, verdict = run(no_eff, prof)
+        assert not got["effective_profile"]["ok"] and verdict == "FAIL" and not any(n.startswith("volume_exception:") for n in nts), prof
+        assert effective_thresholds(no_eff, prof or "extreme") == (dict(ext), None), prof
+    got, _, verdict = run(ok, "normal")                     # manifest extreme, CLI normal: the disagreement fails the gate
+    assert not got["effective_profile"]["ok"] and verdict == "FAIL"
+    as_normal = mut(ok, lambda m: m.update(horizon="Normal Horizon", effective_profile="normal"))
+    for prof in (None, "extreme"):                          # manifest normal (with or without a disagreeing CLI)
+        got, nts, verdict = run(as_normal, prof)
+        assert not got["effective_profile"]["ok"] and verdict == "FAIL" and not any(n.startswith("volume_exception:") for n in nts), prof
+    assert effective_thresholds(as_normal, "normal") == (dict(PROFILES["normal"]), None)
+
+    # 5. control: on the full fixture the exception can flip only the two volume checks; PROFILES untouched
+    base_by, _, _ = run(man)
+    with_by, _, _ = run(mut(man, lambda m: m.update(volume_exception=dict(valid))))
+    changed = {n for n in base_by if base_by[n]["ok"] != with_by[n]["ok"]}
+    assert changed <= {"call_budget", "per_record_calls"}, changed
+    assert PROFILES == profiles_before, "PROFILES mutated"
+    return {"malformed": len(malformed), "bounds": len(bounds), "still_fail": len(still), "profile": 5}
 
 
 UNAVAILABLE = ("Install Universe_", "SOURCE BLOCKED", "Cannot read assignment", "No task date is saved",

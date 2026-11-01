@@ -94,6 +94,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -238,6 +239,32 @@ def _fingerprint(paths) -> list:
     return out
 
 
+def _atomic_json(path: Path, payload) -> None:
+    """Write JSON atomically: concurrent builders never see a partial cache file.
+
+    The published inode keeps the destination's previous mode (a plain overwrite did), or 0644 for a new
+    cache file; mkstemp's 0600 must not leak into a shared cache directory. Assumes the cache directory is
+    written only by the invoking user's cooperating processes: the check-then-use mode read and the
+    post-close chmod are not hardened against a concurrent hostile writer."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        mode = path.stat().st_mode & 0o777
+    except FileNotFoundError:
+        mode = 0o644
+    fd, tmp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w") as fh:
+            json.dump(payload, fh)
+        os.chmod(tmp, mode)
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
 def cached(name: str, sources, build):
     """pv_<name>.json under the cache dir; rebuilt when a source's size/mtime changes."""
     CACHE.mkdir(parents=True, exist_ok=True)
@@ -251,11 +278,9 @@ def cached(name: str, sources, build):
         except (ValueError, KeyError):
             pass
     data = build()
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps({"_meta": {"version": CACHE_VERSION, "sources": fp,
-                                         "built_utc": dt.datetime.now(dt.timezone.utc).isoformat()},
-                               "data": data}))
-    os.replace(tmp, path)
+    _atomic_json(path, {"_meta": {"version": CACHE_VERSION, "sources": fp,
+                                  "built_utc": dt.datetime.now(dt.timezone.utc).isoformat()},
+                        "data": data})
     return data
 
 
@@ -475,9 +500,7 @@ class Universe:
         if store.get("_version") != CACHE_VERSION:
             store = {"_version": CACHE_VERSION}
         store[mailbox] = res
-        tmp = path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(store))
-        os.replace(tmp, path)
+        _atomic_json(path, store)
         return res
 
     # ---- gcal
