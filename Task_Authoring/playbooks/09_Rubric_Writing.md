@@ -230,6 +230,7 @@ Severity — the `/rubric` issue types (`3_Rubrics_Eval.md` taxonomy + `hg-stric
 |---|---|---|---|
 | Overall Rubric Quality | Any Major or Moderate issue; Minor issues on > 10% of rows | Minor issues on 5–10% of rows (NON-FAIL 3) | No Major/Moderate, Minor < 5% |
 | Criteria Weights | > 10% of rows one level off, or any row two levels off | 10% or fewer rows one level off and none two levels off (NON-FAIL 4) | All match |
+| Known data issue | A row grading a value a card in `references/known_data_issues/<universe>.md` says not to grade | Fail | no row rests on a listed card |
 | Category Balance | Zero Outcome rows; more than 50 % Process rows; two or more Process rows failing the three-condition test (2026-10 guides) | — | ≥ 1 Outcome, Process ≤ 50 %, < 2 unnecessary Process rows |
 | Process Rubrics | 2+ genuinely missing ordering checks, or any invalid Process row | Exactly 1 genuinely missing ordering check (NON-FAIL 3) | No ordering dependency lacks a check and every Process row is valid |
 | Agent-Centric Phrasing | 1+ artifact/model subject or tool name in a title; off-pattern agent-centric titles on > 10% of rows | Off-pattern but agent-centric titles (possessive, bare action) on ≤ 10% of rows (NON-FAIL 3) | The Agent + action in every title |

@@ -1,6 +1,6 @@
 # Task-authoring learnings
 
-Sections 1–9: dd-q4-claims-register (prompt failure, 30 October 2026). Sections 10–19: robert-vendor-schedule (injection failure, 31 October 2026). Sections 20–26: robert-vendor-schedule (prompt failure, 31 October 2026). Sections 27–34: robert-vendor-schedule (Opus 5.5 pre-check too easy, 31 October 2026). Sections 35–44: robert-vendor-schedule rev-7 rebuild (1 November 2026). Sections 45–48: dd-2024-release-cost (Opus 5.5 pre-check too easy, rev1) and the Hardness v2 adoption (1 November 2026). The checklist after §26 covers the first three parts; the last three parts end with their own items, numbered across the file.
+Sections 1–9: dd-q4-claims-register (prompt failure, 30 October 2026). Sections 10–19: robert-vendor-schedule (injection failure, 31 October 2026). Sections 20–26: robert-vendor-schedule (prompt failure, 31 October 2026). Sections 27–34: robert-vendor-schedule (Opus 5.5 pre-check too easy, 31 October 2026). Sections 35–44: robert-vendor-schedule rev-7 rebuild (1 November 2026). Sections 45–48: dd-2024-release-cost (Opus 5.5 pre-check too easy, rev1) and the Hardness v2 adoption (1 November 2026). Sections 49–51: dd-2024-release-cost rev2 (/injection PASS, /prompt FAIL 2 on base git coherence), the October 2026 CB guidelines and the known-data-issue cards (1–2 November 2026). The checklist after §26 covers the first three parts; the last three parts end with their own items, numbered across the file.
 
 Recorded: 30 October 2026
 Task: dd-q4-claims-register — Julia Lawson / Product Management / Retrieval
@@ -520,3 +520,58 @@ Before the next design (sections 45–48):
 40. Hash the SQL body the portal grades (from the first section comment, trailing blank lines stripped) before comparing
     with a portal report.
 41. Batch every `tools/*.py` change into one commit and announce the gate-policy change to any concurrent session.
+
+# dd-2024-release-cost rev2: /injection PASS, /prompt FAIL on base git coherence
+
+Task: dd-2024-release-cost — Simon Walker / Engineering / Long Horizon, Medium, synth-cut (Oct 1, 2025 universe)
+Status: rev2 passed every local gate (sql_lint, base_check, hg.py lint, fact_check, hardness_gate, solver contract,
+mutation, preflight, stage_gate) and the Portal /injection (attempt 6ae4e29de73a5c2bb1a35a1a). /prompt scored every
+prompt dimension 5 and failed Cross-Service Coherence at 2. The prompt itself needs no change.
+Evidence: the two Portal reports (`…_0_injection (3).md`, `…_1_prompt (4).md`), `tools/base_claims.py` output on the rev2 SQL.
+
+## 49. Seeded notes must agree with base git, not only with each other
+
+- The /prompt deep recheck opened the exported repos and ran `git branch --contains`. 14 pick notes named a branch
+  that does not hold the ticket's commit (ENG-1340/1422/1459/1505 "onto release/baklava" but only on release/desire;
+  ENG-1555 "finally on desire_hothotfix" but only on lava_fix_3/new_lava; nine lava_fix_3 picks already on
+  release/desire or desire_hotfix). Under the git reading those tickets change trains, so counts change: fail-level.
+- Dates slipped too: lava_fix_3 notes from Oct 7 when the branch first builds Oct 26; the train map's Oct 3 version
+  names branches first built Oct 11–26; four "moved to desire_hothotfix" notes come after that branch's last build.
+- Base branch windows are very short (from #builds and git): baklava Sep 11–13, baklava-unity-2022 Sep 14, desire
+  Oct 4–5, desire_hotfix Oct 10, desire_hothotfix Oct 11–16, lava_fix Oct 22–23, new_lava Oct 25, lava_fix_3 Oct 26–28.
+  A design built on dozens of picks per train has to fit inside these windows, before each ticket's completion.
+- No local tool read git: base_check proves ids, references and dates only, and /injection is static. The 4-agent
+  red team and the adversary solvers never checked a claim against the base either.
+- Fix in the pipeline: `tools/base_claims.py` (B1 branch exists, B2 not named before it exists, B3 pick inside the
+  window, B4 the branch contains the ticket's or PR's commits) is blocking in `stage_gate.py injection`. On rev2 it
+  reports 175 findings and catches all 14 /prompt tickets (ENG-1667 through its PR #1266 comment).
+
+## 50. The October 2026 CB guidelines (12 PDFs) changed several rules the tools enforced
+
+- Only 64 tables are writable: never Snowflake, never `public._changelog` (sql_lint now errors).
+- A closed ticket with later activity fails the task even if no agent misses it (base_check now FAILs a comment dated
+  after `completed_at`/`canceled_at`). rev3 must date every pick note before its ticket closes.
+- With several 100 % runs the lowest count governs both tier bounds (difficulty_stats fixed); a Normal run above 100 is
+  NON-FAIL; padding is a failing error; design Normal to 60–95 calls (hardness_gate cap 95).
+- `/oe` passes or blocks; more than 50 % Process rows fails the rubric (stage_gate rubric-check enforces it).
+- After a FAIL change only FAIL/Major rows; the re-run matrix and pass-screen proof are in GEN_EXECUTION §3.
+- Full mapping: `Task_Authoring/references/Docs/2026-10_CB_Guidelines/00_Reconciliation.md`.
+
+## 51. Known-data-issue cards are a hard input, not background
+
+- `Task_Authoring/references/known_data_issues/{normal,synthcut}.md` (NB-1–33, SC-1–73) list the conflicts reviewers have
+  already failed tasks on. The Portal cites them as `known_base_issues.md`; the local Evals bundle does not ship them.
+- This task touches SC-43 (Simon's Aug–Sep 2024 pay), SC-25 (roster vs staff) and SC-5 (Victor paid after leaving):
+  safe because Ines's pool sums every ledger salaries row as written and no row grades a person's pay. Never add one.
+- base_claims matches on branch names only, never commit titles (SC-56) or build numbers in #builds posts (SC-67).
+
+Before the next design (sections 49–51):
+
+42. Run `tools/base_claims.py` on the SQL before any solver or preflight work; a B-finding changes the truth.
+43. A pick note may only name a branch git shows holding the ticket's commit, dated inside the branch's window and
+    before the ticket's completion. Backed-out or re-pick stories go on tickets with no commit naming them.
+44. Read the universe's known-data-issue cards at scenario design; cite every card the task touches with its disposition.
+45. Never treat a Portal /injection PASS as coherence: it is static. /prompt's deep recheck reads git, Snowflake and
+    the base; run the local equivalents first.
+46. Freeze downstream work (OEs, rubric, baseline) until /injection and /prompt both pass on the same SQL sha256.
+

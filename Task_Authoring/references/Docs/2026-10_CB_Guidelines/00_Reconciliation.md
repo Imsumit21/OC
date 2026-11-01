@@ -44,3 +44,8 @@ hedge wording, prompt tool/step-list bans).
 | Build on 1–2 traps (10) | local ≥ 12 traps / ≥ 7 families floor, with the 1–2 load-bearing traps named | user-retained extreme profile |
 | Confluence / Snowflake unclassified, check from persona view (01, 02) | unscoped, confirmed live | `AGENTS.md` / `service-availability-v1`, QC Rating Form V12 `acl.md` |
 | Let the portal draft the SQL (08) | SQL authored locally, then pasted | the bundle's gates need the SQL as an input |
+
+## Known data issues
+
+`references/known_data_issues/` holds the per-universe cards (NB-1–33, SC-1–73) the Portal cites as
+`known_base_issues.md`. Scenario, injection, prompt, OE and rubric stages must not rest a graded fact on a card.
