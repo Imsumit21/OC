@@ -320,3 +320,73 @@ Before the next pre-check (sections 27–34):
 24. Make the persona own every write target and confirm each write in the pre-check.
 25. Fix and fixture-test the proxy grader before using it for a go/no-go.
 26. Record tool and policy hashes with every run; supersede wrong provenance instead of editing.
+
+# dd-2024-release-cost: Opus 5.5 pre-check too easy (rev1), and the Hardness v2 adoption
+
+Recorded: 1 November 2026
+Task: dd-2024-release-cost — Simon Walker / Engineering / Long Horizon, Medium, synth-cut (Oct 1, 2025 universe)
+Status: rev1 passed /injection and scored /prompt NON-FAIL 3. One unhinted Opus 5.5 pre-check solved it completely and
+/hardness returned FAIL, score 1 ("too easy"). The same day the client issued Hardness v2
+(`Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`), which explains the result; the pipeline now carries it
+(`references/Hardness_Mastery.md` §13, `tools/hardness_v2_check.py`). One run only: an observation, not a rate.
+
+## 35. A correction the agent passes on the way is no trap
+
+- Every trap was settled on its first read. Ines's contractor_fees amendment (T1) was a reply in her own thread, the
+  thread that delegates to the method doc, so reading the thread returned the original and the amendment together. Both
+  train-map versions and "the December version stands" came back in one Trello card read (T3). The slot count's
+  correction sat in the anchored board sheet (T4). Two cancelled calendar slots showed in one `gcal_list_events` call,
+  and archived tickets came with the first `includeArchived` listing.
+- Hardness v2 measured the same on 46 tasks: a correction works only "out of the way" (a Slack message withdrawing a
+  GitHub approval, a Confluence comment reopening a Linear ticket). In the same channel or thread, Opus 5.5 checks
+  stale-vs-newer by default.
+- `tools/hardness_v2_check.py` flags it as SAME_PLACE: `same_container`, `first_read` (an anchor's thread or file) or
+  `on_delegation_path` (the record that delegates to the original). On rev1 it flags T1, T3 and T4. A literal reading
+  of v2 ("the same thread as the original") misses T1: the original is a doc, but the agent reaches it through the thread
+  that holds the correction.
+
+## 36. Brute force beats per-record sampling traps
+
+- The run split all 1,425 Done tickets across six subagents and read every comment: 897 `linear_list_comments` calls,
+  1,002 calls in all, 11 minutes, $22. Per-ticket pick notes cost money, not accuracy.
+- Decoys (the #analytics labels × payroll note, the "~3 slots" deck, the ZM train map, the art-team Confluence page) were
+  never on its path. It went from Leonard's message straight to each authority.
+- v2 Part 4 agrees: long inventories, routine bulk writes and straight totals pass 6/6. Volume buys horizon calls, never
+  failures. Build difficulty from the kind of decision (v2 Part 3), and keep the ≥ 500-call floor as a horizon target.
+
+## 37. Bind a hash to what the portal actually ingested
+
+- The portal's injection report records the SQL body it graded: from the first section comment (`-- slack`) to the
+  end, with trailing blank lines stripped (349,107 bytes, sha256 `784bfe2f…`). The local file adds a five-line header
+  and two trailing newlines (349,450 bytes, `a38659c0…`). The portal's displayed character count ran 25 below the body
+  on both submissions.
+- Comparing whole-file hashes produced a false "the SQL changed since grading" alarm. Hash the body the same way the
+  portal does before claiming a PASS no longer covers the file; byte counts alone do not prove identity.
+- The synth-cut clock is 2025-10-01 07:00 UTC (00:00 PT), not 00:00 UTC: the portal's lint ran at
+  `clock 2025-10-01T07:00:00Z`. `11_V3_Changes.md` was corrected; the assignment's `freeze_utc` stays the user's call.
+
+## 38. Hardness v2 in the pipeline, and its four reconciliations
+
+- New mechanism ids A24 (done across services; family `done_gap`) and A25 (completion elsewhere;
+  `completion_elsewhere`) cover v2 traps 1 and 9. Trap 8 (wrong inputs to a total) reuses existing correction mechanisms
+  on an aggregate slot and is graded as two rows: the corrected input and the final figure.
+- v2's "guard row" and "grade that the agent leaves those items alone" become an exact count or scope on the required
+  write ("creates records for exactly 17 of the 20 receipts"): the grader fails any row an idle agent passes.
+- v2's "put weight 5 on the trap rows" means design the trap onto 5-band work; never raise a weight. DECISION_FLIP flags
+  a rule that can flip no weight-5 slot.
+- v2's "no mode is treated as Medium" applies only to the advisory geometry (`difficulty_mutation.caps_for`, which used to
+  default to Hard). Authoring still refuses a missing mode.
+- Every `tools/*.py` edit changes `stage_gate`'s `__gate_policy__` (sha256 of all tools) and stales every pasted gate
+  certificate in a task in flight. Batch tool edits, commit them together, and tell any concurrent session to re-paste.
+
+Before the next design (sections 35–38):
+
+27. Run `tools/hardness_v2_check.py --design` at S5b and again on the SQL; disposition every SAME_PLACE, DONE_CHECK and
+    UNRESOLVED. No correction in the superseded record's container, an anchor's container or the delegating record's.
+28. Name at least two of the nine v2 traps as separate cross-source decisions, each flipping a weight-5 row; prefer a done
+    source with a missing piece in another service (A24) and a correction somewhere else.
+29. Never count volume, bulk writes or clean arithmetic as difficulty; a trap must survive an agent that reads everything.
+30. Hash the SQL body the portal grades (from the first section comment, trailing blank lines stripped) before comparing
+    with a portal report.
+31. Batch every `tools/*.py` change into one commit and announce the gate-policy change to any concurrent session.
+
