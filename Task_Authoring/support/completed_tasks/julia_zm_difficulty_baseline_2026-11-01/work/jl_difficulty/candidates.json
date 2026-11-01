@@ -1,0 +1,1996 @@
+[
+ {
+  "id": "ZOM-23",
+  "state": "Done",
+  "created": "2025-04-21T04:51:38Z",
+  "completed": "2025-05-16T19:58:38Z",
+  "canceled": null,
+  "updated": "2025-05-16T19:58:38Z",
+  "assignee": "Robert",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "(ZM) Game Design"
+  ],
+  "title": "Reduce difficulty for first 50 levels",
+  "desc": "",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-24",
+  "state": "Done",
+  "created": "2025-04-21T04:53:10Z",
+  "completed": "2025-06-23T17:46:27Z",
+  "canceled": null,
+  "updated": "2025-06-23T17:46:27Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Easy Fix - Just do it!",
+   "Backend Engineering",
+   "Improvement"
+  ],
+  "title": "CPS/DPS Usability Improvement",
+  "desc": "The current stat box blocks the view of the game.\n\nThe \"current\" (real time) stats should show the last completed level stats, and not reset to 0.\n\nTimer used in any CPM calculation is inflated.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-25",
+  "state": "Done",
+  "created": "2025-04-21T04:54:19Z",
+  "completed": "2025-05-30T22:07:04Z",
+  "canceled": null,
+  "updated": "2025-05-30T22:07:04Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Engineering",
+   "Bug"
+  ],
+  "title": "Force top spawn does not work",
+  "desc": "Assuming force bottom also have similar issues",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-30",
+  "state": "Done",
+  "created": "2025-04-21T05:34:29Z",
+  "completed": "2025-05-16T19:59:07Z",
+  "canceled": null,
+  "updated": "2025-05-16T19:59:08Z",
+  "assignee": "leonard.hayes",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement",
+   "Analytics"
+  ],
+  "title": "Need to track average blunder (overfilling match platform) per level + Other QoL analytics feature",
+  "desc": "This is so we know whether we adjust difficulty by reducing monsters or simplifying items to prevent unforced errors.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-42",
+  "state": "Done",
+  "created": "2025-04-21T16:28:42Z",
+  "completed": "2025-05-30T22:06:46Z",
+  "canceled": null,
+  "updated": "2025-05-31T02:54:30Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Level Editor",
+   "Backend Engineering"
+  ],
+  "title": "Dynamic Difficulty",
+  "desc": "# **Part 1:**\n\nAllow level editor to create tiered version of each level. Tier 0 is default. Then we have -2, -1, 0, +1, +2 tiers. (Or more if designer creates it, but each level should have a minimum of these 5 tiers, rest are optional)\n\nWhat's identical across tiers, this is to ensure code consistency across all tiers and keeping code simplified.\n\n* List of items in the level. (For lower level tiers we can set qty to 0 to effectively not have any)\n* List of monsters in the level (For lower level tiers we can set qty to 0 to effectively not have any)\n\nWhat's not identical in the tiers:\n\n* Quantity of the items\n* Quantity of the monsters\n* Pre-warm period\n\nPlayers starts at default tier 0, but gets assigned after the first 6-7 levels based on CPM, to be defined later, and gets moved up and down based on certain winning/losing conditions.\n\nDemotion Rules based on win streak:\n\n1. Use CPM data to place player in a starting tier. (1st 10 level avg CPM > 90 (top 20%) moves to tier 1, rest stays in tier 0)\n2. Lose 4 in a row, you're demoted.\n\nPromotion Rules based on win record of last 10 attempts:\n\n1. Tier -2 is an exception. You promote instantly after 1 win if you're in tier -2.\n2. Starting at tier -1, we evaluate UP TO THE MOST RECENT 10 attempts of the player\n3. We promote if if win rate is 80% or higher. This means we constantly look at the last 10 games played, if at any time win rate is 80%+, we promote. This also means it is possible to be promoted by simply winning 8 games in a row, without playing the full 10 games. We call this \"early exit\" because you're mathematically guaranteed to win 80%.\n\nDemotion Rules based on win record of last 10 attempts:\n\n1. Similar to promotion rules, we demote someone when their win rate for up to the last 10 games is 50% or lower.\n2. Early exits is also possible. Meaning that if you manage to avoid the 4 losing streak demotion, you can still get demoted by doing LLLWLL or LWLWLLL or LLWLLL, these are some cases where you didn't play the full 10 games, but is mathematically guaranteed to finish at 50% or lower win rate.\n\nPlease note that every time a promotion/demotion happens, the record is reset and we start at 0 games played.\n\nThis also means that with a win rate of 60 or 70%, the player does not get promoted or demoted.\n\nA losing streak of 4 games in a row can still trigger at any time, regardless of whatever record. But a demotion from this will still reset the game record for the win rate evaluation.\n\n# **Part 2: Future expansion**\n\nIf a player manages to reach the highest tier difficulty consistently, we will implement an auto tier+ system. What this is will simply be swapping monsters in the level. Meaning we will first create a dictionary table of how we want to swap monsters. This is a sample of a table:\n\nMonster in Max Tier Difficulty Track | Monsters to replace with\n\nPunk A | Punk B\n\nPunk B | Punk C\n\nPunk C | Punk D\n\nPunk D | Brute A\n\nBoss 1 | Boss 3\n\nBoss 2 | Boss 4\n\nBoss 10 | Boss 10\n\nIf the player is winning consistently at a threshold we set, then we run this process *once* when the level starts, replacing all monsters with an upgraded one. If the player continues to excel, then we can run this process *twice* as the level starts. So if this conversion was ran twice, Punk A would first -> Punk B, and that same Punk B -> Punk C, upgraded twice.\n\nThe other way to think about this is that we can essentially have monster \"rank\" for minions and for bosses. And if player manages to approach tier+ 1 then we simply take all the existing monsters and replace them with the \"next rank\" monster. And we do the same for boss. So let's say we have weakest to strongest minion ranks:\nPunk A -> Punk B -> Punk C -> Punk D -> Brute A -> Karen A -> Brute B -> Karen B -> Brute C\n\nThen Tier+1 would move everything up *one* grade. If the player does well, then everything moves up *two grades*. We can continue this for many many tier+ X. In this above sample, a Tier+9 would indicate any regular Punk A in the level, will be replaced by Brute C.\n\nThis will prevent us from overloading each level with too many designer made difficulty tiers and monster tracks. This will also prevent us from overcrowding the level with simply too many monsters.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-45",
+  "state": "Done",
+  "created": "2025-04-21T17:20:21Z",
+  "completed": "2025-06-23T17:46:10Z",
+  "canceled": null,
+  "updated": "2025-06-23T17:46:10Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Backend Engineering"
+  ],
+  "title": "Expose the ability to mark level difficulty in editor also level object in Unity",
+  "desc": "Need to be able to label levels normal/hard/very hard/super hard/ultra hard",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-49",
+  "state": "Done",
+  "created": "2025-04-21T19:14:53Z",
+  "completed": "2025-05-28T23:41:55Z",
+  "canceled": null,
+  "updated": "2025-05-28T23:41:55Z",
+  "assignee": "oliver.brooks",
+  "creator": "leonard.hayes",
+  "parent": null,
+  "labels": [],
+  "title": "Add Blunder Count by Level to Analytics",
+  "desc": "**Description:**\nWe forgot to capture a key gameplay metric in our analytics: the number of **blunders** per level\u2014specifically, how often players **fill up their match platform and lose** due to unforced errors, not monster attacks.\n\nThis will help us better understand the true cause of level failures. Some losses currently attributed to monster damage may actually be due to player mistakes.\n\n**Why it matters:**\n\n* Allows us to distinguish between unforced errors and system-driven defeats\n* Helps with level balancing and difficulty tuning\n* Improves accuracy of failure reason attribution\n\n**Action Items:**\n\n* Track and log **blunder count** per player per level\n* Include it in the existing analytics pipeline\n* Add this metric to relevant dashboards (e.g., Level Performance or Failure Breakdown)",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-50",
+  "state": "Done",
+  "created": "2025-04-21T21:54:01Z",
+  "completed": "2025-06-13T01:18:39Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:18:39Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": "ZOM-30",
+  "labels": [
+   "Backend Engineering"
+  ],
+  "title": "Track player skill tier in the left_level event",
+  "desc": "We need this to keep track of player's up and down adjustment in tier buckets. Also clicks per minute",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-51",
+  "state": "Done",
+  "created": "2025-04-21T21:57:11Z",
+  "completed": "2025-04-30T09:23:16Z",
+  "canceled": null,
+  "updated": "2025-04-30T09:23:16Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Easy Fix - Just do it!",
+   "Engineering"
+  ],
+  "title": "Please bring back the bottom menu bar on home screen with the locked icons",
+  "desc": "It's too empty right now and players have actually complained that there is \"nothing\" coming up.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-52",
+  "state": "Done",
+  "created": "2025-04-21T23:49:12Z",
+  "completed": "2025-05-23T11:50:32Z",
+  "canceled": null,
+  "updated": "2025-05-23T11:50:32Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Engineering",
+   "Bug"
+  ],
+  "title": "Sometimes the boss fast forward mechanism will spawn 2x boss.",
+  "desc": "They will be stacked perfectly on top of each other overlay.\n\nThis makes some level hard and unbeatable on accident.\n\nI think this happens when a boss is about to spawn (Like within 1-2 seconds) and the only on screen boss is also killed which triggers fast forward boss spawn. There is a small window which both natural and fast forward spawn can happen.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-69",
+  "state": "Backlog",
+  "created": "2025-04-23T23:07:33Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-04-24T00:27:02Z",
+  "assignee": null,
+  "creator": "douglas",
+  "parent": null,
+  "labels": [
+   "server-api"
+  ],
+  "title": "Bot system",
+  "desc": "",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-91",
+  "state": "Done",
+  "created": "2025-04-29T16:14:49Z",
+  "completed": "2025-06-13T01:17:33Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:17:33Z",
+  "assignee": "Robert",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "(ZM) Game Design"
+  ],
+  "title": "Categories/Sets/Collections of items taxonomy work",
+  "desc": "Update it in Google sheet [[URL_52440])\n\nAlso sets and collections.\n\nCategories as of 4/29/2025\n\n 1. Baked Goods\n 2. Bathroom\n 3. Bedroom\n 4. Beverages\n 5. Breakfast\n 6. Dining Room\n 7. Fast Food\n 8. Fresh Produce\n 9. Garden\n10. Kitchen\n11. Living Room\n12. Music Instruments\n13. Personal Care\n14. Personal Electronics\n15. Sports\n16. Survival\n17. Sweets\n18. Tools\n19. Toys\n20. Travel",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-108",
+  "state": "Done",
+  "created": "2025-05-01T03:29:44Z",
+  "completed": "2025-05-01T11:10:31Z",
+  "canceled": null,
+  "updated": "2025-05-01T11:10:31Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Submission Blocker",
+   "Bug"
+  ],
+  "title": "Fix Boss Buster items not bypassing minions issue",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0120] Boss Buster items not working. Does not bypass minions. Can't set negative value on items in level editor?",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-131",
+  "state": "Done",
+  "created": "2025-05-16T03:11:46Z",
+  "completed": "2025-06-13T01:19:19Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:19:19Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Upgrade level editor to nest the color variants in parent item",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake So we have massive color variants for a lot of the items, what do you think is a good way to upgrade the level editor to \"collapse\" these variants into some sort of hierarchy?",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-131__848e3b39-f57b-46.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-161",
+  "state": "Done",
+  "created": "2025-05-22T16:49:45Z",
+  "completed": "2025-05-22T17:53:42Z",
+  "canceled": null,
+  "updated": "2025-05-22T17:53:42Z",
+  "assignee": "oliver.brooks",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Analytics"
+  ],
+  "title": "Add difficulty tier assignment for left level event",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0022] Implement an extra definition/event in left level event that shows the difficulty player was assigned to for that level",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-162",
+  "state": "Done",
+  "created": "2025-05-26T23:28:30Z",
+  "completed": "2025-05-30T22:06:40Z",
+  "canceled": null,
+  "updated": "2025-05-30T22:06:40Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Dynamic difficulty tracks are linked across tiers in level editor",
+  "desc": "Update:\n\nIt seems like reloading the design level scene and  thus reloading the level and untether the tracks from each tier, but this reloading process doesn't seem feasible or scalable.\n\nThe play button still only plays default tier 0 difficulty however.\n\n> \n>\n> @Blake there is a bug or unintended feature with the dynamic difficulty in the level editor.\n>\n> * You start with just default tier 0. When you create hard or easy tiers such as +1 or -1, all the monster tracks and item tracks are cloned.\n> * If you change any of these monster track in, doesn't matter which difficulty tier you're editing, it CHANGES ALL.\n> * This is the same for item tracks.\n> * For me this is less of an issue if I am making a harder track today, because then I would just add additional monster tracks with the same timestamps but just create separate quantity. So for example I have tier 0, spawn 5 punks at 30 seconds, for the difficulty, I would just add another track that says spawn 3 punks at 30 seconds, so for a total of 8 punks at 30th second when combining both tracks.\n> * This becomes a huge problem when I want to create an easier tier. Because the inherited monster tracks really needs to be dialed down, so the 5 punks at 30th second? It needs to be dialed down to 3 punks only. But I can't do that because changing it to 3 on the easier tier, will change that same track for tier 0 and 1 and all other tiers. But I can't delete this track and just create a new track with 3 punks only, because this deletes that track for all other tiers...\n> * I think the solution is to make sure one you create new easy or harder tiers, the inherited tracks are not tethered to one another, I'm guessing this is a bug because in the level objects...",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-163",
+  "state": "Done",
+  "created": "2025-05-26T23:32:03Z",
+  "completed": "2025-06-13T01:17:28Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:17:28Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Play button in level editor not loading difficulty tiers",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> Play button in level editor also doesn't load any difficulty tier currently other than default 0.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-173",
+  "state": "Done",
+  "created": "2025-05-29T04:42:47Z",
+  "completed": "2025-07-08T23:03:56Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:03:56Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": "ZOM-292",
+  "labels": [
+   "Level Editor",
+   "Bug"
+  ],
+  "title": "Item Set Count in editor not updating with difficulty tier changes",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake Set Count in editor does not update when you flip between the difficulty tiers.\n\n![image.png]([URL_52547])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-173__ab5f051f-c888-48.png"
+  ],
+  "prs": [
+   "match3d#243(M2025-06-25)"
+  ]
+ },
+ {
+  "id": "ZOM-174",
+  "state": "Done",
+  "created": "2025-05-29T11:03:37Z",
+  "completed": "2025-06-13T01:19:40Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:19:40Z",
+  "assignee": "claire.morgan",
+  "creator": "claire.morgan",
+  "parent": "ZOM-97",
+  "labels": [],
+  "title": "1. Wine Bottle",
+  "desc": "",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-190",
+  "state": "Done",
+  "created": "2025-05-29T16:44:39Z",
+  "completed": "2025-07-08T23:04:08Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:04:08Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Better level stats after completion of a level",
+  "desc": "After I test a level, would love to see the CPM/DPS various metric for the last level played.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-197",
+  "state": "Canceled",
+  "created": "2025-05-30T22:08:41Z",
+  "completed": null,
+  "canceled": "2025-06-23T17:26:25Z",
+  "updated": "2025-06-23T17:26:25Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": "ZOM-24",
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Show these stats somewhere for each level play somewhere on the screen.",
+  "desc": "I could use a toggle that turns on and off some display that shows these stats on screen. And everything is shown at end of each level independently so I can validate the level's difficulty.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-199",
+  "state": "Done",
+  "created": "2025-06-01T07:38:56Z",
+  "completed": "2025-06-23T17:34:44Z",
+  "canceled": null,
+  "updated": "2025-06-23T17:34:44Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Feature"
+  ],
+  "title": "Conduct difficulty tier assignment based on first 10 level avg CPM for players",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake We use the avg CPM of the first 10 level for each player to assign their first ever difficulty tier track. If first 10 level CPM >= 90, then tier 1, otherwise everyone else stays at default tier 0. This will put approximately top \\~20% players into tier. Please provide ways to debug all of this.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-200",
+  "state": "Done",
+  "created": "2025-06-01T07:40:58Z",
+  "completed": "2025-06-13T01:17:38Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:17:38Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Need debug menu for dynamic difficulty to add the metric of last 10 level average CPM. Th...",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake Need debug menu for dynamic difficulty to add the metric of last 10 level average CPM. This should help us debug the first tier assignment.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-201",
+  "state": "Done",
+  "created": "2025-06-01T07:43:04Z",
+  "completed": "2025-07-08T23:04:11Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:04:11Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Dynamic difficulty stat window not functioning. Also turn it into an overlay in editor while not obstructing game board.",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> Also in my editor the dynamic difficulty stat window should just be an overlay, and right now it doesn't seem to function?",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-202",
+  "state": "In Progress",
+  "created": "2025-06-01T08:09:00Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-06-29T00:12:29Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": "ZOM-292",
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Minimize or migrate selection panel for easier difficulty tab comparison",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake Would be awesome if the monster and item selection panel here can either be minimized, or maybe migrate to display 2. Goal is to make flipping back and forth between difficulty tabs easy to compare. QOL improvement",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-202__09aa2a13-ccdc-4a.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-203",
+  "state": "Duplicate",
+  "created": "2025-06-02T16:25:17Z",
+  "completed": null,
+  "canceled": "2025-06-23T17:27:40Z",
+  "updated": "2025-06-23T17:27:40Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "The number of item sets in the level editor UI does not update when you switch between difficulty tabs",
+  "desc": "",
+  "links": [],
+  "relations": [
+   {
+    "target": "ZOM-173",
+    "type": "duplicates"
+   }
+  ],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-209",
+  "state": "Done",
+  "created": "2025-06-03T08:48:36Z",
+  "completed": "2025-06-23T17:34:38Z",
+  "canceled": null,
+  "updated": "2025-06-23T17:34:38Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Algo level generation (post level 100+) to exclude test monsters and items via separate list or flagging on existing items/monster objects",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake The algo level generation (post level 100+) needs to either pull from a separate list of monsters available AND object item list that doesn't include debugging and test monsters and items. That or we allow  a label property on scriptable objects enabling them to be part of the random algo level pool. (I prefer this method) @[PERSON_NAME_0120]",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-214",
+  "state": "Done",
+  "created": "2025-06-05T06:25:54Z",
+  "completed": "2025-06-13T01:17:18Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:17:18Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Fix gameloader adjustments for equipped cards quantity spawned",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0120] the gameloader adjustments for sets to spawn for equipped cards doesn't seem to work for level editor scene. No matter what I set, it spawns 4 sets of anything I equip.\n\n![image.png]([URL_52561])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-214__66fd1385-3beb-44.png",
+   "image:ZOM-214__ceb48f0e-187f-41.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-225",
+  "state": "Done",
+  "created": "2025-06-05T23:55:51Z",
+  "completed": "2025-06-13T01:18:10Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:18:10Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "leonard.hayes",
+  "parent": null,
+  "labels": [],
+  "title": "Implement Pop-Up Offer Progression Logic",
+  "desc": "**Description:**\nWe are introducing a tiered **pop-up offer system** in **Zombie Match**, consisting of three sequential packs:\n\n1. **Day Zero Pack ($2.99)**\n2. **Provisions Pack ($4.99)**\n3. **Strategist's Pack ($9.99)**\n\nThese packs follow a progression logic and share the same pop-up UI behavior as implemented in **Domino Delights**.\n\n---\n\n### **Offer Flow Logic:**\n\n* **Day Zero Pack**\n  * **Trigger:** After player completes **Level 25**\n  * **Availability:** Live for **3 days**\n  * **One-time offer**\n  * **Must be purchased to unlock the next offer**\n* **Provisions Pack**\n  * **Trigger:** Shown only **after Day Zero Pack is purchased**\n  * **Availability:** Live for **4 days**\n  * **One-time offer**\n  * **Must be purchased to unlock the next offer**\n* **Strategist\u2019s Pack**\n  * **Trigger:** Shown only **after Provisions Pack is purchased**\n  * **Availability:** Live for **5 days**\n  * **One-time offer**\n\n---\n\n### **Shared Offer Behavior:**\n\n* Only **one offer is active at a time** per user.\n* All offers appear under the **same HUD icon (top-right corner)**.\n* Pop-up animation, tracking, and timer logic should reuse the **existing functionality from Domino Delights.**\n\n---\n\n**Notes:**\n\n* Offers must expire cleanly if the user does not purchase within the time limit.\n* If the user does not buy the Day Zero Pack, the other two offers will never appear.\n* Ensure purchase status is persistently stored and respected across sessions.\n\nThis system allows us to gradually upsell players with increasing value while keeping the interface clean and non-intrusive.",
+  "links": [],
+  "relations": [
+   {
+    "target": "ZOM-222",
+    "type": "relates"
+   }
+  ],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-231",
+  "state": "Done",
+  "created": "2025-06-06T01:37:03Z",
+  "completed": "2025-06-13T01:17:59Z",
+  "canceled": null,
+  "updated": "2025-06-13T01:17:59Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Show green upgrade arrow only if both criteria are met",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0120] The green upgrade arrow should only appear if both criteria are met, meaning gold cost + card quantity required.",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-231__268cbc90-27bf-46.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-246",
+  "state": "Done",
+  "created": "2025-06-11T17:31:46Z",
+  "completed": "2025-06-16T22:16:30Z",
+  "canceled": null,
+  "updated": "2025-06-16T22:16:31Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Implement an \"attack power\" line item in the card profile section so players know how powerful a ...",
+  "desc": "![image.png]([URL_52584])\n\n![image.png]([URL_52583])\n\nFormula for this calculation:\n\nPsuedo formula:\n\n\\[ (Effective damage with critical) + (Effective damage with critical \\* Damage over time bonuses) \\] \\* (Splash damage bonus estimate) \\* (ricochet effect number of target hits) \\* (projectile count)\n\nActual formula\n\n\\[ (base damage + base damage \\* critical chance % \\* critical bonus %) + ((base damage + base damage \\* critical chance % \\* critical bonus %) \\* (% poison damage + % burn damage + % shock damage) \\] \\* (1 + Item splash radius / 10) \\* (( 1 - ricochet %^ max # of TOTAL targets) / ( 1 - ricochet %)) \\* (projectile count)\n\n@[PERSON_NAME_0054] said:\n\n> Implement an \"attack power\" line item in the card profile section so players know how powerful a card is and what an upgrade entails.",
+  "links": [],
+  "relations": [
+   {
+    "target": "ZOM-263",
+    "type": "relates"
+   }
+  ],
+  "att": [
+   "image:ZOM-246__61b95750-2db7-40.png",
+   "image:ZOM-246__75926624-26b9-48.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-250",
+  "state": "Done",
+  "created": "2025-06-12T03:44:54Z",
+  "completed": "2025-06-23T17:45:47Z",
+  "canceled": null,
+  "updated": "2025-06-23T17:45:47Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Create faux level timer and add attack power stats in level editor",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake Please create a \"faux level timer\" stat in the level editor for each level. The information we have is the monster spawn schedule, the damage they deal, the attack speed they have, and the walk speed it takes for them to get into your face plus the pre-warm period. We can simulate each level at 100x speed and see what's the minimum amount of time it will take to kill a player when the monsters are 100% uncontested. I assume we can manually trigger this simulation, or make it run through the entire list of levels to \"update all\"\n>\n> Second task, in the level editor stats panel for the level, let's add 2 more stats. First one is \"Total Attack Power\", second one is \"Avg Attack Power\" (This is per set of items) The attack power is calculated using this formula in a ticket for [PERSON_NAME_0120] [HERE](https://linear.app/harmonygames-games/issue/ZOM-246/implement-an-attack-power-line-item-in-the-card-profile-section-so). I have not thought about how we can change the calculation based on item levels, so if you have some thoughts around that, feel free to just engineer it in, otherwise we can just work off level 0 item stats for the power calculation.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-251",
+  "state": "Done",
+  "created": "2025-06-12T04:53:12Z",
+  "completed": "2025-06-16T16:03:31Z",
+  "canceled": null,
+  "updated": "2025-06-16T16:03:31Z",
+  "assignee": "oliver.brooks",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Investigate winrate calculation issue in data collection. Left Level might be double firing.",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake @Leonard Did we figure out why the winrate is constantly halved in the calculation? Are we doing something wrong on the data collection side?",
+  "links": [],
+  "relations": [
+   {
+    "target": "ZOM-261",
+    "type": "relates"
+   }
+  ],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-254",
+  "state": "Done",
+  "created": "2025-06-12T21:59:58Z",
+  "completed": "2025-06-23T09:26:05Z",
+  "canceled": null,
+  "updated": "2025-06-23T09:26:06Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Blunder Mechanic 2.0 enrages zombies instead of HP penalty",
+  "desc": "Problem: Current blunder reduces 500 HP from player, this leads to players losing through blunder as opposed to zombies killing them.\n\nThere are 2 audio files and we can play a random one of the 2.\n\n\"ZombieEnrage\" and \"ZombieEnrage2\" they are both in the project\n\nSolution: Instead of HP penalty, we increase the toughness of ALL monsters on stage including to-be spawned zombies.\n\nTrigger Event - Players over fill the match bar, causing a blunder.\n\nResult - We increase these various stats of the monsters:\n\n* Monster walk speed, +25%\n* Monster damage, +25%\n* Monster Max HP, +25%\n  * If max monster HP is 100 \u2192 125\n  * If max monster HP is 100 but monster is hurt at 50 HP, new HP \u2192 75 because (50 + 25% x 100)\n\n***Please expose the settings for the increase for the designers to balance.***",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-256",
+  "state": "Done",
+  "created": "2025-06-13T00:36:42Z",
+  "completed": "2025-09-11T16:51:12Z",
+  "canceled": null,
+  "updated": "2025-09-11T16:51:12Z",
+  "assignee": "leonard.hayes",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Create Algo Levels 2.0",
+  "desc": "[PERSON_NAME_0054] said\n\n\"My suggestion is that we just take some level between level 30-100, and replace the item strategically matching color, item size and maybe even attack power similarity\"\n\n@[PERSON_NAME_0054] said:\n\n> @Leonard Algo Levels ticket",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-258",
+  "state": "Done",
+  "created": "2025-06-13T01:36:45Z",
+  "completed": "2025-06-23T17:45:32Z",
+  "canceled": null,
+  "updated": "2025-06-23T17:45:32Z",
+  "assignee": "marcus.bennett",
+  "creator": "Robert",
+  "parent": "ZOM-254",
+  "labels": [
+   "VFX"
+  ],
+  "title": "Icon for Enraged monster",
+  "desc": "We need a VFX icon to hover over monster head when they are \"enraged\" or \"berserk\". This happens when the player messes up and fill their match bar",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-262",
+  "state": "Done",
+  "created": "2025-06-13T17:14:02Z",
+  "completed": "2025-06-21T01:17:34Z",
+  "canceled": null,
+  "updated": "2025-06-21T01:17:34Z",
+  "assignee": "oliver.brooks",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Tutorial for Blunder Locked User",
+  "desc": "If the first blunder does enough damage to kill the player, the end screen will override the tutorial screen, putting player in a locked state for the level and they have to force quit the level. (not the app)\n\nNeed to create catch all scenario for all different modes of blunder (kill/non kill)\n\n![Screenshot_20250613_002525_Puzzles vs Zombies.jpg]([URL_52591])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-262__7ede7211-d5b6-4e.jpg"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-263",
+  "state": "Done",
+  "created": "2025-06-15T08:24:04Z",
+  "completed": "2025-06-16T22:16:32Z",
+  "canceled": null,
+  "updated": "2025-06-16T22:16:32Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Fix attack power calculation for ricochet effect",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0120] The attack power calculation is slightly off involving ricochet.\n> The formula that has an error is this part (( 1 - ricochet %^ MAX # of TOTAL targets)\n>\n> This includes the MAX # of total targets, including the 1st one. So in the effects data, you have to take the \"count\" value and add 1 first to get total max target.\n\n![image.png]([URL_52592])",
+  "links": [],
+  "relations": [
+   {
+    "target": "ZOM-246",
+    "type": "relates"
+   }
+  ],
+  "att": [
+   "image:ZOM-263__c1205c2e-3bfa-46.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-271",
+  "state": "Done",
+  "created": "2025-06-16T18:15:31Z",
+  "completed": "2025-06-21T01:17:45Z",
+  "canceled": null,
+  "updated": "2025-06-21T01:17:45Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug",
+   "Improvement"
+  ],
+  "title": "Comprehensive Item Stat Display Rules also ATK POWER BUG. Also Change Damage sort to ATK Power sort",
+  "desc": "Bug First:\n\nAt one star the attack power upgrade says 49 + 49\n\nBut if you switch to previewing 2 star, it says 73. The correct value here is 73, so I'm not sure how the atk power upgrade preview has +49.\n\nOnce this is fixed, let's change the Damage sorting to ATK Power sort.\n\nVideo to go with description of rules\n\n[[CREDIT_CARD_NUMBER_6256].7255041.mp4]([URL_52594])\n\nSome of these rules are already implemented.\n\nActivation chance should never be displayed for any properties except Critical Hit % and Bounce Chance %\n\nStat values with 0% or 0 should never be displayed, with ONE exception. If the item is eligible to be upgraded, then the text should show 0% + X%\n\nIn the video above, the toaster gains a stun effect at 2 stars. So when I'm eligible to upgrade here in this video, it should have the stun line item visible showing Stun 0 Sec -> 1 Sec\n\nThis is the same case for all other effects as well. If eligibility is met, then we show a stat line of 0 value and green text shows the upgraded value.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-274",
+  "state": "Done",
+  "created": "2025-06-18T05:11:17Z",
+  "completed": "2025-06-21T01:17:25Z",
+  "canceled": null,
+  "updated": "2025-06-21T01:17:25Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Monsters can only be enraged once bug",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> Bug, Monsters can only be enraged once",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-275",
+  "state": "Done",
+  "created": "2025-06-18T05:34:00Z",
+  "completed": "2025-06-19T02:12:29Z",
+  "canceled": null,
+  "updated": "2025-06-19T02:12:29Z",
+  "assignee": "oliver.brooks",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Update FTUE message to reflect Blunder mechanic 2.0 changes",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> Because of Blunder mechanic 2.0, we need to change our FTUE message. My current thinking is\n>\n> 1. we still highlight the platform objects (all 7)\n> 2. but we highlight something else in addition, ideally the first monster, but I'm not sure how to do that since it's not always going to be the same monster.\n> 3. If 2 is not do-able, then we should try to highlight the top portion (battlefield) in a meaningful way.\n> 4. The messaging should be \"Be Careful! Filling The Match Bar Will Anger The Zombies, Making Them Stronger and Faster!\"",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-276",
+  "state": "Duplicate",
+  "created": "2025-06-18T05:46:46Z",
+  "completed": null,
+  "canceled": "2025-06-23T17:27:18Z",
+  "updated": "2025-06-23T17:27:18Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Fix bug with incorrect 'set' number in difficulty tabs",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> It's the bug where the \"set\" number you see doesn't update when you flip back and forth between the difficulty tabs. So it's really divided by 36 here, not 27",
+  "links": [],
+  "relations": [
+   {
+    "target": "ZOM-173",
+    "type": "duplicates"
+   }
+  ],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-277",
+  "state": "Done",
+  "created": "2025-06-18T05:48:48Z",
+  "completed": "2025-06-20T23:38:43Z",
+  "canceled": null,
+  "updated": "2025-06-20T23:38:43Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Correct average attack power calculation for items in level",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> But btw, that avg calculation doesn't make sense, because you took the total attack power, which is calculated from unique objects (5 here), and divided by the number of set of items in the level, which is 36. The average power should really be 334 / 5 uniques here = 66.8 avg attack power for any item in this level",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-278",
+  "state": "Done",
+  "created": "2025-06-18T05:56:48Z",
+  "completed": "2025-06-21T01:17:16Z",
+  "canceled": null,
+  "updated": "2025-06-21T01:17:16Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Some levels like 35 and 37 not loading in level editor",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake Some levels don't load in level editor, for example Level 35 and 37",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-280",
+  "state": "Canceled",
+  "created": "2025-06-18T21:52:51Z",
+  "completed": null,
+  "canceled": "2025-06-20T23:38:27Z",
+  "updated": "2025-06-20T23:38:27Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Fix monster enraged HP issue causing incorrect death status in game",
+  "desc": "The fix is likely to just not increase HP on monsters when they are enraged. Only speed and damage dealt.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-282",
+  "state": "Done",
+  "created": "2025-06-19T05:23:06Z",
+  "completed": "2025-06-21T01:17:19Z",
+  "canceled": null,
+  "updated": "2025-06-21T01:17:19Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug",
+   "Improvement"
+  ],
+  "title": "Optimize enrage mechanic for speed and attack damage only",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> Need to optimize enrage mechanic so it only increases speed and monster attack damage but NOT HP. We can start at +50% to both.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-286",
+  "state": "Canceled",
+  "created": "2025-06-19T05:37:40Z",
+  "completed": null,
+  "canceled": "2025-06-23T17:51:51Z",
+  "updated": "2025-06-23T17:51:51Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Allow size enforcement override for dynamic item insertion",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> Dynamic Insertion should have certain items ignore size enforcement. So a small item can replace a large item and vice versa. This is limited to rare, epic and legendary items AND the replacement needs to have greater attack power than the target.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-288",
+  "state": "Done",
+  "created": "2025-06-19T05:43:49Z",
+  "completed": "2025-07-08T23:03:37Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:03:37Z",
+  "assignee": "Robert",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Declutter levels and balance around enrage, player skills, and equipped items.",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> [PERSON_NAME_0054] needs to declutter some levels.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-292",
+  "state": "Todo",
+  "created": "2025-06-23T17:30:41Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-07-04T03:07:47Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Level Editor",
+   "Improvement",
+   "30 June"
+  ],
+  "title": "Level Editor Improvements 2.0",
+  "desc": "![image.png]([URL_52610])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-292__06662280-a51b-41.png"
+  ],
+  "prs": [
+   "match3d#267(M2025-07-04)"
+  ]
+ },
+ {
+  "id": "ZOM-293",
+  "state": "Todo",
+  "created": "2025-06-23T18:19:40Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-06-24T16:20:53Z",
+  "assignee": "Robert",
+  "creator": "vincent.parker",
+  "parent": "ZOM-201",
+  "labels": [
+   "30 June"
+  ],
+  "title": "Dynamic Difficulty Tiering Down Issue",
+  "desc": "Dynamic Difficulty Tiering",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-294",
+  "state": "Done",
+  "created": "2025-06-23T19:43:01Z",
+  "completed": "2025-07-04T16:41:02Z",
+  "canceled": null,
+  "updated": "2025-07-04T16:41:02Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug",
+   "30 June"
+  ],
+  "title": "Gameplay Related Bug Fixes",
+  "desc": "The bugs we\u2019ve been putting off is starting to catch up to us now that we have 50 levels of solid play.\n\nGameplay issues:\n\n* Level ends prematurely where as a boss spawns right as the win screen appears.\n* Sometimes a boss would double spawn, throwing off level balance.\n* Hard to reproduce, but sometimes a level will start and immediately end with zero monsters spawned (victory), and zero items spawned. This seems to happen depending on how the LAST level ended. This happens in editor and also live build.\n* DoT effects applied incorrectly, burn for example deals 1st tick damage on contact unlike poison where the first tick damage happens at 1st second *after* impact. Shock is unknown how it\u2019s dealing damage.\n* The damage numbers are off sometimes, it\u2019s almost taking an aggregate amount from various sources but applying it as a single number during kill cam.\n* Enrage doesn\u2019t apply to newly spawned monsters, unless enrage happens after the monster has spawned. (Behavior should be pre-enraged)\n* Refill health and push monster back should reset ALL enrage status. Right now monsters do not get buffed, however a single enrage will buff them to the previous enraged level, whatever that might be.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-295",
+  "state": "Done",
+  "created": "2025-06-23T19:45:43Z",
+  "completed": "2025-07-04T16:40:40Z",
+  "canceled": null,
+  "updated": "2025-07-04T16:40:40Z",
+  "assignee": "owen.baker",
+  "creator": "Robert",
+  "parent": "ZOM-294",
+  "labels": [
+   "Bug",
+   "30 June"
+  ],
+  "title": "Refill health and push monster back should reset ALL enrage status.",
+  "desc": "* Refill health and push monster back should reset ALL enrage status. Right now monsters do not get buffed, however a single enrage will buff them to the previous enraged level, whatever that might be.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": [
+   "match3d#271(M2025-07-04)"
+  ]
+ },
+ {
+  "id": "ZOM-303",
+  "state": "Done",
+  "created": "2025-06-23T23:00:16Z",
+  "completed": "2025-07-08T23:03:51Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:03:51Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug",
+   "30 June"
+  ],
+  "title": "Dynamic Difficult Design Oversight Fix",
+  "desc": "Currently, the players advances a tier whenever they win 8 out of last 10 games.\n\nThis means by level 40, a player can easily be labeled as tier 4, which is often the case given how easy our game is early on.\n\nHowever many of our levels only have 2 tiers of difficult, 0 and 1. And the idea is that if a player loses 4 in a row, they get demoted a player tier. So 4 -> 3 -> 2 and -> 1. However this creates a problem.\n\nA player is difficulty tier 4, plays a difficulty tier 1 level, gets stuck, loses 4 in a row, they are demoted to tier 3. They still load difficulty tier 1 level, and continues to lose. A player would need to lose 12 times for them to actually get to difficulty tier 0 for that level. This defeats the whole purpose of downgrading them. Losing 12 in a row will cause a user to churn.\n\nSolution: when a player is demoted, we also need to demote the level difficulty for the level they are currently on.\n\nSo if a player is demoted from tier 4 -> 3, and they were playing tier 1 difficulty and failed, that level will load the tier 0 version.\n\nThe following level, it will just go back to normal, meaning if a tier 3 level is available, that's the level that will load for the player. Otherwise we load the tier difficulty closes to the player's current tier.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": [
+   "match3d#244(M2025-06-25)"
+  ]
+ },
+ {
+  "id": "ZOM-306",
+  "state": "Done",
+  "created": "2025-06-25T07:03:57Z",
+  "completed": "2025-07-08T23:03:35Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:03:35Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "'@Blake Level editor is being weird again, look at this video, it keeps reverting my yellow haird...",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake Level editor is being weird again, look at this video, it keeps reverting my yellow hairdryer quantity to 2 for some reasn",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-309",
+  "state": "Canceled",
+  "created": "2025-06-26T17:30:03Z",
+  "completed": null,
+  "canceled": "2025-07-03T16:06:00Z",
+  "updated": "2025-07-03T16:06:00Z",
+  "assignee": "arthur.blake",
+  "creator": "arthur.blake",
+  "parent": "ZOM-292",
+  "labels": [],
+  "title": "Multi Edit",
+  "desc": "Badass feature would be to allow ctrl click multiple difficulty tier tabs. When this is done, all the edits are applied to all checked tier tabs. So adding items or monsters would make changes to all",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-312",
+  "state": "Done",
+  "created": "2025-06-26T17:30:30Z",
+  "completed": "2025-07-08T23:03:46Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:03:46Z",
+  "assignee": "arthur.blake",
+  "creator": "arthur.blake",
+  "parent": "ZOM-292",
+  "labels": [],
+  "title": "Delete Difficulty Tier and Reassign",
+  "desc": "Need a function to delete difficulty tiers or reassign them to a specific tier (-1, 0, 1, etc.)",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": [
+   "match3d#265(M2025-07-03)"
+  ]
+ },
+ {
+  "id": "ZOM-313",
+  "state": "Done",
+  "created": "2025-06-26T17:30:45Z",
+  "completed": "2025-07-08T23:03:44Z",
+  "canceled": null,
+  "updated": "2025-07-08T23:03:44Z",
+  "assignee": "arthur.blake",
+  "creator": "arthur.blake",
+  "parent": "ZOM-292",
+  "labels": [],
+  "title": "Copy Monster Track Functionality",
+  "desc": "Need a function that can copy a monster track settings from one difficulty tier to another. Need that same function for items as well. Currently this is done via manually deleting the added tier difficulty element in the scriptable object and re-adding the tier to \u201cclone\u201d",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-315",
+  "state": "Done",
+  "created": "2025-06-26T22:36:29Z",
+  "completed": "2025-07-02T11:16:32Z",
+  "canceled": null,
+  "updated": "2025-07-02T11:16:32Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Use base damage of item if total attack power excludes items without cardData",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake I'm assuming the total attack power doesn't include items without cardData?\n\n![image.png]([URL_52618])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-315__11c02076-a1e7-49.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-324",
+  "state": "Done",
+  "created": "2025-06-30T10:45:30Z",
+  "completed": "2025-07-07T11:11:14Z",
+  "canceled": null,
+  "updated": "2025-07-07T11:11:14Z",
+  "assignee": "owen.baker",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Coin amount is not updated on home screen and core game.",
+  "desc": "* When the rewards are granted or coins are spent in the home screen, changes on coin balance is not updated. \n  * It requires scene change or clicking on the shop button to refresh the UI.\n\n[VID_[CREDIT_CARD_NUMBER_6272].mp4]([URL_52632])\n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6271]_1.MP4]([URL_52631])\n\n[Record_[CREDIT_CARD_NUMBER_6270].mp4]([URL_52630])\n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6269]_1.MP4]([URL_52629])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": [
+   "match3d#278(M2025-07-04)"
+  ]
+ },
+ {
+  "id": "ZOM-325",
+  "state": "Done",
+  "created": "2025-06-30T21:28:47Z",
+  "completed": "2025-07-03T09:27:39Z",
+  "canceled": null,
+  "updated": "2025-07-03T09:27:39Z",
+  "assignee": "claire.morgan",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Paint target circles on top and bottom of trampoline",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0040] Trampoline needs to have the target circles painted on top and bottom of the trampoline, otherwise it looks like a table and hard to spot in the item pile",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-325__8bdfd09d-ac4b-4d.png",
+   "image:ZOM-325__c16473e4-70d5-4b.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-330",
+  "state": "Done",
+  "created": "2025-07-03T09:30:07Z",
+  "completed": "2025-07-17T14:18:29Z",
+  "canceled": null,
+  "updated": "2025-07-17T14:18:29Z",
+  "assignee": "claire.morgan",
+  "creator": "claire.morgan",
+  "parent": "ZOM-97",
+  "labels": [],
+  "title": "Slippers",
+  "desc": "Some threads on bottom",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-345",
+  "state": "Done",
+  "created": "2025-07-03T18:11:12Z",
+  "completed": "2025-07-11T15:14:48Z",
+  "canceled": null,
+  "updated": "2025-07-11T15:14:48Z",
+  "assignee": "arthur.blake",
+  "creator": "leonard.hayes",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Implement Haptics",
+  "desc": "Haptics are here: [[URL_52639])\n\nWe also need to make sure Haptics can be toggled on/off from settings menu. We already have the icons in the settings.\n\n**ITERATION 2 (based on AND 1117 and IOS 937 feedback)**\n\n1- Change `Click Play Button on Prelevel Dialogue` to Presets-medium on both IOS and AND\n\n2- Add `When Zombie pieces fall into the trash` can to IOS - it doesn't exist right now\n\n3- Add `Upgrade Items` to presets-success\n\n4- Change `At level completed screen, when stars shows up` on Android from presets-success to presets-medium\n\n6- Add `Enrage` Haptic Clips - Laser to both platforms\n\n7- Add `Open Card Pack` Wobble to both platforms\n\n8- Add `Trampoline matched in level` Presets - medium to both platforms\n\n9- Add `Glue matched in level` Presets - medium to both platforms\n\n10- Add `When Card Pack has Epic/Legendary play haptic when during the card pack open animation` Presets - success to both platforms\n\n11- Add `Match any item`- Presets - light to both platforms\n\nbonus bug - turn off air strike haptic if there is no air strike, it currently plays no matter what",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": [
+   "match3d#289(M2025-07-10)"
+  ]
+ },
+ {
+  "id": "ZOM-350",
+  "state": "Done",
+  "created": "2025-07-06T21:22:03Z",
+  "completed": "2025-07-08T15:41:48Z",
+  "canceled": null,
+  "updated": "2025-07-08T15:41:48Z",
+  "assignee": "martin.walsh",
+  "creator": "brian.foster",
+  "parent": null,
+  "labels": [],
+  "title": "Teams' missing Screen - Out of lives",
+  "desc": "When users have 0 lives left, we will show them this panel. Through this panel, users can spend coins to refill their lives or use the Free Lives button to use the lives sent by their teammates via the Lives Bank panel.\n\nWe need 2 different variations of this panel. In both panels, everything will be exactly the same; only the visibility of the buttons will change.\n\n* v1: Both buttons will be visible (Refill and Free Lives)\n* v2: Only the Refill button will be visible\n\n![image.png]([URL_52643])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-350__ec5db9d7-5172-43.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-354",
+  "state": "Done",
+  "created": "2025-07-07T11:47:33Z",
+  "completed": "2025-07-08T14:16:27Z",
+  "canceled": null,
+  "updated": "2025-07-08T14:16:27Z",
+  "assignee": "PERSON_3138_NAME",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Bots in plague race doesn't start 2nd session after freeze time.",
+  "desc": "![image.png]([URL_52649])\n\nBots should start increasing their scores after the freeze minutes. But I waited enough but nothing changes after the first part. \n\n![image.png]([URL_52648])\n\n![image.png]([URL_52647])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-354__7752e78b-a0cd-40.png",
+   "image:ZOM-354__d9d32b47-5355-44.png",
+   "image:ZOM-354__58bb9e32-9001-45.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-372",
+  "state": "Done",
+  "created": "2025-07-11T16:05:00Z",
+  "completed": "2025-07-14T15:28:44Z",
+  "canceled": null,
+  "updated": "2025-07-14T15:28:44Z",
+  "assignee": "arthur.blake",
+  "creator": "arthur.blake",
+  "parent": "ZOM-77",
+  "labels": [],
+  "title": "Plague Race - The event screen is above homepage and it's visible from the bottom navigation bar and the home page image shown in the sides.",
+  "desc": "![image.png]([URL_52400])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-372__508eb64e-00e3-48.png"
+  ],
+  "prs": [
+   "match3d#296(M2025-07-11)"
+  ]
+ },
+ {
+  "id": "ZOM-377",
+  "state": "Done",
+  "created": "2025-07-11T16:07:08Z",
+  "completed": "2025-07-15T11:38:25Z",
+  "canceled": null,
+  "updated": "2025-07-15T11:38:25Z",
+  "assignee": "oliver.brooks",
+  "creator": "arthur.blake",
+  "parent": "ZOM-77",
+  "labels": [],
+  "title": "Tutorial - Lvl 2 Boss highlight is missing.",
+  "desc": "The issue has changed. It wasn't highlighting good enough back then but now, it's completely gone for both phone and tablet resolutions. \n\n![Ekran g\u00f6r\u00fcnt\u00fcs\u00fc [CREDIT_CARD_NUMBER_6290].png]([URL_52667])\n\n![Ekran g\u00f6r\u00fcnt\u00fcs\u00fc [CREDIT_CARD_NUMBER_6289].png]([URL_52666])\n\n![Screenshot_[CREDIT_CARD_NUMBER_6288]-80_232bce8c0fd071e3b7a1963a264fccd2.jpg]([URL_52665])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-377__a07271c5-1e80-4c.jpg",
+   "image:ZOM-377__c8db166e-069d-46.png",
+   "image:ZOM-377__7ef1a9d3-0e29-49.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-378",
+  "state": "Done",
+  "created": "2025-07-12T14:35:28Z",
+  "completed": "2025-07-14T14:59:01Z",
+  "canceled": null,
+  "updated": "2025-07-14T14:59:02Z",
+  "assignee": "arthur.blake",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Level 1 is removed and creates tutorial order problems",
+  "desc": "* The first level is not the second level. Something broken in master level sheet probably.\n  * It creates other important issues like wrong tutorials at the wrong spot.\n    * For instance, I'm getting broom booster but the tornado tutorial starts in game. and it happens for all tutorials that have both in-game and home screen tutorials like every booster.\n\n[first level is absent.mp4]([URL_52669])\n\n[tutorial oders are broken.mp4]([URL_52668])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-389",
+  "state": "Done",
+  "created": "2025-07-15T11:50:22Z",
+  "completed": "2025-07-16T18:45:59Z",
+  "canceled": null,
+  "updated": "2025-07-16T18:45:59Z",
+  "assignee": "oliver.brooks",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Highlight circles are too pixelated both in phone and especially in tablet.",
+  "desc": "Right now our current circle to highlight objects are not perfect. Rather, it's pixelated. \n\n![Ekran g\u00f6r\u00fcnt\u00fcs\u00fc [CREDIT_CARD_NUMBER_6297].png]([URL_52694])\n\n![image.png]([URL_52693])\n\n![Screenshot_[CREDIT_CARD_NUMBER_6296]-16_232bce8c0fd071e3b7a1963a264fccd2.jpg]([URL_52692])\n\n![Screenshot_[CREDIT_CARD_NUMBER_6295]-41_232bce8c0fd071e3b7a1963a264fccd2.jpg]([URL_52691])\n\nWe should change highlight object to more quality one.",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-389__2cd261ae-2ac9-43.png",
+   "image:ZOM-389__9b59049e-3d8e-4c.png",
+   "image:ZOM-389__b47ff0c3-01c5-44.jpg",
+   "image:ZOM-389__4042c14e-f767-43.jpg"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-392",
+  "state": "Done",
+  "created": "2025-07-16T12:35:09Z",
+  "completed": "2025-09-04T10:27:25Z",
+  "canceled": null,
+  "updated": "2025-09-04T10:27:25Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Algo Level 2.0 (Level 100+)",
+  "desc": "Doc here: [[URL_52698])\n\n@[PERSON_NAME_0054] said:\n\n> @Blake New Algo Levels 2.0, literally a 1/3rd page design doc. Should be super easy",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-398",
+  "state": "Done",
+  "created": "2025-07-17T11:17:35Z",
+  "completed": "2025-07-21T13:02:42Z",
+  "canceled": null,
+  "updated": "2025-07-21T13:02:42Z",
+  "assignee": "oliver.brooks",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Zombie Lane Issues",
+  "desc": "It happens on both android and ios. \n\n* Zombie Lane rewards are infinitely claimable again. \n\n  [infinite claimable - Made with Clipchamp.mp4]([URL_52704])\n* After level 54, it doesn't populate and it gives null ref. Here is the crashlytics. [https://console.firebase.google.com/project/zombie-match-3d/crashlytics/app/ios:com.calmplay.zombie/issues/1a38020e93d87f80b3cc7123a362bb10?versions=0.1.1067%20(1067)&time=last-seven-days&sessionEventKey=63c209a7286944c6a10e9b5f9e2413e6_2106439211292436695](https://console.firebase.google.com/project/zombie-match-3d/crashlytics/app/ios:com.calmplay.zombie/issues/1a38020e93d87f80b3cc7123a362bb10?versions=0.1.1067%20(1067)&time=last-seven-days&sessionEventKey=63c209a7286944c6a10e9b5f9e2413e6_2106439211292436695)\n\n  [Record_[CREDIT_CARD_NUMBER_6299].mp4]([URL_52702])\n  * After null ref, pin point doesn't redirect to the place I left. Instead, it shows placeholder reward container\n\n    [Record_[CREDIT_CARD_NUMBER_6298].mp4]([URL_52701])\n\n    . \n* When I completed the first 3 levels, zombie lane shows 0/95. @person_6075 \n\n  [0_95 - Made with Clipchamp.mp4]([URL_52700])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-418",
+  "state": "Done",
+  "created": "2025-07-21T15:19:24Z",
+  "completed": "2025-07-22T14:48:53Z",
+  "canceled": null,
+  "updated": "2025-07-22T14:48:53Z",
+  "assignee": "calvin.price",
+  "creator": "vincent.parker",
+  "parent": "ZOM-415",
+  "labels": [
+   "Bug"
+  ],
+  "title": "When it's triggered after the prelevel dialogue is open, the coin balance stay over all the screens",
+  "desc": "[ScreenRecording_[CREDIT_CARD_NUMBER_6307]_1.MP4]([URL_52721])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-419",
+  "state": "Done",
+  "created": "2025-07-21T15:19:24Z",
+  "completed": "2025-09-22T15:12:31Z",
+  "canceled": null,
+  "updated": "2025-09-22T15:12:31Z",
+  "assignee": "brian.foster",
+  "creator": "vincent.parker",
+  "parent": "ZOM-415",
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Daily rewards missing VFX",
+  "desc": "* When I claimed both daily reward and a chest together, it's not clear what I got because there is no indication of daily reward. \n\n  [ScreenRecording_[CREDIT_CARD_NUMBER_6307]_1.MP4]([URL_52722])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-424",
+  "state": "Done",
+  "created": "2025-07-21T15:37:24Z",
+  "completed": "2025-07-23T11:23:10Z",
+  "canceled": null,
+  "updated": "2025-07-23T11:23:10Z",
+  "assignee": "oliver.brooks",
+  "creator": "vincent.parker",
+  "parent": "ZOM-361",
+  "labels": [
+   "Bug"
+  ],
+  "title": "Updating the game from earlier build breaks the core game.",
+  "desc": "If I have more than 1 items equipped, after updating the game to the latest version, the core game breaks.\n\n* objects are not matcheble\n* Zombies don\u2019t move\n* The bottom boosts aren\u2019t visible\n* And the items I had is vanished.\n\nThis is primarily because of the object id changes. We should find a way to update the game without causing any item loss on players' end. \n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6311]_1.MP4]([URL_52728])\n\nWhen I made it after level 90, where all slots are unlocked, the game doesn\u2019t break but I lost the already acquired items.\n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6310]_1.MP4]([URL_52727])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-431",
+  "state": "Done",
+  "created": "2025-07-23T09:46:32Z",
+  "completed": "2025-07-24T10:54:08Z",
+  "canceled": null,
+  "updated": "2025-07-24T10:54:08Z",
+  "assignee": "oliver.brooks",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Zombie Lane Background Should Be Scrollable",
+  "desc": "In the current version, the background and sideways are static, only the content is scrollable. But in design, both bg and sideways should be scrollable as well. \n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6316]_1.MP4]([URL_52737])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-438",
+  "state": "Todo",
+  "created": "2025-07-27T11:51:31Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-10-21T21:10:20Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Investigate why some zombie tracks do not spawn",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake some zombie tracks just doesn't spawn for some reason\n\n[[CREDIT_CARD_NUMBER_6318].6926554.mp4]([URL_52742])\n\nIn level C_0120, I have total of 17 monsters. Here I simulate the gameplay 3-4 times, each time i get different number of monsters. Sometimes as low as 11, and as high as 14, but never all 17 that I intended to spawn\n\n[[CREDIT_CARD_NUMBER_6317].4008734.mp4]([URL_52741])\n\nIt might be aused by DOTS. It's suppose to spawn 3 kid, 1 chef, 2 karens, but different CPM and different simulation has a wide range of results. Sometimes 1 monster, sometimes 4, but it rarely spawns correctly",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-447",
+  "state": "Done",
+  "created": "2025-07-29T08:33:43Z",
+  "completed": "2025-08-25T11:53:44Z",
+  "canceled": null,
+  "updated": "2025-08-25T11:53:44Z",
+  "assignee": "arthur.blake",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Items stay persistent on matching deck",
+  "desc": "It happens with an exception. When that happened, \n\n* some of the objects remains persistent on matching deck\n* blocks the matched items visually\n* and it creates orphan objects on the board. \n\nGenerally happens after blundering (filling every slot by matching pretty fast) and happens more often if it overlaps with the tutorial. \n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6322]_1.MP4]([URL_52752])\n\ncrashlytics link\n\n[https://console.firebase.google.com/project/zombie-match-3d/crashlytics/app/ios:com.calmplay.zombie/issues/a097336dbe8fb79fed62446629df2871?time=last-seven-days&sessionEventKey=9300756187a842ef85fed18e1fc82822_2110843038236798263](https://console.firebase.google.com/project/zombie-match-3d/crashlytics/app/ios:com.calmplay.zombie/issues/a097336dbe8fb79fed62446629df2871?time=last-seven-days&sessionEventKey=9300756187a842ef85fed18e1fc82822_2110843038236798263)",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-456",
+  "state": "Done",
+  "created": "2025-08-05T07:11:13Z",
+  "completed": "2025-08-07T09:39:02Z",
+  "canceled": null,
+  "updated": "2025-08-07T09:39:02Z",
+  "assignee": "arthur.blake",
+  "creator": "vincent.parker",
+  "parent": "ZOM-457",
+  "labels": [
+   "Bug"
+  ],
+  "title": "Level 111 issue where bottom hud doesn't appear",
+  "desc": "I was able to repro this as well. It happens sometimes and sometimes not. I thought it was item related but I tried removing all the items I have still happened. I tried like 10 times and level, that happens for like 7 out of 10.\u00a0 It's level 111 of ios 1327.\n\nIf I used all my cards, it's better because it was able to replace some items. So probably, the level has an item that causes the problem. If that happens, infusion is disrupted but its input blocker is already started since it couldn't be finished, the game is just blocked. \n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6324]_1.MP4]([URL_52764])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-457",
+  "state": "Done",
+  "created": "2025-08-05T08:55:16Z",
+  "completed": "2025-08-25T11:53:20Z",
+  "canceled": null,
+  "updated": "2025-08-25T11:53:20Z",
+  "assignee": null,
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [],
+  "title": "Algo Level Issues",
+  "desc": "[ZOM-460](https://linear.app/harmonygames-games/issue/[IDENTIFIER_26331])\n\n[ZOM-459](https://linear.app/harmonygames-games/issue/[IDENTIFIER_26330])\n\n[ZOM-456](https://linear.app/harmonygames-games/issue/ZOM-456/level-111-issue-where-bottom-hud-doesnt-appear)\n\n[ZOM-458](https://linear.app/harmonygames-games/issue/ZOM-458/quitting-algo-levels-still-makes-the-level-change-animation)",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-458",
+  "state": "Todo",
+  "created": "2025-08-05T09:04:34Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-10-01T18:31:43Z",
+  "assignee": "arthur.blake",
+  "creator": "vincent.parker",
+  "parent": "ZOM-457",
+  "labels": [
+   "Bug"
+  ],
+  "title": "Quitting algo levels still makes the level change animation",
+  "desc": "* * Even though I didn't pass the level, the home screen triggers level pass animation.\n\n    [ScreenRecording_[CREDIT_CARD_NUMBER_6325]_1.MP4]([URL_52765])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-459",
+  "state": "Done",
+  "created": "2025-08-05T09:04:44Z",
+  "completed": "2025-08-25T11:53:11Z",
+  "canceled": null,
+  "updated": "2025-08-25T11:53:11Z",
+  "assignee": "arthur.blake",
+  "creator": "vincent.parker",
+  "parent": "ZOM-457",
+  "labels": [
+   "Bug"
+  ],
+  "title": "Algo levels doesn't count for plague race",
+  "desc": "[ScreenRecording_[CREDIT_CARD_NUMBER_6326]_1.MP4]([URL_52766])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-472",
+  "state": "Done",
+  "created": "2025-08-13T18:14:23Z",
+  "completed": "2025-08-18T16:19:18Z",
+  "canceled": null,
+  "updated": "2025-08-18T16:19:18Z",
+  "assignee": "samuel.turner",
+  "creator": "brian.foster",
+  "parent": null,
+  "labels": [],
+  "title": "Replace Lock Icons with Unlock-Level Illustrations and Add Swipe Navigation",
+  "desc": "* Like we did in Teams, instead of showing a lock icon when we lock each section accessible from the bottom bar, we will display an illustration.\n  * These illustrations will indicate at which level these sections will be unlocked.\n* Additionally, when we are on the main menu, we will add the ability to swipe left and right with our finger to switch between these sections.\n\nFigma: \n\n[Zombie Match 3D](https://www.figma.com/design/TvRw8na5iGd3NynbSRUGFy/Zombie-Match-3D?node-id=13-20&p=f&t=b5pMAFMN5i6lNQ4g-0)\n\n![image.png]([URL_52787])\n\nSwap Mechanic Reference: \n\n[Screen_Recording_20250813_211252_Magic Sort.mp4]([URL_52786])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-472__7981f204-a8e5-4e.png"
+  ],
+  "prs": [
+   "match3d#382(M2025-08-15)"
+  ]
+ },
+ {
+  "id": "ZOM-475",
+  "state": "Done",
+  "created": "2025-08-14T08:56:20Z",
+  "completed": "2025-10-01T18:15:45Z",
+  "canceled": null,
+  "updated": "2025-10-01T18:15:45Z",
+  "assignee": "oliver.brooks",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Consecutive glass impact sfx/vfx causes crash on android",
+  "desc": "The game hard crash every time glass object is matched too fast on android. \n\n1. **play a level with glass item breaking sound VFX. (Wine bottle, glass shampoo bottle) (u can equip it as well)**\n2. **Match real fast, like 3 sets back to back to back.**\n3. **After 2-3x of the SFX played, game hard crashes**\n\n[Screen_Recording_20250812_214618_Zombie Match 3D.mp4]([URL_52791])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-476",
+  "state": "Done",
+  "created": "2025-08-14T08:57:58Z",
+  "completed": "2025-09-04T10:26:04Z",
+  "canceled": null,
+  "updated": "2025-09-04T10:26:04Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Performance Issue when too many zombies are spawning",
+  "desc": "**Game stutters when too many zombies are spawn at the same time + air strike over every algo level 100+**\n\n* **All algo-generated levels stutter badly (even on iPad Pro) \u2013 suspected due to too many zombie spawns plus air strike effect.**\n\nI think it's also related to having big chunk of items in the board.\n\n[ScreenRecording_[CREDIT_CARD_NUMBER_6337]_1.MOV]([URL_52792])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-482",
+  "state": "Backlog",
+  "created": "2025-08-14T18:35:33Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-09-22T15:09:18Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Make \"Fast-forwarding\" another boolean properties in zombies",
+  "desc": "As you know, isBoss bool is used for scaling up the enemy, forcing the next boss to spawn and just being boss. \n\nFor the variant C all monsters are selected as boss to change the zombie spawn mechanic. \n\nBut it creates problems in algo levels because the tiny zombies can still be selected as boss. So it creates an issue in algo levels with imbalanced zombies.  \n\nSo plase make the \"FastForward\" (forcing next zombie to spawn) as a separate property that we can toggle on/off. \n\n![image.png]([URL_52797])",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-482__080c83bc-df49-48.png"
+  ],
+  "prs": []
+ },
+ {
+  "id": "ZOM-495",
+  "state": "Done",
+  "created": "2025-08-20T05:55:06Z",
+  "completed": "2025-09-02T13:29:23Z",
+  "canceled": null,
+  "updated": "2025-09-02T13:29:23Z",
+  "assignee": "arthur.blake",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Simulate levels faster using bot without watching gameplay (Background)",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake The design team agrees that if we can simulate behind the scenes or fast simulate a level using the bot without actually having to watch it play, we can make levels 2x as fast.",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-497",
+  "state": "Done",
+  "created": "2025-08-20T17:51:50Z",
+  "completed": "2025-09-02T13:29:11Z",
+  "canceled": null,
+  "updated": "2025-09-02T13:29:11Z",
+  "assignee": "samuel.turner",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Add slider option to change simulation speed from 1x to 10x",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Blake The design team said can we have the option like a slider that changes the simulation speed from 1x -> 10x? Sometimes we want it fast, sometimes we want it slow, you know.. depends on how the mood strikes...",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": [
+   "match3d#402(M2025-08-26)"
+  ]
+ },
+ {
+  "id": "ZOM-499",
+  "state": "Done",
+  "created": "2025-08-22T17:00:03Z",
+  "completed": "2025-09-17T15:50:24Z",
+  "canceled": null,
+  "updated": "2025-09-17T15:50:24Z",
+  "assignee": "calvin.price",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Remaining Profile Issues",
+  "desc": "* First of all, the \"level\" part on top right UI should be the same with 3-star win amount for the weekly bots.\n* I don't think I should see others inventories.\n* I cannot see player's profiles as the team members.\n* Nuke used shouldn't be more than 3-star wins at any given moment. that's probably @douglas \n\n[Record_[CREDIT_CARD_NUMBER_6343].mp4]([URL_52812])\n\n[Record_[CREDIT_CARD_NUMBER_6342].mp4]([URL_52811])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-517",
+  "state": "Backlog",
+  "created": "2025-09-03T22:22:22Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-10-13T16:44:01Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Monster loses enrage during item refill in endless mode",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0120] Monster will lose enrage in endless mode if they are already enraged and walking on the board and an item refill happens",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-535",
+  "state": "Todo",
+  "created": "2025-09-08T12:51:11Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-09-08T12:51:11Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "Fast matching might target an already-dead zombie",
+  "desc": "Here is a video demonstrating the difference between 75 CPM vs. 120 CPM simulation on the exact same level, because faster matchers end up with a lot of inefficiencies where their item doesn't deal damage since it's flying towards an already killed monster. As a result they end with the nuke. Meanwhile the 75 CPM average player ends up with quite a bit of items left. It's too big of a gap and we should really find ways to tighten all this up\n\n[[CREDIT_CARD_NUMBER_6354].3602723.mp4]([URL_52842])\n\nHere is a slow-mo video of what happens. \n\n[persistent health bar - Made with Clipchamp (1).mp4]([URL_52841])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-542",
+  "state": "Regression",
+  "created": "2025-09-14T22:59:17Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-10-23T16:13:52Z",
+  "assignee": "samuel.turner",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement",
+   "Hot Fix - Global Launch"
+  ],
+  "title": "Update home screen and victory score screen for game modes",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @Martin.Walsh We need to update our home screen for endless mode and boss arena, as well as the end game victory score screen for both these modes:",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-542__baa8b5a8-e23d-4f.png",
+   "image:ZOM-542__c02e672a-14d7-41.png",
+   "image:ZOM-542__c9dcbd1c-3577-41.png",
+   "image:ZOM-542__4e60fda8-50a3-4c.png",
+   "image:ZOM-542__996b8dc3-526e-42.png",
+   "image:ZOM-542__b67ffd32-fa5b-4a.png",
+   "image:ZOM-542__002afd94-929a-42.png",
+   "image:ZOM-542__f777a584-e179-40.png",
+   "image:ZOM-542__f314d0d6-02b6-4c.png",
+   "image:ZOM-542__3d6d62e7-9e46-4f.png",
+   "image:ZOM-542__a582c13a-f1f3-4f.png",
+   "image:ZOM-542__d733e74b-bfe3-4b.png"
+  ],
+  "prs": [
+   "match3d#539(M2025-10-23)",
+   "match3d#543(open)"
+  ]
+ },
+ {
+  "id": "ZOM-545",
+  "state": "Todo",
+  "created": "2025-09-15T15:57:50Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-10-14T14:51:24Z",
+  "assignee": "douglas",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Improvement",
+   "Hot Fix - Global Launch"
+  ],
+  "title": "Ingest bot params from a spreadsheet",
+  "desc": "at start we can use that sheet, but I need @douglas's help on the format. \n\n[[URL_52856])",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-547",
+  "state": "Done",
+  "created": "2025-09-16T18:22:10Z",
+  "completed": "2025-09-17T16:06:16Z",
+  "canceled": null,
+  "updated": "2025-09-17T16:06:16Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "Robert",
+  "parent": null,
+  "labels": [
+   "Improvement"
+  ],
+  "title": "Update balance changes for Boss Arena game mechanics",
+  "desc": "'@[PERSON_NAME_0054] said:\n\n> @[PERSON_NAME_0120] More balance changes to Boss Arena:\n>\n> * Rapid fire can now ONLY BE ACTIVATED WHEN IT'S FULLY CHARGED AT 3 SECONDS\n> * Gold amount divide factor increase from 40 -> 100. So damage / 100 = gold rewarded. This is also easier for players to understand",
+  "links": [],
+  "relations": [],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-549",
+  "state": "In Validation",
+  "created": "2025-09-17T02:31:59Z",
+  "completed": null,
+  "canceled": null,
+  "updated": "2025-09-22T13:40:39Z",
+  "assignee": "EMPLOYEE_0032_NAME",
+  "creator": "leonard.hayes",
+  "parent": null,
+  "labels": [
+   "Improvement",
+   "Analytics"
+  ],
+  "title": "Add new fields to left_level and endless_left analytics events",
+  "desc": "Similar to [ZOM-548](https://linear.app/harmonygames-games/issue/ZOM-548/track-events-for-boss-arena-as-listed-in-the-spreadsheet) we need to add the following fields to the other 2 game modes (details in the spreadsheet as usual) [[URL_52857])\n\n**endless_left**\n\n* endless_level: the name of the level (I.E \"infinite_01\")\n* player_cpm: the average clicks per minute for the round\n* total_equipped_power:total attack power equipped by the player \n* nuke_damage_total: total damage done by nukes\n\n**left_level**\n\n* total_equipped_power:total attack power equipped by the player",
+  "links": [],
+  "relations": [
+   {
+    "target": "ZOM-548",
+    "type": "relates"
+   }
+  ],
+  "att": [],
+  "prs": []
+ },
+ {
+  "id": "ZOM-556",
+  "state": "Done",
+  "created": "2025-09-22T14:44:06Z",
+  "completed": "2025-10-20T12:21:06Z",
+  "canceled": null,
+  "updated": "2025-10-20T12:21:06Z",
+  "assignee": "calvin.price",
+  "creator": "vincent.parker",
+  "parent": null,
+  "labels": [
+   "Bug"
+  ],
+  "title": "When the daily gift is skipped, it doesn't reset to 0.",
+  "desc": "![image.png]([URL_52863])\n\nIf I didn't log in for a day, the bottom part should reset to day 1. However, it doesn't reset right now.",
+  "links": [],
+  "relations": [],
+  "att": [
+   "image:ZOM-556__3d58bb8b-bda6-4a.png"
+  ],
+  "prs": []
+ }
+]

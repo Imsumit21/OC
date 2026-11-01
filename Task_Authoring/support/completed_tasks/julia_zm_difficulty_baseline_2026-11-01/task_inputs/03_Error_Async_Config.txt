@@ -1,0 +1,71 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Leave every field empty to apply nothing. Applies to the baseline run and the
+verifier, not to Universe Explorer.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+On screen 16, leave every field empty.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No forced errors and no async waits, so the Oracle Events need no recovery or wait steps.
+
+## Post-baseline checks
+
+- Forced error fired: n/a (none configured)
+- Async submit → check → get appeared: n/a (none configured)
+- Non-default values confirmed: n/a
+
+## Self-review
+
+Checks walked: `Evals/1_Prompt_Eval.md` §2.2 (feasibility, persona ACL) and `Evals/2_Oracle_Events_Eval.md` §3.5. With no friction,
+every read the task needs stays on its normal path, e.g. Leonard's ask D05HB64NMQU/1759261706.530914, the per-ticket Linear
+comments (ZOM-199) and the PR record harmonygames-Games/match3d#401. There is no alternate path to prove.
+
+| Counter-reading | Resolution (evidence) |
+|---|---|
+| Counter: the scenario is about a game build going out, close to an outage, so a forced error on a GitHub or Linear read is realistic | No. It is not an outage scenario: the task reconciles difficulty tickets against records that already exist (the build mail julia.lawson@harmonygames.co/1844679607844896665, the enrage sheet f_0ba93ae0238d9ed4178212). A forced error on those reads only adds timing noise, and an errored per-record read with no alternate path would remove the only route to a row |
+| Counter: the task needs friction to reach the author's ≥ 120 calls or the < 75% target | V3 sets difficulty through the universe, not friction (`references/Docs/11_V3_Changes.md` §6). The budget (147 calls, 01_Hardness_Manifest.json call_budget) comes from the 109 per-ticket Linear comment reads, the linked PR reads and the register writes; no design note relies on friction |
+| Counter: an async wait on Slack or Gmail search would add realism | Leonard's ask is one DM message (D05HB64NMQU/1759261706.530914) and the build mail plus its reply are one thread (julia.lawson@harmonygames.co/1844679607844896665), read in one call; a wait adds no fact and risks timing-only failures that V3 does not count as valid difficulty |
+
+Unresolved: none.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring-2/task_inputs · 03_Error_Async_Config.txt#5a647d2055f6 · blocking 0 · warnings 0 · checks 10
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#dd7536cdea3f, 01_Hardness_Manifest.json#741e6e29d5bc, 01_Grounding_Dossier.md#00dd277180d2)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 3 evidenced counter-readings (of 3 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

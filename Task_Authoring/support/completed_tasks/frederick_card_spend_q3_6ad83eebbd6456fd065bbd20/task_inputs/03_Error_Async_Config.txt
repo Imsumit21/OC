@@ -1,0 +1,60 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Leave every field empty to apply nothing. Applies to the baseline run and the
+verifier, not to Universe Explorer.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+On screen 16, leave every field empty.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No forced errors and no async waits, so the Oracle Events need no recovery or wait steps.
+
+## Post-baseline checks
+
+- Forced error fired: n/a (none configured)
+- Async submit → check → get appeared: n/a (none configured)
+- Non-default values confirmed: n/a
+
+## Self-review
+
+Checks walked: `Evals/1_Prompt_Eval.md` §2.2 (feasibility, persona ACL) and `Evals/2_Oracle_Events_Eval.md` §3.5. With no friction,
+every read the task needs stays on its normal path, e.g. the hub C07C2866011/1759176840.271025 and the receipts
+frederick.stone@harmonygames.co/1812262106647207041. There is no alternate path to prove.
+
+| Counter-reading | Resolution (evidence) |
+|---|---|
+| Counter: the scenario is about an outage, so friction is realistic | No. It is a finance close for the data room (C07C2866011/1759176840.271025). The Singular gap is a data gap documented on page_singular_cost_connectors, not a tool outage, and no prompt line mentions an outage |
+| Counter: the task needs friction to stay under the Medium cap | V3 sets difficulty through the universe, not friction (`references/Docs/11_V3_Changes.md` §6). The design's difficulty comes from authorities and supersessions (01_Hardness_Manifest.json), and no design note relies on friction |
+| Counter: an async search wait would add realism to the 57 Meta receipt threads | Mail search returns them directly (frederick.stone@harmonygames.co/1844734171545827192). A wait adds no fact and risks timing-only failures that V3 does not count as valid difficulty |
+
+Unresolved: none.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring-2/task_inputs · 03_Error_Async_Config.txt#7c92b9c20d3c · blocking 0 · warnings 0 · checks 10
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#c983da3d0a7d, 01_Hardness_Manifest.json#8b6e3c18def2, 01_Grounding_Dossier.md#84d01f840c36)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 3 evidenced counter-readings (of 3 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+
+
+

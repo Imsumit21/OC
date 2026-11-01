@@ -1,0 +1,54 @@
+# 12 Baseline Difficulty Stats (ZM difficulty baseline task, rubric v81, verifier pasted 2026-11-01)
+
+Task type: long-horizon   Completed: 6/6   Errored: none   Invalid rubrics: none   Judge corrections: none
+
+| Rollout | Counted tool calls | Raw / harness / blocked / repeats | Weighted pass (platform) | Failed rubrics (platform) |
+|---|---|---|---|---|
+| run-1 | 646 | 656 / 7 / 2 / 1 | 68.2% | R5, R6, R7, R44, R65, R66, R67, R68, R71, R72, R73, R74, R75, R76, R77 |
+| run-2 | 1209 | 1266 / 56 / 1 / 0 | 76.9% | R5, R6, R7, R44, R65, R66, R67, R68 |
+| run-3 | 862 | 895 / 28 / 2 / 3 | 100.0% | — (golden run) |
+| run-4 | 798 | 832 / 31 / 3 / 0 | 82.7% | R5, R7, R44, R65, R66, R68 |
+| run-5 | 1038 | 1083 / 42 / 3 / 0 | 88.4% | R5, R6, R66, R67 |
+| run-6 | 357 | 386 / 18 / 5 / 6 | 86.7% | R5, R6, R10, R66, R67 |
+
+| Gate | Value | Rule | Verdict |
+|---|---|---|---|
+| errored_runs | 0 errored, 6 completed of 6 | <= 2 errored and >= 4 completed (3+ errored = Fail) | PASS |
+| pass_at_1 | 1/6 = 17% | <= 50% (<= 3 of 6) | PASS |
+| avg_weighted_pass_rate | 83.8% | < 75% (Evals); QC Spec V2 alone < 90% | FAIL (Avg Pass Rate Too High — Evals < 75%; still under the QC Spec V2 90% gate) |
+| per_rollout_sd | 0.099 (sample 0.108; unweighted 0.056) | 0.1-0.3 (population SD of per-rollout weighted pass rates) | FAIL (Spread Too Low — deterministic; add friction) — at the band edge: sample or unweighted SD reads the other way |
+| failure_patterns | 4 pattern(s); largest 40% of 5 failing (pairwise reading 40%) | >= 2 patterns (differ on >= 2 rubrics); largest <= 50% | PASS |
+| horizon | golden run(s): 862 | long-horizon tier 100-500+ | PASS |
+
+Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):
+- Pattern 1: run-5, run-6
+- Pattern 2: run-1
+- Pattern 3: run-2
+- Pattern 4: run-4
+- Pairwise reading (largest set all within 1 rubric of each other): run-5, run-6
+All-fail rubrics (completed rollouts, platform view): none
+Blocking gates: avg_weighted_pass_rate, per_rollout_sd
+
+Readings: pass@1 1/6 = 17% (count reading 1 of 6 also passes). SD: population 0.099 fails the 0.1 floor by 0.001; sample SD 0.108 and unweighted 0.056 are shown by the calculator, so the SD verdict sits on the band edge (sample reads PASS, unweighted reads FAIL). Patterns: single-linkage and pairwise readings agree (run-5 + run-6 is the only merged pair, differing on 1 rubric, R10); 4 patterns, largest 2 of 5 = 40%. Golden run: run-3 (81/81), so horizon is judged on run-3 only.
+Tool-call notes: counted (raw / harness / blocked / repeats) run-1 646 (656/7/2/1), run-2 1209 (1266/56/1/0), run-3 862 (895/28/2/3), run-4 798 (832/31/3/0), run-5 1038 (1083/42/3/0), run-6 357 (386/18/5/6). Every run is far above the 100-call long-horizon floor and the author target of 120. No ACL-denied hammering seen in the counts; run-6 has the most repeats (6) but stays at 357 counted.
+Friction check: not configured (03_Error_Async_Config.txt: Friction: none); nothing to verify.
+Screen 60 comparison: not supplied. Verifier per-run headers (66, 73, 81, 75, 77, 76 of 81) match the parsed rows.
+Parse note: the pasted 10_Baseline_Verifier_Results.md has copy damage on 3 criterion titles (24 HTML entities such as &gt; and 6 **bold** title markers; R29, R40, R48). The build ran on Working_Files/10_Verifier_Results.normalized.md, which only unescapes entities and strips the bold markers in the title column; decisions and justifications are untouched. Rubric version is the same 81-row 09_Rubrics.json (all 81 rows bind once per run after normalisation).
+Diagnosis:
+- avg_weighted_pass_rate FAIL (both views identical; 83.8% vs Evals < 75%; passes QC Spec V2 alone at < 90%). Cause: run-3 solved the task completely and four other runs score 77 to 88%. Failures concentrate on one choke point: the ticket-scope decision (which ZOM tickets make the list) drives R5/R6/R7 on the register and their DM echoes R66/R67/R68, plus R65 (comment count). R5 and R66 fail in 5 of 6 runs; R6/R67 in 4 of 6. Every per-ticket status row passes almost everywhere (only R10 ZOM-281 fails once), so once the agent finds the rules, classification is easy. R44 (Brian commenter access) fails 3 of 6 and is the only independent second carrier. Route: /create-hardening MODE B, then /create-injection to add an independent difficulty source on different rows (a second hidden authority or chain on per-ticket statuses or on the rules tab), not more weight on the scope count.
+- per_rollout_sd FAIL (0.099, band-edge). Cause: same as above; scores bunch at 77 to 100% with one 68% outlier. Fixing the average with a second independent carrier should widen the spread too. Route: same.
+Screen 61: do not confirm; avg_weighted_pass_rate and per_rollout_sd block (Evals gates). Under QC Spec V2 alone every gate would pass.
+
+## Self-review
+
+1. Re-read as the eval: QC Error Rate (0 errored, PASS), pass@1 (1/6, PASS), Average Weighted Rubric Pass Rate (83.8%: QC < 90% passes, Evals < 75% fails), Failure Signature Concentration (4 signatures, 40%, PASS), Task Type & Horizon (golden 862, long-horizon, PASS; over 500 is not an under-tier fail). Evals scoring.json Agent Failure Rate and SD band are the blockers.
+2. Independent recompute (python, from the matrix without the calculator; total weight 173): per-run weighted rates run-1 0.6821, run-2 0.7688, run-3 1.0000, run-4 0.8266, run-5 0.8844, run-6 0.8671; mean 0.8382 = 83.8%; population SD 0.0987, sample SD 0.1081. Completed 6, errored 0. pass@1: only run-3 passes every rubric, 1/6 = 17%. Differing-rubric counts among failing runs: 1-2 7, 1-4 9, 1-5 11, 1-6 12, 2-4 2, 2-5 4, 2-6 5, 4-5 6, 4-6 7, 5-6 1; only 5-6 merges, giving {5,6}, {1}, {2}, {4}: 4 patterns, largest 2/5 = 40%. Horizon basis: golden run-3, 862 counted. All match the calculator.
+3. Counter-readings:
+- errored: counter-reading that would fail it: a run that should count as errored. All six of run-1..run-6 are non-empty, untruncated and graded on all 81 rows. Holds PASS.
+- pass@1: counter-reading that would fail it: an invalid rubric 11 missed. Removing any rubric cannot push pass@1 past run-3 plus 2 more (run-5 fails R5, R6, R66, R67, four distinct rows); count reading 1 of 6 also passes. Holds PASS.
+- average: counter-reading that would pass it: QC Spec V2 alone (< 90%) passes, or a judge error. Spot-check run-1 R5: the justification counts 33 ticket rows vs 23, a real failure. FAIL stands under Evals.
+- SD: counter-reading that would pass it: sample SD 0.108 (12_difficulty_input.json recomputed). The gate uses population SD 0.0987, so FAIL stands at the band edge.
+- patterns: counter-reading that would fail it: single-linkage chaining. Only run-5/run-6 differ on 1 rubric (R10); no chain forms, the pairwise reading is identical. Holds PASS.
+- horizon: counter-reading that would fail it: the lowest completed run, run-6 at 357 counted, or raw counts. Golden run-3 at 862 and run-6 at 357 both clear 100. Holds PASS.
+4. Inputs re-verified: 11_AF_Justification.md is empty and there are no all-fail rubrics in the platform view, so no --invalid / --judge-correction hand-off applies; 12_difficulty_input.json has no valid:false rows. Rubric version: 81 criteria in 09_Rubrics.json, verifier headers X/81 for all runs. Counted calls for run-6 checked against the raw/blocked/repeat split (386 - 18 harness - 5 blocked - 6 repeats = 357).
+Unresolved: whether platform screen 60 shows population or sample SD (0.099 vs 0.108); screen 60 numbers were not supplied.

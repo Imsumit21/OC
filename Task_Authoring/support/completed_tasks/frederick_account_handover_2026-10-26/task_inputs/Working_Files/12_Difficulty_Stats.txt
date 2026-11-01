@@ -1,0 +1,68 @@
+# 12 Difficulty Stats — Frederick account handover register (fs-account-custody)
+Computed 2026-10-26 · rubric 09_Rubrics.json sha256 98d29b6da9df (37 criteria, weight 119; the version the verifier graded: R2 money-moving column + R37 DM-after-register) · SQL 8d54ed2b4c0c · difficulty mode medium (00_Assigments.md L25)
+
+Task type: normal   Completed: 6/6   Errored: none   Invalid rubrics: none   Judge corrections: none
+| Rollout | Counted tool calls | Raw / harness / blocked / repeats | Weighted pass (platform) | Failed rubrics (platform) |
+|---|---|---|---|---|
+| run-1 | 68 | 68 / 0 / 0 / 0 | 72.3% | R4, R5, R7, R23, R24, R25, R26, R30, R31 |
+| run-2 | 88 | 92 / 2 / 2 / 0 | 59.7% | R3, R6, R7, R8, R23, R26, R27, R30, R31, R33 |
+| run-3 | 86 | 92 / 4 / 2 / 0 | 63.9% | R3, R7, R8, R10, R23, R26, R30, R31, R33 |
+| run-4 | 90 | 96 / 4 / 2 / 0 | 93.3% | R3, R10 |
+| run-5 | 88 | 95 / 5 / 2 / 0 | 100.0% | — (golden run) |
+| run-6 | 100 | 114 / 6 / 2 / 6 | 95.8% | R3 |
+
+| Gate | Value | Rule | Verdict |
+|---|---|---|---|
+| errored_runs | 0 errored, 6 completed of 6 | <= 2 errored and >= 4 completed (3+ errored = Fail) | PASS |
+| pass_at_1 | 1/6 = 17% | <= 50% (<= 3 of 6) | PASS |
+| avg_weighted_pass_rate | 80.8% | < 75% (Evals); QC Spec V2 alone < 90% | FAIL (Avg Pass Rate Too High — Evals < 75%; still under the QC Spec V2 90% gate) |
+| per_rollout_sd | 0.161 (sample 0.176; unweighted 0.114) | 0.1-0.3 (population SD of per-rollout weighted pass rates) | PASS |
+| failure_patterns | 4 pattern(s); largest 40% of 5 failing (pairwise reading 40%) | >= 2 patterns (differ on >= 2 rubrics); largest <= 50% | PASS |
+| horizon | golden run(s): 88 | normal tier 50-100 | PASS |
+
+Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):
+- Pattern 1: run-4, run-6
+- Pattern 2: run-1
+- Pattern 3: run-2
+- Pattern 4: run-3
+- Pairwise reading (largest set all within 1 rubric of each other): run-4, run-6
+All-fail rubrics (completed rollouts, platform view): none
+Blocking gates: avg_weighted_pass_rate
+
+Readings: Pattern grouping: single-linkage and pairwise agree (largest group run-4 + run-6, 2 of 5 failing = 40%). pass@1: 1/6 by count and by percentage. SD: population 0.161, sample 0.176, unweighted 0.114 — all inside 0.1–0.3. Golden run: run-5 (37/37), 88 counted calls. Average: 80.8% fails the calculator's Evals < 75% line and the author target in 00_Assigments.md L71 ("Average weighted pass rate: < 75%"), and passes the assigned V3 medium cap (strictly under 85%; 00_Assigments.md L52, references/Docs/11_V3_Changes.md L76).
+Tool-call notes: counted / raw — run-1 68/68, run-2 88/92, run-3 86/92, run-4 90/96, run-5 88/95, run-6 100/114 (run-6: 6 exact repeats, all gdrive_read_sheet_range / gdrive_list_sheets re-reads of sweep exports, plus 2 ScheduleWakeup and 2 Bash harness calls). Hand count from the dumped trajectories (scratchpad af/r1–r6.txt): MCP calls 68/90/88/92/90/110, matching the calculator's service counts within its sub-agent / harness split. No run hammers inaccessible records: the error results are two oversized results saved to disk (run-6 slack_read_channel, gmail_get_thread), one channel_not_found (run-6) and one Snowflake invalid identifier (run-6). No padding pattern.
+Friction check: not configured (03_Error_Async_Config.txt "Friction: none"); nothing to fire.
+Screen 60 comparison: not supplied.
+Diagnosis: avg_weighted_pass_rate (platform view = valid view; no invalid rubrics, no corrections): 80.8% ≥ 75%. Cause: three of six runs are near-complete (run-4 93.3%, run-5 100%, run-6 95.8%); runs 4–6 found all three Gmail partner notices and both Partners tabs, and lose only the AdMob pub-2341961509332343 exclusion (R3) and, in run-4, Arthur's 569 email (R10). The difficulty sits in the gmail notices (YouTube Brand Account, Instagram Meta Business Suite, TikTok partner) and the Partners tabs; once found, the rest of the chain is easy. Every failure was verified against the trajectories as a legitimate model fail with a correct judge decision (no all-fail rubric, 11 not needed). Route if the 75% line governs: /create-hardening (MODE B) → universe-side hardening (e.g. make the pub-2341961509332343 deactivation and Arthur's 569 override harder to reach, or add an independent second hidden authority on rows runs 4–6 currently pass), re-inject, re-run the full baseline. Never by softening or deleting criteria. If the V3 medium cap governs (strictly under 85%), every gate passes.
+Screen 61: confirm only if every gate passes in both views. Under the calculator's gates it does not (avg 80.8% ≥ 75%). Under V3 medium (< 85%) every gate passes. Which line binds is the author's decision; the author target in 00_Assigments.md is < 75%.
+
+## Self-review
+
+Rows walked (QC Error Rate, pass@1, Average Weighted Rubric Pass Rate, Failure Signature Concentration, Task Type & Horizon; scoring.json Agent Failure Rate / Error Rate / Complexity Threshold Layers; V3 §Difficulty):
+
+| Gate | Independent recomputation | Counter-reading | Resolution | Open |
+|---|---|---|---|---|
+| errored runs | 6 trajectories, all non-empty (68–114 raw calls), every verifier block has 37 rows and a matching "X/37 criteria passed" header → 0 errored, 6 completed | A run should be treated as errored (truncated JSON, a crash mid-run) | Every trajectory ends with a final result and its Slack send succeeded (ts returned, e.g. run-1 D05S58U4SAK ts 1759302256.000000 in 07_Baseline_Trajectories/trajectory-run-1 (2).json; 10_Baseline_Verifier_Results.md L1–L290); the parser stopped on nothing | none |
+| pass@1 | Only run-5 passes all 37 → 1/6 = 16.7% | An invalid rubric would turn another run into a full pass | Deep check of all 31 failures against the write payloads: every judge verdict matches what the agent wrote, no rubric failed every run, so no invalid rubric; run-6's only fail R3 is its 14-row register (pub-2341961509332343 kept) | none |
+| average | Σ passed weight ÷ 119: 86, 71, 76, 111, 119, 114 → 72.27 / 59.66 / 63.87 / 93.28 / 100 / 95.80% → mean 80.81% | V3 medium cap (< 85%) passes it; the 75% line fails it | Both stated; the calculator line is pasted unchanged; the author's own target is < 75% (00_Assigments.md L71). No judge correction would lower it (no judge error found) | which line binds (author decision) |
+| SD | population SD of the six rates by formula = 0.1610; sample 0.1764 | Unweighted SD (0.114) is near the 0.1 floor | Every reading is inside 0.1–0.3 (rates from Working_Files/12_difficulty_input.json × 09_Rubrics.json weights; calculator line per_rollout_sd) | none |
+| patterns | differing-rubric counts: r1–r2 9, r1–r3 8, r1–r4 11, r1–r6 10, r2–r3 3, r2–r4 10, r2–r6 9, r3–r4 7, r3–r6 8, r4–r6 1 → groups {4,6}, {1}, {2}, {3}; largest 2/5 = 40% | run-2 and run-3 differ on only 3 rubrics (R6, R10, R27 vs the shared notice misses); a looser reading would merge them | Rule is "same unless they differ on ≥ 2"; 3 ≥ 2 so they are distinct; even merged, the largest group is 2/5 = 40% ≤ 50% | none |
+| horizon | Golden run-5: 88 counted calls (95 raw); Normal tier floor 50 | Raw count or the average (86.7) | All readings are ≥ 50 (tool_call_detail in Working_Files/12_difficulty_input.json; 07_Baseline_Trajectories/trajectory-run-5.json); V3 only enforces the tier minimum (references/Docs/11_V3_Changes.md L65) | none |
+
+Unresolved: which average line binds — the V3 medium cap (< 85%, passes) or the calculator / author target (< 75%, fails at 80.8%); author decision.
+
+Inputs re-verified: run-1 counted calls by hand = 68 MCP calls, 0 harness (dump r1.txt); `--invalid` / `--judge-correction`: none, and no 11_AF_Justification.md is needed because no rubric failed every completed run (the empty template was moved to Working_Files/11_AF_Justification.empty_placeholder.md); the input JSON has no `"valid": false` rubric; the rubric version graded is the 37-criterion file (verifier titles include the new R2 "money moving (Y/N) column" and R37).
+
+```
+STAGE GATE difficulty: PASS — Task_Authoring-2/task_inputs · 12_Difficulty_Stats.txt#b56572068566 · 12_difficulty_input.json#a87017b46006 · blocking 0 · warnings 0 · checks 10
+[PASS] structure.outputs: 1 output(s) present: 12_Difficulty_Stats.txt
+[PASS] structure.inputs: 4 input(s) present: 12_difficulty_input.json, 10_Baseline_Verifier_Results.md, 09_Rubrics.json, 07_Baseline_Trajectories
+[PASS] structure.fresh: every output newer than its inputs (12_difficulty_input.json, 10_Baseline_Verifier_Results.md, 09_Rubrics.json, 07_Baseline_Trajectories)
+[PASS] structure.placeholders: no placeholders in 12_Difficulty_Stats.txt
+[PASS] tool.difficulty_stats: 7 gate lines match the re-run verbatim
+[PASS] structure.labels: all report lines present
+[PASS] review.counter_readings: 6 evidenced counter-readings (of 6 found; need ≥ 6) in 12_Difficulty_Stats.txt
+[PASS] review.coverage: self-review addresses all 6 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```

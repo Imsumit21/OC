@@ -1,0 +1,2027 @@
+{
+ "persona": "douglas",
+ "horizon": "Long Horizon",
+ "effective_profile": "long",
+ "profile_exception": {
+  "reason": "author target 130-150 tool calls in every baseline run (00_Assigments.md 'Author targets'); the extreme profile's ~600-call design would overshoot it, so the long profile keeps the extreme breadth, authorities, chains and traps with a ~136-call necessary budget",
+  "requester_confirmation": "task author in chat on 2026-10-26: 'make sure this task is a long horizon task soo i want minimum 130 to 150 tool calls in each runs'; recorded in task_inputs/00_Assigments.md ('Author targets for this task')"
+ },
+ "requirements": {
+  "R1": "register membership: the ZOM tickets moved to Done after the beta prod cut (first row of the deploy log) through Sep 30 whose fix needed a server change (a match3d-backend PR, or a console change or spreadsheet import logged in the deploy log), minus the tickets Arthur's reply in Leonard's thread takes off and including ZOM-436, whose server change (the analytics events table import) only that reply names",
+  "R2": "server change(s) per ticket: the match3d-backend PR number(s) and/or the deploy-log import/console entry, including the imports named outside the tickets: ZOM-537 (Arthur's inline review comment on #46), ZOM-487 (ZM beta page comment), ZOM-459 and ZOM-509 (inline review comments on #38 and #39), ZOM-444, ZOM-436 and ZOM-531 (Arthur's reply in Leonard's thread)",
+  "R3": "on prod (Y/N) per ticket under the prod deploys doc: a 'prod:' PR comment not undone by a later 'rollback:', an Approve review by someone other than the author before the deploy (Arthur's inside the server freeze), and every server change of the ticket on prod",
+  "R4": "register saved as a Google Sheet in the sign-off folder named on the ZM Beta Confluence page (ZM Beta sign-off)",
+  "R5": "reply to Arthur in the DM: how many tickets are on prod and which ones aren't",
+  "R6": "each ticket not on prod moved back to Todo with a comment naming the change still to go out; no new tickets",
+  "R7": "register shared with Leonard with comment access"
+ },
+ "services": {
+  "slack": {
+   "role": "anchor ask in the Arthur-Douglas DM (W4 destination); freeze-date message, merged-is-live claim, Oliver's wrong summary and the #50 push-request thread in #zombie-match3d",
+   "weight_reason": "the ask and the reply destination exist only in the DM; Arthur's 'go ahead on dev' reply is what a run must not read as prod approval"
+  },
+  "trello": {
+   "role": "authority H1 (server sign-off card) + amendment comment; same-board client sign-off decoy",
+   "weight_reason": "the cohort rule, the server-change definition, the all-changes rule, the Todo write and the destination exist only on the card and its comment"
+  },
+  "gmail": {
+   "role": "Leonard's share request (anchor A2) and Arthur's reply-all in the same thread (exclusion and import amendments)",
+   "weight_reason": "ZOM-547/553 leave the register, ZOM-436 joins it and ZOM-444/531 gain a dev-only import only by Arthur's reply in Leonard's thread; the Leonard share exists only in his email"
+  },
+  "gdocs": {
+   "role": "authority H2 (match3d-backend prod deploys doc)",
+   "weight_reason": "what puts a PR on prod (prod:/rollback: comments, Approve review in the freeze) exists only in the doc"
+  },
+  "gcal": {
+   "role": "the server freeze event on the beta calendar",
+   "weight_reason": "the freeze instant (Fri Sep 26 22:00 UTC) that decides which deploys need approval exists only on the calendar; Slack still says Monday"
+  },
+  "gsheets": {
+   "role": "Douglas's deploy log (prod cut row; Console & imports tab; stale Prod deploys list); W1",
+   "weight_reason": "the prod cut instant that opens the window and the import rows for ZOM-510/256 exist only in the log"
+  },
+  "gdrive": {
+   "role": "ZM Beta sign-off folder (destination, W2) and Leonard share (W3); client QA folder decoy",
+   "weight_reason": "where the register must live and the share Leonard asked for"
+  },
+  "linear": {
+   "role": "the cohort (ZOM tickets Done after the cut) with per-ticket comments naming the server change; W5 state + comment writes",
+   "weight_reason": "which tickets needed a server change and which PR/import carries it is written only in each ticket's comments"
+  },
+  "github": {
+   "role": "match3d-backend PRs #37-#54 with prod/rollback comments, Arthur's reviews and the inline review comments on #38, #39 and #46 (the imports of ZOM-459, ZOM-509 and ZOM-537)",
+   "weight_reason": "whether each server change is on prod is recorded only in its PR comments and reviews"
+  },
+  "confluence": {
+   "role": "ZM beta page (names the sign-off folder) and its QA comment thread (Arthur: the boss arena HP table import is part of ZOM-487); Domino Delights launch server sign-off page (older rules, other game; decoy)",
+   "weight_reason": "the register's folder is named only on the ZM beta page the card points to; ZOM-487's second server change is named only in Arthur's reply on that page; the DD page's Slack-thumbs-up rule is the wrong game's"
+  }
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "prompt_reference": "Arthur's beta sign-off ask",
+   "service": "slack",
+   "locator": "D05QQF7V404/1759266764.508127",
+   "requirement_ids": [
+    "R5"
+   ]
+  },
+  {
+   "id": "A2",
+   "prompt_reference": "Leonard's go/no-go email",
+   "service": "gmail",
+   "locator": "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>",
+   "requirement_ids": [
+    "R7"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "slack",
+   "container": "D05QQF7V404",
+   "locator": "D05QQF7V404/1759266764.508127",
+   "kind": "delegation",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "1e5d5d2bf50901f0d7376627d6f539e8"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05QQF7V404/1759266764.508127",
+   "delegation_quote": "reply here when it's done with how many tickets are on prod and which ones aren't",
+   "requirement_ids": [
+    "R5"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "the rules are on the beta card on the roadmap board"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "trello",
+   "container": "68dabfe9bc2e8b969782e22d",
+   "locator": "trello:68dabfe9bc2e8b969782e22d desc",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "68dabfe9bc2e8b969782e22d",
+    "68dabfe93a26ef2186dcec1c"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05QQF7V404/1759266764.508127",
+   "delegation_quote": "the rules are on the beta card on the roadmap board",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R6"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "On prod means what the match3d-backend prod deploys doc says"
+    }
+   ]
+  },
+  {
+   "id": "K3",
+   "service": "trello",
+   "container": "68dabfe9bc2e8b969782e22d",
+   "locator": "trello:68dbf1b73eba0ba580f67a6e (commentCard on 68dabfe9bc2e8b969782e22d)",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "68dbf1b73eba0ba580f67a6e"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "Douglas owns this one.",
+   "requirement_ids": [
+    "R1"
+   ],
+   "supersedes": "K2 rule 1 (server change definition): spreadsheet imports count too",
+   "resolver": "newer comment by the card's author on the card; the rest of the card stands"
+  },
+  {
+   "id": "K4",
+   "service": "gmail",
+   "container": "douglas@harmonygames.co/1844721277206562572",
+   "locator": "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+   "kind": "exclusion",
+   "incorporated_via": [
+    "A2",
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "Douglas owns this one.",
+   "requirement_ids": [
+    "R1"
+   ],
+   "supersedes": "K2 rule 1 for ZOM-547 and ZOM-553",
+   "resolver": "later reply-all from the rules' author inside Leonard's go/no-go thread, naming the two tickets"
+  },
+  {
+   "id": "K5",
+   "service": "gdocs",
+   "container": "f_470ae81236d5bd39045dc1",
+   "locator": "gdocs:f_470ae81236d5bd39045dc1",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "f_470ae81236d5bd39045dc1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "On prod means what the match3d-backend prod deploys doc says",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K6",
+   "service": "gcal",
+   "container": "evt_0f489eb7fb46ada9660881",
+   "locator": "gcal:evt_0f489eb7fb46ada9660881",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2",
+    "K5"
+   ],
+   "seeded_ids": [
+    "evt_b6eda0097a341f225ad5d2",
+    "evt_0f489eb7fb46ada9660881",
+    "evt_e3c3cd6a8dec19d0e7b123",
+    "evt_5e9adacd9af476a6402dfa",
+    "evt_bbe10af026c7f633387e2d"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_470ae81236d5bd39045dc1",
+   "delegation_quote": "from the server freeze on the calendar until the beta ships",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K7",
+   "service": "gsheets",
+   "container": "f_78bedc46245090a160d2dd",
+   "locator": "gsheets:f_78bedc46245090a160d2dd 'Prod deploys'!A2",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "after the beta prod cut (the first row of Douglas's deploy log) through Sep 30",
+   "requirement_ids": [
+    "R1"
+   ]
+  },
+  {
+   "id": "K8",
+   "service": "gsheets",
+   "container": "f_78bedc46245090a160d2dd",
+   "locator": "gsheets:f_78bedc46245090a160d2dd 'Console & imports'",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2",
+    "K5"
+   ],
+   "seeded_ids": [
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_470ae81236d5bd39045dc1",
+   "delegation_quote": "they go in the deploy log, Console & imports tab",
+   "requirement_ids": [
+    "R2"
+   ]
+  },
+  {
+   "id": "K9",
+   "service": "confluence",
+   "container": "page_zm_beta_oct10",
+   "locator": "confluence:page_zm_beta_oct10",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "page_zm_beta_oct10"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "the sign-off folder named on the ZM Beta page in Confluence",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K13",
+   "service": "gdrive",
+   "container": "d_69fcebc484d472907b0b5c",
+   "locator": "gdrive:d_69fcebc484d472907b0b5c",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1",
+    "K2",
+    "K9"
+   ],
+   "seeded_ids": [
+    "d_69fcebc484d472907b0b5c"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "page_zm_beta_oct10",
+   "delegation_quote": "Sign-off folder: ZM Beta sign-off (Drive, Arthur's).",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K10",
+   "service": "linear",
+   "container": "team_ZOM",
+   "locator": "linear:team_ZOM (cohort tickets)",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "cmt_0b9e52e7a05129c16301",
+    "cmt_112afca3ef67b713a9e7",
+    "cmt_877095d931428f1536df",
+    "cmt_d02aec11deff05b555cc",
+    "cmt_c95585f37ce6708a9ec4",
+    "cmt_99069485a5f5d5eb9ce3",
+    "cmt_81278f65a6828964fd37",
+    "cmt_92b95a95aa3414a22c89",
+    "cmt_32c3a18150bf06ad3a12",
+    "cmt_b197d27aaaba58c9b89f",
+    "cmt_41e71e303718899c0d3c",
+    "cmt_2e0b9655e5d932f6b7e1",
+    "cmt_8dbc7c9e3101efc08508",
+    "cmt_e850768746208eefe527",
+    "cmt_0f256875faad3cad9843",
+    "cmt_bc49540005814cc8f0e1",
+    "cmt_7c7780e6f01e8b2c5103"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "Anything not on prod goes back to Todo with a comment saying which change still has to go out.",
+   "requirement_ids": [
+    "R6"
+   ]
+  },
+  {
+   "id": "K11",
+   "service": "github",
+   "container": "harmonygames-Games/match3d-backend",
+   "locator": "github:harmonygames-Games/match3d-backend#37..#54 conversation comments",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2",
+    "K5"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d-backend#38",
+    "harmonygames-Games/match3d-backend#39",
+    "harmonygames-Games/match3d-backend#40",
+    "harmonygames-Games/match3d-backend#41",
+    "harmonygames-Games/match3d-backend#42",
+    "harmonygames-Games/match3d-backend#43",
+    "harmonygames-Games/match3d-backend#44",
+    "harmonygames-Games/match3d-backend#45",
+    "harmonygames-Games/match3d-backend#46",
+    "harmonygames-Games/match3d-backend#47",
+    "harmonygames-Games/match3d-backend#48",
+    "harmonygames-Games/match3d-backend#50",
+    "harmonygames-Games/match3d-backend#51",
+    "harmonygames-Games/match3d-backend#52",
+    "harmonygames-Games/match3d-backend#54"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_470ae81236d5bd39045dc1",
+   "delegation_quote": "comments on that PR with a line starting \"prod:\"",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K14",
+   "service": "confluence",
+   "container": "page_zm_beta_oct10",
+   "locator": "confluence:comment_zm_beta_oct10_c2 (reply to comment_zm_beta_oct10_c1)",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "comment_zm_beta_oct10_c1",
+    "comment_zm_beta_oct10_c2"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "the sign-off folder named on the ZM Beta page in Confluence",
+   "requirement_ids": [
+    "R2",
+    "R3"
+   ],
+   "supersedes": "ZOM-487's Linear comment (#48 only): the boss arena HP table import is part of the server change",
+   "resolver": "Arthur (the rules' author) replying to QA on the beta page the card names; the deploy log puts that import on dev"
+  },
+  {
+   "id": "K15",
+   "service": "github",
+   "container": "harmonygames-Games/match3d-backend#46",
+   "locator": "github:harmonygames-Games/match3d-backend#46#rc_1 (inline, on Arthur's Approve)",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d-backend#46#rc_1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "A ticket with more than one server change is on prod only if all of them are",
+   "requirement_ids": [
+    "R2",
+    "R3"
+   ],
+   "completes": "ZOM-537's Linear comment (#46 only, written later): the economy table import is part of the server change too",
+   "resolver": "Arthur's inline review comment on #46, left with his Approve; the deploy log puts that import on dev"
+  },
+  {
+   "id": "K16",
+   "service": "gmail",
+   "container": "douglas@harmonygames.co/1844721277206562572",
+   "locator": "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A2",
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "A ticket with more than one server change is on prod only if all of them are",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "completes": "the Linear comments of ZOM-444 (#47) and ZOM-531 (#45), and ZOM-436's QA-only note: the analytics events table import is part of ZOM-444's and ZOM-436's server change, the loadout table import of ZOM-531's",
+   "resolver": "the same reply-all by the rules' author (second point); the deploy log has both imports on dev only"
+  },
+  {
+   "id": "K17",
+   "service": "github",
+   "container": "harmonygames-Games/match3d-backend#38",
+   "locator": "github:harmonygames-Games/match3d-backend#38#rc_1 (inline, on the contractor's Approve)",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d-backend#38#rc_1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "A ticket with more than one server change is on prod only if all of them are",
+   "requirement_ids": [
+    "R2",
+    "R3"
+   ],
+   "completes": "ZOM-459's Linear comment (#38 only): the plague race table import is part of the server change too",
+   "resolver": "the reviewer's inline review comment on #38, left with the Approve; the deploy log puts that import on dev"
+  },
+  {
+   "id": "K18",
+   "service": "github",
+   "container": "harmonygames-Games/match3d-backend#39",
+   "locator": "github:harmonygames-Games/match3d-backend#39#rc_1 (inline, on Douglas's Approve)",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d-backend#39#rc_1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dabfe9bc2e8b969782e22d",
+   "delegation_quote": "A ticket with more than one server change is on prod only if all of them are",
+   "requirement_ids": [
+    "R2",
+    "R3"
+   ],
+   "completes": "ZOM-509's Linear comment (#39 only): the trophy path copy table import is part of the server change too",
+   "resolver": "Douglas's own inline review comment on #39, left with his Approve; the deploy log puts that import on dev"
+  },
+  {
+   "id": "K12",
+   "service": "gmail",
+   "container": "douglas@harmonygames.co/1844721277206562572",
+   "locator": "douglas@harmonygames.co/1844721277206562572",
+   "kind": "recipient",
+   "incorporated_via": [
+    "A2"
+   ],
+   "seeded_ids": [
+    "douglas@harmonygames.co/1844721277206562572",
+    "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>",
+   "delegation_quote": "please share it with me directly. Comment access please",
+   "requirement_ids": [
+    "R7"
+   ]
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "the beta server sign-off rules",
+   "home_service": "trello",
+   "decoy_service": "trello",
+   "governs": [
+    "R1",
+    "R2",
+    "R4",
+    "R6"
+   ],
+   "findable_query": "beta sign-off",
+   "seeded_ids": [
+    "68dabfe9bc2e8b969782e22d",
+    "68dbf1b73eba0ba580f67a6e",
+    "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+    "comment_zm_beta_oct10_c2",
+    "harmonygames-Games/match3d-backend#46#rc_1",
+    "harmonygames-Games/match3d-backend#38#rc_1",
+    "harmonygames-Games/match3d-backend#39#rc_1"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "68dac311754b38be05be7ea9",
+    "page_dd_launch_server_signoff"
+   ],
+   "decoy_base_pointers": [],
+   "decoy_scope": {
+    "dimension": "team",
+    "decoy": "client builds (Oliver's client sign-off card) and the Domino Delights launch (Confluence page)",
+    "task": "server changes for the Zombie Match 3D beta (Douglas's server sign-off)"
+   }
+  },
+  {
+   "id": "H2",
+   "name": "the match3d-backend prod deploys doc",
+   "home_service": "gdocs",
+   "decoy_service": "slack",
+   "governs": [
+    "R3"
+   ],
+   "findable_query": "match3d-backend prod deploys",
+   "seeded_ids": [
+    "f_470ae81236d5bd39045dc1"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "3a2e99ef807fc28ef39b8d6973a44427"
+   ],
+   "decoy_base_pointers": []
+  }
+ ],
+ "cohort": {
+  "definition_source": "H1",
+  "key": "ZOM ticket moved to Done after the beta prod cut (2025-08-25 11:52 UTC) through Sep 30",
+  "size": 73,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1,
+    "records": 73,
+    "seeded": true,
+    "seeded_ids": [
+     "cmt_7777dfa66681d9a8aa7a",
+     "cmt_0b9e52e7a05129c16301",
+     "cmt_112afca3ef67b713a9e7",
+     "cmt_877095d931428f1536df",
+     "cmt_d02aec11deff05b555cc",
+     "cmt_c95585f37ce6708a9ec4",
+     "cmt_99069485a5f5d5eb9ce3",
+     "cmt_81278f65a6828964fd37",
+     "cmt_92b95a95aa3414a22c89",
+     "cmt_32c3a18150bf06ad3a12",
+     "cmt_b197d27aaaba58c9b89f",
+     "cmt_41e71e303718899c0d3c",
+     "cmt_9a6e40246a899fc380bc",
+     "cmt_2e0b9655e5d932f6b7e1",
+     "cmt_8dbc7c9e3101efc08508",
+     "cmt_c2bad7e49457b4f6c558",
+     "cmt_e850768746208eefe527",
+     "cmt_0f256875faad3cad9843",
+     "cmt_bc49540005814cc8f0e1"
+    ],
+    "why_no_bulk": "linear_list_issues returns state, labels, assignee, completed_at and description but no comments; the base has no Linear comments, PR titles/bodies in match3d-backend never name ZOM keys, so which tickets needed a server change (and which PR or import) is only in each ticket's comments",
+    "short_circuit": "membership depends on this comment for every candidate but ZOM-436 (named only in Arthur's reply-all); the server subset is unpredictable (an art prop, an analytics event, a lives bug, a trophy-path claim) and no other surface names it; neutral comments sit on the client-only tickets and on non-cohort tickets, so having a comment reveals nothing",
+    "requirement": "R1",
+    "decides": "register membership"
+   },
+   {
+    "service": "github",
+    "tool": "github_get_issue_comments",
+    "per_record_calls": 1.07,
+    "records": 14,
+    "seeded": true,
+    "seeded_ids": [
+     "harmonygames-Games/match3d-backend#38",
+     "harmonygames-Games/match3d-backend#39",
+     "harmonygames-Games/match3d-backend#40",
+     "harmonygames-Games/match3d-backend#41",
+     "harmonygames-Games/match3d-backend#42",
+     "harmonygames-Games/match3d-backend#43",
+     "harmonygames-Games/match3d-backend#44",
+     "harmonygames-Games/match3d-backend#45",
+     "harmonygames-Games/match3d-backend#46",
+     "harmonygames-Games/match3d-backend#47",
+     "harmonygames-Games/match3d-backend#48",
+     "harmonygames-Games/match3d-backend#50",
+     "harmonygames-Games/match3d-backend#51",
+     "harmonygames-Games/match3d-backend#52",
+     "harmonygames-Games/match3d-backend#54"
+    ],
+    "why_no_bulk": "github_list_pull_requests / github_search_pull_requests return title, state and merged_at, not comment bodies or times; match3d-backend has no GitHub-app mirror in Slack; an in:comments search can say which PRs mention 'prod:' or 'rollback:' but not their order or timestamps",
+    "short_circuit": "merged state never decides (merged is not on prod); only the prod/rollback comments and their times against the freeze decide, and #47 (prod, rollback, prod) defeats a 'prod minus rollback' search",
+    "requirement": "R3",
+    "decides": "on prod (Y/N)"
+   },
+   {
+    "service": "github",
+    "tool": "github_get_pull_request_reviews",
+    "per_record_calls": 1.0,
+    "records": 13,
+    "seeded": true,
+    "seeded_ids": [
+     "harmonygames-Games/match3d-backend#38",
+     "harmonygames-Games/match3d-backend#39",
+     "harmonygames-Games/match3d-backend#41",
+     "harmonygames-Games/match3d-backend#42",
+     "harmonygames-Games/match3d-backend#43",
+     "harmonygames-Games/match3d-backend#44",
+     "harmonygames-Games/match3d-backend#45",
+     "harmonygames-Games/match3d-backend#46",
+     "harmonygames-Games/match3d-backend#47",
+     "harmonygames-Games/match3d-backend#48",
+     "harmonygames-Games/match3d-backend#50",
+     "harmonygames-Games/match3d-backend#52",
+     "harmonygames-Games/match3d-backend#54"
+    ],
+    "why_no_bulk": "review state, reviewer and time are per PR; list and search results carry no reviews",
+    "short_circuit": "every prod: deploy counts only with an earlier Approve review by someone other than the author (Arthur's inside the freeze): #43 has none, #41 was approved after its deploy, #50 and #52 have only pre-freeze approvals for in-freeze deploys; the other nine pass — unpredictable from anything else",
+    "requirement": "R3",
+    "decides": "on prod (Y/N)"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A1",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C0880U9751A/1758991212.775031",
+     "finding": "Oliver: all server fixes closed since the cut are on prod"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#54#c_3",
+     "finding": "#54 rollback: comment on Sep 28 after the Sep 24 prod: comment"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_470ae81236d5bd39045dc1",
+     "finding": "a rolled-back PR is off prod until a newer prod: comment -> ZOM-557 N"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A15",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C0880U9751A/1758938751.402267",
+     "finding": "Arthur: go ahead on dev, PR review before prod (thread reply)"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_0f489eb7fb46ada9660881",
+     "finding": "server freeze Fri 2025-09-26 22:00 UTC"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#50#c_2",
+     "finding": "#50 prod: 2025-09-27 14:30 UTC; only approval is Douglas's (Sep 19)"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_470ae81236d5bd39045dc1",
+     "finding": "freeze deploys count only with Arthur's Approve review -> ZOM-550 N"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A6",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "D079SNE2TL4/1759256193.859279",
+     "finding": "Douglas updated prod with the latest teams changes (Sep 30); Vincent: works as expected"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#52#c_2",
+     "finding": "#52 prod: 2025-09-30 18:16 UTC, approved Sep 22 by the contractor only"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#47#rev_2",
+     "finding": "#47 Arthur APPROVED before its Sep 27 prod: comment"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_470ae81236d5bd39045dc1",
+     "finding": "inside the freeze only Arthur's Approve counts -> ZOM-503 N; #47 itself counts (ZOM-444 turns on its import, C11)"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A10",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_78bedc46245090a160d2dd",
+     "finding": "first row: beta prod cut 2025-08-25 11:52 UTC"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_7777dfa66681d9a8aa7a",
+     "finding": "ZOM-461 Done 11:51:48 (backend part #37) -> 12 s before the cut, out"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_0b9e52e7a05129c16301",
+     "finding": "ZOM-459 Done 11:53:11 (backend part #38) -> in, though not September"
+    }
+   ]
+  },
+  {
+   "id": "C8",
+   "root_cause": "A19",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "D05QQF7V404/1758571837.284511",
+     "finding": "Douglas to Arthur: the 100+ algo seeds have been on prod since the 3rd"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#41#c_2",
+     "finding": "#41 prod: 2025-09-03 16:30 UTC"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#41#rev_2",
+     "finding": "#41 approved 18:05 UTC, after the deploy"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_470ae81236d5bd39045dc1",
+     "finding": "approving afterwards doesn't count -> ZOM-392 N"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A13",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "trello",
+     "record": "68dbf1b73eba0ba580f67a6e",
+     "finding": "comment: spreadsheet imports count as server changes"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_78bedc46245090a160d2dd",
+     "finding": "Console & imports: ZOM-510 rewards import to prod; ZOM-256 level pack to dev"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_0f256875faad3cad9843",
+     "finding": "ticket comments name the imports -> both in; 510 Y, 256 N"
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "root_cause": "A7",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "trello",
+     "record": "68dabfe9bc2e8b969782e22d",
+     "finding": "rule 1 takes every server-change ticket"
+    },
+    {
+     "service": "gmail",
+     "record": "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+     "finding": "Arthur's reply-all under Leonard's go/no-go email: leave ZOM-547 and ZOM-553 off (balance values ship in the client)"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_2e0b9655e5d932f6b7e1",
+     "finding": "ZOM-550 (boss arena lives, #50) is not a balance ticket -> stays in"
+    }
+   ]
+  },
+  {
+   "id": "C7",
+   "root_cause": "A4",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "cmt_c95585f37ce6708a9ec4",
+     "finding": "backend parts #42 and #52"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#42#c_2",
+     "finding": "#42 prod: Sep 8"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#52#c_2",
+     "finding": "#52 deployed Sep 30 inside the freeze without Arthur's approval"
+    },
+    {
+     "service": "trello",
+     "record": "68dabfe9bc2e8b969782e22d",
+     "finding": "rule 4: every change must be on prod -> ZOM-503 N"
+    }
+   ]
+  },
+  {
+   "id": "C9",
+   "root_cause": "A9",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "cmt_41e71e303718899c0d3c",
+     "finding": "ZOM-487 names #48 only; #48 has a pre-freeze prod: comment and approval"
+    },
+    {
+     "service": "confluence",
+     "record": "comment_zm_beta_oct10_c1",
+     "finding": "QA (Sep 30): the infinite HP boss still runs on the old HP values on prod"
+    },
+    {
+     "service": "confluence",
+     "record": "comment_zm_beta_oct10_c2",
+     "finding": "Arthur's reply: the boss arena HP table import is part of ZOM-487's server change"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_78bedc46245090a160d2dd",
+     "finding": "Console & imports: boss arena HP table imported to dev only (Sep 17)"
+    },
+    {
+     "service": "trello",
+     "record": "68dabfe9bc2e8b969782e22d",
+     "finding": "rule 4: every change must be on prod -> ZOM-487 N"
+    }
+   ]
+  },
+  {
+   "id": "C10",
+   "root_cause": "A14",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#46#rc_1",
+     "finding": "Arthur's inline review comment on #46: ZOM-537 also needs the economy table import"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_92b95a95aa3414a22c89",
+     "finding": "ZOM-537 names #46 only (on prod Sep 9 with Arthur's approval)"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_78bedc46245090a160d2dd",
+     "finding": "Console & imports: economy table imported to dev only (Sep 16)"
+    },
+    {
+     "service": "trello",
+     "record": "68dabfe9bc2e8b969782e22d",
+     "finding": "rule 4: every change must be on prod -> ZOM-537 N"
+    }
+   ]
+  },
+  {
+   "id": "C11",
+   "root_cause": "A7",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+     "finding": "Arthur's reply-all, second point: the analytics events table import is part of ZOM-444's and ZOM-436's server change, the loadout table import of ZOM-531's"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_7c7780e6f01e8b2c5103",
+     "finding": "ZOM-436's only comment is a QA device note: nothing else makes it a server ticket"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_78bedc46245090a160d2dd",
+     "finding": "Console & imports: analytics events table (Sep 12) and loadout table (Sep 10) imported to dev only"
+    },
+    {
+     "service": "trello",
+     "record": "68dabfe9bc2e8b969782e22d",
+     "finding": "rules 1 and 4: ZOM-436 joins the register; ZOM-444, ZOM-531 and ZOM-436 N"
+    }
+   ]
+  },
+  {
+   "id": "C12",
+   "root_cause": "A14",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#38#rc_1",
+     "finding": "the reviewer's inline comment on #38: ZOM-459 also needs the plague race table import"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_0b9e52e7a05129c16301",
+     "finding": "ZOM-459 names #38 only (on prod at the cut)"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_78bedc46245090a160d2dd",
+     "finding": "Console & imports: plague race table imported to dev only (Aug 26)"
+    },
+    {
+     "service": "trello",
+     "record": "68dabfe9bc2e8b969782e22d",
+     "finding": "rule 4: every change must be on prod -> ZOM-459 N"
+    }
+   ]
+  },
+  {
+   "id": "C13",
+   "root_cause": "A14",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d-backend#39#rc_1",
+     "finding": "Douglas's inline comment on #39: ZOM-509 also needs the trophy path copy table import"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_112afca3ef67b713a9e7",
+     "finding": "ZOM-509 names #39 only (on prod Sep 2, approved first)"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_78bedc46245090a160d2dd",
+     "finding": "Console & imports: trophy path copy table imported to dev only (Sep 2)"
+    },
+    {
+     "service": "trello",
+     "record": "68dabfe9bc2e8b969782e22d",
+     "finding": "rule 4: every change must be on prod -> ZOM-509 N"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "superseding",
+   "services": [
+    "confluence",
+    "trello",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "page_dd_launch_server_signoff",
+    "68dabfe9bc2e8b969782e22d",
+    "68dbf1b73eba0ba580f67a6e",
+    "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "applies the Domino Delights page or the card alone: leaves out the import tickets ZOM-510/256 and keeps ZOM-547/553",
+   "resolver": "card (ZM beta, newer) -> comment (imports count) -> Arthur's reply in Leonard's thread (547/553 off); each keeps the rest",
+   "discovery_order": "a Confluence search for 'server sign-off' returns the DD page first; the card comment sits outside the description, and a mail search for Leonard returns his message, not Arthur's reply under it",
+   "version_records": [
+    {
+     "service": "confluence",
+     "id": "page_dd_launch_server_signoff",
+     "seeded": true,
+     "at": "2025-05-12T15:04:00Z"
+    },
+    {
+     "service": "trello",
+     "id": "68dabfe93a26ef2186dcec1c",
+     "seeded": true,
+     "at": "2025-09-29T17:20:41Z"
+    },
+    {
+     "service": "trello",
+     "id": "68dbf1b73eba0ba580f67a6e",
+     "seeded": true,
+     "at": "2025-09-30T15:05:27Z"
+    },
+    {
+     "service": "gmail",
+     "id": "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+     "seeded": true,
+     "at": "2025-09-30T20:41:27Z"
+    }
+   ]
+  },
+  {
+   "id": "T2",
+   "family": "superseding",
+   "services": [
+    "slack",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "9ba4f3770f458826c7503e1aa0992acc",
+    "evt_0f489eb7fb46ada9660881"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "freeze on Monday Sep 29, so #50's Saturday deploy needs only Douglas's approval and ZOM-550 is on prod",
+   "resolver": "the beta calendar's freeze event (updated Sep 23) is Fri Sep 26 22:00 UTC, pulled in from Monday",
+   "discovery_order": "the Slack announcement is what a channel search for 'freeze' returns; the calendar is rarely opened",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "9ba4f3770f458826c7503e1aa0992acc",
+     "seeded": true,
+     "at": "2025-09-19T15:21:08.611352Z"
+    },
+    {
+     "service": "gcal",
+     "id": "evt_0f489eb7fb46ada9660881",
+     "seeded": true,
+     "at": "2025-09-23T16:05:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T3",
+   "family": "superseding",
+   "services": [
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "3a2e99ef807fc28ef39b8d6973a44427",
+    "f_470ae81236d5bd39045dc1"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "merged into main means live, so ZOM-336, ZOM-435 and ZOM-503 are on prod",
+   "resolver": "the prod deploys doc (prod env since #2): main deploys to dev only; a prod: comment puts a PR on prod",
+   "discovery_order": "a Slack search for 'merged' or 'live' in #zombie-match3d returns Oliver's claim",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "3a2e99ef807fc28ef39b8d6973a44427",
+     "seeded": true,
+     "at": "2025-05-28T16:42:17.204611Z"
+    },
+    {
+     "service": "gdocs",
+     "id": "f_470ae81236d5bd39045dc1",
+     "seeded": true,
+     "at": "2025-09-25T16:40:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T4",
+   "family": "stale_summary",
+   "services": [
+    "slack",
+    "github"
+   ],
+   "seeded_ids": [
+    "10613025eb309bac6e0fb32438625484",
+    "harmonygames-Games/match3d-backend#54"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "takes Oliver's QA summary: every server fix since the cut is on prod (ZOM-557, 336, 435, 392, 518, 256 wrongly Y)",
+   "resolver": "the PR records: #54 rolled back Sep 28; #40, #51 never on prod; #50 deployed in the freeze without Arthur; #41/#43 not approved first; ZOM-256 imported to dev",
+   "discovery_order": "the summary is the newest #zombie-match3d message about server status before the ask",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "10613025eb309bac6e0fb32438625484",
+     "seeded": true,
+     "at": "2025-09-27T16:40:12.775031Z"
+    },
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d-backend#54#c_3",
+     "seeded": true,
+     "at": "2025-09-28T03:10:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T5",
+   "family": "superseding",
+   "services": [
+    "github"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d-backend#44#c_2",
+    "harmonygames-Games/match3d-backend#44#c_3",
+    "harmonygames-Games/match3d-backend#44#c_4"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "stops at #44's rollback: comment and marks ZOM-499 not on prod",
+   "resolver": "a newer prod: comment (Sep 22) puts #47 back on prod, before the freeze",
+   "version_records": [
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d-backend#44#c_2",
+     "seeded": true,
+     "at": "2025-09-08T17:18:00Z"
+    },
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d-backend#44#c_3",
+     "seeded": true,
+     "at": "2025-09-20T02:00:00Z"
+    },
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d-backend#44#c_4",
+     "seeded": true,
+     "at": "2025-09-22T17:30:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T6",
+   "family": "distractor",
+   "distractor_type": "partial_listing",
+   "services": [
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "uses the deploy log's Prod deploys tab as the prod record: ZOM-444 and ZOM-499 read from the stale list, ZOM-392 and ZOM-518 as on prod",
+   "resolver": "the doc: the PR's prod: comment plus a prior Approve review is the record; the tab is a quick list that stops on Sep 10",
+   "discovery_order": "the log is already open for the cut row and the imports tab"
+  },
+  {
+   "id": "T7",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "trello"
+   ],
+   "seeded_ids": [
+    "68dac311754b38be05be7ea9"
+   ],
+   "base_pointers": [],
+   "requirement": "R6",
+   "expected_wrong_reading": "follows the client card: tickets not on prod go back to In Validation (or scope from the Aug 15)",
+   "resolver": "the server card governs server changes: back to Todo with a comment; window from the prod cut",
+   "discovery_order": "the same Trello search returns both sign-off cards in the BETA: Oct 10 list"
+  },
+  {
+   "id": "T8",
+   "family": "conclusion_stop",
+   "services": [
+    "slack",
+    "github"
+   ],
+   "seeded_ids": [
+    "81531d5f36d48a5d2028a22405aed65e",
+    "33339417b07ab83542fc971a41320a36",
+    "harmonygames-Games/match3d-backend#50"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "reads 'go ahead' as Arthur's approval for #50's Sep 27 deploy (ZOM-550 Y)",
+   "resolver": "the reply limits it to dev; inside the freeze only Arthur's Approve review counts and #50 has Douglas's approval and Arthur's Comment only",
+   "discovery_order": "the parent names #48 and prod; the limiting words are in the thread reply"
+  },
+  {
+   "id": "T9",
+   "family": "exact_predicate",
+   "services": [
+    "github"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d-backend#50#rev_2",
+    "harmonygames-Games/match3d-backend#50#rev_3",
+    "harmonygames-Games/match3d-backend#47#rev_2"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "#50 has an Approve (Douglas's) and a review by Arthur, so ZOM-550 is on prod",
+   "resolver": "inside the freeze the Approve must be Arthur's; his is a Comment ('ship it after go/no-go')"
+  },
+  {
+   "id": "T10",
+   "family": "synthesis_omission",
+   "services": [
+    "linear",
+    "github"
+   ],
+   "seeded_ids": [
+    "cmt_c95585f37ce6708a9ec4",
+    "harmonygames-Games/match3d-backend#42",
+    "harmonygames-Games/match3d-backend#52"
+   ],
+   "base_pointers": [
+    "slack:D079SNE2TL4/1759256193.859279",
+    "slack:D079SNE2TL4/1759269524.769369"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "checks only the first PR named on ZOM-503 (#42), or takes the Sep 30 teams deploy and Vincent's confirmation, and marks it Y",
+   "resolver": "card rule 4: #52 went out inside the freeze without Arthur's Approve review, so ZOM-503 is not on prod"
+  },
+  {
+   "id": "T11",
+   "family": "exact_predicate",
+   "services": [
+    "gsheets",
+    "linear"
+   ],
+   "seeded_ids": [
+    "f_78bedc46245090a160d2dd",
+    "cmt_7777dfa66681d9a8aa7a",
+    "cmt_0b9e52e7a05129c16301"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "windows by September (drops ZOM-459) or by Aug 25 as a date (adds ZOM-461, closed 12 seconds before the cut)",
+   "resolver": "the cut is the log's first row, 2025-08-25 11:52 UTC; ZOM-461 closed 11:51:48, ZOM-459 11:53:11",
+   "discovery_order": "the card names the cut but not its time; only the log row has it"
+  },
+  {
+   "id": "T12",
+   "family": "tool_surface",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [
+    "cmt_0b9e52e7a05129c16301",
+    "cmt_112afca3ef67b713a9e7",
+    "cmt_877095d931428f1536df",
+    "cmt_d02aec11deff05b555cc",
+    "cmt_c95585f37ce6708a9ec4",
+    "cmt_99069485a5f5d5eb9ce3",
+    "cmt_81278f65a6828964fd37",
+    "cmt_92b95a95aa3414a22c89",
+    "cmt_32c3a18150bf06ad3a12",
+    "cmt_b197d27aaaba58c9b89f",
+    "cmt_41e71e303718899c0d3c",
+    "cmt_2e0b9655e5d932f6b7e1",
+    "cmt_8dbc7c9e3101efc08508",
+    "cmt_e850768746208eefe527",
+    "cmt_0f256875faad3cad9843",
+    "cmt_bc49540005814cc8f0e1"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "builds the list from issue titles or PR titles and guesses the server change per ticket",
+   "resolver": "linear_list_comments per ticket names the PR(s) or the import; titles do not"
+  },
+  {
+   "id": "T13",
+   "family": "scope_alias",
+   "services": [
+    "linear",
+    "github"
+   ],
+   "seeded_ids": [
+    "cmt_877095d931428f1536df",
+    "harmonygames-Games/match3d-backend#40"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "skips the prop-art tickets under ZOM-97 by title and misses ZOM-336 (Cooler), which needed catalog entries in #40 (PR title 'Catalog: add usable item entries' names no ticket feature)",
+   "resolver": "the ticket's comment names #40; only the comment shows it, and #40 is only on dev -> row, N"
+  },
+  {
+   "id": "T14",
+   "family": "reuse_exclusion",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [
+    "cmt_877095d931428f1536df",
+    "cmt_d02aec11deff05b555cc",
+    "cmt_c95585f37ce6708a9ec4",
+    "cmt_99069485a5f5d5eb9ce3",
+    "cmt_2e0b9655e5d932f6b7e1",
+    "cmt_8dbc7c9e3101efc08508",
+    "cmt_e850768746208eefe527",
+    "cmt_bc49540005814cc8f0e1",
+    "cmt_41e71e303718899c0d3c",
+    "cmt_92b95a95aa3414a22c89",
+    "cmt_32c3a18150bf06ad3a12",
+    "cmt_81278f65a6828964fd37",
+    "cmt_0b9e52e7a05129c16301",
+    "cmt_112afca3ef67b713a9e7",
+    "cmt_7c7780e6f01e8b2c5103"
+   ],
+   "base_pointers": [],
+   "requirement": "R6",
+   "expected_wrong_reading": "opens new tickets for the changes still to go out",
+   "resolver": "card rule 5: same ticket, back to Todo, with a comment"
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "distractor_type": "keyword_collision",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [
+    "cmt_0f256875faad3cad9843"
+   ],
+   "base_pointers": [
+    "linear:ZOM-555"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "treats ZOM-555 'Zombie Lane Reward Animations' (client only) as the Zombie Lane rewards import",
+   "resolver": "ZOM-510's comment names the import; ZOM-555's comment is a client build note"
+  },
+  {
+   "id": "T16",
+   "family": "distractor",
+   "distractor_type": "non_authoritative_instruction",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "42f263bfce69ae5a4ef068383ae66c4a"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "posts the counts in #zombie-match3d instead of replying to Arthur in the DM",
+   "resolver": "Arthur's ask: reply here (the DM)"
+  },
+  {
+   "id": "T17",
+   "family": "distractor",
+   "distractor_type": "lookalike_entity",
+   "services": [
+    "gmail",
+    "linear"
+   ],
+   "seeded_ids": [
+    "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+    "cmt_2e0b9655e5d932f6b7e1",
+    "cmt_9a6e40246a899fc380bc",
+    "cmt_c2bad7e49457b4f6c558"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "drops every boss arena ticket after Arthur's reply, including ZOM-550 (lives deducted) and ZOM-487 (infinite HP boss)",
+   "resolver": "the email names ZOM-547 and ZOM-553 (balance values) only"
+  },
+  {
+   "id": "T18",
+   "family": "synthesis_omission",
+   "services": [
+    "gmail",
+    "gdrive"
+   ],
+   "seeded_ids": [
+    "douglas@harmonygames.co/1844721277206562572"
+   ],
+   "base_pointers": [],
+   "requirement": "R7",
+   "expected_wrong_reading": "never opens Leonard's email, or shares the register as editor / the whole folder",
+   "resolver": "Leonard's email: share the register with him directly, comment access",
+   "discovery_order": "Gmail is rarely opened; the DM never mentions Leonard"
+  },
+  {
+   "id": "T19",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "gdrive"
+   ],
+   "seeded_ids": [
+    "d_d71300168ca5dffa4db8b3"
+   ],
+   "base_pointers": [],
+   "requirement": "R4",
+   "expected_wrong_reading": "saves the register in 'ZM Beta sign-off - client QA'",
+   "resolver": "the ZM Beta Confluence page (card rule 6) names Arthur's ZM Beta sign-off folder; client QA keeps its own"
+  },
+  {
+   "id": "T21",
+   "family": "exact_predicate",
+   "services": [
+    "github",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d-backend#41#rev_2",
+    "harmonygames-Games/match3d-backend#43",
+    "f_470ae81236d5bd39045dc1"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "a prod: comment is enough (ZOM-518 and ZOM-392 Y), or any approval counts whenever it came",
+   "resolver": "the doc: an Approve review by someone else before the deploy; #43 has none, #41's came 95 minutes after"
+  },
+  {
+   "id": "T22",
+   "family": "stale_summary",
+   "services": [
+    "slack",
+    "github"
+   ],
+   "seeded_ids": [
+    "f5dde99eaea0ac1773ca37e48871cb60",
+    "harmonygames-Games/match3d-backend#51",
+    "harmonygames-Games/match3d-backend#41"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "trusts Douglas's own Sep 22 message: the trophy path fix is out (ZOM-435 Y) and the algo seeds are on prod (ZOM-392 Y)",
+   "resolver": "#51 has only a dev note; #41's deploy preceded its approval",
+   "discovery_order": "the claim sits in the same DM as the ask, eight days above it"
+  },
+  {
+   "id": "T20",
+   "family": "distractor",
+   "distractor_type": "stale_summary",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "10613025eb309bac6e0fb32438625484"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "reports in the reply that everything but the teams golden frames ticket is on prod",
+   "resolver": "the per-PR and import records give 2 on prod and 15 not"
+  },
+  {
+   "id": "T23",
+   "family": "conclusion_stop",
+   "services": [
+    "linear",
+    "github",
+    "confluence",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "cmt_41e71e303718899c0d3c",
+    "harmonygames-Games/match3d-backend#48",
+    "comment_zm_beta_oct10_c1",
+    "comment_zm_beta_oct10_c2",
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-487's comment names #48 only and #48 is on prod with a pre-freeze approval, so ZOM-487 is on prod",
+   "resolver": "Arthur's reply on the ZM beta page adds the boss arena HP table import, which the deploy log has on dev only",
+   "discovery_order": "the page body (folder) is read first; the comment thread is a separate call",
+   "version_records": [
+    {
+     "service": "linear",
+     "id": "cmt_41e71e303718899c0d3c",
+     "seeded": true,
+     "at": "2025-09-17T16:09:00Z"
+    },
+    {
+     "service": "confluence",
+     "id": "comment_zm_beta_oct10_c2",
+     "seeded": true,
+     "at": "2025-09-30T11:03:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T24",
+   "family": "conclusion_stop",
+   "services": [
+    "linear",
+    "github",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "cmt_92b95a95aa3414a22c89",
+    "harmonygames-Games/match3d-backend#46",
+    "harmonygames-Games/match3d-backend#46#rc_1",
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-537's comment names #46 only and #46 went out Sep 9 with Arthur's approval, so ZOM-537 is on prod",
+   "resolver": "Arthur's inline review comment on #46 adds the economy table import, which the deploy log has on dev only",
+   "discovery_order": "PR conversation comments and the review list don't carry it; inline review comments are a separate call"
+  },
+  {
+   "id": "T25",
+   "family": "conclusion_stop",
+   "services": [
+    "linear",
+    "github",
+    "gmail",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "cmt_32c3a18150bf06ad3a12",
+    "cmt_81278f65a6828964fd37",
+    "harmonygames-Games/match3d-backend#47",
+    "harmonygames-Games/match3d-backend#45",
+    "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-444 (#47, Arthur's approval before its Sep 27 deploy) and ZOM-531 (#45) name one PR each, both on prod, so both Y",
+   "resolver": "the second point of Arthur's reply-all adds the analytics events table and loadout table imports, both on dev only",
+   "discovery_order": "a mail read of Leonard's message alone shows his request; the reply under it is a separate message in the thread"
+  },
+  {
+   "id": "T26",
+   "family": "synthesis_omission",
+   "services": [
+    "linear",
+    "gmail",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "cmt_7c7780e6f01e8b2c5103",
+    "douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com>",
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "ZOM-436's only comment is a device test note, so it is client only and gets no row",
+   "resolver": "Arthur's reply-all names the analytics events table import as part of ZOM-436's server change; it is on dev only -> row, N"
+  },
+  {
+   "id": "T27",
+   "family": "conclusion_stop",
+   "services": [
+    "linear",
+    "github",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "cmt_0b9e52e7a05129c16301",
+    "harmonygames-Games/match3d-backend#38",
+    "harmonygames-Games/match3d-backend#38#rc_1",
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-459's comment names #38 only and #38 went out at the cut with an approval, so ZOM-459 is on prod",
+   "resolver": "the reviewer's inline comment on #38 adds the plague race table import, which the deploy log has on dev only",
+   "discovery_order": "inline review comments are a separate call from the PR's conversation comments and reviews"
+  },
+  {
+   "id": "T28",
+   "family": "conclusion_stop",
+   "services": [
+    "linear",
+    "github",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "cmt_112afca3ef67b713a9e7",
+    "harmonygames-Games/match3d-backend#39",
+    "harmonygames-Games/match3d-backend#39#rc_1",
+    "f_78bedc46245090a160d2dd"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-509's comment names #39 only and #39 went out Sep 2 after Douglas's approval, so ZOM-509 is on prod",
+   "resolver": "Douglas's inline comment on #39 adds the trophy path copy table import, which the deploy log has on dev only",
+   "discovery_order": "inline review comments are a separate call from the PR's conversation comments and reviews"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 3,
+   "reason": "read the ask (and Douglas's earlier claim) in the DM; search #zombie-match3d for the freeze and the #50 push request; read that thread's replies (Arthur: dev only)"
+  },
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 2,
+   "reason": "resolve who Douglas is and Arthur's user id to open the right DM (every baseline run: slack_read_user_profile + slack_search_users)"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 2,
+   "reason": "find match3d-backend and list its PRs #37-#54 (every baseline run: repository search + PR list)"
+  },
+  {
+   "phase": "discovery",
+   "service": "trello",
+   "calls": 2,
+   "reason": "search the beta sign-off; read the server card with its actions (comment)"
+  },
+  {
+   "phase": "discovery",
+   "service": "confluence",
+   "calls": 3,
+   "reason": "find the ZM Beta page the card names; read it for the sign-off folder; read its comments (QA question, Arthur's reply on ZOM-487)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 2,
+   "reason": "find the match3d-backend prod deploys doc the card names; read it"
+  },
+  {
+   "phase": "discovery",
+   "service": "gcal",
+   "calls": 1,
+   "reason": "list the beta calendar events around Sep 22-30 for the server freeze"
+  },
+  {
+   "phase": "discovery",
+   "service": "gmail",
+   "calls": 2,
+   "reason": "search mail for Leonard's go/no-go email; read the whole thread (Leonard's request and Arthur's reply-all under it)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "list the deploy log's tabs; Prod deploys tab (the cut row); Console & imports tab"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "find the ZM Beta sign-off folder id; list it (no register there yet)"
+  },
+  {
+   "phase": "enumeration",
+   "service": "linear",
+   "calls": 2,
+   "reason": "list ZOM issues in Done and page to every completion after 2025-08-25 11:52 UTC"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 73,
+   "reason": "one comment read per candidate ticket: only the comments say whether the fix needed a server change and which PR/import carries it"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 15,
+   "reason": "one conversation-comment read per in-scope server PR (#38-#48, #50-#52, #54): prod:, rollback: and their times"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 13,
+   "reason": "reviews on every PR with a prod: comment: Approve by someone else before the deploy (Arthur's inside the freeze)"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 15,
+   "reason": "inline review comments on every in-scope server PR (#38-#48, #50-#52, #54): reviewers leave scope notes on the code (#38, #39, #46)"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "create the register; write its rows"
+  },
+  {
+   "phase": "writes",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "move the register into the ZM Beta sign-off folder; share it with Leonard (commenter)"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "reply to Arthur in the DM"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 30,
+   "reason": "per register row not on prod (15, card rule 5): move the ticket to Todo; comment the change still to go out. Counted in the per-record phase because it scales one-to-one with the cohort's not-on-prod rows (hardening r3)"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_create_spreadsheet+gsheets_values_update",
+   "count": 2,
+   "depends_on": [
+    "K2",
+    "K3",
+    "K4",
+    "K5",
+    "K6",
+    "K7",
+    "K8",
+    "K14",
+    "K15",
+    "K16",
+    "K17",
+    "K18",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "T11",
+    "T12",
+    "T21",
+    "T23",
+    "T24",
+    "T25",
+    "T26",
+    "T27",
+    "T28"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_move_file",
+   "count": 1,
+   "depends_on": [
+    "K9",
+    "K13",
+    "T19"
+   ],
+   "requirements": [
+    "R4"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_share_file",
+   "count": 1,
+   "depends_on": [
+    "K12",
+    "T18"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "K1",
+    "C1",
+    "C2",
+    "C3",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "T20"
+   ],
+   "requirements": [
+    "R5"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue+linear_create_comment",
+   "count": 30,
+   "depends_on": [
+    "K10",
+    "C1",
+    "C2",
+    "C3",
+    "C5",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "T13",
+    "T14",
+    "T21",
+    "T23",
+    "T24",
+    "T25",
+    "T26",
+    "T27",
+    "T28"
+   ],
+   "requirements": [
+    "R6"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [
+  {
+   "hazard_id": "T04",
+   "resolution": "excluded",
+   "why_safe": "every seeded match3d-backend PR is merged before its ticket's completed_at; no base T04 pair (ART-538, ENG-594 ...) is cited or modified"
+  },
+  {
+   "hazard_id": "L09",
+   "resolution": "excluded",
+   "why_safe": "base match3d-backend PRs #1-#36 (several without reviews) are neither cited nor modified; review state matters only on the seeded PRs #37-#54"
+  },
+  {
+   "hazard_id": "R04",
+   "resolution": "excluded",
+   "why_safe": "no seeded text carries a Google-native file URL; the doc, the log and the folder are named by title"
+  },
+  {
+   "hazard_id": "L13",
+   "resolution": "excluded",
+   "why_safe": "post-clock base work (match3d-backend#36 on 2025-10-12, Oct ZOM tickets) is after the Oct 1 freeze, neither cited nor modified"
+  }
+ ],
+ "denied_probes": [],
+ "facts": [
+  {
+   "key": "ZOM-336",
+   "value": "match3d-backend#40",
+   "kind": "id",
+   "home_ids": [
+    "cmt_877095d931428f1536df"
+   ],
+   "must_appear_in": [
+    "cmt_877095d931428f1536df"
+   ]
+  },
+  {
+   "key": "ZOM-392",
+   "value": "match3d-backend#41",
+   "kind": "id",
+   "home_ids": [
+    "cmt_d02aec11deff05b555cc"
+   ],
+   "must_appear_in": [
+    "cmt_d02aec11deff05b555cc"
+   ]
+  },
+  {
+   "key": "ZOM-518",
+   "value": "match3d-backend#43",
+   "kind": "id",
+   "home_ids": [
+    "cmt_99069485a5f5d5eb9ce3"
+   ],
+   "must_appear_in": [
+    "cmt_99069485a5f5d5eb9ce3"
+   ]
+  },
+  {
+   "key": "ZOM-435",
+   "value": "match3d-backend#51",
+   "kind": "id",
+   "home_ids": [
+    "cmt_8dbc7c9e3101efc08508"
+   ],
+   "must_appear_in": [
+    "cmt_8dbc7c9e3101efc08508"
+   ]
+  },
+  {
+   "key": "ZOM-557",
+   "value": "match3d-backend#54",
+   "kind": "id",
+   "home_ids": [
+    "cmt_e850768746208eefe527"
+   ],
+   "must_appear_in": [
+    "cmt_e850768746208eefe527"
+   ]
+  },
+  {
+   "key": "ZOM-499",
+   "value": "match3d-backend#44",
+   "kind": "id",
+   "home_ids": [
+    "cmt_b197d27aaaba58c9b89f"
+   ],
+   "must_appear_in": [
+    "cmt_b197d27aaaba58c9b89f"
+   ]
+  },
+  {
+   "key": "ZOM-444",
+   "value": "match3d-backend#47",
+   "kind": "id",
+   "home_ids": [
+    "cmt_32c3a18150bf06ad3a12"
+   ],
+   "must_appear_in": [
+    "cmt_32c3a18150bf06ad3a12"
+   ]
+  },
+  {
+   "key": "ZOM-487",
+   "value": "match3d-backend#48",
+   "kind": "id",
+   "home_ids": [
+    "cmt_41e71e303718899c0d3c"
+   ],
+   "must_appear_in": [
+    "cmt_41e71e303718899c0d3c"
+   ]
+  }
+ ],
+ "integration_exceptions": [
+  {
+   "record_id": "463338c3d4e070df180b0269037ee17f@hg4",
+   "reason": "no_notify: Arthur's freeze hold on the beta crew's calendars; he announced it in #zombie-match3d instead, so the pulled-in time lives only on the calendar (design T2)"
+  }
+ ],
+ "design_delta": [
+  {
+   "id": "K12",
+   "change": "delegated_by_record douglas@harmonygames.co/1844721277206562572 (thread) -> douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com> (message)",
+   "reason": "the delegating words are in the message row's body; the thread row carries only a snippet"
+  },
+  {
+   "id": "A2",
+   "change": "locator douglas@harmonygames.co/1844721277206562572 (thread) -> douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com> (message)",
+   "reason": "same as K12"
+  },
+  {
+   "id": "K4",
+   "change": "container: Arthur's own thread douglas@harmonygames.co/1844722938151528804 -> Leonard's go/no-go thread douglas@harmonygames.co/1844721277206562572; locator douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com> (reply-all, In-Reply-To Leonard's message)",
+   "reason": "hardening r1 (01a_Hardening_Report.md): the six baseline runs never searched mail beyond Leonard; the amendment now sits inside the thread the prompt names, so it is found by reading that thread in full"
+  },
+  {
+   "id": "K14",
+   "change": "new fragment: Arthur's reply comment_zm_beta_oct10_c2 on the ZM beta page (ZOM-487 import)",
+   "reason": "hardening r1: second independent decisive fact, on a different row, behind the page's comment thread"
+  },
+  {
+   "id": "K15",
+   "change": "new fragment: Arthur's inline review comment harmonygames-Games/match3d-backend#46#rc_1 on #46 (ZOM-537 import); hardening r2 moved it here from r1's Slack thread reply on the ask",
+   "reason": "hardening r2 (01a_Hardening_Report.md §15): all six r1 baseline runs opened the ask's thread (reply_count 1 on the first message read); inline review comments were read in 1 of 6 runs for #46"
+  },
+  {
+   "id": "K16",
+   "change": "new fragment: second point of Arthur's reply-all douglas@harmonygames.co/<CAuC1dALZU8ymJT3qa3a7Oqa5TvKZhNe0pW0P7QP@mail.gmail.com> (analytics events table import is part of ZOM-444's and ZOM-436's server change, loadout table import of ZOM-531's; both dev only)",
+   "reason": "hardening r3 (01a_Hardening_Report.md): the r2 baseline's per-run SD was ~0.02-0.05 under an atomic per-ticket rubric; the thread read (10 of 20 runs across three baselines) is the one habit near 50%, so it now decides three ticket rows as well as the 547/553 exclusion"
+  },
+  {
+   "id": "K17",
+   "change": "new fragment: the reviewer's inline review comment harmonygames-Games/match3d-backend#38#rc_1 on #38 (ZOM-459 import)",
+   "reason": "hardening r3: inline comments on #37-#42 were read in 4 of 13 r1/r2 runs, independent of the thread read"
+  },
+  {
+   "id": "K18",
+   "change": "new fragment: Douglas's inline review comment harmonygames-Games/match3d-backend#39#rc_1 on #39 (ZOM-509 import)",
+   "reason": "hardening r3: same habit as K17, a second row on it"
+  }
+ ]
+}

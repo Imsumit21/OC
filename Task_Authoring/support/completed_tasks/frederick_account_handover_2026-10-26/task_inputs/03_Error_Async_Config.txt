@@ -1,0 +1,56 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Leave every field empty to apply nothing. Applies to the baseline run and the
+verifier, not to Universe Explorer.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+On screen 16, leave every field empty.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No forced errors and no async waits, so the Oracle Events need no recovery or wait steps.
+
+## Post-baseline checks
+
+- Forced error fired: n/a (none configured)
+- Async submit → check → get appeared: n/a (none configured)
+- Non-default values confirmed: n/a
+
+## Self-review
+
+Checks walked: `Evals/1_Prompt_Eval.md` §2.2 (feasibility, persona ACL) and `Evals/2_Oracle_Events_Eval.md` §3.5. With no friction,
+every read the task needs stays on its normal path, e.g. the hub D05S58U4SAK/1759272012.507134, the sweep exports
+f_f7e7c5bf089029cee91175 and the adjoe reply C07UCC631A6/1757349668.681539. There is no alternate path to prove.
+
+| Counter-reading | Resolution (evidence) |
+|---|---|
+| Counter: the scenario is about an outage (access and lockouts), so a forced error on a Drive or Sheets read is realistic | No. It is not an outage scenario. The lockout in the base is TikTok's, already resolved on Sep 29 (D05S58U4SAK/1759170013.491159). The task is a custody register built from exports Fred can read (f_f7e7c5bf089029cee91175); a forced error on those reads would only add timing noise |
+| Counter: the task needs friction to reach the author's 70+ calls or the < 75% target | V3 sets difficulty through the universe, not friction (`references/Docs/11_V3_Changes.md` §6). The design's difficulty comes from the authorities, amendments and second tabs (01_Hardness_Manifest.json), and no design note relies on friction |
+| Counter: an async wait on Gmail search would add realism to the money-evidence lookups | Mail search returns the receipts directly (frederick.stone@harmonygames.co/1843428112007517388). A wait adds no fact and risks timing-only failures that V3 does not count as valid difficulty |
+
+Unresolved: none.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring-2/task_inputs · 03_Error_Async_Config.txt#cca02f20a551 · blocking 0 · warnings 0 · checks 10
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#ee8d4d0de1ff, 01_Hardness_Manifest.json#97a0fe5ec107, 01_Grounding_Dossier.md#ad5d23e760d6)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 3 evidenced counter-readings (of 3 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```

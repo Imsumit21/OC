@@ -1,0 +1,26 @@
+| Rollout | Counted tool calls | Raw / harness / blocked / repeats | Weighted pass (platform) | Failed rubrics (platform) |
+|---|---|---|---|---|
+| run-1 | 183 | 199 / 9 / 0 / 7 | 51.9% | R2, R3, R4, R5, R7, R8, R9, R18, R19, R22, R23, R24, R25, R26, R28, R29, R30, R33, R34, R35, R36, R38, R39, R40, R43, R44, R45, R46, R48, R49, R50 |
+| run-2 | 163 | 169 / 3 / 3 / 0 | 71.0% | R3, R4, R5, R17, R18, R22, R23, R24, R25, R26, R33, R34, R35, R36, R43, R44, R45, R46, R47 |
+| run-3 | 205 | 215 / 6 / 0 / 4 | 44.6% | R2, R3, R4, R5, R6, R7, R8, R9, R17, R18, R19, R22, R23, R24, R25, R26, R27, R28, R29, R30, R33, R34, R35, R36, R37, R38, R39, R40, R43, R44, R45, R46, R47, R48, R49, R50 |
+| run-4 | 202 | 207 / 4 / 1 / 0 | 51.9% | R2, R3, R4, R5, R7, R8, R9, R18, R19, R22, R23, R24, R25, R26, R28, R29, R30, R33, R34, R35, R36, R38, R39, R40, R43, R44, R45, R46, R48, R49, R50 |
+| run-5 | 238 | 246 / 7 / 1 / 0 | 73.6% | R3, R4, R5, R18, R22, R23, R24, R25, R26, R33, R34, R35, R36, R43, R44, R45, R46 |
+| run-6 | 185 | 193 / 6 / 2 / 0 | 44.6% | R2, R3, R4, R5, R6, R7, R8, R9, R17, R18, R19, R22, R23, R24, R25, R26, R27, R28, R29, R30, R33, R34, R35, R36, R37, R38, R39, R40, R43, R44, R45, R46, R47, R48, R49, R50 |
+
+| Gate | Value | Rule | Verdict |
+|---|---|---|---|
+| errored_runs | 0 errored, 6 completed of 6 | <= 2 errored and >= 4 completed (3+ errored = Fail) | PASS |
+| pass_at_1 | 0/6 = 0% | <= 50% (<= 3 of 6) | PASS |
+| avg_weighted_pass_rate | 56.3% | < 75% (Evals); QC Spec V2 alone < 90% | PASS |
+| per_rollout_sd | 0.117 (sample 0.129; unweighted 0.100) | 0.1-0.3 (population SD of per-rollout weighted pass rates) | PASS |
+| failure_patterns | 4 pattern(s); largest 33% of 6 failing (pairwise reading 33%) | >= 2 patterns (differ on >= 2 rubrics); largest <= 50% | PASS |
+| horizon | average of completed rollouts: 196 | long-horizon tier 100-500+ | PASS |
+
+Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):
+- Pattern 1: run-1, run-4
+- Pattern 2: run-3, run-6
+- Pattern 3: run-2
+- Pattern 4: run-5
+- Pairwise reading (largest set all within 1 rubric of each other): run-1, run-4
+All-fail rubrics (completed rollouts, platform view): R3, R4, R5, R18, R22, R23, R24, R25, R26, R33, R34, R35, R36, R43, R44, R45, R46
+Blocking gates: none

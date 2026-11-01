@@ -1,0 +1,651 @@
+{
+ "1": {
+  "reg": [
+   "cat > /tmp/reg.csv <<'EOF'\nTicket,Title,Server change(s),On prod (Y/N),Notes\nZOM-459,Algo levels doesn't count for plague race,match3d-backend#38,Y,prod: 2025-08-25 11:52 UTC zm-api:41 (beta prod cut); approved before deploy\nZOM-336,Cooler (usable item),match3d-backend#40,N,Merged; only deployed to dev (2025-09-02). No prod: comment\nZOM-509,Trophy path container with headlines and subtext,match3d-backend#39,Y,prod: 2025-09-02 17:30 UTC zm-api:42; approved 15:20 before deploy\nZOM-392,Algo Level 2.0 (Level 100+),match3d-backend#41,N,prod: 2025-09-03 16:30 UTC zm-api:43 went out before the Approve (18:05) - does not count; never redeployed\nZOM-518,Remove equipped items if they are not card anymore,match3d-backend#43,N,prod: 2025-09-04 12:50 UTC zm-api:44 but PR has no Approve review - does not count; never redeployed\nZOM-510,Zombie Lane Reward Issues,Zombie Lane rewards import (deploy log),Y,Import to prod 2025-09-08 16:45 UTC\nZOM-537,Economy Adjustments,match3d-backend#46,Y,prod: 2025-09-09 20:29 UTC zm-api:46; approved by Arthur 19:40\nZOM-531,Items Unequip at the start of each new session,match3d-backend#45,Y,prod: 2025-09-10 18:20 UTC zm-api:47; approved 15:10\nZOM-256,Create Algo Levels 2.0,algo levels 2.0 level pack import (deploy log),N,Import only to dev (2025-09-11 16:30 UTC); never imported to prod\nZOM-444,Instrument analytics event for endless_start,match3d-backend#47,Y,prod: 2025-09-27 16:20 UTC zm-api:55 (freeze); Arthur approved 16:05 before deploy\nZOM-499,Remaining Profile Issues,match3d-backend#44,Y,Rolled back 2025-09-20; redeployed prod: 2025-09-22 17:30 UTC zm-api:51 (approved 09-08)\nZOM-487,Infinite HP Boss Arena,match3d-backend#48 + boss arena HP table import (deploy log),N,#48 on prod (2025-09-16 16:35 UTC zm-api:48) but boss arena HP table import only on dev (2025-09-17)\nZOM-547,Update balance changes for Boss Arena game mechanics,match3d-backend#49,Y,prod: 2025-09-18 16:00 UTC zm-api:49; approved 09-17\nZOM-550,After completing boss arena the lives are deducted by 1,match3d-backend#50,N,prod: 2025-09-27 14:30 UTC zm-api:54 during freeze without Arthur's Approve (his review is a comment: ship after go/no-go) - gets rolled back at go/no-go\nZOM-435,User stuck on trophy path after clicking claim too fast,match3d-backend#51,N,Merged; only deployed to dev (2025-09-19). No prod: comment\nZOM-503,Giving lives in teams are unresponsive,match3d-backend#42 + match3d-backend#52,N,#42 on prod (2025-09-08 17:18 UTC zm-api:45). #52 prod: 2025-09-30 18:16 UTC zm-api:57 during freeze; Approve not Arthur's - gets rolled back at go/no-go\nZOM-553,Make changes to boss arena refill and nuke spawn behavior,match3d-backend#53,Y,prod: 2025-09-24 16:00 UTC zm-api:52; approved 09-23\nZOM-557,Consecutive log in quest doesn't work,match3d-backend#54,N,prod 2025-09-24 then rollback: 2025-09-28 03:10 UTC zm-api:56; no newer prod: comment\n,,,,\nTOTAL,18 tickets in scope,,9 Y / 9 N,\n,,,,\nMethod,\"Scope: ZOM tickets moved to Done after the beta prod cut (2025-08-25 11:52 UTC, deploy log row 1) through 2025-09-30 whose fix needed a match3d-backend PR or a console change/spreadsheet import logged in the deploy log (Console & imports tab). Ticket-to-change mapping from the ticket comments in Linear. Client-only tickets and parent tickets (ZOM-457) excluded.\",,,\n,\"On prod per the match3d-backend prod deploys doc: a 'prod:' comment on the PR with an Approve from someone other than the author before deploy; rollbacks remove it; freeze from 2025-09-26 22:00 UTC requires Arthur's Approve. Merged/dev-only is not on prod. Multi-change tickets are Y only if every change is on prod.\",,,\n,\"Deploy-log imports to dev with no ticket linking them (not attributed to any ticket): plague race table, trophy path copy table, loadout table, analytics events table, economy table.\",,,\nEOF\nbase64 -w0 /tmp/reg.csv > /tmp/reg.b64; wc -c /tmp/reg.b64",
+   "CREATE {\"name\": \"ZM Beta sign-off - server side register\", \"parentId\": \"d_69fcebc484d472907b0b5c\", \"mimeType\": \"text/csv\", \"driveMimeType\": \"application/vnd.google-apps.spreadsheet\", \"description\": \"Server-side beta sign-off register for the Oct 10 ZM beta (rules: ZM ROADMAP > BETA: Oct 10 > Beta sign-off - server side).\"} CONTENT VGlja2V0LFRpdGxlLFNlcnZlciBjaGFuZ2UocyksT24gcHJvZCAoWS9OKSxOb3RlcwpaT00tNDU5LEFsZ28gbGV2ZWxzIGRvZXNuJ3QgY291bnQgZm9yIHBsYWd1ZSByYWNlLG1hdGNoM2QtYmFja2VuZCMzOCxZLHByb2Q6IDIwMjUtMDgtMjUgMTE6NTIgVVRDIHptLWFwaTo0MSAoYmV0YSBwcm9kIGN1dCk7IGFwcHJvdmVkIGJlZm9yZSBkZXBsb3kKWk9NLTMzNixDb29sZXIgKHVzYWJsZSBpdGVtKSxtYXRjaDNkLWJhY2tlbmQjNDAsTixNZXJnZWQ7IG9ubHkgZGVwbG95ZWQgdG8gZGV2ICgyMDI1LTA5LTAyKS4gTm8gcHJvZDogY29tbWVudApaT00tNTA5LFRyb3BoeSBwYXRoIGNvbnRhaW5lciB3aXRoIGhlYWRsaW5lcyBhbmQgc3VidGV4dCxtYXRjaDNkLWJhY2tlbmQjMzksWSxwcm9kOiAyMDI1LTA5LTAyIDE3OjMwIFVUQyB6bS1hcGk6NDI7IGFwcHJvdmVkIDE1OjIwIGJlZm9yZSBkZXBsb3kKWk9NLTM5MixBbGdvIExldmVsIDIuMCAoTGV2ZWwgMTAwKyksbWF0Y2gzZC1iYWNrZW5kIzQxLE4scHJvZDogMjAyNS0wOS0wMyAxNjozMCBVVEMgem0tYXBpOjQzIHdlbnQgb3V0IGJlZm9yZSB0aGUgQXBwcm92ZSAoMTg6MDUpIC0gZG9lcyBub3QgY291bnQ7IG5ldmVyIHJlZGVwbG95ZWQKWk9NLTUxOCxSZW1vdmUgZXF1aXBwZWQgaXRlbXMgaWYgdGhleSBhcmUgbm90IGNhcmQgYW55bW9yZSxtYXRjaDNkLWJhY2tlbmQjNDMsTixwcm9kOiAyMDI1LTA5LTA0IDEyOjUwIFVUQyB6bS1hcGk6NDQgYnV0IFBSIGhhcyBubyBBcHByb3ZlIHJldmlldyAtIGRvZXMgbm90IGNvdW50OyBuZXZlciByZWRlcGxveWVkClpPTS01MTAsWm9tYmllIExhbmUgUmV3YXJkIElzc3Vlcyxab21iaWUgTGFuZSByZXdhcmRzIGltcG9ydCAoZGVwbG95IGxvZyksWSxJbXBvcnQgdG8gcHJvZCAyMDI1LTA5LTA4IDE2OjQ1IFVUQwpaT00tNTM3LEVjb25vbXkgQWRqdXN0bWVudHMsbWF0Y2gzZC1iYWNrZW5kIzQ2LFkscHJvZDogMjAyNS0wOS0wOSAyMDoyOSBVVEMgem0tYXBpOjQ2OyBhcHByb3ZlZCBieSBBcnRodXIgMTk6NDAKWk9NLTUzMSxJdGVtcyBVbmVxdWlwIGF0IHRoZSBzdGFydCBvZiBlYWNoIG5ldyBzZXNzaW9uLG1hdGNoM2QtYmFja2VuZCM0NSxZLHByb2Q6IDIwMjUtMDktMTAgMTg6MjAgVVRDIHptLWFwaTo0NzsgYXBwcm92ZWQgMTU6MTAKWk9NLTI1NixDcmVhdGUgQWxnbyBMZXZlbHMgMi4wLGFsZ28gbGV2ZWxzIDIuMCBsZXZlbCBwYWNrIGltcG9ydCAoZGVwbG95IGxvZyksTixJbXBvcnQgb25seSB0byBkZXYgKDIwMjUtMDktMTEgMTY6MzAgVVRDKTsgbmV2ZXIgaW1wb3J0ZWQgdG8gcHJvZApaT00tNDQ0LEluc3RydW1lbnQgYW5hbHl0aWNzIGV2ZW50IGZvciBlbmRsZXNzX3N0YXJ0LG1hdGNoM2QtYmFja2VuZCM0NyxZLHByb2Q6IDIwMjUtMDktMjcgMTY6MjAgVVRDIHptLWFwaTo1NSAoZnJlZXplKTsgQXJ0aHVyIGFwcHJvdmVkIDE2OjA1IGJlZm9yZSBkZXBsb3kKWk9NLTQ5OSxSZW1haW5pbmcgUHJvZmlsZSBJc3N1ZXMsbWF0Y2gzZC1iYWNrZW5kIzQ0LFksUm9sbGVkIGJhY2sgMjAyNS0wOS0yMDsgcmVkZXBsb3llZCBwcm9kOiAyMDI1LTA5LTIyIDE3OjMwIFVUQyB6bS1hcGk6NTEgKGFwcHJvdmVkIDA5LTA4KQpaT00tNDg3LEluZmluaXRlIEhQIEJvc3MgQXJlbmEsbWF0Y2gzZC1iYWNrZW5kIzQ4ICsgYm9zcyBhcmVuYSBIUCB0YWJsZSBpbXBvcnQgKGRlcGxveSBsb2cpLE4sIzQ4IG9uIHByb2QgKDIwMjUtMDktMTYgMTY6MzUgVVRDIHptLWFwaTo0OCkgYnV0IGJvc3MgYXJlbmEgSFAgdGFibGUgaW1wb3J0IG9ubHkgb24gZGV2ICgyMDI1LTA5LTE3KQpaT00tNTQ3LFVwZGF0ZSBiYWxhbmNlIGNoYW5nZXMgZm9yIEJvc3MgQXJlbmEgZ2FtZSBtZWNoYW5pY3MsbWF0Y2gzZC1iYWNrZW5kIzQ5LFkscHJvZDogMjAyNS0wOS0xOCAxNjowMCBVVEMgem0tYXBpOjQ5OyBhcHByb3ZlZCAwOS0xNwpaT00tNTUwLEFmdGVyIGNvbXBsZXRpbmcgYm9zcyBhcmVuYSB0aGUgbGl2ZXMgYXJlIGRlZHVjdGVkIGJ5IDEsbWF0Y2gzZC1iYWNrZW5kIzUwLE4scHJvZDogMjAyNS0wOS0yNyAxNDozMCBVVEMgem0tYXBpOjU0IGR1cmluZyBmcmVlemUgd2l0aG91dCBBcnRodXIncyBBcHByb3ZlIChoaXMgcmV2aWV3IGlzIGEgY29tbWVudDogc2hpcCBhZnRlciBnby9uby1nbykgLSBnZXRzIHJvbGxlZCBiYWNrIGF0IGdvL25vLWdvClpPTS00MzUsVXNlciBzdHVjayBvbiB0cm9waHkgcGF0aCBhZnRlciBjbGlja2luZyBjbGFpbSB0b28gZmFzdCxtYXRjaDNkLWJhY2tlbmQjNTEs"
+  ],
+  "dm": [
+   {
+    "channel_id": "EMPLOYEE_0025_SLACK_ID",
+    "message": "Server side of the beta sign-off is done. The register is in the ZM Beta sign-off folder (\"ZM Beta sign-off - server side register\").\n\n18 tickets are in scope (Done after the 8/25 prod cut through 9/30, with a backend PR or a console change/import in the deploy log). **9 are on prod, 9 aren't.**\n\nOn prod: ZOM-459, ZOM-509, ZOM-510, ZOM-531, ZOM-537, ZOM-444, ZOM-499, ZOM-547, ZOM-553\n\nNot on prod (all moved back to Todo, each with a comment saying which change still has to go out):\n\u2022 ZOM-336: #40 only went to dev\n\u2022 ZOM-392: #41 went to prod before it was approved, so the deploy doesn't count\n\u2022 ZOM-518: #43 went to prod with no Approve review\n\u2022 ZOM-256: the algo levels 2.0 level pack was only imported to dev\n\u2022 ZOM-487: #48 is on prod, but the boss arena HP table was only imported to dev\n\u2022 ZOM-550: #50 went out during the freeze without your Approve, so it gets rolled back at go/no-go\n\u2022 ZOM-435: #51 only went to dev\n\u2022 ZOM-503: #42 is on prod, but #52 went out during the freeze with an Approve that isn't yours, so it gets rolled back\n\u2022 ZOM-557: #54 was rolled back on 9/28 and hasn't been redeployed"
+   }
+  ],
+  "mv": [
+   {
+    "id": "ZOM-336",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-392",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-518",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-256",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-487",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-550",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-435",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-503",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-557",
+    "state": "Todo"
+   }
+  ],
+  "cm": [
+   {
+    "issueId": "ZOM-336",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. Still has to go out: match3d-backend#40 (catalog usable item entry). It's merged and only on dev; never deployed to prod (no \"prod:\" comment)."
+   },
+   {
+    "issueId": "ZOM-392",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. Still has to go out: match3d-backend#41 (100+ seed endpoint). Its prod deploy on 2025-09-03 16:30 UTC (zm-api:43) went out before the Approve review (18:05), so it doesn't count per the prod deploys doc; it needs a redeploy to prod."
+   },
+   {
+    "issueId": "ZOM-518",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. Still has to go out: match3d-backend#43 (drop non-card items from equipped). It was deployed 2025-09-04 12:50 UTC (zm-api:44) with no Approve review, so it doesn't count per the prod deploys doc; it needs an approval and a redeploy to prod."
+   },
+   {
+    "issueId": "ZOM-256",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. Still has to go out: the algo levels 2.0 level pack import. The deploy log only shows it imported to dev (2025-09-11 16:30 UTC); it was never imported to prod."
+   },
+   {
+    "issueId": "ZOM-487",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. match3d-backend#48 is on prod, but the boss arena HP table import still has to go out: the deploy log only shows it imported to dev (2025-09-17 14:20 UTC)."
+   },
+   {
+    "issueId": "ZOM-550",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. Still has to go out: match3d-backend#50 (don't take a life on a win). It was deployed during the server freeze (2025-09-27 14:30 UTC, zm-api:54) without an Approve from Arthur (his review is a comment: \"ship it after go/no-go\"), so it gets rolled back at go/no-go and needs to go out properly after that."
+   },
+   {
+    "issueId": "ZOM-435",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. Still has to go out: match3d-backend#51 (ignore duplicate claim requests). It's merged and only on dev; never deployed to prod (no \"prod:\" comment)."
+   },
+   {
+    "issueId": "ZOM-503",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. match3d-backend#42 is on prod, but match3d-backend#52 (push lives refresh) still has to go out: it was deployed during the server freeze (2025-09-30 18:16 UTC, zm-api:57) with an Approve that isn't Arthur's, so it gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-557",
+    "body": "Beta sign-off (server side): back to Todo \u2014 not on prod. Still has to go out: match3d-backend#54 (count login streak days in player timezone). It was rolled back on 2025-09-28 03:10 UTC (zm-api:56, streak resets for players east of UTC) and hasn't been redeployed."
+   }
+  ],
+  "share": [
+   {
+    "fileId": "4f51cb152859c8db",
+    "emailAddress": "leonard.hayes@harmonygames.co",
+    "role": "commenter",
+    "type": "user"
+   }
+  ],
+  "other": [
+   {
+    "message_id": "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>",
+    "user_email": "douglas@harmonygames.co",
+    "body": "Hi Leonard,\n\nThe server register is in the ZM Beta sign-off folder (\"ZM Beta sign-off - server side register\"), and I've shared it with you directly with comment access.\n\nShort version: 18 tickets in scope, 9 on prod and 9 not. The 9 that aren't on prod have gone back to Todo.\n\nThanks,\nDouglas"
+   }
+  ]
+ },
+ "2": {
+  "reg": [
+   "CREATE {\"name\": \"ZM Beta sign-off - server side register\", \"parentId\": \"d_69fcebc484d472907b0b5c\", \"mimeType\": \"application/vnd.google-apps.spreadsheet\", \"driveMimeType\": \"application/vnd.google-apps.spreadsheet\", \"description\": \"Server-side beta sign-off register for the Oct 10 ZM beta (rules: ZM ROADMAP > BETA: Oct 10 > Beta sign-off - server side, plus Arthur's Sep 30 amendments).\"} CONTENT None",
+   "{\"spreadsheetId\": \"cb4b53fc13b92596\", \"range\": \"Sheet1!A1\", \"valueInputOption\": \"RAW\", \"values\": [[\"Ticket\", \"Server change(s)\", \"On prod (Y/N)\", \"Notes\"], [\"ZOM-459\", \"match3d-backend#38\", \"Y\", \"#38: prod 2025-08-25 11:52 UTC (zm-api:41, beta prod cut), approved before deploy\"], [\"ZOM-509\", \"match3d-backend#39\", \"Y\", \"#39: prod 2025-09-02 17:30 UTC (zm-api:42), approved before deploy\"], [\"ZOM-336\", \"match3d-backend#40\", \"N\", \"#40: merged and on dev only; no prod: comment, no approving review\"], [\"ZOM-392\", \"match3d-backend#41\", \"N\", \"#41: prod: comment 2025-09-03 16:30 UTC but Approve came 18:05, after the deploy; needs a redeploy (Arthur-approved, freeze)\"], [\"ZOM-518\", \"match3d-backend#43\", \"N\", \"#43: prod: comment 2025-09-04 12:50 UTC but no Approve review from anyone other than the author\"], [\"ZOM-499\", \"match3d-backend#44\", \"Y\", \"#44: rolled back 2025-09-20, redeployed 2025-09-22 17:30 UTC (zm-api:51), approved before deploy\"], [\"ZOM-531\", \"match3d-backend#45; loadout table import\", \"N\", \"#45 on prod 2025-09-10 18:20 UTC (zm-api:47). Loadout table import only on dev (2025-09-10 17:40)\"], [\"ZOM-537\", \"match3d-backend#46\", \"Y\", \"#46: prod 2025-09-09 20:29 UTC (zm-api:46), approved by Arthur before deploy\"], [\"ZOM-444\", \"match3d-backend#47; analytics events table import\", \"N\", \"#47 on prod 2025-09-27 16:20 UTC (zm-api:55, Arthur-approved during freeze). Analytics events table import only on dev (2025-09-12 19:20)\"], [\"ZOM-436\", \"analytics events table import\", \"N\", \"Analytics events table import only on dev (2025-09-12 19:20)\"], [\"ZOM-487\", \"match3d-backend#48\", \"N\", \"#48: prod: comment 2025-09-16 16:35 UTC, but the only Approve is from the PR's own author\"], [\"ZOM-550\", \"match3d-backend#50\", \"N\", \"#50: deployed 2025-09-27 14:30 UTC during the freeze without Arthur's Approve (Arthur only commented 'ship it after go/no-go'); gets rolled back at go/no-go\"], [\"ZOM-435\", \"match3d-backend#51\", \"N\", \"#51: merged, on dev only; no prod: comment\"], [\"ZOM-503\", \"match3d-backend#42; match3d-backend#52\", \"N\", \"#42 on prod 2025-09-08 17:18 UTC (zm-api:45). #52 deployed 2025-09-30 18:16 UTC during the freeze without Arthur's Approve\"], [\"ZOM-557\", \"match3d-backend#54\", \"N\", \"#54: prod 2025-09-24, rolled back 2025-09-28 03:10 UTC (zm-api:56); no newer prod: comment\"], [\"ZOM-510\", \"Zombie Lane rewards import\", \"Y\", \"Imported to prod 2025-09-08 16:45 UTC (deploy log, Console & imports)\"], [\"ZOM-256\", \"algo levels 2.0 level pack import\", \"N\", \"Imported to dev only (2025-09-11 16:30); not on prod\"], [], [\"Total tickets\", \"17\"], [\"On prod\", \"5\"], [\"Not on prod\", \"12\"], [], [\"Scope/rules\", \"ZOM tickets moved to Done after the beta prod cut (2025-08-25 11:52 UTC) through Sep 30 whose fix needed a server change. On prod per the match3d-backend prod deploys doc (prod: comment with prior non-author Approve; Arthur's Approve during the freeze from 2025-09-26 22:00 UTC; rollbacks count). Per Arthur 2025-09-30: ZOM-547/ZOM-553 excluded (#49/#53 are mirrors of the client balance sheet); analytics events table import counts for ZOM-444 and ZOM-436, loadout table import for ZOM-531. Parent tickets (e.g. ZOM-457) have no row.\"]]}"
+  ],
+  "dm": [
+   {
+    "channel_id": "EMPLOYEE_0025_SLACK_ID",
+    "message": "Server side of the beta sign-off is done. The register is in the ZM Beta sign-off folder (\"ZM Beta sign-off - server side register\").\n\n**5 of 17 tickets are on prod:** ZOM-459, ZOM-509, ZOM-499, ZOM-537, ZOM-510\n\n**12 aren't on prod:**\n\u2022 ZOM-336: #40 is on dev only\n\u2022 ZOM-392: #41 was approved after its prod deploy\n\u2022 ZOM-518: #43 has no non-author approval\n\u2022 ZOM-487: #48 was self-approved\n\u2022 ZOM-550: #50 was deployed in the freeze without your Approve\n\u2022 ZOM-435: #51 is on dev only\n\u2022 ZOM-503: #42 is on prod, but #52 was deployed in the freeze without your Approve\n\u2022 ZOM-557: #54 was rolled back on 9/28\n\u2022 ZOM-256: algo levels 2.0 pack import is dev only\n\u2022 ZOM-444: #47 is on prod, but the analytics events table import is dev only\n\u2022 ZOM-436: analytics events table import is dev only\n\u2022 ZOM-531: #45 is on prod, but the loadout table import is dev only\n\nI left ZOM-547 and ZOM-553 off, per your email. All 12 are back in Todo, each with a comment on which change still has to go out.\n\nCorrection to what I told you on 9/22: the trophy path double-claim fix (#51) never went to prod. The 100+ algo seeds (#41) don't count as on prod either, because the approval came after the 9/3 deploy."
+   }
+  ],
+  "mv": [
+   {
+    "id": "ZOM-336",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-392",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-518",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-487",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-550",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-435",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-503",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-557",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-256",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-444",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-436",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-531",
+    "state": "Todo"
+   }
+  ],
+  "cm": [
+   {
+    "issueId": "ZOM-336",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#40 (catalog usable item entries) still has to go out to prod. It's merged and on dev only, with no prod: comment and no approving review. During the freeze it needs Arthur's Approve before it's deployed."
+   },
+   {
+    "issueId": "ZOM-392",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#41 (seed endpoint) still has to go out to prod. The 2025-09-03 16:30 UTC prod deploy doesn't count because the Approve came at 18:05, after the deploy. It needs a redeploy, and during the freeze that needs Arthur's Approve."
+   },
+   {
+    "issueId": "ZOM-518",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#43 (drop non-card items from equipped) still has to go out to prod. The 2025-09-04 prod deploy doesn't count because the PR never got an Approve from anyone other than its author. It needs an Approve (Arthur's, during the freeze) and a redeploy."
+   },
+   {
+    "issueId": "ZOM-487",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#48 (infinite HP event config) still has to go out to prod. The 2025-09-16 prod deploy doesn't count because the only Approve is from the PR's own author. It needs Arthur's Approve (freeze) and a redeploy."
+   },
+   {
+    "issueId": "ZOM-550",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#50 (don't take a life on a win) still has to go out to prod. It was deployed 2025-09-27 14:30 UTC during the server freeze without Arthur's Approve, so it doesn't count and gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-435",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#51 (ignore duplicate claim requests) still has to go out to prod. It's merged and on dev only, with no prod: comment."
+   },
+   {
+    "issueId": "ZOM-503",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#42 (ack) is on prod. match3d-backend#52 (lives refresh push) still has to go out. It was deployed 2025-09-30 18:16 UTC during the server freeze without Arthur's Approve, so it doesn't count and gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-557",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#54 (login streak in player timezone) still has to go out to prod. It was rolled back 2025-09-28 03:10 UTC (streak resets for players east of UTC), and there's no newer prod deploy."
+   },
+   {
+    "issueId": "ZOM-256",
+    "body": "Beta server sign-off: back to Todo, not on prod. The algo levels 2.0 level pack import still has to go out to prod. The deploy log (Console & imports) only has it imported to dev, on 2025-09-11 16:30."
+   },
+   {
+    "issueId": "ZOM-444",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#47 is on prod. The analytics events table import (part of this ticket's server change, per Arthur) still has to go out to prod. It's only imported to dev, on 2025-09-12 19:20."
+   },
+   {
+    "issueId": "ZOM-436",
+    "body": "Beta server sign-off: back to Todo, not on prod. The analytics events table import (this ticket's server change, per Arthur) still has to go out to prod. It's only imported to dev, on 2025-09-12 19:20."
+   },
+   {
+    "issueId": "ZOM-531",
+    "body": "Beta server sign-off: back to Todo, not on prod. match3d-backend#45 is on prod. The loadout table import (part of this ticket's server change, per Arthur) still has to go out to prod. It's only imported to dev, on 2025-09-10 17:40."
+   }
+  ],
+  "share": [
+   {
+    "fileId": "cb4b53fc13b92596",
+    "emailAddress": "leonard.hayes@harmonygames.co",
+    "role": "commenter",
+    "type": "user"
+   }
+  ],
+  "other": [
+   {
+    "message_id": "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>",
+    "user_email": "me",
+    "body": "Hi Leonard,\n\nThe server register is in the ZM Beta sign-off folder (\"ZM Beta sign-off - server side register\"). I've shared it with you directly with comment access.\n\nThanks,\nDouglas"
+   }
+  ]
+ },
+ "3": {
+  "reg": [
+   "cat > /tmp/reg.csv <<'EOF'\nTicket,Title,Server change(s),On prod (Y/N),Notes\nZOM-459,Algo levels doesn't count for plague race,match3d-backend#38,Y,\"prod: 2025-08-25 11:52 UTC zm-api:41 (beta prod cut), approved before deploy\"\nZOM-509,Trophy path container with specific headlines and subtext,match3d-backend#39,Y,\"prod: 2025-09-02 17:30 UTC zm-api:42, approved before deploy\"\nZOM-336,Cooler,match3d-backend#40,N,\"Merged, only deployed to dev (2025-09-02); no prod: comment\"\nZOM-392,Algo Level 2.0 (Level 100+),match3d-backend#41,N,\"prod: 2025-09-03 16:30 UTC but the Approve review came after (18:05), so the deploy doesn't count; redeploy needed\"\nZOM-518,Remove equipped items if they are not card anymore,match3d-backend#43,N,\"prod: 2025-09-04 12:50 UTC with no Approve review from a non-author; deploy doesn't count; redeploy needed\"\nZOM-510,Zombie Lane Reward Issues,Zombie Lane rewards import (deploy log),Y,\"Imported to prod 2025-09-08 16:45 UTC\"\nZOM-256,Create Algo Levels 2.0,algo levels 2.0 level pack import (deploy log),N,\"Imported to dev only (2025-09-11 16:30 UTC); no prod import logged\"\nZOM-531,Items Unequip at the start of each new session,match3d-backend#45,Y,\"prod: 2025-09-10 18:20 UTC zm-api:47, approved before deploy\"\nZOM-537,Economy Adjustments,match3d-backend#46,Y,\"prod: 2025-09-09 20:29 UTC zm-api:46, approved before deploy\"\nZOM-444,Instrument analytics event for endless_start,match3d-backend#47,Y,\"prod: 2025-09-27 16:20 UTC zm-api:55 (freeze); Arthur approved 16:05 before deploy\"\nZOM-499,Remaining Profile Issues,match3d-backend#44,Y,\"prod 09-08, rolled back 09-20, re-deployed prod: 2025-09-22 17:30 UTC zm-api:51; approved before deploy\"\nZOM-487,Infinite HP Boss Arena,match3d-backend#48,Y,\"prod: 2025-09-16 16:35 UTC zm-api:48, approved before deploy\"\nZOM-547,Update balance changes for Boss Arena game mechanics,match3d-backend#49,Y,\"prod: 2025-09-18 16:00 UTC zm-api:49, approved before deploy\"\nZOM-550,\"After completing boss arena, the lives are deducted by 1\",match3d-backend#50,N,\"prod: 2025-09-27 14:30 UTC during server freeze without Arthur's Approve (his review is a comment: ship after go/no-go); gets rolled back at go/no-go\"\nZOM-435,User stuck on trophy path after clicking claim button too fast,match3d-backend#51,N,\"Merged, only deployed to dev (2025-09-19); no prod: comment\"\nZOM-503,Giving lives in teams are unresponsive,\"match3d-backend#42; match3d-backend#52\",N,\"#42 on prod (2025-09-08 17:18 UTC zm-api:45). #52 prod: 2025-09-30 18:16 UTC during freeze without Arthur's Approve; gets rolled back at go/no-go\"\nZOM-553,Make changes to boss arena refill and nuke spawn behavior,match3d-backend#53,Y,\"prod: 2025-09-24 16:00 UTC zm-api:52 (before freeze), approved before deploy\"\nZOM-557,Consecutive log in quest doesn't work,match3d-backend#54,N,\"prod 2025-09-24, rolled back 2025-09-28 03:10 UTC (zm-api:56); no newer prod: comment\"\nEOF\nbase64 -w0 /tmp/reg.csv",
+   "CREATE {\"name\": \"ZM Beta sign-off - server side register\", \"parentId\": \"d_69fcebc484d472907b0b5c\", \"mimeType\": \"text/csv\", \"driveMimeType\": \"application/vnd.google-apps.spreadsheet\", \"description\": \"Server-side beta sign-off register for the Oct 10 ZM beta (rules: ZM ROADMAP > BETA: Oct 10 > Beta sign-off - server side).\"} CONTENT VGlja2V0LFRpdGxlLFNlcnZlciBjaGFuZ2UocyksT24gcHJvZCAoWS9OKSxOb3RlcwpaT00tNDU5LEFsZ28gbGV2ZWxzIGRvZXNuJ3QgY291bnQgZm9yIHBsYWd1ZSByYWNlLG1hdGNoM2QtYmFja2VuZCMzOCxZLCJwcm9kOiAyMDI1LTA4LTI1IDExOjUyIFVUQyB6bS1hcGk6NDEgKGJldGEgcHJvZCBjdXQpLCBhcHByb3ZlZCBiZWZvcmUgZGVwbG95IgpaT00tNTA5LFRyb3BoeSBwYXRoIGNvbnRhaW5lciB3aXRoIHNwZWNpZmljIGhlYWRsaW5lcyBhbmQgc3VidGV4dCxtYXRjaDNkLWJhY2tlbmQjMzksWSwicHJvZDogMjAyNS0wOS0wMiAxNzozMCBVVEMgem0tYXBpOjQyLCBhcHByb3ZlZCBiZWZvcmUgZGVwbG95IgpaT00tMzM2LENvb2xlcixtYXRjaDNkLWJhY2tlbmQjNDAsTiwiTWVyZ2VkLCBvbmx5IGRlcGxveWVkIHRvIGRldiAoMjAyNS0wOS0wMik7IG5vIHByb2Q6IGNvbW1lbnQiClpPTS0zOTIsQWxnbyBMZXZlbCAyLjAgKExldmVsIDEwMCspLG1hdGNoM2QtYmFja2VuZCM0MSxOLCJwcm9kOiAyMDI1LTA5LTAzIDE2OjMwIFVUQyBidXQgdGhlIEFwcHJvdmUgcmV2aWV3IGNhbWUgYWZ0ZXIgKDE4OjA1KSwgc28gdGhlIGRlcGxveSBkb2Vzbid0IGNvdW50OyByZWRlcGxveSBuZWVkZWQiClpPTS01MTgsUmVtb3ZlIGVxdWlwcGVkIGl0ZW1zIGlmIHRoZXkgYXJlIG5vdCBjYXJkIGFueW1vcmUsbWF0Y2gzZC1iYWNrZW5kIzQzLE4sInByb2Q6IDIwMjUtMDktMDQgMTI6NTAgVVRDIHdpdGggbm8gQXBwcm92ZSByZXZpZXcgZnJvbSBhIG5vbi1hdXRob3I7IGRlcGxveSBkb2Vzbid0IGNvdW50OyByZWRlcGxveSBuZWVkZWQiClpPTS01MTAsWm9tYmllIExhbmUgUmV3YXJkIElzc3Vlcyxab21iaWUgTGFuZSByZXdhcmRzIGltcG9ydCAoZGVwbG95IGxvZyksWSwiSW1wb3J0ZWQgdG8gcHJvZCAyMDI1LTA5LTA4IDE2OjQ1IFVUQyIKWk9NLTI1NixDcmVhdGUgQWxnbyBMZXZlbHMgMi4wLGFsZ28gbGV2ZWxzIDIuMCBsZXZlbCBwYWNrIGltcG9ydCAoZGVwbG95IGxvZyksTiwiSW1wb3J0ZWQgdG8gZGV2IG9ubHkgKDIwMjUtMDktMTEgMTY6MzAgVVRDKTsgbm8gcHJvZCBpbXBvcnQgbG9nZ2VkIgpaT00tNTMxLEl0ZW1zIFVuZXF1aXAgYXQgdGhlIHN0YXJ0IG9mIGVhY2ggbmV3IHNlc3Npb24sbWF0Y2gzZC1iYWNrZW5kIzQ1LFksInByb2Q6IDIwMjUtMDktMTAgMTg6MjAgVVRDIHptLWFwaTo0NywgYXBwcm92ZWQgYmVmb3JlIGRlcGxveSIKWk9NLTUzNyxFY29ub215IEFkanVzdG1lbnRzLG1hdGNoM2QtYmFja2VuZCM0NixZLCJwcm9kOiAyMDI1LTA5LTA5IDIwOjI5IFVUQyB6bS1hcGk6NDYsIGFwcHJvdmVkIGJlZm9yZSBkZXBsb3kiClpPTS00NDQsSW5zdHJ1bWVudCBhbmFseXRpY3MgZXZlbnQgZm9yIGVuZGxlc3Nfc3RhcnQsbWF0Y2gzZC1iYWNrZW5kIzQ3LFksInByb2Q6IDIwMjUtMDktMjcgMTY6MjAgVVRDIHptLWFwaTo1NSAoZnJlZXplKTsgQXJ0aHVyIGFwcHJvdmVkIDE2OjA1IGJlZm9yZSBkZXBsb3kiClpPTS00OTksUmVtYWluaW5nIFByb2ZpbGUgSXNzdWVzLG1hdGNoM2QtYmFja2VuZCM0NCxZLCJwcm9kIDA5LTA4LCByb2xsZWQgYmFjayAwOS0yMCwgcmUtZGVwbG95ZWQgcHJvZDogMjAyNS0wOS0yMiAxNzozMCBVVEMgem0tYXBpOjUxOyBhcHByb3ZlZCBiZWZvcmUgZGVwbG95IgpaT00tNDg3LEluZmluaXRlIEhQIEJvc3MgQXJlbmEsbWF0Y2gzZC1iYWNrZW5kIzQ4LFksInByb2Q6IDIwMjUtMDktMTYgMTY6MzUgVVRDIHptLWFwaTo0OCwgYXBwcm92ZWQgYmVmb3JlIGRlcGxveSIKWk9NLTU0NyxVcGRhdGUgYmFsYW5jZSBjaGFuZ2VzIGZvciBCb3NzIEFyZW5hIGdhbWUgbWVjaGFuaWNzLG1hdGNoM2QtYmFja2VuZCM0OSxZLCJwcm9kOiAyMDI1LTA5LTE4IDE2OjAwIFVUQyB6bS1hcGk6NDksIGFwcHJvdmVkIGJlZm9yZSBkZXBsb3kiClpPTS01NTAsIkFmdGVyIGNvbXBsZXRpbmcgYm9zcyBhcmVuYSwgdGhlIGxpdmVzIGFyZSBkZWR1Y3RlZCBieSAxIixtYXRjaDNkLWJhY2tlbmQjNTAsTiwicHJvZDogMjAyNS0wOS0yNyAxNDozMCBVVEMgZHVyaW5nIHNlcnZlciBmcmVlemUgd2l0aG91dCBBcnRodXIncyBBcHByb3ZlIChoaXMgcmV2aWV3IGlzIGEgY29tbWVudDogc2hpcCBhZnRlciBnby9uby1nbyk7IGdldHMgcm9sbGVkIGJhY2sgYXQgZ28vbm8tZ28iClpPTS00MzUsVXNlciBzdHVjayBvbiB0cm9waHkgcGF0aCBhZnRlciBjbGlja2luZyBjbGFpbSBidXR0b24gdG9vIGZhc3QsbWF0Y2gzZC1iYWNrZW5kIzUxLE4sIk1lcmdlZCwgb25s"
+  ],
+  "dm": [
+   {
+    "channel_id": "EMPLOYEE_0025_SLACK_ID",
+    "message": "Server side of the beta sign-off is done. The register (\"ZM Beta sign-off - server side register\") is in the ZM Beta sign-off folder.\n\n**18 tickets in scope, 10 on prod, 8 not.**\n\nOn prod: ZOM-459, ZOM-509, ZOM-510, ZOM-531, ZOM-537, ZOM-444, ZOM-499, ZOM-487, ZOM-547, ZOM-553\n\nNot on prod:\n\u2022 ZOM-336: #40 only went to dev\n\u2022 ZOM-392: #41 approve came after the prod deploy\n\u2022 ZOM-518: #43 deployed with no approve\n\u2022 ZOM-256: algo levels 2.0 level pack only imported to dev\n\u2022 ZOM-550: #50 went out during the freeze without your approve (rolls back at go/no-go)\n\u2022 ZOM-435: #51 only went to dev\n\u2022 ZOM-503: #42 is on prod but #52 went out during the freeze without your approve\n\u2022 ZOM-557: #54 was rolled back on Sep 28\n\nPer rule 5, all 8 are back in Todo, each with a comment saying which change still has to go out.\n\nOne correction: I told you on Sep 22 that the trophy path double claim fix was out. It wasn't. #51 never made it past dev."
+   }
+  ],
+  "mv": [
+   {
+    "id": "ZOM-336",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-392",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-518",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-256",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-550",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-435",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-503",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-557",
+    "state": "Todo"
+   }
+  ],
+  "cm": [
+   {
+    "issueId": "ZOM-336",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#40 (catalog usable item entries) still has to go out to prod. It was merged and deployed to dev only, with no prod deploy on the PR."
+   },
+   {
+    "issueId": "ZOM-392",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#41 (algo levels 100+ seed endpoint) still has to go out to prod. The 2025-09-03 16:30 UTC prod deploy doesn't count because the Approve review came after it (18:05), so it needs a redeploy."
+   },
+   {
+    "issueId": "ZOM-518",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#43 (drop non-card items from equipped) still has to go out to prod. The 2025-09-04 prod deploy went out with no Approve review from someone other than the author, so it doesn't count. It needs an approval and a redeploy."
+   },
+   {
+    "issueId": "ZOM-256",
+    "body": "Back to Todo per the beta server sign-off: the algo levels 2.0 level pack import still has to go out to prod. The deploy log only shows it imported to dev (2025-09-11 16:30 UTC)."
+   },
+   {
+    "issueId": "ZOM-550",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#50 (don't take a life on a boss arena win) still has to go out to prod. It was deployed on 2025-09-27 14:30 UTC during the server freeze without an Approve from Arthur, so it doesn't count and gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-435",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#51 (ignore duplicate trophy path claim requests) still has to go out to prod. It was merged and deployed to dev only, with no prod deploy on the PR."
+   },
+   {
+    "issueId": "ZOM-503",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#52 (push lives refresh to client) still has to go out to prod. #42 is on prod, but #52 was deployed on 2025-09-30 18:16 UTC during the server freeze without an Approve from Arthur, so it doesn't count and gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-557",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#54 (count login streak days in player timezone) still has to go out to prod. It was rolled back on 2025-09-28 03:10 UTC (streak resets east of UTC) and hasn't been redeployed since."
+   }
+  ],
+  "share": [
+   {
+    "fileId": "f46f4bd6d8bfa095",
+    "emailAddress": "leonard.hayes@harmonygames.co",
+    "role": "commenter",
+    "type": "user"
+   }
+  ],
+  "other": []
+ },
+ "4": {
+  "reg": [
+   "gsheets_create_spreadsheet {\"title\": \"ZM Beta sign-off - server side register\", \"initialSheetTitle\": \"Register\"}",
+   "gdrive_move_file {\"fileId\": \"1re3NtgqCemPC3PR_a3W4gsvau9Pv62_kDdo-wD7fSDQ\", \"newParentId\": \"d_69fcebc484d472907b0b5c\"}",
+   "{\"spreadsheetId\": \"1re3NtgqCemPC3PR_a3W4gsvau9Pv62_kDdo-wD7fSDQ\", \"range\": \"Register!A1\", \"valueInputOption\": \"RAW\", \"values\": [[\"Ticket\", \"Server change(s)\", \"On prod (Y/N)\", \"Notes\"], [\"ZOM-459 Algo levels doesn't count for plague race\", \"match3d-backend#38\", \"Y\", \"In the beta prod cut (2025-08-25 11:52, zm-api:41); approved before deploy\"], [\"ZOM-509 Trophy path container with headlines/subtext\", \"match3d-backend#39\", \"Y\", \"prod: 2025-09-02 17:30, zm-api:42; approved before deploy\"], [\"ZOM-336 Cooler (usable item catalog entry)\", \"match3d-backend#40\", \"N\", \"#40 only deployed to dev (2025-09-02); no prod: comment\"], [\"ZOM-392 Algo Level 2.0 (Level 100+) seeds\", \"match3d-backend#41\", \"N\", \"prod: 2025-09-03 16:30 (zm-api:43) but the only Approve came at 18:05, after the deploy - doesn't count; needs redeploy\"], [\"ZOM-518 Remove equipped items that aren't cards anymore\", \"match3d-backend#43\", \"N\", \"prod: 2025-09-04 12:50 (zm-api:44) with no Approve review at all - doesn't count; needs approve + redeploy\"], [\"ZOM-499 Remaining profile issues\", \"match3d-backend#44\", \"Y\", \"Rolled back 2025-09-20; redeployed prod: 2025-09-22 17:30 (zm-api:51), before freeze, approved\"], [\"ZOM-503 Giving lives in teams unresponsive\", \"match3d-backend#42; match3d-backend#52\", \"N\", \"#42 on prod (2025-09-08, zm-api:45). #52 deployed 2025-09-30 18:16 (zm-api:57) during the server freeze without Arthur's Approve - gets rolled back at go/no-go\"], [\"ZOM-531 Items unequip at the start of each session\", \"match3d-backend#45\", \"Y\", \"prod: 2025-09-10 18:20, zm-api:47; approved before deploy\"], [\"ZOM-537 Economy adjustments\", \"match3d-backend#46\", \"Y\", \"prod: 2025-09-09 20:29, zm-api:46; approved by Arthur before deploy\"], [\"ZOM-510 Zombie Lane reward issues\", \"Spreadsheet import: Zombie Lane rewards (deploy log)\", \"Y\", \"Imported to prod 2025-09-08 16:45\"], [\"ZOM-256 Create Algo Levels 2.0\", \"Spreadsheet import: algo levels 2.0 level pack (deploy log)\", \"N\", \"Imported to dev only (2025-09-11 16:30); no prod import logged\"], [\"ZOM-444 Instrument analytics event for endless_start\", \"match3d-backend#47\", \"Y\", \"prod: 2025-09-27 16:20 (zm-api:55) during freeze, Arthur approved at 16:05 before deploy\"], [\"ZOM-487 Infinite HP Boss Arena\", \"match3d-backend#48; Spreadsheet import: boss arena HP table (deploy log)\", \"N\", \"#48 on prod (2025-09-16, zm-api:48). Boss arena HP table imported to dev only (2025-09-17); prod import still needed\"], [\"ZOM-547 Boss Arena balance changes\", \"match3d-backend#49\", \"Y\", \"prod: 2025-09-18 16:00, zm-api:49; approved before deploy\"], [\"ZOM-550 Boss arena takes a life on win\", \"match3d-backend#50\", \"N\", \"Deployed 2025-09-27 14:30 (zm-api:54) during the server freeze; Approve is not Arthur's (his review is a comment only) - gets rolled back at go/no-go\"], [\"ZOM-435 Stuck on trophy path after fast claim\", \"match3d-backend#51\", \"N\", \"#51 merged and on dev only (2025-09-19); never deployed to prod\"], [\"ZOM-553 Boss arena refill and nuke spawn behavior\", \"match3d-backend#53\", \"Y\", \"prod: 2025-09-24 16:00, zm-api:52; approved before deploy\"], [\"ZOM-557 Consecutive log in quest doesn't work\", \"match3d-backend#54\", \"N\", \"prod: 2025-09-24 19:00 (zm-api:53), rolled back 2025-09-28 03:10 (zm-api:56); no newer prod: comment\"], [], [\"Totals\", \"18 tickets\", \"9 Y / 9 N\", \"\"], [], [\"Method\", \"Scope: ZOM tickets moved to Done after the beta prod cut (2025-08-25 11:52 UTC) through 2025-09-30 whose fix needed a match3d-backend PR or a console change / spreadsheet import in the deploy log. Client-only tickets and parent tickets (e.g. ZOM-457) excluded; ZOM-461 (#37) was done at 11:51, before the cut.\", \"\", \"On prod per the 'match3d-backend - prod deploys' doc: a prod: comment on the PR, with a prior Approve from someone other than the author; no later rollback; deploys after the server freeze (2025-09-26 22:00 UTC) need Arthur's Approve. Imports/console changes per the deploy log Console & imports tab (target prod).\"]]}"
+  ],
+  "dm": [
+   {
+    "channel_id": "EMPLOYEE_0025_SLACK_ID",
+    "message": "Server side of the beta sign-off is done. The register is in ZM Beta sign-off: https://docs.google.com/spreadsheets/d/1re3NtgqCemPC3PR_a3W4gsvau9Pv62_kDdo-wD7fSDQ/edit\n\n**18 tickets in scope. 9 are on prod:** ZOM-459, ZOM-509, ZOM-499, ZOM-531, ZOM-537, ZOM-510, ZOM-444, ZOM-547, ZOM-553\n\n**9 aren't on prod** (all moved back to Todo, each with a comment saying what still has to go out):\n\u2022 ZOM-336: #40 has only been deployed to dev\n\u2022 ZOM-392: #41. The Approve came after the Sep 3 prod deploy, so it needs a redeploy. Heads up, that means my earlier \"100+ seeds on prod since the 3rd\" doesn't hold under the rules\n\u2022 ZOM-518: #43 went to prod with no Approve\n\u2022 ZOM-503: #42 is on prod. #52 was deployed Sep 30 during the freeze without your Approve\n\u2022 ZOM-256: the algo levels 2.0 level pack import is on dev only\n\u2022 ZOM-487: #48 is on prod, but the boss arena HP table import is on dev only\n\u2022 ZOM-550: #50 was deployed Sep 27 during the freeze. The Approve is Owen's, not yours (yours is a comment)\n\u2022 ZOM-435: #51 has never been deployed to prod\n\u2022 ZOM-557: #54 was rolled back Sep 28\n\nUnder the freeze rule, #50 and #52 get rolled back at go/no-go."
+   },
+   {
+    "channel_id": "EMPLOYEE_0025_SLACK_ID",
+    "message": "Correction on ZOM-550: I shouldn't have said Owen. #50's Approve came from the other backend dev's account (not the author's), not from you. Either way it doesn't meet the freeze rule."
+   }
+  ],
+  "mv": [
+   {
+    "id": "ZOM-336",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-392",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-518",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-503",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-256",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-487",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-550",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-435",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-557",
+    "state": "Todo"
+   }
+  ],
+  "cm": [
+   {
+    "issueId": "ZOM-336",
+    "body": "Back to Todo for the beta server sign-off: match3d-backend#40 (catalog entry) still has to go out to prod. It was only deployed to dev (Sep 2) and has no prod: comment."
+   },
+   {
+    "issueId": "ZOM-392",
+    "body": "Back to Todo for the beta server sign-off: match3d-backend#41 (seed endpoint) still has to go out to prod. The Sep 3 16:30 prod deploy doesn't count, because the Approve came at 18:05, after the deploy. It needs a redeploy, and during the freeze the Approve has to be Arthur's."
+   },
+   {
+    "issueId": "ZOM-518",
+    "body": "Back to Todo for the beta server sign-off: match3d-backend#43 (drop non-card items from equipped) still has to go out to prod. The Sep 4 deploy went out with no Approve review, so it doesn't count. It needs an Approve (Arthur's, during the freeze) and a redeploy."
+   },
+   {
+    "issueId": "ZOM-503",
+    "body": "Back to Todo for the beta server sign-off: match3d-backend#52 (lives refresh push) still has to go out to prod. #42 is on prod. #52 was deployed Sep 30 during the server freeze without Arthur's Approve, so it doesn't count and gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-256",
+    "body": "Back to Todo for the beta server sign-off: the algo levels 2.0 level pack import still has to go out to prod. The deploy log only shows it imported to dev (Sep 11)."
+   },
+   {
+    "issueId": "ZOM-487",
+    "body": "Back to Todo for the beta server sign-off: the boss arena HP table import still has to go out to prod. match3d-backend#48 is on prod, but the deploy log only shows the HP table imported to dev (Sep 17)."
+   },
+   {
+    "issueId": "ZOM-550",
+    "body": "Back to Todo for the beta server sign-off: match3d-backend#50 (don't take a life on a win) still has to go out to prod. It was deployed Sep 27 during the server freeze without Arthur's Approve (his review is a comment only), so it doesn't count and gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-435",
+    "body": "Back to Todo for the beta server sign-off: match3d-backend#51 (ignore duplicate claims) still has to go out to prod. It's merged and on dev, but it was never deployed to prod."
+   },
+   {
+    "issueId": "ZOM-557",
+    "body": "Back to Todo for the beta server sign-off: match3d-backend#54 (count days in player timezone) still has to go out to prod. It was rolled back Sep 28 (zm-api:56) and has no newer prod: comment."
+   }
+  ],
+  "share": [
+   {
+    "fileId": "1re3NtgqCemPC3PR_a3W4gsvau9Pv62_kDdo-wD7fSDQ",
+    "emailAddress": "leonard.hayes@harmonygames.co",
+    "role": "commenter",
+    "type": "user"
+   }
+  ],
+  "other": [
+   {
+    "message_id": "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>",
+    "user_email": "douglas@harmonygames.co",
+    "body": "Hi Leonard,\n\nThe server register is in the ZM Beta sign-off folder, and I've shared it with you directly with comment access:\nhttps://docs.google.com/spreadsheets/d/1re3NtgqCemPC3PR_a3W4gsvau9Pv62_kDdo-wD7fSDQ/edit\n\nSummary: 18 tickets in scope, 9 on prod and 9 not. The 9 that aren't on prod have gone back to Todo.\n\nThanks,\nDouglas"
+   }
+  ]
+ },
+ "5": {
+  "reg": [
+   "cat > /tmp/reg.csv <<'EOF'\nTicket,Title,Server change(s),On prod (Y/N),Notes\nZOM-459,Algo levels doesn't count for plague race,match3d-backend#38,Y,\"#38 prod 2025-08-25 11:52 UTC (zm-api:41, beta prod cut), approved before deploy\"\nZOM-509,Trophy path container with specific headlines and subtext,match3d-backend#39,Y,\"#39 prod 2025-09-02 17:30 UTC (zm-api:42), approved before deploy\"\nZOM-499,Remaining Profile Issues,match3d-backend#44,Y,\"#44 rolled back 2025-09-20 (zm-api:50), redeployed 2025-09-22 17:30 UTC (zm-api:51) before the freeze; approved before deploy\"\nZOM-537,Economy Adjustments,match3d-backend#46,Y,\"#46 prod 2025-09-09 20:29 UTC (zm-api:46), Arthur approved before deploy\"\nZOM-510,Zombie Lane Reward Issues,Zombie Lane rewards import (deploy log),Y,\"Import to prod 2025-09-08 16:45 UTC\"\nZOM-336,Cooler,match3d-backend#40,N,\"#40 only on dev (2025-09-02); no prod: comment and no approving review\"\nZOM-392,Algo Level 2.0 (Level 100+),match3d-backend#41,N,\"#41 prod comment 2025-09-03 16:30 UTC, but the only approval came after (18:05 UTC); deploy doesn't count, needs a redeploy (freeze: Arthur's approval)\"\nZOM-518,Remove equipped items if they are not card anymore,match3d-backend#43,N,\"#43 deployed 2025-09-04 12:50 UTC with no Approve review from anyone; needs approval + redeploy\"\nZOM-503,Giving lives in teams are unresponsive,\"match3d-backend#42, match3d-backend#52\",N,\"#42 on prod (2025-09-08). #52 deployed 2025-09-30 18:16 UTC during the freeze with a non-Arthur approval, so it gets rolled back at go/no-go\"\nZOM-531,Items Unequip at the start of each new session,\"match3d-backend#45, loadout table import\",N,\"#45 on prod (2025-09-10). Loadout table import only on dev (2025-09-10)\"\nZOM-444,Instrument analytics event for endless_start,\"match3d-backend#47, analytics events table import\",N,\"#47 on prod (2025-09-27, Arthur approved before deploy during freeze). Analytics events table import only on dev (2025-09-12)\"\nZOM-436,Analytics instrumentation for all tutorial steps,analytics events table import,N,\"Analytics events table import only on dev (2025-09-12)\"\nZOM-487,Infinite HP Boss Arena,\"match3d-backend#48, boss arena HP table import\",N,\"#48 on prod (2025-09-16). Boss arena HP table import only on dev (2025-09-17)\"\nZOM-550,\"After completing boss arena, the lives are deducted by 1\",match3d-backend#50,N,\"#50 deployed 2025-09-27 14:30 UTC during the freeze; approval was not Arthur's (Arthur only commented 'ship it after go/no-go'), so it gets rolled back at go/no-go\"\nZOM-435,User stuck on trophy path after clicking claim button too fast,match3d-backend#51,N,\"#51 merged and on dev only; never deployed to prod\"\nZOM-557,Consecutive log in quest doesn't work,match3d-backend#54,N,\"#54 prod 2025-09-24, rolled back 2025-09-28 03:10 UTC (zm-api:56); no newer prod deploy\"\nZOM-256,Create Algo Levels 2.0,algo levels 2.0 level pack import,N,\"Level pack import only on dev (2025-09-11)\"\nEOF\nbase64 -w0 /tmp/reg.csv > /tmp/reg.b64; wc -c /tmp/reg.b64",
+   "CREATE {\"name\": \"ZM Beta sign-off - server side register\", \"parentId\": \"d_69fcebc484d472907b0b5c\", \"mimeType\": \"text/csv\", \"driveMimeType\": \"application/vnd.google-apps.spreadsheet\", \"description\": \"Server-side beta sign-off register for the Oct 10 ZM beta (rules: ZM ROADMAP card 'Beta sign-off - server side' + Arthur's 9/30 comment and email). Scope: ZOM tickets moved to Done after the beta prod cut (2025-08-25 11:52 UTC) through 2025-09-30 that needed a server change. On prod per the match3d-backend prod deploys doc. 5 of 17 on prod.\"} CONTENT VGlja2V0LFRpdGxlLFNlcnZlciBjaGFuZ2UocyksT24gcHJvZCAoWS9OKSxOb3RlcwpaT00tNDU5LEFsZ28gbGV2ZWxzIGRvZXNuJ3QgY291bnQgZm9yIHBsYWd1ZSByYWNlLG1hdGNoM2QtYmFja2VuZCMzOCxZLCIjMzggcHJvZCAyMDI1LTA4LTI1IDExOjUyIFVUQyAoem0tYXBpOjQxLCBiZXRhIHByb2QgY3V0KSwgYXBwcm92ZWQgYmVmb3JlIGRlcGxveSIKWk9NLTUwOSxUcm9waHkgcGF0aCBjb250YWluZXIgd2l0aCBzcGVjaWZpYyBoZWFkbGluZXMgYW5kIHN1YnRleHQsbWF0Y2gzZC1iYWNrZW5kIzM5LFksIiMzOSBwcm9kIDIwMjUtMDktMDIgMTc6MzAgVVRDICh6bS1hcGk6NDIpLCBhcHByb3ZlZCBiZWZvcmUgZGVwbG95IgpaT00tNDk5LFJlbWFpbmluZyBQcm9maWxlIElzc3VlcyxtYXRjaDNkLWJhY2tlbmQjNDQsWSwiIzQ0IHJvbGxlZCBiYWNrIDIwMjUtMDktMjAgKHptLWFwaTo1MCksIHJlZGVwbG95ZWQgMjAyNS0wOS0yMiAxNzozMCBVVEMgKHptLWFwaTo1MSkgYmVmb3JlIHRoZSBmcmVlemU7IGFwcHJvdmVkIGJlZm9yZSBkZXBsb3kiClpPTS01MzcsRWNvbm9teSBBZGp1c3RtZW50cyxtYXRjaDNkLWJhY2tlbmQjNDYsWSwiIzQ2IHByb2QgMjAyNS0wOS0wOSAyMDoyOSBVVEMgKHptLWFwaTo0NiksIEFydGh1ciBhcHByb3ZlZCBiZWZvcmUgZGVwbG95IgpaT00tNTEwLFpvbWJpZSBMYW5lIFJld2FyZCBJc3N1ZXMsWm9tYmllIExhbmUgcmV3YXJkcyBpbXBvcnQgKGRlcGxveSBsb2cpLFksIkltcG9ydCB0byBwcm9kIDIwMjUtMDktMDggMTY6NDUgVVRDIgpaT00tMzM2LENvb2xlcixtYXRjaDNkLWJhY2tlbmQjNDAsTiwiIzQwIG9ubHkgb24gZGV2ICgyMDI1LTA5LTAyKTsgbm8gcHJvZDogY29tbWVudCBhbmQgbm8gYXBwcm92aW5nIHJldmlldyIKWk9NLTM5MixBbGdvIExldmVsIDIuMCAoTGV2ZWwgMTAwKyksbWF0Y2gzZC1iYWNrZW5kIzQxLE4sIiM0MSBwcm9kIGNvbW1lbnQgMjAyNS0wOS0wMyAxNjozMCBVVEMsIGJ1dCB0aGUgb25seSBhcHByb3ZhbCBjYW1lIGFmdGVyICgxODowNSBVVEMpOyBkZXBsb3kgZG9lc24ndCBjb3VudCwgbmVlZHMgYSByZWRlcGxveSAoZnJlZXplOiBBcnRodXIncyBhcHByb3ZhbCkiClpPTS01MTgsUmVtb3ZlIGVxdWlwcGVkIGl0ZW1zIGlmIHRoZXkgYXJlIG5vdCBjYXJkIGFueW1vcmUsbWF0Y2gzZC1iYWNrZW5kIzQzLE4sIiM0MyBkZXBsb3llZCAyMDI1LTA5LTA0IDEyOjUwIFVUQyB3aXRoIG5vIEFwcHJvdmUgcmV2aWV3IGZyb20gYW55b25lOyBuZWVkcyBhcHByb3ZhbCArIHJlZGVwbG95IgpaT00tNTAzLEdpdmluZyBsaXZlcyBpbiB0ZWFtcyBhcmUgdW5yZXNwb25zaXZlLCJtYXRjaDNkLWJhY2tlbmQjNDIsIG1hdGNoM2QtYmFja2VuZCM1MiIsTiwiIzQyIG9uIHByb2QgKDIwMjUtMDktMDgpLiAjNTIgZGVwbG95ZWQgMjAyNS0wOS0zMCAxODoxNiBVVEMgZHVyaW5nIHRoZSBmcmVlemUgd2l0aCBhIG5vbi1BcnRodXIgYXBwcm92YWwsIHNvIGl0IGdldHMgcm9sbGVkIGJhY2sgYXQgZ28vbm8tZ28iClpPTS01MzEsSXRlbXMgVW5lcXVpcCBhdCB0aGUgc3RhcnQgb2YgZWFjaCBuZXcgc2Vzc2lvbiwibWF0Y2gzZC1iYWNrZW5kIzQ1LCBsb2Fkb3V0IHRhYmxlIGltcG9ydCIsTiwiIzQ1IG9uIHByb2QgKDIwMjUtMDktMTApLiBMb2Fkb3V0IHRhYmxlIGltcG9ydCBvbmx5IG9uIGRldiAoMjAyNS0wOS0xMCkiClpPTS00NDQsSW5zdHJ1bWVudCBhbmFseXRpY3MgZXZlbnQgZm9yIGVuZGxlc3Nfc3RhcnQsIm1hdGNoM2QtYmFja2VuZCM0NywgYW5hbHl0aWNzIGV2ZW50cyB0YWJsZSBpbXBvcnQiLE4sIiM0NyBvbiBwcm9kICgyMDI1LTA5LTI3LCBBcnRodXIgYXBwcm92ZWQgYmVmb3JlIGRlcGxveSBkdXJpbmcgZnJlZXplKS4gQW5hbHl0aWNzIGV2ZW50cyB0YWJsZSBpbXBvcnQgb25seSBvbiBkZXYgKDIwMjUtMDktMTIpIgpaT00tNDM2LEFuYWx5dGljcyBpbnN0cnVtZW50YXRpb24gZm9yIGFsbCB0dXRvcmlhbCBzdGVwcyxhbmFseXRpY3MgZXZlbnRzIHRhYmxlIGltcG9ydCxOLCJBbmFseXRpY3MgZXZlbnRzIHRhYmxlIGltcG9ydCBvbmx5IG9uIGRldiAoMjAyNS0wOS0xMikiClpPTS00ODcsSW5maW5pdGUgSFAgQm9zcyBBcmVuYSwibWF0Y2gzZC1iYWNrZW5kIzQ4LCBib3NzIGFyZW5hIEhQIHRhYmxlIGltcG9ydCIsTiwiIzQ4IG9uIHByb2QgKDIwMjUtMDktMTYpLiBCb3NzIGFyZW5hIEhQIHRhYmxlIGltcG9ydCBvbmx5IG9uIGRldiAoMjAyNS0wOS0xNykiClpPTS01NTAsIkFmdGVyIGNvbXBsZXRp"
+  ],
+  "dm": [
+   {
+    "channel_id": "EMPLOYEE_0025_SLACK_ID",
+    "message": "Server side of the beta sign-off is done. The register (\"ZM Beta sign-off - server side register\") is in the ZM Beta sign-off folder.\n\n**5 of 17 tickets are on prod:** ZOM-459, ZOM-509, ZOM-499, ZOM-537, ZOM-510\n\n**12 aren't on prod.** All are back in Todo, each with a comment naming what still has to go out:\n\u2022 ZOM-336: #40 is only on dev\n\u2022 ZOM-392: #41 was deployed before it was approved, so it needs a redeploy\n\u2022 ZOM-518: #43 was deployed with no approval\n\u2022 ZOM-503: #52 went out in the freeze without your approval (#42 is fine)\n\u2022 ZOM-550: #50 went out in the freeze without your approval\n\u2022 ZOM-435: #51 was merged but never deployed to prod\n\u2022 ZOM-557: #54 was rolled back on 9/28\n\u2022 ZOM-531: loadout table import is only on dev\n\u2022 ZOM-444: analytics events table import is only on dev (#47 is fine)\n\u2022 ZOM-436: analytics events table import is only on dev\n\u2022 ZOM-487: boss arena HP table import is only on dev (#48 is fine)\n\u2022 ZOM-256: algo levels 2.0 level pack import is only on dev\n\nPer your email, ZOM-547 and ZOM-553 are left off. Heads up: #50 and #52 are on prod right now but get rolled back at go/no-go under the freeze rule."
+   }
+  ],
+  "mv": [
+   {
+    "id": "ZOM-336",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-392",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-518",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-503",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-531",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-444",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-436",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-487",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-550",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-435",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-557",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-256",
+    "state": "Todo"
+   }
+  ],
+  "cm": [
+   {
+    "issueId": "ZOM-336",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: match3d-backend#40 (catalog entry for the usable cooler). It's only on dev, has no approving review and no prod deploy."
+   },
+   {
+    "issueId": "ZOM-392",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: match3d-backend#41 (100+ seed endpoint). The prod deploy on 2025-09-03 16:30 UTC happened before the only approval (18:05 UTC), so per the prod deploys doc it doesn't count. It needs a redeploy, and during the freeze that means Arthur's approval."
+   },
+   {
+    "issueId": "ZOM-518",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: match3d-backend#43 (drop non-card items from equipped). It was deployed 2025-09-04 with no Approve review, so it doesn't count as on prod. It needs approval (Arthur's during the freeze) and a redeploy."
+   },
+   {
+    "issueId": "ZOM-503",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: match3d-backend#52 (lives refresh push). #42 is on prod, but #52 was deployed 2025-09-30 during the server freeze without Arthur's approval, so it gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-531",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: the loadout table import, which is only on dev (2025-09-10). match3d-backend#45 is already on prod."
+   },
+   {
+    "issueId": "ZOM-444",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: the analytics events table import, which is only on dev (2025-09-12). match3d-backend#47 is already on prod."
+   },
+   {
+    "issueId": "ZOM-436",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: the analytics events table import on the backend, which is only on dev (2025-09-12)."
+   },
+   {
+    "issueId": "ZOM-487",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: the boss arena HP table import, which is only on dev (2025-09-17). match3d-backend#48 is already on prod."
+   },
+   {
+    "issueId": "ZOM-550",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: match3d-backend#50 (don't take a life on a win). It was deployed 2025-09-27 during the server freeze, and the approval wasn't Arthur's (he only commented \"ship it after go/no-go\"), so it gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-435",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: match3d-backend#51 (ignore duplicate claim requests). It's merged and on dev only and has never been deployed to prod."
+   },
+   {
+    "issueId": "ZOM-557",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: match3d-backend#54 (count days in player timezone). It was rolled back on prod 2025-09-28 03:10 UTC (zm-api:56) and hasn't been redeployed."
+   },
+   {
+    "issueId": "ZOM-256",
+    "body": "Beta server sign-off: back to Todo. Still has to go out: the algo levels 2.0 level pack import, which is only on dev (2025-09-11)."
+   }
+  ],
+  "share": [
+   {
+    "fileId": "d5644762373416df",
+    "emailAddress": "leonard.hayes@harmonygames.co",
+    "role": "commenter",
+    "type": "user"
+   }
+  ],
+  "other": [
+   {
+    "message_id": "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>",
+    "user_email": "me",
+    "body": "Hi Leonard,\n\nThe server register (\"ZM Beta sign-off - server side register\") is now in the ZM Beta sign-off folder. I've shared it with you directly with comment access, so you can leave your notes on it before Thursday's call.\n\nShort version: 5 of the 17 in-scope tickets are on prod. The other 12 are back in Todo with notes on what still has to go out.\n\nThanks,\nDouglas"
+   }
+  ]
+ },
+ "6": {
+  "reg": [
+   "cat > /tmp/reg.csv <<'EOF'\nTicket,Server change(s),On prod (Y/N),Notes\nZOM-459 Algo levels doesn't count for plague race,match3d-backend#38,Y,prod: 2025-08-25 11:52 UTC zm-api:41 (beta prod cut); approved before deploy\nZOM-509 Trophy path container with headlines/subtext,match3d-backend#39,Y,prod: 2025-09-02 17:30 UTC zm-api:42\nZOM-336 Cooler,match3d-backend#40,N,#40 only deployed to dev (2025-09-02); no prod: comment\nZOM-392 Algo Level 2.0 (Level 100+),match3d-backend#41,N,prod: 2025-09-03 16:30 UTC but the Approve came at 18:05 (after the deploy); not redeployed since\nZOM-518 Remove equipped items if they are not cards anymore,match3d-backend#43,N,prod: 2025-09-04 12:50 UTC but #43 has no Approve review from anyone other than its author\nZOM-503 Giving lives in teams unresponsive,match3d-backend#42; match3d-backend#52,N,#42 on prod (2025-09-08 zm-api:45). #52 deployed 2025-09-30 18:16 UTC during the server freeze with a non-Arthur Approve so it does not count\nZOM-499 Remaining Profile Issues,match3d-backend#44,Y,Rolled back 2025-09-20; redeployed prod: 2025-09-22 17:30 UTC zm-api:51 (pre-freeze; approved)\nZOM-531 Items unequip at the start of each new session,match3d-backend#45,Y,prod: 2025-09-10 18:20 UTC zm-api:47\nZOM-537 Economy Adjustments,match3d-backend#46,Y,prod: 2025-09-09 20:29 UTC zm-api:46\nZOM-510 Zombie Lane Reward Issues,Backend import: Zombie Lane rewards (deploy log Console & imports),Y,Imported to prod 2025-09-08 16:45 UTC\nZOM-256 Create Algo Levels 2.0,Backend import: algo levels 2.0 level pack (deploy log Console & imports),N,Only imported to dev (2025-09-11 16:30 UTC); no prod import logged\nZOM-444 Instrument analytics event for endless_start,match3d-backend#47,Y,prod: 2025-09-27 16:20 UTC zm-api:55 (during freeze; Arthur approved at 16:05 before deploy)\nZOM-487 Infinite HP Boss Arena,match3d-backend#48,Y,prod: 2025-09-16 16:35 UTC zm-api:48\nZOM-547 Update balance changes for Boss Arena,match3d-backend#49,Y,prod: 2025-09-18 16:00 UTC zm-api:49\nZOM-550 After completing boss arena lives are deducted by 1,match3d-backend#50,N,prod: 2025-09-27 14:30 UTC during the server freeze; Approve was not Arthur's (Arthur only commented 'ship it after go/no-go') so it gets rolled back at go/no-go\nZOM-435 User stuck on trophy path after clicking claim too fast,match3d-backend#51,N,#51 only deployed to dev (2025-09-19); no prod: comment\nZOM-553 Boss arena refill and nuke spawn behavior,match3d-backend#53,Y,prod: 2025-09-24 16:00 UTC zm-api:52\nZOM-557 Consecutive log in quest doesn't work,match3d-backend#54,N,prod: 2025-09-24 but rolled back 2025-09-28 03:10 UTC (zm-api:56); no newer prod: comment\n,,,\nSummary,18 tickets in scope,10 on prod / 8 not on prod,Scope: ZOM tickets moved to Done after the beta prod cut (2025-08-25 11:52 UTC) through 2025-09-30 whose fix needed a match3d-backend PR or a logged console change/import. Parent tickets (e.g. ZOM-457) have no row. On prod per the match3d-backend prod deploys doc (prod: comment + prior non-author Approve; Arthur's Approve required after the 2025-09-26 22:00 UTC freeze; rollbacks count).\nEOF\nbase64 -w0 /tmp/reg.csv > /tmp/reg.b64; wc -c /tmp/reg.b64",
+   "CREATE {\"name\": \"ZM Beta sign-off - server side register\", \"parentId\": \"d_69fcebc484d472907b0b5c\", \"mimeType\": \"text/csv\", \"driveMimeType\": \"application/vnd.google-apps.spreadsheet\", \"description\": \"Server-side beta sign-off register for the Oct 10 ZM beta (rules: ZM ROADMAP card 'Beta sign-off - server side').\"} CONTENT VGlja2V0LFNlcnZlciBjaGFuZ2UocyksT24gcHJvZCAoWS9OKSxOb3RlcwpaT00tNDU5IEFsZ28gbGV2ZWxzIGRvZXNuJ3QgY291bnQgZm9yIHBsYWd1ZSByYWNlLG1hdGNoM2QtYmFja2VuZCMzOCxZLHByb2Q6IDIwMjUtMDgtMjUgMTE6NTIgVVRDIHptLWFwaTo0MSAoYmV0YSBwcm9kIGN1dCk7IGFwcHJvdmVkIGJlZm9yZSBkZXBsb3kKWk9NLTUwOSBUcm9waHkgcGF0aCBjb250YWluZXIgd2l0aCBoZWFkbGluZXMvc3VidGV4dCxtYXRjaDNkLWJhY2tlbmQjMzksWSxwcm9kOiAyMDI1LTA5LTAyIDE3OjMwIFVUQyB6bS1hcGk6NDIKWk9NLTMzNiBDb29sZXIsbWF0Y2gzZC1iYWNrZW5kIzQwLE4sIzQwIG9ubHkgZGVwbG95ZWQgdG8gZGV2ICgyMDI1LTA5LTAyKTsgbm8gcHJvZDogY29tbWVudApaT00tMzkyIEFsZ28gTGV2ZWwgMi4wIChMZXZlbCAxMDArKSxtYXRjaDNkLWJhY2tlbmQjNDEsTixwcm9kOiAyMDI1LTA5LTAzIDE2OjMwIFVUQyBidXQgdGhlIEFwcHJvdmUgY2FtZSBhdCAxODowNSAoYWZ0ZXIgdGhlIGRlcGxveSk7IG5vdCByZWRlcGxveWVkIHNpbmNlClpPTS01MTggUmVtb3ZlIGVxdWlwcGVkIGl0ZW1zIGlmIHRoZXkgYXJlIG5vdCBjYXJkcyBhbnltb3JlLG1hdGNoM2QtYmFja2VuZCM0MyxOLHByb2Q6IDIwMjUtMDktMDQgMTI6NTAgVVRDIGJ1dCAjNDMgaGFzIG5vIEFwcHJvdmUgcmV2aWV3IGZyb20gYW55b25lIG90aGVyIHRoYW4gaXRzIGF1dGhvcgpaT00tNTAzIEdpdmluZyBsaXZlcyBpbiB0ZWFtcyB1bnJlc3BvbnNpdmUsbWF0Y2gzZC1iYWNrZW5kIzQyOyBtYXRjaDNkLWJhY2tlbmQjNTIsTiwjNDIgb24gcHJvZCAoMjAyNS0wOS0wOCB6bS1hcGk6NDUpLiAjNTIgZGVwbG95ZWQgMjAyNS0wOS0zMCAxODoxNiBVVEMgZHVyaW5nIHRoZSBzZXJ2ZXIgZnJlZXplIHdpdGggYSBub24tQXJ0aHVyIEFwcHJvdmUgc28gaXQgZG9lcyBub3QgY291bnQKWk9NLTQ5OSBSZW1haW5pbmcgUHJvZmlsZSBJc3N1ZXMsbWF0Y2gzZC1iYWNrZW5kIzQ0LFksUm9sbGVkIGJhY2sgMjAyNS0wOS0yMDsgcmVkZXBsb3llZCBwcm9kOiAyMDI1LTA5LTIyIDE3OjMwIFVUQyB6bS1hcGk6NTEgKHByZS1mcmVlemU7IGFwcHJvdmVkKQpaT00tNTMxIEl0ZW1zIHVuZXF1aXAgYXQgdGhlIHN0YXJ0IG9mIGVhY2ggbmV3IHNlc3Npb24sbWF0Y2gzZC1iYWNrZW5kIzQ1LFkscHJvZDogMjAyNS0wOS0xMCAxODoyMCBVVEMgem0tYXBpOjQ3ClpPTS01MzcgRWNvbm9teSBBZGp1c3RtZW50cyxtYXRjaDNkLWJhY2tlbmQjNDYsWSxwcm9kOiAyMDI1LTA5LTA5IDIwOjI5IFVUQyB6bS1hcGk6NDYKWk9NLTUxMCBab21iaWUgTGFuZSBSZXdhcmQgSXNzdWVzLEJhY2tlbmQgaW1wb3J0OiBab21iaWUgTGFuZSByZXdhcmRzIChkZXBsb3kgbG9nIENvbnNvbGUgJiBpbXBvcnRzKSxZLEltcG9ydGVkIHRvIHByb2QgMjAyNS0wOS0wOCAxNjo0NSBVVEMKWk9NLTI1NiBDcmVhdGUgQWxnbyBMZXZlbHMgMi4wLEJhY2tlbmQgaW1wb3J0OiBhbGdvIGxldmVscyAyLjAgbGV2ZWwgcGFjayAoZGVwbG95IGxvZyBDb25zb2xlICYgaW1wb3J0cyksTixPbmx5IGltcG9ydGVkIHRvIGRldiAoMjAyNS0wOS0xMSAxNjozMCBVVEMpOyBubyBwcm9kIGltcG9ydCBsb2dnZWQKWk9NLTQ0NCBJbnN0cnVtZW50IGFuYWx5dGljcyBldmVudCBmb3IgZW5kbGVzc19zdGFydCxtYXRjaDNkLWJhY2tlbmQjNDcsWSxwcm9kOiAyMDI1LTA5LTI3IDE2OjIwIFVUQyB6bS1hcGk6NTUgKGR1cmluZyBmcmVlemU7IEFydGh1ciBhcHByb3ZlZCBhdCAxNjowNSBiZWZvcmUgZGVwbG95KQpaT00tNDg3IEluZmluaXRlIEhQIEJvc3MgQXJlbmEsbWF0Y2gzZC1iYWNrZW5kIzQ4LFkscHJvZDogMjAyNS0wOS0xNiAxNjozNSBVVEMgem0tYXBpOjQ4ClpPTS01NDcgVXBkYXRlIGJhbGFuY2UgY2hhbmdlcyBmb3IgQm9zcyBBcmVuYSxtYXRjaDNkLWJhY2tlbmQjNDksWSxwcm9kOiAyMDI1LTA5LTE4IDE2OjAwIFVUQyB6bS1hcGk6NDkKWk9NLTU1MCBBZnRlciBjb21wbGV0aW5nIGJvc3MgYXJlbmEgbGl2ZXMgYXJlIGRlZHVjdGVkIGJ5IDEsbWF0Y2gzZC1iYWNrZW5kIzUwLE4scHJvZDogMjAyNS0wOS0yNyAxNDozMCBVVEMgZHVyaW5nIHRoZSBzZXJ2ZXIgZnJlZXplOyBBcHByb3ZlIHdhcyBub3QgQXJ0aHVyJ3MgKEFydGh1ciBvbmx5IGNvbW1lbnRlZCAnc2hpcCBpdCBhZnRlciBnby9uby1nbycpIHNvIGl0IGdldHMgcm9sbGVkIGJhY2sgYXQgZ28vbm8tZ28KWk9NLTQzNSBVc2VyIHN0dWNrIG9uIHRyb3BoeSBwYXRoIGFm"
+  ],
+  "dm": [
+   {
+    "channel_id": "EMPLOYEE_0025_SLACK_ID",
+    "message": "Server side of the beta sign-off is done. The register is in the ZM Beta sign-off folder (\"ZM Beta sign-off - server side register\").\n\n**10 tickets are on prod:** ZOM-459, ZOM-509, ZOM-499, ZOM-531, ZOM-537, ZOM-510, ZOM-444, ZOM-487, ZOM-547, ZOM-553\n\n**8 aren't:**\n\u2022 ZOM-336: #40 only went to dev\n\u2022 ZOM-392: the #41 prod deploy on Sep 3 went out before the approve, so it doesn't count (correction to what I told you on the 22nd, the 100+ seeds aren't really on prod)\n\u2022 ZOM-518: #43 never got a non-author approve\n\u2022 ZOM-503: #42 is on prod, but #52 went out during the freeze without your approve\n\u2022 ZOM-256: algo levels 2.0 level pack was only imported to dev\n\u2022 ZOM-550: #50 went out during the freeze without your approve (you only commented)\n\u2022 ZOM-435: #51 only went to dev (another correction, the trophy path double-claim fix isn't actually out)\n\u2022 ZOM-557: #54 was rolled back on Sep 28\n\nThat's 18 tickets in scope: Done after the Aug 25 prod cut through Sep 30, with a server change. I counted #47 as on prod because your approve came before the freeze deploy. Per rule 5, all 8 are back in Todo, each with a comment saying which change still has to go out."
+   }
+  ],
+  "mv": [
+   {
+    "id": "ZOM-336",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-392",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-518",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-503",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-256",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-550",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-435",
+    "state": "Todo"
+   },
+   {
+    "id": "ZOM-557",
+    "state": "Todo"
+   }
+  ],
+  "cm": [
+   {
+    "issueId": "ZOM-336",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#40 (usable item catalog entry) still has to go out to prod \u2014 it was only deployed to dev, there's no prod deploy on the PR."
+   },
+   {
+    "issueId": "ZOM-392",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#41 (100+ seed endpoint) still has to go out to prod. The Sep 3 16:30 UTC prod deploy went out before the PR was approved (Approve at 18:05), so it doesn't count \u2014 it needs a redeploy."
+   },
+   {
+    "issueId": "ZOM-518",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#43 (drop non-card items from equipped) still has to go out to prod. The Sep 4 prod deploy doesn't count because the PR never got an Approve review from someone other than its author \u2014 it needs an approval and a redeploy."
+   },
+   {
+    "issueId": "ZOM-503",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#52 (teams lives refresh push) still has to go out to prod. It was deployed Sep 30 during the server freeze without Arthur's Approve, so it doesn't count (and gets rolled back at go/no-go). #42 (ack) is on prod."
+   },
+   {
+    "issueId": "ZOM-256",
+    "body": "Back to Todo per the beta server sign-off: the algo levels 2.0 level pack import still has to go out to prod. The deploy log only has it imported to dev (Sep 11 16:30 UTC)."
+   },
+   {
+    "issueId": "ZOM-550",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#50 (don't take a life on a boss arena win) still has to go out to prod. It was deployed Sep 27 during the server freeze without Arthur's Approve (he only commented \"ship it after go/no-go\"), so it doesn't count and gets rolled back at go/no-go."
+   },
+   {
+    "issueId": "ZOM-435",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#51 (ignore duplicate trophy path claims) still has to go out to prod. It was only deployed to dev (Sep 19), there's no prod deploy on the PR."
+   },
+   {
+    "issueId": "ZOM-557",
+    "body": "Back to Todo per the beta server sign-off: match3d-backend#54 (login streak in player timezone) still has to go out to prod. It was rolled back on Sep 28 03:10 UTC (streak resets for players east of UTC) and hasn't been redeployed since."
+   }
+  ],
+  "share": [
+   {
+    "fileId": "75b98ee70d80a800",
+    "emailAddress": "leonard.hayes@harmonygames.co",
+    "role": "commenter",
+    "type": "user"
+   }
+  ],
+  "other": [
+   {
+    "message_id": "douglas@harmonygames.co/<CAreN_3nXHn9vq-8FWgVQEC3_2hxsSjSNZRkPtWB@mail.gmail.com>",
+    "user_email": "douglas@harmonygames.co",
+    "body": "Hi Leonard,\n\nThe server register is in the ZM Beta sign-off folder (\"ZM Beta sign-off - server side register\"), and I've shared it with you directly with comment access.\n\nQuick summary: 18 tickets are in scope. 10 are on prod and 8 aren't. The 8 that aren't have gone back to Todo with a comment on each.\n\nThanks,\nDouglas"
+   }
+  ]
+ }
+}

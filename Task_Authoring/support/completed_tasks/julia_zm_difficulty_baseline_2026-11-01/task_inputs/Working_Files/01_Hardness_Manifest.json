@@ -1,0 +1,2288 @@
+{
+  "persona": "julia_lawson",
+  "horizon": "Long Horizon",
+  "effective_profile": "long",
+  "profile_exception": {
+    "reason": "author target: at least 120 tool calls in every baseline run and an average weighted pass rate under 75% (00_Assigments.md 'Author targets'); the extreme profile's ~600-call design would overshoot it, so the long profile keeps the extreme breadth, authorities, chains and traps with a ~150-call necessary budget",
+    "requester_confirmation": "task author in chat on 2026-10-30: 'make sure my task is a long horizon task so i want minimum 120 tool calls in each runs and also make sure i want difficulty under 75%'; recorded in task_inputs/00_Assigments.md ('Author targets for this task')"
+  },
+  "requirements": {
+    "R1": "register membership: the ZOM tickets created up to Aug 31 (since ZM started) that changed difficulty - a whole-word title match on the card's vocabulary, attack power in the title (card comment), or any ticket whose closing note from Arthur starts with 'tiers:' (incl. ZOM-281, assigned to someone else) - duplicates out, open/cancelled ones in; minus the analytics and tutorial tickets Leonard drops in his thread reply under the ask (ZOM-30, ZOM-49, ZOM-50, ZOM-161, ZOM-262, ZOM-275), minus ZOM-312 and ZOM-295 (Blake marked them 'not tiers' in his reviews on match3d#265 and match3d#271) and ZOM-258 (Leonard's 'notes for monday' doc attached to the card), minus the four tickets Leonard names as the only extra ones to drop in his reply in the thread under Julia's Sep 29 DM question (ZOM-162, ZOM-163, ZOM-201, ZOM-250); 23 tickets (14 by title, 4 by attack power, 5 by Arthur's notes)",
+    "R2": "status per ticket (Live, Editor only, Replaced, Not shipped) judged against the store builds players have (iOS 0.3.49, Android 0.3.133) under Blake's store builds mail and his reply to it (the reply, in its own Gmail thread because he changed the subject, carries the rule): level editor / LevelDesigner and debug tooling never reach players (ZOM-45 and ZOM-303 Live, ZOM-277 Editor only)",
+    "R3": "replaced-by per Replaced ticket: ZOM-254 by ZOM-282",
+    "R4": "rules in force today: starting tier (after a new player's first 10 games, wins and losses, average CPM over them > 90 -> tier 1, 90 or less tier 0; the build, not the write-ups' '10 levels'); promotion (win rate >= 80% over up to the last 10 attempts; tier -2 promotes after one win); demotion (4 losses in a row, or win rate <= 50% over up to the last 10; the record resets after every move); after a demotion the current level loads one tier down; enrage on blunder adds speed and damage per monster (Live tab of the monster enrage sheet; MonsterBase 0.8/0.8 for the rest), no HP boost",
+    "R5": "register saved in the ZM Difficulty folder",
+    "R6": "reply to Leonard in the DM with the counts: 23 tickets, 15 Live, 4 Editor only, 1 Replaced, 3 Not shipped, plus the keys of the Not shipped and the Editor only tickets (Leonard's thread reply), and when a new player gets the starting tier: after their first 10 games (wins and losses), not after level 10; and which ticket replaced which (ZOM-254 by ZOM-282; Leonard's 'notes for monday' doc)",
+    "R7": "comment on ZOM-199 that the build checks CPM > 90 (not >= 90) and on ZOM-254 naming ZOM-282 as its replacement; and (checklist rule 6 change) a comment on each of the 4 Editor only and 3 Not shipped tickets saying the change isn't in the store builds; none on the four dropped tickets (ZOM-162, ZOM-163, ZOM-201, ZOM-250); same tickets, no new ones; ZOM-199's comment says what Blake's reply says the build does: CPM > 90 (not >= 90), checked when the 10th game ends, wins and losses both counted; each of the 7 Editor only / Not shipped comments names the two builds checked, iOS 0.3.49 and Android 0.3.133 (Leonard's thread reply under the ask)",
+    "R8": "register shared with everyone on the tuning session invite: Robert as editor; Brian as commenter (the checklist's rule 7 change gave him edit, Leonard's later reply under Julia's Sep 29 question takes it back); Leonard as commenter; Arthur as viewer (Leonard's 'notes for monday' doc: view access is enough for him)",
+    "R9": "register is one Google Sheet with two tabs, Tickets and Rules in force; the Tickets tab carries the agenda's columns plus Robert's three (R10)",
+    "R10": "three extra Tickets-tab columns after status, from Robert's thread reply in the Robert / Leonard / Julia group chat (card rule 2 points to it): the ticket's Linear assignee, the day it was marked done as a Pacific day (Robert: 'pacific time'; ZOM-200 2025-06-12, ZOM-274 2025-06-20, ZOM-282 2025-06-20, where the UTC day is one later; blank when it never got done: ZOM-202, ZOM-280, ZOM-293), and its Linear priority (1 Urgent, 2 High, 3 Medium, 4 Low)"
+  },
+  "services": {
+    "slack": {
+      "role": "anchor ask in the Leonard-Julia DM (reply destination); Robert's wrong summary and Brian's post-it-here request in #zombie-design",
+      "weight_reason": "the ask and the reply destination exist only in the DM"
+    },
+    "trello": {
+      "role": "H1 difficulty baseline card on ZM ROADMAP + Leonard's amendment comment; Domino Delights decoy card",
+      "weight_reason": "cohort rule, status vocabulary, replaced rule, write rules and destination live only on the card"
+    },
+    "gmail": {
+      "role": "H2 Blake's store builds mail and his reply in the same thread",
+      "weight_reason": "what reaches players (editor/debug tooling stripped) and the > 90 starting-tier check exist only there"
+    },
+    "linear": {
+      "role": "the 109 candidates; Arthur's and the owners' closing notes; ZOM-42 spec; the ZOM-303 write",
+      "weight_reason": "membership by code touched and the per-ticket files/replacement facts exist only in the comments"
+    },
+    "github": {
+      "role": "match3d#401 (+ Blake's seeded comment); #243 / #265 file tables vs notes",
+      "weight_reason": "what #401 changed (speed/damage split; the unused EnrageHealth method dropped) and the shared-PR file tables live here"
+    },
+    "gsheets": {
+      "role": "H3 ZM monster enrage sheet (Julia's; Live, Next pass, History); the register write; DD Parameter Optimization decoy (base)",
+      "weight_reason": "the per-monster enrage numbers in force exist only on the Live tab"
+    },
+    "gslides": {
+      "role": "Robert's dynamic difficulty deck (tier rules without the 50% demotion rule, stale +25% blunder line)",
+      "weight_reason": "the deck is the named tier-rules source (card rule 5)"
+    },
+    "gcal": {
+      "role": "the Oct 6 tuning session invite (attendees = share list)",
+      "weight_reason": "Brian is named as a recipient only by the invite's attendee list"
+    },
+    "gdrive": {
+      "role": "ZM Difficulty folder (destination) and the share writes",
+      "weight_reason": "destination folder and the four shares"
+    },
+    "gdocs": {
+      "role": "the tuning session agenda (register layout)",
+      "weight_reason": "the sheet format and tab names are stated only in the agenda"
+    }
+  },
+  "anchors": [
+    {
+      "id": "A1",
+      "prompt_reference": "Leonard's difficulty baseline ask",
+      "service": "slack",
+      "locator": "D05HB64NMQU/1759261706.530914",
+      "requirement_ids": [
+        "R6"
+      ]
+    }
+  ],
+  "ask_fragments": [
+    {
+      "id": "K1",
+      "service": "slack",
+      "container": "D05HB64NMQU",
+      "locator": "D05HB64NMQU/1759261706.530914",
+      "kind": "delegation",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "6f77386571537f0bd88c959bdc216f94"
+      ],
+      "delegated_by_record": "D05HB64NMQU/1759261706.530914",
+      "delegation_quote": "reply here when it's in the folder with how many tickets made the list and how many",
+      "requirement_ids": [
+        "R6"
+      ],
+      "names_authorities": [
+        {
+          "id": "H1",
+          "quote": "the rules for the register are on the difficulty baseline card on the zm roadmap board"
+        }
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K2",
+      "service": "trello",
+      "container": "68daca5871dba40417a00383",
+      "locator": "trello:68daca5871dba40417a00383 desc",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "68daca5871dba40417a00383",
+        "68daca5845e48874fb98e25a"
+      ],
+      "delegated_by_record": "D05HB64NMQU/1759261706.530914",
+      "delegation_quote": "the rules for the register are on the difficulty baseline card on the zm roadmap board",
+      "requirement_ids": [
+        "R1",
+        "R10",
+        "R2",
+        "R3",
+        "R7"
+      ],
+      "names_authorities": [
+        {
+          "id": "H2",
+          "quote": "Blake's store builds mail"
+        },
+        {
+          "id": "H3",
+          "quote": "your monster enrage sheet has the numbers"
+        }
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K3",
+      "service": "trello",
+      "container": "68daca5871dba40417a00383",
+      "locator": "trello:68dbfa4362a051efb5e0ae45 (commentCard on 68daca5871dba40417a00383)",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "68dbfa4362a051efb5e0ae45"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Julia owns this one.",
+      "requirement_ids": [
+        "R1"
+      ],
+      "supersedes": "K2 rule 1 (vocabulary): attack power in the title counts too",
+      "resolver": "newer comment by the card author; rest stands",
+      "base_pointers": []
+    },
+    {
+      "id": "K4",
+      "service": "gmail",
+      "container": "1844679607844896665",
+      "locator": "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Blake's store builds mail",
+      "requirement_ids": [
+        "R2"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K5",
+      "service": "gmail",
+      "container": "1844695547248825769",
+      "locator": "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "What is in the store builds and what counts as shipped: Blake's store builds mail and his reply to it.",
+      "requirement_ids": [
+        "R2",
+        "R4",
+        "R7"
+      ],
+      "supersedes": "ZOM-199's '>= 90' and the page's '90 or more'",
+      "resolver": "the reply sits in its own thread (Blake changed the subject); card rules 3 and 6 name 'his reply to it'",
+      "base_pointers": []
+    },
+    {
+      "id": "K6",
+      "service": "gsheets",
+      "container": "f_0ba93ae0238d9ed4178212",
+      "locator": "gsheets:f_0ba93ae0238d9ed4178212 tab Live",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "f_0ba93ae0238d9ed4178212"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Enrage is per monster: your monster enrage sheet has the numbers.",
+      "requirement_ids": [
+        "R4"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K7",
+      "service": "gslides",
+      "container": "f_048bf5e69f8e7f1a659a5c",
+      "locator": "gslides:f_048bf5e69f8e7f1a659a5c",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "f_048bf5e69f8e7f1a659a5c"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "The tier rules are written up in Robert's dynamic difficulty deck",
+      "requirement_ids": [
+        "R4"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K8",
+      "service": "slack",
+      "container": "C090N54TG79",
+      "locator": "C090N54TG79/1756912929.304417",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "6995ba10acf2888f04f033b8bbeb5629"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "The tier rules are written up in Robert's dynamic difficulty deck",
+      "requirement_ids": [
+        "R4"
+      ],
+      "supersedes": "K7 blunder line (+25% speed, damage, HP)",
+      "resolver": "Blake's newer #zombie-design message about the deck",
+      "base_pointers": []
+    },
+    {
+      "id": "K9",
+      "service": "gcal",
+      "container": "26fce3dc380d9da1343bcccc6072f03e@hg4",
+      "locator": "gcal:evt_91674a9c23d012a9ac34da",
+      "kind": "recipient",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "evt_91674a9c23d012a9ac34da"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Share it with everyone on the tuning session invite: Robert can edit, everyone else comments.",
+      "requirement_ids": [
+        "R8"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K10",
+      "service": "gdrive",
+      "container": "d_96489e1e00a56685625939",
+      "locator": "gdrive:d_96489e1e00a56685625939",
+      "kind": "destination",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "d_96489e1e00a56685625939"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "The register goes in the ZM Difficulty folder.",
+      "requirement_ids": [
+        "R5"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K11",
+      "service": "gdocs",
+      "container": "f_9ec79682ff351aa466364a",
+      "locator": "gdocs:f_9ec79682ff351aa466364a",
+      "kind": "format",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "f_9ec79682ff351aa466364a"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Layout as in the session agenda, plus",
+      "requirement_ids": [
+        "R9"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K12",
+      "service": "linear",
+      "container": "ZOM-42",
+      "locator": "linear:ZOM-42 description",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [],
+      "base_pointers": [
+        "ZOM-42"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "in ZOM-42 itself",
+      "requirement_ids": [
+        "R4"
+      ]
+    },
+    {
+      "id": "K13",
+      "service": "linear",
+      "container": "ZOM-305",
+      "locator": "linear:cmt_735d60b29ce006b58217 (comment on ZOM-305)",
+      "kind": "requirement",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "cmt_735d60b29ce006b58217"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "his closing note on those starts with 'tiers:'",
+      "requirement_ids": [
+        "R1"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K14",
+      "service": "slack",
+      "container": "D05HB64NMQU",
+      "locator": "D05HB64NMQU/1759262838.442871 (thread reply under D05HB64NMQU/1759261706.530914)",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "33c941fae57ba8d1e23bc1dff9ce3e2c"
+      ],
+      "delegated_by_record": "D05HB64NMQU/1759261706.530914",
+      "delegation_quote": "i want a baseline of the difficulty system from you",
+      "requirement_ids": [
+        "R1",
+        "R6",
+        "R7"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K18",
+      "service": "slack",
+      "container": "D05HB64NMQU",
+      "locator": "D05HB64NMQU/1759267002.665190 (thread reply under Julia's question D05HB64NMQU/1759181932.207413)",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1"
+      ],
+      "seeded_ids": [
+        "914b21ab6448fac2e4b4f8d164bea41a",
+        "5f6ed4d5ae1a0a04b616af6d6d2dda43"
+      ],
+      "delegated_by_record": "D05HB64NMQU/1759261706.530914",
+      "delegation_quote": "i want a baseline of the difficulty system from you",
+      "requirement_ids": [
+        "R1",
+        "R6",
+        "R7",
+        "R8"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K15",
+      "service": "trello",
+      "container": "68daca5871dba40417a00383",
+      "locator": "trello:68dc033bf7d24e86b8a9cc67 (checklist \"Before Monday\" on 68daca5871dba40417a00383)",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "68dc033bf7d24e86b8a9cc67",
+        "68dc033ba50fbef6a9b12b19",
+        "68dc033b1200a66f890affc6"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Julia owns this one.",
+      "requirement_ids": [
+        "R7",
+        "R8"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K16",
+      "service": "github",
+      "container": "harmonygames-Games/match3d#265",
+      "locator": "harmonygames-Games/match3d#265#rc_7 (inline comment on Blake's review harmonygames-Games/match3d#265#rev_8)",
+      "kind": "amendment",
+      "incorporated_via": [
+        "K2"
+      ],
+      "seeded_ids": [
+        "harmonygames-Games/match3d#265#rev_8",
+        "harmonygames-Games/match3d#265#rc_7"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "a title match Blake marked 'not tiers' in his review on its PR stays off",
+      "requirement_ids": [
+        "R1",
+        "R6",
+        "R7"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K17",
+      "service": "gdocs",
+      "container": "f_f494073fc667097c3c2c6b",
+      "locator": "trello:68dbfcc8aa008dbd8cccea3e (attachment on 68daca5871dba40417a00383) -> gdocs:f_f494073fc667097c3c2c6b",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "68dbfcc8aa008dbd8cccea3e",
+        "f_f494073fc667097c3c2c6b"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Julia owns this one.",
+      "requirement_ids": [
+        "R1",
+        "R6",
+        "R8"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K19",
+      "service": "slack",
+      "container": "CAFC495E4006",
+      "locator": "CAFC495E4006/1759229513.774912 (Robert's thread reply under Leonard's question CAFC495E4006/1759226461.318204)",
+      "kind": "amendment",
+      "incorporated_via": [
+        "A1",
+        "K2"
+      ],
+      "seeded_ids": [
+        "cec246a6e43158f200fe144f0dd7039c",
+        "abe096ff0b5d7216efbc889e91d6d13a"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "Layout as in the session agenda, plus the three things Robert asked for when I asked him in our group chat.",
+      "requirement_ids": [
+        "R9",
+        "R10"
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "K20",
+      "service": "github",
+      "container": "harmonygames-Games/match3d#271",
+      "locator": "harmonygames-Games/match3d#271#rc_1 (inline comment on Blake's APPROVED review harmonygames-Games/match3d#271#rev_2, empty body)",
+      "kind": "amendment",
+      "incorporated_via": [
+        "K2"
+      ],
+      "seeded_ids": [
+        "harmonygames-Games/match3d#271#rev_2",
+        "harmonygames-Games/match3d#271#rc_1"
+      ],
+      "delegated_by_record": "68daca5871dba40417a00383",
+      "delegation_quote": "a title match Blake marked 'not tiers' in his review on its PR stays off",
+      "requirement_ids": [
+        "R1",
+        "R6"
+      ],
+      "base_pointers": [
+        "ZOM-295"
+      ]
+    }
+  ],
+  "authorities": [
+    {
+      "id": "H1",
+      "name": "the difficulty baseline rules (card)",
+      "home_service": "trello",
+      "decoy_service": "trello",
+      "governs": [
+        "R1",
+        "R3",
+        "R5",
+        "R7"
+      ],
+      "findable_query": "difficulty baseline",
+      "seeded_ids": [
+        "68daca5871dba40417a00383",
+        "68dbfa4362a051efb5e0ae45"
+      ],
+      "base_pointers": [],
+      "decoy_seeded_ids": [
+        "683dbef4e319167a802bd888"
+      ],
+      "decoy_base_pointers": [],
+      "decoy_scope": {
+        "dimension": "game",
+        "decoy": "Domino Delights April difficulty pass (DD Product Roadmap board)",
+        "task": "Zombie Match 3D (ZM ROADMAP board)"
+      }
+    },
+    {
+      "id": "H2",
+      "name": "Blake's store builds mail",
+      "home_service": "gmail",
+      "decoy_service": "slack",
+      "governs": [
+        "R2"
+      ],
+      "findable_query": "store builds",
+      "seeded_ids": [
+        "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>",
+        "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>"
+      ],
+      "base_pointers": [],
+      "decoy_seeded_ids": [
+        "84ff828e81ba52e8969c580f49944394"
+      ],
+      "decoy_base_pointers": []
+    },
+    {
+      "id": "H3",
+      "name": "the monster enrage sheet",
+      "home_service": "gsheets",
+      "decoy_service": "gsheets",
+      "governs": [
+        "R4"
+      ],
+      "findable_query": "monster enrage",
+      "seeded_ids": [
+        "f_0ba93ae0238d9ed4178212"
+      ],
+      "base_pointers": [],
+      "decoy_seeded_ids": [],
+      "decoy_base_pointers": [
+        "gsheets:f_34f0950581934de1278969"
+      ],
+      "decoy_scope": {
+        "dimension": "game",
+        "decoy": "Domino Delights (Parameter Optimization, Leonard)",
+        "task": "Zombie Match 3D (ZM monster enrage, Julia)"
+      }
+    }
+  ],
+  "cohort": {
+    "definition_source": "H1",
+    "key": "ZOM ticket created up to 2025-08-31 (first ZOM ticket 2025-04-18; not Duplicate) matching the card vocabulary or attack power in the title, or assigned to Blake (Arthur; membership then by the 'tiers:' tag in his closing note)",
+    "size": 110,
+    "evidence_surfaces": [
+      {
+        "service": "linear",
+        "tool": "linear_list_comments",
+        "per_record_calls": 1,
+        "records": 110,
+        "seeded": true,
+        "seeded_ids": [
+          "cmt_ac0306e8c37188779a29",
+          "cmt_2c00eb8a6b1fa1796c53",
+          "cmt_e041f6d12458bdb5a505",
+          "cmt_a6537a1d0c56ec1e6d84",
+          "cmt_a6d98ad56dbd9edecb8c",
+          "cmt_74e7511b3cccd02e1209",
+          "cmt_267b4b4b44dc345e4cd6",
+          "cmt_bed381141007e04f1aac",
+          "cmt_3907d543ffc60ff10991",
+          "cmt_6fb679dc448e1b2599e4",
+          "cmt_cef4f6c0600df58b8bf4",
+          "cmt_a0e8dffeb4b5f88fd305",
+          "cmt_ac0e8669bb6c8a519877",
+          "cmt_30fd8d79ce8b4c62ee46",
+          "cmt_2bce51d99240aeaa2cc7",
+          "cmt_c4e0722d3b1342427a32",
+          "cmt_c1b740b1376fd9e8af17",
+          "cmt_c5b800e0e24fee852d01",
+          "cmt_5207dd44534fe7d28917",
+          "cmt_88a66d4c6bd193c7a875",
+          "cmt_465f32f84344e2903c56",
+          "cmt_53dddc2442947df50ec5",
+          "cmt_ca16a83ec7b41cbcf1a8",
+          "cmt_bb9c4deb176b2c894ca6",
+          "cmt_ff8ce5da5974d5e45cdb",
+          "cmt_0cc378cef688c5961d38",
+          "cmt_c67b7ad42bc8183104aa",
+          "cmt_229bdb5a27939abf2476",
+          "cmt_5ae7bed6255b9daeb25e",
+          "cmt_d588f677a47bb5cba668",
+          "cmt_b374a5747bd1a139d126",
+          "cmt_c8b600f3f1475c5ef11d",
+          "cmt_482e6c2f07ef0eeb66dd",
+          "cmt_ad5c9cc21508c9961089",
+          "cmt_5633838a438e8937397a",
+          "cmt_6127a64cd2ca2798c001",
+          "cmt_b165ca8d169d68ea3c35",
+          "cmt_79db35d590753f55d547",
+          "cmt_370b572a96173c68048d",
+          "cmt_9698eebaf0663ba1f7da",
+          "cmt_99ae31743b627b339850",
+          "cmt_b2d5959477cef5c6c7e3",
+          "cmt_264b95c44d6c221420c7",
+          "cmt_a19e4e8b9ac4bdffafb4",
+          "cmt_bb3a55390c9a7e976016",
+          "cmt_c7f092bc3d1f01cd005f",
+          "cmt_b0aa45d307c981ce4487",
+          "cmt_4e8a94c057c63987d810",
+          "cmt_4652b254debdbf9ad3fc",
+          "cmt_a98740682072cf49a78b",
+          "cmt_df69e4a92767cbff0000",
+          "cmt_912bdd42ad5c8d51521f",
+          "cmt_760eed1bfc4b2ac62f87",
+          "cmt_b49355bad6463682f785",
+          "cmt_5afd414754c9934c7f21",
+          "cmt_bc80fab00bc55be3e293",
+          "cmt_15bbed3d011504fe70c4",
+          "cmt_7372203a46c603a31c1e",
+          "cmt_7f0329231d8b9f6e2d97",
+          "cmt_9bd1d3170eb054b18d13",
+          "cmt_5919318074e3e3fb7921",
+          "cmt_a969dc3dd35c1f4439cb",
+          "cmt_735d60b29ce006b58217",
+          "cmt_2dc5d7842f2c376e7cc8",
+          "cmt_4254c1451d7cbe0d8d2a",
+          "cmt_3de8de776b46ebcdab25",
+          "cmt_e4e0cb49a5be931bf830",
+          "cmt_39118ab4051fb2c53fb4",
+          "cmt_68811c86e67c36e5c2f7",
+          "cmt_8fcb12fc86675f6c7e3e",
+          "cmt_98027df98af6fb30b763",
+          "cmt_0138e7c47a1423f57cd7",
+          "cmt_7d0c1ba2b4b888392db8",
+          "cmt_43e70f52588dc7f70f48",
+          "cmt_564774d61032b2468dc9",
+          "cmt_9efecec58d6638e31749",
+          "cmt_2be123723faa53cd2c10",
+          "cmt_0162ba169c2d1ab5f4e4",
+          "cmt_eba0255971cbd28ea01c",
+          "cmt_3329d73e7376c5c67c39",
+          "cmt_c7f511ce1eb9ee790c29",
+          "cmt_0ed7c9fa6a6c994b6597",
+          "cmt_2e6d995e7851cf1e2b1b",
+          "cmt_da47a8b22ef6c021dc22",
+          "cmt_9060b55fefe28c99d892",
+          "cmt_5209afb9533bec4053ad",
+          "cmt_daf4811e94289024674a",
+          "cmt_8fb73ca1d1757919dee7",
+          "cmt_1ac358efa9655385120d",
+          "cmt_9f9676962aeda744d4d9",
+          "cmt_d841e15d4d85e03e40c2",
+          "cmt_ecf101dea8fc6e40dec3",
+          "cmt_71b4ffe1ee6abe1de3c0",
+          "cmt_b89dc4404f8d24a09fa9",
+          "cmt_7e27919f6a6c9c99699f",
+          "cmt_63706a6e3398da475611",
+          "cmt_0a5843417ddbbdf9954f",
+          "cmt_5bf36e0584ed410a4d00",
+          "cmt_89c9abb26dd15bbdc2d5",
+          "cmt_2771130fa86844b7fe26",
+          "cmt_c1796dd450831ad9c17a",
+          "cmt_99777f2932da0373cfe4",
+          "cmt_13cde20f9fc3aed0e515",
+          "cmt_08b81d09abe3405a7432",
+          "cmt_8381294ddc887a86aa85",
+          "cmt_8abcd99163cd4c889799",
+          "cmt_078384018310b910f082",
+          "cmt_920480214716645ade91",
+          "cmt_63103111222804c8700a",
+          "cmt_fbdd2edd6b6486bfd37e"
+        ],
+        "why_no_bulk": "linear_list_issues returns titles, states, assignees and descriptions but no comments; the base has no Linear comments; Blake's 'tiers:' tag exists only in his closing notes",
+        "short_circuit": "membership of Blake's 94 tickets is decided only by the tag; the 4 tagged ones have titles with no difficulty word (spawn gaps, item removal, lives, level 1 order) while difficulty-sounding ones (insertion, replacement, algo, stats, spawn limits, CPS/DPS) are untagged; every Blake ticket has a note, so having a note reveals nothing",
+        "requirement": "R1",
+        "decides": "register membership"
+      },
+      {
+        "service": "linear",
+        "tool": "linear_list_comments",
+        "per_record_calls": 0.12,
+        "records": 24,
+        "seeded": true,
+        "seeded_ids": [
+          "cmt_bed381141007e04f1aac",
+          "cmt_bb9c4deb176b2c894ca6",
+          "cmt_ad5c9cc21508c9961089",
+          "cmt_9698eebaf0663ba1f7da",
+          "cmt_b0aa45d307c981ce4487",
+          "cmt_df69e4a92767cbff0000",
+          "cmt_5919318074e3e3fb7921",
+          "cmt_735d60b29ce006b58217",
+          "cmt_68811c86e67c36e5c2f7",
+          "cmt_98027df98af6fb30b763",
+          "cmt_5209afb9533bec4053ad"
+        ],
+        "why_no_bulk": "where a member's change lives (editor panel vs runtime) is stated only in its note",
+        "short_circuit": "titles suggest gameplay for ZOM-277 and editor for ZOM-45; ZOM-173's and ZOM-312's PRs also touch runtime folders and only the note says which part is the ticket's",
+        "requirement": "R2",
+        "decides": "status per ticket"
+      },
+      {
+        "service": "github",
+        "tool": "github_get_pull_request+github_get_pull_request_comments",
+        "per_record_calls": 0.1,
+        "records": 24,
+        "seeded": true,
+        "seeded_ids": [
+          "harmonygames-Games/match3d#401#c_2"
+        ],
+        "why_no_bulk": "PR search returns titles and merge state, not the CodeRabbit file table or the conversation",
+        "short_circuit": "ZOM-282's status depends on what #401 changed (it only split ZOM-282's shared value, so ZOM-282 is Live); the #243 / #265 tables are where a run checks the notes' split of a shared PR",
+        "requirement": "R2",
+        "decides": "status per ticket"
+      }
+    ]
+  },
+  "chains": [
+    {
+      "id": "C1",
+      "root_cause": "A1",
+      "ends_in": "R4",
+      "hops": [
+        {
+          "service": "slack",
+          "record": "C090N54TG79/1759185077.402611",
+          "finding": "Brian: the same +50% for every monster, like 282 says"
+        },
+        {
+          "service": "slack",
+          "record": "C090N54TG79/1756912929.304417",
+          "finding": "Blake: speed and damage only, values per monster, julia keeps them"
+        },
+        {
+          "service": "gsheets",
+          "record": "f_0ba93ae0238d9ed4178212",
+          "finding": "Live tab: per-monster values, MonsterBase 0.8/0.8, hp 0"
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "root_cause": "A12",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "slack",
+          "record": "D05HB64NMQU/1759261706.530914",
+          "finding": "rules are on the difficulty baseline card"
+        },
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "vocabulary, window, Blake's tagged tickets"
+        },
+        {
+          "service": "trello",
+          "record": "68dbfa4362a051efb5e0ae45",
+          "finding": "attack power counts too (+5)"
+        },
+        {
+          "service": "linear",
+          "record": "cmt_735d60b29ce006b58217",
+          "finding": "ZOM-305 'Losing a level deducts 2 lives' tagged tiers: -> member"
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "root_cause": "A15",
+      "ends_in": "R2",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "status judged against the store builds"
+        },
+        {
+          "service": "gmail",
+          "record": "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+          "finding": "Blake's reply (own thread): level editor / LevelDesigner and debug tooling stripped; editor-only tickets never reached players"
+        },
+        {
+          "service": "linear",
+          "record": "cmt_b0aa45d307c981ce4487",
+          "finding": "ZOM-277 is the editor stats panel average -> Editor only though Done"
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "root_cause": "A13",
+      "ends_in": "R8",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "share with everyone on the tuning session invite"
+        },
+        {
+          "service": "gcal",
+          "record": "evt_91674a9c23d012a9ac34da",
+          "finding": "attendees Leonard, Robert, Arthur, Brian"
+        },
+        {
+          "service": "gdrive",
+          "record": "d_96489e1e00a56685625939",
+          "finding": "Robert editor, the others comment (then: Brian edits per the checklist, Arthur views per Leonard's notes, Brian back to comment per Leonard's later reply)"
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "root_cause": "A16",
+      "ends_in": "R4",
+      "hops": [
+        {
+          "service": "linear",
+          "record": "ZOM-42",
+          "finding": "spec: first 10 level avg CPM > 90 -> tier 1"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-199",
+          "finding": "restates it as >= 90"
+        },
+        {
+          "service": "gslides",
+          "record": "f_048bf5e69f8e7f1a659a5c",
+          "finding": "deck: 90 or more"
+        },
+        {
+          "service": "gmail",
+          "record": "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+          "finding": "Blake's reply: the build checks > 90; ZOM-199 is wrong"
+        }
+      ]
+    },
+    {
+      "id": "C6",
+      "root_cause": "A3",
+      "ends_in": "R4",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "rule 5: tier rules in Robert's deck and in ZOM-42 itself"
+        },
+        {
+          "service": "gslides",
+          "record": "f_048bf5e69f8e7f1a659a5c",
+          "finding": "deck: demotion = 4 losses in a row only"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-42",
+          "finding": "full spec (past the list truncation): also <= 50% over up to 10; record resets"
+        }
+      ]
+    },
+    {
+      "id": "C7",
+      "root_cause": "A17",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "up to Aug 31, whole words, duplicates out"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-517",
+          "finding": "enrage title, created Sep 3 -> out"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-271",
+          "finding": "ATK POWER is not 'attack power' -> out"
+        }
+      ]
+    },
+    {
+      "id": "C8",
+      "root_cause": "A8",
+      "ends_in": "R7",
+      "hops": [
+        {
+          "service": "gmail",
+          "record": "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+          "finding": "ZOM-199's >= is not what the build does"
+        },
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "rule 6: comment on that ticket, same tickets, no new ones"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-200",
+          "finding": "lookalike CPM debug-menu ticket is not the one"
+        }
+      ]
+    },
+    {
+      "id": "C9",
+      "root_cause": "A14",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "slack",
+          "record": "D05HB64NMQU/1759261706.530914",
+          "finding": "the ask (reply_count 1): rules on the card, reply with counts"
+        },
+        {
+          "service": "slack",
+          "record": "D05HB64NMQU/1759262838.442871",
+          "finding": "thread reply: drop ZOM-30/49/50/161/262/275; put the Not shipped and Editor only keys in the reply"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-30",
+          "finding": "an analytics ticket that matches the card words but is off the list"
+        }
+      ]
+    },
+    {
+      "id": "C10",
+      "root_cause": "A3",
+      "ends_in": "R7",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "rule 6: Editor only tickets stay as they are; rule 7: everyone else comments"
+        },
+        {
+          "service": "trello",
+          "record": "68dc033bf7d24e86b8a9cc67",
+          "finding": "checklist (not in the search or comments result): rule 6 and rule 7 changes"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-173",
+          "finding": "each Editor only and Not shipped ticket gets a comment; Brian edits"
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "root_cause": "A3",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "rule 1: a title match Blake marked 'not tiers' in his review on its PR stays off"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-312",
+          "finding": "closing note: merged with match3d#265"
+        },
+        {
+          "service": "github",
+          "record": "harmonygames-Games/match3d#265",
+          "finding": "Blake's review has an empty body; its inline comment says 'not tiers'"
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "root_cause": "A3",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "badges: 1 attachment (not in the default card read)"
+        },
+        {
+          "service": "trello",
+          "record": "68dbfcc8aa008dbd8cccea3e",
+          "finding": "link to Leonard's 'notes for monday' doc"
+        },
+        {
+          "service": "gdocs",
+          "record": "f_f494073fc667097c3c2c6b",
+          "finding": "leave ZOM-258 off; Arthur view only; reply says which ticket replaced which"
+        }
+      ]
+    },
+    {
+      "id": "C13",
+      "root_cause": "A3",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "slack",
+          "record": "D05HB64NMQU/1759181932.207413",
+          "finding": "Julia's Sep 29 question to Leonard, an older top-level DM message with reply_count 1"
+        },
+        {
+          "service": "slack",
+          "record": "D05HB64NMQU/1759267002.665190",
+          "finding": "Leonard's reply in that thread: 'take 162, 163, 201 and 250 off … just those four', no comments on them; Brian comment only"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-162",
+          "finding": "a title-matched Editor only ticket that is off the list and gets no comment"
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "root_cause": "A14",
+      "ends_in": "R2",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "rule 3: Blake's store builds mail and his reply to it decide what shipped"
+        },
+        {
+          "service": "gmail",
+          "record": "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>",
+          "finding": "the first mail gives the builds only; its thread has no reply"
+        },
+        {
+          "service": "gmail",
+          "record": "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+          "finding": "the reply, in its own thread, strips level editor and debug tooling; ZOM-199 is wrong on > 90 and on 10 games"
+        },
+        {
+          "service": "linear",
+          "record": "cmt_b0aa45d307c981ce4487",
+          "finding": "ZOM-277 is the editor stats panel average -> Editor only"
+        }
+      ]
+    },
+    {
+      "id": "C15",
+      "root_cause": "A14",
+      "ends_in": "R10",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "rule 2: layout as in the agenda plus the three things Robert asked for in the group chat"
+        },
+        {
+          "service": "slack",
+          "record": "cec246a6e43158f200fe144f0dd7039c",
+          "finding": "Leonard asks Robert what he wants on Julia's list; reply_count 1"
+        },
+        {
+          "service": "slack",
+          "record": "abe096ff0b5d7216efbc889e91d6d13a",
+          "finding": "Robert, in the thread: assignee, the day it got marked done (blank if never), Linear priority, after status"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-293",
+          "finding": "assignee robert, priority 4, never done -> blank done date"
+        }
+      ]
+    },
+    {
+      "id": "C16",
+      "root_cause": "A3",
+      "ends_in": "R1",
+      "hops": [
+        {
+          "service": "trello",
+          "record": "68daca5871dba40417a00383",
+          "finding": "rule 1: a title match Blake marked 'not tiers' in his review on its PR stays off"
+        },
+        {
+          "service": "linear",
+          "record": "ZOM-295",
+          "finding": "closing note: merged with match3d#271"
+        },
+        {
+          "service": "github",
+          "record": "harmonygames-Games/match3d#271",
+          "finding": "Blake's approval has an empty body; its inline comment on MonsterSpawner.cs says 'not tiers'"
+        }
+      ]
+    }
+  ],
+  "traps": [
+    {
+      "id": "T1",
+      "family": "superseding",
+      "services": [
+        "trello"
+      ],
+      "seeded_ids": [
+        "68daca5871dba40417a00383",
+        "68dbfa4362a051efb5e0ae45"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "26 tickets by the card words; misses ZOM-246, 250, 263, 277, 315",
+      "resolver": "the card comment (attack power counts too); rest stands",
+      "discovery_order": "the card description is read first; the comment sits in the activity feed",
+      "version_records": [
+        {
+          "service": "trello",
+          "id": "68daca5845e48874fb98e25a",
+          "seeded": true,
+          "at": "2025-09-29T18:05:12Z"
+        },
+        {
+          "service": "trello",
+          "id": "68dbfa4362a051efb5e0ae45",
+          "seeded": true,
+          "at": "2025-09-30T15:41:55Z"
+        }
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "T2",
+      "family": "exact_predicate",
+      "services": [
+        "linear"
+      ],
+      "base_pointers": [
+        "ZOM-517",
+        "ZOM-576",
+        "ZOM-593",
+        "ZOM-622"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "includes ZOM-517 (enrage, created Sep 3) or the October tiering tickets",
+      "resolver": "card rule 1 window up to Aug 31",
+      "discovery_order": "a title search for enrage/tier returns them first",
+      "seeded_ids": []
+    },
+    {
+      "id": "T3",
+      "family": "distractor",
+      "distractor_type": "keyword_collision",
+      "services": [
+        "linear"
+      ],
+      "base_pointers": [
+        "ZOM-271"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "adds ZOM-271 ('ATK POWER BU...') as an attack power ticket",
+      "resolver": "the comment says attack power in the title; ATK POWER is not the phrase",
+      "discovery_order": "a search for \"attack\" returns it",
+      "seeded_ids": []
+    },
+    {
+      "id": "T4",
+      "family": "distractor",
+      "distractor_type": "near_duplicate_record",
+      "services": [
+        "linear"
+      ],
+      "base_pointers": [
+        "ZOM-203",
+        "ZOM-276"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "lists the two Duplicate tickets",
+      "resolver": "card rule 1: duplicates are out",
+      "seeded_ids": []
+    },
+    {
+      "id": "T5",
+      "family": "scope_alias",
+      "services": [
+        "linear",
+        "gmail"
+      ],
+      "seeded_ids": [
+        "cmt_bed381141007e04f1aac",
+        "cmt_b0aa45d307c981ce4487",
+        "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>"
+      ],
+      "requirement": "R2",
+      "expected_wrong_reading": "ZOM-45 Editor only (title says editor); ZOM-277 Live (title says items in level)",
+      "resolver": "the notes (runtime label; editor stats panel) against the editor/debug rule in Blake's reply",
+      "discovery_order": "titles are read before notes",
+      "base_pointers": []
+    },
+    {
+      "id": "T6",
+      "family": "superseding",
+      "services": [
+        "linear",
+        "gslides",
+        "gmail"
+      ],
+      "base_pointers": [
+        "ZOM-199"
+      ],
+      "seeded_ids": [
+        "f_048bf5e69f8e7f1a659a5c",
+        "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "starting tier at 90 or more (ZOM-199, the page)",
+      "resolver": "Blake's reply (own thread, subject 'editor stuff and ZOM-199, before Monday'): the code checks > 90 when the 10th game ends",
+      "discovery_order": "the first mail's thread holds only the first mail; the reply is a separate conversation that the 'store builds' search does not return",
+      "version_records": [
+        {
+          "service": "gslides",
+          "id": "f_048bf5e69f8e7f1a659a5c",
+          "seeded": true,
+          "at": "2025-06-16T14:10:33Z"
+        },
+        {
+          "service": "gmail",
+          "id": "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+          "seeded": true,
+          "at": "2025-09-30T13:26:05Z"
+        }
+      ]
+    },
+    {
+      "id": "T7",
+      "family": "superseding",
+      "distractor_type": "stale_summary",
+      "services": [
+        "slack"
+      ],
+      "seeded_ids": [
+        "84ff828e81ba52e8969c580f49944394"
+      ],
+      "requirement": "R2",
+      "expected_wrong_reading": "Brian: the editor bits (tier delete, stats window, debug menu) are in the store builds -> Live",
+      "resolver": "Blake's reply: level editor and debug tooling are stripped before shipping",
+      "discovery_order": "#zombie-design is the first channel a difficulty search hits",
+      "version_records": [
+        {
+          "service": "slack",
+          "id": "84ff828e81ba52e8969c580f49944394",
+          "seeded": true,
+          "at": "2025-09-29T22:31:17.402611Z"
+        },
+        {
+          "service": "gmail",
+          "id": "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+          "seeded": true,
+          "at": "2025-09-30T13:26:05Z"
+        }
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "T8",
+      "family": "superseding",
+      "services": [
+        "linear",
+        "github",
+        "gsheets"
+      ],
+      "base_pointers": [
+        "ZOM-254",
+        "ZOM-282"
+      ],
+      "seeded_ids": [
+        "cmt_912bdd42ad5c8d51521f",
+        "harmonygames-Games/match3d#401#c_2",
+        "f_0ba93ae0238d9ed4178212"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "enrage +25% (ZOM-254) or +50% (ZOM-282) for every monster, plus an hp boost (ZOM-254, the deck)",
+      "resolver": "Live tab (per monster, hp 0)",
+      "version_records": [
+        {
+          "service": "linear",
+          "id": "cmt_912bdd42ad5c8d51521f",
+          "seeded": true,
+          "at": "2025-06-21T01:09:19Z"
+        },
+        {
+          "service": "github",
+          "id": "harmonygames-Games/match3d#401#c_2",
+          "seeded": true,
+          "at": "2025-08-25T17:02:28Z"
+        },
+        {
+          "service": "gsheets",
+          "id": "f_0ba93ae0238d9ed4178212",
+          "seeded": true,
+          "at": "2025-09-08T18:21:40Z"
+        }
+      ]
+    },
+    {
+      "id": "T9",
+      "family": "distractor",
+      "distractor_type": "scope_adjacent",
+      "services": [
+        "gsheets"
+      ],
+      "seeded_ids": [
+        "f_0ba93ae0238d9ed4178212"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "copies the Next pass tab (Leonard's per-level proposal)",
+      "resolver": "card rule 5: as they work today -> Live tab",
+      "base_pointers": []
+    },
+    {
+      "id": "T10",
+      "family": "tool_surface",
+      "services": [
+        "linear",
+        "gslides"
+      ],
+      "base_pointers": [
+        "ZOM-42"
+      ],
+      "seeded_ids": [
+        "f_048bf5e69f8e7f1a659a5c"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "demotion only after 4 losses in a row (page, truncated list description)",
+      "resolver": "ZOM-42 read in full: also <= 50% over up to the last 10, record resets after every move",
+      "discovery_order": "linear_list_issues truncates the 4,244-char description; the page restates only the streak"
+    },
+    {
+      "id": "T11",
+      "family": "superseding",
+      "services": [
+        "gslides",
+        "gsheets",
+        "slack"
+      ],
+      "seeded_ids": [
+        "f_048bf5e69f8e7f1a659a5c",
+        "f_0ba93ae0238d9ed4178212",
+        "6995ba10acf2888f04f033b8bbeb5629"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "enrage +25% speed, damage and max HP from the page",
+      "resolver": "the sheet's Live tab; Blake's page comment retires the line",
+      "version_records": [
+        {
+          "service": "gslides",
+          "id": "f_048bf5e69f8e7f1a659a5c",
+          "seeded": true,
+          "at": "2025-06-16T14:10:33Z"
+        },
+        {
+          "service": "slack",
+          "id": "6995ba10acf2888f04f033b8bbeb5629",
+          "seeded": true,
+          "at": "2025-09-03T15:22:09.304417Z"
+        },
+        {
+          "service": "gsheets",
+          "id": "f_0ba93ae0238d9ed4178212",
+          "seeded": true,
+          "at": "2025-09-08T18:21:40Z"
+        }
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "T12",
+      "family": "distractor",
+      "distractor_type": "lookalike_entity",
+      "services": [
+        "trello"
+      ],
+      "seeded_ids": [
+        "683dbef4e319167a802bd888"
+      ],
+      "requirement": "R8",
+      "expected_wrong_reading": "shares with Brian and Vincent as editors / saves in the Difficulty Optimization sheet (DD card)",
+      "resolver": "the ZM ROADMAP card named in the ask",
+      "discovery_order": "a Trello search for \"difficulty baseline\" returns both",
+      "base_pointers": []
+    },
+    {
+      "id": "T13",
+      "family": "cross_reference_gap",
+      "services": [
+        "gcal",
+        "gdrive"
+      ],
+      "seeded_ids": [
+        "evt_91674a9c23d012a9ac34da"
+      ],
+      "requirement": "R8",
+      "expected_wrong_reading": "shares with Robert only, or with Robert and Blake (people named on the card)",
+      "resolver": "invite attendees: Leonard, Robert, Arthur, Brian",
+      "base_pointers": []
+    },
+    {
+      "id": "T14",
+      "family": "reuse_exclusion",
+      "services": [
+        "linear"
+      ],
+      "base_pointers": [
+        "ZOM-199",
+        "ZOM-200"
+      ],
+      "seeded_ids": [
+        "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>"
+      ],
+      "requirement": "R7",
+      "expected_wrong_reading": "opens a new ticket for the CPM check, or comments on ZOM-42 / ZOM-200",
+      "resolver": "card rule 6: comment on the ticket that says it (ZOM-199)"
+    },
+    {
+      "id": "T15",
+      "family": "eliminating_evidence",
+      "services": [
+        "linear",
+        "github"
+      ],
+      "seeded_ids": [
+        "cmt_bb9c4deb176b2c894ca6"
+      ],
+      "base_pointers": [
+        "harmonygames-Games/match3d#243"
+      ],
+      "requirement": "R2",
+      "expected_wrong_reading": "ZOM-173 Live (its PR also changes runtime folders)",
+      "resolver": "the note: ZOM-173 is the set count in the level objects panel (the rest is ZOM-307's)"
+    },
+    {
+      "id": "T16",
+      "family": "distractor",
+      "distractor_type": "non_authoritative_instruction",
+      "services": [
+        "slack"
+      ],
+      "seeded_ids": [
+        "0282d920d9ff69fefb74a4ae417b0e18"
+      ],
+      "requirement": "R6",
+      "expected_wrong_reading": "posts the counts in #zombie-design instead of the DM",
+      "resolver": "Leonard's ask: reply here",
+      "base_pointers": []
+    },
+    {
+      "id": "T17",
+      "family": "distractor",
+      "distractor_type": "scope_adjacent",
+      "services": [
+        "gsheets"
+      ],
+      "base_pointers": [
+        "gsheets:f_34f0950581934de1278969"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "takes Domino Delights parameters for the rules tab",
+      "resolver": "H3 is the ZM monster enrage sheet",
+      "seeded_ids": []
+    },
+    {
+      "id": "T18",
+      "family": "exact_predicate",
+      "services": [
+        "linear"
+      ],
+      "base_pointers": [
+        "ZOM-257",
+        "ZOM-289",
+        "ZOM-383",
+        "ZOM-209",
+        "ZOM-190",
+        "ZOM-96",
+        "ZOM-24"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "adds difficulty-sounding Blake tickets (insertion, replacement, algo, stats, CPS/DPS) as tier work",
+      "resolver": "their notes carry no tiers: tag",
+      "seeded_ids": []
+    },
+    {
+      "id": "T19",
+      "family": "superseding",
+      "services": [
+        "slack",
+        "gmail"
+      ],
+      "base_pointers": [
+        "C08R27X0EAH/1758081917.318539"
+      ],
+      "seeded_ids": [
+        "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>"
+      ],
+      "requirement": "R2",
+      "expected_wrong_reading": "judges against iOS 0.3.38 (submitted Sep 17)",
+      "resolver": "the mail: iOS 0.3.49 / Android 0.3.133",
+      "version_records": [
+        {
+          "service": "slack",
+          "base_pointer": "C08R27X0EAH/1758081917.318539",
+          "seeded": false,
+          "at": "2025-09-17T04:05:17Z"
+        },
+        {
+          "service": "gmail",
+          "id": "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>",
+          "seeded": true,
+          "at": "2025-09-30T09:12:44Z"
+        }
+      ]
+    },
+    {
+      "id": "T20",
+      "family": "exact_predicate",
+      "services": [
+        "linear"
+      ],
+      "base_pointers": [
+        "ZOM-305",
+        "ZOM-352"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "treats the two lives tickets alike: both in, or both out",
+      "resolver": "ZOM-305's note is tagged tiers:; ZOM-352's note cites match3d#282 with no tag",
+      "seeded_ids": []
+    },
+    {
+      "id": "T21",
+      "family": "eliminating_evidence",
+      "services": [
+        "linear",
+        "github"
+      ],
+      "base_pointers": [
+        "ZOM-282",
+        "harmonygames-Games/match3d#401"
+      ],
+      "seeded_ids": [
+        "harmonygames-Games/match3d#401#c_2"
+      ],
+      "requirement": "R3",
+      "expected_wrong_reading": "ZOM-282 Replaced by #401 (or ZOM-254 replaced by #401)",
+      "resolver": "rule 4: only another ticket's closing note that says it replaces a ticket makes it Replaced; ZOM-282's note says it replaces ZOM-254; #401 only splits ZOM-282's numbers"
+    },
+    {
+      "id": "T22",
+      "family": "superseding",
+      "services": [
+        "slack"
+      ],
+      "seeded_ids": [
+        "33c941fae57ba8d1e23bc1dff9ce3e2c"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "keeps ZOM-30, ZOM-49, ZOM-50, ZOM-161, ZOM-262 and ZOM-275 (35 rows, 22 Live) and replies with counts only",
+      "resolver": "Leonard's thread reply under his ask drops the analytics and tutorial tickets and asks for the Not shipped and Editor only keys",
+      "version_records": [
+        {
+          "service": "trello",
+          "id": "68daca5871dba40417a00383",
+          "seeded": true,
+          "at": "2025-09-30T14:04:31Z"
+        },
+        {
+          "service": "slack",
+          "id": "6f77386571537f0bd88c959bdc216f94",
+          "seeded": true,
+          "at": "2025-09-30T19:48:26.530914Z"
+        },
+        {
+          "service": "slack",
+          "id": "33c941fae57ba8d1e23bc1dff9ce3e2c",
+          "seeded": true,
+          "at": "2025-09-30T20:07:18.442871Z"
+        }
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "T23",
+      "family": "superseding",
+      "services": [
+        "trello"
+      ],
+      "seeded_ids": [
+        "68dc033bf7d24e86b8a9cc67",
+        "68dc033ba50fbef6a9b12b19",
+        "68dc033b1200a66f890affc6"
+      ],
+      "requirement": "R7",
+      "expected_wrong_reading": "follows rule 6 and 7 as written: no comments on the Editor only and Not shipped tickets; Brian as commenter",
+      "resolver": "the card's 'Before Monday' checklist: rule 6 change (a comment on each Editor only and Not shipped ticket) and rule 7 change (Brian edits)",
+      "version_records": [
+        {
+          "service": "trello",
+          "id": "68dbe36f4b2b4fffb7525fde",
+          "seeded": true,
+          "at": "2025-09-30T14:04:31Z"
+        },
+        {
+          "service": "trello",
+          "id": "68dc033b328def4251f2a731",
+          "seeded": true,
+          "at": "2025-09-30T16:20:11Z"
+        }
+      ],
+      "base_pointers": []
+    },
+    {
+      "id": "T24",
+      "family": "scope_alias",
+      "services": [
+        "linear"
+      ],
+      "seeded_ids": [
+        "cmt_df69e4a92767cbff0000"
+      ],
+      "base_pointers": [
+        "ZOM-281"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "scans only keyword tickets and Blake's own tickets for the tiers: tag and misses ZOM-281 (assigned to someone else)",
+      "resolver": "rule 1: any ticket Blake counts as tier work; his note on ZOM-281 starts with 'tiers:'"
+    },
+    {
+      "id": "T25",
+      "family": "superseding",
+      "services": [
+        "linear",
+        "gslides",
+        "github"
+      ],
+      "base_pointers": [
+        "ZOM-42",
+        "ZOM-199"
+      ],
+      "seeded_ids": [
+        "f_048bf5e69f8e7f1a659a5c"
+      ],
+      "requirement": "R6",
+      "expected_wrong_reading": "'after the first 10 levels' (ZOM-42, ZOM-199, the deck)",
+      "resolver": "rule 5: for when a new player gets their starting tier, go by the build where a write-up disagrees; TierManager buckets at totalGames == 10, GetTotalGames = wins + losses",
+      "version_records": [
+        {
+          "service": "linear",
+          "base_pointer": "ZOM-42",
+          "seeded": false,
+          "at": "2025-05-31T02:54:30Z"
+        },
+        {
+          "service": "gslides",
+          "id": "f_048bf5e69f8e7f1a659a5c",
+          "seeded": true,
+          "at": "2025-06-16T14:10:33Z"
+        }
+      ]
+    },
+    {
+      "id": "T26",
+      "family": "scope_alias",
+      "services": [
+        "github",
+        "linear"
+      ],
+      "seeded_ids": [
+        "harmonygames-Games/match3d#265#rev_8",
+        "harmonygames-Games/match3d#265#rc_7"
+      ],
+      "base_pointers": [
+        "ZOM-312",
+        "harmonygames-Games/match3d#265"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "keeps ZOM-312 (title match, Editor only), comments on it and lists it among the Editor only keys",
+      "resolver": "rule 1: a title match Blake marked 'not tiers' in his review on its PR stays off; his review on #265 is an empty COMMENTED review whose inline comment starts with 'not tiers'"
+    },
+    {
+      "id": "T27",
+      "family": "superseding",
+      "services": [
+        "trello",
+        "gdocs"
+      ],
+      "seeded_ids": [
+        "68dbfcc8aa008dbd8cccea3e",
+        "f_f494073fc667097c3c2c6b"
+      ],
+      "base_pointers": [
+        "ZOM-258"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "keeps ZOM-258 (title match 'Enraged', Live): 29 rows, 17 Live; Arthur as commenter; no replaced-by line in the reply",
+      "resolver": "Leonard's 'notes for monday' doc, attached to the rules card: leave ZOM-258 off, Arthur view only, say which ticket replaced which",
+      "version_records": [
+        {
+          "service": "trello",
+          "id": "68dbe36f4b2b4fffb7525fde",
+          "seeded": true,
+          "at": "2025-09-30T14:04:31Z"
+        },
+        {
+          "service": "trello",
+          "id": "68dbfcc8aa008dbd8cccea3e",
+          "seeded": true,
+          "at": "2025-09-30T15:52:40Z"
+        }
+      ]
+    },
+    {
+      "id": "T28",
+      "family": "superseding",
+      "services": [
+        "slack",
+        "linear"
+      ],
+      "seeded_ids": [
+        "914b21ab6448fac2e4b4f8d164bea41a",
+        "5f6ed4d5ae1a0a04b616af6d6d2dda43"
+      ],
+      "base_pointers": [
+        "ZOM-162",
+        "ZOM-163",
+        "ZOM-201",
+        "ZOM-250"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "keeps ZOM-162/163/201/250 as Editor only (28 rows, 8 Editor only), comments on all four and lists them among the keys",
+      "resolver": "Leonard's reply in the thread under Julia's Sep 29 DM question: take 162, 163, 201 and 250 off, 'just those four, on top of the ones i already left off', no comments on them",
+      "version_records": [
+        {
+          "service": "trello",
+          "id": "68dbe36f4b2b4fffb7525fde",
+          "seeded": true,
+          "at": "2025-09-30T14:04:31Z"
+        },
+        {
+          "service": "slack",
+          "id": "5f6ed4d5ae1a0a04b616af6d6d2dda43",
+          "seeded": true,
+          "at": "2025-09-30T21:16:42.665190Z"
+        }
+      ]
+    },
+    {
+      "id": "T29",
+      "family": "superseding",
+      "services": [
+        "slack",
+        "trello",
+        "gdrive"
+      ],
+      "seeded_ids": [
+        "5f6ed4d5ae1a0a04b616af6d6d2dda43",
+        "68dc033b1200a66f890affc6"
+      ],
+      "base_pointers": [],
+      "requirement": "R8",
+      "expected_wrong_reading": "shares the register with Brian as an editor (checklist rule 7 change)",
+      "resolver": "Leonard's later reply (Sep 30 21:16Z) after the checklist (Sep 30 16:20Z): scratch Brian editing, comment access is enough",
+      "version_records": [
+        {
+          "service": "trello",
+          "id": "68dc033b328def4251f2a731",
+          "seeded": true,
+          "at": "2025-09-30T16:20:11Z"
+        },
+        {
+          "service": "slack",
+          "id": "5f6ed4d5ae1a0a04b616af6d6d2dda43",
+          "seeded": true,
+          "at": "2025-09-30T21:16:42.665190Z"
+        }
+      ]
+    },
+    {
+      "id": "T30",
+      "family": "tool_surface",
+      "services": [
+        "gmail",
+        "trello"
+      ],
+      "seeded_ids": [
+        "julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com>",
+        "68daca5871dba40417a00383"
+      ],
+      "base_pointers": [],
+      "requirement": "R2",
+      "expected_wrong_reading": "reads only the 'store builds for monday' thread (one message), judges Editor only from ticket titles, marks the attack-power editor tickets ZOM-277/ZOM-315 Live, and comments nothing on ZOM-199 or only '> 90'",
+      "resolver": "card rules 3 and 6 name 'his reply to it'; the reply is a separate Gmail conversation found by a sender or subject search (from:arthur.blake, ZOM-199)",
+      "discovery_order": "gmail_search_messages returns ids only; 'store builds' returns the first mail's thread, which holds one message"
+    },
+    {
+      "id": "T31",
+      "family": "synthesis_omission",
+      "services": [
+        "slack",
+        "linear"
+      ],
+      "seeded_ids": [
+        "33c941fae57ba8d1e23bc1dff9ce3e2c"
+      ],
+      "base_pointers": [
+        "ZOM-173",
+        "ZOM-200",
+        "ZOM-277",
+        "ZOM-315",
+        "ZOM-202",
+        "ZOM-280",
+        "ZOM-293"
+      ],
+      "requirement": "R7",
+      "expected_wrong_reading": "writes the checklist comment ('not in the store builds') without the two build numbers",
+      "resolver": "Leonard's thread reply under the ask: put the two builds in those comments (ios 0.3.49 and android 0.3.133)",
+      "discovery_order": "the checklist item is read first and looks complete; the build-number line sits in the thread reply"
+    },
+    {
+      "id": "T32",
+      "family": "tool_surface",
+      "services": [
+        "slack",
+        "trello",
+        "linear"
+      ],
+      "seeded_ids": [
+        "cec246a6e43158f200fe144f0dd7039c",
+        "abe096ff0b5d7216efbc889e91d6d13a",
+        "68daca5871dba40417a00383"
+      ],
+      "base_pointers": [
+        "ZOM-23",
+        "ZOM-42",
+        "ZOM-288",
+        "ZOM-293",
+        "ZOM-200"
+      ],
+      "requirement": "R10",
+      "expected_wrong_reading": "reads the group chat's top-level messages only (Leonard's question shows reply_count 1) and builds the Tickets tab with the agenda's five columns: no assignee, done date or priority",
+      "resolver": "card rule 2 names 'the three things Robert asked for when I asked him in our group chat'; Robert's answer is the thread reply under Leonard's question",
+      "discovery_order": "the card is read first; the group chat holds Leonard's question at top level and Robert's answer only in its thread"
+    },
+    {
+      "id": "T33",
+      "family": "scope_alias",
+      "services": [
+        "github",
+        "linear"
+      ],
+      "seeded_ids": [
+        "harmonygames-Games/match3d#271#rev_2",
+        "harmonygames-Games/match3d#271#rc_1"
+      ],
+      "base_pointers": [
+        "ZOM-295",
+        "harmonygames-Games/match3d#271"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "keeps ZOM-295 (enrage title match, Done, Live): reads the PR's reviews list only, where Blake's review is an approval with an empty body, and never opens the inline comments",
+      "resolver": "rule 1: a title match Blake marked 'not tiers' in his review on its PR stays off; ZOM-295's closing note says 'merged with match3d#271' and Blake's inline comment there starts with 'not tiers'",
+      "discovery_order": "the card is read first; ZOM-295's closing note names the PR; the mark is an inline review comment"
+    },
+    {
+      "id": "T34",
+      "family": "exact_predicate",
+      "services": [
+        "slack",
+        "linear"
+      ],
+      "seeded_ids": [
+        "abe096ff0b5d7216efbc889e91d6d13a"
+      ],
+      "base_pointers": [
+        "ZOM-200",
+        "ZOM-274",
+        "ZOM-282"
+      ],
+      "requirement": "R10",
+      "expected_wrong_reading": "writes the UTC date from Linear's completed_at: 2025-06-13 for ZOM-200 and 2025-06-21 for ZOM-274 and ZOM-282",
+      "resolver": "Robert asks for the day it got marked done in pacific time; completed_at 01:17Z on those three is the evening before in Pacific time"
+    }
+  ],
+  "call_budget": [
+    {
+      "phase": "discovery",
+      "service": "slack",
+      "calls": 6,
+      "reason": "read the ask in the Leonard-Julia DM; resolve Leonard's DM; open the ask's thread (Leonard's reply); open the thread under Julia's Sep 29 question (Leonard's later reply); find the Robert / Leonard / Julia group chat and open the thread under Leonard's question (Robert's reply)"
+    },
+    {
+      "phase": "discovery",
+      "service": "trello",
+      "calls": 4,
+      "reason": "search the board for the difficulty baseline card, read it, read its comments (amendment)"
+    },
+    {
+      "phase": "discovery",
+      "service": "gmail",
+      "calls": 4,
+      "reason": "search for Blake's store builds mail and open its thread; search for his reply (own thread, new subject) and open it"
+    },
+    {
+      "phase": "discovery",
+      "service": "gsheets",
+      "calls": 2,
+      "reason": "find the monster enrage sheet, read the Live tab"
+    },
+    {
+      "phase": "discovery",
+      "service": "gslides",
+      "calls": 2,
+      "reason": "find Robert's dynamic difficulty deck and read its text"
+    },
+    {
+      "phase": "discovery",
+      "service": "slack",
+      "calls": 1,
+      "reason": "search #zombie-design for the deck (Blake's Sep 3 correction)"
+    },
+    {
+      "phase": "discovery",
+      "service": "gcal",
+      "calls": 2,
+      "reason": "find the Oct 6 tuning session and read its attendees (share list)"
+    },
+    {
+      "phase": "discovery",
+      "service": "gdocs",
+      "calls": 2,
+      "reason": "find and read the session agenda (sheet with two tabs)"
+    },
+    {
+      "phase": "discovery",
+      "service": "gdrive",
+      "calls": 1,
+      "reason": "find the ZM Difficulty folder id (destination)"
+    },
+    {
+      "phase": "enumeration",
+      "service": "linear",
+      "calls": 5,
+      "reason": "page through ZOM issues created up to Aug 31 (~470) to apply the title words and pick out Blake's"
+    },
+    {
+      "phase": "rules",
+      "service": "linear",
+      "calls": 1,
+      "reason": "read ZOM-42 in full (4,244-char spec: > 90, the 50% demotion rule and the record reset are past the truncation)"
+    },
+    {
+      "phase": "rules",
+      "service": "linear",
+      "calls": 3,
+      "reason": "read ZOM-199, ZOM-254, ZOM-282 in full for the rules tab",
+      "conditional_on": "list_issues truncates these shorter descriptions"
+    },
+    {
+      "phase": "per-record",
+      "service": "linear",
+      "calls": 110,
+      "reason": "one linear_list_comments per candidate: the closing note's tiers: tag decides membership and the note decides where a change lives; no bulk comment call"
+    },
+    {
+      "phase": "per-record",
+      "service": "github",
+      "calls": 3,
+      "reason": "read #401 (what changed; Blake comment), #243 and #265 (file tables vs notes)"
+    },
+    {
+      "phase": "writes",
+      "service": "gsheets",
+      "calls": 3,
+      "reason": "create the register with Tickets and Rules in force tabs; write the rows"
+    },
+    {
+      "phase": "writes",
+      "service": "gdrive",
+      "calls": 5,
+      "reason": "move the sheet into ZM Difficulty; share with Robert (edit), Brian and Leonard (comment), Arthur (view)"
+    },
+    {
+      "phase": "writes",
+      "service": "slack",
+      "calls": 1,
+      "reason": "reply to Leonard in the DM with the counts"
+    },
+    {
+      "phase": "writes",
+      "service": "linear",
+      "calls": 9,
+      "reason": "comment on ZOM-199 (build checks > 90), on ZOM-254 (replaced by ZOM-282) and on each of the 4 Editor only and 3 Not shipped tickets (checklist rule 6 change)"
+    },
+    {
+      "phase": "discovery",
+      "service": "github",
+      "calls": 8,
+      "reason": "rule 1 'not tiers': find the PRs of the title matches (#243, #244, #265, #271) and read each PR's review comments (Blake's inline notes on #265 and #271)"
+    },
+    {
+      "phase": "discovery",
+      "service": "trello",
+      "calls": 1,
+      "reason": "list the rules card's attachments (Leonard's notes for monday)"
+    },
+    {
+      "phase": "discovery",
+      "service": "gdocs",
+      "calls": 1,
+      "reason": "read Leonard's notes for monday (drop ZOM-258)"
+    },
+    {
+      "phase": "read-back",
+      "service": "gsheets",
+      "calls": 1,
+      "reason": "read the register back to check the rows and counts"
+    }
+  ],
+  "writes": [
+    {
+      "service": "gsheets",
+      "tool": "gsheets_create_spreadsheet+gsheets_values_update",
+      "count": 3,
+      "depends_on": [
+        "C1",
+        "C2",
+        "C3",
+        "C5",
+        "C6",
+        "C7",
+        "K11",
+        "K12",
+        "K13",
+        "K19",
+        "K2",
+        "K20",
+        "K3",
+        "K4",
+        "K5",
+        "K6",
+        "K7",
+        "K8",
+        "T1",
+        "T10",
+        "T15",
+        "T32",
+        "T33",
+        "T34",
+        "T5",
+        "T6",
+        "T8"
+      ],
+      "requirements": [
+        "R1",
+        "R10",
+        "R2",
+        "R3",
+        "R4",
+        "R9"
+      ]
+    },
+    {
+      "service": "gdrive",
+      "tool": "gdrive_move_file+gdrive_share_file",
+      "count": 5,
+      "depends_on": [
+        "K9",
+        "K10",
+        "C4",
+        "T12",
+        "T13"
+      ],
+      "requirements": [
+        "R5",
+        "R8"
+      ]
+    },
+    {
+      "service": "slack",
+      "tool": "slack_send_message",
+      "count": 1,
+      "depends_on": [
+        "C2",
+        "C3",
+        "K1",
+        "K20",
+        "T16",
+        "T33"
+      ],
+      "requirements": [
+        "R6"
+      ]
+    },
+    {
+      "service": "linear",
+      "tool": "linear_create_comment",
+      "count": 2,
+      "depends_on": [
+        "K5",
+        "C5",
+        "C8",
+        "T14",
+        "T21"
+      ],
+      "requirements": [
+        "R7"
+      ]
+    }
+  ],
+  "hazard_acknowledgements": [
+    {
+      "hazard_id": "L03",
+      "resolution": "dated_claim",
+      "why_safe": "ZOM-292 (Todo, match3d#267 merged) and ZOM-387 (Todo, match3d#319 merged) are candidates only; the SQL does not modify them or their PRs. Blake's seeded notes (before each issue's updated_at) say each stays open for the rest of its list and that the first part went in with the PR - dated human claims that explain the state; neither is a member (no tier-code file)",
+      "requirement": "R1"
+    }
+  ],
+  "denied_probes": [],
+  "facts": [
+    {
+      "key": "iOS 0.3.49",
+      "value": "0.3.49",
+      "kind": "version",
+      "must_appear_in": [
+        "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>"
+      ]
+    },
+    {
+      "key": "Android 0.3.133",
+      "value": "0.3.133",
+      "kind": "version",
+      "must_appear_in": [
+        "julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com>"
+      ]
+    },
+    {
+      "key": "ZOM-173",
+      "value": "match3d#243",
+      "kind": "id",
+      "home_ids": [
+        "cmt_bb9c4deb176b2c894ca6",
+        "cmt_4254c1451d7cbe0d8d2a"
+      ],
+      "must_appear_in": [
+        "cmt_bb9c4deb176b2c894ca6"
+      ]
+    },
+    {
+      "key": "ZOM-312",
+      "value": "match3d#265",
+      "kind": "id",
+      "home_ids": [
+        "cmt_68811c86e67c36e5c2f7"
+      ],
+      "must_appear_in": [
+        "cmt_68811c86e67c36e5c2f7"
+      ]
+    },
+    {
+      "key": "ZOM-292",
+      "value": "match3d#267",
+      "kind": "id",
+      "home_ids": [
+        "cmt_7372203a46c603a31c1e"
+      ],
+      "must_appear_in": [
+        "cmt_7372203a46c603a31c1e"
+      ]
+    },
+    {
+      "key": "ZOM-387",
+      "value": "match3d#319",
+      "kind": "id",
+      "home_ids": [
+        "cmt_8fb73ca1d1757919dee7"
+      ],
+      "must_appear_in": [
+        "cmt_8fb73ca1d1757919dee7"
+      ]
+    },
+    {
+      "key": "ZOM-352",
+      "value": "match3d#282",
+      "kind": "id",
+      "home_ids": [
+        "cmt_564774d61032b2468dc9"
+      ],
+      "must_appear_in": [
+        "cmt_564774d61032b2468dc9"
+      ]
+    },
+    {
+      "key": "comment builds (L1 reply)",
+      "value": "0.3.133",
+      "kind": "version",
+      "must_appear_in": [
+        "33c941fae57ba8d1e23bc1dff9ce3e2c"
+      ]
+    }
+  ],
+  "integration_exceptions": [
+    {
+      "record_id": "26fce3dc380d9da1343bcccc6072f03e@hg4",
+      "reason": "no_notify: Leonard put the Oct 6 tuning session straight on the four calendars and announced it on the card (rule 7 names the invite); the attendee list lives only on the calendar (design C4/T13)"
+    }
+  ],
+  "design_delta": [
+    {
+      "id": "K4",
+      "change": "seeded_ids julia.lawson@harmonygames.co/1844679607844896665 (thread) -> julia.lawson@harmonygames.co/<CAAMNAwYx-0CiDbK185Gu5MJ7tQOQpotFjqOw79t@mail.gmail.com> (first message row)",
+      "reason": "the store builds text and its date live on the message row; the thread row carries only a snippet"
+    },
+    {
+      "id": "K5",
+      "change": "seeded_ids julia.lawson@harmonygames.co/1844695547248860585 -> julia.lawson@harmonygames.co/<CA5_F2rDr1wRIt9hs5OQOh24VwdKeAGryNjbRuXV@mail.gmail.com> (reply row, thread julia.lawson@harmonygames.co/1844679607844896665)",
+      "reason": "the reply has no thread of its own; it is a message row inside the first message's thread"
+    },
+    {
+      "id": "H2",
+      "change": "seeded_ids moved to the two message rows (as K4/K5)",
+      "reason": "same as K4/K5"
+    },
+    {
+      "id": "PRC_244",
+      "change": "the minted key PRC_244 now holds Blake's comment on match3d#401 (#401#c_2), not a #244 comment",
+      "reason": "design v4: no #244 seed (the level drop is live in the code); the key name was kept to keep builder ids stable"
+    },
+    {
+      "id": "R5-K5",
+      "change": "Blake's reply moves to its own thread 1844695547248825769 (subject 'editor stuff and ZOM-199, before Monday'); it now carries the editor/debug stripping rule and both ZOM-199 corrections; card rule 3 names the reply",
+      "reason": "hardening round 5: a second independent carrier (Gmail reply) for the failure-pattern gate"
+    },
+    {
+      "id": "R5-K14",
+      "change": "Leonard's thread reply under the ask adds: name the two builds in the Editor only / Not shipped comments",
+      "reason": "hardening round 5: per-comment output rule (A21) on the thread carrier"
+    },
+    {
+      "id": "R6-K19",
+      "change": "third hidden thread reply in a different conversation (group chat CAFC495E4006): Robert's three extra Tickets-tab columns; card rule 2 points to it",
+      "reason": "hardening round 6: 22 baseline/hardness runs show only thread replies land; spread graded weight over threads in separate conversations so failures split"
+    },
+    {
+      "id": "R7-K20",
+      "change": "Blake's 'not tiers' inline review comment on harmonygames-Games/match3d#271 (ZOM-295 off: 23 tickets, 15 Live); Robert's done day in pacific time",
+      "reason": "hardening round 7: replay over 15 runs; #271 inline comments were fetched by 5 of 15, every run wrote the UTC day; two levers on different carriers so failing runs split"
+    }
+  ]
+}

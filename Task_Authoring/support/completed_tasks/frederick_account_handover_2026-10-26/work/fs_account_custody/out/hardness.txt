@@ -1,0 +1,38 @@
+HARDNESS GATE (normal): PASS
+  [ok] effective_profile: effective_profile 'normal' for 'Normal Horizon' → thresholds 'normal'
+  [ok] sql_lint_clean: 0 lint error(s) — run tools/sql_lint.py
+  [ok] base_consistency: /injection-style checks vs the base universe: A 0 finding(s), C 0 finding(s), 0 warning(s) — run tools/base_check.py --manifest
+  [ok] persona_reach: 31 load-bearing seeded ids for frederick_stone (5 in unscoped services = visible, 26 judged by persona_view check-sql); not provably visible: none
+  [ok] fact_consistency: fact_check: 0 error(s) (4 declared facts), 0 drift warning(s); first: none — run tools/fact_check.py --manifest --no-leak
+  [ok] hazard_scope: 0 pre-existing hazard(s) among task-touched records; state/lifecycle or referential without a verified resolution: none
+  [ok] services_injected: 7 schemas injected (confluence, gdocs, gdrive, gmail, gsheets, slack, trello); need ≥ 6
+  [ok] rows: 76 INSERTed rows (UPDATE companions not counted; 76 rows in all); need ≥ 50
+  [ok] services_carrying_weight: 8 services with a weight_reason; need ≥ 7
+  [ok] no_orphan_injection: schemas injected but absent from the design: none
+  [ok] seeded_ids_exist_in_sql: 64 seeded ids cited; missing from SQL: none
+  [ok] anchors: 1 anchors (1–3, each with a plain-language prompt_reference)
+  [ok] ask_fragments: 8 fragments; need ≥ 7
+  [ok] ask_fragment_services: 5 services carry asks; need ≥ 5
+  [ok] ask_fragment_containers: 7 distinct containers; need ≥ 6
+  [ok] incorporation_chains: every fragment must chain back to a prompt anchor through explicit delegations whose words (delegation_quote) are in the delegating record; broken: none
+  [ok] requirement_coverage: 8 declared requirements; each must be named (requirement_ids) by an incorporated fragment or an anchor — orphan requirements (graded with no source the prompt reaches): none
+  [ok] authority_incorporation: every authority must be named by a fragment's own record (names_authorities [{id, quote}]) or be the record an incorporated fragment delegates to; orphan authorities: none
+  [ok] cohort_size: cohort 13; need ≥ 10 (source-defined: True)
+  [ok] evidence_surfaces: 4 surfaces over 4 services; each needs why_no_bulk and (extreme) a short_circuit analysis — why a correct run cannot skip it once other surfaces decide the record (missing: none)
+  [ok] surface_requirements: every cohort surface must serve a declared, incorporated requirement and the output column or decision it states (`requirement`, `decides`) — no manufactured columns; bad: none
+  [ok] per_record_calls: Σ per-record calls × records each surface applies to = 34; need ≥ 25
+  [ok] call_budget: unconditional (verified) floor 60 of 60 planned calls (0 conditional on unverified tool behaviour count 0); need floor ≥ 60 and total ≤ 100 (Normal Horizon 50–100)
+  [ok] call_budget_spread: 8 services in budget; largest share outside the per-record phase 37% (≤ 40%)
+  [ok] traps: 15 traps across 9 families; need ≥ 8 / ≥ 5; unknown family: none
+  [ok] trap_independence: traps hit 6 distinct requirements; need ≥ 4 (failure-pattern diversity)
+  [ok] trap_completeness: each trap needs records, a resolver and the expected wrong reading; incomplete: none
+  [ok] supersession: 3 supersessions (3 with versions in ≥ 2 services, 1 with ≥ 3 versions); each needs version_records [{service, id|base_pointer, seeded, at (ISO, oldest first)}] ≥ 2 — missing/unordered: none
+  [ok] supersession_chronology: 3 trap(s) with version_records; the records' own timestamps (SQL created_at/ts/date/updated_at, or the base record) must be strictly increasing in the listed order (oldest first); bad: none
+  [ok] distractors: 4 distractors of 4 types; need ≥ 4 / ≥ 3
+  [ok] discovery_order_proofs: 6 traps carry a discovery-order proof; need ≥ 2
+  [ok] independent_chains: 5 chains with 5 distinct mechanism ids (Hardness_Mastery.md enum; chains sharing a mechanism count once); need ≥ 2, each ≥ 3 hops over ≥ 2 services ending in a graded fact; thin: none; root_cause not a mechanism id: none
+  [ok] hidden_authorities: 2 authorities (need ≥ 1), each homed in ['gcal', 'gdocs', 'gmail', 'gsheets', 'gslides', 'snowflake', 'trello'] with a decoy record elsewhere (decoy_seeded_ids / decoy_base_pointers), a findable_query, records, and NON-overlapping 'governs'; bad: none; overlap: False; same-service decoys 0 (need ≥ 0: a targeted search must also meet a decoy)
+  [ok] decoy_scope: each authority's decoy must apply to a different scope (decoy_scope {dimension: game|issuer|lot|team, decoy, task}) or be an older entry of a trap's version_records — an identical-scope contradiction fails Cross-Service Coherence and Unique Ground Truth; bad: none
+  [ok] rarely_opened_evidence: 12 traps carry decisive evidence in rarely-opened services ['gcal', 'gmail', 'gsheets', 'gslides', 'snowflake', 'trello']; need ≥ 2
+  [ok] requirements: 8 requirements declared; referenced but undeclared: none; declared with no trap/chain/authority/write mapping: none
+  [ok] writes: 4 writes over 4 services; each must depend on findings

@@ -1,0 +1,53 @@
+Task type: long-horizon   Completed: 6/6   Errored: none   Invalid rubrics: none   Judge corrections: none
+| Rollout | Counted tool calls | Raw / harness / blocked / repeats | Weighted pass (platform) | Failed rubrics (platform) |
+|---|---|---|---|---|
+| run-1 | 183 | 199 / 9 / 0 / 7 | 51.9% | R2, R3, R4, R5, R7, R8, R9, R18, R19, R22, R23, R24, R25, R26, R28, R29, R30, R33, R34, R35, R36, R38, R39, R40, R43, R44, R45, R46, R48, R49, R50 |
+| run-2 | 163 | 169 / 3 / 3 / 0 | 71.0% | R3, R4, R5, R17, R18, R22, R23, R24, R25, R26, R33, R34, R35, R36, R43, R44, R45, R46, R47 |
+| run-3 | 205 | 215 / 6 / 0 / 4 | 44.6% | R2, R3, R4, R5, R6, R7, R8, R9, R17, R18, R19, R22, R23, R24, R25, R26, R27, R28, R29, R30, R33, R34, R35, R36, R37, R38, R39, R40, R43, R44, R45, R46, R47, R48, R49, R50 |
+| run-4 | 202 | 207 / 4 / 1 / 0 | 51.9% | R2, R3, R4, R5, R7, R8, R9, R18, R19, R22, R23, R24, R25, R26, R28, R29, R30, R33, R34, R35, R36, R38, R39, R40, R43, R44, R45, R46, R48, R49, R50 |
+| run-5 | 238 | 246 / 7 / 1 / 0 | 73.6% | R3, R4, R5, R18, R22, R23, R24, R25, R26, R33, R34, R35, R36, R43, R44, R45, R46 |
+| run-6 | 185 | 193 / 6 / 2 / 0 | 44.6% | R2, R3, R4, R5, R6, R7, R8, R9, R17, R18, R19, R22, R23, R24, R25, R26, R27, R28, R29, R30, R33, R34, R35, R36, R37, R38, R39, R40, R43, R44, R45, R46, R47, R48, R49, R50 |
+
+| Gate | Value | Rule | Verdict |
+|---|---|---|---|
+| errored_runs | 0 errored, 6 completed of 6 | <= 2 errored and >= 4 completed (3+ errored = Fail) | PASS |
+| pass_at_1 | 0/6 = 0% | <= 50% (<= 3 of 6) | PASS |
+| avg_weighted_pass_rate | 56.3% | < 75% (Evals); QC Spec V2 alone < 90% | PASS |
+| per_rollout_sd | 0.117 (sample 0.129; unweighted 0.100) | 0.1-0.3 (population SD of per-rollout weighted pass rates) | PASS |
+| failure_patterns | 4 pattern(s); largest 33% of 6 failing (pairwise reading 33%) | >= 2 patterns (differ on >= 2 rubrics); largest <= 50% | PASS |
+| horizon | average of completed rollouts: 196 | long-horizon tier 100-500+ | PASS |
+
+Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):
+- Pattern 1: run-1, run-4
+- Pattern 2: run-3, run-6
+- Pattern 3: run-2
+- Pattern 4: run-5
+- Pairwise reading (largest set all within 1 rubric of each other): run-1, run-4
+All-fail rubrics (completed rollouts, platform view): R3, R4, R5, R18, R22, R23, R24, R25, R26, R33, R34, R35, R36, R43, R44, R45, R46
+Blocking gates: none
+
+Readings: single-linkage and pairwise pattern readings agree (largest 33%); pass@1 0/6 as count and percentage; population SD 0.117 (sample 0.129, unweighted 0.100 — all inside or on the 0.1–0.3 band); no golden run, horizon on the completed-run average.
+Tool-call notes: counted (raw / harness / blocked / repeats) — run-1 183 (199/9/0/7), run-2 163 (169/3/3/0), run-3 205 (215/6/0/4), run-4 202 (207/4/1/0), run-5 238 (246/7/1/0), run-6 185 (193/6/2/0); average 196. No ACL-denied hammering: every scoped read targets Douglas's own DMs, channels, mailbox, calendar and files. Most calls are the 73 per-ticket Linear comment reads and the per-PR comment/review reads the task requires (not padding). Above the author's 130–150 target, inside the Long-Horizon 100–500+ tier.
+Friction check: not configured (03_Error_Async_Config.txt: Friction: none); nothing to fire.
+Screen 60 comparison: not supplied by the human; the platform view above is computed from the platform verifier copy (10_Baseline_Verifier_Results.md, headers 45/57/40/45/59/40 of 76).
+Diagnosis: no failing gate in either view (valid view = platform view: 11_AF_Justification.md marks all 17 all-fails VALID, --invalid none, --judge-correction none).
+Screen 61: confirm — every gate passes in both views.
+
+## Self-review
+
+Walked the QC rows (Error Rate, pass@1, Average Weighted Rubric Pass Rate, Failure Signature Concentration, Task Type & Horizon in QC_Spec_Doc_Latest.csv) and scoring.json "Agent Failure Rate" / "Error Rate" / "Complexity Threshold Layers" gate by gate.
+
+Recomputed independently from 12_difficulty_input.json (no calculator): passed weight / 314 per run = 163 (0.5191), 223 (0.7102), 140 (0.4459), 163 (0.5191), 231 (0.7357), 140 (0.4459); mean 0.5626; population SD 0.1175, sample SD 0.1287. Differing-rubric matrix: run-1/run-4 0, run-3/run-6 0, run-2/run-5 2, every other pair 5–19 → patterns {run-1, run-4}, {run-3, run-6}, {run-2}, {run-5}; largest 2 of 6 = 33%. No rollout passes every valid rubric. Counted-call average 196 (183+163+205+202+238+185)/6.
+
+Re-verified inputs: the input JSON binds the 76 criteria of 09_Rubrics.json (sha256 880f59b9298d, the version /rubric passed and the verifier graded); "valid": false appears on no rubric, matching 11's "--invalid none"; run-3's counted calls spot-checked: 215 raw tool_use events in trajectory-run-3.json minus 6 harness (Bash, Agent) minus 4 exact repeats = 205.
+
+| Gate | Counter-reading | Resolution (evidence) |
+|---|---|---|
+| errored_runs | a run that should count as errored | run-1 to run-6 each end with a result event, subtype success (trajectory-run-2.json … trajectory-run-6.json, trajectory-run-1 (7).json); 6/6 completed |
+| pass_at_1 | a judge error hiding a full pass | best run (run-5) still fails 17 valid rubrics, all confirmed genuine in 11_AF_Justification.md (R3–R5, R18, R22–R26, R33–R36, R43–R46) |
+| avg_weighted_pass_rate | an invalid all-fail inflating difficulty | 11_AF_Justification.md found 0 invalid (R3–R46 all-fails VALID); recomputed mean of run-1 … run-6 is 0.5626, under 75% and QC's 90% |
+| per_rollout_sd | the unweighted SD reading sits on the 0.100 edge | population SD of run-1 … run-6 weighted rates is 0.1175 (recomputed from 12_difficulty_input.json), inside 0.1–0.3; the band is edge-inclusive, so the unweighted 0.100 also passes |
+| failure_patterns | run-2 and run-5 differ on only 2 rubrics and might be read as one pattern | run-2 and run-5 differ on 2 rubrics; the rule merges only when results differ on ≤ 1 rubric; even merged, the largest pattern is 2 of 6 = 33% (≤ 50%) and 3 patterns remain |
+| horizon | raw tool calls instead of counted | counted average 196 over run-1 … run-6 (raw average 205, 12_difficulty_input.json) — both inside Long-Horizon 100–500+; no golden run (best run-5 = 73.6%) |
+
+Unresolved: none. Note: the author's own call target (130–150 per run) is not met (counted 163–238); this is an author target, not a QC or Evals gate.

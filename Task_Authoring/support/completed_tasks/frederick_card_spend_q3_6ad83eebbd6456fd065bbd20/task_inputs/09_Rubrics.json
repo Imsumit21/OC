@@ -1,0 +1,443 @@
+[
+  {
+    "title": "The Agent saves the card-spend workbook as a Google Sheets file in the Drive folder 'Q3 2025 investor reporting' (d_b3d01a4a5d8d97d9d4c3a4)",
+    "category": "Outcome",
+    "weight": 1,
+    "justification": "Prompt: 'The workbook goes in the Q3 2025 investor reporting folder'. The Q2 2025 folder is a lookalike.",
+    "evidence": "SQL L9 folder d_b3d01a4a5d8d97d9d4c3a4; Frederick is a writer"
+  },
+  {
+    "title": "The Agent shows Jan–Sep 2025 card statement cycle amounts on the Ledger tie-out tab that tie to 97,968.21, the total of the eight 2025 'Unreconciled operating expenses' ledger lines, either as gross cycle amounts summing to 97,968.21 or as net cycle amounts plus a UA reclass shown on that tab (as a row or a column) that together make 97,968.21 when the reclass is added back",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard asks to 'tie each month back to the ledger'. The total needs all 496 feed sheets, the 7 adjustments tabs, the cycle rules and the bank-rule exclusions. Close notes rule 7 ('show it as a reclass in the tie-out') sets no layout: a tie-out may show gross cycles with the UA reclass deducted, or net cycles with the reclass shown beside them as a row or a column; R4 grades the reclass amount.",
+    "evidence": "Snowflake FINANCE.EXPENSES.FINANCE_LEDGER FIN-000419 to FIN-000618; feed folder d_e342e9e32a98e7cc2d5d57"
+  },
+  {
+    "title": "The Agent ties the June and July 2025 cycles on the Ledger tie-out tab to the July ledger line of 24,354.37 dated 2025-07-31, either as June 12,222.02 plus July 12,132.35 or as one combined July figure of 24,354.37",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Close notes rule 4: there is no June ledger line and July carries both cycles; the tie-out puts the June cycle under the July line, either split out or combined.",
+    "evidence": "FIN-000580 (snowflake.json /tables/38/rows/579); close notes rules 3–4 in f_2a1e1bf25cf49d5d974bfc (SQL L19)"
+  },
+  {
+    "title": "The Agent shows the UA reclass on the Ledger tie-out tab as 1,000.00, the August 2025 Unity Ads charge",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 7: an ad-network charge on these cards is marketing UA, not opex: 'show it as a reclass in the tie-out, not in a category.' UNITY ADS is the only ad-network charge in the feed, so the UA reclass is 1,000.00; a UA reclass that also takes in the 10,200.00 Unity seats prepay of Aug 8 (UNITY TECHNOLOGIES, a separate vendor under rule 12) is 11,200.00 and fails. Moving the June cycle under the July line (rule 4) is not a UA reclass. The 'not in a category' half is graded on the Category by month tab by R55.",
+    "evidence": "Feed sheet f_f7299de2df377944f21e7b (UNITY ADS 1,000.00, posted 2025-08-20); close notes rules 7 and 12 in f_2a1e1bf25cf49d5d974bfc (SQL L19)"
+  },
+  {
+    "title": "The Agent shows the September 2025 cycle at 10,438.20 on the Ledger tie-out tab, tying to the ledger line dated 2025-09-30",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Close notes rule 3: the September cycle runs Aug 29–Sep 28, so the Sep 29 postings (408.58) fall in October.",
+    "evidence": "FIN-000618; feed sheets through Sep 28"
+  },
+  {
+    "title": "The Agent shows the January 2025 statement cycle at 7,759.99 on the Ledger tie-out tab, tying to the ledger line dated 2025-01-31",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Close notes rule 3: the January cycle runs Dec 26, 2024 to Jan 25, 2025; calendar January does not tie.",
+    "evidence": "FIN-000419; feed sheets card_0417_2024-12-26 onward"
+  },
+  {
+    "title": "The Agent lists 41 vendors on the By vendor tab besides its Unity Technologies and Unity Ads rows",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Close notes rule 12 merges each brand into one vendor; the count is right only after reading every sheet and applying every merge. Counting outside the two Unity names keeps the row independent of whether Unity Ads appears on By vendor and of how Unity is split (R11 grades the Unity seats).",
+    "evidence": "Feed folder d_e342e9e32a98e7cc2d5d57; close notes rule 12 in f_2a1e1bf25cf49d5d974bfc (SQL L19)"
+  },
+  {
+    "title": "The Agent shows AppMagic amounts on the By vendor tab for 2025-01 to 2025-09 that sum to 1,293.46, including its foreign transaction fee rows",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "The feed notes doc: a FOREIGN TRANSACTION FEE row counts with the charge directly above it.",
+    "evidence": "Feed notes doc f_0230719d3dcc16f12821d7; AppMagic rows on card 0417"
+  },
+  {
+    "title": "The Agent shows Sensor Tower amounts on the By vendor tab for 2025-01 to 2025-09 that sum to 1,043.33, net of the -106.67 credit of Sep 8, 2025",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "The feed notes doc puts late credits on an adjustments tab; close notes rule 5 nets a refund in the cycle it posts.",
+    "evidence": "Feed sheet f_ae25c0c1cae08271c73609 adjustments tab"
+  },
+  {
+    "title": "The Agent shows the OPENAI *CHATGPT SUBSCR and OPENAI CHATGPT TEAM charges under a single vendor name, of any label, on the By vendor tab with 2025-01 to 2025-09 amounts that sum to 1,050.00",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 12: one vendor per brand, so both OpenAI descriptors merge.",
+    "evidence": "Feed sheets f_4406ba0c8bd5212ecaf145 (OPENAI *CHATGPT SUBSCR 90.00, Dec 26, 2024) and f_ecda6fb95d068733de87d1 (OPENAI CHATGPT TEAM 150.00, Mar 26, 2025); close notes rule 12 in f_2a1e1bf25cf49d5d974bfc (SQL L19)"
+  },
+  {
+    "title": "The Agent shows Unity Technologies seat amounts on the By vendor tab for 2025-01 to 2025-09 that sum to 17,970.00",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 12: Unity seats (UNITY TECHNOLOGIES) and Unity Ads are separate vendors, so the 1,000.00 Unity Ads charge is not part of this total.",
+    "evidence": "UNITY TECHNOLOGIES rows incl. 10,200.00 on Aug 8 (f_e5bd3c66de846ccd52eb65)"
+  },
+  {
+    "title": "The Agent shows Software & subscriptions at 1,107.91 for 2025-08 on the Category by month tab",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Griffin's 2025 categories replace the 2024 list; Unity seats go under Hosting & infrastructure per Griffin's answer in Leonard's Sep 30 DM, so August Software holds none of the 10,200.00 Unity prepay.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010; Slack DM D05S58U4SAK/1759248472.204417; feed sheet f_e5bd3c66de846ccd52eb65 (Aug 8)"
+  },
+  {
+    "title": "The Agent shows Travel & events at 3,265.46 for 2025-06 on the Category by month tab",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 4: in the By vendor and Category by month tabs the June cycle stays its own month (2025-06); only the tie-out puts it under July.",
+    "evidence": "Close notes rule 4 (SQL L19); June cycle May 26–Jun 25"
+  },
+  {
+    "title": "The Agent shows Hosting & infrastructure at 1,025.84 for 2025-09 on the Category by month tab",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Griffin's note puts hosting (Edgegap game servers) and website builders (Webflow) under Hosting & infrastructure; September holds no Unity seat charge.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010"
+  },
+  {
+    "title": "The Agent shows Professional & admin at 3,552.00 for 2025-03 on the Category by month tab",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Griffin's note puts equity platforms (Carta's annual charge) under Professional & admin; the 2024 Confluence list put Carta under Software.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010 (Professional & admin: equity platforms); feed sheet f_92f153f01d044b66a18584 (CARTA INC 2,760.00, Mar 3)"
+  },
+  {
+    "title": "The Agent lists Q4 monthly run-rate amounts on the Q4 run-rate tab that total 2,869.80 (±0.01)",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Close notes rule 9; the total needs every plan's status, including Edgegap's emailed confirmation (420.00), LinkedIn's emailed cancellation, Leonard's Sep 29 1Password change (3 seats), and the vendor notices (WeWork ends Sep 30, Webflow 18.00, SavvyCal and Buttondown closed, Murf 11.00). ±0.01 covers Envato rounding.",
+    "evidence": "Close notes rule 9 (SQL L19); Bank rules tab excludes AWS and the other six vendors"
+  },
+  {
+    "title": "The Agent shows Edgegap at 420.00 per month on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Rule 8 counts a downgrade once the vendor confirms it by email to the account owner. Edgegap's Sep 29 email to Arthur (cc Frederick) confirms the 420.00 plan from the Oct 10 invoice, though ENG-2370 and the Edgegap card show no change and the #481 item is still unticked.",
+    "evidence": "Email frederick.stone@harmonygames.co/1844619081941308353 (Edgegap to Arthur, cc Frederick, Sep 29)"
+  },
+  {
+    "title": "The Agent shows Unity Pro at 850.00 per month on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 9: annual plans at 1/12 of the last annual charge, here the 10,200.00 prepay of Aug 8, 2025.",
+    "evidence": "Feed sheet f_e5bd3c66de846ccd52eb65 (Aug 8); ENG-2370 Sep 3 comment"
+  },
+  {
+    "title": "The Agent shows Sensor Tower at 250.00 per month on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard's Sep 26 #executives reply keeps Sensor Tower and cuts AppMagic instead; the Sep 5 vendor email moves it to Lite at 250.00.",
+    "evidence": "Slack C07C2866011/1758910840.227619; email frederick.stone@harmonygames.co/1842440482849575149"
+  },
+  {
+    "title": "The Agent shows Envato Elements at 27.04 per month (±0.01) on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 9: annual plans at 1/12, fee rows count with the plan. (314.97 annual charge + 9.45 FX fee) / 12 = 27.035.",
+    "evidence": "Feed sheet f_97a39ec079315cacdf0162 (Feb 11)"
+  },
+  {
+    "title": "The Agent shows Cogency Global at 25.00 per month on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 9 names COGENCY GLOBAL INC registered-agent renewals as annual plans: 1/12 of the 300.00 renewal.",
+    "evidence": "Feed sheet f_773461c3f2934d09aca6a8 (May 16); close notes rule 9"
+  },
+  {
+    "title": "The Agent sends a reply in Leonard's Gmail thread 'Card spend breakdown for Q3 Standard Metrics'",
+    "category": "Outcome",
+    "weight": 1,
+    "justification": "Prompt: 'the summary goes out as a reply on his email thread'. A sent message in the thread passes whichever send tool is used.",
+    "evidence": "Thread frederick.stone@harmonygames.co/1844640253739158706"
+  },
+  {
+    "title": "The Agent addresses its reply in the 'Card spend breakdown for Q3 Standard Metrics' thread to exactly leonard.hayes@harmonygames.co, arthur.blake@harmonygames.co and robert@harmonygames.co (each as To or Cc)",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard's email says 'I'll tell you who else needs the reply'; his Sep 30 DM adds Robert and keeps Arthur on. Robert's address comes from Contacts.",
+    "evidence": "Slack DM D05S58U4SAK/1759248331.512089; contacts.json /contacts/107"
+  },
+  {
+    "title": "The Agent gives Travel & events at 23,043.63 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard asks the reply to carry 'the totals by category' under Griffin's 2025 categories.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010; feed folder d_e342e9e32a98e7cc2d5d57"
+  },
+  {
+    "title": "The Agent gives Software & subscriptions at 8,361.12 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard's Sep 30 DM relays Griffin's answer that Unity seats go under Hosting & infrastructure; Griffin's note had left that item open.",
+    "evidence": "Slack DM D05S58U4SAK/1759248472.204417"
+  },
+  {
+    "title": "The Agent gives Hosting & infrastructure at 27,305.36 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Hosting includes Edgegap and Webflow under Griffin's definitions, plus Unity seats per Griffin's answer relayed in Leonard's Sep 30 DM.",
+    "evidence": "Slack DM D05S58U4SAK/1759248472.204417"
+  },
+  {
+    "title": "The Agent gives Professional & admin at 7,473.00 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Category total requested in the reply; Carta, Gusto and Cogency Global belong here under Griffin's definitions.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010"
+  },
+  {
+    "title": "The Agent gives a Q4 monthly run-rate of 2,869.80 (±0.01) in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread, stated as a total or as per-vendor amounts that sum to it",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard asks the reply to carry 'the monthly run-rate'.",
+    "evidence": "Close notes rule 9 in workbook f_2a1e1bf25cf49d5d974bfc, tab Card close notes (SQL L19); Edgegap email frederick.stone@harmonygames.co/1844619081941308353; Webflow forward frederick.stone@harmonygames.co/1843077030346987811; Murf email frederick.stone@harmonygames.co/1844260144939613075"
+  },
+  {
+    "title": "The Agent names the 60.00 Midjourney charge posted Sep 2, 2025 as a disputed charge in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Midjourney was cancelled Jul 3 (Trello card comment). Its Aug 2 charge was refunded on Aug 25, so the Sep 2 charge is Midjourney's one unrefunded charge after its confirmed cancellation (close notes rule 8).",
+    "evidence": "Feed sheets f_1830257bf9ea6d5269d440, f_64e214d78ad44085744dad, f_8eeb88266f2fd9e9f26737"
+  },
+  {
+    "title": "The Agent makes Trello changes on exactly one card",
+    "category": "Outcome",
+    "weight": 1,
+    "justification": "Leonard: 'put what you find in a comment on that one ... don't start a new card.' The one card is #481 'Q4 cost cuts - card subscriptions'; a new card, or a change on the near-match #480 'Cut list - art tools (Claire Morgan's invoices)', makes two cards. A run with no Trello change fails.",
+    "evidence": "Trello card 68d2dafdbfcc777cc630fad0 (#481); decoy card #480 (SQL L3319)"
+  },
+  {
+    "title": "The Agent records that Sensor Tower is kept rather than cancelled in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "The card's checklist still says 'Sensor Tower - cancel (Fred)', but Leonard's Sep 26 reply in the #executives thread keeps Sensor Tower and cuts AppMagic instead.",
+    "evidence": "Slack C07C2866011/1758910840.227619; checklist item 68d2db26023fcd67f26b2bc0"
+  },
+  {
+    "title": "The Agent records that AppMagic is cancelled in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "The Sep 27 AppMagic email to Frederick confirms the cancellation, following Leonard's Sep 26 change.",
+    "evidence": "Email frederick.stone@harmonygames.co/1844413390127613285"
+  },
+  {
+    "title": "The Agent records the 99.99 LinkedIn Sales Navigator charge of Sep 3, 2025 as a charge to dispute in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "LinkedIn's Aug 21 email confirms the cancellation ('You won't be charged again'); the #481 item is still unticked and the feed bills 99.99 on Sep 3 with no refund.",
+    "evidence": "Email frederick.stone@harmonygames.co/1841082615726759126 (LinkedIn, Aug 21); feed sheet f_9c2cecbd35b55e83151f42"
+  },
+  {
+    "title": "The Agent records the 60.00 Midjourney charge of Sep 2, 2025 as a charge to dispute in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard asks for the card to be updated 'with what you find'; Midjourney is a card subscription charged after its Jul 3 cancellation and not refunded.",
+    "evidence": "Feed sheet f_8eeb88266f2fd9e9f26737; Midjourney Trello card comment"
+  },
+  {
+    "title": "The Agent adds a comment to Linear issue ENG-2370 listing Arthur's subscriptions still being charged",
+    "category": "Outcome",
+    "weight": 1,
+    "justification": "Leonard: 'Anything of Arthur's that is still being charged goes on his seat cleanup ticket.'",
+    "evidence": "Linear ENG-2370 'Seat cleanup (Unity, 1Password) + Edgegap plan'"
+  },
+  {
+    "title": "The Agent lists Unity Pro as still being charged in its ENG-2370 comment",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard: 'Anything of Arthur's that is still being charged goes on his seat cleanup ticket.' Unity Pro (Owner: Arthur) is on the 10,200.00 annual prepay of Aug 8, 2025, charged until it lapses; the seat drop waits for the Aug 2026 renewal.",
+    "evidence": "Feed sheet f_e5bd3c66de846ccd52eb65; ENG-2370 Sep 3 comment; #481 comment 68d55da0fc9579f06920f651 (seat drop at the Aug 2026 renewal)"
+  },
+  {
+    "title": "The Agent lists Edgegap as still being charged in its ENG-2370 comment",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard: 'Anything of Arthur's that is still being charged goes on his seat cleanup ticket.' Edgegap (Owner: Arthur) billed 600.00 on Sep 10; the Sep 29 downgrade lowers the price from the Oct 10 invoice but does not stop the charge.",
+    "evidence": "Email frederick.stone@harmonygames.co/1844619081941308353 (Edgegap to Arthur, cc Frederick, Sep 29); feed sheet f_6960655b622588feec606d"
+  },
+  {
+    "title": "The Agent lists Google Cloud as still being charged in its ENG-2370 comment",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard: 'Anything of Arthur's that is still being charged goes on his seat cleanup ticket.' Google Cloud (Owner: Arthur) billed 396.84 on Sep 2 with no change recorded.",
+    "evidence": "Feed sheet f_8eeb88266f2fd9e9f26737 (Sep 2); ENG-2370 description"
+  },
+  {
+    "title": "The Agent lists 1Password as still being charged in its ENG-2370 comment",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard: 'Anything of Arthur's that is still being charged goes on his seat cleanup ticket.' 1Password (Owner: Arthur) billed 39.95 on Sep 2 and drops to 3 seats from the Oct bill, still charged.",
+    "evidence": "Trello card 678167bdc481ee214e69886d comment 68dac5f2a1b3c4d5e6f70812; feed sheet f_8eeb88266f2fd9e9f26737 (Sep 2)"
+  },
+  {
+    "title": "The Agent shows 1Password at 23.97 per month on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Rule 8 counts a comment on the vendor's card; Leonard's Sep 29 comment on the 1Password card sets 3 seats (3 × 7.99) from the Oct bill, later than Arthur's Sep 25 note of 4 seats on card #481.",
+    "evidence": "Trello action 68dac5f2a1b3c4d5e6f70812; card #481 comment 68d55da0fc9579f06920f651"
+  },
+  {
+    "title": "The Agent gives Marketing (non-UA) at 3,019.00 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Griffin's note leaves conference passes open; Leonard's Sep 30 DM relays the answer: Marketing (non-UA). The GDC passes (2,398.00 less the 399.00 refund) join Fiverr's 1,020.00.",
+    "evidence": "Slack DM D05S58U4SAK/1759248472.204417; feed sheets card_0417_2025-02-05 and card_0417_2025-03-04 adjustments"
+  },
+  {
+    "title": "The Agent shows Marketing (non-UA) at 2,398.00 for 2025-02 on the Category by month tab",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "The GDC passes posted Feb 5 fall in the February cycle and go under Marketing (non-UA) per Griffin's answer in Leonard's Sep 30 DM.",
+    "evidence": "Slack DM D05S58U4SAK/1759248472.204417; feed sheet card_0417_2025-02-05"
+  },
+  {
+    "title": "The Agent names the 99.99 LinkedIn Sales Navigator charge posted Sep 3, 2025 as a disputed charge in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "LinkedIn confirmed the cancellation by email on Aug 21 (rule 8: vendor email to the owner, Fred); the Sep 3 charge has no refund by the last sheet in the window, so it is disputed.",
+    "evidence": "Email frederick.stone@harmonygames.co/1841082615726759126 (LinkedIn, Aug 21); feed sheet f_9c2cecbd35b55e83151f42"
+  },
+  {
+    "title": "The Agent shows Webflow at 18.00 per month on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Rule 8 counts a downgrade once the vendor emails the account owner. Leonard forwarded Webflow's email: Basic hosting at $18.00/month from the Oct 19 charge. The Trello card shows no change, so the Sep charge of 29.00 is the stale value.",
+    "evidence": "Leonard's forward in Frederick's Gmail (frederick.stone@harmonygames.co/1843077030346987811, Sep 12), a vendor email to the account owner"
+  },
+  {
+    "title": "The Agent values WeWork at 0.00 per month in its Q4 run-rate on the Q4 run-rate tab, as a 0.00 row or by leaving it out of the listed plans",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard forwarded WeWork's email to him as account owner: the membership ends Sep 30 and the Sep 1 charge was the last one. Rule 8 counts a vendor-confirmed change even before it is on the board, so the Sep charge of 299.00 is not the Q4 rate.",
+    "evidence": "Leonard's forward frederick.stone@harmonygames.co/1842712891359915474 (Sep 8); feed card_0417_2025-09-01"
+  },
+  {
+    "title": "The Agent shows Murf at 11.00 per month on the Q4 run-rate tab",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Murf's Sep 25 email to Frederick (the account owner) moves the workspace to Basic at $11.00 from the Oct 18 charge; rule 8 counts it even before it is on the board, so the Sep charge of 22.00 is not the Q4 rate.",
+    "evidence": "Email frederick.stone@harmonygames.co/1844260144939613075 (Sep 25)"
+  },
+  {
+    "title": "The Agent names the 16.00 SavvyCal charge posted Sep 11, 2025 as a disputed charge in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "SavvyCal's email (forwarded by Leonard) says the team account closed Sep 4 and nothing more will be billed; the feed bills 16.00 on Sep 11 with no refund by the last sheet (rule 8).",
+    "evidence": "Leonard's forward frederick.stone@harmonygames.co/1842440452440816195 (Sep 5); feed card_0417_2025-09-11"
+  },
+  {
+    "title": "The Agent names the 20.00 Buttondown charge posted Sep 21, 2025 as a disputed charge in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Buttondown's email (forwarded by Leonard) says the newsletter was shut down Sep 15 and the card won't be billed again; the feed bills 20.00 on Sep 21 with no refund by the last sheet (rule 8).",
+    "evidence": "Leonard's forward frederick.stone@harmonygames.co/1843438818427329887 (Sep 16); feed card_0417_2025-09-21"
+  },
+  {
+    "title": "The Agent records the 16.00 SavvyCal charge of Sep 11, 2025 as a charge to dispute in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard asks for what Frederick finds on the card subscriptions to go in a comment on #481; SavvyCal was charged after its confirmed closure.",
+    "evidence": "Leonard's forward frederick.stone@harmonygames.co/1842440452440816195"
+  },
+  {
+    "title": "The Agent records the 20.00 Buttondown charge of Sep 21, 2025 as a charge to dispute in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard asks for what Frederick finds on the card subscriptions to go in a comment on #481; Buttondown was charged after its confirmed shutdown.",
+    "evidence": "Leonard's forward frederick.stone@harmonygames.co/1843438818427329887"
+  },
+  {
+    "title": "The Agent lists exactly four disputed charges in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard asks the reply to carry 'the disputed charges'. Close notes rule 8: Midjourney 60.00 (Sep 2), LinkedIn 99.99 (Sep 3), SavvyCal 16.00 (Sep 11) and Buttondown 20.00 (Sep 21). The Aug 2 Midjourney charge (refunded Aug 25) and the Jul 9 Loom charge (refunded Jul 15) are decoys; WeWork has no charge after Sep 1.",
+    "evidence": "Feed sheets f_8eeb88266f2fd9e9f26737, f_9c2cecbd35b55e83151f42, card_0417_2025-09-11, card_0417_2025-09-21; adjustments f_64e214d78ad44085744dad, f_5f0fdcceb9f524b65bdbfc"
+  },
+  {
+    "title": "The Agent records the Edgegap plan downgrade as confirmed in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "The #481 item 'Edgegap - downgrade plan (Arthur, ENG-2370)' is still unticked and Arthur's Sep 24 ENG-2370 comment says Edgegap still has to confirm, but Edgegap's Sep 29 email to Arthur (cc Frederick) confirms the downgrade to Starter at $420.00/month from the Oct 10 invoice. Leonard asks for what Frederick finds to go in a comment on #481; the row grades the confirmation.",
+    "evidence": "Email frederick.stone@harmonygames.co/1844619081941308353 (Edgegap to Arthur, cc Frederick, Sep 29); #481 checklist item (SQL L3359); Linear ENG-2370 Sep 24 comment"
+  },
+  {
+    "title": "The Agent lists exactly four of Arthur's subscriptions as still being charged in its ENG-2370 comment",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Five Trello subscription cards say 'Owner: Arthur': Unity Pro, Edgegap, Google Cloud and 1Password are still charged; Backtrace was cancelled Feb 28 and has no later charge, so it is not one of them.",
+    "evidence": "Trello cards 6781678eed4a22437740af0d, 678167bdc481ee214e69886d, 678167ecd9078d3fe0a0887b and the Google Cloud and Edgegap cards (Owner: Arthur); feed folder d_e342e9e32a98e7cc2d5d57"
+  },
+  {
+    "title": "The Agent shows Informa (GDC) at -399.00 for 2025-03 on the By vendor tab",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard asks for the breakdown by vendor month by month. Close notes rule 5 books a refund in the cycle it posts: the -399.00 GDC refund posted Mar 4 falls in the March cycle (Feb 26 to Mar 25), not against the Feb 5 charge.",
+    "evidence": "Feed sheet card_0417_2025-03-04 adjustments tab (INFORMA GDC 2025 -399.0, refund); SQL L441"
+  },
+  {
+    "title": "The Agent shows Category by month tab values for 2025-01 to 2025-09 that sum to 96,968.21 across every category it lists, where a UA or Unity Ads amount counts unless the tab labels it a reclass or outside opex, and total lines are left out",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Volume control for the tab: the cells need every feed sheet, the cycle rules and the bank-rule exclusions. Close notes rule 7 keeps the 1,000.00 Unity Ads charge 'not in a category', so a UA or Unity Ads category (or Unity Ads inside Marketing (non-UA)) makes 97,968.21 and fails, while a line labelled as a reclass or not opex is not a category. Categories may run as rows or columns.",
+    "evidence": "Feed folder d_e342e9e32a98e7cc2d5d57; close notes rules 7 and 11 in f_2a1e1bf25cf49d5d974bfc (SQL L19)"
+  },
+  {
+    "title": "The Agent shows the March 2025 cycle at 12,214.05 on the Ledger tie-out tab, tying to the ledger line dated 2025-03-31",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Close notes rule 5 nets a refund in the cycle it posts (the -399.00 GDC refund of Mar 4), unlike the 2024 Confluence rule that netted refunds against the month of the original charge.",
+    "evidence": "FIN-000474 (snowflake.json tables/38, 2025-03-31, 12,214.05); feed sheet card_0417_2025-03-04 adjustments tab (SQL L441)"
+  },
+  {
+    "title": "The Agent gives Hardware & equipment at 19,203.87 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard asks the reply to carry 'the totals by category' under Griffin's 2025 categories.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010; feed folder d_e342e9e32a98e7cc2d5d57"
+  },
+  {
+    "title": "The Agent gives Other G&A at 6,475.77 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard asks the reply to carry 'the totals by category' under Griffin's 2025 categories.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010; feed folder d_e342e9e32a98e7cc2d5d57"
+  },
+  {
+    "title": "The Agent gives Research & user testing at 2,086.46 for Jan–Sep 2025 in its reply on the 'Card spend breakdown for Q3 Standard Metrics' thread",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Leonard asks the reply to carry 'the totals by category' under Griffin's 2025 categories.",
+    "evidence": "Forwarded note frederick.stone@harmonygames.co/1844639871009298010; feed folder d_e342e9e32a98e7cc2d5d57"
+  },
+  {
+    "title": "The Agent sends exactly one email",
+    "category": "Outcome",
+    "weight": 1,
+    "justification": "Prompt: 'the summary goes out as a reply on his email thread'. Leonard's same-day 'Fwd: Q2 metrics - opex categories' thread is a near-match; a second send (or a send on that thread as well) makes two emails. A run that sends nothing fails.",
+    "evidence": "Thread frederick.stone@harmonygames.co/1844640253739158706; decoy thread (SQL L3042)"
+  },
+  {
+    "title": "The Agent makes exactly one change to Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 1,
+    "justification": "Leonard: 'put what you find in a comment on that one (I'll keep the checklist myself)'. The one expected change is the findings comment; ticking a checklist item, renaming or moving the card, or a second comment makes more than one change. A run with no change on #481 fails. The checklist stays at Notion, ChatGPT and 1Password complete.",
+    "evidence": "Trello card 68d2dafdbfcc777cc630fad0 checklist (SQL L3341–L3361)"
+  },
+  {
+    "title": "The Agent records exactly four charges to dispute in its comment on Trello card #481 'Q4 cost cuts - card subscriptions'",
+    "category": "Outcome",
+    "weight": 3,
+    "justification": "Close notes rule 8: Midjourney 60.00 (Sep 2), LinkedIn 99.99 (Sep 3), SavvyCal 16.00 (Sep 11) and Buttondown 20.00 (Sep 21). The refunded Midjourney Aug 2 and Loom Jul 9 charges are decoys.",
+    "evidence": "Feed sheets f_8eeb88266f2fd9e9f26737 (Midjourney, Sep 2), f_9c2cecbd35b55e83151f42 (LinkedIn, Sep 3), card_0417_2025-09-11 (SavvyCal), card_0417_2025-09-21 (Buttondown); adjustments tabs SQL L1245 and L1493"
+  },
+  {
+    "title": "The Agent ties the August 2025 cycle on the Ledger tie-out tab to the ledger line of 22,090.21 dated 2025-08-31, either as one August cycle figure of 22,090.21 or as August opex plus a UA reclass shown on that tab (as a row or a column) that together make 22,090.21 when the reclass is added back",
+    "category": "Outcome",
+    "weight": 5,
+    "justification": "Leonard asks to 'tie each month back to the ledger'. The August cycle (Jul 29 to Aug 28) is 22,090.21, the FIN-000600 line; it holds the Unity Ads charge, so a tie-out may show it whole or as opex plus the separate reclass (R4 grades the reclass amount).",
+    "evidence": "FIN-000600 (snowflake.json tables/38, 2025-08-31, 22,090.21); feed sheets card_0417_2025-07-29 to card_0417_2025-08-28; close notes rules 3 and 7 in f_2a1e1bf25cf49d5d974bfc (SQL L19)"
+  }
+]

@@ -1,0 +1,406 @@
+"""Julia Lawson - Zombie Match 3D difficulty baseline register (design builder; reads the base exports, never writes them).
+
+Writes, next to this file:
+  truth.json         candidates, membership, per-ticket status (the ground truth the dossier/rubric will reuse)
+  minted_ids.json    every seeded id with its own timestamp (collision-checked against the base)
+  planned_text.json  the wording /create-injection seeds verbatim (every delegation quote is a substring of one of these)
+and the draft manifest Task_Authoring-2/task_inputs/Working_Files/01_Hardness_Manifest.draft.json.
+"""
+import datetime as D
+import hashlib
+import json
+import os
+import re
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+B = '/home/sumit/Downloads/OC/OC/'
+WF = B + 'Task_Authoring-2/task_inputs/Working_Files/'
+LIN = json.load(open(B + 'HarmonyGames_Other_Services/Services_Data/linear/data.json'))
+GH = json.load(open(B + 'HarmonyGames_GitHub/Services_Data/github/data.json'))
+
+
+def ts(s):
+    return D.datetime.fromisoformat(s.replace('Z', '+00:00')).timestamp()
+
+
+def iso(t):
+    return D.datetime.fromtimestamp(t, D.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
+def h(seed, n):
+    return hashlib.sha256(seed.encode()).hexdigest()[:n]
+
+
+CLOCK = '2025-10-01T00:00:00Z'
+users = {u['id']: u['email'] for u in LIN['users']}
+uid = {u['email']: u['id'] for u in LIN['users']}
+idmap = {i['id']: i['identifier'] for i in LIN['issues']}
+ISS = {i['identifier']: i for i in LIN['issues']}
+ARTHUR = 'arthur.blake@harmonygames.co'
+
+# ------------------------------------------------------------------ cohort rule (card rule 1 + comment)
+CARD = re.compile(r'\b(difficulty|difficult|tier|tiers|tiering|enrage|enraged|blunder|cpm)\b', re.I)
+AMEND = re.compile(r'\battack power\b', re.I)
+
+
+def in_window(i):
+    return '2025-04-21' <= i['created_at'][:10] <= '2025-08-31'
+
+
+cands = []
+for i in LIN['issues']:
+    if not i['identifier'].startswith('ZOM-') or not in_window(i) or i['state_id'] == 'Duplicate':
+        continue
+    t = i['title'] or ''
+    reason = ('card' if CARD.search(t) else 'amend' if AMEND.search(t) else
+              'arthur' if users.get(i['assignee_id']) == ARTHUR else None)
+    if reason is None:
+        continue
+    if i['updated_at'] >= CLOCK and reason != 'arthur':
+        raise SystemExit(f"title candidate touched after the clock: {i['identifier']}")
+    cands.append(i)
+cands.sort(key=lambda i: i['number'])
+
+# ------------------------------------------------------------------ per-ticket files (Arthur's closing notes)
+DD = 'Assets/Scripts/DynamicDifficulty/'
+TAGGED = {  # Arthur tickets whose only tie to difficulty is the code they touched (not the title)
+    'ZOM-24': [DD + 'Editor/CpsDpsOverlay.cs'],
+    'ZOM-190': ['Assets/Scripts/LevelEditor/UI/LevelStatsPanel.cs', DD + 'Editor/LevelRunStats.cs'],
+    'ZOM-209': [DD + 'AlgoTierPicker.cs', 'Assets/Match3D/Game/Levels/AlgoLevelGenerator.cs'],
+    'ZOM-221': [DD + 'TrackScheduler.cs', 'Assets/Match3D/Game/Spawning/MonsterSpawner.cs'],
+    'ZOM-257': [DD + 'DynamicInsertion.cs'],
+    'ZOM-289': [DD + 'DynamicReplacement.cs', DD + 'DynamicInsertion.cs (deleted)'],
+    'ZOM-300': [DD + 'DynamicItemRemoval.cs'],
+    'ZOM-313': [DD + 'Editor/TrackCopy.cs', 'Assets/Scripts/LevelEditor/UI/TrackMenu.cs'],
+    'ZOM-383': [DD + 'DynamicReplacement.cs'],
+}
+TITLE_FILES = {  # Arthur's title-matching tickets
+    'ZOM-42': [DD + 'TierManager.cs', DD + 'TierAssignment.cs', 'Assets/Scripts/LevelEditor/Tiers/TierTabs.cs'],
+    'ZOM-45': ['Assets/Scripts/LevelEditor/UI/DifficultyLabel.cs', 'Assets/Match3D/Game/Levels/LevelObject.cs'],
+    'ZOM-50': ['Assets/Match3D/Analytics/LeftLevelEvent.cs'],
+    'ZOM-162': ['Assets/Scripts/LevelEditor/Tracks/TierTrackCloner.cs'],
+    'ZOM-163': ['Assets/Scripts/LevelEditor/UI/PlayButton.cs'],
+    'ZOM-173': ['Assets/Scripts/LevelEditor/UI/LevelObjectsPanel.cs'],
+    'ZOM-199': [DD + 'TierAssignment.cs', 'Assets/Scripts/Debug/DifficultyDebugMenu.cs'],
+    'ZOM-200': ['Assets/Scripts/Debug/DifficultyDebugMenu.cs'],
+    'ZOM-201': ['Assets/Scripts/Debug/DifficultyStatWindow.cs'],
+    'ZOM-250': ['Assets/Scripts/LevelEditor/UI/FauxLevelTimer.cs', 'Assets/Scripts/LevelEditor/UI/LevelStatsPanel.cs'],
+    'ZOM-277': ['Assets/Scripts/LevelEditor/UI/LevelStatsPanel.cs'],
+    'ZOM-282': [DD + 'Enrage.cs'],
+    'ZOM-303': [DD + 'TierManager.cs', 'Assets/Match3D/Game/Levels/GameLoader.cs'],
+    'ZOM-312': ['Assets/Scripts/LevelEditor/UI/LevelSettings.cs'],
+    'ZOM-315': ['Assets/Match3D/Game/Cards/AttackPower.cs'],
+}
+AREA = [  # neutral notes for the rest of Arthur's tickets (path by topic)
+    (r'icon|sprite|border', 'Assets/Editor/IconGenerator/IconGenerator.cs'),
+    (r'ipad|stretch|tablet|resolution|screen|overlay|ui|tool tip|hud|leaderboard|profile|items page', 'Assets/Scripts/UI/'),
+    (r'level editor|editor|play button|multi edit|easy add|copy|migrat', 'Assets/Scripts/LevelEditor/'),
+    (r'algo', 'Assets/Match3D/Game/Levels/Algo2/'),
+    (r'spawn|drop|item|monster|throw|matching|deck|grid|size|boss buster|null ref|artifact|orientation|insertion|card',
+     'Assets/Match3D/Game/'),
+    (r'singular|analytics', 'Assets/Match3D/Analytics/'),
+    (r'quest|lives|plague|race|economy', 'Assets/Match3D/LiveOps/'),
+    (r'haptic', 'Assets/Match3D/Game/Feedback/'),
+]
+
+# ------------------------------------------------------------------ ground truth per member
+REPLACED = {'ZOM-23': 'match3d#341', 'ZOM-254': 'ZOM-282', 'ZOM-282': 'match3d#401', 'ZOM-209': 'ZOM-392',
+            'ZOM-257': 'ZOM-289'}
+EDITOR = {'ZOM-162', 'ZOM-163', 'ZOM-173', 'ZOM-200', 'ZOM-201', 'ZOM-250', 'ZOM-277', 'ZOM-312', 'ZOM-24', 'ZOM-190',
+          'ZOM-313'}
+NOT_SHIPPED_DONE = {'ZOM-303'}   # Done in Linear; level demotion behind a flag that is off in the store builds
+PRS = {'ZOM-173': 'match3d#243', 'ZOM-303': 'match3d#244', 'ZOM-312': 'match3d#265', 'ZOM-295': 'match3d#271'}
+
+truth = []
+for i in cands:
+    k, t = i['identifier'], i['title']
+    reason = 'card' if CARD.search(t) else 'amend' if AMEND.search(t) else 'arthur'
+    member = reason in ('card', 'amend') or k in TAGGED
+    if not member:
+        status = None
+    elif i['state_id'] != 'Done' or k in NOT_SHIPPED_DONE:
+        status = 'Not shipped'
+    elif k in REPLACED:
+        status = 'Replaced'
+    elif k in EDITOR:
+        status = 'Editor only'
+    else:
+        status = 'Live'
+    truth.append(dict(id=k, title=t, state=i['state_id'], assignee=users.get(i['assignee_id']), created=i['created_at'],
+                      completed=i['completed_at'], canceled=i['canceled_at'], updated=i['updated_at'],
+                      parent=idmap.get(i['parent_id']), reason=reason, member=member, status=status,
+                      replaced_by=REPLACED.get(k) if status == 'Replaced' else None, pr=PRS.get(k),
+                      decided_by_comment=k in TAGGED or k in ('ZOM-23', 'ZOM-45', 'ZOM-277', 'ZOM-282', 'ZOM-209',
+                                                               'ZOM-257', 'ZOM-24', 'ZOM-190', 'ZOM-313')))
+members = [r for r in truth if r['member']]
+counts = {}
+for r in members:
+    counts[r['status']] = counts.get(r['status'], 0) + 1
+OUT_TRUTH = dict(clock=CLOCK, candidates=len(truth), members=len(members), counts=counts,
+                 card_only=sum(r['reason'] == 'card' for r in members), amend=sum(r['reason'] == 'amend' for r in members),
+                 tagged=sum(r['reason'] == 'arthur' for r in members), rows=truth)
+
+# ------------------------------------------------------------------ minted ids
+out = {}
+DM_LEO = 'D05HB64NMQU'       # Leonard <-> Julia DM
+ZD = 'C090N54TG79'           # #zombie-design (Julia, Robert, Leonard, Arthur are members)
+ZPRS = 'C093LEZGF6J'         # #zombie-prs (GitHub app mirror of match3d; Julia is not a member)
+slack = [
+    ('S_ROBERT_SUM', ZD, '2025-09-29T22:31:17.402611Z'),     # wrong summary (A1)
+    ('S_BRIAN_POST', ZD, '2025-09-30T16:12:40.118527Z'),     # non-authoritative: post the list here
+    ('S_ASK', DM_LEO, '2025-09-30T19:48:26.530914Z'),        # anchor A1
+]
+for k, c, t in slack:
+    tsv = f"{ts(t):.6f}"
+    out[k] = {'channel': c, 'ts': tsv, 'id': h(f"{c}|{tsv}", 32), 'at': t}
+
+
+def trello(seed, t):
+    return format(int(ts(t)), '08x') + h('trello-jl-' + seed, 16)
+
+
+for k, t in [('T_H1CARD', '2025-09-29T18:05:12Z'), ('T_H1CREATE', '2025-09-29T18:05:12Z'),
+             ('T_H1CMT', '2025-09-30T15:41:55Z'),
+             ('T_DDCARD', '2025-03-27T16:20:08Z'), ('T_DDCREATE', '2025-03-27T16:20:08Z')]:
+    out[k] = {'id': trello(k, t), 'at': t}
+
+
+def f(seed):
+    return 'f_' + h('drive-jl' + seed, 22)
+
+
+def d(seed):
+    return 'd_' + h('drive-jl' + seed, 22)
+
+
+out['FOLDER_ZMDIFF'] = {'id': d('zm_difficulty'), 'at': '2025-06-13T15:02:11Z'}
+out['SHEET_KNOBS'] = {'id': f('zm_difficulty_knobs'), 'created': '2025-06-13T15:20:40Z', 'at': '2025-08-26T16:55:02Z'}
+out['DOC_AGENDA'] = {'id': f('zm_tuning_agenda_oct6'), 'created': '2025-09-29T18:31:09Z', 'at': '2025-09-30T11:04:37Z'}
+
+
+def gid(t):
+    return str(int(ts(t) * 1000) << 20 | int(h('g' + t, 5), 16) & 0xFFFFF)
+
+
+def msgid(key):
+    import base64
+    return '<CA' + base64.b64encode(hashlib.sha256(key.encode()).digest()).decode()[:38].replace('/', '_').replace('+', '-') + '@mail.gmail.com>'
+
+
+for k, t in [('G_BUILD', '2025-09-30T09:12:44Z'), ('G_BUILD_RE', '2025-09-30T13:26:05Z')]:
+    out[k] = {'at': t, 'gmail_id': gid(t), 'message_id': msgid(k)}
+out['G_BUILD']['thread_id'] = out['G_BUILD']['gmail_id']
+out['G_BUILD_RE']['thread_id'] = out['G_BUILD']['gmail_id']
+out['G_BUILD']['mailboxes'] = ['julia.lawson@harmonygames.co', 'leonard.hayes@harmonygames.co', 'robert@harmonygames.co',
+                               'arthur.blake@harmonygames.co', 'brian.foster@harmonygames.co']
+
+SESSION_CALS = ['leonard.hayes@harmonygames.co', 'julia.lawson@harmonygames.co', 'robert@harmonygames.co',
+                'arthur.blake@harmonygames.co', 'brian.foster@harmonygames.co']
+out['GCAL_TUNING'] = {'ical_uid': h('ical_zm_tuning_oct6', 32) + '@hg4', 'start': '2025-10-06T17:00:00Z',
+                      'end': '2025-10-06T18:00:00Z', 'created': '2025-09-29T18:24:51Z', 'at': '2025-09-29T18:24:51Z',
+                      'organizer': 'leonard.hayes@harmonygames.co',
+                      'copies': {cal: 'evt_' + h('zmtuning' + cal, 22) for cal in SESSION_CALS}}
+
+out['CONF_DDA'] = {'id': 'page_zm_dynamic_difficulty', 'space': 'space_PROD', 'at': '2025-06-24T14:10:33Z',
+                   'author': 'user_EMPLOYEE_0016'}
+out['CC_ART'] = {'id': 'comment_zm_dynamic_difficulty_c1', 'page': 'page_zm_dynamic_difficulty',
+                 'at': '2025-08-26T15:22:09Z', 'author': 'user_EMPLOYEE_0025'}
+out['PRC_244'] = {'id': 'harmonygames-Games/match3d#244#c_3', 'pr': 'harmonygames-Games/match3d#244',
+                  'at': '2025-06-25T19:40:52Z', 'author': 'EMPLOYEE_0025_GITHUB_USERNAME',
+                  'timeline_event': 'harmonygames-Games/match3d#244#ev_7'}
+
+# Linear notes: Arthur's closing note on every Arthur candidate; owners' notes on the other title/amend candidates.
+NOTE_AUTHOR = {'ZOM-23': 'robert@harmonygames.co', 'ZOM-30': 'leonard.hayes@harmonygames.co',
+               'ZOM-49': 'oliver.brooks@harmonygames.co', 'ZOM-161': 'oliver.brooks@harmonygames.co',
+               'ZOM-258': 'marcus.bennett@harmonygames.co', 'ZOM-262': 'oliver.brooks@harmonygames.co',
+               'ZOM-275': 'oliver.brooks@harmonygames.co', 'ZOM-288': 'robert@harmonygames.co',
+               'ZOM-293': 'robert@harmonygames.co', 'ZOM-295': 'owen.baker@harmonygames.co'}
+# EMPLOYEE_0032 tickets (token person): the QA note is Vincent's (Douglas precedent: never voice the token)
+for k in ('ZOM-246', 'ZOM-254', 'ZOM-263', 'ZOM-274', 'ZOM-280'):
+    NOTE_AUTHOR[k] = 'vincent.parker@harmonygames.co'
+EXTRA_NOTES = {'ZOM-392': ('arthur.blake@harmonygames.co', '2025-09-04T10:14:31Z')}   # non-member: says 2.0 replaces 209
+
+
+def area(t):
+    for rx, p in AREA:
+        if re.search(rx, t, re.I):
+            return p
+    return 'Assets/Match3D/Game/'
+
+
+def note_text(r):
+    k, t = r['id'], r['title']
+    if k == 'ZOM-23':
+        return "the first 50 were rebuilt from scratch for the MF 35 pack in match3d#341, so the easier versions from this ticket are gone"
+    if k == 'ZOM-282':
+        return "closing. touched " + DD + "Enrage.cs. the hp boost still applies on respawned monsters, will clean that up later"
+    if k == 'ZOM-289':
+        return "closing. touched " + ", ".join(TAGGED[k]) + ". insertion from ZOM-257 is removed, only replacement runs now"
+    if k == 'ZOM-392':
+        return "closing. touched Assets/Match3D/Game/Levels/Algo2/. 2.0 handles everything past level 100 now, the old generator from ZOM-209 is deleted"
+    if k == 'ZOM-292':
+        return ("keeping this open as the umbrella for the rest of the 2.0 list. copy monsters went in with match3d#267, "
+                "touched Assets/Scripts/LevelEditor/ only")
+    if k == 'ZOM-303':
+        return "closing. touched " + ", ".join(TITLE_FILES[k]) + " (match3d#244)"
+    files = TAGGED.get(k) or TITLE_FILES.get(k)
+    if r['assignee'] == ARTHUR:
+        if r['state'] == 'Canceled':
+            return "dropping this one, nothing merged"
+        if r['state'] in ('Todo', 'Backlog'):
+            return "parking this, nothing merged yet"
+        if r['state'] == 'In Progress':
+            return "wip on a branch, nothing merged yet"
+        if files:
+            return "closing. touched " + ", ".join(files)
+        return "closing. touched " + area(t) + " only"
+    owner = NOTE_AUTHOR.get(k)
+    if owner == 'vincent.parker@harmonygames.co':
+        return "checked on the dev build, works as described" if r['state'] == 'Done' else "not reproducible anymore, closing"
+    if r['state'] == 'Todo':
+        return "still happens on the dev build, keeping it open"
+    return "checked on the dev build, works as described"
+
+
+notes = {}
+for r in truth:
+    k = r['id']
+    i = ISS[k]
+    author = ARTHUR if r['assignee'] == ARTHUR else NOTE_AUTHOR.get(k)
+    if author is None:
+        continue
+    if i['updated_at'] >= CLOCK:          # open at the clock; changed only afterwards -> parking note before the clock
+        at = iso(min(ts('2025-09-26T15:00:00Z'), ts(i['created_at']) + 86400 * 30) + 60 * (int(h('p' + k, 2), 16) % 50))
+        notes[k] = {'id': 'cmt_' + h('jl-lin' + k, 20), 'issue': k, 'author': uid[author], 'author_email': author,
+                    'at': at, 'text': "parking this, nothing merged yet", 'decisive': False, 'post_clock_issue': True}
+        continue
+    if k == 'ZOM-292':
+        at = '2025-07-04T03:07:46Z'          # after match3d#267 merged (03:07:45Z), before the issue's updated_at 03:07:47Z
+    elif k == 'ZOM-23':
+        at = '2025-07-28T17:41:20Z'          # after match3d#341 merged (2025-07-28T17:13Z); issue updated_at bumped
+    if k not in ('ZOM-292', 'ZOM-23'):
+        anchor_t = i['completed_at'] or i['canceled_at'] or i['updated_at']
+        at = iso(ts(anchor_t) - 60 * (4 + int(h('m' + k, 2), 16) % 20))
+        if ts(at) < ts(i['created_at']):
+            at = iso(ts(i['created_at']) + 300)
+    notes[k] = {'id': 'cmt_' + h('jl-lin' + k, 20), 'issue': k, 'author': uid[author], 'author_email': author, 'at': at,
+                'text': note_text(r), 'decisive': r['decided_by_comment'] or k in ('ZOM-392',)}
+for k, (author, at) in EXTRA_NOTES.items():
+    notes[k] = {'id': 'cmt_' + h('jl-lin' + k, 20), 'issue': k, 'author': uid[author], 'author_email': author, 'at': at,
+                'text': note_text({'id': k, 'title': ISS[k]['title'], 'assignee': author, 'state': 'Done'}), 'decisive': True}
+out['LIN_NOTES'] = notes
+
+# ------------------------------------------------------------------ collision checks against the base
+base_cmt = {c.get('id') for c in LIN.get('comments', [])}
+assert not ({n['id'] for n in notes.values()} & base_cmt)
+gh_pc = {c['id'] for c in GH['pull_request_comments']}
+assert out['PRC_244']['id'] not in gh_pc
+gh_ev = {e['id'] for e in GH['timeline_events']}
+assert out['PRC_244']['timeline_event'] not in gh_ev
+for k in ('S_ROBERT_SUM', 'S_BRIAN_POST', 'S_ASK'):
+    p = B + f"HarmonyGames_Other_Services/Services_Data/slack/messages/{out[k]['channel']}/{out[k]['at'][:7]}.json"
+    if os.path.exists(p):
+        assert out[k]['ts'] not in {m['ts'] for m in json.load(open(p))}, k
+for k, v in out.items():
+    if isinstance(v, dict) and 'at' in v and isinstance(v['at'], str):
+        assert v['at'] < CLOCK or k == 'GCAL_TUNING', (k, v['at'])
+
+# ------------------------------------------------------------------ planned wording
+P = {}
+P['S_ASK'] = ("julia before monday's tuning session i want a baseline of the difficulty system from you, not from memory. "
+              "every difficulty ticket since we started zm and whether players actually have it in the store builds right now, "
+              "plus the tier and enrage numbers as they are today. the rules for the register are on the difficulty baseline "
+              "card on the zm roadmap board. reply here with the counts when it's in the folder")
+P['S_ROBERT_SUM'] = ("for monday so we don't start from zero: everything from the june dynamic difficulty push is in the store "
+                     "builds except tier delete, including the level drop after a tier demotion. enrage is +50% speed and "
+                     "damage like 282 says")
+P['S_BRIAN_POST'] = "julia when you have the difficulty list can you drop it in here too so the rest of us can see it"
+P['H1_TITLE'] = 'Difficulty baseline (Julia)'
+P['H1_DESC'] = (
+    "For the Oct 6 tuning session. Julia owns this one.\n"
+    "1. Scope: every ZOM ticket created Apr 21 - Aug 31 that changed difficulty. That is any ticket with difficulty, "
+    "difficult, tier, tiers, tiering, enrage, enraged, blunder or CPM as a whole word in the title, plus Arthur's tickets "
+    "that touched the tier code (anything under Assets/Scripts/DynamicDifficulty) even if the title doesn't say so. "
+    "Arthur's closing note on each of his tickets lists the files. Duplicates are out.\n"
+    "2. One row per ticket: ticket, title, Linear state, status, and for Replaced the ticket or PR that replaced it. "
+    "Layout as in the session agenda.\n"
+    "3. Status is one of Live, Editor only, Replaced, Not shipped, judged against the store builds players have today. "
+    "What is in the store builds and what counts as shipped: Arthur's store builds mail.\n"
+    "4. Replaced: a later ticket or PR changed what this ticket shipped so it no longer works the way the ticket says. "
+    "Name the later one. ZOM-42 is the system itself: it stays Live and its numbers go on the rules tab.\n"
+    "5. Rules in force tab: starting tier, promotion, demotion and enrage as they work in the store builds today. "
+    "The numbers designers tune are on Arthur's difficulty knobs sheet; the tier rules are written up on the dynamic "
+    "difficulty page in Confluence.\n"
+    "6. Anything Done in Linear that players don't actually have goes back to Todo with a comment saying what's missing. "
+    "Same ticket, no new ones.\n"
+    "7. The register goes in the ZM Difficulty folder. Share it with everyone on the tuning session invite: Robert can "
+    "edit, everyone else comments.")
+P['H1_CMT'] = ("adding to rule 1: attack power in the title counts too, enrage tuning leans on those numbers. rest of the "
+               "card stands.")
+P['DD_TITLE'] = 'Difficulty baseline'
+P['DD_DESC'] = (
+    "For the April difficulty pass on Domino Delights.\n"
+    "1. Scope: ENG tickets from the #difficulty-optimization work (pity, bot balancing, level swaps).\n"
+    "2. One row per ticket: ticket, status (Live / Not live).\n"
+    "3. Live means merged to GameOfDominoes main.\n"
+    "4. The list goes in the Difficulty Optimization sheet. Share it with Brian and Vincent.")
+P['DOC_AGENDA_TITLE'] = 'ZM difficulty tuning - Oct 6'
+P['DOC_AGENDA_BODY'] = (
+    "Agenda\n"
+    "1. Baseline (Julia): the register from the difficulty baseline card. One sheet with two tabs, Tickets and Rules in "
+    "force, so we tune from what players have and not from what we remember.\n"
+    "2. Rage by level (Leonard): one enrage multiplier for every level is too blunt for the early funnel.\n"
+    "3. Tier 0 versions (Robert): sign-off status per level band.\n"
+    "4. What 0.3.22 had and what we keep (Robert).\n")
+P['G_BUILD_SUBJECT'] = 'store builds for monday'
+P['G_BUILD_BODY'] = (
+    "Hi all,\n\nFor Monday, so we're talking about the same thing. The store builds players have today are iOS 0.3.49 "
+    "(Leonard released it yesterday) and Android 0.3.133. Both were cut from main on Sep 26, and everything difficulty "
+    "related was merged long before that.\n\nTwo things people mix up:\n- The level editor (Assets/Scripts/LevelEditor), "
+    "anything in an Editor folder and the debug menu (Assets/Scripts/Debug) are stripped from store builds. A ticket "
+    "whose changes are only there never reached players, Done or not.\n- Code behind a remote flag counts as shipped "
+    "only if the flag is on for players.\n\nArthur")
+P['G_BUILD_RE_BODY'] = (
+    "One more for the list: the level drop after a tier demotion (ZOM-303, match3d#244) is behind dda_level_demotion, "
+    "and that flag is still off for everyone. We never turned it on, Robert hasn't signed off the tier 0 versions.\n\n"
+    "Arthur\n\nOn Tue, Sep 30, 2025 at 2:12 AM Arthur Blake <arthur.blake@harmonygames.co> wrote:\n"
+    "> Hi all,\n>\n> For Monday, so we're talking about the same thing. The store builds players have today are iOS 0.3.49\n"
+    "> (Leonard released it yesterday) and Android 0.3.133. ...")
+P['GCAL_SUMMARY'] = 'ZM difficulty tuning'
+P['SHEET_KNOBS_TITLE'] = 'ZM difficulty knobs'
+P['SHEET_KNOBS_TABS'] = {
+    'Live': [["knob", "value", "since"],
+             ["starting_tier_cpm (first 10 levels avg, >=)", "90", "2025-06-23"],
+             ["enrage_speed_mult", "1.40", "2025-08-26"],
+             ["enrage_damage_mult", "1.30", "2025-08-26"],
+             ["enrage_hp_mult", "1.00", "2025-08-26"]],
+    'Next pass': [["knob", "proposed", "who"],
+                  ["enrage_speed_mult levels 1-20", "1.20", "Robert"],
+                  ["enrage_speed_mult levels 21+", "1.50", "Robert"],
+                  ["enrage_damage_mult", "1.25", "Robert"],
+                  ["starting_tier_cpm", "85", "Leonard"]],
+    'History': [["date", "change", "ref"],
+                ["2025-06-23", "starting tier: first 10 levels avg CPM >= 90 goes to tier 1", "ZOM-199"],
+                ["2025-06-23", "blunder enrage +50% speed and damage", "ZOM-282"],
+                ["2025-08-26", "enrage split into separate speed and damage knobs (1.40 / 1.30), no hp", "match3d#401"]]}
+P['CONF_DDA_TITLE'] = 'ZM dynamic difficulty - how tiers work'
+P['CONF_DDA_BODY'] = (
+    "Tiers -2 to +2 per level (ZOM-42); tier 0 is the default version of each level.\n"
+    "Starting tier: average CPM over the first 10 levels; 90 or more starts you on tier 1, everyone else on tier 0.\n"
+    "Promotion: win rate of 80% or more over the last 10 attempts moves you up one tier. On tier -2 one win promotes you.\n"
+    "Demotion: 4 losses in a row moves you down one tier.\n"
+    "Blunder: overfilling the match bar enrages every monster on the board: +25% walk speed, +25% damage, +25% max HP "
+    "(ZOM-254).")
+P['CC_ART_BODY'] = ("promotion looks at the last 12 attempts now, not 10, since the bot sim pass. still 80%. the enrage "
+                    "numbers above are old, the knobs sheet has the current ones")
+P['PRC_244_BODY'] = ("level drop after demotion ships behind dda_level_demotion. we turn it on with the next store build once "
+                     "robert has the tier 0 versions")
+P['FOLDER_ZMDIFF_NAME'] = 'ZM Difficulty'
+P['NOTES'] = {k: v['text'] for k, v in notes.items()}
+
+json.dump(OUT_TRUTH, open(os.path.join(HERE, 'truth.json'), 'w'), indent=1)
+json.dump(out, open(os.path.join(HERE, 'minted_ids.json'), 'w'), indent=1)
+json.dump(P, open(os.path.join(HERE, 'planned_text.json'), 'w'), indent=1, ensure_ascii=False)
+print('candidates', len(truth), 'members', len(members), counts, 'card', OUT_TRUTH['card_only'], 'amend',
+      OUT_TRUTH['amend'], 'tagged', OUT_TRUTH['tagged'], 'notes', len(notes),
+      'decisive notes', sum(1 for n in notes.values() if n['decisive']))
