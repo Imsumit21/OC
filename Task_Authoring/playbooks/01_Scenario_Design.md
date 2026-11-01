@@ -309,6 +309,16 @@ This step consumes that output and owns the decisions:
 - [ ] **Trap independence** (§2.6 item 6): a trap counts only if an agent that has defeated all
       the others can still fail it; merge traps that fall to the same rule. No record states a
       chain's conclusion (item 5).
+- [ ] **Hardness v2 trap selection** (`Hardness_Mastery.md` §13; Opus 5.5): name at least two of the nine v2 traps
+      the design uses, as two separate decisions that each need checking across sources (Part 5 rule 1), ranked by
+      cost: a done source with the missing piece in another service (A24, `done_gap`) and a correction somewhere else
+      come first. For each, name the convincing wrong source and the record that beats it — who wrote each, when and
+      with what authority — and the weight-5 row the miss flips (status, number, inclusion or write).
+- [ ] **Corrections off the first-read path.** No correction may sit in the superseded record's container, an
+      anchor's container (including replies in the anchor's thread) or the container of a record that delegates to
+      the superseded one: Opus 5.5 reads those on the way and settles the trap (v2 Part 2; dd-2024 rev1 T1, T3).
+      Put it in a later reply on another item, a page comment, a review or another service, tied to the same item and
+      person. Volume and plain arithmetic are not difficulty (v2 Part 4): never count them toward a trap.
 
 ### S5a — Mechanism portfolio (the design driver; the S5 counts stay as floors)
 - [ ] Generate **10–15 grounded candidates** (moved from `/create-hardening` MODE A A3), each cited to real records:
@@ -385,6 +395,11 @@ This step consumes that output and owns the decisions:
       SQL exists yet, so only the manifest-structure flags can fire; injection S5c re-runs it on the SQL.
 - [ ] Write a disposition for every flag in section 5. Lexical warnings, not proof: redesign the difficulty, never
       remove a fairness link.
+- [ ] `python3 -B Task_Authoring/tools/hardness_v2_check.py --design --task-dir Task_Authoring/task_inputs` (Hardness
+      v2 Part 7 self-checks: SAME_PLACE, DONE_CHECK, TWO_DECISIONS, DECISION_FLIP, INPUT_CHECK, FILTER_CHECK,
+      RULE_IN_PROMPT). Without SQL, records that only the overlay can place report UNRESOLVED; injection re-runs it on
+      the SQL. Write a disposition for every FLAG and UNRESOLVED in section 5; a FLAG is answered by moving evidence or
+      changing the work, never by raising a weight (`09_Rubric_Writing.md` gate 8).
 
 ### S6 — Deliverables and writes
 - [ ] One register/record (exact totals, checked-absence states) + 3–6 dependent writes over
@@ -462,7 +477,9 @@ This step consumes that output and owns the decisions:
       invariants, ≤ 5 spot checks per group + a volume criterion, one criterion per required
       write/recipient.
       No decoy or exclusion that only a `leaves X as found / open / unchanged` row could grade: each exclusion is an
-      exact count or scope on a required write, or a requirement inside a required artifact. No graded count, format
+      exact count or scope on a required write, or a requirement inside a required artifact. This is how a v2 trap 9
+      (A25, work someone already did) and v2's "guard row" are graded here: "creates charge records for exactly 17 of
+      the 20 receipts", never "leaves the first two alone" (`Hardness_Mastery.md` §10). No graded count, format
       or line limit the prompt will not state (`Evals/3_Rubrics_Eval.md` Negative Criteria, Overly Specific).
 
 - [ ] **Coherence rail** (Cross-Service Coherence is a hard fail on presence): every S1 audit row

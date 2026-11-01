@@ -283,6 +283,18 @@ revision's label; `<harness>` is `NAME@VERSION`; `<model>` is the run's model la
       count: other models' decisions, control over-applications, slips and `mechanism?` errors pending review.
 
       **Stop rule:** at most two platform pre-checks per scenario. After two misses, change the scenario.
+- [ ] **7. Hardness v2 diagnosis** (`Hardness_Mastery.md` §13.4; Opus 5.5). Run
+      `python3 -B Task_Authoring/tools/hardness_v2_check.py --task-dir Task_Authoring/task_inputs` on the revision the run
+      is bound to and quote its table in section 8. For every trap the run settled, state which kind of v2 failure it
+      was, from the call ledger: the correction came back in the same call or container as the original
+      (`same_container`), in an anchor's thread or file (`first_read`), or in the record that delegates to the original
+      (`on_delegation_path`); a bulk call carried the answer; a decoy was never on the path; volume was brute-forced.
+      Then list the heavy rows (weight 5) that passed: those are the parts Opus finds easy, and the proposed rebuilds
+      (section 10) must not add more of them. Propose only v2 moves: move a correction out of the obvious place, add a
+      done source with a missing piece (A24) or a completion note elsewhere (A25), move one or two in-scope items
+      outside the obvious filter, or put the deciding fact behind an alias a contact or history record resolves. Never
+      propose more rows, items, steps or volume, and never spell a rule out in the prompt (one v2 task went from
+      failing to 100 %).
 
 **What one run can and cannot show.** The screen is asymmetric. It can reject a design strongly: if success needs k
 mechanisms each landing with p ≥ 0.7, a run in which all k leak has likelihood ≤ 0.3ᵏ (2.7 % for k = 3). It cannot
@@ -303,9 +315,9 @@ A16 after retrieval).
 5. Per-rollout ledgers.
 6. Friction, tool-defect and horizon checks.
 7. Verifier sanity findings (B3e).
-8. Why Opus passed.
+8. Why Opus passed (with the `hardness_v2_check` table and, per settled trap, its v2 failure kind; heavy rows that passed).
 9. Purge list (proposed; S0r decides).
-10. Proposed rebuilds (candidates for `/create-scenario --revise` S5a).
+10. Proposed rebuilds (candidates for `/create-scenario --revise` S5a), each a Hardness v2 move (§13.4), never added volume.
 11. Routing (proposed; S0r decides): universe changes proposed (the facts they would change) · prompt-side defects (with proposed wording) · routed OE and rubric observations.
 12. Self-review (below).
 13. Next steps.
