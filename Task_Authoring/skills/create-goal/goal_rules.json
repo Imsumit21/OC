@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "reviewed": "2026-11-01: drafted by the build session from the sources below; reviewed by the oracle (GPT-6.1 Sol, round 1 REVISE), every MUST and SHOULD applied (Task_Authoring/plans/Create_Goal_Skill_Plan_2026-11-01.md, section 11). Same day: the Opus 5.5 hardness guide checked against the gates and incorporated with four corrections (plan section 12), implementation review fixes in plan section 13, and the guide moved from the git-ignored workspace root (`hardness update.md`) to `Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`, which made its lines required (plan section 14).",
+  "reviewed": "2026-11-01: drafted by the build session from the sources below; reviewed by the oracle (GPT-6.1 Sol, round 1 REVISE), every MUST and SHOULD applied (Task_Authoring/plans/Create_Goal_Skill_Plan_2026-11-01.md, section 11). Same day: the Opus 5.5 hardness guide checked against the gates and incorporated with four corrections (plan section 12), implementation review fixes in plan section 13, and the guide moved from the git-ignored workspace root (`hardness update.md`) to `Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`, which made its lines required (plan section 14). After the Hardness v2 pipeline commits (merged in 2aa2809), rule 4 asks for at least two distinct, named trap types from the guide as separate cross-source decisions and the deliverable names tools/hardness_v2_check.py (plan section 16).",
   "about": "Wording for /create-goal. build_goal.py fills the {placeholders} from the task context. Each evidence entry names a workspace-relative file and a phrase that must occur in it (whitespace-insensitive); a required line whose evidence is missing stops the run (exit 3), an optional line is dropped with a warning. The check proves only that the cited phrase still exists, not that the rule is still right: review the text against its sources whenever a source or this file changes. kind: authority = Evals, playbooks, GEN_EXECUTION, the QC spec or policy; guideline = platform guidance outside the gates (the Opus 5.5 hardness guide, `Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`, tracked; its lines are required like any other); lesson = the learnings file (historical; a later section can supersede an earlier one).",
   "limits": {"words": "whitespace-delimited tokens that contain a letter or digit (a path is one word); the ceiling applies to the generated text, --note text counts only towards the warning", "warn_words": 520, "max_words": 560},
   "lines": {
@@ -82,7 +82,7 @@
       ]
     },
     "rule_injection": {
-      "text": "3. /injection: check each seeded entity across the whole universe, date each seed after the base events it relies on, and confirm the agent's tools return it.",
+      "text": "3. /injection: check each seeded entity across the whole universe, date each seed after the base events it relies on, confirm the agent's tools return it.",
       "evidence": [
         {"path": "Evals/0_Injection_Quality_Eval.md", "contains": "a material introduced contradiction cannot be reconciled", "kind": "authority"},
         {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "**tool-surface proof** (the decisive record is returned by the natural call", "kind": "authority"},
@@ -92,7 +92,7 @@
       ]
     },
     "rule_hardness": {
-      "text": "4. /hardness: ≥ {channels} independent loss channels, none over half the weight{v2_traps}. Keep authority clear and incorporated and answers out of hubs and checklists, so difficulty survives complete retrieval; each miss must flip a multi-source row (weight 5 by kind of work, never raised), and no row may pass by doing nothing.",
+      "text": "4. /hardness: ≥ {channels} independent loss channels, none over half the weight{v2_traps}. Keep authority clear and incorporated, answers out of hubs and checklists, so difficulty survives complete retrieval; each miss must flip a multi-source row (weight 5 by kind of work, never raised); no row may pass by doing nothing.",
       "evidence": [
         {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "Use at least 3 independent loss channels on separate outputs; Hard needs at least 4.", "kind": "authority"},
         {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "No unit of discovery may decide more than half the weight", "kind": "authority"},
@@ -104,8 +104,12 @@
       ]
     },
     "v2_traps": {
-      "text": ", from the trap types in the hardness guide Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md (not its worked examples: those are real tasks), each naming the convincing wrong source and the record that beats it; volume, steps, clean totals, visible caveats and same-thread corrections don't work",
+      "text": ", two or more of them cross-source decisions on distinct, named trap types from the hardness guide (Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md, not its worked examples: those are real tasks), each naming the convincing wrong source and the record that beats it; volume, clean totals, visible caveats and same-thread corrections don't work",
       "evidence": [
+        {"path": "Task_Authoring/setup/GEN_EXECUTION.md", "contains": "Every design names at least two of these as separate cross-source decisions that each flip a weight-5 row", "kind": "authority"},
+        {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "name at least two of the nine v2 traps the design uses, as two separate decisions that each need checking across sources", "kind": "authority"},
+        {"path": "learnings", "contains": "Name at least two of the nine v2 traps as separate cross-source decisions, each flipping a weight-5 row", "kind": "lesson"},
+        {"path": "learnings", "contains": "A correction the agent passes on the way is no trap", "kind": "lesson"},
         {"path": "Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md", "contains": "This guide replaces the hardness advice we built on Opus 4.8.", "kind": "guideline"},
         {"path": "Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md", "contains": "## Part 9. Worked examples (real tasks)", "kind": "guideline"},
         {"path": "Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md", "contains": "name the convincing wrong source and the record that beats it", "kind": "guideline"},
@@ -116,7 +120,7 @@
       ]
     },
     "rule_spread": {
-      "text": "5. Spread: if every run fails the same rows, the failure-pattern and SD gates fail, so vary the traps' findability. Before SQL, score whole policies and single misses on the real surface (UNCALIBRATED): E[avg] ≤ {target} %, P(all gates) ≥ 0.5.",
+      "text": "5. Spread: identical misses in every run fail the failure-pattern and SD gates, so vary the traps' findability. Before SQL, score whole policies and single misses on the real surface (UNCALIBRATED): E[avg] ≤ {target} %, P(all gates) ≥ 0.5.",
       "evidence": [
         {"path": "Task_Authoring/references/Docs/QC_Spec_Doc_Latest.csv", "contains": "Need >=2 distinct signatures and no single signature >50% of failing rollouts", "kind": "authority"},
         {"path": "Task_Authoring/playbooks/12_Difficulty.md", "contains": "population SD of per-rollout weighted pass rates in 0.1–0.3, edges inclusive", "kind": "authority"},
@@ -147,8 +151,10 @@
       "evidence": []
     },
     "v2_checks": {
-      "text": " (with the guide's Part 7 checks)",
+      "text": " (with the guide's Part 7 checks, run by Task_Authoring/tools/hardness_v2_check.py)",
       "evidence": [
+        {"path": "Task_Authoring/setup/GEN_EXECUTION.md", "contains": "runs the advisory `tools/hardness_v2_check.py` (scenario S5b, injection, hardening MODE B)", "kind": "authority"},
+        {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "`python3 -B Task_Authoring/tools/hardness_v2_check.py --design --task-dir Task_Authoring/task_inputs` (Hardness v2 Part 7 self-checks", "kind": "authority"},
         {"path": "Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md", "contains": "## Part 7. Self-check before you run /hardness", "kind": "guideline"}
       ]
     },

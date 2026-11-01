@@ -90,10 +90,12 @@ class ComposeTests(unittest.TestCase):
                      "Robert's (robert-vendor-schedule)", "a real document, sheet, deck or email",
                      "Founders / Exec / Strategy", "fundraising, board, legal/contracts, vendor, HR",
                      "learnings (§1–44)", "Then stop and tell me to run /create-scenario.",
-                     f"from the trap types in the hardness guide {GUIDE} (not its worked examples",
+                     f"two or more of them cross-source decisions on distinct, named trap types from the hardness guide "
+                     f"({GUIDE}, not its worked examples",
                      "the convincing wrong source and the record that beats it", "same-thread corrections don't work",
-                     "weight 5 by kind of work, never raised", "the failure-pattern and SD gates fail",
-                     "hardness (with the guide's Part 7 checks) and volume plans",
+                     "weight 5 by kind of work, never raised", "fail the failure-pattern and SD gates",
+                     "hardness (with the guide's Part 7 checks, run by Task_Authoring/tools/hardness_v2_check.py) "
+                     "and volume plans",
                      "confirm the agent's tools return it"):
             self.assertIn(text, goal)
         self.assertNotIn("dd-2025-closeout", goal)            # another universe's design is not a storyline to avoid
@@ -306,7 +308,7 @@ class SourceDriftTests(unittest.TestCase):
         for name, entry in cited:
             with self.subTest(entry=name):
                 self.assertFalse(entry.get("optional"))
-                for item in entry["evidence"]:
+                for item in (i for i in entry["evidence"] if i["kind"] == "guideline"):
                     self.assertTrue(item["path"].startswith("Task_Authoring/references/Docs/"), item["path"])
                     self.assertTrue((G.WS / item["path"]).is_file(), item["path"])
 

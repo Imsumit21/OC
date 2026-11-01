@@ -2,8 +2,8 @@
 
 Written 2026-11-01 for oracle review before implementation. Status: implemented the same day. §11 records the oracle's
 round-1 findings and what changed; §12 records the Opus 5.5 hardness guide's verification and incorporation; §13 the
-implementation review; §14 the guide's move into the bundle; §15 the commit-time check. Where §3–§9 differ from the
-files, the files and §11–§15 govern (for example, the generator
+implementation review; §14 the guide's move into the bundle; §15 the commit-time check; §16 the Hardness v2 pipeline
+rules. Where §3–§9 differ from the files, the files and §11–§16 govern (for example, the generator
 lives in `scripts/`, the word limits are 520 (warning) and 560 (ceiling), and there is no `--allow-existing-design`).
 
 ## 1. Purpose
@@ -324,3 +324,20 @@ so in a fresh checkout without that folder every run for another task folder sto
 the folder from the script's default (`default_rel`), which is named but never required to exist, and describes it as
 "not present" when it is missing. Two regression tests cover this. The eight CLI tests need the universe data
 (`task_context.py --require-source`), so they run only in a checkout that has it.
+
+## 16. Hardness v2 pipeline rules (2026-11-01)
+
+The Hardness v2 commits merged in `2aa2809` made two rules part of the pipeline: every design names at least two of the
+guide's traps as separate cross-source decisions that each flip a weight-5 row, and runs the advisory checker
+`tools/hardness_v2_check.py` (scenario S5b, injection, hardening MODE B; `setup/GEN_EXECUTION.md` §3a,
+`playbooks/01_Scenario_Design.md`). The goal now carries both: rule 4 asks for two or more of the independent loss
+channels to be cross-source decisions on distinct, named trap types from the guide, and the deliverable's hardness plan
+names the checker beside the Part 7 checks. The first wording ("decisions from the guide's trap types") let two
+decisions share one type and never required naming it; the `verify` code review failed it, and the requirement now
+matches the sources. Both lines cite those sources and the dd-2024 lessons in `learnings`, by heading or item text
+rather than number, so a renumbering cannot break them. To stay at the 520-word mark with three sibling designs named,
+rules 3–5 were shortened by six words without changing a requirement: three joining words, rule 5 restated as
+"identical misses in every run fail the failure-pattern and SD gates", and "steps" dropped from the list of things that
+don't work, which "volume" already covers. Leonard's assignment gives 520 words against today's folders. The test that
+keeps the guide's citations in the tracked bundle now checks only guideline citations, because a guide-backed line can
+also cite authority files.

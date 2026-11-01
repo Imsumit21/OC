@@ -55,7 +55,9 @@ have no storyline yet and are not named), the closest existing pre-scenario anal
 ## Hardness guide
 
 `Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md` is the platform's Opus 5.5 hardness guide (46 tasks, 270
-runs), kept verbatim. Its trap types and its Part 7 checks enter the goal's hardness rule and the analysis deliverable.
+runs), kept verbatim. Its trap types and its Part 7 checks enter the goal's hardness rule and the analysis deliverable,
+with the pipeline's two rules for it (GEN_EXECUTION § 3a): at least two of its traps as separate cross-source
+decisions, and the advisory checker `tools/hardness_v2_check.py`, which `/create-scenario` runs at S5b (plan § 16).
 Four of its rules are adapted to the gates here (plan § 12):
 
 - **Weight 5 follows the work.** The guide says to put weight 5 on trap rows and to raise a weight if a miss flips
