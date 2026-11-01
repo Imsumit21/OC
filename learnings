@@ -1,6 +1,6 @@
 # Task-authoring learnings
 
-Sections 1–9: dd-q4-claims-register (prompt failure, 30 October 2026). Sections 10–19: robert-vendor-schedule (injection failure, 31 October 2026). Sections 20–26: robert-vendor-schedule (prompt failure, 31 October 2026). Sections 27–34: robert-vendor-schedule (Opus 5.5 pre-check too easy, 31 October 2026). Sections 35–44: robert-vendor-schedule rev-7 rebuild (1 November 2026). Sections 45–48: dd-2024-release-cost (Opus 5.5 pre-check too easy, rev1) and the Hardness v2 adoption (1 November 2026). Sections 49–51: dd-2024-release-cost rev2 (/injection PASS, /prompt FAIL 2 on base git coherence), the October 2026 CB guidelines and the known-data-issue cards (1–2 November 2026). The checklist after §26 covers the first three parts; the last three parts end with their own items, numbered across the file.
+Sections 1–9: dd-q4-claims-register (prompt failure, 30 October 2026). Sections 10–19: robert-vendor-schedule (injection failure, 31 October 2026). Sections 20–26: robert-vendor-schedule (prompt failure, 31 October 2026). Sections 27–34: robert-vendor-schedule (Opus 5.5 pre-check too easy, 31 October 2026). Sections 35–44: robert-vendor-schedule rev-7 rebuild (1 November 2026). Sections 45–48: dd-2024-release-cost (Opus 5.5 pre-check too easy, rev1) and the Hardness v2 adoption (1 November 2026). Sections 49–51: dd-2024-release-cost rev2 (/injection PASS, /prompt FAIL 2 on base git coherence), the October 2026 CB guidelines and the known-data-issue cards (1–2 November 2026). The checklist after §26 covers the first three parts; the last three parts end with their own items, numbered across the file. Sections 52–59: dd-2025-closeout rev 7 (Opus 5.5 pre-check too easy on rev 6; 2 November 2026).
 
 Recorded: 30 October 2026
 Task: dd-q4-claims-register — Julia Lawson / Product Management / Retrieval
@@ -575,3 +575,81 @@ Before the next design (sections 49–51):
     the base; run the local equivalents first.
 46. Freeze downstream work (OEs, rubric, baseline) until /injection and /prompt both pass on the same SQL sha256.
 
+# dd-2025-closeout: Opus 5.5 pre-check too easy (rev 6) and the rev-7 Hardness v2 rebuild
+
+Recorded: 2 November 2026
+Task: dd-2025-closeout — Julia Lawson / Product / Product Management / Retrieval, Long Horizon, hard, synth-cut
+Status: rev 6 passed /injection and /prompt (PASS 5); one unhinted Opus 5.5 pre-check met every requirement (/hardness
+FAIL 1). Rev 7 (SQL `59447e37e556`, prompt unchanged) adds four v2 traps; two delta reviews predict /injection PASS and
+/prompt PASS 5; the platform runs and a fresh pre-check are pending. Red team skipped at the requester's instruction.
+Evidence: `task_inputs2/Working_Files/01a_Hardening_Report.md`, `Working_Files/rev7/REV7_DELTA.md`, `rev7/V1_*`, `rev7/V2_*`.
+
+## 52. "The run never read X" is not "X is hidden": read the subagent briefs
+
+- The rev-6 run never called `github_get_pull_request_reviews` or `github_get_pull_request_comments`, but its GitHub
+  subagent was briefed to fetch both for every PR since 2024-10-01. It died of context thrashing first. The miss was luck.
+- Before calling a surface hidden, read the briefs (`trajectory_ledger` briefs.json) for what the agent meant to read.
+  Prefer carriers no brief would sweep: a comment on a non-cohort record (the destination epic), a thread reply under a
+  non-anchor root, a correction on the one channel message the agent has no reason to expand.
+
+## 53. GitHub surfaces as the agent sees them
+
+- `github_search_pull_requests` `comments` counts conversation comments only (#1679: 26 inline, `comments: 0`);
+  `"store build" in:comments` returned 0 hits. Reviews and inline comments come back only from their own reads.
+- INT-01: inline review comments and conversation comments get a GitHub-app copy in #engineering-bots threaded under the
+  PR's 'opened' message (~89–100 %); COMMENTED review containers only ~17 %. A review body needs no Slack copy.
+- `base_check` pairs copies to records in time order: a COMMENTED container with the same timestamp as its inline comment
+  consumes the comment's copy. Declare the container in `integration_exceptions`.
+- A conversation comment changes the 'opened' copy's `Comments` field (1 → 2) as well as the parent's reply counters.
+
+## 54. Word hidden facts in plain language the rule still covers
+
+- The rev-6 run grepped notes for `store build|rolled back|revert|never merged|hooked up|players (never|can't)…` and
+  searched PRs for "store build" and "players". Rev-7 GitHub texts say "the store version has this change and … same as
+  in the ticket": the rule ("the bug it fixed still happens on the store build") covers them; no keyword does.
+- Say the build contains the change, or a reviewer reads "missed the build" instead of "doesn't fix it"; cover every part
+  the ticket names, or "players got part of it" makes a LIVE fork.
+- "The store version has this change" is a base-git claim (§49): map the export SHAs through `commit_map`, then
+  `git merge-base --is-ancestor <merge> iOS_Submission_<n>`. Here iOS_Submission_139–142 (10–11 Apr) contain all three
+  merges, so the 16–18 Apr reviews of 1.4.1 hold.
+
+## 55. A new record can trip an old solver heuristic
+
+- The solver reads any `#NNNN` naming a merged PR in a closed PR's comments as "the change went there". A settling comment
+  that named #1855 would have turned ENG-2158 LIVE. Write settling comments without PR numbers, or exclude them.
+- `oracle_kit` `contract.regression` needs the current solver to reproduce the previous truth byte for byte on the
+  previous SQL. Gate new fields and rules on the new revision's records (`if st["epic_note"]`, `BARE_PR_SETTLED_BY in ids`).
+
+## 56. Follow-through on the destination
+
+- `linear_get_issue` returns no comments. The requester's note on the epic the prompt names ("Done or Canceled carry-overs
+  go back to Todo") is incorporated through the destination and invisible to a describe-only read.
+- `hardness_gate` `requirement_coverage` needs the new requirement on an anchor: add it to the destination anchor's
+  `requirement_ids`.
+
+## 57. Tools changed under the session again
+
+- A teammate commit (`d3a8313`, 1 Nov 23:55) and uncommitted edits (2 Nov 00:28) changed `base_check`, `stage_gate`,
+  `hardness_gate`. `base_check` now fails any seeded comment dated after its ticket closed ("Read This Before You Submit"
+  2026-10-23). That fails rev 6's 52 store-build QA and rollback notes, which the platform /prompt passed explicitly.
+- Run `git log -3 -- Task_Authoring/tools` before trusting a gate result. Record a conflict between a new local rule and a
+  platform verdict; don't rewrite a passed design mid-revision. Next design: put QA observations on records that are
+  open at the time, or date them before the close.
+
+## 58. Settle every answer-key fork the platform names, with a dated record
+
+- The /hardness report called ENG-2158 a key defect (the run's CLOSE was right). A reviewer then raised a LIVE reading
+  through a later null-ref PR. One dated comment on the closed PR settles both; keep such rows at normal weight.
+
+## 59. Brief review subagents to write first
+
+- Both delta-review subagents ran out of steps before writing their files; the findings survived only in the final reply.
+  Ask for the output file skeleton first, then fill it as each check finishes.
+
+Before the next pre-check (sections 52–59):
+
+47. Read the run's subagent briefs before calling a surface hidden; prefer carriers no brief would sweep.
+48. Check each hidden text against the run's own grep and search terms; keep the rule's meaning, drop its keywords.
+49. Pair every injected GitHub comment with its INT-01 copy; declare COMMENTED containers as integration exceptions.
+50. Never put a PR number in a settling comment the PR-pointer heuristic reads; gate new solver rules on new records.
+51. Check `git log` for tool changes before a gate run; record conflicts with platform verdicts instead of chasing them.
