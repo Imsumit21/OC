@@ -12,6 +12,12 @@
 > Eval release `task-quality-v1` also fails trap hints and riddles, staged typos, hidden
 > destinations the persona would know, audit-form wording and if-chains in the prompt;
 > makes Overly Broad a Major rubric issue; and fails any rubric row an idle agent passes.
+>
+> **Opus 5.5 (Hardness v2, 2026-10-31).** The client's guideline `references/Docs/13_Hardness_v2_Opus55.md`
+> (46 Opus 5.5 tasks under 75 %, 270 runs, 2,843 graded rows) is the current evidence for the baseline model and
+> outranks the Opus 4.8 measurements below where they disagree. §13 maps its nine traps onto this library (new ids
+> A24, A25), lists what no longer works, and states how its rules are reconciled with the local grading rails (§10).
+> Run `tools/hardness_v2_check.py` for its self-checks.
 
 The technique library behind `/create-scenario`, `/create-injection` and
 `/create-hardening`. It ranks every known hardness technique by **measured** effect on
@@ -388,6 +394,7 @@ else. Distinct root causes are distinct ids: two chains with the same id count o
 | `A9` | response pairing | `A20` | subagent synthesis loss |
 | `A10` | exclusion settled within seconds | `A21` | per-surface format/redaction rules |
 | `A11` | retraction / failure-before-admission | | |
+| `A24` | done across services: a done source plus a missing piece in another service (v2 trap 1) | `A25` | completion elsewhere: work already done, recorded away from the request (v2 trap 9) |
 | `2.6.1` | logical short-circuit (independently consequential surfaces) | `2.6.8` | write end states and permissions |
 | `2.6.2` | metadata sweep | `2.6.9` | chronology of references |
 | `2.6.3` | breadcrumbs that land directly | `2.6.10` | budget arithmetic |
@@ -555,7 +562,7 @@ Format: **Mech** (weakness exploited) · **Build** · **Evidence** · **Guard**.
 | ID | Technique | Ev. |
 |---|---|---|
 | S1 | Thread continues past the apparent conclusion | **M** (A1) — strongest single lever |
-| S2 | Cross-surface later correction (email claim → later Slack correction) | P |
+| S2 | Cross-surface later correction (email claim → later Slack correction) | **M5** (v2 trap 2: 28 of 46 Opus 5.5 tasks) — only when the correction is off the first-read path: not in the superseded record's container, an anchor's container or a record that delegates to it (§13; `hardness_v2_check` SAME_PLACE) |
 | S3 | Structured-system supersession (Linear comment or merged PR overrides the description) | P |
 | S4 | Retraction / withdrawn claim | **M** (A11) |
 | S5 | Failure surfaces before the admission | **M** (A11) |
@@ -672,6 +679,7 @@ volume row; never tune rubrics to the baseline.
 | Judge reliability | a verifier missed a late write in a long trajectory (V4-NF1 r5) — keep writes few, distinctive and verifiable from the final state |
 | Hardness validity (`/hardness` 1A §2–§3) | a failure counts only if four things hold: the rule is incorporated, the evidence was returned by an ordinary call, one end state exists, and the verifier judged it right. Otherwise it is a defect, not hardness (§11: a 48.7% task was ≈ 80% once unincorporated-handbook rows were removed) |
 | Run validity | record mixed-model rollouts (Haiku or Sonnet subagents), compaction, background work after the final answer, and missing or duplicate rollout files. Exclude them from the horizon count and from attribution (`01a` B0) |
+| Same-place correction (v2) | a correction in the superseded record's container, an anchor's container or a record on the delegation path to the original is read on the way and settled by Opus 5.5 (v2 Part 2; dd-2024 rev1 T1/T3); `tools/hardness_v2_check.py` SAME_PLACE flags it. Advisory, but every flag needs a disposition |
 | Evals rubric overrides | prohibition-only titles always fail, and so does any row an agent passes by doing nothing ("leaves X as found"); artifact-subject or tool-named titles = Major + FAIL; overly specific = Major; overly broad = Major (`task-quality-v1`); every row needs a `valid_case` it accepts and a `do_nothing_case` it rejects; predicted all-fail on ≥ 2 rows = FAIL; spot-check groups need a volume criterion (`Evals/3_Rubrics_Eval.md`, `hg-strict-overrides-v1`) |
 
 ---
@@ -702,6 +710,15 @@ Added from Season Pass (§12):
 - a confident claim contradicted by per-item records the agent reads anyway (0/5);
 - counting on model fallbacks or harness failures. These are validity confounds, never levers.
 
+Added from Hardness v2 (§13). Part 4 lists these as passing 6/6 for Opus 5.5 even in tasks that scored low overall:
+- long inventories and routine bulk writes (the 31 % Drive task listed exactly 44 files and did every ordinary move);
+- straight totals on clean inputs, and clear calls from visible evidence (seven keep/cut calls with CPI and D1);
+- pulling facts from one spec page and publishing them; a caveat Opus can see;
+- adding steps, services or rows: none lowered scores by itself. Volume is a horizon tool, never a difficulty tool.
+
+Parts 2 and 8 add two more: a correction in the same channel or thread as the original (Opus checks stale-vs-newer
+there by default), and rules written into the prompt (one task went from failing to 100 %).
+
 ---
 
 ## 10 · Where V1 and V2 advice conflict — and the resolution used here
@@ -714,6 +731,10 @@ Added from Season Pass (§12):
 | 10+ services / 8+ writes vs QC norms (3–5 writes) | 10–13 services carrying **evidence**; 3–6 dependent writes across ≥ 3 services |
 | 500+ vs tiers | target ≥ 500 per the requester; state the Borderline-Horizon consequence on Normal-tier tasks |
 | Reference files 6–8 vs "earns its place" | only when the scenario needs an attachment |
+| v2 "add a guard row" for an item left unchanged; trap 9 "grade that the agent leaves those items alone" vs the do-nothing rule (§8, `09_Rubric_Writing.md` gate 7, executable in `Evals/tools/hg_rubric_checks.py`) | keep the do-nothing rule: the grader fails any row an idle agent passes. Grade v2's intent as an exact count or scope on the required write ("creates vendor charge records for exactly 17 of the 20 receipts", "labels exactly 17 emails") or as a requirement inside a required artifact. Support: the Agentic Benchmark Checklist (Zhu et al., NeurIPS 2025, arXiv 2507.02825) asks for a do-nothing baseline and a ground-truth state that includes untouched items and that trivial changes cannot satisfy (O.g.2–3) |
+| v2 "a task with no mode is treated as Medium" vs "never infer the mode" | authoring keeps refusing a missing V3 mode (`difficulty_stats`, `GEN_EXECUTION` §0); only the advisory geometry (`difficulty_mutation.caps_for`) defaults to Medium, and it says so |
+| v2 "put weight 5 on the trap rows" / "raise the weight" vs weight = kind of work, never re-weight (`09_Rubric_Writing.md` gate 8) | same outcome by design: make the trap decide 5-band work (multi-source reconciliation, tracing). Move the evidence onto the decision path or change the work; never raise a weight. `hardness_v2_check` DECISION_FLIP flags a rule that can flip no weight-5 slot |
+| v2 "pick at least two of the nine traps" vs the ≥ 12 traps / ≥ 7 families floor | both: the local floor stays; §13 maps the nine traps onto mechanism ids and families, and at least two of the nine must be present (A24 and A25 added for traps 1 and 9) |
 
 ---
 
@@ -824,3 +845,85 @@ The full task folder is archived at `support/archive/task_inputs_season_pass_202
    one run moved 20 points.
 5. **Measure on the target model before building.** The pre-registered forecast said 72 %; the observed was about
    90 %.
+
+---
+
+## 13 · Hardness v2 — what beats Opus 5.5 (client guideline, 2026-10-31)
+
+Source: `references/Docs/13_Hardness_v2_Opus55.md`, verbatim. 46 Enterprise Atlas tasks where Opus 5.5 scored under
+75 % on the baseline (270 runs, 2,843 graded rows); for every failed row the judge's reasoning was checked against the
+author's evidence. Evidence tag **[M5]** = measured on Opus 5.5 by that study. It is the current authority for the
+baseline model; the [M] tags above are Opus 4.8 or earlier.
+
+**Scoring (Part 1)** is unchanged: six unhinted Opus 5.5 rollouts, weighted rubric score, average strictly below the
+mode cap (Easy 90 %, Medium 85 %, Hard 70 %; `references/v3_policy.json`). Weight-5 rows must depend on what Opus gets
+wrong. The pre-check is one run: an early warning, never a verdict.
+
+**What changed (Part 2).** Corrections still work only out of the way; "proving done" is now the top trap; length does
+not make a task harder (Normal tasks 66 %, Long-Horizon 67 %); plain volume and arithmetic are easy — Opus fails when
+the inputs to a total are wrong, not when it adds.
+
+### 13.1 The nine traps, in order of cost, mapped onto this library
+
+| # | v2 trap | Mechanism ids | Trap families | Build (v2 "How to build it") | Grade | Self-check |
+|---|---|---|---|---|---|---|
+| 1 | Proving "done" across services | **A24** (new) | `done_gap` | a believable, easy-to-find done source (merged PR, closed ticket, sign-off) and the missing piece in another service, found only by checking each part; the data defines "on prod", "merged", "signed off" | the status / inclusion row at weight 5 | DONE_CHECK |
+| 2 | A correction somewhere else | A1, A11, A16 (S1–S4, S7, S9, S13) | `superseding`, `stale_summary`, `conclusion_stop` | a dated correction in a thread reply, page comment, review or another service, tied to the same item and person; it must change a number, status or write. Never in the superseded record's container, an anchor's container or on the delegation path to it | the corrected number / status | SAME_PLACE |
+| 3 | Follow-through a rule requires | A15 (+ `writes[]`) | `authority`, `synthesis_omission` | the rule in a real handoff, team rule or earlier promise; an easy destination | a few representative writes plus one count row — never dozens of identical rows | DECISION_FLIP |
+| 4 | Dates, windows, dependencies | A10, A17 (S9, S11) | `effective_date`, `unit_or_timezone` | the governing timezone and method in a natural plan or message; one boundary case or changed leave record that moves a real assignment | the qualifying item / scheduled work | FILTER_CHECK |
+| 5 | A rule or exception hidden in the data | A12, A15 | `authority` | a natural reason to look for the policy (the request mentions the cleanup, budget or roll-up); the deciding exception in a record reachable from there | each singled-out exception on its own row | RULE_IN_PROMPT |
+| 6 | Different names for the same thing | A7, A8 | `scope_alias`, `entity_collision` | a real alias, person-to-company link or differently titled existing ticket, mapped in contacts, an earlier conversation or ticket history; no spelling tricks | inclusion / reuse row | — |
+| 7 | Items outside the obvious filter | A17, A18 | `exact_predicate`, `near_miss_mention` | two or three genuinely in-scope items just outside the obvious search, with a rule in the data that brings them in | each item on its own row | FILTER_CHECK |
+| 8 | Wrong inputs to a total | A1, A10, A13, A14 feeding an aggregate (no new id) | `superseding`, `cross_reference_gap` | adjustments, refunds, revised claims or rounding rules in normal billing records or messages | the corrected input and the final figure on **two separate rows** (legal: gate 6 forbids three or more) | INPUT_CHECK |
+| 9 | Work someone already did | **A25** (new) | `completion_elsewhere` (distractor type `already_done`) | a believable completion note in a different place from the original request | an exact count or scope on the required write ("creates records for exactly 17 of the 20 receipts") — never a "leaves X alone" row (§10) | — |
+
+Pick at least two of the nine (Appendix); the local ≥ 12 traps / ≥ 7 families floor still applies. A24 and A25 have no
+ledger records yet: `hardness_ledger.py priors --family A24` returns Beta(1,1), UNCALIBRATED, so a forecast needs a
+disclosed `--channel-rate` or reports the rule as UNPARAMETERIZED.
+
+### 13.2 Design rules (Part 5) and the self-checks (Part 7)
+
+Before writing: at least two deciding facts that need checking across sources (two separate decisions); for each, the
+convincing wrong source and the record that beats it, with who wrote each, when and with what authority; the miss
+changes a weight-5 row (status, number, inclusion or write, not a comment); every alias, invoice ID or build number
+maps back through persona-visible records; rules live in the records and the prompt only points at a natural start.
+
+`python3 -B Task_Authoring/tools/hardness_v2_check.py --task-dir Task_Authoring/task_inputs` (`--design` at the
+scenario stage) answers the self-checks from the manifest, SQL, gradable surface and prompt:
+
+| Check | v2 | Fires when |
+|---|---|---|
+| SAME_PLACE | Part 7 same-place; trap 2 | the newest version record shares a container with a superseded one (`same_container`), sits in an anchor's container including its thread replies (`first_read`), or sits in the container of a record that delegates to a superseded one (`on_delegation_path`) |
+| DONE_CHECK | Part 7 done check; trap 1 | no A24 rule, chain root or `done_gap` trap |
+| TWO_DECISIONS | Part 5 rule 1 | fewer than two portfolio rules spanning ≥ 2 services that decide different requirements |
+| DECISION_FLIP | Part 7 decision flip; Part 5 rule 3 | a portfolio rule can flip no weight-5 slot |
+| INPUT_CHECK | Part 7 input check; trap 8 | a weight-5 aggregate slot no rule or mutant can move |
+| FILTER_CHECK | Part 7 filter check; trap 7 | no `exact_predicate` / `near_miss_mention` trap and no A17 rule |
+| RULE_IN_PROMPT | Part 8 | eight consecutive words of a trap resolver appear in the prompt |
+
+A container the tool cannot derive is UNRESOLVED, never clean; declare `version_records[].container` (key format in the
+tool's docstring) when a base record holds the correction. The tool is advisory (exit 0; `--strict` for design loops)
+and is not a stage-gate check; every FLAG needs a written disposition, and the response is a redesign, never a weaker
+fairness link or a raised weight.
+
+### 13.3 Observed on this repo: dd-2024-release-cost rev1 (one Opus 5.5 pre-check, 2026-10-31)
+
+One unhinted Opus 5.5 run solved the task completely (495 of 495 ticket lines, every total, every write; /hardness FAIL
+score 1, "too easy"). Every trap was settled on its first read — the v2 failure mode exactly:
+- the pool amendment (T1) was a reply in Ines's own thread, the thread that delegates to the method doc; reading the
+  thread returned the original and the amendment together (`on_delegation_path`);
+- both train-map versions and "the December version stands" came back in one Trello card read (`same_container`, T3);
+- the board-model sheet that held the slot count was an anchor (`first_read`, T4); two cancelled calendar slots were
+  visible in one `gcal_list_events` call; archived tickets came with the first `includeArchived` listing;
+- decoys were never on its path; per-ticket pick notes were brute-forced (897 `linear_list_comments` across six
+  subagents, 1,002 calls, $22). Volume bought calls, not failures.
+`hardness_v2_check` flags T1, T3 and T4 on that revision. One run is an observation, not a rate.
+
+### 13.4 If the run comes back too easy (Part 8)
+
+Look at which heavy rows passed 6/6 — those are what Opus finds easy; don't add more of them. Move a correction out of
+the obvious place (thread reply, comment, review, another service); add a done source with a missing piece, or a
+completion note somewhere else; move one or two in-scope items outside the obvious filter; put the deciding fact behind
+an alias a contact or history record resolves. Don't add rows, items or steps, and don't spell the rule out in the
+prompt. Routing: `playbooks/12_Difficulty.md`, `playbooks/01a_Hardening.md` MODE B.
+

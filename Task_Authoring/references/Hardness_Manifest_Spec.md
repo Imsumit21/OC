@@ -73,7 +73,14 @@ Opus pre-check decide whether the difficulty is real.
 `stale_summary` · `reuse_exclusion` · `effective_date` · `authority` · `pagination` ·
 `exact_predicate` · `acl_alternate` · `friction` · `synthesis_omission` ·
 `eliminating_evidence` · `conclusion_stop` · `entity_collision` · `unit_or_timezone` ·
-`cross_reference_gap` · `near_miss_mention` (a record names the rule/value but is not the governing one) · `mutable_pointer` (a pointer to an artifact that changed after the pointer was written).
+`cross_reference_gap` · `near_miss_mention` (a record names the rule/value but is not the governing one) · `mutable_pointer` (a pointer to an artifact that changed after the pointer was written) · `done_gap` (Hardness v2 trap 1, mechanism A24: one source says an item is done, another service shows a required piece missing) · `completion_elsewhere` (Hardness v2 trap 9, mechanism A25: the item looks open but a record in another place shows it already done; grade it as an exact count or scope on the required write, never a "leaves X alone" row).
+
+**Version-record containers (optional, Hardness v2).** `traps[].version_records[].container` overrides the container
+`tools/hardness_v2_check.py` derives for a record (`slack:<channel>/<thread root ts>`, `gmail:<thread id>`,
+`file:<drive file id>`, `gcal:<ical uid or event id>`, `trello:<card id>`, `linear:<issue>`, `github:<repo>#<pr>`,
+`confluence:<page id>`, `snowflake:<table>`). Declare it when a base record holds a version and the SQL overlay cannot
+place it; otherwise the check reports UNRESOLVED. No gate reads the field; `chains[].root_cause` and
+`mechanism_portfolio[].mechanism` also accept `A24` and `A25` (`Hardness_Mastery.md` §13).
 
 **Distractor types:** `lookalike_entity` · `near_duplicate_record` ·
 `non_authoritative_instruction` · `stale_summary` · `partial_listing` · `keyword_collision` ·
