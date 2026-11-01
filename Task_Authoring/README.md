@@ -50,7 +50,7 @@ original Claude-only behavior for install and uninstall. Both scripts support
 `--dry-run`, reject redirected registry directories, and preserve unrelated files.
 Install checks all selected destinations for conflicts before creating any links.
 
-All 11 skill folders stay in `Task_Authoring/skills/`; both registries contain
+All 12 skill folders stay in `Task_Authoring/skills/`; both registries contain
 relative folder symlinks, for example:
 
 ```text
@@ -114,6 +114,7 @@ human-time slot; `/create-humantime` writes the graded worksheet to
 
 | Command | Writes | Then |
 |---|---|---|
+| `/create-goal` *(optional, first)* | `00_Session_Goal.md`: a copy-ready `/goal` for a fresh session, tailored to the assignment (no stage gate) | paste it into a fresh session; it writes `00_Pre_Scenario_Analysis.md` and stops → `/create-scenario` |
 | `/create-scenario` (`--revise` after `/create-hardening`) | `01_Scenario_Design.md`, draft `01_Hardness_Manifest.draft.json` (with the mechanism portfolio), `01_Gradable_Surface.json`, `01b_Redteam_Review.md` + `.second.md` (or a recorded `RED TEAM FALLBACK:`) | `/create-injection` |
 | `/create-injection` | `01_Universe_Inject.sql`, `01_Grounding_Dossier.md`, final `01_Hardness_Manifest.json`, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` | `/injection` |
 | `/create-hardening` *(forensics after a run)* | `01a_Hardening_Report.md`, `run_forensics/<revision>/`, ledger records (no SQL) | `/create-scenario --revise`; human revises prompt if needed |
@@ -129,7 +130,7 @@ human-time slot; `/create-humantime` writes the graded worksheet to
 | `/create-allfail` | `11_AF_Justification.md` | Rate All-Fail Rubrics screen |
 | `/create-difficulty` | `12_Difficulty_Stats.txt` | Difficulty check screen |
 
-Every command is blocked at handoff until `python3 Task_Authoring/tools/stage_gate.py <stage> Task_Authoring/task_inputs --paste` prints PASS (stages: scenario, injection, hardening, reference-files, error-async, prompt-writing, prompt-check, humantime, oe-writing, oe-check, rubric-writing, rubric-check, allfail, difficulty).
+Every command except `/create-goal` (which runs its own self-checks; see its `SKILL.md`) is blocked at handoff until `python3 Task_Authoring/tools/stage_gate.py <stage> Task_Authoring/task_inputs --paste` prints PASS (stages: scenario, injection, hardening, reference-files, error-async, prompt-writing, prompt-check, humantime, oe-writing, oe-check, rubric-writing, rubric-check, allfail, difficulty).
 
 Full flow, gates and loop-backs: `Guide/How_To_Author_A_Task.md`. Copy-paste
 equivalents of every command: `Guide/Manual_Commands.md`.
@@ -190,7 +191,7 @@ Task_Authoring/
 │   ├── Scenario_Atlas.md     17 verified storylines with per-service anchors, persona reach, natural contradictions
 │   ├── Ask_Carriers.md       where asks and facts can live in each of the 13 services, call costs, bulk shortcuts, SQL skeletons
 │   ├── Hardness_Manifest_Spec.md  the manifest format and gate thresholds
-│   ├── Docs/                 official V2 guidelines (1_Changelog … 10_Long Horizon), QC_Spec_Doc_Latest.csv
+│   ├── Docs/                 official V2 guidelines (1_Changelog … 10_Long Horizon), V3 notes (11–12), the Opus 5.5 hardness guide (13_Hardness_V2_Opus55.md), QC_Spec_Doc_Latest.csv
 │   ├── Taxonomy_V2_Step_Map.md  generated from Taxonomy/Taxonomy.json (62 screens + key screen text)
 │   ├── Tasks_Template/       empty V2 slot scaffold (copied into task_inputs/)
 │   ├── Universe_Brief.md, Persona_Briefs.md, Native_Artifact_Anatomy.md

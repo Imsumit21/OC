@@ -68,6 +68,17 @@ python3 Task_Authoring/tools/hg.py rubric-lint <rubric.json>
 `<task_dir>/01_Universe_Inject.sql`; `rubric-lint` runs the eval's
 `hg_rubric_lint.py`. Run both beside the local `sql_lint.py` / `hardness_gate.py`.
 
+## 0.25 · Session goal (optional) · `/create-goal`
+
+Prints a short `/goal` for a fresh session that writes `Working_Files/00_Pre_Scenario_Analysis.md` and stops before
+`/create-scenario`. It is tailored to the assignment and the workspace state (other task folders, the Evals input store,
+`learnings`). It has no stage gate and writes only `Working_Files/00_Session_Goal.md` (nothing with `--stdout-only`):
+
+```sh
+python3 -B Task_Authoring/skills/create-goal/scripts/build_goal.py --task-dir <task_dir> [--note "<decision>"] [--stdout-only]
+python3 -B Task_Authoring/skills/create-goal/scripts/build_goal.py --list
+```
+
 ## 0.5 · Scenario design · `/create-scenario`
 
 ```
