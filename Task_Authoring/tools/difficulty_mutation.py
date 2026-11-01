@@ -491,7 +491,13 @@ def _tracker_group(heading: str, surface: dict):
 
 def caps_for(views: str, context) -> dict:
     out = {}
-    mode = (context or {}).get("difficulty_mode") or "hard"
+    mode = (context or {}).get("difficulty_mode")
+    if not mode:
+        # Advisory only: the authoring gates refuse to infer a V3 mode (difficulty_stats). Hardness v2 Part 1
+        # treats a task with no mode as Medium, so the geometry uses that cap and says so.
+        mode = "medium"
+        print("difficulty_mutation: no difficulty_mode supplied; the advisory cap defaults to Medium "
+              "(Hardness v2 Part 1)", file=sys.stderr)
     spec = (context or {}).get("spec_version")
     want = {"v2": ["V2"], "v3": ["V3"], "both": ["V2", "V3"]}.get(views) or (["V3"] if spec == "V3" else ["V2"])
     for v in want:
