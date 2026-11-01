@@ -144,7 +144,8 @@ class Overlay:
             v = row.get(FILE_TABLES[table])
             return f"file:{v}" if v else None
         if table == "gcal.gcal_events":
-            return f"gcal:{row.get('ical_uid') or row.get('event_id')}"
+            key = row.get("ical_uid") or row.get("event_id")
+            return f"gcal:{key}" if key else None
         if table == "trello.trello_cards":
             return f"trello:{row['id']}"
         if table in ("trello.trello_actions", "trello.trello_checklists"):
@@ -248,6 +249,9 @@ def _same_place(man: dict, ov: Overlay, rep: dict) -> None:
             continue
         judged += 1
         tid = t.get("id")
+        key, n = tid, 2
+        while key in rep["nodes"]:
+            key, n = f"{tid}#{n}", n + 1
         *earlier, newest = versions
         corr = ov.container(_record_pointer(newest), newest.get("container"))
         olds = [
@@ -298,7 +302,7 @@ def _same_place(man: dict, ov: Overlay, rep: dict) -> None:
                 )
         else:
             node["same_place"] = "CLEAN"
-        rep["nodes"][tid] = node
+        rep["nodes"][key] = node
     st = [n["same_place"] for n in rep["nodes"].values()]
     rep["checks"]["SAME_PLACE"] = (
         "SKIP"
@@ -441,9 +445,18 @@ def _surface_checks(man: dict, surface, rep: dict) -> None:
                     }
                 )
         rep["checks"]["DECISION_FLIP"] = "FLAG" if weak else "CLEAN"
+        known = {p["id"] for p in port}
+        unknown = sorted({m for s in slots for m in movers(s)} - known)
+        unknown = [u for u in unknown if not u.startswith("mut")]
         rep["details"]["DECISION_FLIP"] = (
             f"{len(port) - len(weak)} of {len(port)} rules can flip a weight-5 slot"
             + (f"; not: {weak}" if weak else "")
+            + (
+                f"; slot mechanisms not in the portfolio: {unknown} (naming drift? "
+                f"gradable_surface.py validate, mechanisms.known)"
+                if unknown
+                else ""
+            )
         )
     totals = [
         s for s in slots if s.get("class") == "aggregate" and s.get("weight") == 5
@@ -502,8 +515,38 @@ def _prompt_check(man: dict, prompt: str, rep: dict) -> None:
     )
 
 
+def _sanitize(man: dict) -> tuple:
+    """Drop entries the checks cannot read and say which lists held them (never a silent pass)."""
+    clean, bad = dict(man), []
+    for k in ("anchors", "ask_fragments", "traps", "mechanism_portfolio", "chains"):
+        items = man.get(k)
+        if items is None:
+            continue
+        if not isinstance(items, list):
+            clean[k] = []
+            bad.append(k)
+            continue
+        keep = [x for x in items if isinstance(x, dict)]
+        if len(keep) != len(items):
+            bad.append(k)
+        clean[k] = keep
+    port = []
+    for p in clean.get("mechanism_portfolio") or []:
+        req = p.get("requirement")
+        if req is not None and not isinstance(req, (str, int)):
+            if "mechanism_portfolio" not in bad:
+                bad.append("mechanism_portfolio")
+            p = dict(p, requirement=None)
+        port.append(p)
+    if "mechanism_portfolio" in clean:
+        clean["mechanism_portfolio"] = port
+    ids = [t.get("id") for t in clean.get("traps") or []]
+    bad += [f"duplicate trap id {i}" for i in sorted({i for i in ids if i and ids.count(i) > 1})]
+    return clean, bad
+
+
 def run(man: dict, sql_text: str = "", prompt: str = "", surface=None) -> dict:
-    man = man if isinstance(man, dict) else {}
+    man, malformed = _sanitize(man if isinstance(man, dict) else {})
     rep = {
         "tool": "hardness_v2_check",
         "label": LABEL,
@@ -512,6 +555,7 @@ def run(man: dict, sql_text: str = "", prompt: str = "", surface=None) -> dict:
         "flags": [],
         "unresolved": [],
         "nodes": {},
+        "malformed": malformed,
     }
     _same_place(man, Overlay(sql_text or ""), rep)
     _design_checks(man, rep)
@@ -536,6 +580,8 @@ def to_text(rep: dict) -> str:
         for f in rep["flags"]:
             kind = f" ({f['kind']})" if f.get("kind") else ""
             lines.append(f"  {f['check']} {f['node'] or '-'}{kind}: {f['detail']}")
+    if rep.get("malformed"):
+        lines += ["", f"Malformed manifest entries skipped (fix the manifest): {rep['malformed']}"]
     if rep["unresolved"]:
         lines += ["", "Unresolved (never a pass):"]
         lines += [
@@ -668,8 +714,12 @@ def main(argv) -> int:
             file=sys.stderr,
         )
         return 2
+    data = json.loads(Path(man).read_text())
+    if not isinstance(data, dict):
+        print(f"hardness_v2_check: the manifest {man} is not a JSON object", file=sys.stderr)
+        return 2
     rep = run(
-        json.loads(Path(man).read_text()),
+        data,
         Path(sql).read_text() if sql else "",
         Path(prompt).read_text() if prompt and Path(prompt).is_file() else "",
         json.loads(Path(surface).read_text())
@@ -692,6 +742,6 @@ def main(argv) -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main(sys.argv[1:]))
-    except (ValueError, KeyError, json.JSONDecodeError) as error:
+    except (ValueError, KeyError, TypeError, AttributeError, json.JSONDecodeError) as error:
         print(f"hardness_v2_check: {error}", file=sys.stderr)
         raise SystemExit(2)

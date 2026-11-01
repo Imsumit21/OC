@@ -47,5 +47,12 @@ class CapsFor(unittest.TestCase):
             self.assertEqual(err, "")
 
 
+    def test_v2_view_never_discloses(self):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            out = dm.caps_for("v2", None)
+        self.assertIsNone(out["V2"]["mode"])
+        self.assertEqual(err.getvalue(), "")
+
 if __name__ == "__main__":
     unittest.main()

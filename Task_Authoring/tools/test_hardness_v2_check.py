@@ -350,6 +350,56 @@ class Cli(unittest.TestCase):
         self.assertEqual(rc, 2)
 
 
+
+class Robustness(unittest.TestCase):
+    """Review notes N1-N4 (2026-11-01): malformed manifests, duplicate ids, id-less events, naming drift."""
+
+    def test_non_dict_entries_are_skipped_and_reported(self):
+        man = {"anchors": ["A1"], "ask_fragments": ["K1"], "traps": ["T1"], "mechanism_portfolio": ["M1"],
+               "chains": ["C1"]}
+        rep = hv.run(man, SQL)
+        self.assertEqual(rep["checks"]["SAME_PLACE"], "SKIP")
+        self.assertEqual(sorted(rep["malformed"]), ["anchors", "ask_fragments", "chains", "mechanism_portfolio", "traps"])
+
+    def test_list_valued_requirement_does_not_crash(self):
+        traps = [{"id": "T1", "family": "superseding", "services": ["gdocs", "gmail"]}]
+        port = [{"id": "M1", "mechanism": "A14", "nodes": ["T1"], "requirement": ["R1", "R2"]}]
+        rep = hv.run(manifest(traps, port), SQL)
+        self.assertIn("mechanism_portfolio", rep["malformed"])
+
+    def test_malformed_json_shape_is_a_usage_error_not_strict(self):
+        with tempfile.TemporaryDirectory() as d:
+            m, s = Path(d) / "m.json", Path(d) / "x.sql"
+            m.write_text(json.dumps(["not", "a", "manifest"]))
+            s.write_text(SQL)
+            err = io.StringIO()
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(err):
+                rc = hv.main(["--manifest", str(m), "--sql", str(s), "--strict"])
+            self.assertEqual(rc, 2)
+            self.assertIn("manifest", err.getvalue())
+
+    def test_duplicate_trap_ids_keep_the_flag(self):
+        t = {"id": "T3", "family": "superseding", "services": ["trello"],
+             "version_records": [vr("trello", "act1"), vr("trello", "act2")]}
+        clean = {"id": "T3", "family": "superseding", "services": ["gdocs", "slack"],
+                 "version_records": [vr("gdocs", "f_doc1"), vr("slack", "C0OTHER0001/1758900000.000400")]}
+        rep = hv.run(manifest([t, clean]), SQL)
+        self.assertEqual(rep["checks"]["SAME_PLACE"], "FLAG")
+        self.assertIn("1 flagged", rep["details"]["SAME_PLACE"])
+        self.assertIn("duplicate trap id T3", " ".join(rep["malformed"]))
+
+    def test_event_without_ids_is_unresolved_not_matched(self):
+        sql = SQL + ("INSERT INTO gcal.gcal_events (calendar_id, summary, status) VALUES ('c@x.co', 'slot', 'confirmed');\n")
+        ov = hv.Overlay(sql)
+        self.assertIsNone(ov._from_row("gcal.gcal_events", {"calendar_id": "c@x.co"}))
+
+    def test_unknown_slot_mechanisms_are_named(self):
+        port = [{"id": "M1", "mechanism": "A15", "nodes": ["T1"], "requirement": "R2"}]
+        slots = [{"id": "S1", "weight": 5, "class": "aggregate", "mechanisms": ["M1", "M9_ride_along"]}]
+        rep = hv.run(manifest(portfolio=port), SQL, surface={"slots": slots})
+        self.assertEqual(rep["checks"]["DECISION_FLIP"], "CLEAN")
+        self.assertIn("M9_ride_along", rep["details"]["DECISION_FLIP"])
+
 LIVE = HERE.parent / "task_inputs"
 
 
