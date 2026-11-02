@@ -35,11 +35,14 @@ Inputs (all required unless marked; stop and name what is missing)
   `01_Universe_Inject.sql` (or "no injection"), reference files the prompt uses.
 - `08_OE_Writing_Ledger.md`, `08_Oracle_Events.md` (optional — leads and a comparison path, never authority).
 
-Output
+Output (two files, one analysis)
 - `task_inputs/11_AF_Justification.md` — denominator, all-fail list, one
   classified block per all-fail rubric, the tally, and the hand-off line for `/create-difficulty`.
   `NONE` (with the denominator) when no rubric failed every completed rollout — the QC dimension
   is then an automatic 5.
+- `task_inputs/11_Baseline_AllFail_Justifications.md` — the screen-ready file and the artifact the
+  platform saves under its `all-fail` input key (`Evals/INPUTS.md` stores it as
+  `11_Baseline_AllFail_Justifications.txt`; the store renames on save). Step 9 writes it.
 
 ## Step 1 — Parse and bind (mechanical)
 
@@ -125,7 +128,9 @@ trajectory is empty; a trajectory is truncated JSON. Never bind by guesswork. A 
    missed discovery), test each row separately; say which root cause they share. Shared
    cause is not itself a defect; an identical acceptance condition repeated across rows is an
    overlap finding for `/rubric`, not an all-fail invalidity.
-6. **Justification shape (VALID only).** One or two sentences that state (a) the exact grounded
+6. **Justification shape (VALID only).** One paragraph of 200 to 1,400 characters whose first
+   sentence is at most 220 characters and names the expected figure, so screen 58 can take just
+   that sentence if the field truncates. The paragraph states (a) the exact grounded
    requirement — value and source — and why it is a fair ask of this prompt (incorporating
    passage, reachable to this persona), and (b) the concrete miss shared by the completed runs
    (what they did instead, with the decisive omitted step). Every clause must be checkable in
@@ -133,11 +138,37 @@ trajectory is empty; a trajectory is truncated JSON. Never bind by guesswork. A 
    that concedes a defect (a tool limit, an unreachable record, a requirement the prompt does
    not make — QC treats a justification that reveals the defect as an invalid all-fail), a claim
    no trajectory shows, or advice. An unfactual or irrelevant justification of
-   a valid all-fail is a QC Non-fail.
+   a valid all-fail is a QC Non-fail. The paragraph is the text Step 9 renders into the screen
+   file, so it must not use an em or en dash and must not name a local file.
 7. **Invalid → report and fix.** Quote the criterion, name the failed test, the evidence,
    whether it is causal, and the consequence (inflates difficulty), and propose the corrected
    criterion. Fix it (Claude, Codex or the human) and re-run the verifier; then re-run this step and `/create-difficulty`.
 8. **Never tune.** Never recommend deleting a valid criterion to move the difficulty numbers.
+
+## Step 9 — write the screen file (mechanical render of Step 6)
+
+Write `task_inputs/11_Baseline_AllFail_Justifications.md` from the workbook, never from fresh prose.
+The workspace reference is `Task_Authoring-2/task_inputs-Suryansh/11_Baseline_AllFail_Justifications.md`.
+
+```text
+# Baseline All-Fail Justifications
+
+All <n> baseline rollouts completed, so an all-fail rubric is one that failed in all <n>. <k> rubric(s) failed in all <n>, and <v> <is|are> valid.
+
+## <criterion title, copied verbatim from 09_Rubrics.json>
+
+<the workbook's Justification (VALID only) paragraph>
+```
+
+Rules the gate enforces (`baseline.*`): the header line; an intro naming the completed count, the
+all-fail count and the valid count; one `##` section per VALID row with the title byte-equal to
+`09_Rubrics.json`; exactly one paragraph per section, 200 to 1,400 characters, no blank line, list
+marker, table or heading inside it; a first sentence of at most 220 characters naming a figure;
+every figure in the paragraph present in that row's title or workbook block; no em or en dash; no
+local file name, `SQL L<n>` or `OE <n>`. A row that is invalid, a judge error or unresolved gets
+**no** section, and one `Not justified: R<n> (<class>: <one clause>)` line names it. When nothing
+failed every run, write the header and `No rubric failed every completed rollout; the QC dimension
+is an automatic 5.`
 
 ## Output format
 
@@ -154,6 +185,8 @@ Causation: <for each failed test: causal yes/no + why>
 Shared root cause: <row ids or none>
 Justification (VALID only): <1–2 sentences>
 Finding (otherwise): <test failed · rule · evidence · consequence>
+
+Screen file: task_inputs/11_Baseline_AllFail_Justifications.md (<s> section(s), one paragraph each; Not justified: <ids | none>)
 
 Summary: valid <n> · invalid <n> (rubric <n>, environment <n>; ≥ 2 = QC Fail, 1 = Non-fail) · judge errors <n> · unresolved <n> · non-causal defects to fix <ids>
 Hand-off to /create-difficulty: --invalid <ids | none> --judge-correction <run-k:Rn … | none>
@@ -182,12 +215,18 @@ Hand-off to /create-difficulty: --invalid <ids | none> --judge-correction <run-k
    prompt? Does the "satisfying" passage meet every part of the criterion?
 5. **Re-verify every justification sentence** against a trajectory locator and a source record; a
    value carried from the ledger, OE or verifier text is a lead, not evidence.
-6. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py allfail Task_Authoring/task_inputs --paste` re-runs `difficulty_stats.py` on `12_difficulty_input.json` (write it in Step 1 with `--out`) and compares the all-fail list; checks one block per all-fail with an exact criterion quote, every completed run cited with an event, all eight tests, a 1–2 sentence justification for VALID; and needs one evidenced counter-reading per block plus the recomputation.
-7. **Re-run** the calculator after any binding fix; **record** each counter-reading, its
+6. **Screen file.** Walk Step 9 against the file: header, intro counts, one section per VALID row
+   with a verbatim title, one paragraph each, the figures copied from the workbook, no dash, no
+   local file name, and every invalid row named as not justified. Read it as the reviewer will: the
+   paragraph alone, without the workbook, must say what was required, what the runs did and why the
+   failure is real.
+7. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py allfail Task_Authoring/task_inputs --paste` re-runs `difficulty_stats.py` on `12_difficulty_input.json` (write it in Step 1 with `--out`) and compares the all-fail list; checks one block per all-fail with an exact criterion quote, every completed run cited with an event, all eight tests, a 1–2 sentence justification for VALID; and needs one evidenced counter-reading per block plus the recomputation.
+8. **Re-run** the calculator after any binding fix; **record** each counter-reading, its
    resolution, and anything left unresolved. Never soften a finding to reach a count of zero
    invalid, never invent one. Criteria and the prompt are quoted; a proposed fix is labelled as such.
 
 ## Deliver
 
-Handoff is blocked until `stage_gate.py allfail` prints PASS. The denominator, each verdict, the justifications ready for screen 58, the invalid/unresolved
-rows the human must fix (re-run the verifier after), and the hand-off line. Next: `/create-difficulty`.
+Handoff is blocked until `stage_gate.py allfail` prints PASS. The denominator, each verdict, the screen
+file path and its paragraph per rubric (the text for screen 58), the invalid/unresolved rows the human
+must fix (re-run the verifier after), and the hand-off line. Next: `/create-difficulty`.

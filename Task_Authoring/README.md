@@ -134,7 +134,7 @@ human-time slot; `/create-humantime` writes the graded worksheet to
 | `/create-oe-writing check` | `08_OE_Check.md` | `/oe` |
 | `/create-rubric-writing` | `09_Rubric_Writing_Plan.md` (+ `09_Rubrics.json` draft on request) | `09_Rubrics.json` (Claude, Codex or human) |
 | `/create-rubric-writing check` | `09_Rubric_Check.md` | `/rubric` |
-| `/create-allfail` | `11_AF_Justification.md` | Rate All-Fail Rubrics screen |
+| `/create-allfail` | `11_AF_Justification.md` (evidence) and `11_Baseline_AllFail_Justifications.md` (screen text, the platform `all-fail` input) | Rate All-Fail Rubrics screen |
 | `/create-difficulty` | `12_Difficulty_Stats.txt` | Difficulty check screen |
 
 Every command except `/create-goal` (which runs its own self-checks; see its `SKILL.md`) is blocked at handoff until `python3 Task_Authoring/tools/stage_gate.py <stage> Task_Authoring/task_inputs --paste` prints PASS (stages: scenario, injection, hardening, reference-files, error-async, prompt-writing, prompt-check, humantime, oe-writing, oe-check, rubric-writing, rubric-check, allfail, difficulty).

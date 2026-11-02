@@ -2966,6 +2966,130 @@ def st_rubric_check(ctx):
                 [("re-verified", r"re-?verif|hg\.py")])
 
 
+
+def _rubric_titles(ctx):
+    p = ctx.p("09_Rubrics.json")
+    try:
+        data = json.loads(p.read_text(errors="replace"))
+    except (OSError, ValueError):
+        return []
+    out = []
+    for row in data if isinstance(data, list) else []:
+        if isinstance(row, dict):
+            out.append(str(row.get("title") or row.get("criterion") or "").strip())
+    return out
+
+
+def _norm_text(t):
+    return re.sub(r"\s+", " ", str(t or "")).strip()
+
+
+def _screen_ints(t):
+    return {int(x.replace(",", "")) for x in re.findall(r"\b\d[\d,]*\b", str(t or ""))}
+
+
+def _af_screen(ctx, screen, titles, af_ids, valid_ids, bodies, just, completed):
+    """The platform's all-fail input: one paragraph per VALID row, heading = the rubric title."""
+    if not screen.exists:
+        ctx.add("baseline.file", False, "11_Baseline_AllFail_Justifications.md missing (the platform saves the "
+                "`all-fail` input as 11_Baseline_AllFail_Justifications.txt; see plans/AllFail_Screen_File_Plan)")
+        return
+    text = screen.text
+    nonempty = [l for l in screen.lines if l.strip()]
+    ok_head = bool(nonempty) and bool(re.match(r"^#\s+Baseline All-Fail(?: Rubric)? Justifications\s*$",
+                                               nonempty[0].strip()))
+    ctx.add("baseline.header", ok_head, "header line present" if ok_head
+            else "the first line must be '# Baseline All-Fail Justifications'")
+    intro = " ".join(nonempty[1:]) if len(nonempty) > 1 else ""
+    heads = [(i, m.group(1).strip()) for i, l in enumerate(screen.lines)
+             for m in [re.match(r"^##\s+(\S.*?)\s*$", l)] if m]
+    first_head = heads[0][0] if heads else len(screen.lines)
+    intro = " ".join(l.strip() for l in screen.lines[1:first_head] if l.strip())
+    words = {0: "zero", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight",
+             9: "nine", 10: "ten"}
+
+    def mentions(n, where):
+        w = words.get(n, "")
+        return bool(re.search(rf"\b(?:{n}{'|' + w if w else ''})\b", where, re.I))
+
+    counts_ok = (mentions(completed, intro) or re.search(r"\ball 6\b", intro, re.I)) and (
+        (not af_ids and re.search(r"no rubric failed", text, re.I))
+        or (af_ids and mentions(len(af_ids), intro) and (len(valid_ids) == len(af_ids) or mentions(len(valid_ids), intro))))
+    ctx.add("baseline.intro", bool(counts_ok), "intro states the completed count, the all-fail count and how many "
+            "are valid" if counts_ok else "intro must state '<n>/6 completed', the all-fail count and the valid count")
+    if not af_ids:
+        ctx.add("baseline.sections", not heads, "no all-fail rubric, so no sections" if not heads
+                else f"{len(heads)} section(s) for a task with no all-fail rubric")
+        ctx.add("baseline.paragraph", True, "no section to check")
+        ctx.add("baseline.figures", True, "no section to check")
+        ctx.add("baseline.first_sentence", True, "no section to check")
+    else:
+        got = {h for _, h in heads}
+        want = {titles[int(r[1:]) - 1] for r in valid_ids if 0 < int(r[1:]) <= len(titles)}
+        miss, extra = sorted(want - got), sorted(got - want)
+        ctx.add("baseline.sections", not miss and not extra,
+                "one section per VALID all-fail, titles verbatim" if not miss and not extra
+                else f"missing section(s) for {miss[:3]} / unexpected {extra[:3]}")
+        bad_para, bad_first, bad_fig = [], [], []
+        for k, (i, title) in enumerate(heads):
+            end = heads[k + 1][0] if k + 1 < len(heads) else len(screen.lines)
+            body = screen.lines[i + 1:end]
+            while body and not body[0].strip():
+                body.pop(0)
+            while body and not body[-1].strip():
+                body.pop()
+            if not body or any(not l.strip() for l in body) or any(
+                    re.match(r"^\s*(?:[-*+]|\d+[.)]|\||#)", l) for l in body):
+                bad_para.append(i)
+                continue
+            para = " ".join(l.strip() for l in body)
+            if not (200 <= len(para) <= 1400) or not para.endswith((".", "!", "?")):
+                bad_para.append(i)
+                continue
+            first = re.split(r"(?<=[.!?])\s+", para)[0]
+            if len(first) > 220 or not re.search(r"\d", first):
+                bad_first.append(i)
+            rid = next((r for r in valid_ids if 0 < int(r[1:]) <= len(titles) and titles[int(r[1:]) - 1] == title), None)
+            allowed = {n for t in titles for n in _screen_ints(t)} | {
+                n for b in bodies.values() for n in _screen_ints(b)}
+            if _screen_ints(para) - allowed:
+                bad_fig.append((i, sorted(_screen_ints(para) - allowed)[:4]))
+        ctx.add("baseline.paragraph", not bad_para, f"{len(bad_para)} section(s) not one 200-1400 character paragraph"
+                if bad_para else f"{len(heads)} section(s) are single paragraphs",
+                [screen.loc(i) for i in bad_para])
+        ctx.add("baseline.first_sentence", not bad_first,
+                f"{len(bad_first)} first sentence(s) over 220 characters or naming no figure" if bad_first
+                else "every first sentence is short and names a figure", [screen.loc(i) for i in bad_first])
+        ctx.add("baseline.figures", not bad_fig,
+                f"figures not in the row's evidence: {bad_fig[:2]}" if bad_fig
+                else "every figure in a section appears in that row's title or evidence",
+                [screen.loc(i) for i, _ in bad_fig])
+    dashes = [c for c in text if c in "\u2014\u2013"]
+    ctx.add("baseline.dashes", not dashes, "no em or en dash" if not dashes
+            else f"{len(dashes)} em/en dash(es); use commas, colons or parentheses")
+    names = re.findall(r"Working_Files|\b[\w./-]+\.(?:md|json|sql|py|txt|csv)\b|SQL L\d+|\bOE \d+", text)
+    ctx.add("baseline.names", not names, "no local file name in the screen file" if not names
+            else f"local file reference(s): {sorted(set(names))[:3]}")
+    if af_ids:
+        not_valid = sorted(af_ids - valid_ids)
+        m = re.search(r"Not justified:\s*(.+)", text)
+        named = set(re.findall(r"\bR\d+\b", m.group(1))) if m else set()
+        ctx.add("baseline.not_justified", named == set(not_valid),
+                "no invalid all-fail" if not not_valid and not m else
+                ("every invalid all-fail is named as not justified" if named == set(not_valid)
+                 else f"'Not justified:' names {sorted(named)} but the workbook invalidates {not_valid}"))
+        drift = []
+        for (i, title) in heads:
+            rid = next((r for r in valid_ids if 0 < int(r[1:]) <= len(titles) and titles[int(r[1:]) - 1] == title), None)
+            end = heads[[h[0] for h in heads].index(i) + 1][0] if [h[0] for h in heads].index(i) + 1 < len(heads) else len(screen.lines)
+            para = _norm_text(" ".join(l.strip() for l in screen.lines[i + 1:end] if l.strip()))
+            if rid and just.get(rid) and para != _norm_text(just[rid]):
+                drift.append(rid)
+        ctx.add("baseline.one_text", not drift, "the screen paragraph is the workbook justification"
+                if not drift else f"{drift[:3]} differ from the workbook justification (warn for one release)",
+                block=False)
+
+
 def st_allfail(ctx):
     doc = ctx.doc("11_AF_Justification.md")
     rub = ctx.p("09_Rubrics.json").read_text(errors="replace") if ctx.p("09_Rubrics.json").exists() else ""
@@ -2995,10 +3119,12 @@ def st_allfail(ctx):
     completed = int(mc.group(1))
     tests = ["authority", "grounding", "reachability", "capability", "atomicity", "precision", "phrasing", "friction"]
     probs = []
+    bodies, just = {}, {}
     for k, (i, rid, verdict) in enumerate(blocks):
         end = blocks[k + 1][0] if k + 1 < len(blocks) else next(
             (j for j in range(i + 1, len(doc.lines)) if re.match(r"^(?:Summary:|#+\s*Self)", doc.lines[j])), len(doc.lines))
         body = "\n".join(doc.lines[i:end])
+        bodies[rid] = body
         cq = re.search(r"Criterion:\s*\"(.+?)\"\s*$", body, re.M)
         if not cq or cq.group(1) not in rub:
             probs.append(f"{rid}: criterion quote not an exact substring of 09_Rubrics.json")
@@ -3013,8 +3139,11 @@ def st_allfail(ctx):
             probs.append(f"{rid}: tests not answered: {miss}")
         if verdict == "VALID":
             j = re.search(r"Justification[^:]*:\s*(.+)", body)
-            if not j or len(re.findall(r"[.!?](?:\s|$)", j.group(1))) > 2 or len(j.group(1).split()) < 8:
-                probs.append(f"{rid}: VALID needs a 1–2 sentence justification")
+            if j:
+                just[rid] = j.group(1).strip()
+            if not j or len(j.group(1).split()) < 8 or len(j.group(1)) > 1400 or \
+                    len(re.findall(r"[.!?](?:\s|$)", j.group(1))) > 6:
+                probs.append(f"{rid}: VALID needs one justification paragraph (8+ words, at most 6 sentences, at most 1400 characters)")
         elif not re.search(r"Finding[^:]*:\s*\S", body):
             probs.append(f"{rid}: {verdict} needs a Finding line")
     ctx.add("structure.block_fields", not probs, "; ".join(probs[:6]) if probs else f"{len(blocks)} blocks complete")
@@ -3023,6 +3152,8 @@ def st_allfail(ctx):
                 + ("present" if lab in doc.text else "missing"))
     clock_check(ctx, doc)
     self_review(ctx, doc, len(blocks) + 1, [("recomputed list", r"recompute"), ("re-verified", r"re-?verif|hg\.py")])
+    _af_screen(ctx, ctx.doc("11_Baseline_AllFail_Justifications.md"), _rubric_titles(ctx), listed,
+               {rid for (_i, rid, verdict) in blocks if verdict == "VALID"}, bodies, just, completed)
 
 
 def st_difficulty(ctx):
@@ -3118,7 +3249,7 @@ STAGES = {
                          inputs=["09_Rubrics.json", "09_Rubric_Writing_Plan.md"], optional=[],
                          upstream=[("rubric-writing", "09_Rubric_Writing_Plan.md")], digest_extra=["09_Rubrics.json"]),
     "allfail": dict(fn=st_allfail, primary="11_AF_Justification.md",
-                    outputs=["11_AF_Justification.md"],
+                    outputs=["11_AF_Justification.md", "11_Baseline_AllFail_Justifications.md"],
                     inputs=["10_Baseline_Verifier_Results.md", "09_Rubrics.json", "07_Baseline_Trajectories"],
                     optional=[], upstream=[("rubric-check", "09_Rubric_Check.md")]),
     "difficulty": dict(fn=st_difficulty, primary="12_Difficulty_Stats.txt", outputs=["12_Difficulty_Stats.txt"],

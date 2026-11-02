@@ -459,7 +459,8 @@ resolves names in both places.
 | `09_Rubrics.json` | Claude, Codex or human (builder export) | Rubric Criteria Builder | `/create-rubric-writing draft` (optional) | `rubric` |
 | `09_Rubric_Check.md` | Model | — | `/create-rubric-writing check` | — |
 | `10_Baseline_Verifier_Results.md` | Platform | Run Verifiers — Baseline | — | `baseline-verifier` |
-| `11_AF_Justification.md` | Model | Rate All-Fail Rubrics | `/create-allfail` | `all-fail` |
+| `11_AF_Justification.md` | Model | — (evidence workbook) | `/create-allfail` | — |
+| `11_Baseline_AllFail_Justifications.md` | Model | Rate All-Fail Rubrics | `/create-allfail` (playbook Step 9) | `all-fail` (the store saves it as `11_Baseline_AllFail_Justifications.txt`) |
 | `12_Difficulty_Stats.txt` | Model (+ `tools/difficulty_stats.py`) | Difficulty & Failure-Pattern Check | `/create-difficulty` | `difficulty` |
 | `13_Release_Gate.txt` | Model (+ `tools/stage_gate.py release`) | — (final check before Submit) | `stage_gate.py release` | — |
 
@@ -480,7 +481,7 @@ the pasted PASS block; the next stage's gate checks that block is current.
 | `oe-check` | **`08_OE_Check.md`** (+ `08_Oracle_Events.md` digest) | oe-writing |
 | `rubric-writing` | **`09_Rubric_Writing_Plan.md`** | oe-writing, oe-check |
 | `rubric-check` | **`09_Rubric_Check.md`** (+ `09_Rubrics.json` digest) | rubric-writing |
-| `allfail` | **`11_AF_Justification.md`** | rubric-check |
+| `allfail` | **`11_AF_Justification.md`** + `11_Baseline_AllFail_Justifications.md` | rubric-check |
 | `difficulty` | **`12_Difficulty_Stats.txt`** (+ `12_difficulty_input.json`) | allfail (if present) |
 
 The prompt, OE and rubric slots (`04_Prompt.txt`, `08_Oracle_Events.md`, `09_Rubrics.json`) have no gate of their own: the

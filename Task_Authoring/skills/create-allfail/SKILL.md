@@ -1,6 +1,6 @@
 ---
 name: create-allfail
-description: "Find every rubric that failed all completed baseline rollouts on a HarmonyGames task, decide valid vs invalid from the trajectories, draft 1–2 line justifications for valid ones and report invalid ones for the human to fix. Use /create-allfail once the baseline verifier results exist. Writes Task_Authoring/task_inputs/11_AF_Justification.md."
+description: "Find every rubric that failed all completed baseline rollouts on a HarmonyGames task, decide valid vs invalid from the trajectories, and write both the evidence workbook and the screen-ready justification file the platform saves as its all-fail input. Use /create-allfail once the baseline verifier results exist. Writes Task_Authoring/task_inputs/11_AF_Justification.md and 11_Baseline_AllFail_Justifications.md."
 ---
 
 # All-fail rubric analysis (11)
@@ -27,12 +27,17 @@ Parse and bind with `python3 Task_Authoring/tools/difficulty_stats.py --build �
 apply the persona ACL yourself (search does not).
 
 ## Output
-`task_inputs/11_AF_Justification.md` (or `NONE`): one verdict per all-fail (VALID · INVALID — rubric · INVALID — environment · JUDGE ERROR · UNRESOLVED; invalid only when the defect causes the failure — including `unobservable` deciding evidence, a rejected fair alternative and a row an idle Agent passes), justifications for VALID rows, the tally, the `--invalid` / `--judge-correction` hand-off line, and the **Self-review** section (playbook; GEN_EXECUTION §6a). Keep the baseline verifier's `Clock:` line wherever its results are quoted.
+
+Two files from one analysis.
+
+1. `task_inputs/11_AF_Justification.md` (or `NONE`): one verdict per all-fail (VALID · INVALID — rubric · INVALID — environment · JUDGE ERROR · UNRESOLVED; invalid only when the defect causes the failure — including `unobservable` deciding evidence, a rejected fair alternative and a row an idle Agent passes), justifications for VALID rows, the tally, the `--invalid` / `--judge-correction` hand-off line, and the **Self-review** section (playbook; GEN_EXECUTION §6a). Keep the baseline verifier's `Clock:` line wherever its results are quoted.
+
+2. `task_inputs/11_Baseline_AllFail_Justifications.md`: the screen-ready file and the artifact the platform saves under its `all-fail` input key (the store names it `11_Baseline_AllFail_Justifications.txt`). Header line `# Baseline All-Fail Justifications`, one intro sentence giving the completed count, the all-fail count and how many are valid, then one `##` section per VALID all-fail whose heading is the criterion title copied verbatim from `09_Rubrics.json`, and exactly one paragraph per section: 200 to 1,400 characters, first sentence at most 220 characters and naming the expected figure, no em or en dash, no local file name. A row that is invalid, a judge error or unresolved gets no section; a `Not justified:` line names it instead. When nothing failed every run, the file holds the header and a sentence saying so. The paragraph is the same text as the workbook's `Justification (VALID only)` line, so the two files cannot drift.
 
 A forecast's `P(fails all six)` is workload, not an all-fail verdict or a block: decide each rubric on the trajectory evidence and the rubric defect.
 
 ## Stage gate (blocking)
-Run `python3 Task_Authoring/tools/stage_gate.py allfail Task_Authoring/task_inputs --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
+Run `python3 Task_Authoring/tools/stage_gate.py allfail Task_Authoring/task_inputs --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use, the self-review's counter-readings, and the `baseline.*` checks on the screen file (header, one section per VALID row with verbatim titles, one 200 to 1,400 character paragraph each, a short first sentence that names a figure, figures that appear in that row's evidence, no em or en dash, no local file name, invalid rows named as not justified). Fix the artifact; never edit the gate's output.
 
 ## Deliver
-Report the output path(s), any blocking findings, and the next step: enter justifications on the Rate All-Fail Rubrics screen; fix any invalid criterion (Claude, Codex or the human) and re-run the verifier; then `/create-difficulty`.
+Report both paths, the paragraph for each all-fail rubric (this is the text for the Rate All-Fail Rubrics screen, and the file is what the platform saves under its `all-fail` key), any blocking findings, and the next step: enter justifications on the Rate All-Fail Rubrics screen; fix any invalid criterion (Claude, Codex or the human) and re-run the verifier; then `/create-difficulty`.

@@ -22,7 +22,7 @@ Evals key) is in `setup/GEN_EXECUTION.md` §5.
 | `08_Oracle_Events.md` | **You only** |
 | `09_Rubrics.json` | **You only** — export from the Rubric Criteria Builder |
 | `10_Baseline_Verifier_Results.md` | Platform — paste the verifier results |
-| `11_AF_Justification.md` | `/create-allfail` — the all-fail justifications for the Rate All-Fail Rubrics screen |
+| `11_AF_Justification.md` | `/create-allfail` — the all-fail evidence workbook; its sibling `11_Baseline_AllFail_Justifications.md` is the screen-ready text for the Rate All-Fail Rubrics screen |
 | `Audit-Report/` | Review reports, when the task is audited |
 
 ## Generated here (`task_inputs/Working_Files/`)
