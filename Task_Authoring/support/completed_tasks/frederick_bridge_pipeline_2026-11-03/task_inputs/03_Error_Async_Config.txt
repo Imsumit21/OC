@@ -1,0 +1,70 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Decision for frederick_bridge_pipeline (injection rev9, SQL sha256 69db98aed17f; unchanged from rev3): no forced errors and no async waits.
+Reason: the scenario is a board pre-read pipeline, not an outage story, and friction is never a hardness or horizon
+lever (playbooks/03_Error_Async_Config.md hard gate 1). Applies to the baseline run and the verifier; nothing is
+configured, so this file is not supplied to /prompt.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No tool is forced to fail and no search is delayed; every Oracle Event uses the ordinary read and write calls.
+- No alternate-path table and no async discovery table are needed (no errored or waited function).
+
+## Post-baseline checks
+
+- Forced error fired (failed calls visible in the trajectories): n/a (none configured)
+- Async submit → check → get appeared, with the delay: n/a (none configured)
+- Only 1.0 / 30 / 35 have been exercised before; any other value confirmed in the first trajectory: n/a
+
+## Self-review
+
+| # | Check | Counter-reading | Evidence | Resolution |
+|---|---|---|---|---|
+| 1 | Is the scenario about an outage the prompt would mention? | the bridge round "stalling" could read as an outage worth simulating | the hub frederick.stone@harmonygames.co/1844724419788800011 asks for a pipeline status; no seeded or base record in scope reports a tool outage (01_Grounding_Dossier.md, Facts for the human) | not an outage: none stands |
+| 2 | Would friction add realism the task needs? | forced errors on gmail_search_messages could make the 79-firm sweep longer | GEN_EXECUTION §3a and playbooks/03_Error_Async_Config.md hard gate 1: friction is never a horizon lever; the honest budget is already 502 calls (01_Hardness_Manifest.json call_budget) and V1 runs routed around every forced error | no realism reason: none stands |
+| 3 | Do Oracle Events or rubric rows depend on a configured function? | a later stage might assume an async twin path | nothing is configured, so no OE may show an errored or waited call (Evals/2_Oracle_Events_Eval.md Phase 3.5 has nothing to check) | consistent |
+
+Unresolved: none.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputs · 03_Error_Async_Config.txt#6f25af7cf75c · 00_Assigments.md#8ae66b700bc2 · 01_Grounding_Dossier.md#8e34fa421f3c · 01_Universe_Inject.sql#69db98aed17f · __context__#f1f763cb8cb4 · __assignment__#827e8afa884d · __policy__#dc4ab5df3cdd · __gate_policy__#0fc4bb90877f · __review__#724c5240bc3b · blocking 0 · warnings 0 · checks 12
+[PASS] assignment.v3_context: Frederick Stone / Co-founder; medium cap <85%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#69db98aed17f, 01_Hardness_Manifest.json#3bec0fb4cfe5, 01_Grounding_Dossier.md#8e34fa421f3c, solver/solver.py#ce489e02535a, 01c_Dispositions.json#1413fef8563a, 01c_Preflight_Report.json#81bfee29de2a, 00_Assigments.md#8ae66b700bc2, 01_Scenario_Design.md#640e8f5ec13b, 01_Hardness_Manifest.draft.json#734485a1f422, 01_Gradable_Surface.json#1c83028e4346, __context__#f1f763cb8cb4, __assignment__#827e8afa884d, __policy__#dc4ab5df3cdd, __gate_policy__#0fc4bb90877f, __review__#724c5240bc3b)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 3 evidenced counter-readings (of 3 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

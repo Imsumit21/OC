@@ -1,0 +1,530 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "frederick_bridge_pipeline",
+ "revision": "design-12",
+ "truth_keys": [
+  "Kevin Lin",
+  "Mike Fischer",
+  "Demetri Detsaridis",
+  "Anton Bernstein",
+  "Paul Heydon",
+  "The Mini Fund",
+  "GFR Fund",
+  "London Venture Partners",
+  "Play Ventures",
+  "Sisu Game Ventures",
+  "Ludlow Ventures",
+  "Greycroft Partners",
+  "Transcend Fund",
+  "1Up Ventures",
+  "Cherry Ventures",
+  "Initial Capital",
+  "Sweet Capital",
+  "Konvoy Ventures",
+  "Betaworks Ventures",
+  "Courtside Ventures",
+  "MaC Venture Capital",
+  "Progression Fund",
+  "Signia Venture Partners",
+  "Backed.vc",
+  "The Venture Reality Fund",
+  "Presence Capital",
+  "Colopl Next",
+  "Everblue Management",
+  "Dune Ventures",
+  "Galaxy Interactive",
+  "BITKRAFT Ventures",
+  "Makers Fund",
+  "Maveron",
+  "Canaan Ventures",
+  "March Gaming Fund",
+  "Andreessen Horowitz",
+  "Dentsu Ventures",
+  "LEGO Ventures",
+  "Comcast Ventures",
+  "HP Tech Ventures",
+  "Qualcomm Ventures",
+  "Bessemer Venture Partners",
+  "NFX",
+  "Upfront Ventures",
+  "Hiro Capital",
+  "Grishin Robotics",
+  "Benchmark",
+  "Accel Partners",
+  "New Enterprise Associates",
+  "Index Ventures",
+  "Lightspeed",
+  "Raine Ventures",
+  "EQT Ventures",
+  "General Catalyst",
+  "Early Bird",
+  "Moon Fire",
+  "20VCs",
+  "[PERSON_NAME_5402]",
+  "Core Finance",
+  "Acterra",
+  "Felix Ventures",
+  "Balderton Ventures",
+  "Lakestar Ventures",
+  "BBQ Capital",
+  "F4 Fund",
+  "Treo VC",
+  "T-accelerate",
+  "NCsoft",
+  "Mattel",
+  "Sciplay",
+  "Superplay",
+  "Sony Mobile",
+  "Revo Capital",
+  "e2vc",
+  "Triptyq",
+  "Turkven",
+  "Harlem Capital",
+  "Homa",
+  "Brightwater Games Fund"
+ ],
+ "classes": [
+  "New investor",
+  "In talks",
+  "Awaiting reply",
+  "Keep warm"
+ ],
+ "truth_fields": {
+  "class": "Group",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "register": {
+   "kind": "table",
+   "name_regex": "(?i).*(send|list|q4|update).*",
+   "key_column": "Firm",
+   "key_regex": ".+",
+   "columns": [
+    "Firm",
+    "Group",
+    "Amount",
+    "Build access"
+   ],
+   "class_column": "Group",
+   "comparators": {
+    "Group": "norm",
+    "Build access": "norm"
+   }
+  },
+  "reply": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  },
+  "checklists": {
+   "kind": "json_text",
+   "tool": "trello_create_check_item"
+  },
+  "followups": {
+   "kind": "json_text",
+   "tool": "trello_create_card"
+  },
+  "cardcomment": {
+   "kind": "calls",
+   "tool": "trello_add_comment_to_card"
+  }
+ },
+ "slots": [
+  {
+   "id": "V1",
+   "title": "send list membership",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "79 names looked at, 25 kept: email-only passes, uncontacted firms and Paul (backed out) off, off-list calls on",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "FILT",
+    "DONE1"
+   ],
+   "fact_id": "send_list_size",
+   "volume_for": [
+    "group",
+    "access"
+   ],
+   "expected_keys": [
+    "Anton Bernstein",
+    "GFR Fund",
+    "London Venture Partners",
+    "Initial Capital",
+    "BITKRAFT Ventures",
+    "Makers Fund",
+    "Andreessen Horowitz",
+    "Dentsu Ventures",
+    "Hiro Capital",
+    "Raine Ventures",
+    "General Catalyst",
+    "BBQ Capital",
+    "Treo VC",
+    "T-accelerate",
+    "NCsoft",
+    "Sciplay",
+    "Superplay",
+    "Sony Mobile",
+    "Revo Capital",
+    "e2vc",
+    "Triptyq",
+    "Turkven",
+    "Harlem Capital",
+    "Homa",
+    "Brightwater Games Fund"
+   ]
+  },
+  {
+   "id": "ST1",
+   "title": "SciPlay group",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "mail thread vs Robert's #executives thread reply",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Sciplay",
+    "Group"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "CORR"
+   ],
+   "group": "group"
+  },
+  {
+   "id": "ST2",
+   "title": "Hiro Capital group",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "list row vs partner-only pass mail vs contacts",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Hiro Capital",
+    "Group"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "group": "group"
+  },
+  {
+   "id": "ST3",
+   "title": "Homa on the send list in talks",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "calendar + invitation body + Slack note, off the list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Homa",
+    "Group"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "group"
+  },
+  {
+   "id": "ST4",
+   "title": "Brightwater on the send list in talks",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "person-titled call + contacts + mail, off the list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Brightwater Games Fund",
+    "Group"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "group"
+  },
+  {
+   "id": "ST5",
+   "title": "London Venture Partners group",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "pass after a call read from its own thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "London Venture Partners",
+    "Group"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "group"
+  },
+  {
+   "id": "AC1",
+   "title": "Dentsu build access",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "invite mail and tester ticket vs Arthur's #zombie-match3d post",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Dentsu Ventures",
+    "Build access"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE2"
+   ],
+   "group": "access"
+  },
+  {
+   "id": "AC2",
+   "title": "T-Accelerate build access",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "tester ticket vs Arthur's #zombie-match3d post",
+   "class": "direct",
+   "selector": [
+    "field",
+    "T-accelerate",
+    "Build access"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE2"
+   ],
+   "group": "access"
+  },
+  {
+   "id": "AC3",
+   "title": "NCsoft build access",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "tester ticket vs Arthur's #zombie-match3d post (rev12)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "NCsoft",
+    "Build access"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE2"
+   ],
+   "group": "access"
+  },
+  {
+   "id": "AC4",
+   "title": "Brightwater build access",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "tester ticket vs Arthur's #zombie-match3d post (rev12)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Brightwater Games Fund",
+    "Build access"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE2"
+   ],
+   "group": "access"
+  },
+  {
+   "id": "M3",
+   "title": "Anton Bernstein amount",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Slack post and angels sheet vs Leonard's DM vs completed notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Anton Bernstein",
+    "Amount"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INPUT"
+   ]
+  },
+  {
+   "id": "G2",
+   "title": "Anton Bernstein group",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "signed: the DocuSign Completed notice is in",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Anton Bernstein",
+    "Group"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "RP1",
+   "title": "reply on Leonard's thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery to the named thread",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "frederick.stone@harmonygames.co/1844724419788800011"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "RP2",
+   "title": "reply gives the In talks count",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "7 firms, 0 angels: off-list calls in, Anton out (signed), Paul out (backed out)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "[Ii]n [Tt]alks.{0,40}7 firms?.{0,12}0 angels?"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT",
+    "DONE1"
+   ],
+   "fact_id": "in_talks_count"
+  },
+  {
+   "id": "RP3",
+   "title": "reply gives the Keep warm count",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "3: LVP, Hiro, SciPlay",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "[Kk]eep [Ww]arm.{0,40}3"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR",
+    "ALIAS"
+   ],
+   "fact_id": "keep_warm_count"
+  },
+  {
+   "id": "DL1",
+   "title": "send list in the Q4 2025 investor update folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery to the named folder",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_5e8a1c3f9b07d2e64a1b93"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "CL1",
+   "title": "send checklist item for Homa",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "card rule applied to an off-list firm found through its call",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklists",
+    "H[Oo][Mm][Aa]"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW",
+    "FILT"
+   ]
+  },
+  {
+   "id": "FU1",
+   "title": "follow-up card for GFR Fund",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "in talks, no open To Do card of its own",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "followups",
+    "GFR"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DUP"
+   ]
+  },
+  {
+   "id": "FU2",
+   "title": "follow-up card for BBQ Capital",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "awaiting reply, nothing booked after Sep 30",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "followups",
+    "BBQ"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BOOKED"
+   ]
+  },
+  {
+   "id": "FU3",
+   "title": "follow-up card for Brightwater Games Fund",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "off-list firm in talks gets a card too",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "followups",
+    "Brightwater"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "AN1",
+   "title": "comment on Leonard's open Anel card for NCsoft",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "To Do card named for NCsoft's partner vs the 2025 list's Partner column",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "trello_card",
+    "68c99e98737744bd966aed24",
+    "up"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DUP"
+   ]
+  }
+ ]
+}

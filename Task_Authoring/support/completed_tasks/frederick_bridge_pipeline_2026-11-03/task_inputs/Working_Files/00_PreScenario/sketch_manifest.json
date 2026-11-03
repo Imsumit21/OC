@@ -1,0 +1,54 @@
+{
+  "_note": "PRE-SCENARIO SKETCH for hardness_v2_check.py only. Not the /create-scenario draft manifest; ids prefixed NEW- are planned seeds with declared containers.",
+  "effective_profile": "extreme",
+  "horizon": "Long Horizon",
+  "anchors": [
+    {"id": "AN1", "locator": "gmail:NEW-leonard-ask-thread", "prompt_reference": "Leonard's board pre-read email"}
+  ],
+  "ask_fragments": [
+    {"id": "F1", "seeded_ids": ["NEW-leonard-ask-thread"], "delegated_by_record": "NEW-leonard-ask-thread", "requirement_ids": ["R1","R2","R3"]},
+    {"id": "F2", "seeded_ids": ["NEW-trello-keepwarm-comment"], "delegated_by_record": "NEW-leonard-ask-thread", "requirement_ids": ["R6"]}
+  ],
+  "traps": [
+    {"id": "T_CORR", "family": "superseding", "mechanism": "A11", "services": ["gmail","slack"], "requirement": "R2",
+     "expected_wrong_reading": "SciPlay still Active: last mail in its cc'd thread is the investor's 'we'll continue to play and let you know' (Sep 18)",
+     "resolver": "Robert's later reply in a different bridge-pitch thread reporting the verbal pass",
+     "version_records": [
+       {"service": "gmail", "id": "gmail:1842285743246816270", "container": "gmail:1842285743246816270", "seeded": false, "at": "2025-09-18T03:27:31Z"},
+       {"service": "slack", "id": "NEW-robert-thread-reply", "container": "slack:C096HFA5Z8W/NEW-other-root", "seeded": true, "at": "2025-09-29T22:00:00Z"}]},
+    {"id": "T_ALIAS", "family": "scope_alias", "mechanism": "A7", "services": ["gmail","contacts","gsheets"], "requirement": "R2",
+     "expected_wrong_reading": "list firm has no reply, so 'no response'",
+     "resolver": "pass mail signed by a partner under the fund's other name; Contacts maps partner to firm"},
+    {"id": "T_FILT1", "family": "exact_predicate", "mechanism": "A17", "services": ["gcal","gmail","slack"], "requirement": "R1",
+     "expected_wrong_reading": "register = Game Investor List rows only",
+     "resolver": "ask's scope (every firm we had a call with since the Sep 3 kickoff) brings in a pitched firm absent from the list"},
+    {"id": "T_FILT2", "family": "near_miss_mention", "mechanism": "A17", "services": ["gcal","contacts"], "requirement": "R1",
+     "expected_wrong_reading": "calendar title shows only a person, so the call is skipped",
+     "resolver": "Contacts maps the person to the firm"},
+    {"id": "T_DONE1", "family": "done_gap", "mechanism": "A24", "services": ["slack","gmail"], "requirement": "R3",
+     "expected_wrong_reading": "angel counted as committed from the #executives 'is in' post",
+     "resolver": "signing-service mail shows the SAFE still unsigned; ask defines committed as signed"},
+    {"id": "T_INPUT", "family": "superseding", "mechanism": "A11", "services": ["slack","gmail"], "requirement": "R3",
+     "expected_wrong_reading": "soft-circle total uses the angel's first amount",
+     "resolver": "later message in another place lowers the amount",
+     "version_records": [
+       {"service": "slack", "id": "NEW-exec-in-post", "container": "slack:C07C2866011/NEW-exec-root", "seeded": true, "at": "2025-09-19T18:00:00Z"},
+       {"service": "gmail", "id": "NEW-angel-revision-mail", "container": "gmail:NEW-angel-thread", "seeded": true, "at": "2025-09-26T18:00:00Z"}]},
+    {"id": "T_DONE2", "family": "done_gap", "mechanism": "A24", "services": ["gmail","linear","slack"], "requirement": "R4",
+     "expected_wrong_reading": "build access delivered because the follow-up mail says invites were sent",
+     "resolver": "Linear ticket for the Android internal-track adds still open"},
+    {"id": "T_FOLLOW", "family": "synthesis_omission", "mechanism": "A15", "services": ["trello"], "requirement": "R6",
+     "expected_wrong_reading": "no write beyond the sheet and reply",
+     "resolver": "Leonard's comment on the Existing Investor Update card: every firm that passes goes on its keep-warm checklist"}
+  ],
+  "mechanism_portfolio": [
+    {"id": "CORR", "mechanism": "A11", "nodes": ["T_CORR"], "requirement": "R2", "natural_reading": "status from the firm's own mail thread"},
+    {"id": "ALIAS", "mechanism": "A7", "nodes": ["T_ALIAS"], "requirement": "R2", "natural_reading": "match firms by list name only"},
+    {"id": "FILT1", "mechanism": "A17", "nodes": ["T_FILT1"], "requirement": "R1", "natural_reading": "register = list rows"},
+    {"id": "FILT2", "mechanism": "A17", "nodes": ["T_FILT2"], "requirement": "R1", "natural_reading": "skip person-only calendar titles"},
+    {"id": "DONE1", "mechanism": "A24", "nodes": ["T_DONE1"], "requirement": "R3", "natural_reading": "'is in' counts as committed"},
+    {"id": "INPUT", "mechanism": "A11", "nodes": ["T_INPUT"], "requirement": "R3", "natural_reading": "first stated amount"},
+    {"id": "DONE2", "mechanism": "A24", "nodes": ["T_DONE2"], "requirement": "R4", "natural_reading": "invite mail = access delivered"},
+    {"id": "FOLLOW", "mechanism": "A15", "nodes": ["T_FOLLOW"], "requirement": "R6", "natural_reading": "no checklist writes"}
+  ]
+}

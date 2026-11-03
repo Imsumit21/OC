@@ -1,0 +1,62 @@
+# 12 Baseline Difficulty Stats (frederick_bridge_pipeline, injection rev12, rubric 40 rows / weight 168, verifier pasted 2026-11-03)
+
+Task type: long-horizon   Difficulty mode: medium (assigned)   Completed: 6/6   Errored: none   Invalid rubrics: none   Judge corrections: none
+Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+Seed bound: 2025-10-01T00:00:00Z
+
+V3 difficulty mode: medium · verdict view: platform
+Denominators: 6 rollout slots; 6 completed score(s); 0 errored excluded from averages (never zero-scored).
+Assignment context: assignment_hash=827e8afa884dca7c5310be50bd5bd8afda1daf89b1b419da79d2d95e4ae5cd2a · policy_hash=dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1 · context_hash=f1f763cb8cb4229e9ebc36f6d141c6c9e517d76ae1edeb6836ff3b6aab97e987 · freeze_utc=2025-10-01T00:00:00Z
+
+| Rollout | Counted tool calls | Raw / harness / blocked / repeats | Weighted pass (platform) | Failed rubrics (platform) |
+|---|---|---|---|---|
+| run-1 | 140 | 164 / 22 / 2 / 0 | 73.2% | R4, R5, R13, R19, R22, R25, R27, R34, R36 |
+| run-2 | 150 | 165 / 15 / 0 / 0 | 73.2% | R4, R13, R14, R15, R16, R17, R22, R27, R34 |
+| run-3 | 126 | 145 / 19 / 0 / 0 | 79.2% | R5, R19, R22, R25, R27, R34, R36 |
+| run-4 | 141 | 152 / 10 / 1 / 0 | 67.3% | R5, R14, R15, R16, R17, R19, R22, R25, R27, R34, R36 |
+| run-5 | 109 | 118 / 9 / 0 / 0 | 73.2% | R4, R13, R14, R15, R16, R17, R22, R27, R34 |
+| run-6 | 123 | 149 / 18 / 8 / 0 | 100.0% | — (golden run) |
+
+| Gate | Value | Rule | Verdict |
+|---|---|---|---|
+| errored_runs | 0 errored, 6 completed of 6 | <= 2 errored and >= 4 completed (3+ errored = Fail) | PASS |
+| pass_at_1 | 1/6 full passes; 1/6 completed = 17% | V3 operational pass@k: fewer than 5 full passes out of 6 slots (5+ fails) | PASS |
+| avg_weighted_pass_rate | 77.7% (6 completed; 0 errored excluded) | V3 medium: strictly < 85%; equality fails | PASS |
+| per_rollout_sd | 0.106 (sample 0.116; unweighted 0.089) | 0.1-0.3 (population SD of per-rollout weighted pass rates) | PASS — at the band edge: sample or unweighted SD reads the other way |
+| failure_patterns | 4 pattern(s); largest 40% of 5 failing (pairwise reading 40%) | >= 2 patterns (differ on >= 2 rubrics); largest <= 50% | PASS |
+| horizon | golden run(s): 123 | long-horizon tier 100-500+ | PASS |
+| baseline_models | all 6 rollout slots have claude-opus-5-5 provenance | claude-opus-5-5 for all 6 baseline rollouts; missing model evidence and fallback/mixed provenance block | PASS |
+
+Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):
+- Pattern 1: run-2, run-5
+- Pattern 2: run-1
+- Pattern 3: run-3
+- Pattern 4: run-4
+- Pairwise reading (largest set all within 1 rubric of each other): run-2, run-5
+All-fail rubrics (completed rollouts, platform view): none
+Blocking gates: none
+
+Readings: pass@1 1/6 = 17% (only run-6 passes every row; the count reading 1 of 6 also passes; five full passes would fail). Average 77.7% is 7.3 points under the medium cap of 85%. SD: population 0.106 passes the 0.1 floor by 0.006; the calculator prints the band-edge note because the unweighted SD (0.089) reads FAIL while the sample SD (0.116) reads PASS. Patterns: single-linkage and pairwise readings agree; only run-2 and run-5 match exactly (0 differing rows); every other pair differs on 2 or more rows, so 4 patterns with the largest 2 of 5 failing runs = 40%. Golden run: run-6.
+Tool-call notes: counted (raw / harness / blocked / repeats) run-1 140 (164/22/2/0), run-2 150 (165/15/0/0), run-3 126 (145/19/0/0), run-4 141 (152/10/1/0), run-5 109 (118/9/0/0), run-6 123 (149/18/8/0). Lowest 109 (run-5), highest 150 (run-2); 0 of 6 runs under the 100-call long-horizon floor; the golden run-6 at 123 governs the horizon. run-6 had 8 blocked calls (error results), all excluded. run-1 used 2 sub-agent briefs with 6 context continuations (trajectory_ledger.py); its sub-agent MCP calls are counted. No ACL-denied hammering or padding seen: run-5 was counted by hand (118 tool_use, 109 MCP, 9 harness, 0 blocked, 0 repeats = 109). trajectory_ledger.py binds all six exports to rev12 (SQL 69db98aed17f, BOUND:['rev12']) with claude-opus-5-5 provenance; the INSUFFICIENT line it prints is for the old pre-check trajectory, which this stage does not use.
+Friction check: not configured (03_Error_Async_Config.txt: no forced errors and no async waits); nothing to verify.
+Screen 60 comparison: not supplied. Verifier per-run headers 31, 31, 33, 29, 31 and 40 of 40 match the parsed rows. Weight warning: the platform rubric the user pasted on 2026-11-03 has R14 (Dentsu Ventures build access) and R15 (T-accelerate build access) at weight 1, where the /rubric PASS 5 version (09_Rubrics.json, sha256 768ce692) has 5. With those two at 1 (total 160) the same results give average 79.1% and population SD 0.098, which FAILS the 0.1 floor (scratch recompute). Screen 60 only matches this report after R14 and R15 are set to 5 on the platform.
+Parse note: the verifier export escapes the brackets in four titles (R8, R18, R26, R28 read \[PERSON_NAME_0854\] and \[PERSON_NAME_2306\]), so --build refused to bind them to 09_Rubrics.json. The build ran on Working_Files/run_forensics/rev12/platform/09_Rubrics.verifier_titles.json, which is 09_Rubrics.json with only those four titles escaped as the platform shows them (same order, weights and other text; every other title binds unchanged in all six runs).
+Fairness check: the failed rows were checked against the verifier justifications and the designed records; each is a real miss on a designed decision: Paul's back-out in Leonard's Sep 30 DM D05S58U4SAK/1759251900.863415 (R4, R13, R22, R27, R34 in run-1, run-2, run-5), SciPlay's Keep warm from Robert's Sep 30 reply C07C2866011/1759248360.377105 (R5, R19, R25, R36, plus R22, R27, R34 in run-3), and the build access from Arthur's later #zombie-match3d post C0880U9751A/1759274400.518306 (R14 to R17 in run-2, run-4, run-5). No unfair row, no wrong expected value, no judge correction.
+Forecast: the pre-registered forecast hev_c6ae7863e04a66b1 (Working_Files/01c_Forecast.json) binds rev8 SQL 4895577edea8, not rev12 (69db98aed17f). No forecast was pre-registered for rev12, so none is scored against this batch (hardness_forecast.py score not run; scoring a rev8 forecast on a rev12 batch would mix revisions). Advisory and UNCALIBRATED in any case.
+Diagnosis: no gate fails in either view (they are identical: no invalid rubrics, no judge corrections). At risk: per_rollout_sd sits 0.006 above the floor, and only with R14 and R15 at weight 5. Route: none required; fix the two platform weights before screen 60. Heavy rows passing 6/6 (Hardness v2 Part 8) are not a gate failure and need no change.
+Screen 61: confirm only after R14 and R15 are weight 5 on the platform and screen 60 shows the same numbers as this report (average 77.7%, 1/6 full passes, SD 0.106). With the current platform weights the SD gate would fail.
+
+## Self-review
+
+1. Re-read as the eval (Evals/references/rules/scoring.json Agent Failure Rate, Error Rate and Complexity Threshold Layers; the QC rows Error Rate, pass@1, Average Weighted Rubric Pass Rate, Failure Signature Concentration, Task Type & Horizon; V3 medium cap from 11_V3_Changes.md): Error Rate 0 errored, PASS; pass@1 1/6 full passes, PASS under the V3 five-of-six rule; average 77.7% under the medium cap of 85%, PASS; Failure Signature Concentration 4 signatures, largest 40%, PASS; Task Type & Horizon golden run-6 at 123 counted calls, long-horizon band 100-500+, PASS; baseline models all claude-opus-5-5, PASS.
+2. Independent recompute (python over 12_difficulty_input.json, without the calculator; total weight 168): passed weight run-1 123 (0.7321), run-2 123 (0.7321), run-3 133 (0.7917), run-4 113 (0.6726), run-5 123 (0.7321), run-6 168 (1.0000); mean 0.7768 = 77.7%; population SD 0.1056, sample SD 0.1157. Completed 6, errored 0. pass@1: only run-6 passes every rubric, 1 of 6. Differing-rubric counts among the failing runs: run-1/run-2 8, run-1/run-3 2, run-1/run-4 6, run-1/run-5 8, run-2/run-3 10, run-2/run-4 6, run-2/run-5 0, run-3/run-4 4, run-3/run-5 10, run-4/run-5 6, so run-2 + run-5 is one pattern and run-1, run-3, run-4 are their own: 4 patterns, largest 2 of 5 = 40%. Horizon basis: golden run-6, 123 counted. Every number matches the calculator.
+3. Counter-readings:
+- errored: counter-reading that would fail it: a run that should count as errored. All six exports in 07_Baseline_Trajectories are non-empty with a final result event, and each is graded on all 40 rows in 10_Baseline_Verifier_Results.md. Holds PASS.
+- pass@1: counter-reading that would fail it: an incorrect full-pass count, or a judge error that hides more full passes. Every failed row checked in the fairness note is a true miss (e.g. run-3 R22 'The In talks checklist has 8 items because SciPlay is included'); five full passes would need four more runs to flip every failed row. Holds PASS.
+- average: counter-reading that would fail it: platform weights differing from 09_Rubrics.json. With R14 and R15 at 1 the average is 79.1%, still under 85%. Holds PASS in both weightings.
+- SD: counter-reading that would fail it: the platform's current weights (R14, R15 at 1) give population SD 0.098 (scratch recompute), and the unweighted SD is 0.089. The gate of record uses the population SD of weighted rates on the /rubric PASS 5 weights (09_Rubrics.json sha256 768ce692), 0.1056, so PASS stands, but only after the platform weights are fixed. Named as open below.
+- patterns: counter-reading that would fail it: single-linkage chaining across near neighbours. The closest non-identical pair is run-1/run-3 at 2 rows (R4, R13), which already counts as different; no chain forms and the pairwise reading is the same. Holds PASS.
+- horizon: counter-reading that would fail it: the lowest completed run or raw counts. The golden run-6 counted 123 and the lowest run, run-5, counted 109 (checked by hand); both clear 100. Raw counts are higher still. Holds PASS.
+- model: counter-reading that would fail it: a mixed or fallback model in a sub-agent. trajectory_ledger.py shows claude-opus-5-5 for all six, mixed=False and no fallbacks; run-1's sub-agent briefs are also claude-opus-5-5. Holds PASS.
+4. Inputs re-verified: 11_AF_Justification.md is empty and there are no all-fail rubrics, so no --invalid or --judge-correction hand-off applies; 12_difficulty_input.json has no valid:false rows. Rubric version: 40 criteria in 09_Rubrics.json (sha256 768ce692, the /rubric PASS 5 file); verifier headers X/40 for all runs. Trajectory files are byte-identical (md5) to Working_Files/run_forensics/rev12/baseline2/runs. Assignment, policy and context hashes in 12_difficulty_input.json match 00_Task_Context.json (827e8afa, dc4ab5df, f1f763cb). Mode medium as assigned.
+Unresolved: the platform's R14 and R15 weights (1 on the pasted platform copy, 5 in the /rubric-passed file) must be set to 5 before screen 60; screen 60 numbers were not supplied; the SD margin is 0.006.

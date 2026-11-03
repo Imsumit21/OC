@@ -1,0 +1,427 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "frederick_bridge_pipeline",
+ "revision": "design-1",
+ "truth_keys": [
+  "Kevin Lin",
+  "Mike Fischer",
+  "Demetri Detsaridis",
+  "Anton Bernstein",
+  "Paul Heydon",
+  "The Mini Fund",
+  "GFR Fund",
+  "London Venture Partners",
+  "Play Ventures",
+  "Sisu Game Ventures",
+  "Ludlow Ventures",
+  "Greycroft Partners",
+  "Transcend Fund",
+  "1Up Ventures",
+  "Cherry Ventures",
+  "Initial Capital",
+  "Sweet Capital",
+  "Konvoy Ventures",
+  "Betaworks Ventures",
+  "Courtside Ventures",
+  "MaC Venture Capital",
+  "Progression Fund",
+  "Signia Venture Partners",
+  "Backed.vc",
+  "The Venture Reality Fund",
+  "Presence Capital",
+  "Colopl Next",
+  "Everblue Management",
+  "Dune Ventures",
+  "Galaxy Interactive",
+  "BITKRAFT Ventures",
+  "Makers Fund",
+  "Maveron",
+  "Canaan Ventures",
+  "March Gaming Fund",
+  "Andreessen Horowitz",
+  "Dentsu Ventures",
+  "LEGO Ventures",
+  "Comcast Ventures",
+  "HP Tech Ventures",
+  "Qualcomm Ventures",
+  "Bessemer Venture Partners",
+  "NFX",
+  "Upfront Ventures",
+  "Hiro Capital",
+  "Grishin Robotics",
+  "Benchmark",
+  "Accel Partners",
+  "New Enterprise Associates",
+  "Index Ventures",
+  "Lightspeed",
+  "Raine Ventures",
+  "EQT Ventures",
+  "General Catalyst",
+  "Early Bird",
+  "Moon Fire",
+  "20VCs",
+  "[PERSON_NAME_5402]",
+  "Core Finance",
+  "Acterra",
+  "Felix Ventures",
+  "Balderton Ventures",
+  "Lakestar Ventures",
+  "BBQ Capital",
+  "F4 Fund",
+  "Treo VC",
+  "T-accelerate",
+  "NCsoft",
+  "Mattel",
+  "Sciplay",
+  "Superplay",
+  "Sony Mobile",
+  "Revo Capital",
+  "e2vc",
+  "Triptyq",
+  "Turkven",
+  "Harlem Capital",
+  "Homa",
+  "Brightwater Games Fund"
+ ],
+ "classes": [
+  "Passed",
+  "In talks",
+  "Awaiting reply",
+  "Not contacted this round"
+ ],
+ "truth_fields": {
+  "class": "Status",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "register": {
+   "kind": "table",
+   "name_regex": "(?i).*(fundrais|pipeline|bridge).*",
+   "key_column": "Firm",
+   "key_regex": ".+",
+   "columns": [
+    "Firm",
+    "Status",
+    "Last two-way contact",
+    "Build access",
+    "Committed",
+    "Soft-circled"
+   ],
+   "class_column": "Status",
+   "comparators": {
+    "Status": "norm",
+    "Build access": "norm"
+   }
+  },
+  "reply": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  },
+  "keepwarm": {
+   "kind": "json_text",
+   "tool": "trello_create_check_item"
+  }
+ },
+ "slots": [
+  {
+   "id": "V1",
+   "title": "register size",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "list rows deduplicated plus off-list calls",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "FILT"
+   ],
+   "fact_id": "register_size",
+   "volume_for": [
+    "status",
+    "access"
+   ]
+  },
+  {
+   "id": "ST1",
+   "title": "SciPlay status",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "mail thread vs Robert's Slack thread reply",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Sciplay",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "CORR"
+   ],
+   "group": "status"
+  },
+  {
+   "id": "ST2",
+   "title": "Hiro Capital status",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "list row vs partner-only pass mail vs contacts",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Hiro Capital",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "group": "status"
+  },
+  {
+   "id": "ST3",
+   "title": "Homa on the register in talks",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "calendar + invitation body + Slack note, off the list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Homa",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "status"
+  },
+  {
+   "id": "ST4",
+   "title": "Brightwater on the register in talks",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "person-titled call + contacts + mail, off the list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Brightwater Games Fund",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "status"
+  },
+  {
+   "id": "ST5",
+   "title": "London Venture Partners status",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "pass read from its own thread under the list's longer name",
+   "class": "direct",
+   "selector": [
+    "field",
+    "London Venture Partners",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "status"
+  },
+  {
+   "id": "AC1",
+   "title": "Dentsu build access",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "invite mail vs tester ticket",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Dentsu Ventures",
+    "Build access"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE2"
+   ],
+   "group": "access"
+  },
+  {
+   "id": "AC2",
+   "title": "T-Accelerate build access",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "read from the tester ticket",
+   "class": "direct",
+   "selector": [
+    "field",
+    "T-accelerate",
+    "Build access"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "access"
+  },
+  {
+   "id": "M1",
+   "title": "Paul Heydon soft-circled amount",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Slack post vs signing reminder vs template",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Paul Heydon",
+    "Soft-circled"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE1"
+   ]
+  },
+  {
+   "id": "M3",
+   "title": "Anton Bernstein committed amount",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Slack post vs Anton's mail vs completed notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Anton Bernstein",
+    "Committed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INPUT"
+   ]
+  },
+  {
+   "id": "M2",
+   "title": "committed total on the register",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "sum over signed SAFEs at their latest amounts",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "register",
+    "[Cc]ommitted.{0,60}25,?000"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE1",
+    "INPUT"
+   ],
+   "fact_id": "committed_total"
+  },
+  {
+   "id": "RP1",
+   "title": "reply on Leonard's thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery to the named thread",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "frederick.stone@harmonygames.co/1844724419788800011"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "RP2",
+   "title": "reply states the committed total",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same reconciled total carried into the reply",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "[Cc]ommitted.{0,60}25,?000"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE1",
+    "INPUT"
+   ],
+   "fact_id": "committed_total"
+  },
+  {
+   "id": "RP3",
+   "title": "reply states the soft-circled total",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "sum over unsigned written yeses",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "[Ss]oft.?circled.{0,60}50,?000"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE1"
+   ],
+   "fact_id": "soft_total"
+  },
+  {
+   "id": "DL1",
+   "title": "register in the Board - Oct 14 2025 folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery to the named folder",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_5e8a1c3f9b07d2e64a1b93"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "KW1",
+   "title": "keep-warm item for SciPlay",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "card rule applied to a pass found only in a Slack reply",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "keepwarm",
+    "Sci[Pp]lay"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW",
+    "CORR"
+   ]
+  },
+  {
+   "id": "KW2",
+   "title": "keep-warm item for Hiro Capital",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "card rule applied to a partner-only pass",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "keepwarm",
+    "[Hh]iro"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW",
+    "ALIAS"
+   ]
+  }
+ ]
+}
