@@ -345,6 +345,12 @@ requester_confirmation, call_budget_floor, per_record_floor}` (`references/Hardn
 the ≥ 500 call-budget and ≥ 300 per-record minima, never below the platform's 100-call Long Horizon floor; every other
 extreme target above still applies, and `hardness_gate.py` prints the exception in its notes.
 
+**Cohort exception (per task, requester-confirmed).** When no natural ≥ 40-record cohort exists for the persona and
+competency, an extreme manifest may carry `cohort_exception {reason, requester_confirmation, cohort_floor}`
+(`references/Hardness_Manifest_Spec.md`). It lowers only the cohort-size minimum (40), never below the normal profile's
+10; the ≥ 3 surfaces over ≥ 2 services, each surface's `why_no_bulk` and the extreme `short_circuit` analysis still
+apply, padding a cohort stays a failing error, and `hardness_gate.py` prints the exception in its notes.
+
 **Horizon fit — one effective profile per task.** A ≥ 500-call design suits a **Long Horizon**
 assignment. On a **Normal Horizon** assignment it scores Borderline Horizon (non-fail, task score
 capped at 3). `/create-scenario` resolves the profile once and writes it into the manifest as

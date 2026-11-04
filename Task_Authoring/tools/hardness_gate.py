@@ -24,7 +24,10 @@ Red team A (2026-10-05, support/examples/calibration/harness_redteam/A_scenario_
                            manifest may carry volume_exception {reason, requester_confirmation (nonblank strings),
                            call_budget_floor (int 100-500), per_record_floor (int 0-300)}: it replaces only those two
                            numeric minima; present but null, partial, mistyped, unknown-keyed or out of range =
-                           FAIL, minima unchanged
+                           FAIL, minima unchanged. It may also carry cohort_exception {reason, requester_confirmation
+                           (nonblank strings), cohort_floor (int 10-40)}: it replaces only the cohort-size minimum;
+                           surfaces, surface services, why_no_bulk and the short-circuit analysis still apply; malformed
+                           = FAIL, minimum unchanged
   incorporation_chains     + each fragment's `delegation_quote` is an exact substring of the text of its
                            delegated_by_record (seeded SQL row, or the base record read through tools/hg.py)
   requirement_coverage     every declared requirement is named by >= 1 incorporated fragment or anchor (requirement_ids)
@@ -166,13 +169,41 @@ def volume_exception(manifest: dict, eff) -> tuple:
     return (None, probs) if probs else ({"budget": b, "per_record_calls": r}, [])
 
 
-def effective_thresholds(manifest: dict, profile: str) -> tuple:
-    """(thresholds, floors): the profile's thresholds with a complete volume_exception's two minima applied.
+def cohort_exception(manifest: dict, eff) -> tuple:
+    """(floor, problems): a requester-confirmed smaller cohort floor for the extreme profile only.
 
-    Applied only when the gate runs at the extreme profile and the manifest itself declares extreme; floors is None when
-    nothing was applied. PROFILES is never mutated."""
-    vex = volume_exception(manifest, manifest.get("effective_profile"))[0] if profile == "extreme" else None
-    return (dict(PROFILES[profile], **vex) if vex else dict(PROFILES[profile])), vex
+    It replaces exactly one numeric minimum, `cohort` (the cohort size), and never goes below the normal profile's
+    cohort floor; the surface count, surface services, why_no_bulk and the extreme short-circuit analysis are unchanged.
+    Absent -> (None, []); incomplete, unknown-keyed or out of range -> (None, problems)."""
+    if "cohort_exception" not in manifest:
+        return None, []
+    ex = manifest["cohort_exception"]          # present: null, a non-object or a partial object all fail closed
+    if eff != "extreme":
+        return None, [f"cohort_exception applies only to the extreme profile, not {eff!r}"]
+    if not isinstance(ex, dict):
+        return None, ["cohort_exception must be an object {reason, requester_confirmation, cohort_floor}"]
+    known = {"reason", "requester_confirmation", "cohort_floor"}
+    extra = sorted(str(k) for k in ex if k not in known)
+    probs = [f"cohort_exception has unknown key(s) {', '.join(extra)}"] if extra else []
+    probs += [f"cohort_exception.{k} must be a nonblank string" for k in ("reason", "requester_confirmation")
+              if not (isinstance(ex.get(k), str) and ex.get(k).strip())]
+    lo, hi = PROFILES["normal"]["cohort"], PROFILES["extreme"]["cohort"]
+    c = ex.get("cohort_floor")
+    if not (isinstance(c, int) and not isinstance(c, bool) and lo <= c <= hi):
+        probs.append(f"cohort_exception.cohort_floor must be an integer {lo}-{hi}, got {c!r}")
+    return (None, probs) if probs else ({"cohort": c}, [])
+
+
+def effective_thresholds(manifest: dict, profile: str) -> tuple:
+    """(thresholds, floors): the profile's thresholds with a complete volume_exception's two minima applied, and a
+    complete cohort_exception's cohort minimum.
+
+    Applied only when the gate runs at the extreme profile and the manifest itself declares extreme; floors (the
+    volume floors) is None when no volume_exception was applied. PROFILES is never mutated."""
+    eff = manifest.get("effective_profile")
+    vex = volume_exception(manifest, eff)[0] if profile == "extreme" else None
+    cex = cohort_exception(manifest, eff)[0] if profile == "extreme" else None
+    return dict(PROFILES[profile], **(vex or {}), **(cex or {})), vex
 
 
 def resolve_profile(manifest: dict, cli_profile: str | None = None) -> tuple:
@@ -194,6 +225,7 @@ def resolve_profile(manifest: dict, cli_profile: str | None = None) -> tuple:
             probs.append("Normal Horizon at the extreme profile (Borderline Horizon, score capped at 3) needs profile_exception "
                          "{reason, requester_confirmation} recording the requester's confirmation")
     probs += volume_exception(manifest, eff)[1]
+    probs += cohort_exception(manifest, eff)[1]
     profile = eff if eff in PROFILES else (cli_profile if cli_profile in PROFILES else "extreme")
     return profile, probs
 
@@ -291,6 +323,7 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
     ensure_active(globals(), require_source=True)
     profile, profile_probs = resolve_profile(manifest, profile)
     p, vex = effective_thresholds(manifest, profile)   # a complete volume_exception changes only budget / per_record_calls
+    cex = cohort_exception(manifest, manifest.get("effective_profile"))[0] if profile == "extreme" else None  # only cohort
     checks: list[dict] = []
 
     sql_only = {"sql_lint_clean", "services_injected", "rows", "no_orphan_injection", "seeded_ids_exist_in_sql", "base_consistency",
@@ -475,10 +508,12 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
     per_record = sum(float(s.get("per_record_calls", 0)) * int(s.get("records", size)) for s in surfaces)
     per_record = int(per_record)
     check("cohort_size", int(cohort.get("size", 0)) >= p["cohort"],
-          f"cohort {cohort.get('size', 0)}; need ≥ {p['cohort']} (source-defined: {bool(cohort.get('definition_source'))})")
+          f"cohort {cohort.get('size', 0)}; need ≥ {p['cohort']} (source-defined: {bool(cohort.get('definition_source'))})"
+          + (" (requester-confirmed cohort_exception)" if cex else ""))
+    # the short-circuit analysis follows the profile's own cohort floor, so a cohort_exception never waives it
     check("evidence_surfaces", len(surfaces) >= p["surfaces"] and len(s_services) >= p["surface_services"]
           and all(s.get("why_no_bulk") for s in surfaces)
-          and (p["cohort"] < 40 or all(s.get("short_circuit") for s in surfaces)),
+          and (PROFILES[profile]["cohort"] < 40 or all(s.get("short_circuit") for s in surfaces)),
           f"{len(surfaces)} surfaces over {len(s_services)} services; each needs why_no_bulk and (extreme) a short_circuit "
           f"analysis — why a correct run cannot skip it once other surfaces decide the record "
           f"(missing: {[s.get('tool') for s in surfaces if not s.get('short_circuit')][:5] or 'none'})")
@@ -673,8 +708,13 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
         ex = manifest["volume_exception"]
         notes.append(f"volume_exception: call-budget floor {vex['budget']} and per-record floor {vex['per_record_calls']} replace "
                      f"{PROFILES['extreme']['budget']} and {PROFILES['extreme']['per_record_calls']}; every other extreme target "
-                     f"applies — reason: {str(ex.get('reason'))[:80]}; requester confirmation: "
+                     f"applies{' except the cohort floor below' if cex else ''} — reason: {str(ex.get('reason'))[:80]}; requester confirmation: "
                      f"{str(ex.get('requester_confirmation'))[:80]}")
+    if cex:
+        ex = manifest["cohort_exception"]
+        notes.append(f"cohort_exception: cohort floor {cex['cohort']} replaces {PROFILES['extreme']['cohort']}; surfaces, surface "
+                     f"services, why_no_bulk and short_circuit still apply — reason: {str(ex.get('reason'))[:80]}; requester "
+                     f"confirmation: {str(ex.get('requester_confirmation'))[:80]}")
 
     failed = [c for c in checks if not c["ok"]]
     return {"profile": profile + (" (design)" if design else ""), "verdict": "PASS" if not failed else "FAIL", "checks": checks,
@@ -1117,13 +1157,16 @@ def _self_test() -> None:
     _self_test_integrity()
     k = _self_test_portfolio()
     v = _self_test_volume_exception()
+    c = _self_test_cohort_exception()
     _self_test_v2_ids()
     print(f"self-test: ok ({n} red-team-A planted defects each fail their own check; integrity layer incl. denied probes, "
           f"hazard resolutions and no-leak; {k} mechanism_portfolio / artifact_fields defects fail, A22/A23 accepted, "
           f"A24/A25 and their v2 trap families accepted; "
           f"volume_exception: {v['malformed']} malformed or out-of-range values fail closed, {v['bounds']} boundary values "
           f"accepted, {v['still_fail']} other defects still fail under a valid exception, {v['profile']} profile-resolution "
-          f"cases fail the gate, only the two minima change)")
+          f"cases fail the gate, only the two minima change; cohort_exception: {c['malformed']} malformed or out-of-range "
+          f"values fail closed, {c['bounds']} boundary values accepted, {c['still_fail']} other defects still fail, only the "
+          f"cohort minimum changes)")
 
 
 def _self_test_portfolio() -> int:
@@ -1336,6 +1379,94 @@ def _self_test_volume_exception() -> dict:
     assert changed <= {"call_budget", "per_record_calls"}, changed
     assert PROFILES == profiles_before, "PROFILES mutated"
     return {"malformed": len(malformed), "bounds": len(bounds), "still_fail": len(still), "profile": 5}
+
+
+def _self_test_cohort_exception() -> dict:
+    """cohort_exception: fails closed on any malformed value, lowers only the cohort minimum when complete, never waives
+    the surface shape or the extreme short-circuit analysis, changes nothing else."""
+    import copy
+    profiles_before = copy.deepcopy(PROFILES)
+    man, sql, _ = _fixture_a()
+    rt = RecordText(sql)
+
+    def run(m, prof=None):
+        r = evaluate(m, sql, prof, records=rt, integrity=False)
+        return {c["check"]: c for c in r["checks"]}, r["notes"], r["verdict"]
+
+    def mut(base, f):
+        m = json.loads(json.dumps(base))
+        f(m)
+        return m
+    ext, lo, hi = PROFILES["extreme"], PROFILES["normal"]["cohort"], PROFILES["extreme"]["cohort"]
+    small = mut(man, lambda m: m["cohort"].update(size=34))
+    by, _, _ = run(small)
+    assert not by["cohort_size"]["ok"], by["cohort_size"]["detail"]
+    valid = {"reason": "no natural 40-record cohort for this persona and competency", "requester_confirmation": "requester, 2026-11-04",
+             "cohort_floor": 30}
+    ok = mut(small, lambda m: m.update(cohort_exception=dict(valid)))
+    by, notes, _ = run(ok)
+    assert by["cohort_size"]["ok"] and by["effective_profile"]["ok"], (by["cohort_size"]["detail"], by["effective_profile"]["detail"])
+    assert any(n.startswith("cohort_exception:") for n in notes), notes
+    th, vex = effective_thresholds(ok, "extreme")
+    assert vex is None and th == dict(ext, cohort=30), (vex, th)
+
+    # 1. malformed or out-of-range exceptions fail closed: effective_profile fails, the cohort minimum stays 40, no note
+    def setf(k, v):
+        return lambda m: m["cohort_exception"].update({k: v})
+
+    def drop(k):
+        return lambda m: m["cohort_exception"].pop(k)
+    malformed = [("null exception", lambda m: m.update(cohort_exception=None)),
+                 ("non-object exception", lambda m: m.update(cohort_exception="yes")),
+                 ("list exception", lambda m: m.update(cohort_exception=[valid])),
+                 ("unknown key", lambda m: m["cohort_exception"].update({"surfaces_floor": 1}))]
+    for k in ("reason", "requester_confirmation"):
+        malformed += [(f"{k} missing", drop(k))] + [(f"{k}={v!r}", setf(k, v)) for v in (None, "", "  ", True, 1.5, 0, [], ["x"], {"a": 1})]
+    bad = (None, True, False, 30.0, 30.5, "30", lo - 1, hi + 1, [30])
+    malformed += [("cohort_floor missing", drop("cohort_floor"))] + [(f"cohort_floor={v!r}", setf("cohort_floor", v)) for v in bad]
+    for name, f in malformed:
+        m = mut(ok, f)
+        got, nts, _ = run(m)
+        assert not got["effective_profile"]["ok"] and not got["cohort_size"]["ok"], name
+        assert f"need ≥ {ext['cohort']}" in got["cohort_size"]["detail"], (name, got["cohort_size"]["detail"])
+        assert not any(n.startswith("cohort_exception:") for n in nts), name
+        assert effective_thresholds(m, "extreme") == (dict(ext), None), name
+
+    # 2. accepted boundaries
+    bounds = [lo, hi]
+    for v in bounds:
+        th, _ = effective_thresholds(mut(ok, setf("cohort_floor", v)), "extreme")
+        assert th["cohort"] == v, (v, th["cohort"])
+
+    # 3. a valid exception excuses nothing else: a cohort under the lowered floor, a missing short-circuit analysis and
+    #    fewer surfaces still fail
+    surf = {"service": "github", "tool": "github_get_pull_request_reviews", "per_record_calls": 1, "records": 22,
+            "why_no_bulk": "x", "short_circuit": "x", "requirement": "R1", "decides": "budget tier"}
+    three = mut(ok, lambda m: m["cohort"]["evidence_surfaces"].extend([dict(surf), dict(surf, tool="github_get_issue_comments")]))
+    got, _, _ = run(three)
+    assert got["evidence_surfaces"]["ok"], got["evidence_surfaces"]["detail"]
+    still = [("cohort under the lowered floor", lambda m: m["cohort"].update(size=29), "cohort_size"),
+             ("short-circuit missing under the exception", lambda m: m["cohort"]["evidence_surfaces"][0].pop("short_circuit"),
+              "evidence_surfaces"),
+             ("too few surfaces under the exception", lambda m: m["cohort"].update(evidence_surfaces=m["cohort"]["evidence_surfaces"][:2]),
+              "evidence_surfaces")]
+    for name, f, want in still:
+        got, _, _ = run(mut(three, f))
+        assert not got[want]["ok"], (name, got[want]["detail"])
+
+    # 4. profile resolution: a normal manifest never applies it and fails the gate
+    as_normal = mut(ok, lambda m: m.update(horizon="Normal Horizon", effective_profile="normal"))
+    got, nts, verdict = run(as_normal)
+    assert not got["effective_profile"]["ok"] and verdict == "FAIL" and not any(n.startswith("cohort_exception:") for n in nts)
+    assert effective_thresholds(as_normal, "normal") == (dict(PROFILES["normal"]), None)
+
+    # 5. control: on the full fixture the exception can flip only cohort_size; PROFILES untouched
+    base_by, _, _ = run(small)
+    with_by, _, _ = run(ok)
+    changed = {n for n in base_by if base_by[n]["ok"] != with_by[n]["ok"]}
+    assert changed <= {"cohort_size"}, changed
+    assert PROFILES == profiles_before, "PROFILES mutated"
+    return {"malformed": len(malformed), "bounds": len(bounds), "still_fail": len(still)}
 
 
 UNAVAILABLE = ("Install Universe_", "SOURCE BLOCKED", "Cannot read assignment", "No task date is saved",

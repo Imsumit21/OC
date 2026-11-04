@@ -259,5 +259,65 @@ class VolumeExceptionTests(unittest.TestCase):
         self.assertTrue(problems)
 
 
+class CohortExceptionTests(unittest.TestCase):
+    VALID = {"reason": "no natural 40-record cohort", "requester_confirmation": "requester, 2026-11-04", "cohort_floor": 30}
+
+    def manifest(self, **overrides):
+        man = {"effective_profile": "extreme", "horizon": "Long Horizon", "cohort_exception": dict(self.VALID)}
+        man["cohort_exception"].update(overrides)
+        return man
+
+    def test_valid_exception_replaces_only_the_cohort_minimum(self):
+        thresholds, floors = hardness_gate.effective_thresholds(self.manifest(), "extreme")
+        self.assertIsNone(floors)
+        self.assertEqual(thresholds["cohort"], 30)
+        for key, value in hardness_gate.PROFILES["extreme"].items():
+            if key != "cohort":
+                self.assertEqual(thresholds[key], value)
+        self.assertEqual(hardness_gate.PROFILES["extreme"]["cohort"], 40)
+
+    def test_combines_with_volume_exception(self):
+        man = self.manifest()
+        man["volume_exception"] = dict(VolumeExceptionTests.VALID)
+        thresholds, floors = hardness_gate.effective_thresholds(man, "extreme")
+        self.assertEqual(floors, {"budget": 150, "per_record_calls": 30})
+        self.assertEqual((thresholds["cohort"], thresholds["budget"], thresholds["per_record_calls"]), (30, 150, 30))
+        self.assertEqual(thresholds["surfaces"], hardness_gate.PROFILES["extreme"]["surfaces"])
+
+    def test_boundaries_are_accepted(self):
+        for value in (hardness_gate.PROFILES["normal"]["cohort"], hardness_gate.PROFILES["extreme"]["cohort"]):
+            thresholds, _ = hardness_gate.effective_thresholds(self.manifest(cohort_floor=value), "extreme")
+            self.assertEqual(thresholds["cohort"], value)
+
+    def test_malformed_values_fail_closed(self):
+        lo, hi = hardness_gate.PROFILES["normal"]["cohort"], hardness_gate.PROFILES["extreme"]["cohort"]
+        malformed = [None, "yes", [], {},
+                     {"reason": "", "requester_confirmation": "c", "cohort_floor": 30},
+                     {"reason": "r", "requester_confirmation": " ", "cohort_floor": 30},
+                     {"reason": "r", "requester_confirmation": "c", "cohort_floor": True},
+                     {"reason": "r", "requester_confirmation": "c", "cohort_floor": 30.0},
+                     {"reason": "r", "requester_confirmation": "c", "cohort_floor": "30"},
+                     {"reason": "r", "requester_confirmation": "c", "cohort_floor": lo - 1},
+                     {"reason": "r", "requester_confirmation": "c", "cohort_floor": hi + 1},
+                     {"reason": "r", "requester_confirmation": "c", "cohort_floor": 30, "surfaces_floor": 1}]
+        for bad in malformed:
+            floor, problems = hardness_gate.cohort_exception({"cohort_exception": bad}, "extreme")
+            self.assertIsNone(floor, bad)
+            self.assertTrue(problems, bad)
+            thresholds, _ = hardness_gate.effective_thresholds({"effective_profile": "extreme", "cohort_exception": bad}, "extreme")
+            self.assertEqual(thresholds, dict(hardness_gate.PROFILES["extreme"]), bad)
+            _, probs = hardness_gate.resolve_profile({"effective_profile": "extreme", "horizon": "Long Horizon",
+                                                      "cohort_exception": bad})
+            self.assertTrue(probs, bad)
+
+    def test_non_extreme_profile_rejects_the_key(self):
+        floor, problems = hardness_gate.cohort_exception(self.manifest(), "normal")
+        self.assertIsNone(floor)
+        self.assertTrue(problems)
+        thresholds, _ = hardness_gate.effective_thresholds(dict(self.manifest(), effective_profile="normal",
+                                                                horizon="Normal Horizon"), "normal")
+        self.assertEqual(thresholds, dict(hardness_gate.PROFILES["normal"]))
+
+
 if __name__ == "__main__":
     unittest.main()
