@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "reviewed": "2026-11-01: drafted by the build session from the sources below; reviewed by the oracle (GPT-6.1 Sol, round 1 REVISE), every MUST and SHOULD applied (Task_Authoring/plans/Create_Goal_Skill_Plan_2026-11-01.md, section 11). Same day: the Opus 5.5 hardness guide checked against the gates and incorporated with four corrections (plan section 12), implementation review fixes in plan section 13, and the guide moved from the git-ignored workspace root (`hardness update.md`) to `Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`, which made its lines required (plan section 14). After the Hardness v2 pipeline commits (merged in 2aa2809), rule 4 asks for at least two distinct, named trap types from the guide as separate cross-source decisions and the deliverable names tools/hardness_v2_check.py (plan section 16).",
+  "reviewed": "2026-11-01: drafted by the build session from the sources below; reviewed by the oracle (GPT-6.1 Sol, round 1 REVISE), every MUST and SHOULD applied (Task_Authoring/plans/Create_Goal_Skill_Plan_2026-11-01.md, section 11). Same day: the Opus 5.5 hardness guide checked against the gates and incorporated with four corrections (plan section 12), implementation review fixes in plan section 13, and the guide moved from the git-ignored workspace root (`hardness update.md`) to `Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`, which made its lines required (plan section 14). After the Hardness v2 pipeline commits (merged in 2aa2809), rule 4 asks for at least two distinct, named trap types from the guide as separate cross-source decisions and the deliverable names tools/hardness_v2_check.py (plan section 16). 2026-11-04: wording tightened at the user's request without changing a requirement, and the default-folder line now gives the export command (plan section 17).",
   "about": "Wording for /create-goal. build_goal.py fills the {placeholders} from the task context. Each evidence entry names a workspace-relative file and a phrase that must occur in it (whitespace-insensitive); a required line whose evidence is missing stops the run (exit 3), an optional line is dropped with a warning. The check proves only that the cited phrase still exists, not that the rule is still right: review the text against its sources whenever a source or this file changes. kind: authority = Evals, playbooks, GEN_EXECUTION, the QC spec or policy; guideline = platform guidance outside the gates (the Opus 5.5 hardness guide, `Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md`, tracked; its lines are required like any other); lesson = the learnings file (historical; a later section can supersede an earlier one).",
   "limits": {"words": "whitespace-delimited tokens that contain a letter or digit (a path is one word); the ceiling applies to the generated text, --note text counts only towards the warning", "warn_words": 520, "max_words": 560},
   "lines": {
     "header": {
-      "text": "/goal Author the HarmonyGames task in {task_abs}/ (other paths are relative to {workspace}) so it scores 5 on every platform eval and passes /create-difficulty first time.",
+      "text": "/goal Author the HarmonyGames task in {task_abs}/ (other paths relative to {workspace}) to score 5 on every platform eval and pass /create-difficulty first time.",
       "evidence": []
     },
     "assignment": {
@@ -30,7 +30,7 @@
       ]
     },
     "default_dir": {
-      "text": "Tools default to {default_rel}/ ({default_owner}): export TASK_AUTHORING_TASK_DIR to this folder and read \"task_inputs/\" in skills as this folder.",
+      "text": "Tools default to {default_rel}/ ({default_owner}): export TASK_AUTHORING_TASK_DIR={task_arg} and read skills' \"task_inputs/\" as this folder.",
       "evidence": [
         {"path": "Task_Authoring/README.md", "contains": "(or set `TASK_AUTHORING_TASK_DIR` for that shell)", "kind": "authority"}
       ]
@@ -42,7 +42,7 @@
       ]
     },
     "boundary": {
-      "text": "Write only here (helper caches and ledger tools aside); never edit Evals/, claude/, Task_Authoring/tools/, the universe or other tasks; never execute SQL.",
+      "text": "Write only here (helper caches and ledger tools aside); never edit Evals/, claude/, Task_Authoring/tools/, the universe or other tasks, or execute SQL.",
       "evidence": [
         {"path": "Task_Authoring/setup/GEN_EXECUTION.md", "contains": "## 1 · Write boundary (HARD RULE)", "kind": "authority"},
         {"path": "Task_Authoring/setup/GEN_EXECUTION.md", "contains": "The one shared file the `/create-*` commands write outside `task_inputs/` is the cross-task evidence ledger", "kind": "authority"}
@@ -82,7 +82,7 @@
       ]
     },
     "rule_injection": {
-      "text": "3. /injection: check each seeded entity across the whole universe, date each seed after the base events it relies on, confirm the agent's tools return it.",
+      "text": "3. /injection: check each seed against the whole universe, date it after the base events it relies on, confirm the agent's tools return it.",
       "evidence": [
         {"path": "Evals/0_Injection_Quality_Eval.md", "contains": "a material introduced contradiction cannot be reconciled", "kind": "authority"},
         {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "**tool-surface proof** (the decisive record is returned by the natural call", "kind": "authority"},
@@ -104,7 +104,7 @@
       ]
     },
     "v2_traps": {
-      "text": ", two or more of them cross-source decisions on distinct, named trap types from the hardness guide (Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md, not its worked examples: those are real tasks), each naming the convincing wrong source and the record that beats it; volume, clean totals, visible caveats and same-thread corrections don't work",
+      "text": ", two or more of them cross-source decisions on distinct, named trap types from the hardness guide (Task_Authoring/references/Docs/13_Hardness_v2_Opus55.md, not its worked examples), each naming the convincing wrong source and the record that beats it; volume, clean totals, visible caveats and same-thread corrections don't work",
       "evidence": [
         {"path": "Task_Authoring/setup/GEN_EXECUTION.md", "contains": "Every design names at least two of these as separate cross-source decisions that each flip a weight-5 row", "kind": "authority"},
         {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "name at least two of the nine v2 traps the design uses, as two separate decisions that each need checking across sources", "kind": "authority"},
@@ -131,7 +131,7 @@
       ]
     },
     "rule_writes": {
-      "text": "6. Writes: each needs an authorized trigger and proven write access; make {first} the owner of Drive, Docs and Sheets targets.",
+      "text": "6. Writes: each needs an authorized trigger and proven write access; {first} must own Drive, Docs and Sheets targets.",
       "evidence": [
         {"path": "Task_Authoring/playbooks/01_Scenario_Design.md", "contains": "the persona can **edit** every write target (owner or shared as writer)", "kind": "authority"},
         {"path": "learnings", "contains": "## 31. The persona must own its write targets", "kind": "lesson"},
@@ -139,7 +139,7 @@
       ]
     },
     "rule_align": {
-      "text": "7. Align scenario, injection and prompt so every OE and rubric row traces to incorporated facts; keep traps, rules and answers out of the task prompt, an ordinary request naming its destinations.",
+      "text": "7. Align scenario, injection and prompt so every OE and rubric row traces to incorporated facts; keep traps, rules and answers out of the prompt, an ordinary request naming its destinations.",
       "evidence": [
         {"path": "Task_Authoring/references/Docs/11_V3_Changes.md", "contains": "Answer-key clauses such as", "kind": "authority"},
         {"path": "Task_Authoring/references/Docs/11_V3_Changes.md", "contains": "An unnamed destination the sender would know", "kind": "authority"},
@@ -188,7 +188,7 @@
       ]
     },
     "Planning and Decision Support": {
-      "text": "recommend a course of action, plan or schedule with its tradeoffs; each material choice (order, dates, owners) is fixed by the prompt or a record {first} can open, or bounded so the rubric accepts every answer inside.",
+      "text": "recommend a course of action, plan or schedule with tradeoffs; each material choice (order, dates, owners) is fixed by the prompt or a record {first} can open, or bounded so the rubric accepts every answer inside.",
       "evidence": [
         {"path": "Task_Authoring/references/Taxonomy_V2_Step_Map.md", "contains": "Recommend a course of action, plan, or schedule, with tradeoffs.", "kind": "authority"}
       ]

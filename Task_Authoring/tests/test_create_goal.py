@@ -96,7 +96,8 @@ class ComposeTests(unittest.TestCase):
                      "weight 5 by kind of work, never raised", "fail the failure-pattern and SD gates",
                      "hardness (with the guide's Part 7 checks, run by Task_Authoring/tools/hardness_v2_check.py) "
                      "and volume plans",
-                     "confirm the agent's tools return it"):
+                     "confirm the agent's tools return it",
+                     f"export TASK_AUTHORING_TASK_DIR={shlex.quote(G.rel(self.task))} and read"):
             self.assertIn(text, goal)
         self.assertNotIn("dd-2025-closeout", goal)            # another universe's design is not a storyline to avoid
         self.assertNotIn("{", goal)
@@ -385,6 +386,7 @@ class CliTests(unittest.TestCase):
         result = self.cli("--task-dir", str(spaced), "--stdout-only")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("--task-dir " + shlex.quote(G.rel(spaced)) + " --write", result.stdout)
+        self.assertIn("export TASK_AUTHORING_TASK_DIR=" + shlex.quote(G.rel(spaced)) + " and", result.stdout)
 
     def test_output_that_is_a_directory_stops_with_6(self):
         out = self.task / "Working_Files" / "00_Session_Goal.md"

@@ -341,3 +341,14 @@ rules 3–5 were shortened by six words without changing a requirement: three jo
 don't work, which "volume" already covers. Leonard's assignment gives 520 words against today's folders. The test that
 keeps the guide's citations in the tracked bundle now checks only guideline citations, because a guide-backed line can
 also cite authority files.
+
+## 17. Tighter wording (2026-11-04, at the user's request)
+
+Asked for a more concise goal (Julia Lawson's `task_inputsS` gave 525 generated words), the wording was cut by 15 words
+without changing a requirement, a cited phrase or a phrase the tests pin: joining words in the header, rule 3 ("each
+seed", "date it"), rule 6 ("{first} must own"), rule 7 ("the prompt") and the Planning skill ("with tradeoffs", the
+taxonomy's own words); and rule 4's reason for skipping the guide's worked examples (": those are real tasks"; §12 and
+SKILL.md keep the reason). The default-folder line now gives the command, `export TASK_AUTHORING_TASK_DIR=<--task-dir
+value>`, instead of describing it; two tests pin it, including a folder with spaces. Julia's goal is now 510 generated
+words (556 with the two notes), counted by `build_goal.py` on both rule files against the same folders. Reaching about 450 would mean dropping rules (rule 1's census sentence, rule 5's forecast or rule 2's category
+meanings), so that was not done. Notes stay verbatim and count only toward the warning.
