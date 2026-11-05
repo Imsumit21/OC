@@ -22,8 +22,9 @@ Red team A (2026-10-05, support/examples/calibration/harness_redteam/A_scenario_
   effective_profile        effective_profile present; Long Horizon = extreme; Normal Horizon at extreme only with a
                            profile_exception {reason, requester_confirmation}; --profile must agree. An extreme
                            manifest may carry volume_exception {reason, requester_confirmation (nonblank strings),
-                           call_budget_floor (int 100-500), per_record_floor (int 0-300)}: it replaces only those two
-                           numeric minima; present but null, partial, mistyped, unknown-keyed or out of range =
+                           call_budget_floor (int 100-500), per_record_floor (int 0-300), optional rows_floor
+                           (int 40-120)}: it replaces those numeric minima (budget, per_record_calls, and rows when
+                           rows_floor is given); present but null, partial, mistyped, unknown-keyed or out of range =
                            FAIL, minima unchanged. It may also carry cohort_exception {reason, requester_confirmation
                            (nonblank strings), cohort_floor (int 10-40)}: it replaces only the cohort-size minimum;
                            surfaces, surface services, why_no_bulk and the short-circuit analysis still apply; malformed
@@ -140,14 +141,15 @@ def _has_token(code: str, token: str) -> bool:
 
 
 VOLUME_EXCEPTION_MIN_BUDGET = 100   # the platform's Long Horizon minimum (counted calls); no exception goes below it
+ROWS_EXCEPTION_MIN = 40             # an extreme injection stays substantial even when the honest universe can't reach 120 seeded rows
 
 
 def volume_exception(manifest: dict, eff) -> tuple:
-    """(floors, problems): a requester-confirmed lower call-budget floor for the extreme profile only.
+    """(floors, problems): requester-confirmed lower volume floors for the extreme profile only.
 
-    It replaces exactly two numeric minima, `budget` and `per_record_calls`; every other check, including the necessity
-    reason each budget row needs, is unchanged. Absent -> (None, []); incomplete, unknown-keyed or out of range ->
-    (None, problems)."""
+    It replaces the `budget` and `per_record_calls` minima, and optionally the seeded-row `rows` minimum via
+    `rows_floor` (int ROWS_EXCEPTION_MIN-120); every other check, including the necessity reason each budget row
+    needs, is unchanged. Absent -> (None, []); incomplete, unknown-keyed or out of range -> (None, problems)."""
     if "volume_exception" not in manifest:
         return None, []
     ex = manifest["volume_exception"]          # present: null, a non-object or a partial object all fail closed
@@ -155,7 +157,7 @@ def volume_exception(manifest: dict, eff) -> tuple:
         return None, [f"volume_exception applies only to the extreme profile, not {eff!r}"]
     if not isinstance(ex, dict):
         return None, ["volume_exception must be an object {reason, requester_confirmation, call_budget_floor, per_record_floor}"]
-    known = {"reason", "requester_confirmation", "call_budget_floor", "per_record_floor"}
+    known = {"reason", "requester_confirmation", "call_budget_floor", "per_record_floor", "rows_floor"}
     extra = sorted(str(k) for k in ex if k not in known)
     probs = [f"volume_exception has unknown key(s) {', '.join(extra)}"] if extra else []
     probs += [f"volume_exception.{k} must be a nonblank string" for k in ("reason", "requester_confirmation")
@@ -166,7 +168,14 @@ def volume_exception(manifest: dict, eff) -> tuple:
         probs.append(f"volume_exception.call_budget_floor must be an integer {VOLUME_EXCEPTION_MIN_BUDGET}-{top['budget']}, got {b!r}")
     if not (isinstance(r, int) and not isinstance(r, bool) and 0 <= r <= top["per_record_calls"]):
         probs.append(f"volume_exception.per_record_floor must be an integer 0-{top['per_record_calls']}, got {r!r}")
-    return (None, probs) if probs else ({"budget": b, "per_record_calls": r}, [])
+    floors = {"budget": b, "per_record_calls": r}
+    if "rows_floor" in ex:                         # optional: the honest seeded-row floor when the universe can't reach 120
+        rf = ex.get("rows_floor")
+        if not (isinstance(rf, int) and not isinstance(rf, bool) and ROWS_EXCEPTION_MIN <= rf <= top["rows"]):
+            probs.append(f"volume_exception.rows_floor must be an integer {ROWS_EXCEPTION_MIN}-{top['rows']}, got {rf!r}")
+        else:
+            floors["rows"] = rf
+    return (None, probs) if probs else (floors, [])
 
 
 def cohort_exception(manifest: dict, eff) -> tuple:
@@ -322,7 +331,7 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
     from runtime_context import ensure_active
     ensure_active(globals(), require_source=True)
     profile, profile_probs = resolve_profile(manifest, profile)
-    p, vex = effective_thresholds(manifest, profile)   # a complete volume_exception changes only budget / per_record_calls
+    p, vex = effective_thresholds(manifest, profile)   # a complete volume_exception changes budget / per_record_calls (and optional rows)
     cex = cohort_exception(manifest, manifest.get("effective_profile"))[0] if profile == "extreme" else None  # only cohort
     checks: list[dict] = []
 
@@ -375,7 +384,8 @@ def evaluate(manifest: dict, sql_text: str, profile: str | None = None, design: 
           f"{len(injected)} schemas injected ({', '.join(injected)}); need ≥ {p['services_injected']}")
     inserts = stats.get("ops", {}).get("insert", stats["total_rows"])
     check("rows", inserts >= p["rows"],
-          f"{inserts} INSERTed rows (UPDATE companions not counted; {stats['total_rows']} rows in all); need ≥ {p['rows']}")
+          f"{inserts} INSERTed rows (UPDATE companions not counted; {stats['total_rows']} rows in all); need ≥ {p['rows']}"
+          + (" (requester-confirmed volume_exception.rows_floor)" if vex and "rows" in vex else ""))
 
     services = manifest.get("services", {})
     weighted = [s for s, v in services.items() if s in SERVICES and v.get("weight_reason")]
@@ -1344,6 +1354,16 @@ def _self_test_volume_exception() -> dict:
         th, vex = effective_thresholds(mut(ok, setf(k, v)), "extreme")
         want = {"call_budget_floor": "budget", "per_record_floor": "per_record_calls"}[k]
         assert vex is not None and th[want] == v, (k, v, th[want])
+
+    # 3. optional rows_floor: accepted in range (overrides the rows minimum), rejected out of range, absent = default
+    for v in (ROWS_EXCEPTION_MIN, ext["rows"], ext["rows"] - 30):
+        th, vex = effective_thresholds(mut(ok, setf("rows_floor", v)), "extreme")
+        assert vex is not None and vex.get("rows") == v and th["rows"] == v, ("rows_floor accept", v, th.get("rows"))
+    for bad in (None, True, False, ROWS_EXCEPTION_MIN - 1, ext["rows"] + 1, float(ROWS_EXCEPTION_MIN),
+                str(ROWS_EXCEPTION_MIN), [ROWS_EXCEPTION_MIN]):
+        assert volume_exception(mut(ok, setf("rows_floor", bad)), "extreme")[1], ("rows_floor reject", bad)
+    # absent rows_floor leaves rows at the profile default and the other two minima still apply
+    assert "rows" not in (effective_thresholds(ok, "extreme")[1] or {}) and effective_thresholds(ok, "extreme")[0]["rows"] == ext["rows"]
 
     # 3. a valid exception does not excuse anything else
     still = [("budget under the lowered floor", lambda m: m["call_budget"][0].update(calls=140), "call_budget"),
