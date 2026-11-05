@@ -31,6 +31,7 @@ before re-running. Backup copies (`*.bak*`), pickles and `*.err` probes are git-
 | `robert_winddown_closeout_2026-10-30` | Robert · Long · easy | Feb 14, 2026 | 85.7% |
 | `julia_zm_difficulty_baseline_2026-11-01` | Julia Lawson · Long · medium | Oct 1, 2025 | 83.8% |
 | `frederick_bridge_pipeline_2026-11-03` | Frederick Stone · Long · medium | Oct 1, 2025 | 77.7% |
+| `frederick_q4_commitments_2026-11-05` | Frederick Stone · Long · easy | Oct 1, 2025 | 71.0% |
 
 ## Adding a task
 

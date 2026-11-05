@@ -1,0 +1,2135 @@
+{
+ "_note": "Final manifest (/create-injection rev4). Draft 01_Hardness_Manifest.draft.json (scenario-certified design-2, 84fea705bc87) plus the ids, facts and bindings only the SQL settles; every change is in design_delta.",
+ "persona": "frederick_stone",
+ "assignment_context": {
+  "context_hash": "db8af19cc1c30a6be55a16a0e314bf3060388efa6a11c62f13a81a08f6bd0462",
+  "assignment_hash": "b196657eace063449d8bf34d6500df549306827925c9dd7f3a90a9f27765af14",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2025-10-01T00:00:00Z",
+  "difficulty_mode": "easy"
+ },
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "author_targets": {
+  "min_calls_per_run": 130,
+  "max_avg_weighted_pass": 0.8,
+  "requester_confirmation": "task author in chat on 2026-11-03: 'my task is a long horizon task soo i want over 130 tool calls in each runs and also i want difficulty pass rate under 80% and also have to folllow all other difficulty guidelines soo you can choose from your self which option is best fit for my needs for this task'"
+ },
+ "volume_exception": {
+  "reason": "the cohort is 46 real companies (36 in scope); mail and calendar are bulk-readable, so honest necessary calls are about 225 (a lean correct run about 150) - reaching 500 would need padding, which fails on its own",
+  "requester_confirmation": "task author in chat on 2026-11-03 set the horizon target at 'over 130 tool calls in each runs' and delegated the choice ('you can choose from your self which option is best fit for my needs'); the pre-scenario analysis's volume-exception proposal was part of that choice",
+  "call_budget_floor": 200,
+  "per_record_floor": 90
+ },
+ "requirements": {
+  "R1": "log population: every outside company with an offer, a trial, a quote, terms or an ask waiting on us that one of us engaged with (a call, a reply, a sign-up or paper) - 36 companies; cold pitches nobody answered (including ones only forwarded around internally), ad networks, PlayableX, Craftsman+ and Singular, investors, Mattel and withdrawn offers stay off",
+  "R2": "decision per company under the runway guardrails' cash test and park rule (End / Park), with the Sep 29 #executives change that travel and event costs count as cash even when a partner books them",
+  "R3": "live-game exemption: anything on Arthur's keep-running list stays (Keep) even when it costs money",
+  "R4": "already answered: no second answer; the log records who answered (Answered by) and a revisit when the answer was 'later'",
+  "R5": "a written answer to every company waiting to hear from us, on its own thread or to the address its paper or notice names",
+  "R6": "signing: only Leonard or Arthur accept terms; anything waiting on a signature gets a founders' board To Do card named for the company; auto-renewal, exclusivity, IP licence or a term over 12 months also goes to ESG's intake address, one email per agreement (Sign)",
+  "R7": "revisit reminder on Frederick's calendar on the January commitments review date (Mon Jan 5, 2026) for each parked company and each 'later' answer (Next date)",
+  "R8": "a contact for every company's person in Contacts, company in the job field, added only when missing",
+  "R9": "the log sheet in Frederick's Q4 commitments folder with the README's columns (Company, Contact, What's waiting, Decision, Answered by, What we told them, Next date)",
+  "R10": "reply on Leonard's thread with what we're keeping (Keep) and what's waiting on Arthur or Leonard to sign (Sign)"
+ },
+ "services": {
+  "gmail": {
+   "role": "hub ask and report destination; ESG's signing note and intake emails; every counterparty's offer thread (36 in scope, 10 boundary); Clipforge's processor notice; replies and cancellations",
+   "weight_reason": "the ask, the signing rule, every offer's state and every written answer live in mail"
+  },
+  "gdocs": {
+   "role": "runway guardrails doc (H1) and its UA-buckets decoy; the folder README; ESG's intake checklist; 28 counterparties' papers (order forms, terms, quotes)",
+   "weight_reason": "the decision rules and each paper's cost, dates and terms (auto-renewal, exclusivity, IP, term) decide the decision"
+  },
+  "gdrive": {
+   "role": "Frederick's Q4 commitments folder (destination, owned by Frederick) holding the README and template; papers shared by counterparties",
+   "weight_reason": "the log must be created in the owned folder"
+  },
+  "gsheets": {
+   "role": "log template header row; Frederick's stale July vendor tracker (decoy); the log itself",
+   "weight_reason": "the log is the graded register"
+  },
+  "gslides": {
+   "role": "partners' proposal decks as their papers (Lanternfly, Bundlehouse)",
+   "weight_reason": "Bundlehouse's IP-licence term (counsel route) and Lanternfly's proposal live only in the deck"
+  },
+  "slack": {
+   "role": "Leonard's Sep 29 #executives amendment; Leonard's Sep 26 thread reply (Framewell waiver, names Maren) under the Sep 22 Playtestcloud root; Leonard's Sep 29 DM thread reply under his Sep 17 localization message (Lanternfly answered, names Wen); Robert's Sep 17 note (Spotlight answered, names the Dec 5 indie showcase); Leonard's July 'sign small stuff' note (superseded); Robert's 'cancel everything' post (non-authoritative); Frederick's Sep 4 Nintendo post (base)",
+   "weight_reason": "Framewell's decision, Lanternfly's answered state and the travel amendment exist only in Slack"
+  },
+  "gcal": {
+   "role": "Leonard's Jan 5, 2026 commitments review (revisit date); Clipforge's Jul 14 kickoff; Spotlight's Sep 17 call (no answer in its description); revisit writes",
+   "weight_reason": "the revisit date lives in the calendar; the revisit reminders are writes"
+  },
+  "trello": {
+   "role": "Arthur's keep-running list card (H3) on the founders' board; signature cards in To Do (writes); base BrowserStack card (decoy)",
+   "weight_reason": "the Keep exemption is decided by the card's checklist; routed signatures are cards"
+  },
+  "contacts": {
+   "role": "ESG Law intake entry (recipient); three counterparties already present; contact writes",
+   "weight_reason": "ESG's intake address and the dedupe check live in Contacts; contacts are writes"
+  },
+  "linear": {
+   "role": "ZOM-567 'Switch dev kit' and Arthur's Sep 25 comment (the Nintendo done-gap)",
+   "weight_reason": "the missing piece of Nintendo's 'done' lives only in the Linear comment"
+  }
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "service": "gmail",
+   "record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "locator": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "prompt_reference": "Leonard's vendor and partner email",
+   "requirement_ids": [
+    "R1",
+    "R5",
+    "R10"
+   ]
+  },
+  {
+   "id": "A2",
+   "service": "gdrive",
+   "record": "d_80a8c04753ba82ba4ba6a5",
+   "locator": "d_80a8c04753ba82ba4ba6a5",
+   "prompt_reference": "my Q4 commitments folder",
+   "requirement_ids": [
+    "R9"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "gmail",
+   "container": "frederick.stone@harmonygames.co/1844732913254784171",
+   "locator": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/1844732913254784171"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "anyone outside the investor work who has an offer, a trial, a quote, terms or an ask in front of us and that one of us has actually engaged with",
+   "requirement_ids": [
+    "R1",
+    "R5",
+    "R8",
+    "R10"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "the runway guardrails doc"
+    },
+    {
+     "id": "H2",
+     "quote": "ESG's note about signing"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "gdocs",
+   "container": "f_b98287f6f80fe431a71209",
+   "locator": "f_b98287f6f80fe431a71209",
+   "kind": "delegation",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_b98287f6f80fe431a71209"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "Go by the runway guardrails doc for what we do with each one",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K3",
+   "service": "gdocs",
+   "container": "f_b98287f6f80fe431a71209",
+   "locator": "f_b98287f6f80fe431a71209",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_b98287f6f80fe431a71209"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "Go by the runway guardrails doc for what we do with each one",
+   "requirement_ids": [
+    "R4"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K4",
+   "service": "gdocs",
+   "container": "f_b98287f6f80fe431a71209",
+   "locator": "f_b98287f6f80fe431a71209",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_b98287f6f80fe431a71209"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "Go by the runway guardrails doc for what we do with each one",
+   "requirement_ids": [
+    "R3"
+   ],
+   "names_authorities": [
+    {
+     "id": "H3",
+     "quote": "Arthur's keep-running list on our board"
+    }
+   ]
+  },
+  {
+   "id": "K5",
+   "service": "gmail",
+   "container": "frederick.stone@harmonygames.co/1844177063117059830",
+   "locator": "frederick.stone@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/1844177063117059830"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "Anything that needs signing goes the way ESG's note about signing says",
+   "requirement_ids": [
+    "R6"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K6",
+   "service": "trello",
+   "container": "689b662c60cbe40b9f4a97ae",
+   "locator": "689b662c60cbe40b9f4a97ae",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K4"
+   ],
+   "seeded_ids": [
+    "689b662c60cbe40b9f4a97ae"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_b98287f6f80fe431a71209",
+   "delegation_quote": "anything on Arthur's keep-running list on our board stays",
+   "requirement_ids": [
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K7",
+   "service": "gcal",
+   "container": "evt_fd469c29811879519c2c96",
+   "locator": "evt_fd469c29811879519c2c96",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "evt_fd469c29811879519c2c96"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_b98287f6f80fe431a71209",
+   "delegation_quote": "comes back at the January commitments review I'll put on our calendars",
+   "requirement_ids": [
+    "R7"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K8",
+   "service": "gdocs",
+   "container": "f_846ddc38b2aab3d2ed3fcb",
+   "locator": "f_846ddc38b2aab3d2ed3fcb",
+   "kind": "format",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_846ddc38b2aab3d2ed3fcb"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "the README in the folder has the columns",
+   "requirement_ids": [
+    "R9",
+    "R8"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K9",
+   "service": "gsheets",
+   "container": "f_05f0a451b29b19a1c0b90f",
+   "locator": "f_05f0a451b29b19a1c0b90f",
+   "kind": "format",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K8"
+   ],
+   "seeded_ids": [
+    "f_05f0a451b29b19a1c0b90f"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_846ddc38b2aab3d2ed3fcb",
+   "delegation_quote": "copy the header row from the template sheet",
+   "requirement_ids": [
+    "R9"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K10",
+   "service": "slack",
+   "container": "C07C2866011/1759166100.370044",
+   "locator": "C07C2866011/1759166100.370044",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "7e88911312fa9a969f0659a105af59a3"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "plus the one change I posted in #executives on Monday",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K11",
+   "service": "contacts",
+   "container": "9b0185e445572aeee9f27d35",
+   "locator": "9b0185e445572aeee9f27d35",
+   "kind": "recipient",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K5"
+   ],
+   "seeded_ids": [
+    "9b0185e445572aeee9f27d35"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+   "delegation_quote": "our intake address (it's in your Contacts as ESG Law intake)",
+   "requirement_ids": [
+    "R6"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K12",
+   "service": "gdocs",
+   "container": "f_3b06917a41dd59308d890b",
+   "locator": "f_3b06917a41dd59308d890b",
+   "kind": "format",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K5"
+   ],
+   "seeded_ids": [
+    "f_3b06917a41dd59308d890b"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>",
+   "delegation_quote": "what to include is in the intake checklist I shared",
+   "requirement_ids": [
+    "R6"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K13",
+   "service": "gmail",
+   "container": "frederick.stone@harmonygames.co/1844732913254784171",
+   "locator": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/1844732913254784171"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "reply here with what we're keeping and what's waiting on Arthur or me to sign",
+   "requirement_ids": [
+    "R10"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K14",
+   "service": "gmail",
+   "container": "frederick.stone@harmonygames.co/1844732913254784171",
+   "locator": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/1844732913254784171"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com>",
+   "delegation_quote": "Everyone who is waiting to hear from us should get a written answer this week",
+   "requirement_ids": [
+    "R5"
+   ],
+   "names_authorities": []
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "the runway guardrails doc",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R2",
+    "R4",
+    "R7"
+   ],
+   "findable_query": "runway guardrails",
+   "seeded_ids": [
+    "f_b98287f6f80fe431a71209"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "f_7bacf15c4e8eea1a52dcd4"
+   ],
+   "decoy_base_pointers": [
+    "C07C2866011/1757961037.465799"
+   ],
+   "decoy_scope": {
+    "dimension": "team",
+    "decoy": "UA ad-network spend (fundraising bucket vs real UA bucket, Sep 15-16)",
+    "task": "vendor and partner commitments outside UA"
+   }
+  },
+  {
+   "id": "H2",
+   "name": "ESG's note about signing",
+   "home_service": "gmail",
+   "decoy_service": "slack",
+   "governs": [
+    "R6"
+   ],
+   "findable_query": "ESG signing",
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/1844177063117059830"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "0573efd133cabdb1acde61e68571aa82"
+   ],
+   "decoy_base_pointers": []
+  },
+  {
+   "id": "H3",
+   "name": "Arthur's keep-running list",
+   "home_service": "trello",
+   "decoy_service": "trello",
+   "governs": [
+    "R3"
+   ],
+   "findable_query": "keep-running",
+   "seeded_ids": [
+    "689b662c60cbe40b9f4a97ae"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "trello:688c4fa78031638f0804a994"
+   ],
+   "decoy_scope": {
+    "dimension": "team",
+    "decoy": "tools Leonard cancelled in his August cleanup",
+    "task": "what the live game needs to keep running"
+   }
+  }
+ ],
+ "cohort": {
+  "definition": "every outside company with an offer, trial, quote, terms or ask to HG in Frederick's view since June 2025 (46 looked at); 36 pass the hub's scope rule",
+  "definition_source": [
+   "frederick.stone@harmonygames.co/1844732913254784171",
+   "f_b98287f6f80fe431a71209"
+  ],
+  "key": "company",
+  "size": 46,
+  "evidence_surfaces": [
+   {
+    "service": "gmail",
+    "tool": "gmail_search_messages+gmail_get_thread",
+    "per_record_calls": 0.5,
+    "records": 46,
+    "requirement": "R1",
+    "decides": "every outside company with an offer, a trial, a quote, terms or an ask waiting on us",
+    "why_no_bulk": "gmail_search returns ids only; gmail_get_messages_batch reads bodies in bulk, so only half a call per company is counted",
+    "short_circuit": "whether a company is in scope (engaged, not cold, not withdrawn) and what it is waiting on is only in its own thread; no list names the 36",
+    "seeded_ids": []
+   },
+   {
+    "service": "gdocs",
+    "tool": "gdocs_get_document / gslides_get_presentation",
+    "per_record_calls": 1.0,
+    "records": 32,
+    "requirement": "R2",
+    "seeded": true,
+    "decides": "decision per company",
+    "why_no_bulk": "each paper is its own document; no call returns the body of more than one document",
+    "short_circuit": "cost, conversion dates and terms (auto-renewal, exclusivity, IP, term length) decide 13 of 32 papers and the mail never states them, so every paper must be read",
+    "seeded_ids": []
+   },
+   {
+    "service": "contacts",
+    "tool": "contacts_search_contacts",
+    "per_record_calls": 1.0,
+    "records": 35,
+    "requirement": "R8",
+    "decides": "a contact for every company's person in Contacts, company in the job field, added only when missing",
+    "why_no_bulk": "three counterparties already have contacts; a per-company lookup is the dedupe check before each add (contacts_get_contacts pages 170+ internal entries)",
+    "short_circuit": "adding without the lookup duplicates Kinetic Arcade, Lumencloud and Markward",
+    "seeded_ids": []
+   },
+   {
+    "service": "gcal",
+    "tool": "gcal_list_events (Jun-Jan window)",
+    "per_record_calls": 0.2,
+    "records": 46,
+    "requirement": "R4",
+    "decides": "already answered: no second answer; the log records who answered (Answered by)",
+    "why_no_bulk": "one listing covers many companies (counted at 0.2 per company)",
+    "short_circuit": "Clipforge's workspace id appears only on its kickoff call and paper; Spotlight's call is the only calendar trace of its answer, which is in Robert's note",
+    "seeded_ids": []
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A24",
+   "ends_in": "R6",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1842359398719557772",
+     "finding": "Nintendo Developer Portal: Registration Completed (Sep 4)"
+    },
+    {
+     "service": "slack",
+     "record": "C07C2866011/1757011358.730529",
+     "finding": "Frederick: I registered an account for harmonygames"
+    },
+    {
+     "service": "linear",
+     "record": "ZOM-567",
+     "finding": "Arthur, Sep 25 comment: org account limited until an officer accepts the Global ToS and NDA"
+    },
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1844177063117059830",
+     "finding": "ESG: only Leonard or Arthur accept terms; waiting on a signature -> founders' board card"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A11",
+   "ends_in": "R7",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1843618067251203081",
+     "finding": "Framewell: Pro plan from Nov 1 at $149/month"
+    },
+    {
+     "service": "gdocs",
+     "record": "framewell order form",
+     "finding": "billing starts Nov 1 (cash in window)"
+    },
+    {
+     "service": "slack",
+     "record": "9fb2d23420c7e01ca163571f4129c912",
+     "finding": "Leonard (thread reply under the Sep 22 Playtestcloud post): no charge until Feb 1"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_fd469c29811879519c2c96",
+     "finding": "parked -> revisit at the Jan 5 review"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A25",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1842800807116855774",
+     "finding": "Lanternfly proposal (Sep 9); Frederick: 'we'll take a look' (Sep 10); Sep 22 'any news?' unanswered in the thread"
+    },
+    {
+     "service": "gslides",
+     "record": "f_5dbbaf5b251d5261427eb1",
+     "finding": "Southeast Asia publishing proposal deck"
+    },
+    {
+     "service": "slack",
+     "record": "D05S58U4SAK/1758151772.570449",
+     "finding": "Leonard (DM root, Sep 17): 'we have no localization though'"
+    },
+    {
+     "service": "slack",
+     "record": "418a0a6d6c29b7b67ce0ffb270c78c1e",
+     "finding": "Leonard (DM thread reply, Sep 29): rang Wen back Saturday, Southeast Asia waits until after the raise, talk in January"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A15",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1844157874176168845",
+     "finding": "free tier ends Oct 31; Team $29/month from Nov 1 unless you downgrade"
+    },
+    {
+     "service": "gdocs",
+     "record": "pingwise terms",
+     "finding": "uptime monitoring and on-call paging for the backend endpoints"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_b98287f6f80fe431a71209",
+     "finding": "exemption: anything on Arthur's keep-running list stays"
+    },
+    {
+     "service": "trello",
+     "record": "689b662c60cbe40b9f4a97ae",
+     "finding": "checklist item 'the night pager for backend outages'"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A4",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "clipforge pilot agreement",
+     "finding": "pilot free through Jan 15, 2026; workspace HG-2291"
+    },
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1843067564852153540",
+     "finding": "processor notice for workspace HG-2291: pilot ends Oct 15, $1,800/month from Oct 16"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_0a5e42c3aac62434ba2cfc",
+     "finding": "Jul 14 kickoff (UGC Studio) ties the workspace to Clipforge"
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "root_cause": "A17",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1835288808653226583",
+     "finding": "June 18 quote: booth hold needs a $2,400 deposit by Oct 10"
+    },
+    {
+     "service": "gdocs",
+     "record": "pixel harbor quote",
+     "finding": "deposit terms; showcase Oct 24"
+    },
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1844732913254784171",
+     "finding": "scope: anyone with an offer in front of us that one of us engaged with (no date limit)"
+    }
+   ]
+  },
+  {
+   "id": "C7",
+   "root_cause": "A17",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1839631800730308867",
+     "finding": "Aug 5 sign-up (free until Jan 31) and Gemma's Aug 12 'keep it after Jan 31?', nothing later, no filed paper"
+    },
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1844732913254784171",
+     "finding": "scope: an offer in front of us that one of us engaged with (a sign-up), no date limit"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_fd469c29811879519c2c96",
+     "finding": "parked -> revisit at the Jan 5 review"
+    }
+   ]
+  },
+  {
+   "id": "C8",
+   "root_cause": "A25",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1842712097588195482",
+     "finding": "Rina's Sep 8 invitation: Dec 5 indie showcase, $750 stand fee, 'could we set up a call?'"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_564a16d0f5f6598d0360d5",
+     "finding": "Sep 17 showcase call, Robert organizer (no answer in the description)"
+    },
+    {
+     "service": "slack",
+     "record": "fc2f69c06b333f6c54dfd63d455c3958",
+     "finding": "Robert (Sep 17, #executives): sitting the Dec 5 indie showcase out, let Rina know"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "done_gap",
+   "services": [
+    "gmail",
+    "slack",
+    "linear",
+    "trello"
+   ],
+   "seeded_ids": [
+    "ZOM-567",
+    "cmt_c9a6660d81e067ad1de7"
+   ],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1842359398719557772",
+    "C07C2866011/1757011358.730529"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "Nintendo is done: Frederick registered and the portal sent Registration Completed, so nothing is waiting",
+   "resolver": "Arthur's Sep 25 comment on ZOM-567: the org account stays limited until an officer accepts the Global ToS and NDA; with ESG's rule it is Sign with a founders' board card",
+   "discovery_order": "the two Sep 4 portal mails and Frederick's #executives post come back from any Nintendo search; the comment needs linear_list_comments on ZOM-567"
+  },
+  {
+   "id": "T2",
+   "family": "superseding",
+   "services": [
+    "gmail",
+    "gdocs",
+    "slack"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1843618067251203081",
+    "9fb2d23420c7e01ca163571f4129c912"
+   ],
+   "base_pointers": [
+    "C07C2866011/1758513190.847889"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Framewell is paid from Nov 1, so it fails the cash test: End with a cancellation",
+   "resolver": "Leonard's Sep 26 reply under his Sep 22 Playtestcloud post: Maren (Framewell's account manager on the order-form mail) holds the Pro plan at no charge until Feb 1 -> free until January -> Park, revisit Jan 5",
+   "discovery_order": "the quote thread and order form are read first; the reply sits under a root about another vendor, #executives history shows roots only, and the reply names neither Framewell nor 'vendor', so a company-name search misses it (rev3 pre-check found it by 'Framewell', event 444)",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "frederick.stone@harmonygames.co/<CAGJkuaxoKn_J2zxTzhLswrYwOGA_wA5IXe9v747@mail.gmail.com>",
+     "seeded": true,
+     "at": "2025-09-18T16:00:00Z",
+     "container": "gmail:1843618067251203081"
+    },
+    {
+     "service": "slack",
+     "id": "9fb2d23420c7e01ca163571f4129c912",
+     "seeded": true,
+     "at": "2025-09-26T21:02:00Z",
+     "container": "slack:C07C2866011/1758513190.847889"
+    }
+   ]
+  },
+  {
+   "id": "T3",
+   "family": "completion_elsewhere",
+   "services": [
+    "gmail",
+    "gslides",
+    "slack"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1842800807116855774",
+    "418a0a6d6c29b7b67ce0ffb270c78c1e"
+   ],
+   "base_pointers": [
+    "D05S58U4SAK/1758151772.570449"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "Lanternfly's Sep 22 follow-up is unanswered, so it gets a Park reply",
+   "resolver": "Leonard's Sep 29 reply in the DM thread under his Sep 17 localization message: he rang Wen back (Southeast Asia waits until after the raise, talk in January) -> Answered by Leonard, revisit Jan 5, no second answer",
+   "discovery_order": "the thread with the unanswered follow-up is the natural read; the answer is a thread reply in the 1:1 DM (history shows roots only) naming Wen and the Southeast Asia deal, so neither a 'Lanternfly' nor a 'told' search returns it (rev3 found the DM root at events 387, 426, 428)"
+  },
+  {
+   "id": "T4",
+   "family": "authority",
+   "services": [
+    "gmail",
+    "gdocs",
+    "trello"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1844157874176168845",
+    "689b662c60cbe40b9f4a97ae"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "Pingwise bills $29/month from Nov 1, so it fails the cash test: End (ask to downgrade)",
+   "resolver": "the guardrails exempt Arthur's keep-running list; its checklist item 'the night pager for backend outages' is Pingwise's on-call paging -> Keep, confirm staying",
+   "discovery_order": "the cash test is read before the exemption is joined to a checklist item that does not name the vendor"
+  },
+  {
+   "id": "T5",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "gmail",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1843067564852153540",
+    "evt_0a5e42c3aac62434ba2cfc"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "Clipforge's pilot is free through Jan 15, 2026 (its agreement), so Park",
+   "resolver": "the processor notice for workspace HG-2291 (UGC Studio, tied to Clipforge by the paper and the Jul 14 kickoff) moves the pilot end to Oct 15 and starts $1,800/month on Oct 16 -> End, cancel in writing by Oct 15",
+   "discovery_order": "the agreement and the rep's thread name Clipforge; the notice names only the workspace and product, so a name search misses it",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "id": "f_8d0e0e3ae076b2f745e7e2",
+     "seeded": true,
+     "at": "2025-07-08T18:30:00Z",
+     "container": "file:f_8d0e0e3ae076b2f745e7e2"
+    },
+    {
+     "service": "gmail",
+     "id": "frederick.stone@harmonygames.co/<CAYV6MxN9j-x1B7nyXxQQO_hYhY5AoRuc5G7XzgR@paylane.io>",
+     "seeded": true,
+     "at": "2025-09-12T14:10:00Z",
+     "container": "gmail:1843067564852153540"
+    }
+   ]
+  },
+  {
+   "id": "T6",
+   "family": "exact_predicate",
+   "services": [
+    "gmail",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1835288808653226583"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "the backlog is what came in during September, so Pixel Harbor's June quote is missed",
+   "resolver": "the hub's scope has no date limit (an offer in front of us that we engaged with); the June quote still needs a deposit by Oct 10 -> on the log, End",
+   "discovery_order": "date-windowed mail searches (after Sep 1) do not return a June 18 thread"
+  },
+  {
+   "id": "T7",
+   "family": "superseding",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "0573efd133cabdb1acde61e68571aa82",
+    "frederick.stone@harmonygames.co/1844177063117059830"
+   ],
+   "base_pointers": [],
+   "requirement": "R6",
+   "expected_wrong_reading": "Leonard's July note lets Frederick accept small terms himself, so Markward's click-through needs no card",
+   "resolver": "ESG's Sep 24 note (only Leonard or Arthur accept terms, whatever the amount) and Leonard's Sep 25 reply ('this replaces what I said in July')",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "0573efd133cabdb1acde61e68571aa82",
+     "seeded": true,
+     "at": "2025-07-22T18:10:00Z",
+     "container": "slack:C07C2866011/1753207800.603298"
+    },
+    {
+     "service": "gmail",
+     "id": "frederick.stone@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+     "seeded": true,
+     "at": "2025-09-24T20:05:00Z",
+     "container": "gmail:1844177063117059830"
+    },
+    {
+     "service": "gmail",
+     "id": "frederick.stone@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>",
+     "seeded": true,
+     "at": "2025-09-25T16:30:00Z",
+     "container": "gmail:1844177063117059830"
+    }
+   ]
+  },
+  {
+   "id": "T8",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "f_b98287f6f80fe431a71209",
+    "evt_fd469c29811879519c2c96"
+   ],
+   "base_pointers": [],
+   "requirement": "R7",
+   "expected_wrong_reading": "revisit 'in the first week of January' (the guardrails' wording), dated by guess",
+   "resolver": "Leonard's commitments review on Mon Jan 5, 2026 (created Sep 29) is the revisit date",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "id": "f_b98287f6f80fe431a71209",
+     "seeded": true,
+     "at": "2025-09-26T16:00:00Z",
+     "container": "file:f_b98287f6f80fe431a71209"
+    },
+    {
+     "service": "gcal",
+     "id": "evt_fd469c29811879519c2c96",
+     "seeded": true,
+     "at": "2025-09-29T18:00:00Z",
+     "container": "gcal:evt_fd469c29811879519c2c96"
+    }
+   ]
+  },
+  {
+   "id": "T9",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_b98287f6f80fe431a71209",
+    "7e88911312fa9a969f0659a105af59a3"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "travel and event costs count only when we book them, so Wishwave (partner-booked travel) parks",
+   "resolver": "Leonard's Sep 29 #executives change: travel and event costs count as cash even when a partner books them -> Wishwave End",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "id": "f_b98287f6f80fe431a71209",
+     "seeded": true,
+     "at": "2025-09-26T16:00:00Z",
+     "container": "file:f_b98287f6f80fe431a71209"
+    },
+    {
+     "service": "slack",
+     "id": "7e88911312fa9a969f0659a105af59a3",
+     "seeded": true,
+     "at": "2025-09-29T17:15:00Z",
+     "container": "slack:C07C2866011/1759166100.370044"
+    }
+   ]
+  },
+  {
+   "id": "T10",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "80ced6c98e9bd0aa1ccb462488f1746d"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "Robert's 'just cancel every marketing tool' settles every decision as End",
+   "resolver": "Robert is not the owner of the guardrails; Leonard's doc decides",
+   "distractor_type": "non_authoritative_instruction"
+  },
+  {
+   "id": "T11",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1843000993076735547"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Playable Factory's unanswered follow-up is a company waiting on us",
+   "resolver": "a cold pitch nobody engaged with is off the log",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "T12",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1817715521687421486"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the Google partner check-in is a partner waiting on timing",
+   "resolver": "the hub keeps ad networks off the log (UA budget call)",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "T13",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1840501641217286806"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "Balancy's trial offer needs an answer",
+   "resolver": "Leonard answered in-thread on Sep 11 ('we'll circle back') -> Answered by Leonard, revisit",
+   "distractor_type": "already_done"
+  },
+  {
+   "id": "T14",
+   "family": "stale_summary",
+   "services": [
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "f_9d6edd4922d8130ccd272e"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "Frederick's July 31 vendor tracker is the population",
+   "resolver": "the tracker predates most offers and lists ended ones; the hub's scope rule over the mail decides",
+   "distractor_type": "stale_summary"
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1842898562278009736"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "NCsoft's engine demo and 'pilot' talk is a partner offer",
+   "resolver": "NCsoft is strategic / investor talks (bridge work), off the log",
+   "distractor_type": "keyword_collision"
+  },
+  {
+   "id": "T16",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1842255337882328812"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "Nova Rewards' offer is waiting on us",
+   "resolver": "Nova withdrew it on Sep 23",
+   "distractor_type": "withdrawn_ask"
+  },
+  {
+   "id": "T18",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1842348778705877030"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Rayking's pitch is engaged: Frederick wrote 'Hi \u2026, Leonard forwarded me your email'",
+   "resolver": "that reply went to Leonard (To: leonard.hayes), so nothing from us reached Rayking: a pitch only forwarded around internally stays off the log",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "T17",
+   "family": "distractor",
+   "services": [
+    "gmail",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_be21bac5d50e291ebfbe2b"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "Retainly's trial converts to paid like Reviewly's, so End",
+   "resolver": "Retainly converts Jan 12, 2026, outside the cash window -> Park",
+   "distractor_type": "near_duplicate_record"
+  },
+  {
+   "id": "T19",
+   "family": "completion_elsewhere",
+   "services": [
+    "gmail",
+    "gcal",
+    "slack"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1842712097588195482",
+    "fc2f69c06b333f6c54dfd63d455c3958"
+   ],
+   "base_pointers": [],
+   "requirement": "R4",
+   "expected_wrong_reading": "Spotlight Fest's Dec 5 invitation ($750 stand fee) is still open, so the cash test ends it with a written no",
+   "resolver": "Robert's Sep 17 #executives note: he had the call about the Dec 5 indie showcase and let Rina know we're sitting it out -> Answered by Robert, no second answer",
+   "discovery_order": "the invitation thread and the Sep 17 call event are the natural reads; the note names neither the fest nor 'told', and sits before the late-September #executives window (rev3 found the old wording by 'Spotlight' and 'told', events 386, 426)"
+  },
+  {
+   "id": "T20",
+   "family": "exact_predicate",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1839631800730308867"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "the backlog is what is live in recent mail and the filed papers, so Hootline (nothing after Aug 12, no paper) is missed",
+   "resolver": "the hub's scope has no date limit: Frederick signed up (engaged) and Gemma's Aug 12 question is unanswered -> on the log, Park, revisit Jan 5",
+   "discovery_order": "a mailbox listing from mid-August, the paperwork folder and the July tracker all miss it (rev3's cohort came from exactly those, events 66, 282, 284); an undated mail search or a June-onward listing finds it"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "DONE",
+   "mechanism": "A24",
+   "prior_family": "done_gap",
+   "prior_family_reason": "v2 trap 1: a done source (registration completed) with the missing piece (officer acceptance) in another service (Linear comment)",
+   "nodes": [
+    "T1",
+    "C1"
+   ],
+   "requirement": "R6",
+   "natural_reading": "Nintendo needs nothing: registration completed",
+   "decides": [
+    "X1",
+    "X2"
+   ],
+   "controls": [
+    "Orbit Store (needs an officer's acceptance, no done claim: Sign)",
+    "Playfuse (NDA: Sign)",
+    "Retainly (analytics trial, converts Jan 12, nothing to accept: Park)"
+   ],
+   "over_application": "over-application routes Retainly's trial sign-up to a signature card although its paper needs no acceptance",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_7f44d83eaad625e9",
+     "hev_522f1ca2bc9062de"
+    ]
+   },
+   "source": "linear-comment",
+   "signature": "Nintendo ZOM-567 comment officer accepts"
+  },
+  {
+   "id": "CORR",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 2: the waiver is a thread reply under a root about another vendor and (rev4) names the contact and plan, not the company; rev3's named reply leaked to a 'Framewell' search (hev_ebc012c844829411); bridge SciPlay reply under an unrelated root: 2/8 then 3/6 caught",
+   "nodes": [
+    "T2",
+    "C2"
+   ],
+   "requirement": "R2",
+   "natural_reading": "Framewell End: paid from Nov 1",
+   "decides": [
+    "X3",
+    "X4"
+   ],
+   "controls": [
+    "Brightlane Studio (paid from Oct 1, no waiver: End)",
+    "Quillcraft (free beta through January: Park)"
+   ],
+   "over_application": "over-application parks Brightlane too, as if every paid quote were waived",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411"
+    ]
+   },
+   "source": "slack-thread-reply-alias",
+   "signature": "Maren Pro plan no charge until Feb 1"
+  },
+  {
+   "id": "COMPL",
+   "mechanism": "A25",
+   "prior_family": "completion_elsewhere",
+   "prior_family_reason": "v2 trap 9: the answer was given by phone and (rev4) recorded as a thread reply in Leonard's 1:1 DM naming Wen, not the company; rev3's named DM root leaked (hev_13d86dcf23442708); bridge Paul DM placement: 3/6 caught",
+   "nodes": [
+    "T3",
+    "C3"
+   ],
+   "requirement": "R4",
+   "natural_reading": "Lanternfly gets a reply (Park or Sign)",
+   "decides": [
+    "X5",
+    "X6",
+    "X15",
+    "X19"
+   ],
+   "controls": [
+    "Balancy (answered in its own thread: Answered)",
+    "Motive Forge (Arthur declined in-thread: Answered)",
+    "Glyphworks (font quote nobody has answered: Park, gets a written answer)"
+   ],
+   "over_application": "over-application treats Glyphworks as answered because Leonard mentioned fonts in #executives",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_13d86dcf23442708"
+    ]
+   },
+   "source": "slack-dm-thread-reply",
+   "signature": "rang Wen back Southeast Asia after the raise"
+  },
+  {
+   "id": "EXC",
+   "mechanism": "A15",
+   "prior_family": "authority",
+   "prior_family_reason": "v2 trap 5: an exception in an older record (Arthur's August list) overrides the cash test; the item is named by function, not vendor",
+   "nodes": [
+    "T4",
+    "C4"
+   ],
+   "requirement": "R3",
+   "natural_reading": "Pingwise End: paid from Nov 1",
+   "decides": [
+    "X16",
+    "P1"
+   ],
+   "controls": [
+    "Vaultline and Certwell (named on the list: Keep)",
+    "Reviewly (paid, not on the list: End)"
+   ],
+   "over_application": "over-application keeps Reviewly as live-game tooling",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_d17e4abe74f0e7e0",
+     "hev_1de494f0682754d6"
+    ]
+   },
+   "source": "trello-checklist",
+   "signature": "keep-running night pager backend outages"
+  },
+  {
+   "id": "DATE",
+   "mechanism": "A4",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 4: a moved end date changes which side of the Dec 31 window the pilot falls on; the notice is keyed by workspace id (handover publisher-id notice: 5/6 missed)",
+   "nodes": [
+    "T5",
+    "C5"
+   ],
+   "requirement": "R2",
+   "natural_reading": "Clipforge Park: pilot free through Jan 15",
+   "decides": [
+    "X9",
+    "X10",
+    "X11"
+   ],
+   "controls": [
+    "Retainly (converts Jan 12: Park)",
+    "Reviewly (converts Oct 20 by its own terms: End)"
+   ],
+   "over_application": "over-application ends Retainly as well",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b"
+    ]
+   },
+   "source": "processor-notice",
+   "signature": "workspace HG-2291 pilot ends Oct 15"
+  },
+  {
+   "id": "FILT",
+   "mechanism": "A17",
+   "prior_family": "exact_predicate",
+   "prior_family_reason": "v2 trap 7: one in-scope company sits outside the September date window runs search (handover Arthur email outside the window: 2/6 missed)",
+   "nodes": [
+    "T6",
+    "C6"
+   ],
+   "requirement": "R1",
+   "natural_reading": "Pixel Harbor not on the log",
+   "decides": [
+    "X12",
+    "X13",
+    "V1"
+   ],
+   "controls": [
+    "Glyphworks (August thread with a filed paper: on the log)",
+    "Nova Rewards (withdrawn: off)",
+    "Playable Factory (cold pitch nobody answered: off the log)"
+   ],
+   "over_application": "over-application pulls Playable Factory's cold pitch onto the log",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_9c403cae42eb4df8",
+     "hev_c2297d21ba5cbc7b"
+    ]
+   },
+   "source": "mail-date-window",
+   "signature": "Pixel Harbor deposit Oct 10 June quote"
+  },
+  {
+   "id": "SIGN",
+   "mechanism": "A12",
+   "prior_family": "superseding",
+   "prior_family_reason": "the governing signing rule (ESG, Gmail) supersedes Leonard's July Slack note; on the delegation path, so expected mostly caught",
+   "nodes": [
+    "T7"
+   ],
+   "requirement": "R6",
+   "natural_reading": "Frederick accepts Markward's free click-through himself (July note): no card",
+   "decides": [
+    "C10"
+   ],
+   "controls": [
+    "Kinetic Arcade (counsel + card either way)",
+    "Echohall (free plan continues, nothing to accept: Park)"
+   ],
+   "over_application": "over-application cards Echohall although nothing needs accepting",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24"
+    ]
+   },
+   "source": "hub-path",
+   "signature": "ESG only Leonard or Arthur accept terms"
+  },
+  {
+   "id": "AMEND",
+   "mechanism": "A15",
+   "prior_family": "superseding",
+   "prior_family_reason": "the Sep 29 #executives change to the cash test; named by the hub, so expected mostly caught",
+   "nodes": [
+    "T9"
+   ],
+   "requirement": "R2",
+   "natural_reading": "Wishwave Park: travel is booked by the partner",
+   "decides": [
+    "C11"
+   ],
+   "controls": [
+    "Pressbeam (no travel: Park)"
+   ],
+   "over_application": "over-application ends Pressbeam",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_1ceea0e7e912f48b"
+    ]
+   },
+   "source": "hub-path",
+   "signature": "travel counts as cash partner books"
+  },
+  {
+   "id": "NOTE",
+   "mechanism": "A25",
+   "prior_family": "completion_elsewhere",
+   "prior_family_reason": "v2 trap 9 (rev4): Spotlight's answer was given on a call by Robert and recorded only in his #executives note, which names the Dec 5 indie showcase and Rina, not the fest; rev3's named note leaked to 'Spotlight' and 'told' searches (precheck events 386, 426)",
+   "nodes": [
+    "T19",
+    "C8"
+   ],
+   "requirement": "R4",
+   "natural_reading": "Spotlight Fest End: say no to the $750 stand fee",
+   "decides": [
+    "X20",
+    "C3"
+   ],
+   "controls": [
+    "Motive Forge (Arthur declined in-thread: Answered)",
+    "Wishwave (partner showcase push, nobody answered: End)"
+   ],
+   "over_application": "over-application treats Wishwave's showcase push as already answered by Robert's note",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_13d86dcf23442708"
+    ]
+   },
+   "source": "slack-root-alias",
+   "signature": "Dec 5 indie showcase sitting this one out Rina"
+  },
+  {
+   "id": "WIN",
+   "mechanism": "A17",
+   "prior_family": "exact_predicate",
+   "prior_family_reason": "v2 trap 7 (rev4): one in-scope company sits outside every obvious filter - no filed paper, not in the July tracker, nothing after Aug 12 - while rev3's pre-check built the cohort from an after:Aug-15 listing, the paperwork folder and the tracker (events 66, 282, 284)",
+   "nodes": [
+    "T20",
+    "C7"
+   ],
+   "requirement": "R1",
+   "natural_reading": "Hootline not on the log",
+   "decides": [
+    "X18",
+    "X21",
+    "V1"
+   ],
+   "controls": [
+    "Quillcraft (August thread with a filed paper: on the log)",
+    "Gamesforum SF (August invite nobody answered: off)"
+   ],
+   "over_application": "over-application pulls Gamesforum SF's unanswered August invite onto the log",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_9c403cae42eb4df8",
+     "hev_c2297d21ba5cbc7b"
+    ]
+   },
+   "source": "mail-window-and-folder",
+   "signature": "Hootline promo keep the scheduler after Jan 31"
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-DONE",
+   "kind": "member",
+   "rule": "DONE",
+   "degrade": "Nintendo treated as done (no Sign, no card)",
+   "members": [
+    "Nintendo"
+   ],
+   "latent": "linear-comment read",
+   "family": "done_gap"
+  },
+  {
+   "id": "CH-CORR",
+   "kind": "member",
+   "rule": "CORR",
+   "degrade": "Framewell ended",
+   "members": [
+    "Framewell"
+   ],
+   "latent": "contact-name search / thread open",
+   "family": "superseding"
+  },
+  {
+   "id": "CH-COMPL",
+   "kind": "member",
+   "rule": "COMPL",
+   "degrade": "Lanternfly answered again (Sign or Park)",
+   "members": [
+    "Lanternfly Publishing"
+   ],
+   "latent": "DM thread open",
+   "family": "completion_elsewhere"
+  },
+  {
+   "id": "CH-EXC",
+   "kind": "member",
+   "rule": "EXC",
+   "degrade": "Pingwise ended",
+   "members": [
+    "Pingwise"
+   ],
+   "latent": "trello checklist join",
+   "family": "authority"
+  },
+  {
+   "id": "CH-DATE",
+   "kind": "member",
+   "rule": "DATE",
+   "degrade": "Clipforge parked",
+   "members": [
+    "Clipforge"
+   ],
+   "latent": "workspace-id mail",
+   "family": "superseding"
+  },
+  {
+   "id": "CH-FILT",
+   "kind": "member",
+   "rule": "FILT",
+   "degrade": "Pixel Harbor Events off the log",
+   "members": [
+    "Pixel Harbor Events"
+   ],
+   "latent": "mail date window",
+   "family": "exact_predicate"
+  },
+  {
+   "id": "CH-NOTE",
+   "kind": "member",
+   "rule": "NOTE",
+   "degrade": "Spotlight Fest ended and answered again",
+   "members": [
+    "Spotlight Fest"
+   ],
+   "latent": "full #executives read / showcase search",
+   "family": "completion_elsewhere"
+  },
+  {
+   "id": "CH-WIN",
+   "kind": "member",
+   "rule": "WIN",
+   "degrade": "Hootline off the log",
+   "members": [
+    "Hootline"
+   ],
+   "latent": "undated mail search",
+   "family": "exact_predicate"
+  },
+  {
+   "id": "CH-SLIP",
+   "kind": "slip",
+   "degrade": "base slip on control rows",
+   "slots": [
+    "C1",
+    "C2",
+    "C5",
+    "C6",
+    "C7",
+    "C9"
+   ]
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "gmail",
+   "calls": 4,
+   "reason": "read the hub; open ESG's signing thread with Leonard's reply; open the ESG engagement thread for the intake group"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 4,
+   "reason": "read the guardrails doc, the folder README, ESG's intake checklist; reject the UA-buckets doc on scope"
+  },
+  {
+   "phase": "discovery",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "read the template header row; reject the July tracker as stale"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "list the Q4 commitments folder; locate papers shared by counterparties"
+  },
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 4,
+   "reason": "read Leonard's Sep 29 amendment; search #executives for the guardrails context and the July signing note"
+  },
+  {
+   "phase": "discovery",
+   "service": "trello",
+   "calls": 2,
+   "reason": "read the founders' board lists and cards; read Arthur's keep-running checklist"
+  },
+  {
+   "phase": "discovery",
+   "service": "gcal",
+   "calls": 1,
+   "reason": "read the Jan 5 commitments review"
+  },
+  {
+   "phase": "discovery",
+   "service": "contacts",
+   "calls": 1,
+   "reason": "find ESG Law intake"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gmail",
+   "calls": 8,
+   "reason": "census of offer threads since June (dated and undated searches, vendor and partner terms); every company has its own thread"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gcal",
+   "calls": 2,
+   "reason": "list calls Jun 2025 to Jan 2026 (kickoffs, partner calls, the review)"
+  },
+  {
+   "phase": "enumeration",
+   "service": "slack",
+   "calls": 3,
+   "reason": "search #executives and DMs for vendor and partner decisions Leonard or Arthur already made"
+  },
+  {
+   "phase": "per-record",
+   "service": "gmail",
+   "calls": 23,
+   "reason": "each of 46 companies' thread read (bulk batch reads counted at half a call per company)"
+  },
+  {
+   "phase": "per-record",
+   "service": "gdocs",
+   "calls": 29,
+   "reason": "each counterparty's paper (order form, terms, quote): cost, conversion dates, auto-renewal, exclusivity, IP, term"
+  },
+  {
+   "phase": "per-record",
+   "service": "gslides",
+   "calls": 3,
+   "reason": "partners' proposal decks (Lanternfly, Bundlehouse) and one deck-only term"
+  },
+  {
+   "phase": "per-record",
+   "service": "contacts",
+   "calls": 35,
+   "reason": "lookup before each add (three counterparties already exist; ESG intake)"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 8,
+   "reason": "name, contact-name and topic searches for companies whose state may have moved off their thread (Framewell, Lanternfly, Spotlight and others), and opening the threads they land in"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 2,
+   "reason": "ZOM-567 and its comments (Nintendo)"
+  },
+  {
+   "phase": "per-record",
+   "service": "gcal",
+   "calls": 9,
+   "reason": "calls tied to a company (Clipforge kickoff, Spotlight, partner calls) read at 0.2 per company"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 31,
+   "reason": "a written answer to each of 31 companies waiting to hear from us (replies on their threads; Clipforge's cancellation to the notice's address)"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 3,
+   "reason": "one email per counsel agreement to ESG's intake address (Kinetic Arcade, Lumencloud, Bundlehouse)"
+  },
+  {
+   "phase": "writes",
+   "service": "gcal",
+   "calls": 14,
+   "reason": "a revisit reminder on Jan 5 for each of 12 parked companies and 2 'later' answers"
+  },
+  {
+   "phase": "writes",
+   "service": "contacts",
+   "calls": 32,
+   "reason": "a contact for each company's person not already in Contacts"
+  },
+  {
+   "phase": "writes",
+   "service": "trello",
+   "calls": 7,
+   "reason": "a founders' board To Do card for each company waiting on a signature"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "create the log in the folder and write its rows"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 1,
+   "reason": "reply on Leonard's thread with what stays and what waits on a signature"
+  },
+  {
+   "phase": "read-back",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "read the log back against the README columns"
+  },
+  {
+   "phase": "read-back",
+   "service": "trello",
+   "calls": 1,
+   "reason": "confirm the cards landed in To Do"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_create_spreadsheet+gsheets_values_update",
+   "count": 3,
+   "depends_on": [
+    "K8",
+    "K9",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T19",
+    "T20"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R9"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_reply_to_message+gmail_send_message",
+   "count": 34,
+   "depends_on": [
+    "K1",
+    "K14",
+    "K5",
+    "K11",
+    "K12",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6"
+   ],
+   "requirements": [
+    "R5",
+    "R6"
+   ]
+  },
+  {
+   "service": "gcal",
+   "tool": "gcal_create_event",
+   "count": 14,
+   "depends_on": [
+    "K7",
+    "C2",
+    "C3",
+    "C7",
+    "T8",
+    "T20"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "contacts",
+   "tool": "contacts_add_new_contact",
+   "count": 32,
+   "depends_on": [
+    "K1",
+    "K8",
+    "C6"
+   ],
+   "requirements": [
+    "R8"
+   ]
+  },
+  {
+   "service": "trello",
+   "tool": "trello_create_card",
+   "count": 7,
+   "depends_on": [
+    "K5",
+    "C1",
+    "T7"
+   ],
+   "requirements": [
+    "R6"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_reply_to_message (report)",
+   "count": 1,
+   "depends_on": [
+    "K13",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6"
+   ],
+   "requirements": [
+    "R10"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [
+  {
+   "hazard_id": "Q01",
+   "resolution": "dated_claim",
+   "requirement": "R2",
+   "why_safe": "Leonard's seeded reply under his Sep 22 Playtestcloud root changes that root's reply_count/latest_reply; the SQL updates the counters as companions and the text is an attributed, dated claim"
+  },
+  {
+   "hazard_id": "Q01",
+   "resolution": "dated_claim",
+   "requirement": "R4",
+   "why_safe": "rev4: Leonard's seeded DM reply under his Sep 17 'we have no localization though' root (D05S58U4SAK/1758151772.570449) changes that root's reply_count/latest_reply; the SQL updates the counters as companions and the text is an attributed, dated claim"
+  }
+ ],
+ "denied_probes": [],
+ "gradable_surface": "01_Gradable_Surface.json",
+ "design_delta": [
+  {
+   "id": "T2",
+   "change": "rebuild",
+   "why": "rev3 pre-check found the waiver by a 'Framewell' Slack search (precheck event 444) and 'vendor after:' (event 480); rev4 rewords the reply to name Maren and the Pro plan, not Framewell or vendors",
+   "evidence": "run_forensics/rev3/precheck.node_verdicts.json",
+   "reason": "rev3 pre-check found the waiver by a 'Framewell' Slack search (precheck event 444) and 'vendor after:' (event 480); rev4 rewords the reply to name Maren and the Pro plan, not Framewell or vendors"
+  },
+  {
+   "id": "T3",
+   "change": "rebuild",
+   "why": "rev3 DM root was the newest DM message and named Lanternfly and 'told' (events 387, 426, 428); rev4 makes it a thread reply under Leonard's Sep 17 localization DM, naming Wen and the Southeast Asia deal",
+   "evidence": "run_forensics/rev3/precheck.node_verdicts.json",
+   "reason": "rev3 DM root was the newest DM message and named Lanternfly and 'told' (events 387, 426, 428); rev4 makes it a thread reply under Leonard's Sep 17 localization DM, naming Wen and the Southeast Asia deal"
+  },
+  {
+   "id": "T19",
+   "change": "add",
+   "why": "Spotlight's answer (Robert's note) leaked by 'Spotlight'/'told' (events 386, 426); rev4 de-names it, removes the answer from the call's description and gives it its own rule NOTE",
+   "evidence": "01a_Hardening_Report.md \u00a710 M3",
+   "reason": "Spotlight's answer (Robert's note) leaked by 'Spotlight'/'told' (events 386, 426); rev4 de-names it, removes the answer from the call's description and gives it its own rule NOTE"
+  },
+  {
+   "id": "T20",
+   "change": "add",
+   "why": "the only landed trap was a member outside the inbox-and-folder filter; rev4 moves Hootline outside it (no paper, ask moved to Aug 12) under rule WIN",
+   "evidence": "01a_Hardening_Report.md \u00a710 M4",
+   "reason": "the only landed trap was a member outside the inbox-and-folder filter; rev4 moves Hootline outside it (no paper, ask moved to Aug 12) under rule WIN"
+  },
+  {
+   "id": "C7",
+   "change": "add",
+   "why": "chain for WIN (Hootline)",
+   "evidence": "01a_Hardening_Report.md \u00a710 M4",
+   "reason": "chain for WIN (Hootline)"
+  },
+  {
+   "id": "C8",
+   "change": "add",
+   "why": "chain for NOTE (Spotlight)",
+   "evidence": "01a_Hardening_Report.md \u00a710 M3",
+   "reason": "chain for NOTE (Spotlight)"
+  },
+  {
+   "id": "X7",
+   "change": "purge",
+   "why": "surface: the Pingwise decision sample (EXC leaked, the guardrails name the card) is replaced in the decision group by X20 Spotlight decision; EXC keeps X16 and P1",
+   "evidence": "run_forensics/rev3/precheck.surface_grades.json",
+   "reason": "surface: the Pingwise decision sample (EXC leaked, the guardrails name the card) is replaced in the decision group by X20 Spotlight decision; EXC keeps X16 and P1"
+  },
+  {
+   "id": "surface",
+   "change": "rebuild",
+   "why": "the rev3 proxy under-reported a correct run by 27 points: Answered by and Next date now compare by word (issue_key), and the told patterns accept 'no', 'won't', 'said no', 'passed on'",
+   "evidence": "01a_Hardening_Report.md \u00a76",
+   "reason": "the rev3 proxy under-reported a correct run by 27 points: Answered by and Next date now compare by word (issue_key), and the told patterns accept 'no', 'won't', 'said no', 'passed on'"
+  },
+  {
+   "id": "anchor A1",
+   "change": "record/locator frederick.stone@harmonygames.co/1844732913254784171 -> frederick.stone@harmonygames.co/<CAlIXcq3nWlSRBAZONcbY9d2v0ggkPYER8WfaoZa@mail.gmail.com> (the thread is kept in every fragment's seeded_ids)",
+   "reason": "the anchor's text is on Leonard's message row"
+  },
+  {
+   "id": "record ids (all elements)",
+   "change": "Slack 'channel/ts' pointers to seeded messages -> the messages' 32-hex row ids; Gmail fragment locators, delegating records, authority records and version records -> the message row that carries the quoted words or was sent at the declared time (thread ids kept alongside)",
+   "reason": "the gate reads text and timestamps from SQL rows: a Slack message row is keyed by its id, and a Gmail thread row holds only a snippet"
+  },
+  {
+   "id": "T5 version_records[0]",
+   "change": "placeholder 'clipforge-pilot-agreement' -> f_8d0e0e3ae076b2f745e7e2",
+   "reason": "the pilot agreement's Drive id is minted by the SQL builder (f_ + 22 hex)"
+  },
+  {
+   "id": "T7 version_records[2]",
+   "change": "placeholder frederick.stone@harmonygames.co/1844177063117059830#ack -> frederick.stone@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>",
+   "reason": "Leonard's acknowledgement is its own message row in the ESG thread"
+  },
+  {
+   "id": "T17 seeded_ids",
+   "change": "placeholder 'retainly-terms' -> f_be21bac5d50e291ebfbe2b",
+   "reason": "Retainly's trial terms doc id is minted by the SQL builder"
+  },
+  {
+   "id": "K7 delegation_quote",
+   "change": "'comes back at the January commitments review on our calendars' -> \"comes back at the January commitments review I'll put on our calendars\"",
+   "reason": "rev2: the guardrails doc (Sep 26) predates the review event (Sep 29); it now announces the review instead of citing it as already on the calendars (platform /injection C-adv 1)"
+  },
+  {
+   "id": "rev4 record wording",
+   "change": "Framewell's waiver names Maren and the Pro plan; Leonard's Lanternfly answer is a reply in the DM thread under his Sep 17 'we have no localization though' (root counters updated) and names Wen and the Southeast Asia deal; Robert's Spotlight note names the Dec 5 indie showcase and Rina; the Spotlight call's description no longer states the answer; Hootline's ask moves to Aug 12 and its filed paper is dropped (terms in the Aug 5 mail)",
+   "reason": "the rev3 Opus pre-check found every named correction by a company-name or 'told'/'vendor' Slack search and built its cohort from the Aug 15+ inbox, the paperwork folder and the July tracker (01a_Hardening_Report.md \u00a710 M1-M4); truth values are unchanged"
+  },
+  {
+   "id": "rev3 record wording",
+   "change": "hub names PlayableX and Craftsman+ with the UA exclusions; guardrails say offers to take up before January count as cash and offers open after January park; Framewell's hold has nothing to sign; Leonard's Lanternfly DM is region-specific; Arthur's ZOM-567 comment settles the officer step, Oct 15 and no ESG triggers; Spotlight and Motive Forge answers are plain noes; explicit dates for Brightlane, Ascendo, Reviewly, Playfuse; Markward has no rolling term; Bundlehouse needs signing; Retainly, Benchmarkly, Driftwood ask a question; UA doc and Playfuse template wording match the base",
+   "reason": "a blind fork sweep of Frederick-visible records (brief stage) found readings no record settled; each change keeps the solver's truth (the Lanternfly told text is read from the DM)"
+  },
+  {
+   "id": "mechanism_portfolio.DONE.controls",
+   "change": "added Retainly as a control member",
+   "reason": "the draft's over_application already acts on this member; the solver contract (contract.controls) needs the operator to move a declared control"
+  },
+  {
+   "id": "mechanism_portfolio.COMPL.controls",
+   "change": "added Glyphworks as a control member",
+   "reason": "the draft's over_application already acts on this member; the solver contract (contract.controls) needs the operator to move a declared control"
+  },
+  {
+   "id": "mechanism_portfolio.FILT.controls",
+   "change": "added Playable Factory as a control member",
+   "reason": "the draft's over_application already acts on this member; the solver contract (contract.controls) needs the operator to move a declared control"
+  },
+  {
+   "id": "mechanism_portfolio.SIGN.controls",
+   "change": "added Echohall as a control member",
+   "reason": "the draft's over_application already acts on this member; the solver contract (contract.controls) needs the operator to move a declared control"
+  }
+ ],
+ "facts": [
+  {
+   "key": "Nintendo officer step",
+   "value": "Global ToS and NDA",
+   "kind": "status",
+   "home_ids": [
+    "cmt_c9a6660d81e067ad1de7"
+   ]
+  },
+  {
+   "key": "ZOM-567 lapse date",
+   "value": "Oct 15",
+   "kind": "date",
+   "must_appear_in": [
+    "cmt_c9a6660d81e067ad1de7"
+   ]
+  },
+  {
+   "key": "Framewell waiver",
+   "value": "no charge until Feb 1",
+   "kind": "status",
+   "home_ids": [
+    "9fb2d23420c7e01ca163571f4129c912"
+   ]
+  },
+  {
+   "key": "Lanternfly call-back",
+   "value": "Southeast Asia has to wait until after the raise",
+   "kind": "status",
+   "home_ids": [
+    "418a0a6d6c29b7b67ce0ffb270c78c1e"
+   ]
+  },
+  {
+   "key": "keep-running night pager",
+   "value": "night pager for backend outages",
+   "kind": "status",
+   "home_ids": [
+    "689b66a450734c26dcdf6291"
+   ]
+  },
+  {
+   "key": "Clipforge workspace",
+   "value": "HG-2291",
+   "kind": "id",
+   "must_appear_in": [
+    "f_8d0e0e3ae076b2f745e7e2",
+    "frederick.stone@harmonygames.co/<CAYV6MxN9j-x1B7nyXxQQO_hYhY5AoRuc5G7XzgR@paylane.io>",
+    "frederick.stone@harmonygames.co/<CAyIhcf4XSg_rUt0eT-St8La39wsNDnRzBlIxJMi@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "Paylane cancellation address",
+   "value": "billing@paylane.io",
+   "kind": "id",
+   "home_ids": [
+    "frederick.stone@harmonygames.co/<CAYV6MxN9j-x1B7nyXxQQO_hYhY5AoRuc5G7XzgR@paylane.io>"
+   ]
+  },
+  {
+   "key": "Pixel Harbor deposit",
+   "value": "$2,400",
+   "kind": "amount",
+   "home_ids": [
+    "f_614f88a28a2f0cf1b88408",
+    "frederick.stone@harmonygames.co/<CAC1R0eFyTK7ezriX3kHgoWqGCC1DkbKElci5sJ8@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "partner-booked travel",
+   "value": "even when a partner books them",
+   "kind": "status",
+   "home_ids": [
+    "7e88911312fa9a969f0659a105af59a3"
+   ]
+  },
+  {
+   "key": "July signing note superseded",
+   "value": "This replaces what I said in July",
+   "kind": "status",
+   "home_ids": [
+    "frederick.stone@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>",
+    "leonard.hayes@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>",
+    "robert@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>",
+    "arthur.blake@harmonygames.co/<CAyZDYLgzExhQkAm-LGcRvcnmhRj4gYsOAVITlO5@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "ESG officer rule",
+   "value": "Only an officer, you or Arthur, accepts terms",
+   "kind": "status",
+   "home_ids": [
+    "frederick.stone@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+    "leonard.hayes@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+    "robert@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>",
+    "arthur.blake@harmonygames.co/<CAyKP29rjypyVF_dZsTX0hDpFvI5fgxGX5-KMwIz@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "keep-running card",
+   "value": "Keep-running list (don't cut)",
+   "kind": "status",
+   "must_appear_in": [
+    "689b662c60cbe40b9f4a97ae"
+   ]
+  },
+  {
+   "key": "Spotlight answer",
+   "value": "sitting this one out this year",
+   "kind": "status",
+   "home_ids": [
+    "fc2f69c06b333f6c54dfd63d455c3958"
+   ]
+  },
+  {
+   "key": "Hootline ask",
+   "value": "would you like to keep the scheduler after that",
+   "kind": "status",
+   "home_ids": [
+    "frederick.stone@harmonygames.co/<CAhKYUa4HtPNJGhGU5qifbVfYwMCjxb0DSaMXtME@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "log sheet name",
+   "value": "Q4 commitments log",
+   "kind": "status",
+   "home_ids": [
+    "f_846ddc38b2aab3d2ed3fcb"
+   ]
+  }
+ ],
+ "integration_exceptions": [
+  {
+   "record_id": "24cbd5ab34e4c9c132384aae9cf0a03c@hg4",
+   "reason": "no_notify: Frederick organized the Jul 14 UGC Studio kickoff himself; the only other attendee is Clipforge's Priya Raman (external), so no invitation mail lands in any HarmonyGames mailbox"
+  }
+ ],
+ "solver": {
+  "path": "Working_Files/solver/solver.py",
+  "digest": "070ede94989a04abfa3a122e8d6834f62f2ab50124ce5770758b5102c907ddcb"
+ }
+}

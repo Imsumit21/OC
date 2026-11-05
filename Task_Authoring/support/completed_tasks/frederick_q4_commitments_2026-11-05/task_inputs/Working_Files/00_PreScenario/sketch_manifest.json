@@ -1,0 +1,207 @@
+{
+  "_note": "PRE-SCENARIO SKETCH for hardness_v2_check.py only (storyline A: vendor and partner commitments close-out). Not the /create-scenario draft manifest. Ids prefixed NEW- are planned seeds with declared containers; base ids are real synth-cut records Frederick can see (cansee_anchors.txt). T_CORR moved off Singular (known-data-issue SC-39) to a seeded vendor with no base footprint.",
+  "effective_profile": "extreme",
+  "horizon": "Long Horizon",
+  "anchors": [
+    {
+      "id": "AN1",
+      "locator": "gmail:NEW-leonard-handoff-thread",
+      "prompt_reference": "Leonard's vendor and partner email"
+    },
+    {
+      "id": "AN2",
+      "locator": "gdrive:NEW-fred-q4-commitments-folder",
+      "prompt_reference": "my Q4 commitments folder"
+    },
+    {
+      "id": "AN3",
+      "locator": "trello:640643a3fd8f3ca308d9318e",
+      "prompt_reference": "our founders Trello board"
+    }
+  ],
+  "ask_fragments": [
+    {
+      "id": "F1",
+      "seeded_ids": [
+        "NEW-leonard-handoff-thread"
+      ],
+      "delegated_by_record": "NEW-leonard-handoff-thread",
+      "requirement_ids": [
+        "R1",
+        "R2",
+        "R4",
+        "R5"
+      ]
+    },
+    {
+      "id": "F2",
+      "seeded_ids": [
+        "NEW-runway-guardrails-doc"
+      ],
+      "delegated_by_record": "NEW-leonard-handoff-thread",
+      "requirement_ids": [
+        "R2",
+        "R3"
+      ]
+    },
+    {
+      "id": "F3",
+      "seeded_ids": [
+        "NEW-esg-signing-note"
+      ],
+      "delegated_by_record": "NEW-leonard-handoff-thread",
+      "requirement_ids": [
+        "R6"
+      ]
+    }
+  ],
+  "traps": [
+    {
+      "id": "T_DONE",
+      "family": "done_gap",
+      "mechanism": "A24",
+      "services": [
+        "gmail",
+        "slack",
+        "trello"
+      ],
+      "requirement": "R6",
+      "expected_wrong_reading": "Nintendo developer access is finished: Frederick registered (#executives 1757011358.730529) and the portal sent 'Registration Completed' (gmail 1842359398719557772)",
+      "resolver": "a later portal reminder says the account stays limited until an authorized officer accepts the Global ToS and NDA; ESG's signing note says only Leonard or Arthur accept terms for the company"
+    },
+    {
+      "id": "T_CORR",
+      "family": "superseding",
+      "mechanism": "A11",
+      "services": [
+        "gmail",
+        "slack"
+      ],
+      "requirement": "R2",
+      "expected_wrong_reading": "a seeded tool vendor's own thread ends with its quote (renews Nov 1 at a paid rate) and no answer, so the cash test says end it and send a non-renewal notice",
+      "resolver": "Leonard's later thread reply under an unrelated #executives post says the vendor waived Q4 and bills nothing until Feb 1, so the cash in the window is zero: park to the revisit date, no notice (vendor chosen with no base footprint; Singular dropped per known-data-issue SC-39)",
+      "version_records": [
+        {
+          "service": "gmail",
+          "id": "NEW-vendor-renewal-quote",
+          "container": "gmail:NEW-vendor-renewal-thread",
+          "seeded": true,
+          "at": "2025-09-18T16:00:00Z"
+        },
+        {
+          "service": "slack",
+          "id": "NEW-leonard-waiver-thread-reply",
+          "container": "slack:C07C2866011/NEW-unrelated-exec-root",
+          "seeded": true,
+          "at": "2025-09-26T21:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "T_COMPL",
+      "family": "completion_elsewhere",
+      "mechanism": "A25",
+      "services": [
+        "gmail",
+        "gcal"
+      ],
+      "requirement": "R4",
+      "expected_wrong_reading": "Rayking's seeded 'any news?' follow-up in Frederick's thread (base thread gmail 1842348778705877030) is unanswered, so it gets a reply",
+      "resolver": "a calendar call Leonard held with them carries his note that he already told them: no China publishing until after the raise, talk in January"
+    },
+    {
+      "id": "T_FILT",
+      "family": "exact_predicate",
+      "mechanism": "A17",
+      "services": [
+        "gcal",
+        "slack",
+        "contacts"
+      ],
+      "requirement": "R1",
+      "expected_wrong_reading": "the backlog is the vendor and partner mail in Frederick's inbox",
+      "resolver": "the hub's scope (anyone we've had a call with or have paper with) brings in a vendor seen only through a calendar call Frederick attended and a #zombie-match3d mention"
+    },
+    {
+      "id": "T_EXC",
+      "family": "house_rule",
+      "mechanism": "A15",
+      "services": [
+        "gdocs",
+        "slack",
+        "gmail"
+      ],
+      "requirement": "R3",
+      "expected_wrong_reading": "every paid commitment before January fails the cash test",
+      "resolver": "the guardrails doc exempts what the live game needs to keep running; an older #executives decision ties one paid tool to that exemption"
+    },
+    {
+      "id": "T_DATE",
+      "family": "boundary_date",
+      "mechanism": "A4",
+      "services": [
+        "gmail",
+        "gdocs"
+      ],
+      "requirement": "R3",
+      "expected_wrong_reading": "a free trial costs nothing before January, so it is parked to the revisit date",
+      "resolver": "the vendor's own terms mail says the trial converts to paid on Oct 15, inside the cash window, so it is cancelled now"
+    }
+  ],
+  "mechanism_portfolio": [
+    {
+      "id": "DONE",
+      "mechanism": "A24",
+      "nodes": [
+        "T_DONE"
+      ],
+      "requirement": "R6",
+      "natural_reading": "registration completed means access is done"
+    },
+    {
+      "id": "CORR",
+      "mechanism": "A11",
+      "nodes": [
+        "T_CORR"
+      ],
+      "requirement": "R2",
+      "natural_reading": "status from the vendor's own mail thread"
+    },
+    {
+      "id": "COMPL",
+      "mechanism": "A25",
+      "nodes": [
+        "T_COMPL"
+      ],
+      "requirement": "R4",
+      "natural_reading": "an unanswered follow-up needs a reply"
+    },
+    {
+      "id": "FILT",
+      "mechanism": "A17",
+      "nodes": [
+        "T_FILT"
+      ],
+      "requirement": "R1",
+      "natural_reading": "backlog = vendor mail in the persona's inbox"
+    },
+    {
+      "id": "EXC",
+      "mechanism": "A15",
+      "nodes": [
+        "T_EXC"
+      ],
+      "requirement": "R3",
+      "natural_reading": "every paid item before January is cut"
+    },
+    {
+      "id": "DATE",
+      "mechanism": "A4",
+      "nodes": [
+        "T_DATE"
+      ],
+      "requirement": "R3",
+      "natural_reading": "a trial costs nothing until someone pays"
+    }
+  ]
+}

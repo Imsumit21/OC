@@ -1,0 +1,737 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "frederick_q4_commitments",
+ "revision": "design-2",
+ "truth_keys": [
+  "Nintendo",
+  "Framewell",
+  "Lanternfly Publishing",
+  "Pingwise",
+  "Clipforge",
+  "Pixel Harbor Events",
+  "Brightlane Studio",
+  "Soundvault",
+  "Reviewly",
+  "Streamcast Talent",
+  "Lingora",
+  "Panelpulse",
+  "Ascendo",
+  "Wishwave",
+  "Vaultline",
+  "Certwell",
+  "Kinetic Arcade",
+  "Lumencloud",
+  "Bundlehouse",
+  "Orbit Store",
+  "Markward",
+  "Playfuse",
+  "Hootline",
+  "Glyphworks",
+  "Cloudlark",
+  "Echohall",
+  "Pressbeam",
+  "Retainly",
+  "Quillcraft",
+  "Tilecast",
+  "Benchmarkly",
+  "Loopnote",
+  "Driftwood Audio",
+  "Balancy",
+  "Motive Forge",
+  "Spotlight Fest"
+ ],
+ "classes": [
+  "Answered",
+  "End",
+  "Keep",
+  "Sign",
+  "Park"
+ ],
+ "truth_fields": {
+  "class": "Decision",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "log": {
+   "kind": "table",
+   "name_regex": "(?i).*(commit|vendor|partner|q4).*",
+   "key_column": "Company",
+   "key_regex": ".+",
+   "columns": [
+    "Company",
+    "Contact",
+    "What's waiting",
+    "Decision",
+    "Answered by",
+    "What we told them",
+    "Next date"
+   ],
+   "class_column": "Decision",
+   "reason_column": "What we told them",
+   "comparators": {
+    "Decision": "norm",
+    "Answered by": "issue_key",
+    "Next date": "issue_key"
+   }
+  },
+  "replies": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  },
+  "sends": {
+   "kind": "json_text",
+   "tool": "gmail_send_message"
+  },
+  "events": {
+   "kind": "json_text",
+   "tool": "gcal_create_event"
+  },
+  "cards": {
+   "kind": "json_text",
+   "tool": "trello_create_card"
+  },
+  "contacts": {
+   "kind": "json_text",
+   "tool": "contacts_add_new_contact"
+  }
+ },
+ "slots": [
+  {
+   "id": "X1",
+   "title": "Nintendo decision",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "portal mails + Frederick's post vs Arthur's Linear comment + ESG's signing rule",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Nintendo",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE"
+   ],
+   "group": "decision"
+  },
+  {
+   "id": "X2",
+   "title": "Nintendo signature card",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the card exists only if the Linear comment and ESG's rule are joined",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "cards",
+    ".*[Nn]intendo.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE"
+   ],
+   "fact_id": "nintendo_card"
+  },
+  {
+   "id": "X3",
+   "title": "Framewell decision",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "order form vs Leonard's thread reply under another vendor's post",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Framewell",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "CORR"
+   ],
+   "group": "decision"
+  },
+  {
+   "id": "X4",
+   "title": "Framewell revisit reminder",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "revisit exists only once the waiver parks it; date from the review event",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "events",
+    ".*[Ff]ramewell.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR"
+   ],
+   "fact_id": "framewell_revisit"
+  },
+  {
+   "id": "X5",
+   "title": "Lanternfly decision",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "thread follow-up vs Leonard's DM",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lanternfly Publishing",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "COMPL"
+   ],
+   "group": "decision"
+  },
+  {
+   "id": "X6",
+   "title": "Lanternfly answered by",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "who answered is only in the DM",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lanternfly Publishing",
+    "Answered by"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "COMPL"
+   ],
+   "group": "answered_by"
+  },
+  {
+   "id": "X20",
+   "title": "Spotlight Fest decision",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "invitation thread vs Robert's note that names only the Dec 5 indie showcase and Rina",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Spotlight Fest",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "NOTE"
+   ],
+   "group": "decision"
+  },
+  {
+   "id": "X9",
+   "title": "Clipforge decision",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "pilot agreement vs processor notice keyed by workspace id + kickoff call",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Clipforge",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DATE"
+   ],
+   "group": "decision"
+  },
+  {
+   "id": "X10",
+   "title": "Clipforge next date",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "cancel-by date from the moved pilot end",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Clipforge",
+    "Next date"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DATE"
+   ],
+   "group": "next_date"
+  },
+  {
+   "id": "X11",
+   "title": "Clipforge written cancellation",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the address is only in the processor notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sends",
+    ".*billing@paylane\\.io.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DATE"
+   ],
+   "fact_id": "clipforge_cancel"
+  },
+  {
+   "id": "X12",
+   "title": "Pixel Harbor next date",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "June quote outside the window + hub scope + deposit date",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pixel Harbor Events",
+    "Next date"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "next_date"
+  },
+  {
+   "id": "X13",
+   "title": "Pixel Harbor told",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "decline after finding the June quote and applying the cash test",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Pixel Harbor Events",
+    ".*(\\\\b[Nn]o\\\\b|[Dd]eclin|[Pp]ass(ed)? on|[Nn]ot (book|tak)|[Nn]o thanks|[Ss]aid no|[Ww]on'?t|[Nn]ot this).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "told"
+  },
+  {
+   "id": "V1",
+   "title": "log membership",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "46 looked at, 36 kept by the scope rule",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "FILT",
+    "WIN"
+   ],
+   "fact_id": "log_size",
+   "volume_for": [
+    "decision",
+    "next_date",
+    "answered_by",
+    "told"
+   ],
+   "expected_keys": [
+    "Nintendo",
+    "Framewell",
+    "Lanternfly Publishing",
+    "Pingwise",
+    "Clipforge",
+    "Pixel Harbor Events",
+    "Brightlane Studio",
+    "Soundvault",
+    "Reviewly",
+    "Streamcast Talent",
+    "Lingora",
+    "Panelpulse",
+    "Ascendo",
+    "Wishwave",
+    "Vaultline",
+    "Certwell",
+    "Kinetic Arcade",
+    "Lumencloud",
+    "Bundlehouse",
+    "Orbit Store",
+    "Markward",
+    "Playfuse",
+    "Hootline",
+    "Glyphworks",
+    "Cloudlark",
+    "Echohall",
+    "Pressbeam",
+    "Retainly",
+    "Quillcraft",
+    "Tilecast",
+    "Benchmarkly",
+    "Loopnote",
+    "Driftwood Audio",
+    "Balancy",
+    "Motive Forge",
+    "Spotlight Fest"
+   ]
+  },
+  {
+   "id": "P1",
+   "title": "report names what stays",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "kept list needs the exemption join (Pingwise) plus Vaultline and Certwell",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*[Pp]ingwise.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXC"
+   ],
+   "fact_id": "kept_list"
+  },
+  {
+   "id": "P2",
+   "title": "report names Markward as waiting to sign",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "ESG's note supersedes the July note for click-through terms",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*[Mm]arkward.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "SIGN"
+   ],
+   "fact_id": "sign_list_markward"
+  },
+  {
+   "id": "X14",
+   "title": "Framewell next date",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "review date once the waiver parks it (order form says Nov 1)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Framewell",
+    "Next date"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "CORR"
+   ],
+   "group": "next_date"
+  },
+  {
+   "id": "X15",
+   "title": "Lanternfly told",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "what Leonard told them is only in the DM",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Lanternfly Publishing",
+    ".*([Nn]o new (publishing|deals)|(before|after|until) the raise).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "COMPL"
+   ],
+   "group": "told"
+  },
+  {
+   "id": "X17",
+   "title": "Nintendo next date",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the portal request lapses Oct 15 unless an officer accepts - only in Arthur's ZOM-567 comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Nintendo",
+    "Next date"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE"
+   ],
+   "group": "next_date"
+  },
+  {
+   "id": "X16",
+   "title": "Pingwise next date",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Keep: next bill Nov 1 (End would be a cancel-by date)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pingwise",
+    "Next date"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXC"
+   ],
+   "group": "next_date"
+  },
+  {
+   "id": "X18",
+   "title": "Hootline revisit reminder",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Hootline exists only in August mail with no paper; parked -> Jan 5 reminder",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "events",
+    ".*[Hh]ootline.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "WIN"
+   ],
+   "fact_id": "hootline_revisit"
+  },
+  {
+   "id": "X19",
+   "title": "Lanternfly revisit reminder",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a 'later' answer found only in the DM thread reply -> Jan 5 reminder",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "events",
+    ".*[Ll]anternfly.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "COMPL"
+   ],
+   "fact_id": "lanternfly_revisit"
+  },
+  {
+   "id": "X21",
+   "title": "Hootline contact",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "Gemma is reachable only from the August thread",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "contacts",
+    ".*[Hh]ootline.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "WIN"
+   ],
+   "fact_id": "hootline_contact"
+  },
+  {
+   "id": "C1",
+   "title": "Balancy answered by",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Leonard's answer is in Balancy's own thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Balancy",
+    "Answered by"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "answered_by"
+  },
+  {
+   "id": "C2",
+   "title": "Motive Forge answered by",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Arthur declined in-thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Motive Forge",
+    "Answered by"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "answered_by"
+  },
+  {
+   "id": "C3",
+   "title": "Spotlight Fest answered by",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Robert's answer is only in his Sep 17 note, which names the showcase and Rina, not the fest",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Spotlight Fest",
+    "Answered by"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "NOTE"
+   ],
+   "group": "answered_by"
+  },
+  {
+   "id": "C5",
+   "title": "Soundvault told",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "paid on signature -> declined",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Soundvault",
+    ".*(\\\\b[Nn]o\\\\b|[Dd]eclin|[Pp]ass(ed)? on|[Nn]ot (book|tak)|[Nn]o thanks|[Ss]aid no|[Ww]on'?t|[Nn]ot this).*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "told"
+  },
+  {
+   "id": "C6",
+   "title": "Kinetic Arcade told",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "exclusivity -> with counsel",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Kinetic Arcade",
+    ".*([Cc]ounsel|[Ll]awyer|[Ll]egal|ESG).*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "told"
+  },
+  {
+   "id": "C7",
+   "title": "Kinetic Arcade card",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "waiting on a signature -> card",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "cards",
+    ".*[Kk]inetic.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "kinetic_card"
+  },
+  {
+   "id": "C8",
+   "title": "Lumencloud to ESG intake",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "36-month term on the paper + ESG rule + intake address from Contacts",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sends",
+    ".*[Ll]umencloud.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "lumencloud_esg"
+  },
+  {
+   "id": "C9",
+   "title": "Reviewly contact",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the person in Reviewly's thread",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "contacts",
+    ".*[Rr]eviewly.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "reviewly_contact"
+  },
+  {
+   "id": "C10",
+   "title": "Markward signature card",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "ESG's note supersedes the July note: click-through terms need an officer",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "cards",
+    ".*[Mm]arkward.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "SIGN"
+   ],
+   "fact_id": "markward_card"
+  },
+  {
+   "id": "C11",
+   "title": "Wishwave told",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the Sep 29 change counts partner-booked travel as cash",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Wishwave",
+    ".*(\\\\b[Nn]o\\\\b|[Dd]eclin|[Pp]ass(ed)? on|[Nn]ot (book|tak)|[Nn]o thanks|[Ss]aid no|[Ww]on'?t|[Nn]ot this).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AMEND"
+   ],
+   "group": "told"
+  },
+  {
+   "id": "D1",
+   "title": "log in the Q4 commitments folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "folder named in the prompt",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_80a8c04753ba82ba4ba6a5"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D2",
+   "title": "report on Leonard's thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "reply on the hub",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "hub-message"
+   ],
+   "role": "core",
+   "mechanisms": []
+  }
+ ]
+}
