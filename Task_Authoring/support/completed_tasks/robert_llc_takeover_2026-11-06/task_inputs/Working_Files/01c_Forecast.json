@@ -1,0 +1,7655 @@
+{
+ "tool": "hardness_forecast/1",
+ "note": "model outputs, not measurements; the Season Pass backtests are development fixtures, not validation",
+ "revision": "rev4",
+ "sql_sha256": "f1a290ced1765a5b5ed0fe039b0f65428ea3924ab4269267bfea352a04211f10",
+ "solver_sha256": "f8392ca56fc2ede89c121f2618217714c3985366d01fd2ac7701fad34b665b9e",
+ "surface": "Task_Authoring/task_inputs/Working_Files/01_Gradable_Surface.json",
+ "sha256": "ecfd436788e50d4a6ad4126795ed52e3b7ae2267ff5f70f45f41088cad94a9a7",
+ "views": {
+  "V3": {
+   "cap": 0.9,
+   "mode": "easy"
+  }
+ },
+ "task_type": "long-horizon",
+ "calls": 550,
+ "max_k": 8,
+ "max_k_override": null,
+ "kind": "HARDNESS_FORECAST",
+ "label": "UNCALIBRATED · advisory",
+ "model": "claude-opus-5-5",
+ "priors_from": "claude-opus-5-5",
+ "exclusions": {
+  "tasks": [],
+  "revisions": [],
+  "include_mixed": false
+ },
+ "ledger": "Task_Authoring/support/hardness_ledger/ledger.jsonl",
+ "ledger_sha256": "754634fb4db0fed8cbc19d1b3e1be6dbc5a91dd535122641f101523e0cbc390f",
+ "mechanisms": [
+  {
+   "id": "rule:CORR",
+   "family": "superseding",
+   "source": "dm-thread-reply",
+   "touched": 3,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 5.0,
+    "mean": 0.1667,
+    "n_eff": 4.0,
+    "trials": 4,
+    "tasks": {
+     "frederick_bridge_pipeline": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "frederick_q4_commitments": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "robert_llc_takeover": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "samuel_zm_beta_messages": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_febd018417f4bd36",
+     "hev_26ecd3a4fc80313c",
+     "hev_7fb791c864fb2acd",
+     "hev_3a71c99557336ba6"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:AUTH",
+   "family": "exact_predicate",
+   "source": "warehouse",
+   "touched": 5,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 2.0,
+    "beta": 4.0,
+    "mean": 0.3333,
+    "n_eff": 4.0,
+    "trials": 4,
+    "tasks": {
+     "frederick_bridge_pipeline": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "frederick_q4_commitments": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "robert_llc_takeover": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "samuel_zm_beta_messages": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 1.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_9c403cae42eb4df8",
+     "hev_c2297d21ba5cbc7b",
+     "hev_0148aad4d8a4eb2d",
+     "hev_2da16037a402bf13",
+     "hev_b76760802056e969"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:FILT",
+   "family": "exact_predicate",
+   "source": "channel-history",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 2.0,
+    "beta": 4.0,
+    "mean": 0.3333,
+    "n_eff": 4.0,
+    "trials": 4,
+    "tasks": {
+     "frederick_bridge_pipeline": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "frederick_q4_commitments": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "robert_llc_takeover": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "samuel_zm_beta_messages": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 1.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_9c403cae42eb4df8",
+     "hev_c2297d21ba5cbc7b",
+     "hev_0148aad4d8a4eb2d",
+     "hev_2da16037a402bf13",
+     "hev_b76760802056e969"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:COMPLETE",
+   "family": "completion_elsewhere",
+   "source": "mail-by-name",
+   "touched": 3,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 4.0,
+    "mean": 0.2,
+    "n_eff": 3.0,
+    "trials": 3,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "robert_llc_takeover": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "samuel_zm_beta_messages": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_13d86dcf23442708",
+     "hev_34b1b726275909e0",
+     "hev_d2253957e65e0329"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:DONE",
+   "family": "done_gap",
+   "source": "store-notice",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 3.0,
+    "beta": 3.0,
+    "mean": 0.5,
+    "n_eff": 4.0,
+    "trials": 4,
+    "tasks": {
+     "frederick_bridge_pipeline": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "frederick_q4_commitments": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 1.0
+     },
+     "robert_llc_takeover": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 1.0
+     },
+     "samuel_zm_beta_messages": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_7f44d83eaad625e9",
+     "hev_522f1ca2bc9062de",
+     "hev_b8f28a892a74b855",
+     "hev_fa790909c7cd5693",
+     "hev_f9b2298b6c9739d4"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:DATE",
+   "family": "boundary_date",
+   "source": "channel-history",
+   "touched": 2,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 2.0,
+    "beta": 1.0,
+    "mean": 0.6667,
+    "n_eff": 1.0,
+    "trials": 1,
+    "tasks": {
+     "robert_llc_takeover": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 1.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_3d96146a0a8b19a5"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:STACKS",
+   "family": "superseding",
+   "source": "mail-second-paragraph",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 5.0,
+    "mean": 0.1667,
+    "n_eff": 4.0,
+    "trials": 4,
+    "tasks": {
+     "frederick_bridge_pipeline": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "frederick_q4_commitments": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "robert_llc_takeover": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "samuel_zm_beta_messages": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_febd018417f4bd36",
+     "hev_26ecd3a4fc80313c",
+     "hev_7fb791c864fb2acd",
+     "hev_3a71c99557336ba6"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-CORR",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared",
+   "members": 3,
+   "family": "superseding",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 4,
+   "f": 0,
+   "n_eff": 4.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    },
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    }
+   },
+   "batch_sizes": null,
+   "source": "dm-thread-reply",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "mean": 0.166667,
+    "records": [
+     "hev_39af74d72b3932dc",
+     "hev_bf02ef378d0a4fa0",
+     "hev_a960ac24b1850f20",
+     "hev_66548e39596ea127"
+    ],
+    "unit": "member",
+    "n": 4,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     },
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.375,
+    "plug_in": 0.421297,
+    "units": 3,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.024788,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "CH-AUTH",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared",
+   "members": 3,
+   "family": "exact_predicate",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 1,
+   "f": 0,
+   "n_eff": 1.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    }
+   },
+   "batch_sizes": null,
+   "source": "warehouse",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "mean": 0.333333,
+    "records": [
+     "hev_0e15eed886c6fd32"
+    ],
+    "unit": "member",
+    "n": 1,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.6,
+    "plug_in": 0.703703,
+    "units": 3,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.051744,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "CH-FILT",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared",
+   "members": 1,
+   "family": "exact_predicate",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 1,
+   "f": 0,
+   "n_eff": 1.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    }
+   },
+   "batch_sizes": null,
+   "source": "channel-history",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "mean": 0.333333,
+    "records": [
+     "hev_0e15eed886c6fd32"
+    ],
+    "unit": "member",
+    "n": 1,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.333333,
+    "plug_in": 0.333333,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.01314,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "CH-COMPLETE",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared",
+   "members": 3,
+   "family": "completion_elsewhere",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 2,
+   "f": 0,
+   "n_eff": 2.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    },
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    }
+   },
+   "batch_sizes": null,
+   "source": "mail-by-name",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "records": [
+     "hev_58dcdb13d83f424d",
+     "hev_7c74ef96692be1e3"
+    ],
+    "unit": "member",
+    "n": 2,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     },
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.5,
+    "plug_in": 0.578125,
+    "units": 3,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.032587,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "CH-DONE",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared",
+   "members": 1,
+   "family": "done_gap",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 1,
+   "f": 0,
+   "n_eff": 1.0,
+   "rate_tasks": {
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    }
+   },
+   "batch_sizes": null,
+   "source": "store-notice",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "mean": 0.333333,
+    "records": [
+     "hev_bec393d63b5410e0"
+    ],
+    "unit": "member",
+    "n": 1,
+    "f": 0,
+    "tasks": {
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.333333,
+    "plug_in": 0.333333,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.01314,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "CH-DATE",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared (unit-free point)",
+   "members": 2,
+   "family": "boundary_date",
+   "inert_members": 0,
+   "slots": [],
+   "unit": null,
+   "converted_from": null,
+   "n": null,
+   "f": null,
+   "n_eff": 0,
+   "rate_tasks": null,
+   "at_rho": null,
+   "batch_sizes": null,
+   "source": "channel-history",
+   "override_source": "design-prior-plan-policy_scores-rev4",
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "point": 0.55,
+    "mean": 0.55,
+    "records": [],
+    "source": "design-prior-plan-policy_scores-rev4",
+    "basis": "OVERRIDE (disclosed, no ledger record): --channel-rate CH-DATE=0.55 (source: design-prior-plan-policy_scores-rev4)",
+    "label": "UNCALIBRATED · OVERRIDE"
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.7975,
+    "plug_in": 0.7975,
+    "units": 2,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED · OVERRIDE"
+  },
+  {
+   "id": "CH-STACKS",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared",
+   "members": 1,
+   "family": "superseding",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 4,
+   "f": 0,
+   "n_eff": 4.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    },
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    }
+   },
+   "batch_sizes": null,
+   "source": "mail-second-paragraph",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "mean": 0.166667,
+    "records": [
+     "hev_39af74d72b3932dc",
+     "hev_bf02ef378d0a4fa0",
+     "hev_a960ac24b1850f20",
+     "hev_66548e39596ea127"
+    ],
+    "unit": "member",
+    "n": 4,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     },
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.166667,
+    "plug_in": 0.166667,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:CORR",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 1,
+   "family": "superseding",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 6,
+   "f": 0,
+   "n_eff": 6.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 4,
+     "f": 0,
+     "n_eff": 4.0
+    },
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 7.0,
+     "mean": 0.125
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 7.0,
+     "mean": 0.125
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 7.0,
+     "mean": 0.125
+    }
+   },
+   "batch_sizes": null,
+   "source": "dm-thread-reply",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 7.0,
+    "mean": 0.125,
+    "records": [
+     "hev_d3b1b9dcf4e19fcc",
+     "hev_22d4191952144533",
+     "hev_c3cc19b1927c1302",
+     "hev_8130210e56a8c375",
+     "hev_166c7ec533acd8a7",
+     "hev_1757704931c75214"
+    ],
+    "unit": "member",
+    "n": 6,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 4,
+      "f": 0,
+      "n_eff": 4.0
+     },
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 7.0,
+      "mean": 0.125
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 7.0,
+      "mean": 0.125
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 7.0,
+      "mean": 0.125
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.125,
+    "plug_in": 0.125,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:COMPLETE",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 1,
+   "family": "completion_elsewhere",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 2,
+   "f": 0,
+   "n_eff": 2.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    },
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    }
+   },
+   "batch_sizes": null,
+   "source": "mail-by-name",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "records": [
+     "hev_638d1ef495e65d17",
+     "hev_1b7e37504971c652"
+    ],
+    "unit": "member",
+    "n": 2,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     },
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.25,
+    "plug_in": 0.25,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:DONE",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 1,
+   "family": "done_gap",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 2,
+   "f": 0,
+   "n_eff": 2.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    },
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    }
+   },
+   "batch_sizes": null,
+   "source": "store-notice",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "records": [
+     "hev_8dcd719a9d6f614d",
+     "hev_e572a5dca937a9e7"
+    ],
+    "unit": "member",
+    "n": 2,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     },
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.25,
+    "plug_in": 0.25,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:STACKS",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 1,
+   "family": "superseding",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 6,
+   "f": 0,
+   "n_eff": 6.0,
+   "rate_tasks": {
+    "frederick_q4_commitments": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 4,
+     "f": 0,
+     "n_eff": 4.0
+    },
+    "samuel_zm_beta_messages": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 7.0,
+     "mean": 0.125
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 7.0,
+     "mean": 0.125
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 7.0,
+     "mean": 0.125
+    }
+   },
+   "batch_sizes": null,
+   "source": "mail-second-paragraph",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 7.0,
+    "mean": 0.125,
+    "records": [
+     "hev_d3b1b9dcf4e19fcc",
+     "hev_22d4191952144533",
+     "hev_c3cc19b1927c1302",
+     "hev_8130210e56a8c375",
+     "hev_166c7ec533acd8a7",
+     "hev_1757704931c75214"
+    ],
+    "unit": "member",
+    "n": 6,
+    "f": 0,
+    "tasks": {
+     "frederick_q4_commitments": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 4,
+      "f": 0,
+      "n_eff": 4.0
+     },
+     "samuel_zm_beta_messages": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 7.0,
+      "mean": 0.125
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 7.0,
+      "mean": 0.125
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 7.0,
+      "mean": 0.125
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.125,
+    "plug_in": 0.125,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  }
+ ],
+ "unparameterized_channels": [
+  {
+   "id": "control:AUTH",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:FILT",
+   "kind": "control",
+   "members": 2,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:DATE",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  }
+ ],
+ "briefs": {
+  "files": [],
+  "sha256": {},
+  "digest": null,
+  "content_digest": null,
+  "batches": null
+ },
+ "scenarios": [
+  {
+   "dependence": "independent",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8779,
+     "band_10_90": [
+      0.842,
+      0.9156
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.7707,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1219
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7201
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1647,
+    "rule:AUTH": 0.3362,
+    "rule:FILT": 0.3315,
+    "rule:COMPLETE": 0.1963,
+    "rule:DONE": 0.4976,
+    "rule:DATE": 0.668,
+    "rule:STACKS": 0.166
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3311,
+     "either": 26745,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3215,
+     "either": 26555,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 1947,
+     "either": 19717,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 5030,
+     "either": 34707,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6588,
+     "either": 43374,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1626,
+     "either": 18219,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6644,
+     "either": 33416,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 3874,
+     "either": 28080,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 10042,
+     "either": 39985,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13569,
+     "either": 46683,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3371,
+     "either": 26764,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 3910,
+     "either": 27758,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 9884,
+     "either": 39857,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 13330,
+     "either": 46636,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3322,
+     "either": 26527,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 5883,
+     "either": 35752,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 7967,
+     "either": 43893,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2029,
+     "either": 19714,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19958,
+     "either": 49975,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 4974,
+     "either": 34842,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6775,
+     "either": 43266,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0552,
+     "either": 0.4457
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0536,
+     "either": 0.4426
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0324,
+     "either": 0.3286
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0838,
+     "either": 0.5785
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1098,
+     "either": 0.7229
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0271,
+     "either": 0.3036
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1107,
+     "either": 0.5569
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0646,
+     "either": 0.468
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1674,
+     "either": 0.6664
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2261,
+     "either": 0.7781
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0562,
+     "either": 0.4461
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0652,
+     "either": 0.4626
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1647,
+     "either": 0.6643
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.2222,
+     "either": 0.7773
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0554,
+     "either": 0.4421
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.098,
+     "either": 0.5959
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1328,
+     "either": 0.7316
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0338,
+     "either": 0.3286
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3326,
+     "either": 0.8329
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0829,
+     "either": 0.5807
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1129,
+     "either": 0.7211
+    }
+   },
+   "run_score_band_10_90": [
+    0.7922,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3758,
+    "CH-AUTH": 0.6017,
+    "CH-FILT": 0.3384,
+    "CH-COMPLETE": 0.5021,
+    "CH-DONE": 0.3328,
+    "CH-DATE": 0.7955,
+    "CH-STACKS": 0.1643,
+    "control:CORR": 0.1241,
+    "control:COMPLETE": 0.2494,
+    "control:DONE": 0.2505,
+    "control:STACKS": 0.1278
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7542,
+     "P_fails_all_six": 0.2097
+    },
+    "G2": {
+     "P_fail": 0.6934,
+     "P_fails_all_six": 0.1976
+    },
+    "G3": {
+     "P_fail": 0.5611,
+     "P_fails_all_six": 0.1014
+    },
+    "I1": {
+     "P_fail": 0.3985,
+     "P_fails_all_six": 0.0365
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7542,
+     "P_fails_all_six": 0.2097
+    },
+    "G2": {
+     "P_fail": 0.6934,
+     "P_fails_all_six": 0.1976
+    },
+    "G3": {
+     "P_fail": 0.5611,
+     "P_fails_all_six": 0.1014
+    },
+    "I1": {
+     "P_fail": 0.3985,
+     "P_fails_all_six": 0.0365
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8787,
+     "band_10_90": [
+      0.842,
+      0.9177
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.7573,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1279
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7419
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1674,
+    "rule:AUTH": 0.3322,
+    "rule:FILT": 0.3353,
+    "rule:COMPLETE": 0.2021,
+    "rule:DONE": 0.5004,
+    "rule:DATE": 0.6669,
+    "rule:STACKS": 0.1678
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3411,
+     "either": 26564,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3367,
+     "either": 26798,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2060,
+     "either": 20113,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 5039,
+     "either": 35027,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6628,
+     "either": 43427,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1710,
+     "either": 18405,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6638,
+     "either": 33414,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4001,
+     "either": 28059,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 9984,
+     "either": 39969,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13355,
+     "either": 46587,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3362,
+     "either": 26640,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 4056,
+     "either": 28194,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 9971,
+     "either": 40172,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 13284,
+     "either": 46848,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3454,
+     "either": 26738,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 6097,
+     "either": 36054,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 8099,
+     "either": 44041,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2042,
+     "either": 20158,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19970,
+     "either": 50063,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 5058,
+     "either": 35035,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6710,
+     "either": 43372,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0568,
+     "either": 0.4427
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0561,
+     "either": 0.4466
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0343,
+     "either": 0.3352
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.084,
+     "either": 0.5838
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1105,
+     "either": 0.7238
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0285,
+     "either": 0.3068
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1106,
+     "either": 0.5569
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0667,
+     "either": 0.4677
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1664,
+     "either": 0.6662
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2226,
+     "either": 0.7764
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.056,
+     "either": 0.444
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0676,
+     "either": 0.4699
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1662,
+     "either": 0.6695
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.2214,
+     "either": 0.7808
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0576,
+     "either": 0.4456
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1016,
+     "either": 0.6009
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.135,
+     "either": 0.734
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.034,
+     "either": 0.336
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3328,
+     "either": 0.8344
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0843,
+     "either": 0.5839
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1118,
+     "either": 0.7229
+    }
+   },
+   "run_score_band_10_90": [
+    0.7922,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3767,
+    "CH-AUTH": 0.5929,
+    "CH-FILT": 0.3302,
+    "CH-COMPLETE": 0.4956,
+    "CH-DONE": 0.3327,
+    "CH-DATE": 0.7982,
+    "CH-STACKS": 0.1668,
+    "control:CORR": 0.1277,
+    "control:COMPLETE": 0.2449,
+    "control:DONE": 0.2515,
+    "control:STACKS": 0.1264
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7538,
+     "P_fails_all_six": 0.2074
+    },
+    "G2": {
+     "P_fail": 0.6887,
+     "P_fails_all_six": 0.196
+    },
+    "G3": {
+     "P_fail": 0.5511,
+     "P_fails_all_six": 0.0962
+    },
+    "I1": {
+     "P_fail": 0.3968,
+     "P_fails_all_six": 0.0331
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7538,
+     "P_fails_all_six": 0.2074
+    },
+    "G2": {
+     "P_fail": 0.6887,
+     "P_fails_all_six": 0.196
+    },
+    "G3": {
+     "P_fail": 0.5511,
+     "P_fails_all_six": 0.0962
+    },
+    "I1": {
+     "P_fail": 0.3968,
+     "P_fails_all_six": 0.0331
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8911,
+     "band_10_90": [
+      0.8506,
+      0.9329
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.5939,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1393
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7909
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1674,
+    "rule:AUTH": 0.3322,
+    "rule:FILT": 0.3353,
+    "rule:COMPLETE": 0.2021,
+    "rule:DONE": 0.5004,
+    "rule:DATE": 0.6669,
+    "rule:STACKS": 0.1678
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3411,
+     "either": 26564,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3367,
+     "either": 26798,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2060,
+     "either": 20113,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 5039,
+     "either": 35027,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6628,
+     "either": 43427,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1710,
+     "either": 18405,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6638,
+     "either": 33414,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4001,
+     "either": 28059,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 9984,
+     "either": 39969,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13355,
+     "either": 46587,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3362,
+     "either": 26640,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 4056,
+     "either": 28194,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 9971,
+     "either": 40172,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 13284,
+     "either": 46848,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3454,
+     "either": 26738,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 6097,
+     "either": 36054,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 8099,
+     "either": 44041,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2042,
+     "either": 20158,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19970,
+     "either": 50063,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 5058,
+     "either": 35035,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6710,
+     "either": 43372,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0568,
+     "either": 0.4427
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0561,
+     "either": 0.4466
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0343,
+     "either": 0.3352
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.084,
+     "either": 0.5838
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1105,
+     "either": 0.7238
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0285,
+     "either": 0.3068
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1106,
+     "either": 0.5569
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0667,
+     "either": 0.4677
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1664,
+     "either": 0.6662
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2226,
+     "either": 0.7764
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.056,
+     "either": 0.444
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0676,
+     "either": 0.4699
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1662,
+     "either": 0.6695
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.2214,
+     "either": 0.7808
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0576,
+     "either": 0.4456
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1016,
+     "either": 0.6009
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.135,
+     "either": 0.734
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.034,
+     "either": 0.336
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3328,
+     "either": 0.8344
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0843,
+     "either": 0.5839
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1118,
+     "either": 0.7229
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3767,
+    "CH-AUTH": 0.5929,
+    "CH-FILT": 0.3302,
+    "CH-COMPLETE": 0.4956,
+    "CH-DONE": 0.3327,
+    "CH-DATE": 0.7982,
+    "CH-STACKS": 0.1668,
+    "control:CORR": 0.1277,
+    "control:COMPLETE": 0.2449,
+    "control:DONE": 0.2515,
+    "control:STACKS": 0.1264
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7392,
+     "P_fails_all_six": 0.1791
+    },
+    "G2": {
+     "P_fail": 0.572,
+     "P_fails_all_six": 0.1005
+    },
+    "G3": {
+     "P_fail": 0.4405,
+     "P_fails_all_six": 0.0525
+    },
+    "I1": {
+     "P_fail": 0.3968,
+     "P_fails_all_six": 0.0331
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7392,
+     "P_fails_all_six": 0.1791
+    },
+    "G2": {
+     "P_fail": 0.572,
+     "P_fails_all_six": 0.1005
+    },
+    "G3": {
+     "P_fail": 0.4405,
+     "P_fails_all_six": 0.0525
+    },
+    "I1": {
+     "P_fail": 0.3968,
+     "P_fails_all_six": 0.0331
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.9044,
+     "band_10_90": [
+      0.8636,
+      0.9459
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.4263,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1039
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.6775
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1666,
+    "rule:AUTH": 0.3349,
+    "rule:FILT": 0.3377,
+    "rule:COMPLETE": 0.2014,
+    "rule:DONE": 0.4968,
+    "rule:DATE": 0.6687,
+    "rule:STACKS": 0.1697
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3290,
+     "either": 26805,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3372,
+     "either": 26886,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2021,
+     "either": 20065,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 4930,
+     "either": 34878,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6609,
+     "either": 43514,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1689,
+     "either": 18493,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6799,
+     "either": 33556,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4026,
+     "either": 28157,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 9959,
+     "either": 39946,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13329,
+     "either": 46891,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3547,
+     "either": 26732,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 4105,
+     "either": 28241,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 10170,
+     "either": 39898,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 13499,
+     "either": 46884,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3478,
+     "either": 26964,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 5993,
+     "either": 35903,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 8076,
+     "either": 44135,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2127,
+     "either": 20143,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19949,
+     "either": 49984,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 5028,
+     "either": 34964,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6799,
+     "either": 43508,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0548,
+     "either": 0.4467
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0562,
+     "either": 0.4481
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0337,
+     "either": 0.3344
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0822,
+     "either": 0.5813
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1101,
+     "either": 0.7252
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0282,
+     "either": 0.3082
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1133,
+     "either": 0.5593
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0671,
+     "either": 0.4693
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.166,
+     "either": 0.6658
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2221,
+     "either": 0.7815
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0591,
+     "either": 0.4455
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0684,
+     "either": 0.4707
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1695,
+     "either": 0.665
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.225,
+     "either": 0.7814
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.058,
+     "either": 0.4494
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.0999,
+     "either": 0.5984
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1346,
+     "either": 0.7356
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0355,
+     "either": 0.3357
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3325,
+     "either": 0.8331
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0838,
+     "either": 0.5827
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1133,
+     "either": 0.7251
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3761,
+    "CH-AUTH": 0.5966,
+    "CH-FILT": 0.3273,
+    "CH-COMPLETE": 0.4974,
+    "CH-DONE": 0.3305,
+    "CH-DATE": 0.7958,
+    "CH-STACKS": 0.1643,
+    "control:CORR": 0.1249,
+    "control:COMPLETE": 0.2492,
+    "control:DONE": 0.2485,
+    "control:STACKS": 0.1253
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.737,
+     "P_fails_all_six": 0.1784
+    },
+    "G2": {
+     "P_fail": 0.5064,
+     "P_fails_all_six": 0.074
+    },
+    "G3": {
+     "P_fail": 0.3766,
+     "P_fails_all_six": 0.044
+    },
+    "I1": {
+     "P_fail": 0.2984,
+     "P_fails_all_six": 0.0156
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.737,
+     "P_fails_all_six": 0.1784
+    },
+    "G2": {
+     "P_fail": 0.5064,
+     "P_fails_all_six": 0.074
+    },
+    "G3": {
+     "P_fail": 0.3766,
+     "P_fails_all_six": 0.044
+    },
+    "I1": {
+     "P_fail": 0.2984,
+     "P_fails_all_six": 0.0156
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8886,
+     "band_10_90": [
+      0.8485,
+      0.9286
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.6295,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1349
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7711
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1675,
+    "rule:AUTH": 0.3307,
+    "rule:FILT": 0.3304,
+    "rule:COMPLETE": 0.2032,
+    "rule:DONE": 0.4999,
+    "rule:DATE": 0.6672,
+    "rule:STACKS": 0.1689
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3275,
+     "either": 26621,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3379,
+     "either": 26497,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2038,
+     "either": 20206,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 5059,
+     "either": 34984,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6760,
+     "either": 43324,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1653,
+     "either": 18534,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6571,
+     "either": 33099,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4008,
+     "either": 28030,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 9903,
+     "either": 39934,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13249,
+     "either": 46629,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3269,
+     "either": 26712,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 3998,
+     "either": 28020,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 9875,
+     "either": 39942,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 13283,
+     "either": 46575,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3330,
+     "either": 26631,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 6062,
+     "either": 36123,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 8181,
+     "either": 44045,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2016,
+     "either": 20313,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 20059,
+     "either": 49966,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 5015,
+     "either": 35113,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6796,
+     "either": 43373,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0546,
+     "either": 0.4437
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0563,
+     "either": 0.4416
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.034,
+     "either": 0.3368
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0843,
+     "either": 0.5831
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1127,
+     "either": 0.7221
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0276,
+     "either": 0.3089
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1095,
+     "either": 0.5516
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0668,
+     "either": 0.4672
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1651,
+     "either": 0.6656
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2208,
+     "either": 0.7772
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0545,
+     "either": 0.4452
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0666,
+     "either": 0.467
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1646,
+     "either": 0.6657
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.2214,
+     "either": 0.7762
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0555,
+     "either": 0.4439
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.101,
+     "either": 0.602
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1363,
+     "either": 0.7341
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0336,
+     "either": 0.3386
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3343,
+     "either": 0.8328
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0836,
+     "either": 0.5852
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1133,
+     "either": 0.7229
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3748,
+    "CH-AUTH": 0.5985,
+    "CH-FILT": 0.3326,
+    "CH-COMPLETE": 0.4977,
+    "CH-DONE": 0.3325,
+    "CH-DATE": 0.7983,
+    "CH-STACKS": 0.1673,
+    "control:CORR": 0.1252,
+    "control:COMPLETE": 0.2486,
+    "control:DONE": 0.2467,
+    "control:STACKS": 0.1239
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7418,
+     "P_fails_all_six": 0.1809
+    },
+    "G2": {
+     "P_fail": 0.5936,
+     "P_fails_all_six": 0.1098
+    },
+    "G3": {
+     "P_fail": 0.4597,
+     "P_fails_all_six": 0.0602
+    },
+    "I1": {
+     "P_fail": 0.4015,
+     "P_fails_all_six": 0.0336
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7418,
+     "P_fails_all_six": 0.1809
+    },
+    "G2": {
+     "P_fail": 0.5936,
+     "P_fails_all_six": 0.1098
+    },
+    "G3": {
+     "P_fail": 0.4597,
+     "P_fails_all_six": 0.0602
+    },
+    "I1": {
+     "P_fail": 0.4015,
+     "P_fails_all_six": 0.0336
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8779,
+     "band_10_90": [
+      0.842,
+      0.9156
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.7707,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1219
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7201
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1647,
+    "rule:AUTH": 0.3362,
+    "rule:FILT": 0.3315,
+    "rule:COMPLETE": 0.1963,
+    "rule:DONE": 0.4976,
+    "rule:DATE": 0.6692,
+    "rule:STACKS": 0.166
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3311,
+     "either": 26745,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3215,
+     "either": 26555,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 1947,
+     "either": 19717,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 5030,
+     "either": 34707,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6596,
+     "either": 43441,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1626,
+     "either": 18219,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6644,
+     "either": 33416,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 3874,
+     "either": 28080,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 10042,
+     "either": 39985,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13553,
+     "either": 46774,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3371,
+     "either": 26764,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 3910,
+     "either": 27758,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 9884,
+     "either": 39857,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18526,
+     "either": 41515,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3322,
+     "either": 26527,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 5883,
+     "either": 35752,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 7896,
+     "either": 44039,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2029,
+     "either": 19714,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19885,
+     "either": 50123,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 4974,
+     "either": 34842,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6761,
+     "either": 43355,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0552,
+     "either": 0.4457
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0536,
+     "either": 0.4426
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0324,
+     "either": 0.3286
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0838,
+     "either": 0.5785
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1099,
+     "either": 0.724
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0271,
+     "either": 0.3036
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1107,
+     "either": 0.5569
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0646,
+     "either": 0.468
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1674,
+     "either": 0.6664
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2259,
+     "either": 0.7796
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0562,
+     "either": 0.4461
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0652,
+     "either": 0.4626
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1647,
+     "either": 0.6643
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3088,
+     "either": 0.6919
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0554,
+     "either": 0.4421
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.098,
+     "either": 0.5959
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1316,
+     "either": 0.734
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0338,
+     "either": 0.3286
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3314,
+     "either": 0.8354
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0829,
+     "either": 0.5807
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1127,
+     "either": 0.7226
+    }
+   },
+   "run_score_band_10_90": [
+    0.7922,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3758,
+    "CH-AUTH": 0.6017,
+    "CH-FILT": 0.3384,
+    "CH-COMPLETE": 0.5021,
+    "CH-DONE": 0.3328,
+    "CH-DATE": 0.7955,
+    "CH-STACKS": 0.1643,
+    "control:CORR": 0.1241,
+    "control:COMPLETE": 0.2494,
+    "control:DONE": 0.2505,
+    "control:STACKS": 0.1278
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7542,
+     "P_fails_all_six": 0.2097
+    },
+    "G2": {
+     "P_fail": 0.6934,
+     "P_fails_all_six": 0.1976
+    },
+    "G3": {
+     "P_fail": 0.5611,
+     "P_fails_all_six": 0.1014
+    },
+    "I1": {
+     "P_fail": 0.3985,
+     "P_fails_all_six": 0.0365
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7542,
+     "P_fails_all_six": 0.2097
+    },
+    "G2": {
+     "P_fail": 0.6934,
+     "P_fails_all_six": 0.1976
+    },
+    "G3": {
+     "P_fail": 0.5611,
+     "P_fails_all_six": 0.1014
+    },
+    "I1": {
+     "P_fail": 0.3985,
+     "P_fails_all_six": 0.0365
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8778,
+     "band_10_90": [
+      0.842,
+      0.9177
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.7666,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1277
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7387
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1674,
+    "rule:AUTH": 0.3387,
+    "rule:FILT": 0.3323,
+    "rule:COMPLETE": 0.2001,
+    "rule:DONE": 0.501,
+    "rule:DATE": 0.6608,
+    "rule:STACKS": 0.1682
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3370,
+     "either": 27000,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3375,
+     "either": 26612,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2058,
+     "either": 19994,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 4946,
+     "either": 35161,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6642,
+     "either": 43050,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1755,
+     "either": 18385,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6679,
+     "either": 33586,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4141,
+     "either": 28189,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 10148,
+     "either": 40237,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13425,
+     "either": 46545,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3397,
+     "either": 27021,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 4042,
+     "either": 27905,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 10014,
+     "either": 39988,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18408,
+     "either": 41179,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3385,
+     "either": 26650,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 6014,
+     "either": 36053,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 7997,
+     "either": 43655,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2011,
+     "either": 20089,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19943,
+     "either": 49764,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 4982,
+     "either": 35173,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6722,
+     "either": 43018,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0562,
+     "either": 0.45
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0563,
+     "either": 0.4435
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0343,
+     "either": 0.3332
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0824,
+     "either": 0.586
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1107,
+     "either": 0.7175
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0293,
+     "either": 0.3064
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1113,
+     "either": 0.5598
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.069,
+     "either": 0.4698
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1691,
+     "either": 0.6706
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2238,
+     "either": 0.7758
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0566,
+     "either": 0.4503
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0674,
+     "either": 0.4651
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1669,
+     "either": 0.6665
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3068,
+     "either": 0.6863
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0564,
+     "either": 0.4442
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1002,
+     "either": 0.6009
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1333,
+     "either": 0.7276
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0335,
+     "either": 0.3348
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3324,
+     "either": 0.8294
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.083,
+     "either": 0.5862
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.112,
+     "either": 0.717
+    }
+   },
+   "run_score_band_10_90": [
+    0.7922,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3762,
+    "CH-AUTH": 0.5973,
+    "CH-FILT": 0.3297,
+    "CH-COMPLETE": 0.4971,
+    "CH-DONE": 0.3304,
+    "CH-DATE": 0.7988,
+    "CH-STACKS": 0.1636,
+    "control:CORR": 0.1251,
+    "control:COMPLETE": 0.2507,
+    "control:DONE": 0.2499,
+    "control:STACKS": 0.127
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7541,
+     "P_fails_all_six": 0.2044
+    },
+    "G2": {
+     "P_fail": 0.6927,
+     "P_fails_all_six": 0.197
+    },
+    "G3": {
+     "P_fail": 0.5611,
+     "P_fails_all_six": 0.1013
+    },
+    "I1": {
+     "P_fail": 0.3997,
+     "P_fails_all_six": 0.0313
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7541,
+     "P_fails_all_six": 0.2044
+    },
+    "G2": {
+     "P_fail": 0.6927,
+     "P_fails_all_six": 0.197
+    },
+    "G3": {
+     "P_fail": 0.5611,
+     "P_fails_all_six": 0.1013
+    },
+    "I1": {
+     "P_fail": 0.3997,
+     "P_fails_all_six": 0.0313
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8904,
+     "band_10_90": [
+      0.8506,
+      0.9307
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.6052,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1375
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7826
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1674,
+    "rule:AUTH": 0.3387,
+    "rule:FILT": 0.3323,
+    "rule:COMPLETE": 0.2001,
+    "rule:DONE": 0.501,
+    "rule:DATE": 0.6608,
+    "rule:STACKS": 0.1682
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3370,
+     "either": 27000,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3375,
+     "either": 26612,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2058,
+     "either": 19994,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 4946,
+     "either": 35161,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6642,
+     "either": 43050,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1755,
+     "either": 18385,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6679,
+     "either": 33586,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4141,
+     "either": 28189,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 10148,
+     "either": 40237,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13425,
+     "either": 46545,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3397,
+     "either": 27021,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 4042,
+     "either": 27905,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 10014,
+     "either": 39988,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18408,
+     "either": 41179,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3385,
+     "either": 26650,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 6014,
+     "either": 36053,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 7997,
+     "either": 43655,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 2011,
+     "either": 20089,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19943,
+     "either": 49764,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 4982,
+     "either": 35173,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6722,
+     "either": 43018,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0562,
+     "either": 0.45
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0563,
+     "either": 0.4435
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0343,
+     "either": 0.3332
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0824,
+     "either": 0.586
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1107,
+     "either": 0.7175
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0293,
+     "either": 0.3064
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1113,
+     "either": 0.5598
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.069,
+     "either": 0.4698
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1691,
+     "either": 0.6706
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2238,
+     "either": 0.7758
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0566,
+     "either": 0.4503
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0674,
+     "either": 0.4651
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.1669,
+     "either": 0.6665
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3068,
+     "either": 0.6863
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0564,
+     "either": 0.4442
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1002,
+     "either": 0.6009
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1333,
+     "either": 0.7276
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0335,
+     "either": 0.3348
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3324,
+     "either": 0.8294
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.083,
+     "either": 0.5862
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.112,
+     "either": 0.717
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3762,
+    "CH-AUTH": 0.5973,
+    "CH-FILT": 0.3297,
+    "CH-COMPLETE": 0.4971,
+    "CH-DONE": 0.3304,
+    "CH-DATE": 0.7988,
+    "CH-STACKS": 0.1636,
+    "control:CORR": 0.1251,
+    "control:COMPLETE": 0.2507,
+    "control:DONE": 0.2499,
+    "control:STACKS": 0.127
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7401,
+     "P_fails_all_six": 0.1742
+    },
+    "G2": {
+     "P_fail": 0.5748,
+     "P_fails_all_six": 0.0988
+    },
+    "G3": {
+     "P_fail": 0.4482,
+     "P_fails_all_six": 0.0529
+    },
+    "I1": {
+     "P_fail": 0.3997,
+     "P_fails_all_six": 0.0313
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7401,
+     "P_fails_all_six": 0.1742
+    },
+    "G2": {
+     "P_fail": 0.5748,
+     "P_fails_all_six": 0.0988
+    },
+    "G3": {
+     "P_fail": 0.4482,
+     "P_fails_all_six": 0.0529
+    },
+    "I1": {
+     "P_fail": 0.3997,
+     "P_fails_all_six": 0.0313
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.9043,
+     "band_10_90": [
+      0.8636,
+      0.9437
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9998,
+      "avg_weighted_pass_rate": 0.4209,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.11
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.6908
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1632,
+    "rule:AUTH": 0.3345,
+    "rule:FILT": 0.3305,
+    "rule:COMPLETE": 0.2004,
+    "rule:DONE": 0.5012,
+    "rule:DATE": 0.6719,
+    "rule:STACKS": 0.1666
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3338,
+     "either": 26520,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3234,
+     "either": 26383,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2037,
+     "either": 19776,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 5013,
+     "either": 34849,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6534,
+     "either": 43571,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1643,
+     "either": 18141,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6582,
+     "either": 33313,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4090,
+     "either": 28001,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 10096,
+     "either": 40044,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13484,
+     "either": 46899,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3377,
+     "either": 26685,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 3953,
+     "either": 27897,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 9961,
+     "either": 39938,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18421,
+     "either": 41721,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3290,
+     "either": 26531,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 6004,
+     "either": 36091,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 8114,
+     "either": 44224,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 1971,
+     "either": 20046,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 20301,
+     "either": 50086,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 5106,
+     "either": 34960,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6741,
+     "either": 43568,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0556,
+     "either": 0.442
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0539,
+     "either": 0.4397
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.034,
+     "either": 0.3296
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0835,
+     "either": 0.5808
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1089,
+     "either": 0.7262
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0274,
+     "either": 0.3024
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1097,
+     "either": 0.5552
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0682,
+     "either": 0.4667
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.1683,
+     "either": 0.6674
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2247,
+     "either": 0.7816
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0563,
+     "either": 0.4447
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0659,
+     "either": 0.4649
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.166,
+     "either": 0.6656
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.307,
+     "either": 0.6954
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.0548,
+     "either": 0.4422
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1001,
+     "either": 0.6015
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1352,
+     "either": 0.7371
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0328,
+     "either": 0.3341
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3383,
+     "either": 0.8348
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0851,
+     "either": 0.5827
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1124,
+     "either": 0.7261
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3753,
+    "CH-AUTH": 0.5935,
+    "CH-FILT": 0.3328,
+    "CH-COMPLETE": 0.4995,
+    "CH-DONE": 0.3365,
+    "CH-DATE": 0.7978,
+    "CH-STACKS": 0.1682,
+    "control:CORR": 0.1214,
+    "control:COMPLETE": 0.2505,
+    "control:DONE": 0.2477,
+    "control:STACKS": 0.1237
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7379,
+     "P_fails_all_six": 0.1783
+    },
+    "G2": {
+     "P_fail": 0.5062,
+     "P_fails_all_six": 0.0725
+    },
+    "G3": {
+     "P_fail": 0.3728,
+     "P_fails_all_six": 0.0375
+    },
+    "I1": {
+     "P_fail": 0.3014,
+     "P_fails_all_six": 0.0151
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7379,
+     "P_fails_all_six": 0.1783
+    },
+    "G2": {
+     "P_fail": 0.5062,
+     "P_fails_all_six": 0.0725
+    },
+    "G3": {
+     "P_fail": 0.3728,
+     "P_fails_all_six": 0.0375
+    },
+    "I1": {
+     "P_fail": 0.3014,
+     "P_fails_all_six": 0.0151
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8883,
+     "band_10_90": [
+      0.8485,
+      0.9286
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.6304,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1334
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.7608
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1681,
+    "rule:AUTH": 0.3355,
+    "rule:FILT": 0.3335,
+    "rule:COMPLETE": 0.2016,
+    "rule:DONE": 0.4975,
+    "rule:DATE": 0.6687,
+    "rule:STACKS": 0.1673
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 3369,
+     "either": 26843,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 3346,
+     "either": 26749,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 2006,
+     "either": 20174,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 5007,
+     "either": 34926,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 6721,
+     "either": 43482,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 1714,
+     "either": 18408,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 6682,
+     "either": 33459,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 4111,
+     "either": 28115,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 10138,
+     "either": 39841,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 13354,
+     "either": 46895,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 3371,
+     "either": 26797,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 3975,
+     "either": 28134,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 9959,
+     "either": 39903,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18639,
+     "either": 41493,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 3420,
+     "either": 26631,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 6010,
+     "either": 35937,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 8157,
+     "either": 44060,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 1949,
+     "either": 20187,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 19964,
+     "either": 50006,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 4970,
+     "either": 34919,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 6724,
+     "either": 43435,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.0561,
+     "either": 0.4474
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.0558,
+     "either": 0.4458
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0334,
+     "either": 0.3362
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.0834,
+     "either": 0.5821
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.112,
+     "either": 0.7247
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0286,
+     "either": 0.3068
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.1114,
+     "either": 0.5576
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.0685,
+     "either": 0.4686
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.169,
+     "either": 0.664
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.2226,
+     "either": 0.7816
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.0562,
+     "either": 0.4466
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.0663,
+     "either": 0.4689
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.166,
+     "either": 0.6651
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3106,
+     "either": 0.6915
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.057,
+     "either": 0.4439
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1002,
+     "either": 0.5989
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1359,
+     "either": 0.7343
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0325,
+     "either": 0.3365
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.3327,
+     "either": 0.8334
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.0828,
+     "either": 0.582
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1121,
+     "either": 0.7239
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3727,
+    "CH-AUTH": 0.6014,
+    "CH-FILT": 0.3329,
+    "CH-COMPLETE": 0.5021,
+    "CH-DONE": 0.3351,
+    "CH-DATE": 0.7978,
+    "CH-STACKS": 0.1627,
+    "control:CORR": 0.1242,
+    "control:COMPLETE": 0.2506,
+    "control:DONE": 0.25,
+    "control:STACKS": 0.1262
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7415,
+     "P_fails_all_six": 0.1838
+    },
+    "G2": {
+     "P_fail": 0.5941,
+     "P_fails_all_six": 0.1106
+    },
+    "G3": {
+     "P_fail": 0.4634,
+     "P_fails_all_six": 0.0591
+    },
+    "I1": {
+     "P_fail": 0.4027,
+     "P_fails_all_six": 0.0357
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7415,
+     "P_fails_all_six": 0.1838
+    },
+    "G2": {
+     "P_fail": 0.5941,
+     "P_fails_all_six": 0.1106
+    },
+    "G3": {
+     "P_fail": 0.4634,
+     "P_fails_all_six": 0.0591
+    },
+    "I1": {
+     "P_fail": 0.4027,
+     "P_fails_all_six": 0.0357
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8855,
+     "band_10_90": [
+      0.8463,
+      0.9264
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9998,
+      "avg_weighted_pass_rate": 0.6802,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1785
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.9008
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1649,
+    "rule:AUTH": 0.3324,
+    "rule:FILT": 0.3288,
+    "rule:COMPLETE": 0.2035,
+    "rule:DONE": 0.4997,
+    "rule:DATE": 0.6708,
+    "rule:STACKS": 0.1672
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 8134,
+     "either": 21706,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 8091,
+     "either": 21533,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 5951,
+     "either": 16156,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 9296,
+     "either": 30580,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 9572,
+     "either": 40574,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 5429,
+     "either": 14497,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 13798,
+     "either": 25876,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 9404,
+     "either": 22753,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 17381,
+     "either": 32545,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 18534,
+     "either": 41662,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 8210,
+     "either": 21766,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 9433,
+     "either": 22508,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 17218,
+     "either": 32492,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18480,
+     "either": 41500,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 8155,
+     "either": 21605,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 11140,
+     "either": 31053,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 11723,
+     "either": 40740,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 6017,
+     "either": 16226,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 26588,
+     "either": 43644,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 9372,
+     "either": 30640,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 9727,
+     "either": 40555,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.1356,
+     "either": 0.3618
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.1348,
+     "either": 0.3589
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.0992,
+     "either": 0.2693
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.1549,
+     "either": 0.5097
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1595,
+     "either": 0.6762
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0905,
+     "either": 0.2416
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.23,
+     "either": 0.4313
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.1567,
+     "either": 0.3792
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.2897,
+     "either": 0.5424
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.3089,
+     "either": 0.6944
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.1368,
+     "either": 0.3628
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.1572,
+     "either": 0.3751
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.287,
+     "either": 0.5415
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.308,
+     "either": 0.6917
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.1359,
+     "either": 0.3601
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1857,
+     "either": 0.5175
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1954,
+     "either": 0.679
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.1003,
+     "either": 0.2704
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.4431,
+     "either": 0.7274
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.1562,
+     "either": 0.5107
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1621,
+     "either": 0.6759
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.376,
+    "CH-AUTH": 0.5969,
+    "CH-FILT": 0.3303,
+    "CH-COMPLETE": 0.4981,
+    "CH-DONE": 0.3331,
+    "CH-DATE": 0.7952,
+    "CH-STACKS": 0.1669,
+    "control:CORR": 0.1264,
+    "control:COMPLETE": 0.254,
+    "control:DONE": 0.2486,
+    "control:STACKS": 0.1259
+   },
+   "slots": {
+    "G2": {
+     "P_fail": 0.6439,
+     "P_fails_all_six": 0.1502
+    },
+    "V1": {
+     "P_fail": 0.6421,
+     "P_fails_all_six": 0.0983
+    },
+    "G3": {
+     "P_fail": 0.5534,
+     "P_fails_all_six": 0.0969
+    },
+    "I1": {
+     "P_fail": 0.4014,
+     "P_fails_all_six": 0.0349
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "G2": {
+     "P_fail": 0.6439,
+     "P_fails_all_six": 0.1502
+    },
+    "V1": {
+     "P_fail": 0.6421,
+     "P_fails_all_six": 0.0983
+    },
+    "G3": {
+     "P_fail": 0.5534,
+     "P_fails_all_six": 0.0969
+    },
+    "I1": {
+     "P_fail": 0.4014,
+     "P_fails_all_six": 0.0349
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8853,
+     "band_10_90": [
+      0.8463,
+      0.9264
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9997,
+      "avg_weighted_pass_rate": 0.6815,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1854
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.8996
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1679,
+    "rule:AUTH": 0.3308,
+    "rule:FILT": 0.3349,
+    "rule:COMPLETE": 0.2018,
+    "rule:DONE": 0.5031,
+    "rule:DATE": 0.6681,
+    "rule:STACKS": 0.1678
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 8217,
+     "either": 21708,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 8249,
+     "either": 21919,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 6032,
+     "either": 16151,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 9497,
+     "either": 30768,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 9728,
+     "either": 40433,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 5468,
+     "either": 14679,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 13991,
+     "either": 25950,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 9277,
+     "either": 22679,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 17419,
+     "either": 32619,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 18513,
+     "either": 41421,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 8186,
+     "either": 21734,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 9430,
+     "either": 22769,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 17654,
+     "either": 32627,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18666,
+     "either": 41511,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 8194,
+     "either": 21969,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 11172,
+     "either": 31124,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 11480,
+     "either": 40712,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 6023,
+     "either": 16155,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 26575,
+     "either": 43699,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 9464,
+     "either": 30796,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 9739,
+     "either": 40417,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.1369,
+     "either": 0.3618
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.1375,
+     "either": 0.3653
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.1005,
+     "either": 0.2692
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.1583,
+     "either": 0.5128
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1621,
+     "either": 0.6739
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0911,
+     "either": 0.2447
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.2332,
+     "either": 0.4325
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.1546,
+     "either": 0.378
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.2903,
+     "either": 0.5436
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.3085,
+     "either": 0.6904
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.1364,
+     "either": 0.3622
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.1572,
+     "either": 0.3795
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.2942,
+     "either": 0.5438
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3111,
+     "either": 0.6918
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.1366,
+     "either": 0.3661
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1862,
+     "either": 0.5187
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1913,
+     "either": 0.6785
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.1004,
+     "either": 0.2692
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.4429,
+     "either": 0.7283
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.1577,
+     "either": 0.5133
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1623,
+     "either": 0.6736
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3776,
+    "CH-AUTH": 0.5997,
+    "CH-FILT": 0.3342,
+    "CH-COMPLETE": 0.5005,
+    "CH-DONE": 0.3357,
+    "CH-DATE": 0.7962,
+    "CH-STACKS": 0.1706,
+    "control:CORR": 0.1257,
+    "control:COMPLETE": 0.2494,
+    "control:DONE": 0.2482,
+    "control:STACKS": 0.124
+   },
+   "slots": {
+    "G2": {
+     "P_fail": 0.6471,
+     "P_fails_all_six": 0.1564
+    },
+    "V1": {
+     "P_fail": 0.6456,
+     "P_fails_all_six": 0.1019
+    },
+    "G3": {
+     "P_fail": 0.5511,
+     "P_fails_all_six": 0.0982
+    },
+    "I1": {
+     "P_fail": 0.4012,
+     "P_fails_all_six": 0.0346
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "G2": {
+     "P_fail": 0.6471,
+     "P_fails_all_six": 0.1564
+    },
+    "V1": {
+     "P_fail": 0.6456,
+     "P_fails_all_six": 0.1019
+    },
+    "G3": {
+     "P_fail": 0.5511,
+     "P_fails_all_six": 0.0982
+    },
+    "I1": {
+     "P_fail": 0.4012,
+     "P_fails_all_six": 0.0346
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8927,
+     "band_10_90": [
+      0.8506,
+      0.9351
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9997,
+      "avg_weighted_pass_rate": 0.5799,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1598
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.8475
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1679,
+    "rule:AUTH": 0.3308,
+    "rule:FILT": 0.3349,
+    "rule:COMPLETE": 0.2018,
+    "rule:DONE": 0.5031,
+    "rule:DATE": 0.6681,
+    "rule:STACKS": 0.1678
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 8217,
+     "either": 21708,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 8249,
+     "either": 21919,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 6032,
+     "either": 16151,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 9497,
+     "either": 30768,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 9728,
+     "either": 40433,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 5468,
+     "either": 14679,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 13991,
+     "either": 25950,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 9277,
+     "either": 22679,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 17419,
+     "either": 32619,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 18513,
+     "either": 41421,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 8186,
+     "either": 21734,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 9430,
+     "either": 22769,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 17654,
+     "either": 32627,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18666,
+     "either": 41511,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 8194,
+     "either": 21969,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 11172,
+     "either": 31124,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 11480,
+     "either": 40712,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 6023,
+     "either": 16155,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 26575,
+     "either": 43699,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 9464,
+     "either": 30796,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 9739,
+     "either": 40417,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.1369,
+     "either": 0.3618
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.1375,
+     "either": 0.3653
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.1005,
+     "either": 0.2692
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.1583,
+     "either": 0.5128
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1621,
+     "either": 0.6739
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0911,
+     "either": 0.2447
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.2332,
+     "either": 0.4325
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.1546,
+     "either": 0.378
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.2903,
+     "either": 0.5436
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.3085,
+     "either": 0.6904
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.1364,
+     "either": 0.3622
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.1572,
+     "either": 0.3795
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.2942,
+     "either": 0.5438
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3111,
+     "either": 0.6918
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.1366,
+     "either": 0.3661
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1862,
+     "either": 0.5187
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1913,
+     "either": 0.6785
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.1004,
+     "either": 0.2692
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.4429,
+     "either": 0.7283
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.1577,
+     "either": 0.5133
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1623,
+     "either": 0.6736
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3776,
+    "CH-AUTH": 0.5997,
+    "CH-FILT": 0.3342,
+    "CH-COMPLETE": 0.5005,
+    "CH-DONE": 0.3357,
+    "CH-DATE": 0.7962,
+    "CH-STACKS": 0.1706,
+    "control:CORR": 0.1257,
+    "control:COMPLETE": 0.2494,
+    "control:DONE": 0.2482,
+    "control:STACKS": 0.124
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.6996,
+     "P_fails_all_six": 0.1304
+    },
+    "G2": {
+     "P_fail": 0.5664,
+     "P_fails_all_six": 0.0952
+    },
+    "G3": {
+     "P_fail": 0.4416,
+     "P_fails_all_six": 0.0522
+    },
+    "I1": {
+     "P_fail": 0.4012,
+     "P_fails_all_six": 0.0346
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.6996,
+     "P_fails_all_six": 0.1304
+    },
+    "G2": {
+     "P_fail": 0.5664,
+     "P_fails_all_six": 0.0952
+    },
+    "G3": {
+     "P_fail": 0.4416,
+     "P_fails_all_six": 0.0522
+    },
+    "I1": {
+     "P_fail": 0.4012,
+     "P_fails_all_six": 0.0346
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.9041,
+     "band_10_90": [
+      0.8636,
+      0.9437
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9996,
+      "avg_weighted_pass_rate": 0.4287,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1076
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.6937
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1692,
+    "rule:AUTH": 0.3359,
+    "rule:FILT": 0.3338,
+    "rule:COMPLETE": 0.2011,
+    "rule:DONE": 0.5016,
+    "rule:DATE": 0.6702,
+    "rule:STACKS": 0.1701
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 8328,
+     "either": 21980,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 8294,
+     "either": 21888,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 6075,
+     "either": 16143,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 9540,
+     "either": 30712,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 9777,
+     "either": 40591,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 5632,
+     "either": 14726,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 13938,
+     "either": 26244,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 9439,
+     "either": 22779,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 17497,
+     "either": 32755,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 18747,
+     "either": 41621,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 8276,
+     "either": 22082,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 9334,
+     "either": 22758,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 17445,
+     "either": 32681,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18624,
+     "either": 41618,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 8428,
+     "either": 21804,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 10993,
+     "either": 31169,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 11537,
+     "either": 40741,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 6097,
+     "either": 16171,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 26560,
+     "either": 43752,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 9575,
+     "either": 30727,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 9848,
+     "either": 40570,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.1388,
+     "either": 0.3663
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.1382,
+     "either": 0.3648
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.1013,
+     "either": 0.2691
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.159,
+     "either": 0.5119
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.163,
+     "either": 0.6765
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0939,
+     "either": 0.2454
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.2323,
+     "either": 0.4374
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.1573,
+     "either": 0.3796
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.2916,
+     "either": 0.5459
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.3125,
+     "either": 0.6937
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.1379,
+     "either": 0.368
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.1556,
+     "either": 0.3793
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.2908,
+     "either": 0.5447
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3104,
+     "either": 0.6936
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.1405,
+     "either": 0.3634
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1832,
+     "either": 0.5195
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1923,
+     "either": 0.679
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.1016,
+     "either": 0.2695
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.4427,
+     "either": 0.7292
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.1596,
+     "either": 0.5121
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1641,
+     "either": 0.6762
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3779,
+    "CH-AUTH": 0.6051,
+    "CH-FILT": 0.3339,
+    "CH-COMPLETE": 0.4988,
+    "CH-DONE": 0.336,
+    "CH-DATE": 0.7952,
+    "CH-STACKS": 0.1676,
+    "control:CORR": 0.1241,
+    "control:COMPLETE": 0.2504,
+    "control:DONE": 0.2523,
+    "control:STACKS": 0.123
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.7321,
+     "P_fails_all_six": 0.172
+    },
+    "G2": {
+     "P_fail": 0.5098,
+     "P_fails_all_six": 0.0725
+    },
+    "G3": {
+     "P_fail": 0.3796,
+     "P_fails_all_six": 0.0401
+    },
+    "I1": {
+     "P_fail": 0.3001,
+     "P_fails_all_six": 0.0141
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.7321,
+     "P_fails_all_six": 0.172
+    },
+    "G2": {
+     "P_fail": 0.5098,
+     "P_fails_all_six": 0.0725
+    },
+    "G3": {
+     "P_fail": 0.3796,
+     "P_fails_all_six": 0.0401
+    },
+    "I1": {
+     "P_fail": 0.3001,
+     "P_fails_all_six": 0.0141
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8909,
+     "band_10_90": [
+      0.8506,
+      0.9329
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.6023,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.1562
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:AUTH",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:FILT",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:COMPLETE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DONE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:DATE",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:STACKS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 1.8393
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:CORR": 0.1651,
+    "rule:AUTH": 0.3309,
+    "rule:FILT": 0.3287,
+    "rule:COMPLETE": 0.2013,
+    "rule:DONE": 0.4994,
+    "rule:DATE": 0.6725,
+    "rule:STACKS": 0.1646
+   },
+   "landing_pair_counts": {
+    "rule:CORR|rule:AUTH": {
+     "both": 8125,
+     "either": 21637,
+     "runs": 60000
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 8100,
+     "either": 21528,
+     "runs": 60000
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 5999,
+     "either": 15987,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 9337,
+     "either": 30532,
+     "runs": 60000
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 9583,
+     "either": 40673,
+     "runs": 60000
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 5448,
+     "either": 14338,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 13842,
+     "either": 25732,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 9381,
+     "either": 22551,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 17361,
+     "either": 32454,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 18492,
+     "either": 41710,
+     "runs": 60000
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 8081,
+     "either": 21651,
+     "runs": 60000
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 9285,
+     "either": 22513,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 17225,
+     "either": 32456,
+     "runs": 60000
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 18428,
+     "either": 41640,
+     "runs": 60000
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 8088,
+     "either": 21510,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 11141,
+     "either": 30898,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 11544,
+     "either": 40882,
+     "runs": 60000
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 5992,
+     "either": 15964,
+     "runs": 60000
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 26499,
+     "either": 43810,
+     "runs": 60000
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 9304,
+     "either": 30535,
+     "runs": 60000
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 9556,
+     "either": 40670,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:CORR|rule:AUTH": {
+     "both": 0.1354,
+     "either": 0.3606
+    },
+    "rule:CORR|rule:FILT": {
+     "both": 0.135,
+     "either": 0.3588
+    },
+    "rule:CORR|rule:COMPLETE": {
+     "both": 0.1,
+     "either": 0.2665
+    },
+    "rule:CORR|rule:DONE": {
+     "both": 0.1556,
+     "either": 0.5089
+    },
+    "rule:CORR|rule:DATE": {
+     "both": 0.1597,
+     "either": 0.6779
+    },
+    "rule:CORR|rule:STACKS": {
+     "both": 0.0908,
+     "either": 0.239
+    },
+    "rule:AUTH|rule:FILT": {
+     "both": 0.2307,
+     "either": 0.4289
+    },
+    "rule:AUTH|rule:COMPLETE": {
+     "both": 0.1563,
+     "either": 0.3759
+    },
+    "rule:AUTH|rule:DONE": {
+     "both": 0.2893,
+     "either": 0.5409
+    },
+    "rule:AUTH|rule:DATE": {
+     "both": 0.3082,
+     "either": 0.6952
+    },
+    "rule:AUTH|rule:STACKS": {
+     "both": 0.1347,
+     "either": 0.3609
+    },
+    "rule:FILT|rule:COMPLETE": {
+     "both": 0.1547,
+     "either": 0.3752
+    },
+    "rule:FILT|rule:DONE": {
+     "both": 0.2871,
+     "either": 0.5409
+    },
+    "rule:FILT|rule:DATE": {
+     "both": 0.3071,
+     "either": 0.694
+    },
+    "rule:FILT|rule:STACKS": {
+     "both": 0.1348,
+     "either": 0.3585
+    },
+    "rule:COMPLETE|rule:DONE": {
+     "both": 0.1857,
+     "either": 0.515
+    },
+    "rule:COMPLETE|rule:DATE": {
+     "both": 0.1924,
+     "either": 0.6814
+    },
+    "rule:COMPLETE|rule:STACKS": {
+     "both": 0.0999,
+     "either": 0.2661
+    },
+    "rule:DONE|rule:DATE": {
+     "both": 0.4416,
+     "either": 0.7302
+    },
+    "rule:DONE|rule:STACKS": {
+     "both": 0.1551,
+     "either": 0.5089
+    },
+    "rule:DATE|rule:STACKS": {
+     "both": 0.1593,
+     "either": 0.6778
+    }
+   },
+   "run_score_band_10_90": [
+    0.8312,
+    0.961
+   ],
+   "channels_hit_rate": {
+    "CH-CORR": 0.3721,
+    "CH-AUTH": 0.6073,
+    "CH-FILT": 0.3365,
+    "CH-COMPLETE": 0.5016,
+    "CH-DONE": 0.3371,
+    "CH-DATE": 0.8001,
+    "CH-STACKS": 0.1661,
+    "control:CORR": 0.1265,
+    "control:COMPLETE": 0.248,
+    "control:DONE": 0.2511,
+    "control:STACKS": 0.1211
+   },
+   "slots": {
+    "V1": {
+     "P_fail": 0.6974,
+     "P_fails_all_six": 0.1343
+    },
+    "G2": {
+     "P_fail": 0.581,
+     "P_fails_all_six": 0.1063
+    },
+    "G3": {
+     "P_fail": 0.4627,
+     "P_fails_all_six": 0.0593
+    },
+    "I1": {
+     "P_fail": 0.4031,
+     "P_fails_all_six": 0.0311
+    },
+    "G1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "I5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "P3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R6": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R7": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "L1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "V1": {
+     "P_fail": 0.6974,
+     "P_fails_all_six": 0.1343
+    },
+    "G2": {
+     "P_fail": 0.581,
+     "P_fails_all_six": 0.1063
+    },
+    "G3": {
+     "P_fail": 0.4627,
+     "P_fails_all_six": 0.0593
+    },
+    "I1": {
+     "P_fail": 0.4031,
+     "P_fails_all_six": 0.0311
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  }
+ ],
+ "summary": {
+  "V3": {
+   "P_all_min": 0.0,
+   "P_all_max": 0.0,
+   "E_average_range": [
+    0.8778,
+    0.9044
+   ],
+   "voi": [
+    "rule:CORR",
+    "rule:AUTH",
+    "rule:FILT",
+    "rule:COMPLETE",
+    "rule:DONE",
+    "rule:DATE",
+    "rule:STACKS"
+   ]
+  }
+ },
+ "preregistration": {
+  "id": "hev_82f1150ec1778af9",
+  "added": true,
+  "present": false,
+  "rejected": []
+ }
+}

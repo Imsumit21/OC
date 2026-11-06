@@ -1,0 +1,17 @@
+| # | Finding | Source file | Disposition with evidence |
+|---|---|---|---|
+| RT4-1 | VO payer fork once "moves" is dropped | 01b_Redteam_Fallback_rev4.md #1 | accepted: the reply now says "it's on my card till the end of Feb and moves to our new company's card from March" (the bill moves; no project word); slack C09UHHN6PFZ/2025-12 /3123 explains why it was on his card |
+| RT4-2 | VO issue state fork under the Done clause | #2 | accepted: the project description decides by who pays first, "to Done if one of us pays it himself through May"; the campaign is on Leonard's card only till Feb, so it is Todo with Leonard |
+| RT4-3 | "barely billing" vs the costing rule | #3 | accepted: replaced by "that's what it runs at from March (it's still in learning this week)" |
+| RT4-4 | GitHub Done vs Canceled under the new clause order | #4 | accepted: the Done clause comes first and says "(even if HG still owns it)"; Arthur's mail robert@harmonygames.co/1856975772058401508 ("count it as mine like the other two") keeps GitHub Done |
+| RT4-5 | build machines read as Arthur's | #5 | accepted: the Jenkins email says "the build boxes are HG's"; ENG-2446 stays Canceled (#executives C07C2866011/1770850800.723979 lists build machines in Sunset's sale) |
+| RT4-6 | layer.ai owner rivals | #6 | accepted: the reply asks Robert to "pull it out yourself", which beats the card's "whoever runs it" for this step; the sheet's Owner column is graded, the Canceled issue's Linear assignee is not (the project description assigns only Todo issues) |
+| RT4-7 | orphaned reply without the parent update | #7 | accepted, routed to /create-injection: UPDATE the parent C09UHHN6PFZ/1770837702.167889 (thread_ts_legacy, reply_count 1, latest_reply), as rev3 SQL lines 47 and 50 did for the VO and DM replies |
+| RT4-8 | "source art only lives in layer" overclaims | #8 | accepted: "the CF character concept art is only in layer.ai"; no base record contradicts concept art there (reviewer: all earlier layer.ai uses are ZM, none says CF art lives elsewhere) |
+| RT4-9 | Robert ignores a 17:10Z mention | #9 | accepted: the reply moves to 19:15Z (T layer_reply), after the channel's last base message that day (C09UHHN6PFZ/2026-02 /726, 19:08Z) |
+| RT4-10 | Mar 3 vs Mar 2 | #10 | accepted for the rubric stage: accept "by Mar 3" and "before Mar 3" (the C4 pattern already reads both) |
+| RT4-11 | Nakama stack left out | #11 | accepted: "just its live stacks" (slack D04UY3DQJE5/2026-01 /18–/26 shows a third stack) |
+| RT4-12 | recipients and timing | #12 | accepted: To Robert, cc Leonard (as the billing email robert@harmonygames.co/1856975772058401508), 04:20Z = 11:20pm ET |
+| RT4-13 | Calm Play after the purge | #13 | confirmed: uniquely HG/Canceled by H1's vehicle sentence and C04UEQVDVB7/1701383740.580749 |
+| RT4-14 | concentration of the Jenkins clause | §(b) | accepted as designed (v2 trap 8, wrong input to a total): it moves P1, R2 and R3; the other money rules move different rows (C1, C2, I1), so failure patterns still differ (plan/policy_scores.txt P(patterns) 0.88–0.98) |
+| RT4-15 | layer.ai reply found "unlikely" | §(c) | accepted as fair, not hidden: Robert is @-mentioned, the reply carries the item's full name 'layer.ai' and sits under the item's own access-date post; a 'layer.ai' search returns both (re-verified with hg.py search-many on base: the parent is the only 2026-02 'layer.ai' hit in C09UHHN6PFZ) |

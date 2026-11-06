@@ -1,0 +1,568 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "robert_llc_takeover",
+ "revision": "design-2 (rev4)",
+ "truth_keys": [
+  "Combo Fighter",
+  "Domino Delights",
+  "Zombie Match",
+  "Domino Delights production account (AWS)",
+  "Domino Delights dev account (AWS)",
+  "Zombie Match account (AWS)",
+  "Analytics pipeline account (AWS)",
+  "Combo Fighter backend and auth stacks (AWS)",
+  "Build machines",
+  "Metabase",
+  "dbt",
+  "GitHub",
+  "Singular",
+  "AppsFlyer",
+  "Google Analytics",
+  "Figma",
+  "layer.ai",
+  "Soundly",
+  "Kapwing",
+  "Cursor",
+  "CodeRabbit",
+  "Unity Pro",
+  "Zapier",
+  "Helpshift",
+  "Domino Delights player support",
+  "Slack",
+  "Google Workspace",
+  "Linear",
+  "Deel",
+  "Gusto",
+  "Intuit",
+  "Carta",
+  "Apple developer account",
+  "Google Play developer account",
+  "Calm Play LLC",
+  "Unity Ads balance",
+  "Playable vendor",
+  "Combo Fighter VO campaign"
+ ],
+ "classes": [
+  "LLC",
+  "Founder",
+  "HG"
+ ],
+ "truth_fields": {
+  "class": "Decision",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "plan": {
+   "kind": "table",
+   "name_regex": "(?i).*(llc|plan|take|combo|90).*",
+   "key_column": "Item",
+   "key_regex": "(?:Item 1|[A-Za-z][A-Za-z0-9 .()&/-]*)",
+   "columns": [
+    "Item",
+    "Game",
+    "Decision",
+    "Monthly cost",
+    "Paid by",
+    "Next step",
+    "Owner",
+    "By"
+   ],
+   "class_column": "Decision",
+   "reason_column": "Next step",
+   "comparators": {
+    "Decision": "yes_no"
+   },
+   "yes_no": {
+    "LLC": [
+     "LLC",
+     "LLC takes it",
+     "Take",
+     "Takes",
+     "Take it",
+     "LLC pays"
+    ],
+    "Founder": [
+     "Founder",
+     "One of us",
+     "Carried",
+     "Already carried",
+     "Arthur",
+     "Blake",
+     "Arthur carries it",
+     "Blake carries it"
+    ],
+    "HG": [
+     "HG",
+     "Harmony Games",
+     "Stays with HG",
+     "Stays HG",
+     "Not used",
+     "Not taken",
+     "Leave with HG",
+     "Sunset"
+    ]
+   }
+  },
+  "reply": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  },
+  "new_issue": {
+   "kind": "json_text",
+   "tool": "linear_create_issue"
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  }
+ },
+ "slots": [
+  {
+   "id": "G1",
+   "title": "Combo Fighter decision",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the ground rules say it comes over either way",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Combo Fighter",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "games"
+  },
+  {
+   "id": "G2",
+   "title": "Domino Delights decision",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "January warehouse income vs the trimmed hosting in Arthur's DM, under the ground rules' take test",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Domino Delights",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "CORR",
+    "AUTH"
+   ],
+   "group": "games"
+  },
+  {
+   "id": "G3",
+   "title": "Zombie Match decision",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "January warehouse income ($0.00) against the take test",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Zombie Match",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUTH"
+   ],
+   "group": "games"
+  },
+  {
+   "id": "I1",
+   "title": "Metabase decision",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "issue note and #winddown vs Arthur's later email that he carries it",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Metabase",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "COMPLETE"
+   ],
+   "group": "items"
+  },
+  {
+   "id": "I2",
+   "title": "Calm Play LLC decision",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Leonard's issue note read against the ground rules' vehicle sentence (rev4: EXC purged, a control row)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Calm Play LLC",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "items"
+  },
+  {
+   "id": "I3",
+   "title": "Figma decision",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "Leonard's issue note: HG's prepaid plan, stays HG's and lapses Sep 11",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Figma",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "items"
+  },
+  {
+   "id": "I4",
+   "title": "Helpshift decision",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "#winddown: cancelled",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Helpshift",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "items"
+  },
+  {
+   "id": "I5",
+   "title": "Cursor decision",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "#winddown: cancelled",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Cursor",
+    "Decision"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "items"
+  },
+  {
+   "id": "V1",
+   "title": "number of LLC rows",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "count of the plan's LLC rows (7): depends on DD's decision, the campaign row and who already carries Metabase and dbt",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "LLC"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "CORR",
+    "AUTH",
+    "FILT",
+    "COMPLETE"
+   ],
+   "volume_for": [
+    "games",
+    "items",
+    "costs"
+   ]
+  },
+  {
+   "id": "C1",
+   "title": "campaign row at its monthly rate",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the campaign is in no list: #prototype / #executives history, Robert's deck and Leonard's status joined",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "plan",
+    "(campaign|video|ads)[ -~\\u00a0-\\uffff]{0,200}[ $,]3,?000\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "fact_id": "campaign_row"
+  },
+  {
+   "id": "C2",
+   "title": "DD production hosting at $140",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "#winddown, issue note, draft and Confluence vs Arthur's DM reply",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "plan",
+    "(domino|DD)[ -~\\u00a0-\\uffff]{0,160}[ $,]140\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR"
+   ],
+   "fact_id": "dd_hosting"
+  },
+  {
+   "id": "C3",
+   "title": "DD player support release step before Feb 28",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Arthur's done claim and the merged PR vs the App Store Connect notice, dated by the card's rule",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "plan",
+    "(support|helpshift)[ -~\\u00a0-\\uffff]{0,220}(release|build|ship|submi|approv)[ -~\\u00a0-\\uffff]{0,120}feb[a-z]*\\.? ?(2[0-8]|1[5-9])\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE",
+    "CORR",
+    "AUTH"
+   ],
+   "fact_id": "support_step"
+  },
+  {
+   "id": "C4",
+   "title": "layer.ai art export dated before Mar 3",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the closed-looking issue note vs Leonard's #prototype post (access until March 3rd) and his reply under it (CF's art only lives there), dated by the card's rule",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "plan",
+    "(?:^|\\n)(?=[ -~\\u00a0-\\uffff]*layer)(?=[ -~\\u00a0-\\uffff]*(export|download|sav(e|ing)|pull|back ?up|get))[ -~\\u00a0-\\uffff]*?(mar[a-z]*\\.? ?[123]\\b|feb[a-z]*\\.? ?2[0-9]\\b|before[ -~\\u00a0-\\uffff]{0,20}mar)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DATE"
+   ],
+   "fact_id": "layer_step"
+  },
+  {
+   "id": "C5",
+   "title": "GitHub repos transfer after the data is delivered",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Arthur's Feb 11 'transfer now' superseded by the Feb 12 checklist",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "plan",
+    "github[ -~\\u00a0-\\uffff]{0,220}(after|once|when|until)[ -~\\u00a0-\\uffff]{0,80}(data|sold|sale|deliver)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DATE"
+   ],
+   "fact_id": "github_step"
+  },
+  {
+   "id": "P1",
+   "title": "CF backend stacks at $62",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Arthur's ~$95 note on ENG-2445 vs his later Jenkins email (the extra backend copy shut down, $62 now), under the costing rule",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "plan",
+    "(backend|auth)[ -~\\u00a0-\\uffff]{0,160}[ $,]62\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "STACKS"
+   ],
+   "fact_id": "cf_stacks"
+  },
+  {
+   "id": "P3",
+   "title": "AppsFlyer at $0",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "#winddown Feb 12: free up to 15K installs",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "plan",
+    "appsflyer[ -~\\u00a0-\\uffff]{0,120}([ $,]0\\b|free)"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "costs"
+  },
+  {
+   "id": "R2",
+   "title": "Arthur's monthly cash in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a third of $3,450 less the $248 he already carries (split email + billing email)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "([Aa]rthur|[Bb]lake).{0,120}[ $]902\\b|[ $]902\\b.{0,120}([Aa]rthur|[Bb]lake)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "COMPLETE",
+    "CORR",
+    "FILT",
+    "STACKS"
+   ],
+   "fact_id": "arthur_share"
+  },
+  {
+   "id": "R3",
+   "title": "Leonard's and Robert's monthly cash in the reply",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "a third of the LLC's monthly cost under the split email",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b1,?150\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR",
+    "FILT",
+    "COMPLETE",
+    "STACKS"
+   ],
+   "fact_id": "even_share"
+  },
+  {
+   "id": "R4",
+   "title": "recommendation takes DD",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the take test's outcome stated",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "([Dd]omino|DD).{0,160}([Tt]ake|[Kk]eep|[Bb]ring|[Cc]omes? over|[Ww]orth)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR",
+    "AUTH"
+   ],
+   "fact_id": "dd_decision_reply"
+  },
+  {
+   "id": "R6",
+   "title": "reply names the unreleased support build",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the store notice's open step",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "([Ss]upport|[Hh]elpshift).{0,220}([Ff]eb[a-z]*\\.? ?28|[Rr]elease|[Bb]uild|not approved|[Rr]ejected)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE",
+    "CORR",
+    "AUTH"
+   ],
+   "fact_id": "support_reply"
+  },
+  {
+   "id": "R7",
+   "title": "reply leaves Zombie Match with HG",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "January income $0.00 under the take test",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "([Zz]ombie|ZM).{0,160}([Ss]unset|HG|[Hh]armony|[Ss]tay|[Ll]eave|not)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "AUTH"
+   ],
+   "fact_id": "zm_reply"
+  },
+  {
+   "id": "L1",
+   "title": "new issue for the campaign",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the campaign is outside the project; the ground rules bring it in",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "new_issue",
+    "([Cc]ampaign|[Vv]ideo|[Aa]ds|[Mm]eta)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "fact_id": "campaign_issue"
+  },
+  {
+   "id": "D1",
+   "title": "plan sheet in Robert's Drive root",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the hub: keep it in your drive",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_9f7ba94f7526d54d8482ba"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D2",
+   "title": "reply links the plan sheet",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the hub: share it and tell me here",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "reply"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D3",
+   "title": "reply in Leonard's DM thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the hub: tell me here",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_thread",
+    "1770961200.890407"
+   ],
+   "role": "core",
+   "mechanisms": []
+  }
+ ]
+}

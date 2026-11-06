@@ -1,0 +1,36 @@
+MUTATION · rev4 · sql f1a290ced176 · deterministic design diagnostics from the solver; on the Season Pass backtests these are development fixtures, not validation
+  key-locality: PASS on 39 of 39 configurations checked
+  rule:CORR                          KILLED     flipped   8 flips direct slot(s) of weight >= 3: ['G2']
+  rule:AUTH                          KILLED     flipped  11 flips direct slot(s) of weight >= 3: ['G2', 'G3']
+  rule:FILT                          WEAK       flipped   3 flips only aggregate or weight-1 slots: ['V1']
+  rule:COMPLETE                      KILLED     flipped   8 flips direct slot(s) of weight >= 3: ['I1']
+  rule:DONE                          SURVIVED   flipped   0 changes outputs that no slot reads
+  rule:DATE                          SURVIVED   flipped   0 changes outputs that no slot reads
+  rule:STACKS                        SURVIVED   flipped   0 changes outputs that no slot reads
+  degrade:corr_over                  SURVIVED   flipped   0 changes outputs that no slot reads
+  degrade:auth_over                  WEAK       flipped   4 flips only aggregate or weight-1 slots: ['G1', 'V1']
+  degrade:filt_over                  WEAK       flipped   3 flips only aggregate or weight-1 slots: ['V1']
+  degrade:complete_over              WEAK       flipped   0 changes what an aggregate reads (class or group membership) and the ag
+  degrade:done_over                  SURVIVED   flipped   0 changes outputs that no slot reads
+  degrade:stacks_over                SURVIVED   flipped   0 changes outputs that no slot reads
+  degrade:date_over                  SURVIVED   flipped   0 changes outputs that no slot reads
+  degrade:ch_miss                    KILLED     flipped  13 flips direct slot(s) of weight >= 3: ['G2', 'G3', 'I1']
+  shards (consecutive slices of 14 records, 3 batches): 10 mutants {'KILLED': 3, 'WEAK': 3, 'SURVIVED': 4}
+  intervention:rule:CORR             load-bearing    
+  intervention:rule:AUTH             load-bearing    
+  intervention:rule:FILT             load-bearing    
+  intervention:rule:COMPLETE         load-bearing    
+  intervention:rule:DONE             load-bearing    
+  intervention:rule:DATE             load-bearing    
+  intervention:rule:STACKS           load-bearing    
+  intervention:degrade:corr_over     no-injected-records
+  intervention:degrade:auth_over     no-injected-records
+  intervention:degrade:filt_over     no-injected-records
+  intervention:degrade:complete_over no-injected-records
+  intervention:degrade:done_over     no-injected-records
+  intervention:degrade:stacks_over   no-injected-records
+  intervention:degrade:date_over     no-injected-records
+  intervention:degrade:ch_miss       no-injected-records
+  geometry: U = 0.8701 (67/77) · L_max = 0.2078 over ['rule:AUTH', 'rule:COMPLETE']
+    V3 cap 0.90: U PASS (needs > 0.10) · L_max OK
+  dispositions: 0/30 recorded; missing ['rule:CORR', 'rule:AUTH', 'rule:FILT', 'rule:COMPLETE', 'rule:DONE', 'rule:DATE', 'rule:STACKS', 'degrade:corr_over'] ...

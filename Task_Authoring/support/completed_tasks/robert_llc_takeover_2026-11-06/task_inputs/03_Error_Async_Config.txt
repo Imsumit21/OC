@@ -1,0 +1,51 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Robert · LLC take-over plan for Combo Fighter · normal universe, clock 2026-02-14T00:00:00Z (Fri Feb 13, 4:00 PM PT) · injection rev4 (SQL sha256 f1a290ced176, with the layer.ai reply fix; re-checked after the rev4 re-injection, no friction change).
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+Reason: nothing in the scenario is about a tool outage or a slow search. The task's difficulty and horizon come from the seeded records (see `Working_Files/01_Grounding_Dossier.md`), never from friction (playbook 03, hard gate 1).
+
+## Post-baseline checks
+
+- Forced error fired (failed calls visible in the trajectories): n/a (Friction: none)
+- Async submit → check → get appeared, with the delay: n/a (Friction: none)
+- Only 1.0 / 30 / 35 have been exercised before; any other value confirmed in the first trajectory: n/a (Friction: none)
+
+## Self-review
+
+| Area | Counter-reading (strongest argument it fails) | Evidence that resolves it | Verdict |
+|---|---|---|---|
+| Is the scenario about an outage | A wind-down might read as an outage worth simulating (accounts being shut, Slack moving to guests). | The prompt asks for an LLC take-over plan built from Leonard's DM D04UP2L3E3S/1770961200.890407, the ground rules f_1e468a9d69ea0f0a2001f5 and the project's issues ENG-2438…ENG-2474. No record or ask turns on a tool failing, and no prompt line mentions an outage. | none stands |
+| Horizon / difficulty | Friction could add calls to help the requester's "over 130 calls per run" target. | Playbook 03, hard gate 1: friction is never a horizon or hardness lever, and retries never count toward the horizon. The horizon comes from 37 per-issue reads and 74 per-issue writes (manifest call_budget, `Working_Files/01_Hardness_Manifest.json`). | none stands |
+| Alternate paths | An errored search on Snowflake or Linear could remove the only route to a deciding value (REVENUE_DAILY January sums; the per-issue notes). | With no error configured, no route is removed. snowflake.ANALYTICS.MONETIZATION.REVENUE_DAILY and every linear_list_comments read stay intact. | none stands |
+| rev4 additions | The rev4 records (Arthur's 'jenkins' email robert@harmonygames.co/<CAcq2o5fx1qiP_Mz3H-YKAP4-dEO1xiZLWrLKg1v@mail.gmail.com>, Leonard's layer.ai reply C09UHHN6PFZ/1770923700.470906) could be read as needing a slower route, or an error to keep a run off them. | Both are reached by an ordinary mail search and by opening the base layer.ai post's thread (dossier, Findability section); friction is never used to hide a correction (playbook 03, hard gate 1), so the config stays Friction: none. | none stands |
+| Async twins and verifier reads | A wait on a search tool could change which records a run meets first (the designed discovery order). | No wait is configured, so the discovery order in the dossier stands unchanged (Findability section, D04V95AAAHW/1770952200.665739 met after #winddown C0ADGSZKR3R/1770680984.725779). | none stands |
+
+Unresolved: none. The config is not supplied to `/prompt` (no friction).
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputs · 03_Error_Async_Config.txt#8a2688db32e6 · 00_Assigments.md#97be9960492b · 01_Grounding_Dossier.md#1188624c21da · 01_Universe_Inject.sql#f1a290ced176 · __context__#226493b2011a · __assignment__#b4220a529c0a · __policy__#dc4ab5df3cdd · __gate_policy__#f8638415ca2c · __review__#ee46d7814b64 · blocking 0 · warnings 0 · checks 12
+[PASS] assignment.v3_context: Robert / Co-founder & Creative Director; easy cap <90%; freeze 2026-02-14T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe normal; KB bound; clock Clock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#f1a290ced176, 01_Hardness_Manifest.json#3d5b59a8bb48, 01_Grounding_Dossier.md#1188624c21da, solver/solver.py#f8392ca56fc2, 01c_Dispositions.json#b39eba46053e, 01c_Preflight_Report.json#c43f18f375cc, 00_Assigments.md#97be9960492b, 01_Scenario_Design.md#e791f8bc1662, 01_Hardness_Manifest.draft.json#c9b02d5f4a26, 01_Gradable_Surface.json#ecfd436788e5, __context__#226493b2011a, __assignment__#b4220a529c0a, __policy__#dc4ab5df3cdd, __gate_policy__#f8638415ca2c, __review__#ee46d7814b64)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 5 evidenced counter-readings (of 5 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
