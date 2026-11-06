@@ -1,0 +1,61 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+No friction is applied. The task is solved through the normal product surface;
+the baseline run and the verifier see the same service behavior as any other run.
+No error function and no async wait is configured. This is the local policy default
+(`create-error-async`: configured friction is realism only, never a difficulty or
+horizon lever).
+
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+
+## Alternate path (required for every errored function)
+
+No function is errored, so no alternate path is required.
+
+## Discovery the async wait depends on
+
+No async wait is configured, so no discovery depends on one.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- None: there is no injected failure, wait, or workaround to write into the Oracle Events.
+
+## Post-baseline checks
+
+- Forced error fired: n/a
+- Async submit → check → get appeared with the delay: n/a
+- Only 1.0 / 30 / 35 exercised: n/a
+
+## Self-review
+
+| Area | Counter-reading | Resolution |
+|---|---|---|
+| Difficulty | Friction is load-bearing for this task's difficulty. | No design note relies on it: `01_Hardness_Manifest.json` has no error or wait lever; the difficulty is the eight mechanism rules over the 132-row register, with the deciding QA notes read one ticket at a time (e.g. the Sep 29 note `cmt_zom559_1` on `ZOM-559`) and corrections kept off the first-read path (Arthur's withdrawal `C08R6BF4ENN/1759261800.335275`). |
+| Outage framing | The scenario is about a failing system the run must wait out. | No: the ask is a QA release gate on the candidate builds (`ZOM-570`, Arthur's post `C08R27X0EAH/1759263900.484190`); the prod issue on `ZOM-563` is evidence already confirmed fixed in `D079SNE2TL4/1759269524.769369`, not an outage the run must survive. |
+
+Unresolved: none. Friction stays none on the injection SQL certified at sha256 prefix 5a8d995238f3; no error or wait function is selected.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputs · 03_Error_Async_Config.txt#af03ea097424 · 00_Assigments.md#90d69427cab7 · 01_Grounding_Dossier.md#4f38db93303c · 01_Universe_Inject.sql#5a8d995238f3 · __context__#fb209f3058d7 · __assignment__#c2f3888d53bd · __policy__#dc4ab5df3cdd · __gate_policy__#9b78441396d8 · __review__#4c88e8308ed5 · blocking 0 · warnings 0 · checks 12
+[PASS] assignment.v3_context: Vincent Parker / Game Systems Engineer; easy cap <90%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#5a8d995238f3, 01_Hardness_Manifest.json#01a3caa4a5bf, 01_Grounding_Dossier.md#4f38db93303c, solver/solver.py#f7a6aeed38d8, 01c_Dispositions.json#0d69abd8f7ab, 01c_Preflight_Report.json#8fb3c8b8c94d, 00_Assigments.md#90d69427cab7, 01_Scenario_Design.md#087cccf519b5, 01_Hardness_Manifest.draft.json#35516411430b, 01_Gradable_Surface.json#e3001f0c8fa4, __context__#fb209f3058d7, __assignment__#c2f3888d53bd, __policy__#dc4ab5df3cdd, __gate_policy__#9b78441396d8, __review__#4c88e8308ed5)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 2 evidenced counter-readings (of 2 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+

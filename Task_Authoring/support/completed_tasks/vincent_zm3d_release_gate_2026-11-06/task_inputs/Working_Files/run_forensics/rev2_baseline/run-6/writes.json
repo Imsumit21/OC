@@ -1,0 +1,1180 @@
+[
+ {
+  "event": 420,
+  "id": "toolu_vrtx_01SsvbCeN9Pdxtfz9F4ZLHDv",
+  "tool": "linear_create_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 421,
+  "input": {
+   "team": "Zombie Match 3D",
+   "title": "iOS #50: updating over the N-1 store build resets the save to level 1",
+   "description": "Found by the update-path rows of the QA Regression Runbook on the ZM store candidates (ZOM-570).\n\n**Device / OS:** iPhone 13, iOS 18.6\n**Source build:** N-1 store version from the App Store → updated to iOS Submission #50 (TestFlight 50)\n\n**What happens:** after the update the save comes back at level 1 with 500 coins. The account was on level 212 with 18,400 coins before the update. Relaunching doesn't bring the progress back.\n\n**Repro:**\n1. Install the N-1 build from the App Store.\n2. Play past level 200.\n3. Install TestFlight 50 (iOS Submission #50) over it.\n4. Launch.\n\n**Expected:** level, coins and unlocks survive the update (runbook: Save / progression, Update from N-1).\n\n**Other update rows on the same run:** iOS N-2 → #50 pass; Android N-1 → #135 pass; Android N-2 → #135 pass.\n\nEvidence: Brian's \"Update-path run - iOS #50 / Android #135\" doc (Sep 30). A failure in an UPDATE column blocks the release per the runbook, and lost progress / coins is a blocker under the ZM submission rules.",
+   "labels": [
+    "Bug"
+   ],
+   "priority": 1,
+   "relatedTo": [
+    "ZOM-570"
+   ]
+  }
+ },
+ {
+  "event": 437,
+  "id": "toolu_vrtx_01UynDzknuSsaXbP3eCeHYfb",
+  "tool": "gsheets_batch_update",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 438,
+  "input": {
+   "spreadsheetId": "f_0ebfccf33076f9dbf086bc",
+   "requests": [
+    {
+     "addSheet": {
+      "properties": {
+       "title": "Sep 30 - Android #135 / iOS #50",
+       "index": 2,
+       "gridProperties": {
+        "rowCount": 160,
+        "columnCount": 6
+       }
+      }
+     }
+    }
+   ]
+  }
+ },
+ {
+  "event": 439,
+  "id": "toolu_vrtx_01A59vfUVTenCZXEVgnMyxs2",
+  "tool": "gsheets_values_update",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 440,
+  "spreadsheet_id": "f_0ebfccf33076f9dbf086bc",
+  "range": "'Sep 30 - Android #135 / iOS #50'!A1",
+  "values": [
+   [
+    "ticket",
+    "title",
+    "build status",
+    "QA result",
+    "call",
+    "evidence"
+   ],
+   [
+    "ZOM-581",
+    "iOS #50: updating over the N-1 store build resets the save to level 1",
+    "n/a",
+    "FAIL on runbook update row: iPhone 13 iOS 18.6, N-1 store build -> #50, save back at level 1 / 500 coins (was 212 / 18,400); filed during gate",
+    "BLOCKER",
+    "Update-path run - iOS #50 / Android #135 (Brian, Sep 30) f_5e40215b7d4d24b0455412"
+   ],
+   [
+    "ZOM-435",
+    "User stuck on trophy path after clicking claim button too fast",
+    "in candidate",
+    "repro on #135 (Leonard): tapped claim twice fast, stuck on the path, only killing the app got out",
+    "BLOCKER",
+    "Trello Fix TECH ISSUES card (pTbZYXdb) comment 68dc63484a5b2d0a869e758f"
+   ],
+   [
+    "ZOM-569",
+    "Season Pass opens twice from the join popup and leaves an empty screen",
+    "not in candidate",
+    "not re-tested; fix a61cb2b pushed to main Sep 30 21:36, after the Started lines (iOS #50 18:43, Android #135 18:45) - kill-the-app dead end still in both candidates",
+    "BLOCKER",
+    "match3d a61cb2b"
+   ],
+   [
+    "ZOM-567",
+    "Zombie Lane chests claimed on prod don't land in the inventory",
+    "server - not live",
+    "Arthur on prod after the #36 rollout: claimed a chest, nothing landed; chest-row data load not run on prod (held until after the push)",
+    "BLOCKER",
+    "match3d-backend#36 review comment rc_1"
+   ],
+   [
+    "ZOM-573",
+    "Collect&Win: claiming the 5th chest crashes the app",
+    "n/a",
+    "repro 3/3 on #135 (Pixel 6), app closes on claim",
+    "BLOCKER",
+    "ZOM-573"
+   ],
+   [
+    "ZOM-576",
+    "Season Pass premium tier claim drops the booster bundle",
+    "n/a",
+    "repro on #50 sandbox purchase: tier 12 gems land, boosters lost, tier marked claimed",
+    "BLOCKER",
+    "ZOM-576"
+   ],
+   [
+    "ZOM-578",
+    "Tutorial stuck at step 3 on a fresh install",
+    "n/a",
+    "repro on #135 fresh install, can't get past step 3 even after relaunch",
+    "BLOCKER",
+    "ZOM-578"
+   ],
+   [
+    "ZOM-546",
+    "Bug: refill algorithm spawns fewer items over time",
+    "n/a",
+    "repro on #135 / #50: endless board drains to 5 items after ~8 refills, run can't go on",
+    "BLOCKER",
+    "cmt_zom546_1"
+   ],
+   [
+    "ZOM-554",
+    "Quiting level mid tornado boost breaks the object physics",
+    "n/a",
+    "repro on #50: next level's objects float, had to force-quit",
+    "BLOCKER",
+    "cmt_zom554_2"
+   ],
+   [
+    "ZOM-483",
+    "Infinite lives from new-install are not granted, rewards 30 min in the next session start.",
+    "n/a",
+    "repro on #135 fresh install: 50 min left -> 30 min after relaunch, 20 min of infinite lives lost",
+    "BLOCKER",
+    "cmt_zom483_1"
+   ],
+   [
+    "ZOM-560",
+    "The abandoned pack win streak freezer reward is not granted.",
+    "n/a",
+    "repro on #135 sandbox: abandoned pack purchase, win streak freezer time not delivered",
+    "BLOCKER",
+    "cmt_zom560_1"
+   ],
+   [
+    "ZOM-449",
+    "Some items are acting weird in low-end android device",
+    "n/a",
+    "repro on #135 low-end device: cold start into level 3 froze, taps dead until force-quit",
+    "BLOCKER",
+    "cmt_zom449_2"
+   ],
+   [
+    "ZOM-559",
+    "Homing out on android(samsung), sound disappears.",
+    "n/a",
+    "not re-tested on #135 / #50; latest check #133 on Samsung S22: SFX gone and victory screen froze, force-quit needed",
+    "BLOCKER",
+    "cmt_zom559_1"
+   ],
+   [
+    "DES-313",
+    "ZM level 214 can't be completed",
+    "n/a",
+    "repro on #135: only 2 of 3 jars spawn, level can't be finished",
+    "BLOCKER",
+    "cmt_des313_1"
+   ],
+   [
+    "ZOM-568",
+    "Settings language list jumps back to the top while scrolling",
+    "n/a",
+    "repro on #135",
+    "KNOWN ISSUE",
+    "cmt_zom568_1"
+   ],
+   [
+    "ZOM-579",
+    "Boss arena hit VFX plays behind the board on iPad",
+    "n/a",
+    "seen on #50 (iPad), visual only",
+    "KNOWN ISSUE",
+    "ZOM-579"
+   ],
+   [
+    "ZOM-468",
+    "Low-end devices rendering issues",
+    "n/a",
+    "repro on #135 low-end: boss buster half missing, play fine",
+    "KNOWN ISSUE",
+    "cmt_zom468_2"
+   ],
+   [
+    "ZOM-562",
+    "Orphan items in boss arena",
+    "n/a",
+    "repro on #135: single items after 2 of 8 refills",
+    "KNOWN ISSUE",
+    "cmt_zom562_1"
+   ],
+   [
+    "ZOM-481",
+    "Zombie Health bar persists too long after death.",
+    "n/a",
+    "repro on #135, level finishes",
+    "KNOWN ISSUE",
+    "cmt_zom481_2"
+   ],
+   [
+    "ZOM-556",
+    "When the daily gift is skipped, it doesn't reset to 0.",
+    "n/a",
+    "repro on #135",
+    "KNOWN ISSUE",
+    "cmt_zom556_2"
+   ],
+   [
+    "ZOM-535",
+    "Fast matching might target an already-dead zombie",
+    "n/a",
+    "repro on #135",
+    "KNOWN ISSUE",
+    "cmt_zom535_1"
+   ],
+   [
+    "ZOM-534",
+    "Quest points not resetting until app restart in production",
+    "n/a",
+    "repro against prod with #135: points stuck at 5/5 until restart, rewards fine",
+    "KNOWN ISSUE",
+    "cmt_zom534_2"
+   ],
+   [
+    "ZOM-520",
+    "First loss as level doesn't reset win streak",
+    "n/a",
+    "repro on #135, level 21",
+    "KNOWN ISSUE",
+    "cmt_zom520_1"
+   ],
+   [
+    "ZOM-505",
+    "Tutorial repeats at level 19 in V 1736 Android version",
+    "n/a",
+    "repro on #135, level playable after tapping through",
+    "KNOWN ISSUE",
+    "cmt_zom505_2"
+   ],
+   [
+    "ZOM-574",
+    "Zombie Lane info popup text is cut off in German",
+    "n/a",
+    "seen on #50 (iPhone SE)",
+    "KNOWN ISSUE",
+    "ZOM-574"
+   ],
+   [
+    "ZOM-504",
+    "In endless mode, objects might stay persistent in the deck after match",
+    "n/a",
+    "repro on #50, cell still works",
+    "KNOWN ISSUE",
+    "cmt_zom504_2"
+   ],
+   [
+    "ZOM-458",
+    "Quitting algo levels still makes the level change animation",
+    "n/a",
+    "repro on #135 / #50",
+    "KNOWN ISSUE",
+    "cmt_zom458_1"
+   ],
+   [
+    "ZOM-443",
+    "Investigate non-random item removal from board due to win streak",
+    "n/a",
+    "repro on #135, no effect on play",
+    "KNOWN ISSUE",
+    "cmt_zom443_2"
+   ],
+   [
+    "ZOM-572",
+    "Win streak freezer counter shows 2 after using the last one",
+    "n/a",
+    "seen on #135, label only",
+    "KNOWN ISSUE",
+    "ZOM-572"
+   ],
+   [
+    "ZOM-438",
+    "Investigate why some zombie tracks do not spawn",
+    "n/a",
+    "repro on #135: C_0120 ends with 11-13 zombies, level completes",
+    "KNOWN ISSUE",
+    "cmt_zom438_2"
+   ],
+   [
+    "ZOM-427",
+    "App icon is too zoomed in for android",
+    "n/a",
+    "repro on #135 launcher icon",
+    "KNOWN ISSUE",
+    "cmt_zom427_1"
+   ],
+   [
+    "ZOM-571",
+    "Gem pack price shows $0.00 for a second when the shop opens",
+    "n/a",
+    "seen on #50, purchase works after prices load",
+    "KNOWN ISSUE",
+    "ZOM-571"
+   ],
+   [
+    "ZOM-348",
+    "Rotating Shop Discount Issues",
+    "n/a",
+    "repro on #135, purchase goes through at shown price",
+    "KNOWN ISSUE",
+    "cmt_zom348_2"
+   ],
+   [
+    "ZOM-237",
+    "packs animations bugs",
+    "n/a",
+    "repro on #135 / #50: NEW banner replays, SFX on wrong cards, claims fine",
+    "KNOWN ISSUE",
+    "cmt_zom237_2"
+   ],
+   [
+    "ZOM-580",
+    "Daily gift popup shows twice after the midnight reset",
+    "n/a",
+    "seen on #135, second popup opens empty",
+    "KNOWN ISSUE",
+    "ZOM-580"
+   ],
+   [
+    "ART-793",
+    "ZM3D - boss arena background flickers on iPhone 12",
+    "n/a",
+    "repro on #50 (iPhone 12)",
+    "KNOWN ISSUE",
+    "cmt_art793_1"
+   ],
+   [
+    "ZOM-563",
+    "Teams' lives, golden frames and names not working on prod env",
+    "server - live",
+    "seen working on prod after Douglas updated prod with the teams/social changes (Sep 30)",
+    "FIXED",
+    "Slack DM with Douglas p1759269524769369"
+   ],
+   [
+    "ZOM-564",
+    "\"Free\" label stays on boosters after Tutorial",
+    "in candidate",
+    "pass on #50 and #135 (Brian)",
+    "FIXED",
+    "cmt_zom564_1"
+   ],
+   [
+    "ZOM-517",
+    "Monster loses enrage during item refill in endless mode",
+    "in candidate",
+    "not reproduced on #135 / #50 (4 runs each)",
+    "FIXED",
+    "cmt_zom517_1"
+   ],
+   [
+    "ZOM-429",
+    "Leaderboard next session doesn't start without killing the app",
+    "in candidate",
+    "not reproduced on #135 / #50 (3 tries each)",
+    "FIXED",
+    "cmt_zom429_1"
+   ],
+   [
+    "ZOM-503",
+    "Giving lives in teams are unresponsive",
+    "in candidate",
+    "not re-checked on #135 / #50 (passed on #127); fix on main before the Started line",
+    "FIXED",
+    "match3d#422"
+   ],
+   [
+    "ZOM-557",
+    "Consecutive log in quest doesn't work",
+    "in candidate",
+    "not re-checked; fix on main Sep 22 18:25, before the Started line",
+    "FIXED",
+    "match3d 6a2d96f"
+   ],
+   [
+    "ZOM-561",
+    "On low-end devices, items surfaces vertical to camera is black.",
+    "in candidate",
+    "not re-checked; closed Sep 30 12:43, before the Started line",
+    "FIXED",
+    "ZOM-561"
+   ],
+   [
+    "ZOM-558",
+    "Weekly star count has wrong image",
+    "in candidate",
+    "not re-checked; closed Sep 23 14:49, before the Started line",
+    "FIXED",
+    "ZOM-558"
+   ],
+   [
+    "ZOM-473",
+    "Endless mode ending screen can be skipped after death",
+    "in candidate",
+    "not re-checked; closed Sep 22 15:11, before the Started line",
+    "FIXED",
+    "ZOM-473"
+   ],
+   [
+    "ZOM-506",
+    "V 1736 (Android) - Two strings are overlapping in the Zombie Lane button at home screen",
+    "in candidate",
+    "not re-checked; closed Sep 22 15:14, before the Started line",
+    "FIXED",
+    "ZOM-506"
+   ],
+   [
+    "ZOM-434",
+    "Items flying around when the app is backgrounded while the scene is loading",
+    "in candidate",
+    "not re-checked; closed Sep 22 13:53, before the Started line",
+    "FIXED",
+    "ZOM-434"
+   ]
+  ]
+ },
+ {
+  "event": 442,
+  "id": "toolu_vrtx_01GP3tKvL4UqZhgERtMVVxQ7",
+  "tool": "gsheets_values_append",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 443,
+  "spreadsheet_id": "f_0ebfccf33076f9dbf086bc",
+  "range": "'Sep 30 - Android #135 / iOS #50'!A1",
+  "values": [
+   [
+    "ZOM-553",
+    "Make changes to boss arena refill and nuke spawn behavior",
+    "n/a",
+    "design change request (Done)",
+    "NO CALL",
+    "ZOM-553"
+   ],
+   [
+    "ZOM-555",
+    "Zombie Lane Reward Animations",
+    "n/a",
+    "animation change request (Done)",
+    "NO CALL",
+    "ZOM-555"
+   ],
+   [
+    "ZOM-498",
+    "Fixing UI Elements on Home screen",
+    "n/a",
+    "UI layout request (Done)",
+    "NO CALL",
+    "ZOM-498"
+   ],
+   [
+    "ZOM-536",
+    "Trampoline icon is not consistent and model should be updated.",
+    "n/a",
+    "outdated icon/model replacement (Done)",
+    "NO CALL",
+    "ZOM-536"
+   ],
+   [
+    "ZOM-112",
+    "Infinite Lives animation (currently inactive)",
+    "n/a",
+    "VFX request (Done)",
+    "NO CALL",
+    "ZOM-112"
+   ],
+   [
+    "ZOM-538",
+    "Browse VFX library for bread and confetti options",
+    "n/a",
+    "VFX request (Done)",
+    "NO CALL",
+    "ZOM-538"
+   ],
+   [
+    "ZOM-239",
+    "Infinite Lifes Animation Implementation",
+    "n/a",
+    "VFX request (Done)",
+    "NO CALL",
+    "ZOM-239"
+   ],
+   [
+    "ZOM-419",
+    "Daily rewards missing VFX",
+    "n/a",
+    "VFX request (Done)",
+    "NO CALL",
+    "ZOM-419"
+   ],
+   [
+    "ZOM-169",
+    "Upgrade FTUE dialogue to support image",
+    "n/a",
+    "feature (Done)",
+    "NO CALL",
+    "ZOM-169"
+   ],
+   [
+    "ZOM-507",
+    "Create an extra camera to display effect videos",
+    "n/a",
+    "tooling / feature (Done)",
+    "NO CALL",
+    "ZOM-507"
+   ],
+   [
+    "ZOM-575",
+    "Add a haptics toggle to settings",
+    "n/a",
+    "feature request",
+    "NO CALL",
+    "ZOM-575"
+   ],
+   [
+    "ZOM-577",
+    "level_fail event is missing the booster_used param",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-577"
+   ],
+   [
+    "ZOM-566",
+    "Collect&Win Analytics",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-566"
+   ],
+   [
+    "ZOM-552",
+    "Season Pass Analytics",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-552"
+   ],
+   [
+    "ZOM-548",
+    "Track events for boss arena as listed in the spreadsheet",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-548"
+   ],
+   [
+    "ZOM-549",
+    "Add new fields to left_level and endless_left analytics events",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-549"
+   ],
+   [
+    "ZOM-442",
+    "Analytics Instrumentation for Tropy Reward Redeem",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-442"
+   ],
+   [
+    "ZOM-441",
+    "Fix reward_str and chest_content_str sending issue",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-441"
+   ],
+   [
+    "ZOM-439",
+    "Investigate card_upgrade event not recording correctly",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-439"
+   ],
+   [
+    "ZOM-400",
+    "New field on left_level event for unique items brought to battle",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-400"
+   ],
+   [
+    "ZOM-387",
+    "Giant Analytics Ticket",
+    "n/a",
+    "analytics",
+    "NO CALL",
+    "ZOM-387"
+   ],
+   [
+    "ZOM-386",
+    "Track Player Card Inventory and Sync to BigQuery",
+    "n/a",
+    "analytics / data",
+    "NO CALL",
+    "ZOM-386"
+   ],
+   [
+    "ZOM-541",
+    "Cards Collect Vfx animation",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-541"
+   ],
+   [
+    "ZOM-565",
+    "Endless Horde Start Screen Vfx",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-565"
+   ],
+   [
+    "ZOM-465",
+    "Endless Mode Master VFX Ticket",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-465"
+   ],
+   [
+    "ZOM-526",
+    "Tokens traveling to live-ops",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-526"
+   ],
+   [
+    "ZOM-521",
+    "Master Ticket - VFX implementation",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-521"
+   ],
+   [
+    "ZOM-528",
+    "Claimed Cards traveling to inventory section",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-528"
+   ],
+   [
+    "ZOM-484",
+    "Info Screen Animations",
+    "n/a",
+    "animation request",
+    "NO CALL",
+    "ZOM-484"
+   ],
+   [
+    "ZOM-344",
+    "Quest UI box animation",
+    "n/a",
+    "animation request",
+    "NO CALL",
+    "ZOM-344"
+   ],
+   [
+    "ZOM-118",
+    "Shop Animations Master Ticket",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-118"
+   ],
+   [
+    "ZOM-64",
+    "Experiment with VFX when matching boss busters off the board",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-64"
+   ],
+   [
+    "ZOM-236",
+    "Shop Pack Idle animation",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-236"
+   ],
+   [
+    "ZOM-16",
+    "Liquid Impact",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-16"
+   ],
+   [
+    "ZOM-243",
+    "Poison/Fire/Shock Death Vfx Animations",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-243"
+   ],
+   [
+    "ZOM-122",
+    "Simple animations for offers bands and labels.",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-122"
+   ],
+   [
+    "ZOM-119",
+    "Shine for gold and gem piles.",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-119"
+   ],
+   [
+    "ZOM-121",
+    "Card pack animation in the shop",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-121"
+   ],
+   [
+    "ZOM-76",
+    "[PERSON_NAME_0120] to implement this VFX",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-76"
+   ],
+   [
+    "ZOM-56",
+    "Glued VFX",
+    "n/a",
+    "VFX request",
+    "NO CALL",
+    "ZOM-56"
+   ],
+   [
+    "ZOM-48",
+    "Reward Animations",
+    "n/a",
+    "VFX / design request",
+    "NO CALL",
+    "ZOM-48"
+   ],
+   [
+    "ZOM-543",
+    "Queue Manager",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-543"
+   ],
+   [
+    "ZOM-544",
+    "Implement Google Apple Login",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-544"
+   ],
+   [
+    "ZOM-539",
+    "Implement Red Dot for Cards and Shop",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-539"
+   ],
+   [
+    "ZOM-471",
+    "Add red dot icon for players not in Plague Race",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-471"
+   ],
+   [
+    "ZOM-508",
+    "Assisted Start",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-508"
+   ],
+   [
+    "ZOM-130",
+    "Create an out of moves screen flow with offers",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-130"
+   ],
+   [
+    "ZOM-255",
+    "Tap to skip kill cam + Dimming the board area",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-255"
+   ],
+   [
+    "ZOM-168",
+    "5th In-game Boost Double Damage",
+    "n/a",
+    "feature",
+    "NO CALL",
+    "ZOM-168"
+   ],
+   [
+    "ZOM-78",
+    "Event Calendar For Zombie Match 3D",
+    "n/a",
+    "backend / feature",
+    "NO CALL",
+    "ZOM-78"
+   ],
+   [
+    "ZOM-70",
+    "Rewards system",
+    "n/a",
+    "backend endpoint",
+    "NO CALL",
+    "ZOM-70"
+   ],
+   [
+    "ZOM-69",
+    "Bot system",
+    "n/a",
+    "backend endpoint",
+    "NO CALL",
+    "ZOM-69"
+   ],
+   [
+    "ZOM-66",
+    "Stats endpoints",
+    "n/a",
+    "backend endpoint",
+    "NO CALL",
+    "ZOM-66"
+   ],
+   [
+    "ZOM-65",
+    "Profile page endpoints",
+    "n/a",
+    "backend endpoint",
+    "NO CALL",
+    "ZOM-65"
+   ],
+   [
+    "ZOM-477",
+    "DOT kills can take too long and cause perceived unresponsivenes",
+    "n/a",
+    "tuning / design change",
+    "NO CALL",
+    "ZOM-477"
+   ],
+   [
+    "ZOM-482",
+    "Make \"Fast-forwarding\" another boolean properties in zombies",
+    "n/a",
+    "tools / design",
+    "NO CALL",
+    "ZOM-482"
+   ],
+   [
+    "ZOM-545",
+    "Ingest bot params from a spreadsheet",
+    "n/a",
+    "tools",
+    "NO CALL",
+    "ZOM-545"
+   ],
+   [
+    "ZOM-292",
+    "Level Editor Improvements 2.0",
+    "n/a",
+    "tools",
+    "NO CALL",
+    "ZOM-292"
+   ],
+   [
+    "ZOM-311",
+    "Move item/monster lists to a third display in the editor",
+    "n/a",
+    "tools",
+    "NO CALL",
+    "ZOM-311"
+   ],
+   [
+    "ZOM-202",
+    "Minimize or migrate selection panel for easier difficulty tab comparison",
+    "n/a",
+    "tools",
+    "NO CALL",
+    "ZOM-202"
+   ],
+   [
+    "ZOM-73",
+    "A/B Test Item Sizes",
+    "n/a",
+    "design / balance",
+    "NO CALL",
+    "ZOM-73"
+   ],
+   [
+    "ZOM-62",
+    "Zombie Ops #3 Spec (Dead Eye)",
+    "n/a",
+    "design",
+    "NO CALL",
+    "ZOM-62"
+   ],
+   [
+    "ZOM-293",
+    "Dynamic Difficulty Tiering Down Issue",
+    "n/a",
+    "doesn't say what goes wrong",
+    "NO CALL",
+    "ZOM-293"
+   ],
+   [
+    "ZOM-542",
+    "Update home screen and victory score screen for game modes",
+    "n/a",
+    "UI layout request",
+    "NO CALL",
+    "ZOM-542"
+   ],
+   [
+    "ZOM-453",
+    "Fix text inconsistency",
+    "n/a",
+    "text style request",
+    "NO CALL",
+    "ZOM-453"
+   ],
+   [
+    "ZOM-432",
+    "Daily gift artwork needs to have the frame",
+    "n/a",
+    "art request",
+    "NO CALL",
+    "ZOM-432"
+   ],
+   [
+    "ZOM-317",
+    "Martin to polish UI assets in FIGMA",
+    "n/a",
+    "art / UI request",
+    "NO CALL",
+    "ZOM-317"
+   ],
+   [
+    "ZOM-390",
+    "Icon and Event Visual for Win Streak Event (axe arena)",
+    "n/a",
+    "art request",
+    "NO CALL",
+    "ZOM-390"
+   ],
+   [
+    "ZOM-171",
+    "Icon for double damage in-game boost",
+    "n/a",
+    "art request",
+    "NO CALL",
+    "ZOM-171"
+   ],
+   [
+    "ZOM-513",
+    "Convert Maracas into multi-color variant-enabled",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-513"
+   ],
+   [
+    "ZOM-514",
+    "Request to add motorcycle helmet as a survival item",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-514"
+   ],
+   [
+    "ZOM-97",
+    "REVISION FOR ITEMS",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-97"
+   ],
+   [
+    "ZOM-104",
+    "Gas Can improvement",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-104"
+   ],
+   [
+    "ZOM-137",
+    "FOOD ITEMS",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-137"
+   ],
+   [
+    "ZOM-342",
+    "Indoor Plant",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-342"
+   ],
+   [
+    "ZOM-184",
+    "11.Curling Iron (Maybe Drop the item)",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-184"
+   ],
+   [
+    "ZOM-182",
+    "9. Bagel",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-182"
+   ],
+   [
+    "ZOM-181",
+    "8. Vaious Solid color Plates/cups/mugs/egg on plates",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-181"
+   ],
+   [
+    "ZOM-155",
+    "Squash",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-155"
+   ],
+   [
+    "ZOM-151",
+    "Cucumbers",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-151"
+   ],
+   [
+    "ZOM-150",
+    "Cherries",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-150"
+   ],
+   [
+    "ZOM-148",
+    "Plum",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-148"
+   ],
+   [
+    "ZOM-147",
+    "Peach",
+    "n/a",
+    "3D art request",
+    "NO CALL",
+    "ZOM-147"
+   ],
+   [
+    "ZOM-467",
+    "Zombie Match 3d - Marketing Videos",
+    "n/a",
+    "marketing art",
+    "NO CALL",
+    "ZOM-467"
+   ],
+   [
+    "ART-792",
+    "ZM3D - Marketing Screenshots round 3",
+    "n/a",
+    "marketing art",
+    "NO CALL",
+    "ART-792"
+   ],
+   [
+    "ART-790",
+    "Updated ZM Marketing Screenshots",
+    "n/a",
+    "marketing art",
+    "NO CALL",
+    "ART-790"
+   ]
+  ]
+ },
+ {
+  "event": 454,
+  "id": "toolu_vrtx_01LUDgeaQQqcPHu4FekuUnAe",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 455,
+  "issue": "ZOM-570",
+  "state": null,
+  "description": null,
+  "patch": [
+   {
+    "op": "append",
+    "text": "\n\n## QA gate blockers (Android #135 / iOS #50), Oct 1\n\nCall: **NO-GO** until these are cleared. Full register: ZM3D Release Gate sheet, tab \"Sep 30 - Android #135 / iOS #50\".\n\n- ZOM-581 - iOS #50 update over the N-1 store build resets the save to level 1 (runbook update row failed, filed during the gate)\n- ZOM-435 - stuck on trophy path after a fast double-tap on claim (Leonard repro on #135; fix was in the candidate, still happens)\n- ZOM-569 - Season Pass opens twice from the join popup, empty screen, kill the app (fix a61cb2b landed after the Started lines, not in #135 / #50)\n- ZOM-567 - Zombie Lane chests don't land in the inventory on prod (backend #36 code is on prod, but the chest-row data load hasn't been run on prod)\n- ZOM-573 - Collect&Win: claiming the 5th chest crashes the app (#135)\n- ZOM-576 - Season Pass premium tier 12 claim drops the booster bundle (#50 sandbox)\n- ZOM-578 - tutorial stuck at step 3 on a fresh install (#135)\n- ZOM-546 - endless refill drains the board, run can't continue (#135 / #50)\n- ZOM-554 - quitting mid tornado boost leaves the next level unplayable until force-quit (#50)\n- ZOM-483 - new-install infinite lives time lost on relaunch (#135)\n- ZOM-560 - abandoned pack doesn't deliver the win streak freezer (#135 sandbox)\n- ZOM-449 - low-end Android freeze on cold start into level 3 (#135)\n- ZOM-559 - Samsung: home out mid-level, sound gone and victory screen freezes (latest check #133, not re-tested on the candidates)\n- DES-313 - level 214 can't be completed, only 2 of 3 jars spawn (#135)"
+   }
+  ],
+  "appended": [
+   "\n\n## QA gate blockers (Android #135 / iOS #50), Oct 1\n\nCall: **NO-GO** until these are cleared. Full register: ZM3D Release Gate sheet, tab \"Sep 30 - Android #135 / iOS #50\".\n\n- ZOM-581 - iOS #50 update over the N-1 store build resets the save to level 1 (runbook update row failed, filed during the gate)\n- ZOM-435 - stuck on trophy path after a fast double-tap on claim (Leonard repro on #135; fix was in the candidate, still happens)\n- ZOM-569 - Season Pass opens twice from the join popup, empty screen, kill the app (fix a61cb2b landed after the Started lines, not in #135 / #50)\n- ZOM-567 - Zombie Lane chests don't land in the inventory on prod (backend #36 code is on prod, but the chest-row data load hasn't been run on prod)\n- ZOM-573 - Collect&Win: claiming the 5th chest crashes the app (#135)\n- ZOM-576 - Season Pass premium tier 12 claim drops the booster bundle (#50 sandbox)\n- ZOM-578 - tutorial stuck at step 3 on a fresh install (#135)\n- ZOM-546 - endless refill drains the board, run can't continue (#135 / #50)\n- ZOM-554 - quitting mid tornado boost leaves the next level unplayable until force-quit (#50)\n- ZOM-483 - new-install infinite lives time lost on relaunch (#135)\n- ZOM-560 - abandoned pack doesn't deliver the win streak freezer (#135 sandbox)\n- ZOM-449 - low-end Android freeze on cold start into level 3 (#135)\n- ZOM-559 - Samsung: home out mid-level, sound gone and victory screen freezes (latest check #133, not re-tested on the candidates)\n- DES-313 - level 214 can't be completed, only 2 of 3 jars spawn (#135)"
+  ]
+ },
+ {
+  "event": 456,
+  "id": "toolu_vrtx_01DpK5VmKQLZXHH4LgXt5Ymr",
+  "tool": "slack_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 457,
+  "channel": "C08R27X0EAH",
+  "thread_ts": "1759263900.484190",
+  "text": "QA call on Android #135 / iOS #50: **NO-GO** as of today. There are 14 blockers, listed by key on ZOM-570. Full register is in the \"Sep 30 - Android #135 / iOS #50\" tab of my release gate sheet.\n\nHeads up on the \"matrix green\" above: that's the fresh-install columns only. Brian's update-path run has **iOS #50 installed over N-1 resetting the save to level 1** (level 212 / 18,400 coins → level 1 / 500). An update-column failure blocks the release per the runbook. Nobody had filed it, so it's now ZOM-581.\n\nBlockers:\n• ZOM-581: iOS N-1 → #50 update wipes progress\n• ZOM-435: trophy path stuck after a fast double-tap on claim. Leonard hit it on #135, and the fix is in the build\n• ZOM-569: Season Pass double-open leaves a dead screen. The fix (a61cb2b) landed at 21:36, after #50/#135 started, so it's not in either candidate\n• ZOM-567: Zombie Lane chests still don't land on prod. The #36 code is live, but the chest-row data load hasn't been run on prod\n• ZOM-573: Collect&Win crashes when you claim the 5th chest (#135)\n• ZOM-576: Season Pass tier 12 premium claim drops the boosters (#50)\n• ZOM-578: tutorial stuck at step 3 on a fresh install (#135)\n• ZOM-546: endless refill drains the board until the run can't go on\n• ZOM-554: quitting mid-tornado leaves the next level unplayable until a force-quit\n• ZOM-483: new-install infinite-lives time gets cut on relaunch\n• ZOM-560: abandoned pack doesn't deliver the win streak freezer\n• ZOM-449: low-end Android freezes on a cold start into level 3\n• ZOM-559: Samsung victory screen freezes after homing out (last seen on #133, not re-checked on these candidates yet)\n• DES-313: level 214 can't be completed\n\nFixed on these candidates: ZOM-564, 517, 429; ZOM-563 is live on prod. 22 known issues are logged in the tab and don't block. Happy to re-gate a new cut before Friday's go/no-go."
+ }
+]

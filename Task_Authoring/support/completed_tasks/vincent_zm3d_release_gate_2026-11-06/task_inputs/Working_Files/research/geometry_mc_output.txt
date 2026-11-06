@@ -1,0 +1,40 @@
+PLANNED SURFACE (pre-scenario sketch, UNCALIBRATED)
+  slots 22  total weight 84  weight-5 slots 11
+  weight by channel: {'ALL_BLOCKERS': '3/84=4%', 'C1': '10/84=12%', 'C2': '10/84=12%', 'C3': '10/84=12%', 'C4': '8/84=10%', 'C5': '8/84=10%', 'C6': '13/84=15%', 'C7': '5/84=6%', 'ordinary': '17/84=20%'}
+
+WHOLE POLICIES (deterministic, no slips)
+   20.2%  P0 lazy: Linear states + labels only
+   29.8%  P1 Linear + GitHub merges (no #builds, no deploy check, no re-tests)
+   35.7%  P2 + #builds change lists
+   51.2%  P3 + every ticket comment and PR review (no DMs, no runbook rule)
+   90.5%  P4 everything retrieved, house rule not applied
+   84.5%  P5 everything retrieved, obvious filter kept
+  100.0%  P6 perfect
+
+SINGLE MISSES (everything else right)
+   88.1%  miss C1
+   88.1%  miss C2
+   88.1%  miss C3
+   90.5%  miss C4
+   90.5%  miss C5
+   84.5%  miss C6  (both outside-filter members)
+   94.0%  miss C7
+   90.5%  miss one outside-filter member only
+
+PAIRS (worst and best two-channel misses)
+   76.2%  miss C1+C2
+   76.2%  miss C1+C3
+   76.2%  miss C2+C3
+   84.5%  miss C4+C7
+   84.5%  miss C5+C7
+   84.5%  miss C6a+C7
+
+SIX-RUN BASELINES (20000 draws per scale; gate math = difficulty_stats._gates, easy, long-horizon)
+  scale = multiplier on every design miss rate (1.0 = the design rates; <1 = a stronger Opus)
+  scale 1.00: E[avg] 60.9% (p10-p90 50.4%-71.2%)  E[SD] 0.174  P(avg<90%) 1.00  P(<5 full) 1.00  P(SD band) 0.84  P(patterns) 1.00  P(all four) 0.84  E[full passes] 0.17
+           P(row fails all six) >= 1%: {'S2_reg_X2': 0.042, 'L2_blocker_X2': 0.042, 'S3_reg_X3': 0.015, 'L3_blocker_X3': 0.015, 'S6a_reg_X6a': 0.016, 'S6b_reg_X6b': 0.016, 'S13_register_volume': 0.039, 'S7_reg_X7': 0.015}
+  scale 0.75: E[avg] 69.4% (p10-p90 59.3%-79.4%)  E[SD] 0.166  P(avg<90%) 1.00  P(<5 full) 1.00  P(SD band) 0.81  P(patterns) 1.00  P(all four) 0.81  E[full passes] 0.38
+           P(row fails all six) >= 1%: {'S13_register_volume': 0.01}
+  scale 0.50: E[avg] 78.2% (p10-p90 69.0%-86.9%)  E[SD] 0.147  P(avg<90%) 0.96  P(<5 full) 1.00  P(SD band) 0.70  P(patterns) 0.99  P(all four) 0.69  E[full passes] 0.81
+  scale 0.35: E[avg] 83.6% (p10-p90 75.4%-91.3%)  E[SD] 0.129  P(avg<90%) 0.85  P(<5 full) 1.00  P(SD band) 0.55  P(patterns) 0.98  P(all four) 0.54  E[full passes] 1.25
+  scale 0.25: E[avg] 87.4% (p10-p90 80.2%-93.8%)  E[SD] 0.112  P(avg<90%) 0.66  P(<5 full) 0.99  P(SD band) 0.41  P(patterns) 0.97  P(all four) 0.38  E[full passes] 1.68

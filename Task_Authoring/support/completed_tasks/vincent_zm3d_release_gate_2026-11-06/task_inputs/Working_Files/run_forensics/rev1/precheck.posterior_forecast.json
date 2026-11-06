@@ -1,0 +1,6985 @@
+{
+ "tool": "hardness_forecast/1",
+ "note": "model outputs, not measurements; the Season Pass backtests are development fixtures, not validation",
+ "revision": "rev1",
+ "sql_sha256": "d761d9819dfe5547aa36d6f9ca1c2408b09323ca52125fa1141170731811c81a",
+ "solver_sha256": "56a3aa46acdd462cead78b91835036aa1d69b9c8ebcb14f27d334086c88618d4",
+ "surface": "Task_Authoring/task_inputs/Working_Files/01_Gradable_Surface.json",
+ "sha256": "97ff01c7baf7c46caba4a315d1ee410334846d2fdd2e0ec5ab61658aebbd83aa",
+ "views": {
+  "V3": {
+   "cap": 0.9,
+   "mode": "easy"
+  }
+ },
+ "task_type": "long-horizon",
+ "calls": 550,
+ "max_k": 8,
+ "max_k_override": null,
+ "kind": "HARDNESS_FORECAST",
+ "label": "UNCALIBRATED · advisory",
+ "model": "claude-opus-5-5",
+ "priors_from": "claude-opus-5-5",
+ "exclusions": {
+  "tasks": [],
+  "revisions": [],
+  "include_mixed": false
+ },
+ "ledger": "Task_Authoring/support/hardness_ledger/ledger.jsonl",
+ "ledger_sha256": "7472a4165207ad6a7dd6673194d7d243ab2275fe3b429bbfe22f53f106ffe7fb",
+ "mechanisms": [
+  {
+   "id": "rule:R_DONE_BUILD",
+   "family": "A24",
+   "source": "build-cut",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 2.0,
+    "mean": 0.3333,
+    "n_eff": 1.0,
+    "trials": 1,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_629850249f55e2d3",
+     "hev_da8f703d3115e8e0"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:R_DONE_SERVER",
+   "family": "A24",
+   "source": "backend-deploy",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 2.0,
+    "mean": 0.3333,
+    "n_eff": 1.0,
+    "trials": 1,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_629850249f55e2d3",
+     "hev_da8f703d3115e8e0"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:R_CORRECTION",
+   "family": "wrong summary + thread past its conclusion (A1)",
+   "source": "retests",
+   "touched": 2,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.8571,
+    "beta": 3.0,
+    "mean": 0.3824,
+    "n_eff": 2.8571,
+    "trials": 8,
+    "tasks": {
+     "library:ML-selected Combo Fighters": {
+      "trials": 6,
+      "weighted": 3.0,
+      "deff": 3.5,
+      "n_eff": 0.8571,
+      "landed": 0.8571
+     },
+     "robert-vendor-schedule": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "vincent_zm3d_gate": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_0e23d0e0b6b029a5",
+     "hev_e0e5f73b1cee8d3d",
+     "hev_6b560d035cdf9211",
+     "hev_fcae4e267ad7d452"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:R_ALIAS",
+   "family": "A7",
+   "source": "vendor-report",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert-vendor-schedule": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "vincent_zm3d_gate": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_83d7b0972f87a2ec",
+     "hev_a9d032847c594cf3"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:R_FILTER",
+   "family": "A17",
+   "source": "scope-rule",
+   "touched": 94,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert-vendor-schedule": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "vincent_zm3d_gate": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_971c5e5fdb2d2c1a",
+     "hev_95fae459cc9d282a"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:R_COMPLETION",
+   "family": "A25",
+   "source": "server-confirm",
+   "touched": 2,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 2.0,
+    "mean": 0.3333,
+    "n_eff": 1.0,
+    "trials": 1,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_9f21d34afc03eb11"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  }
+ ],
+ "channels": [
+  {
+   "id": "scale:comments",
+   "kind": "scale",
+   "latent": "member",
+   "latent_from": "declared",
+   "members": 7,
+   "family": "scale",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 7,
+   "f": 0,
+   "n_eff": 7.0,
+   "rate_tasks": {
+    "vincent_zm3d_gate": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 7,
+     "f": 0,
+     "n_eff": 7.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 8.0,
+     "mean": 0.111111
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 8.0,
+     "mean": 0.111111
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 8.0,
+     "mean": 0.111111
+    }
+   },
+   "batch_sizes": null,
+   "source": "scale:comments",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 8.0,
+    "mean": 0.111111,
+    "records": [
+     "hev_ca4272a74d98fce0"
+    ],
+    "unit": "member",
+    "n": 7,
+    "f": 0,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 7,
+      "f": 0,
+      "n_eff": 7.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 8.0,
+      "mean": 0.111111
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 8.0,
+      "mean": 0.111111
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 8.0,
+      "mean": 0.111111
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.466667,
+    "plug_in": 0.561537,
+    "units": 7,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.006208,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:R_DONE_BUILD",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 3,
+   "family": "A24",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 4,
+   "f": 0,
+   "n_eff": 4.0,
+   "rate_tasks": {
+    "vincent_zm3d_gate": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 4,
+     "f": 0,
+     "n_eff": 4.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    }
+   },
+   "batch_sizes": null,
+   "source": "build-cut",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "mean": 0.166667,
+    "records": [
+     "hev_05bcd4663bee4d41",
+     "hev_cf2289594eab226c",
+     "hev_d696abac093facf2",
+     "hev_b4912f920f213098"
+    ],
+    "unit": "member",
+    "n": 4,
+    "f": 0,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 4,
+      "f": 0,
+      "n_eff": 4.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.375,
+    "plug_in": 0.421297,
+    "units": 3,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.013625,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:R_DONE_SERVER",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 1,
+   "family": "A24",
+   "inert_members": 1,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 4,
+   "f": 0,
+   "n_eff": 4.0,
+   "rate_tasks": {
+    "vincent_zm3d_gate": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 4,
+     "f": 0,
+     "n_eff": 4.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 5.0,
+     "mean": 0.166667
+    }
+   },
+   "batch_sizes": null,
+   "source": "backend-deploy",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "mean": 0.166667,
+    "records": [
+     "hev_05bcd4663bee4d41",
+     "hev_cf2289594eab226c",
+     "hev_d696abac093facf2",
+     "hev_b4912f920f213098"
+    ],
+    "unit": "member",
+    "n": 4,
+    "f": 0,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 4,
+      "f": 0,
+      "n_eff": 4.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 5.0,
+      "mean": 0.166667
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.166667,
+    "plug_in": 0.166667,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.008009,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:R_CORRECTION",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 2,
+   "family": "wrong summary + thread past its conclusion (A1)",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 2,
+   "f": 0,
+   "n_eff": 2.0,
+   "rate_tasks": {
+    "vincent_zm3d_gate": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    }
+   },
+   "batch_sizes": null,
+   "source": "retests",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "records": [
+     "hev_6b92f23b15d91e2f",
+     "hev_1f919c906e2a93de"
+    ],
+    "unit": "member",
+    "n": 2,
+    "f": 0,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.4,
+    "plug_in": 0.4375,
+    "units": 2,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0135,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:R_ALIAS",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 1,
+   "family": "A7",
+   "inert_members": 1,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 1,
+   "f": 0,
+   "n_eff": 1.0,
+   "rate_tasks": {
+    "vincent_zm3d_gate": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 1,
+     "f": 0,
+     "n_eff": 1.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 2.0,
+     "mean": 0.333333
+    }
+   },
+   "batch_sizes": null,
+   "source": "vendor-report",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "mean": 0.333333,
+    "records": [
+     "hev_a7380375bc2d3252"
+    ],
+    "unit": "member",
+    "n": 1,
+    "f": 0,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 1,
+      "f": 0,
+      "n_eff": 1.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 2.0,
+      "mean": 0.333333
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.333333,
+    "plug_in": 0.333333,
+    "units": 1,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:R_FILTER",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 3,
+   "family": "A17",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 3,
+   "f": 0,
+   "n_eff": 3.0,
+   "rate_tasks": {
+    "vincent_zm3d_gate": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 3,
+     "f": 0,
+     "n_eff": 3.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 4.0,
+     "mean": 0.2
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 4.0,
+     "mean": 0.2
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 4.0,
+     "mean": 0.2
+    }
+   },
+   "batch_sizes": null,
+   "source": "scope-rule",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "mean": 0.2,
+    "records": [
+     "hev_9fcd160c743f82a1",
+     "hev_41f1ece72fd43f65",
+     "hev_a9a9d8375d8f2988"
+    ],
+    "unit": "member",
+    "n": 3,
+    "f": 0,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 3,
+      "f": 0,
+      "n_eff": 3.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 4.0,
+      "mean": 0.2
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 4.0,
+      "mean": 0.2
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 4.0,
+      "mean": 0.2
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.428571,
+    "plug_in": 0.488,
+    "units": 3,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  },
+  {
+   "id": "control:R_COMPLETION",
+   "kind": "control",
+   "latent": "member",
+   "latent_from": "rate unit",
+   "members": 2,
+   "family": "A25",
+   "inert_members": 0,
+   "slots": [],
+   "unit": "member",
+   "converted_from": null,
+   "n": 2,
+   "f": 0,
+   "n_eff": 2.0,
+   "rate_tasks": {
+    "vincent_zm3d_gate": {
+     "runs": 1,
+     "deff": 1.0,
+     "n": 2,
+     "f": 0,
+     "n_eff": 2.0
+    }
+   },
+   "at_rho": {
+    "0.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "0.5": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    },
+    "1.0": {
+     "alpha": 1.0,
+     "beta": 3.0,
+     "mean": 0.25
+    }
+   },
+   "batch_sizes": null,
+   "source": "server-confirm",
+   "override_source": null,
+   "dropped": [],
+   "preregistered": true,
+   "rate": {
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "records": [
+     "hev_4696f9c418f137f6",
+     "hev_e33250e8b3badf27"
+    ],
+    "unit": "member",
+    "n": 2,
+    "f": 0,
+    "tasks": {
+     "vincent_zm3d_gate": {
+      "runs": 1,
+      "deff": 1.0,
+      "n": 2,
+      "f": 0,
+      "n_eff": 2.0
+     }
+    },
+    "at_rho": {
+     "0.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "0.5": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     },
+     "1.0": {
+      "alpha": 1.0,
+      "beta": 3.0,
+      "mean": 0.25
+     }
+    },
+    "basis": "ledger records, member trials (runs of a task share a design effect, H2)",
+    "label": "UNCALIBRATED",
+    "dropped": []
+   },
+   "P_any_unit_fails": {
+    "integrated": 0.4,
+    "plug_in": 0.4375,
+    "units": 2,
+    "rule": "1 - E[(1 - e)^N] over the rate's Beta; plug-in 1 - (1 - mean)^N"
+   },
+   "expected_loss_alone": 0.0,
+   "label": "UNCALIBRATED"
+  }
+ ],
+ "unparameterized_channels": [],
+ "briefs": {
+  "files": [
+   "Task_Authoring/task_inputs/Working_Files/run_forensics/rev1/precheck/briefs.json"
+  ],
+  "sha256": {
+   "Task_Authoring/task_inputs/Working_Files/run_forensics/rev1/precheck/briefs.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "digest": "b801571a12b37f9a58c4e33d9ef15a8b32f4ac650b14984c7dccca3f03ea1d46",
+  "content_digest": null,
+  "batches": null
+ },
+ "scenarios": [
+  {
+   "dependence": "independent",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8106,
+     "band_10_90": [
+      0.7222,
+      0.8889
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.936,
+      "per_rollout_sd": 0.3462,
+      "failure_patterns": 0.9319
+     },
+     "P_all": 0.3302,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.4756,
+       "P_all_if_rate_below_median": 0.1848,
+       "spread": 0.2908
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.3122,
+       "P_all_if_rate_below_median": 0.3482,
+       "spread": 0.036
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.3418,
+       "P_all_if_rate_below_median": 0.3186,
+       "spread": 0.0232
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.3406,
+       "P_all_if_rate_below_median": 0.3198,
+       "spread": 0.0208
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.3384,
+       "P_all_if_rate_below_median": 0.322,
+       "spread": 0.0164
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.3356,
+       "P_all_if_rate_below_median": 0.3248,
+       "spread": 0.0108
+      }
+     ],
+     "E_patterns": 4.9158
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3337,
+    "rule:R_DONE_SERVER": 0.3303,
+    "rule:R_CORRECTION": 0.3829,
+    "rule:R_ALIAS": 0.2492,
+    "rule:R_FILTER": 0.251,
+    "rule:R_COMPLETION": 0.3359
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6620,
+     "either": 33222,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7603,
+     "either": 35391,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 4953,
+     "either": 30020,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 5005,
+     "either": 30076,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6736,
+     "either": 33439,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7651,
+     "either": 35141,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 4923,
+     "either": 29848,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 4954,
+     "either": 29925,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6524,
+     "either": 33449,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5761,
+     "either": 32162,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5729,
+     "either": 32302,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7747,
+     "either": 35378,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3721,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5072,
+     "either": 30032,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 5058,
+     "either": 30154,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1103,
+     "either": 0.5537
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1267,
+     "either": 0.5898
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0825,
+     "either": 0.5003
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0834,
+     "either": 0.5013
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1123,
+     "either": 0.5573
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1275,
+     "either": 0.5857
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.082,
+     "either": 0.4975
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0826,
+     "either": 0.4988
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1087,
+     "either": 0.5575
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.096,
+     "either": 0.536
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0955,
+     "either": 0.5384
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1291,
+     "either": 0.5896
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.062,
+     "either": 0.4381
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0845,
+     "either": 0.5005
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0843,
+     "either": 0.5026
+    }
+   },
+   "run_score_band_10_90": [
+    0.6481,
+    0.9444
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4611,
+    "control:R_DONE_BUILD": 0.3773,
+    "control:R_DONE_SERVER": 0.1638,
+    "control:R_CORRECTION": 0.4022,
+    "control:R_ALIAS": 0.3336,
+    "control:R_FILTER": 0.4244,
+    "control:R_COMPLETION": 0.4037
+   },
+   "slots": {
+    "S05": {
+     "P_fail": 0.5384,
+     "P_fails_all_six": 0.0838
+    },
+    "S25": {
+     "P_fail": 0.5366,
+     "P_fails_all_six": 0.0845
+    },
+    "S14": {
+     "P_fail": 0.4444,
+     "P_fails_all_six": 0.0571
+    },
+    "S24": {
+     "P_fail": 0.408,
+     "P_fails_all_six": 0.0472
+    },
+    "S07": {
+     "P_fail": 0.3829,
+     "P_fails_all_six": 0.029
+    },
+    "S26": {
+     "P_fail": 0.3748,
+     "P_fails_all_six": 0.0288
+    },
+    "S01": {
+     "P_fail": 0.3337,
+     "P_fails_all_six": 0.0347
+    },
+    "S03": {
+     "P_fail": 0.3303,
+     "P_fails_all_six": 0.0322
+    },
+    "S11": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S12": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S13": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S28": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S29": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S09": {
+     "P_fail": 0.2492,
+     "P_fails_all_six": 0.0112
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0007
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S05": {
+     "P_fail": 0.5384,
+     "P_fails_all_six": 0.0838
+    },
+    "S25": {
+     "P_fail": 0.5366,
+     "P_fails_all_six": 0.0845
+    },
+    "S14": {
+     "P_fail": 0.4444,
+     "P_fails_all_six": 0.0571
+    },
+    "S24": {
+     "P_fail": 0.408,
+     "P_fails_all_six": 0.0472
+    },
+    "S07": {
+     "P_fail": 0.3829,
+     "P_fails_all_six": 0.029
+    },
+    "S26": {
+     "P_fail": 0.3748,
+     "P_fails_all_six": 0.0288
+    },
+    "S01": {
+     "P_fail": 0.3337,
+     "P_fails_all_six": 0.0347
+    },
+    "S03": {
+     "P_fail": 0.3303,
+     "P_fails_all_six": 0.0322
+    },
+    "S11": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S12": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S13": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S28": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S29": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S09": {
+     "P_fail": 0.2492,
+     "P_fails_all_six": 0.0112
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0007
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8692,
+     "band_10_90": [
+      0.8179,
+      0.9182
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.7892,
+      "per_rollout_sd": 0.0037,
+      "failure_patterns": 0.9323
+     },
+     "P_all": 0.0036,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0046,
+       "P_all_if_rate_below_median": 0.0026,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0044,
+       "P_all_if_rate_below_median": 0.0028,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.0042,
+       "P_all_if_rate_below_median": 0.003,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0032,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0034,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0034,
+       "spread": 0.0004
+      }
+     ],
+     "E_patterns": 5.0106
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3326,
+    "rule:R_DONE_SERVER": 0.3353,
+    "rule:R_CORRECTION": 0.3808,
+    "rule:R_ALIAS": 0.2547,
+    "rule:R_FILTER": 0.2482,
+    "rule:R_COMPLETION": 0.3315
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6703,
+     "either": 33375,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7566,
+     "either": 35241,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5118,
+     "either": 30125,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4813,
+     "either": 30040,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6680,
+     "either": 33169,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7556,
+     "either": 35413,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 5114,
+     "either": 30291,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 5030,
+     "either": 29985,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6525,
+     "either": 33486,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5852,
+     "either": 32282,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5680,
+     "either": 32064,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7586,
+     "either": 35154,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3796,
+     "either": 26384,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5183,
+     "either": 29993,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 4933,
+     "either": 29853,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1117,
+     "either": 0.5563
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1261,
+     "either": 0.5874
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0853,
+     "either": 0.5021
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0802,
+     "either": 0.5007
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1113,
+     "either": 0.5528
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1259,
+     "either": 0.5902
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0852,
+     "either": 0.5049
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0838,
+     "either": 0.4998
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1087,
+     "either": 0.5581
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0975,
+     "either": 0.538
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0947,
+     "either": 0.5344
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1264,
+     "either": 0.5859
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0633,
+     "either": 0.4397
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0864,
+     "either": 0.4999
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0822,
+     "either": 0.4975
+    }
+   },
+   "run_score_band_10_90": [
+    0.7778,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.465,
+    "control:R_DONE_BUILD": 0.3711,
+    "control:R_DONE_SERVER": 0.1654,
+    "control:R_CORRECTION": 0.3972,
+    "control:R_ALIAS": 0.3335,
+    "control:R_FILTER": 0.4217,
+    "control:R_COMPLETION": 0.3989
+   },
+   "slots": {
+    "S14": {
+     "P_fail": 0.4411,
+     "P_fails_all_six": 0.0597
+    },
+    "S24": {
+     "P_fail": 0.4054,
+     "P_fails_all_six": 0.0489
+    },
+    "S25": {
+     "P_fail": 0.4039,
+     "P_fails_all_six": 0.0306
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2306,
+     "P_fails_all_six": 0.0015
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S28": {
+     "P_fail": 0.0509,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.049,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S14": {
+     "P_fail": 0.4411,
+     "P_fails_all_six": 0.0597
+    },
+    "S24": {
+     "P_fail": 0.4054,
+     "P_fails_all_six": 0.0489
+    },
+    "S25": {
+     "P_fail": 0.4039,
+     "P_fails_all_six": 0.0306
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2306,
+     "P_fails_all_six": 0.0015
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S28": {
+     "P_fail": 0.0509,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.049,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8849,
+     "band_10_90": [
+      0.8395,
+      0.9275
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.6599,
+      "per_rollout_sd": 0.0007,
+      "failure_patterns": 0.9187
+     },
+     "P_all": 0.0006,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0012,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.0002,
+       "P_all_if_rate_below_median": 0.001,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.0008,
+       "P_all_if_rate_below_median": 0.0004,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0004,
+       "P_all_if_rate_below_median": 0.0008,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0004,
+       "P_all_if_rate_below_median": 0.0008,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0006,
+       "P_all_if_rate_below_median": 0.0006,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 4.918
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3326,
+    "rule:R_DONE_SERVER": 0.3353,
+    "rule:R_CORRECTION": 0.3808,
+    "rule:R_ALIAS": 0.2547,
+    "rule:R_FILTER": 0.2482,
+    "rule:R_COMPLETION": 0.3315
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6703,
+     "either": 33375,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7566,
+     "either": 35241,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5118,
+     "either": 30125,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4813,
+     "either": 30040,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6680,
+     "either": 33169,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7556,
+     "either": 35413,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 5114,
+     "either": 30291,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 5030,
+     "either": 29985,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6525,
+     "either": 33486,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5852,
+     "either": 32282,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5680,
+     "either": 32064,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7586,
+     "either": 35154,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3796,
+     "either": 26384,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5183,
+     "either": 29993,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 4933,
+     "either": 29853,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1117,
+     "either": 0.5563
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1261,
+     "either": 0.5874
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0853,
+     "either": 0.5021
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0802,
+     "either": 0.5007
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1113,
+     "either": 0.5528
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1259,
+     "either": 0.5902
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0852,
+     "either": 0.5049
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0838,
+     "either": 0.4998
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1087,
+     "either": 0.5581
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0975,
+     "either": 0.538
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0947,
+     "either": 0.5344
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1264,
+     "either": 0.5859
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0633,
+     "either": 0.4397
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0864,
+     "either": 0.4999
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0822,
+     "either": 0.4975
+    }
+   },
+   "run_score_band_10_90": [
+    0.8056,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.465,
+    "control:R_DONE_BUILD": 0.3711,
+    "control:R_DONE_SERVER": 0.1654,
+    "control:R_CORRECTION": 0.3972,
+    "control:R_ALIAS": 0.3335,
+    "control:R_FILTER": 0.4217,
+    "control:R_COMPLETION": 0.3989
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.3878,
+     "P_fails_all_six": 0.0288
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S14": {
+     "P_fail": 0.3035,
+     "P_fails_all_six": 0.0082
+    },
+    "S24": {
+     "P_fail": 0.2583,
+     "P_fails_all_six": 0.0024
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2107,
+     "P_fails_all_six": 0.001
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S13": {
+     "P_fail": 0.0251,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0246,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0244,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.3878,
+     "P_fails_all_six": 0.0288
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S14": {
+     "P_fail": 0.3035,
+     "P_fails_all_six": 0.0082
+    },
+    "S24": {
+     "P_fail": 0.2583,
+     "P_fails_all_six": 0.0024
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2107,
+     "P_fails_all_six": 0.001
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S13": {
+     "P_fail": 0.0251,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0246,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0244,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8891,
+     "band_10_90": [
+      0.8457,
+      0.9306
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.6206,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8984
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 4.7767
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.333,
+    "rule:R_DONE_SERVER": 0.3336,
+    "rule:R_CORRECTION": 0.3855,
+    "rule:R_ALIAS": 0.2477,
+    "rule:R_FILTER": 0.2525,
+    "rule:R_COMPLETION": 0.3345
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6684,
+     "either": 33313,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7678,
+     "either": 35431,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5102,
+     "either": 29737,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4991,
+     "either": 30140,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6611,
+     "either": 33440,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7824,
+     "either": 35322,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 4864,
+     "either": 30012,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 4911,
+     "either": 30257,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6663,
+     "either": 33425,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5788,
+     "either": 32200,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5873,
+     "either": 32407,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7750,
+     "either": 35450,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3769,
+     "either": 26241,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 4958,
+     "either": 29972,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 5040,
+     "either": 30182,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1114,
+     "either": 0.5552
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.128,
+     "either": 0.5905
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.085,
+     "either": 0.4956
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0832,
+     "either": 0.5023
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1102,
+     "either": 0.5573
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1304,
+     "either": 0.5887
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0811,
+     "either": 0.5002
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0819,
+     "either": 0.5043
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.111,
+     "either": 0.5571
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0965,
+     "either": 0.5367
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0979,
+     "either": 0.5401
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1292,
+     "either": 0.5908
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0628,
+     "either": 0.4374
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0826,
+     "either": 0.4995
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.084,
+     "either": 0.503
+    }
+   },
+   "run_score_band_10_90": [
+    0.8148,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4709,
+    "control:R_DONE_BUILD": 0.3732,
+    "control:R_DONE_SERVER": 0.1684,
+    "control:R_CORRECTION": 0.4053,
+    "control:R_ALIAS": 0.3319,
+    "control:R_FILTER": 0.4264,
+    "control:R_COMPLETION": 0.3962
+   },
+   "slots": {
+    "S26": {
+     "P_fail": 0.3785,
+     "P_fails_all_six": 0.0271
+    },
+    "S25": {
+     "P_fail": 0.3764,
+     "P_fails_all_six": 0.0262
+    },
+    "S03": {
+     "P_fail": 0.3336,
+     "P_fails_all_six": 0.0359
+    },
+    "S01": {
+     "P_fail": 0.333,
+     "P_fails_all_six": 0.0332
+    },
+    "S14": {
+     "P_fail": 0.3083,
+     "P_fails_all_six": 0.009
+    },
+    "S24": {
+     "P_fail": 0.2602,
+     "P_fails_all_six": 0.0034
+    },
+    "S09": {
+     "P_fail": 0.2477,
+     "P_fails_all_six": 0.0099
+    },
+    "S07": {
+     "P_fail": 0.1944,
+     "P_fails_all_six": 0.0009
+    },
+    "S05": {
+     "P_fail": 0.1934,
+     "P_fails_all_six": 0.0001
+    },
+    "S27": {
+     "P_fail": 0.1648,
+     "P_fails_all_six": 0.0029
+    },
+    "S20": {
+     "P_fail": 0.1122,
+     "P_fails_all_six": 0.0002
+    },
+    "S11": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S26": {
+     "P_fail": 0.3785,
+     "P_fails_all_six": 0.0271
+    },
+    "S25": {
+     "P_fail": 0.3764,
+     "P_fails_all_six": 0.0262
+    },
+    "S03": {
+     "P_fail": 0.3336,
+     "P_fails_all_six": 0.0359
+    },
+    "S01": {
+     "P_fail": 0.333,
+     "P_fails_all_six": 0.0332
+    },
+    "S14": {
+     "P_fail": 0.3083,
+     "P_fails_all_six": 0.009
+    },
+    "S24": {
+     "P_fail": 0.2602,
+     "P_fails_all_six": 0.0034
+    },
+    "S09": {
+     "P_fail": 0.2477,
+     "P_fails_all_six": 0.0099
+    },
+    "S07": {
+     "P_fail": 0.1944,
+     "P_fails_all_six": 0.0009
+    },
+    "S05": {
+     "P_fail": 0.1934,
+     "P_fails_all_six": 0.0001
+    },
+    "S27": {
+     "P_fail": 0.1648,
+     "P_fails_all_six": 0.0029
+    },
+    "S20": {
+     "P_fail": 0.1122,
+     "P_fails_all_six": 0.0002
+    },
+    "S11": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8779,
+     "band_10_90": [
+      0.8287,
+      0.9244
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.7149,
+      "per_rollout_sd": 0.0042,
+      "failure_patterns": 0.9293
+     },
+     "P_all": 0.0041,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0066,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.005
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0058,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0034
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0056,
+       "P_all_if_rate_below_median": 0.0026,
+       "spread": 0.003
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.005,
+       "P_all_if_rate_below_median": 0.0032,
+       "spread": 0.0018
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0048,
+       "spread": 0.0014
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.0042,
+       "P_all_if_rate_below_median": 0.004,
+       "spread": 0.0002
+      }
+     ],
+     "E_patterns": 5.0093
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3326,
+    "rule:R_DONE_SERVER": 0.3356,
+    "rule:R_CORRECTION": 0.381,
+    "rule:R_ALIAS": 0.2526,
+    "rule:R_FILTER": 0.2485,
+    "rule:R_COMPLETION": 0.3335
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6745,
+     "either": 33346,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7658,
+     "either": 35156,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5057,
+     "either": 30052,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4892,
+     "either": 29970,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6687,
+     "either": 33276,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7725,
+     "either": 35270,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 5061,
+     "either": 30229,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 4989,
+     "either": 30054,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6680,
+     "either": 33464,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5747,
+     "either": 32266,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5696,
+     "either": 32070,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7574,
+     "either": 35293,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3679,
+     "either": 26382,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5058,
+     "either": 30104,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 4959,
+     "either": 29956,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1124,
+     "either": 0.5558
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1276,
+     "either": 0.5859
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0843,
+     "either": 0.5009
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0815,
+     "either": 0.4995
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1114,
+     "either": 0.5546
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1288,
+     "either": 0.5878
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0843,
+     "either": 0.5038
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0832,
+     "either": 0.5009
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1113,
+     "either": 0.5577
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0958,
+     "either": 0.5378
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0949,
+     "either": 0.5345
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1262,
+     "either": 0.5882
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0613,
+     "either": 0.4397
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0843,
+     "either": 0.5017
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0827,
+     "either": 0.4993
+    }
+   },
+   "run_score_band_10_90": [
+    0.7963,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4671,
+    "control:R_DONE_BUILD": 0.3744,
+    "control:R_DONE_SERVER": 0.1648,
+    "control:R_CORRECTION": 0.3987,
+    "control:R_ALIAS": 0.3339,
+    "control:R_FILTER": 0.4259,
+    "control:R_COMPLETION": 0.4016
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.3928,
+     "P_fails_all_six": 0.0277
+    },
+    "S26": {
+     "P_fail": 0.3711,
+     "P_fails_all_six": 0.025
+    },
+    "S03": {
+     "P_fail": 0.3356,
+     "P_fails_all_six": 0.0383
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.035
+    },
+    "S14": {
+     "P_fail": 0.3315,
+     "P_fails_all_six": 0.0142
+    },
+    "S24": {
+     "P_fail": 0.2877,
+     "P_fails_all_six": 0.0082
+    },
+    "S09": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0116
+    },
+    "S05": {
+     "P_fail": 0.2509,
+     "P_fails_all_six": 0.004
+    },
+    "S07": {
+     "P_fail": 0.225,
+     "P_fails_all_six": 0.0034
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.11,
+     "P_fails_all_six": 0.0003
+    },
+    "S11": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0327,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.3928,
+     "P_fails_all_six": 0.0277
+    },
+    "S26": {
+     "P_fail": 0.3711,
+     "P_fails_all_six": 0.025
+    },
+    "S03": {
+     "P_fail": 0.3356,
+     "P_fails_all_six": 0.0383
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.035
+    },
+    "S14": {
+     "P_fail": 0.3315,
+     "P_fails_all_six": 0.0142
+    },
+    "S24": {
+     "P_fail": 0.2877,
+     "P_fails_all_six": 0.0082
+    },
+    "S09": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0116
+    },
+    "S05": {
+     "P_fail": 0.2509,
+     "P_fails_all_six": 0.004
+    },
+    "S07": {
+     "P_fail": 0.225,
+     "P_fails_all_six": 0.0034
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.11,
+     "P_fails_all_six": 0.0003
+    },
+    "S11": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0327,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8106,
+     "band_10_90": [
+      0.7222,
+      0.8889
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.936,
+      "per_rollout_sd": 0.3462,
+      "failure_patterns": 0.9319
+     },
+     "P_all": 0.3302,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.4756,
+       "P_all_if_rate_below_median": 0.1848,
+       "spread": 0.2908
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.3122,
+       "P_all_if_rate_below_median": 0.3482,
+       "spread": 0.036
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.3418,
+       "P_all_if_rate_below_median": 0.3186,
+       "spread": 0.0232
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.3406,
+       "P_all_if_rate_below_median": 0.3198,
+       "spread": 0.0208
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.3384,
+       "P_all_if_rate_below_median": 0.322,
+       "spread": 0.0164
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.3356,
+       "P_all_if_rate_below_median": 0.3248,
+       "spread": 0.0108
+      }
+     ],
+     "E_patterns": 4.9158
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3337,
+    "rule:R_DONE_SERVER": 0.3303,
+    "rule:R_CORRECTION": 0.3829,
+    "rule:R_ALIAS": 0.2492,
+    "rule:R_FILTER": 0.251,
+    "rule:R_COMPLETION": 0.3359
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6620,
+     "either": 33222,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7603,
+     "either": 35391,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 4953,
+     "either": 30020,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 5005,
+     "either": 30076,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6736,
+     "either": 33439,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7651,
+     "either": 35141,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 4923,
+     "either": 29848,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 4954,
+     "either": 29925,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6524,
+     "either": 33449,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5761,
+     "either": 32162,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5729,
+     "either": 32302,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7747,
+     "either": 35378,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3721,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5072,
+     "either": 30032,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 5058,
+     "either": 30154,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1103,
+     "either": 0.5537
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1267,
+     "either": 0.5898
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0825,
+     "either": 0.5003
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0834,
+     "either": 0.5013
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1123,
+     "either": 0.5573
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1275,
+     "either": 0.5857
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.082,
+     "either": 0.4975
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0826,
+     "either": 0.4988
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1087,
+     "either": 0.5575
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.096,
+     "either": 0.536
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0955,
+     "either": 0.5384
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1291,
+     "either": 0.5896
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.062,
+     "either": 0.4381
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0845,
+     "either": 0.5005
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0843,
+     "either": 0.5026
+    }
+   },
+   "run_score_band_10_90": [
+    0.6481,
+    0.9444
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4611,
+    "control:R_DONE_BUILD": 0.3773,
+    "control:R_DONE_SERVER": 0.1638,
+    "control:R_CORRECTION": 0.4022,
+    "control:R_ALIAS": 0.3336,
+    "control:R_FILTER": 0.4244,
+    "control:R_COMPLETION": 0.4037
+   },
+   "slots": {
+    "S05": {
+     "P_fail": 0.5384,
+     "P_fails_all_six": 0.0838
+    },
+    "S25": {
+     "P_fail": 0.5366,
+     "P_fails_all_six": 0.0845
+    },
+    "S14": {
+     "P_fail": 0.4444,
+     "P_fails_all_six": 0.0571
+    },
+    "S24": {
+     "P_fail": 0.408,
+     "P_fails_all_six": 0.0472
+    },
+    "S07": {
+     "P_fail": 0.3829,
+     "P_fails_all_six": 0.029
+    },
+    "S26": {
+     "P_fail": 0.3748,
+     "P_fails_all_six": 0.0288
+    },
+    "S01": {
+     "P_fail": 0.3337,
+     "P_fails_all_six": 0.0347
+    },
+    "S03": {
+     "P_fail": 0.3303,
+     "P_fails_all_six": 0.0322
+    },
+    "S11": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S12": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S13": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S28": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S29": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S09": {
+     "P_fail": 0.2492,
+     "P_fails_all_six": 0.0112
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0007
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S05": {
+     "P_fail": 0.5384,
+     "P_fails_all_six": 0.0838
+    },
+    "S25": {
+     "P_fail": 0.5366,
+     "P_fails_all_six": 0.0845
+    },
+    "S14": {
+     "P_fail": 0.4444,
+     "P_fails_all_six": 0.0571
+    },
+    "S24": {
+     "P_fail": 0.408,
+     "P_fails_all_six": 0.0472
+    },
+    "S07": {
+     "P_fail": 0.3829,
+     "P_fails_all_six": 0.029
+    },
+    "S26": {
+     "P_fail": 0.3748,
+     "P_fails_all_six": 0.0288
+    },
+    "S01": {
+     "P_fail": 0.3337,
+     "P_fails_all_six": 0.0347
+    },
+    "S03": {
+     "P_fail": 0.3303,
+     "P_fails_all_six": 0.0322
+    },
+    "S11": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S12": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S13": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S28": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S29": {
+     "P_fail": 0.251,
+     "P_fails_all_six": 0.0122
+    },
+    "S09": {
+     "P_fail": 0.2492,
+     "P_fails_all_six": 0.0112
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0007
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8692,
+     "band_10_90": [
+      0.8179,
+      0.9182
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.7892,
+      "per_rollout_sd": 0.0037,
+      "failure_patterns": 0.9323
+     },
+     "P_all": 0.0036,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0046,
+       "P_all_if_rate_below_median": 0.0026,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0044,
+       "P_all_if_rate_below_median": 0.0028,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.0042,
+       "P_all_if_rate_below_median": 0.003,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0032,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0034,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0034,
+       "spread": 0.0004
+      }
+     ],
+     "E_patterns": 5.0106
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3326,
+    "rule:R_DONE_SERVER": 0.3353,
+    "rule:R_CORRECTION": 0.3808,
+    "rule:R_ALIAS": 0.2547,
+    "rule:R_FILTER": 0.2482,
+    "rule:R_COMPLETION": 0.3315
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6703,
+     "either": 33375,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7566,
+     "either": 35241,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5118,
+     "either": 30125,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4813,
+     "either": 30040,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6680,
+     "either": 33169,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7556,
+     "either": 35413,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 5114,
+     "either": 30291,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 5030,
+     "either": 29985,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6525,
+     "either": 33486,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5852,
+     "either": 32282,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5680,
+     "either": 32064,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7586,
+     "either": 35154,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3796,
+     "either": 26384,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5183,
+     "either": 29993,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 4933,
+     "either": 29853,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1117,
+     "either": 0.5563
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1261,
+     "either": 0.5874
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0853,
+     "either": 0.5021
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0802,
+     "either": 0.5007
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1113,
+     "either": 0.5528
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1259,
+     "either": 0.5902
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0852,
+     "either": 0.5049
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0838,
+     "either": 0.4998
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1087,
+     "either": 0.5581
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0975,
+     "either": 0.538
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0947,
+     "either": 0.5344
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1264,
+     "either": 0.5859
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0633,
+     "either": 0.4397
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0864,
+     "either": 0.4999
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0822,
+     "either": 0.4975
+    }
+   },
+   "run_score_band_10_90": [
+    0.7778,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.465,
+    "control:R_DONE_BUILD": 0.3711,
+    "control:R_DONE_SERVER": 0.1654,
+    "control:R_CORRECTION": 0.3972,
+    "control:R_ALIAS": 0.3335,
+    "control:R_FILTER": 0.4217,
+    "control:R_COMPLETION": 0.3989
+   },
+   "slots": {
+    "S14": {
+     "P_fail": 0.4411,
+     "P_fails_all_six": 0.0597
+    },
+    "S24": {
+     "P_fail": 0.4054,
+     "P_fails_all_six": 0.0489
+    },
+    "S25": {
+     "P_fail": 0.4039,
+     "P_fails_all_six": 0.0306
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2306,
+     "P_fails_all_six": 0.0015
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S28": {
+     "P_fail": 0.0509,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.049,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S14": {
+     "P_fail": 0.4411,
+     "P_fails_all_six": 0.0597
+    },
+    "S24": {
+     "P_fail": 0.4054,
+     "P_fails_all_six": 0.0489
+    },
+    "S25": {
+     "P_fail": 0.4039,
+     "P_fails_all_six": 0.0306
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2306,
+     "P_fails_all_six": 0.0015
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S28": {
+     "P_fail": 0.0509,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0494,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.049,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8849,
+     "band_10_90": [
+      0.8395,
+      0.9275
+     ],
+     "P_gate": {
+      "pass_at_1": 1.0,
+      "avg_weighted_pass_rate": 0.6599,
+      "per_rollout_sd": 0.0007,
+      "failure_patterns": 0.9187
+     },
+     "P_all": 0.0006,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0012,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.0002,
+       "P_all_if_rate_below_median": 0.001,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.0008,
+       "P_all_if_rate_below_median": 0.0004,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0004,
+       "P_all_if_rate_below_median": 0.0008,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0004,
+       "P_all_if_rate_below_median": 0.0008,
+       "spread": 0.0004
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0006,
+       "P_all_if_rate_below_median": 0.0006,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 4.918
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3326,
+    "rule:R_DONE_SERVER": 0.3353,
+    "rule:R_CORRECTION": 0.3808,
+    "rule:R_ALIAS": 0.2547,
+    "rule:R_FILTER": 0.2482,
+    "rule:R_COMPLETION": 0.3315
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6703,
+     "either": 33375,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7566,
+     "either": 35241,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5118,
+     "either": 30125,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4813,
+     "either": 30040,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6680,
+     "either": 33169,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7556,
+     "either": 35413,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 5114,
+     "either": 30291,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 5030,
+     "either": 29985,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6525,
+     "either": 33486,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5852,
+     "either": 32282,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5680,
+     "either": 32064,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7586,
+     "either": 35154,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3796,
+     "either": 26384,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5183,
+     "either": 29993,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 4933,
+     "either": 29853,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1117,
+     "either": 0.5563
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1261,
+     "either": 0.5874
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0853,
+     "either": 0.5021
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0802,
+     "either": 0.5007
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1113,
+     "either": 0.5528
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1259,
+     "either": 0.5902
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0852,
+     "either": 0.5049
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0838,
+     "either": 0.4998
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1087,
+     "either": 0.5581
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0975,
+     "either": 0.538
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0947,
+     "either": 0.5344
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1264,
+     "either": 0.5859
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0633,
+     "either": 0.4397
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0864,
+     "either": 0.4999
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0822,
+     "either": 0.4975
+    }
+   },
+   "run_score_band_10_90": [
+    0.8056,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.465,
+    "control:R_DONE_BUILD": 0.3711,
+    "control:R_DONE_SERVER": 0.1654,
+    "control:R_CORRECTION": 0.3972,
+    "control:R_ALIAS": 0.3335,
+    "control:R_FILTER": 0.4217,
+    "control:R_COMPLETION": 0.3989
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.3878,
+     "P_fails_all_six": 0.0288
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S14": {
+     "P_fail": 0.3035,
+     "P_fails_all_six": 0.0082
+    },
+    "S24": {
+     "P_fail": 0.2583,
+     "P_fails_all_six": 0.0024
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2107,
+     "P_fails_all_six": 0.001
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S13": {
+     "P_fail": 0.0251,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0246,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0244,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.3878,
+     "P_fails_all_six": 0.0288
+    },
+    "S26": {
+     "P_fail": 0.3703,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3353,
+     "P_fails_all_six": 0.0365
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.0362
+    },
+    "S14": {
+     "P_fail": 0.3035,
+     "P_fails_all_six": 0.0082
+    },
+    "S24": {
+     "P_fail": 0.2583,
+     "P_fails_all_six": 0.0024
+    },
+    "S09": {
+     "P_fail": 0.2547,
+     "P_fails_all_six": 0.0134
+    },
+    "S05": {
+     "P_fail": 0.2107,
+     "P_fails_all_six": 0.001
+    },
+    "S07": {
+     "P_fail": 0.1902,
+     "P_fails_all_six": 0.0005
+    },
+    "S27": {
+     "P_fail": 0.1646,
+     "P_fails_all_six": 0.0017
+    },
+    "S20": {
+     "P_fail": 0.1104,
+     "P_fails_all_six": 0.0004
+    },
+    "S13": {
+     "P_fail": 0.0251,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0246,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0244,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0243,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8891,
+     "band_10_90": [
+      0.8457,
+      0.9306
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.6206,
+      "per_rollout_sd": 0.0,
+      "failure_patterns": 0.8984
+     },
+     "P_all": 0.0,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0,
+       "P_all_if_rate_below_median": 0.0,
+       "spread": 0.0
+      }
+     ],
+     "E_patterns": 4.7767
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.333,
+    "rule:R_DONE_SERVER": 0.3336,
+    "rule:R_CORRECTION": 0.3855,
+    "rule:R_ALIAS": 0.2477,
+    "rule:R_FILTER": 0.2525,
+    "rule:R_COMPLETION": 0.3345
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6684,
+     "either": 33313,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7678,
+     "either": 35431,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5102,
+     "either": 29737,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4991,
+     "either": 30140,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6611,
+     "either": 33440,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7824,
+     "either": 35322,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 4864,
+     "either": 30012,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 4911,
+     "either": 30257,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6663,
+     "either": 33425,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5788,
+     "either": 32200,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5873,
+     "either": 32407,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7750,
+     "either": 35450,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3769,
+     "either": 26241,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 4958,
+     "either": 29972,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 5040,
+     "either": 30182,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1114,
+     "either": 0.5552
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.128,
+     "either": 0.5905
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.085,
+     "either": 0.4956
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0832,
+     "either": 0.5023
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1102,
+     "either": 0.5573
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1304,
+     "either": 0.5887
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0811,
+     "either": 0.5002
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0819,
+     "either": 0.5043
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.111,
+     "either": 0.5571
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0965,
+     "either": 0.5367
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0979,
+     "either": 0.5401
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1292,
+     "either": 0.5908
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0628,
+     "either": 0.4374
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0826,
+     "either": 0.4995
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.084,
+     "either": 0.503
+    }
+   },
+   "run_score_band_10_90": [
+    0.8148,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4709,
+    "control:R_DONE_BUILD": 0.3732,
+    "control:R_DONE_SERVER": 0.1684,
+    "control:R_CORRECTION": 0.4053,
+    "control:R_ALIAS": 0.3319,
+    "control:R_FILTER": 0.4264,
+    "control:R_COMPLETION": 0.3962
+   },
+   "slots": {
+    "S26": {
+     "P_fail": 0.3785,
+     "P_fails_all_six": 0.0271
+    },
+    "S25": {
+     "P_fail": 0.3764,
+     "P_fails_all_six": 0.0262
+    },
+    "S03": {
+     "P_fail": 0.3336,
+     "P_fails_all_six": 0.0359
+    },
+    "S01": {
+     "P_fail": 0.333,
+     "P_fails_all_six": 0.0332
+    },
+    "S14": {
+     "P_fail": 0.3083,
+     "P_fails_all_six": 0.009
+    },
+    "S24": {
+     "P_fail": 0.2602,
+     "P_fails_all_six": 0.0034
+    },
+    "S09": {
+     "P_fail": 0.2477,
+     "P_fails_all_six": 0.0099
+    },
+    "S07": {
+     "P_fail": 0.1944,
+     "P_fails_all_six": 0.0009
+    },
+    "S05": {
+     "P_fail": 0.1934,
+     "P_fails_all_six": 0.0001
+    },
+    "S27": {
+     "P_fail": 0.1648,
+     "P_fails_all_six": 0.0029
+    },
+    "S20": {
+     "P_fail": 0.1122,
+     "P_fails_all_six": 0.0002
+    },
+    "S11": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S26": {
+     "P_fail": 0.3785,
+     "P_fails_all_six": 0.0271
+    },
+    "S25": {
+     "P_fail": 0.3764,
+     "P_fails_all_six": 0.0262
+    },
+    "S03": {
+     "P_fail": 0.3336,
+     "P_fails_all_six": 0.0359
+    },
+    "S01": {
+     "P_fail": 0.333,
+     "P_fails_all_six": 0.0332
+    },
+    "S14": {
+     "P_fail": 0.3083,
+     "P_fails_all_six": 0.009
+    },
+    "S24": {
+     "P_fail": 0.2602,
+     "P_fails_all_six": 0.0034
+    },
+    "S09": {
+     "P_fail": 0.2477,
+     "P_fails_all_six": 0.0099
+    },
+    "S07": {
+     "P_fail": 0.1944,
+     "P_fails_all_six": 0.0009
+    },
+    "S05": {
+     "P_fail": 0.1934,
+     "P_fails_all_six": 0.0001
+    },
+    "S27": {
+     "P_fail": 0.1648,
+     "P_fails_all_six": 0.0029
+    },
+    "S20": {
+     "P_fail": 0.1122,
+     "P_fails_all_six": 0.0002
+    },
+    "S11": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0028,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8779,
+     "band_10_90": [
+      0.8287,
+      0.9244
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9999,
+      "avg_weighted_pass_rate": 0.7149,
+      "per_rollout_sd": 0.0042,
+      "failure_patterns": 0.9293
+     },
+     "P_all": 0.0041,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0066,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.005
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0058,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0034
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.0056,
+       "P_all_if_rate_below_median": 0.0026,
+       "spread": 0.003
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.005,
+       "P_all_if_rate_below_median": 0.0032,
+       "spread": 0.0018
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0048,
+       "spread": 0.0014
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.0042,
+       "P_all_if_rate_below_median": 0.004,
+       "spread": 0.0002
+      }
+     ],
+     "E_patterns": 5.0093
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3326,
+    "rule:R_DONE_SERVER": 0.3356,
+    "rule:R_CORRECTION": 0.381,
+    "rule:R_ALIAS": 0.2526,
+    "rule:R_FILTER": 0.2485,
+    "rule:R_COMPLETION": 0.3335
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 6745,
+     "either": 33346,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 7658,
+     "either": 35156,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 5057,
+     "either": 30052,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 4892,
+     "either": 29970,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 6687,
+     "either": 33276,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 7725,
+     "either": 35270,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 5061,
+     "either": 30229,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 4989,
+     "either": 30054,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 6680,
+     "either": 33464,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 5747,
+     "either": 32266,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 5696,
+     "either": 32070,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 7574,
+     "either": 35293,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 3679,
+     "either": 26382,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 5058,
+     "either": 30104,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 4959,
+     "either": 29956,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1124,
+     "either": 0.5558
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.1276,
+     "either": 0.5859
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.0843,
+     "either": 0.5009
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.0815,
+     "either": 0.4995
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1114,
+     "either": 0.5546
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.1288,
+     "either": 0.5878
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.0843,
+     "either": 0.5038
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.0832,
+     "either": 0.5009
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1113,
+     "either": 0.5577
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.0958,
+     "either": 0.5378
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.0949,
+     "either": 0.5345
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.1262,
+     "either": 0.5882
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.0613,
+     "either": 0.4397
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.0843,
+     "either": 0.5017
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.0827,
+     "either": 0.4993
+    }
+   },
+   "run_score_band_10_90": [
+    0.7963,
+    0.9537
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4671,
+    "control:R_DONE_BUILD": 0.3744,
+    "control:R_DONE_SERVER": 0.1648,
+    "control:R_CORRECTION": 0.3987,
+    "control:R_ALIAS": 0.3339,
+    "control:R_FILTER": 0.4259,
+    "control:R_COMPLETION": 0.4016
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.3928,
+     "P_fails_all_six": 0.0277
+    },
+    "S26": {
+     "P_fail": 0.3711,
+     "P_fails_all_six": 0.025
+    },
+    "S03": {
+     "P_fail": 0.3356,
+     "P_fails_all_six": 0.0383
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.035
+    },
+    "S14": {
+     "P_fail": 0.3315,
+     "P_fails_all_six": 0.0142
+    },
+    "S24": {
+     "P_fail": 0.2877,
+     "P_fails_all_six": 0.0082
+    },
+    "S09": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0116
+    },
+    "S05": {
+     "P_fail": 0.2509,
+     "P_fails_all_six": 0.004
+    },
+    "S07": {
+     "P_fail": 0.225,
+     "P_fails_all_six": 0.0034
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.11,
+     "P_fails_all_six": 0.0003
+    },
+    "S11": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0327,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.3928,
+     "P_fails_all_six": 0.0277
+    },
+    "S26": {
+     "P_fail": 0.3711,
+     "P_fails_all_six": 0.025
+    },
+    "S03": {
+     "P_fail": 0.3356,
+     "P_fails_all_six": 0.0383
+    },
+    "S01": {
+     "P_fail": 0.3326,
+     "P_fails_all_six": 0.035
+    },
+    "S14": {
+     "P_fail": 0.3315,
+     "P_fails_all_six": 0.0142
+    },
+    "S24": {
+     "P_fail": 0.2877,
+     "P_fails_all_six": 0.0082
+    },
+    "S09": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0116
+    },
+    "S05": {
+     "P_fail": 0.2509,
+     "P_fails_all_six": 0.004
+    },
+    "S07": {
+     "P_fail": 0.225,
+     "P_fails_all_six": 0.0034
+    },
+    "S27": {
+     "P_fail": 0.1681,
+     "P_fails_all_six": 0.0016
+    },
+    "S20": {
+     "P_fail": 0.11,
+     "P_fails_all_six": 0.0003
+    },
+    "S11": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0333,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0327,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0314,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8153,
+     "band_10_90": [
+      0.7037,
+      0.9167
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9979,
+      "avg_weighted_pass_rate": 0.8534,
+      "per_rollout_sd": 0.717,
+      "failure_patterns": 0.7788
+     },
+     "P_all": 0.5735,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.692,
+       "P_all_if_rate_below_median": 0.455,
+       "spread": 0.237
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.6128,
+       "P_all_if_rate_below_median": 0.5342,
+       "spread": 0.0786
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.5964,
+       "P_all_if_rate_below_median": 0.5506,
+       "spread": 0.0458
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.5942,
+       "P_all_if_rate_below_median": 0.5528,
+       "spread": 0.0414
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.5908,
+       "P_all_if_rate_below_median": 0.5562,
+       "spread": 0.0346
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.5866,
+       "P_all_if_rate_below_median": 0.5604,
+       "spread": 0.0262
+      }
+     ],
+     "E_patterns": 3.846
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3306,
+    "rule:R_DONE_SERVER": 0.3373,
+    "rule:R_CORRECTION": 0.3832,
+    "rule:R_ALIAS": 0.2504,
+    "rule:R_FILTER": 0.2496,
+    "rule:R_COMPLETION": 0.3329
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 12034,
+     "either": 28044,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 13729,
+     "either": 29105,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 9997,
+     "either": 24866,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 9861,
+     "either": 24953,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 11950,
+     "either": 27861,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 13976,
+     "either": 29258,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 10060,
+     "either": 25203,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 10083,
+     "either": 25131,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 12179,
+     "either": 28032,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 11493,
+     "either": 26526,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 11405,
+     "either": 26565,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 13854,
+     "either": 29113,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 8686,
+     "either": 21313,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 10055,
+     "either": 24941,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 10049,
+     "either": 24898,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.2006,
+     "either": 0.4674
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.2288,
+     "either": 0.4851
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.1666,
+     "either": 0.4144
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.1643,
+     "either": 0.4159
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1992,
+     "either": 0.4643
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.2329,
+     "either": 0.4876
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.1677,
+     "either": 0.42
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.1681,
+     "either": 0.4189
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.203,
+     "either": 0.4672
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.1915,
+     "either": 0.4421
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.1901,
+     "either": 0.4427
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.2309,
+     "either": 0.4852
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.1448,
+     "either": 0.3552
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.1676,
+     "either": 0.4157
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.1675,
+     "either": 0.415
+    }
+   },
+   "run_score_band_10_90": [
+    0.5278,
+    0.9722
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4647,
+    "control:R_DONE_BUILD": 0.3739,
+    "control:R_DONE_SERVER": 0.1657,
+    "control:R_CORRECTION": 0.4003,
+    "control:R_ALIAS": 0.3293,
+    "control:R_FILTER": 0.4266,
+    "control:R_COMPLETION": 0.398
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.5302,
+     "P_fails_all_six": 0.0798
+    },
+    "S14": {
+     "P_fail": 0.4435,
+     "P_fails_all_six": 0.0566
+    },
+    "S05": {
+     "P_fail": 0.4427,
+     "P_fails_all_six": 0.0392
+    },
+    "S24": {
+     "P_fail": 0.4059,
+     "P_fails_all_six": 0.0461
+    },
+    "S07": {
+     "P_fail": 0.3832,
+     "P_fails_all_six": 0.0295
+    },
+    "S26": {
+     "P_fail": 0.3743,
+     "P_fails_all_six": 0.027
+    },
+    "S03": {
+     "P_fail": 0.3373,
+     "P_fails_all_six": 0.0354
+    },
+    "S01": {
+     "P_fail": 0.3306,
+     "P_fails_all_six": 0.0327
+    },
+    "S09": {
+     "P_fail": 0.2504,
+     "P_fails_all_six": 0.0132
+    },
+    "S11": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S12": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S13": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S28": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S29": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S27": {
+     "P_fail": 0.1659,
+     "P_fails_all_six": 0.0018
+    },
+    "S20": {
+     "P_fail": 0.1114,
+     "P_fails_all_six": 0.0003
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.5302,
+     "P_fails_all_six": 0.0798
+    },
+    "S14": {
+     "P_fail": 0.4435,
+     "P_fails_all_six": 0.0566
+    },
+    "S05": {
+     "P_fail": 0.4427,
+     "P_fails_all_six": 0.0392
+    },
+    "S24": {
+     "P_fail": 0.4059,
+     "P_fails_all_six": 0.0461
+    },
+    "S07": {
+     "P_fail": 0.3832,
+     "P_fails_all_six": 0.0295
+    },
+    "S26": {
+     "P_fail": 0.3743,
+     "P_fails_all_six": 0.027
+    },
+    "S03": {
+     "P_fail": 0.3373,
+     "P_fails_all_six": 0.0354
+    },
+    "S01": {
+     "P_fail": 0.3306,
+     "P_fails_all_six": 0.0327
+    },
+    "S09": {
+     "P_fail": 0.2504,
+     "P_fails_all_six": 0.0132
+    },
+    "S11": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S12": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S13": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S28": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S29": {
+     "P_fail": 0.2496,
+     "P_fails_all_six": 0.0122
+    },
+    "S27": {
+     "P_fail": 0.1659,
+     "P_fails_all_six": 0.0018
+    },
+    "S20": {
+     "P_fail": 0.1114,
+     "P_fails_all_six": 0.0003
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8692,
+     "band_10_90": [
+      0.8025,
+      0.9321
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9985,
+      "avg_weighted_pass_rate": 0.7189,
+      "per_rollout_sd": 0.3198,
+      "failure_patterns": 0.8426
+     },
+     "P_all": 0.2768,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.332,
+       "P_all_if_rate_below_median": 0.2216,
+       "spread": 0.1104
+      },
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.331,
+       "P_all_if_rate_below_median": 0.2226,
+       "spread": 0.1084
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.3148,
+       "P_all_if_rate_below_median": 0.2388,
+       "spread": 0.076
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.3104,
+       "P_all_if_rate_below_median": 0.2432,
+       "spread": 0.0672
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.3068,
+       "P_all_if_rate_below_median": 0.2468,
+       "spread": 0.06
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.2954,
+       "P_all_if_rate_below_median": 0.2582,
+       "spread": 0.0372
+      }
+     ],
+     "E_patterns": 4.262
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3344,
+    "rule:R_DONE_SERVER": 0.337,
+    "rule:R_CORRECTION": 0.3813,
+    "rule:R_ALIAS": 0.2442,
+    "rule:R_FILTER": 0.2515,
+    "rule:R_COMPLETION": 0.3334
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 12104,
+     "either": 28176,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 13825,
+     "either": 29117,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 9849,
+     "either": 24864,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 10065,
+     "either": 25090,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 11975,
+     "either": 28091,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 13901,
+     "either": 29197,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 9947,
+     "either": 24922,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 10207,
+     "either": 25104,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 12031,
+     "either": 28191,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 11297,
+     "either": 26234,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 11517,
+     "either": 26456,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 13769,
+     "either": 29115,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 8599,
+     "either": 21145,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 9787,
+     "either": 24868,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 10069,
+     "either": 25028,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.2017,
+     "either": 0.4696
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.2304,
+     "either": 0.4853
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.1641,
+     "either": 0.4144
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.1678,
+     "either": 0.4182
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1996,
+     "either": 0.4682
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.2317,
+     "either": 0.4866
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.1658,
+     "either": 0.4154
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.1701,
+     "either": 0.4184
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.2005,
+     "either": 0.4698
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.1883,
+     "either": 0.4372
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.192,
+     "either": 0.4409
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.2295,
+     "either": 0.4853
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.1433,
+     "either": 0.3524
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.1631,
+     "either": 0.4145
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.1678,
+     "either": 0.4171
+    }
+   },
+   "run_score_band_10_90": [
+    0.713,
+    0.9722
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4704,
+    "control:R_DONE_BUILD": 0.3761,
+    "control:R_DONE_SERVER": 0.1664,
+    "control:R_CORRECTION": 0.4017,
+    "control:R_ALIAS": 0.3313,
+    "control:R_FILTER": 0.4327,
+    "control:R_COMPLETION": 0.3992
+   },
+   "slots": {
+    "S14": {
+     "P_fail": 0.4423,
+     "P_fails_all_six": 0.0584
+    },
+    "S24": {
+     "P_fail": 0.4075,
+     "P_fails_all_six": 0.0486
+    },
+    "S25": {
+     "P_fail": 0.4069,
+     "P_fails_all_six": 0.0332
+    },
+    "S26": {
+     "P_fail": 0.3747,
+     "P_fails_all_six": 0.0252
+    },
+    "S03": {
+     "P_fail": 0.337,
+     "P_fails_all_six": 0.0391
+    },
+    "S01": {
+     "P_fail": 0.3344,
+     "P_fails_all_six": 0.0349
+    },
+    "S09": {
+     "P_fail": 0.2442,
+     "P_fails_all_six": 0.011
+    },
+    "S05": {
+     "P_fail": 0.2218,
+     "P_fails_all_six": 0.0007
+    },
+    "S07": {
+     "P_fail": 0.1908,
+     "P_fails_all_six": 0.0003
+    },
+    "S27": {
+     "P_fail": 0.1676,
+     "P_fails_all_six": 0.0021
+    },
+    "S20": {
+     "P_fail": 0.1124,
+     "P_fails_all_six": 0.0005
+    },
+    "S11": {
+     "P_fail": 0.051,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.051,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0504,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0503,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0502,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S14": {
+     "P_fail": 0.4423,
+     "P_fails_all_six": 0.0584
+    },
+    "S24": {
+     "P_fail": 0.4075,
+     "P_fails_all_six": 0.0486
+    },
+    "S25": {
+     "P_fail": 0.4069,
+     "P_fails_all_six": 0.0332
+    },
+    "S26": {
+     "P_fail": 0.3747,
+     "P_fails_all_six": 0.0252
+    },
+    "S03": {
+     "P_fail": 0.337,
+     "P_fails_all_six": 0.0391
+    },
+    "S01": {
+     "P_fail": 0.3344,
+     "P_fails_all_six": 0.0349
+    },
+    "S09": {
+     "P_fail": 0.2442,
+     "P_fails_all_six": 0.011
+    },
+    "S05": {
+     "P_fail": 0.2218,
+     "P_fails_all_six": 0.0007
+    },
+    "S07": {
+     "P_fail": 0.1908,
+     "P_fails_all_six": 0.0003
+    },
+    "S27": {
+     "P_fail": 0.1676,
+     "P_fails_all_six": 0.0021
+    },
+    "S20": {
+     "P_fail": 0.1124,
+     "P_fails_all_six": 0.0005
+    },
+    "S11": {
+     "P_fail": 0.051,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.051,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0504,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0503,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0502,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8849,
+     "band_10_90": [
+      0.8272,
+      0.9398
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9984,
+      "avg_weighted_pass_rate": 0.6191,
+      "per_rollout_sd": 0.1304,
+      "failure_patterns": 0.8465
+     },
+     "P_all": 0.1119,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.1448,
+       "P_all_if_rate_below_median": 0.079,
+       "spread": 0.0658
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.1358,
+       "P_all_if_rate_below_median": 0.088,
+       "spread": 0.0478
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.1258,
+       "P_all_if_rate_below_median": 0.098,
+       "spread": 0.0278
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.1256,
+       "P_all_if_rate_below_median": 0.0982,
+       "spread": 0.0274
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.1232,
+       "P_all_if_rate_below_median": 0.1006,
+       "spread": 0.0226
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.116,
+       "P_all_if_rate_below_median": 0.1078,
+       "spread": 0.0082
+      }
+     ],
+     "E_patterns": 4.2802
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3344,
+    "rule:R_DONE_SERVER": 0.337,
+    "rule:R_CORRECTION": 0.3813,
+    "rule:R_ALIAS": 0.2442,
+    "rule:R_FILTER": 0.2515,
+    "rule:R_COMPLETION": 0.3334
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 12104,
+     "either": 28176,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 13825,
+     "either": 29117,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 9849,
+     "either": 24864,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 10065,
+     "either": 25090,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 11975,
+     "either": 28091,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 13901,
+     "either": 29197,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 9947,
+     "either": 24922,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 10207,
+     "either": 25104,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 12031,
+     "either": 28191,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 11297,
+     "either": 26234,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 11517,
+     "either": 26456,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 13769,
+     "either": 29115,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 8599,
+     "either": 21145,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 9787,
+     "either": 24868,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 10069,
+     "either": 25028,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.2017,
+     "either": 0.4696
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.2304,
+     "either": 0.4853
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.1641,
+     "either": 0.4144
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.1678,
+     "either": 0.4182
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1996,
+     "either": 0.4682
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.2317,
+     "either": 0.4866
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.1658,
+     "either": 0.4154
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.1701,
+     "either": 0.4184
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.2005,
+     "either": 0.4698
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.1883,
+     "either": 0.4372
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.192,
+     "either": 0.4409
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.2295,
+     "either": 0.4853
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.1433,
+     "either": 0.3524
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.1631,
+     "either": 0.4145
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.1678,
+     "either": 0.4171
+    }
+   },
+   "run_score_band_10_90": [
+    0.7593,
+    0.9722
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4704,
+    "control:R_DONE_BUILD": 0.3761,
+    "control:R_DONE_SERVER": 0.1664,
+    "control:R_CORRECTION": 0.4017,
+    "control:R_ALIAS": 0.3313,
+    "control:R_FILTER": 0.4327,
+    "control:R_COMPLETION": 0.3992
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.3906,
+     "P_fails_all_six": 0.0306
+    },
+    "S26": {
+     "P_fail": 0.3747,
+     "P_fails_all_six": 0.0252
+    },
+    "S03": {
+     "P_fail": 0.337,
+     "P_fails_all_six": 0.0391
+    },
+    "S01": {
+     "P_fail": 0.3344,
+     "P_fails_all_six": 0.0349
+    },
+    "S14": {
+     "P_fail": 0.3057,
+     "P_fails_all_six": 0.0078
+    },
+    "S24": {
+     "P_fail": 0.2577,
+     "P_fails_all_six": 0.0025
+    },
+    "S09": {
+     "P_fail": 0.2442,
+     "P_fails_all_six": 0.011
+    },
+    "S05": {
+     "P_fail": 0.2063,
+     "P_fails_all_six": 0.0006
+    },
+    "S07": {
+     "P_fail": 0.1908,
+     "P_fails_all_six": 0.0003
+    },
+    "S27": {
+     "P_fail": 0.1676,
+     "P_fails_all_six": 0.0021
+    },
+    "S20": {
+     "P_fail": 0.1124,
+     "P_fails_all_six": 0.0005
+    },
+    "S29": {
+     "P_fail": 0.0256,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0255,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0255,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0255,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0248,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.3906,
+     "P_fails_all_six": 0.0306
+    },
+    "S26": {
+     "P_fail": 0.3747,
+     "P_fails_all_six": 0.0252
+    },
+    "S03": {
+     "P_fail": 0.337,
+     "P_fails_all_six": 0.0391
+    },
+    "S01": {
+     "P_fail": 0.3344,
+     "P_fails_all_six": 0.0349
+    },
+    "S14": {
+     "P_fail": 0.3057,
+     "P_fails_all_six": 0.0078
+    },
+    "S24": {
+     "P_fail": 0.2577,
+     "P_fails_all_six": 0.0025
+    },
+    "S09": {
+     "P_fail": 0.2442,
+     "P_fails_all_six": 0.011
+    },
+    "S05": {
+     "P_fail": 0.2063,
+     "P_fails_all_six": 0.0006
+    },
+    "S07": {
+     "P_fail": 0.1908,
+     "P_fails_all_six": 0.0003
+    },
+    "S27": {
+     "P_fail": 0.1676,
+     "P_fails_all_six": 0.0021
+    },
+    "S20": {
+     "P_fail": 0.1124,
+     "P_fails_all_six": 0.0005
+    },
+    "S29": {
+     "P_fail": 0.0256,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0255,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0255,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0255,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0248,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8893,
+     "band_10_90": [
+      0.8349,
+      0.9414
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9978,
+      "avg_weighted_pass_rate": 0.588,
+      "per_rollout_sd": 0.0642,
+      "failure_patterns": 0.8293
+     },
+     "P_all": 0.0534,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.0748,
+       "P_all_if_rate_below_median": 0.032,
+       "spread": 0.0428
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.0662,
+       "P_all_if_rate_below_median": 0.0406,
+       "spread": 0.0256
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.0658,
+       "P_all_if_rate_below_median": 0.041,
+       "spread": 0.0248
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.0586,
+       "P_all_if_rate_below_median": 0.0482,
+       "spread": 0.0104
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.0584,
+       "P_all_if_rate_below_median": 0.0484,
+       "spread": 0.01
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.055,
+       "P_all_if_rate_below_median": 0.0518,
+       "spread": 0.0032
+      }
+     ],
+     "E_patterns": 4.1936
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3366,
+    "rule:R_DONE_SERVER": 0.3288,
+    "rule:R_CORRECTION": 0.3895,
+    "rule:R_ALIAS": 0.2495,
+    "rule:R_FILTER": 0.2494,
+    "rule:R_COMPLETION": 0.3347
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 11883,
+     "either": 28044,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 14100,
+     "either": 29470,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 9970,
+     "either": 25195,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 9983,
+     "either": 25179,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 12035,
+     "either": 28243,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 13792,
+     "either": 29309,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 9884,
+     "either": 24812,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 9843,
+     "either": 24850,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 11852,
+     "either": 27957,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 11692,
+     "either": 26647,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 11530,
+     "either": 26806,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 14053,
+     "either": 29399,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 8542,
+     "either": 21389,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 10030,
+     "either": 25017,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 9852,
+     "either": 25192,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1981,
+     "either": 0.4674
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.235,
+     "either": 0.4912
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.1662,
+     "either": 0.4199
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.1664,
+     "either": 0.4197
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.2006,
+     "either": 0.4707
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.2299,
+     "either": 0.4885
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.1647,
+     "either": 0.4135
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.1641,
+     "either": 0.4142
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1975,
+     "either": 0.4659
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.1949,
+     "either": 0.4441
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.1922,
+     "either": 0.4468
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.2342,
+     "either": 0.49
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.1424,
+     "either": 0.3565
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.1672,
+     "either": 0.4169
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.1642,
+     "either": 0.4199
+    }
+   },
+   "run_score_band_10_90": [
+    0.7685,
+    0.9722
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4641,
+    "control:R_DONE_BUILD": 0.3738,
+    "control:R_DONE_SERVER": 0.1627,
+    "control:R_CORRECTION": 0.4002,
+    "control:R_ALIAS": 0.3317,
+    "control:R_FILTER": 0.4248,
+    "control:R_COMPLETION": 0.3983
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.3776,
+     "P_fails_all_six": 0.0278
+    },
+    "S26": {
+     "P_fail": 0.3745,
+     "P_fails_all_six": 0.0269
+    },
+    "S01": {
+     "P_fail": 0.3366,
+     "P_fails_all_six": 0.0367
+    },
+    "S03": {
+     "P_fail": 0.3288,
+     "P_fails_all_six": 0.0371
+    },
+    "S14": {
+     "P_fail": 0.3034,
+     "P_fails_all_six": 0.0074
+    },
+    "S24": {
+     "P_fail": 0.2618,
+     "P_fails_all_six": 0.0029
+    },
+    "S09": {
+     "P_fail": 0.2495,
+     "P_fails_all_six": 0.0119
+    },
+    "S05": {
+     "P_fail": 0.1987,
+     "P_fails_all_six": 0.0007
+    },
+    "S07": {
+     "P_fail": 0.1925,
+     "P_fails_all_six": 0.0003
+    },
+    "S27": {
+     "P_fail": 0.1653,
+     "P_fails_all_six": 0.003
+    },
+    "S20": {
+     "P_fail": 0.1106,
+     "P_fails_all_six": 0.0001
+    },
+    "S28": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0025,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0025,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.3776,
+     "P_fails_all_six": 0.0278
+    },
+    "S26": {
+     "P_fail": 0.3745,
+     "P_fails_all_six": 0.0269
+    },
+    "S01": {
+     "P_fail": 0.3366,
+     "P_fails_all_six": 0.0367
+    },
+    "S03": {
+     "P_fail": 0.3288,
+     "P_fails_all_six": 0.0371
+    },
+    "S14": {
+     "P_fail": 0.3034,
+     "P_fails_all_six": 0.0074
+    },
+    "S24": {
+     "P_fail": 0.2618,
+     "P_fails_all_six": 0.0029
+    },
+    "S09": {
+     "P_fail": 0.2495,
+     "P_fails_all_six": 0.0119
+    },
+    "S05": {
+     "P_fail": 0.1987,
+     "P_fails_all_six": 0.0007
+    },
+    "S07": {
+     "P_fail": 0.1925,
+     "P_fails_all_six": 0.0003
+    },
+    "S27": {
+     "P_fail": 0.1653,
+     "P_fails_all_six": 0.003
+    },
+    "S20": {
+     "P_fail": 0.1106,
+     "P_fails_all_six": 0.0001
+    },
+    "S28": {
+     "P_fail": 0.0027,
+     "P_fails_all_six": 0.0
+    },
+    "S29": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0026,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0025,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0025,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8789,
+     "band_10_90": [
+      0.8164,
+      0.9367
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9987,
+      "avg_weighted_pass_rate": 0.6579,
+      "per_rollout_sd": 0.182,
+      "failure_patterns": 0.8479
+     },
+     "P_all": 0.1573,
+     "value_of_information": [
+      {
+       "mechanism": "rule:R_ALIAS",
+       "P_all_if_rate_above_median": 0.1974,
+       "P_all_if_rate_below_median": 0.1172,
+       "spread": 0.0802
+      },
+      {
+       "mechanism": "rule:R_FILTER",
+       "P_all_if_rate_above_median": 0.1906,
+       "P_all_if_rate_below_median": 0.124,
+       "spread": 0.0666
+      },
+      {
+       "mechanism": "rule:R_DONE_BUILD",
+       "P_all_if_rate_above_median": 0.1874,
+       "P_all_if_rate_below_median": 0.1272,
+       "spread": 0.0602
+      },
+      {
+       "mechanism": "rule:R_COMPLETION",
+       "P_all_if_rate_above_median": 0.1844,
+       "P_all_if_rate_below_median": 0.1302,
+       "spread": 0.0542
+      },
+      {
+       "mechanism": "rule:R_DONE_SERVER",
+       "P_all_if_rate_above_median": 0.1782,
+       "P_all_if_rate_below_median": 0.1364,
+       "spread": 0.0418
+      },
+      {
+       "mechanism": "rule:R_CORRECTION",
+       "P_all_if_rate_above_median": 0.1782,
+       "P_all_if_rate_below_median": 0.1364,
+       "spread": 0.0418
+      }
+     ],
+     "E_patterns": 4.3246
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:R_DONE_BUILD": 0.3248,
+    "rule:R_DONE_SERVER": 0.3349,
+    "rule:R_CORRECTION": 0.382,
+    "rule:R_ALIAS": 0.2458,
+    "rule:R_FILTER": 0.2453,
+    "rule:R_COMPLETION": 0.3278
+   },
+   "landing_pair_counts": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 11773,
+     "either": 27810,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 13473,
+     "either": 28933,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 9660,
+     "either": 24577,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 9665,
+     "either": 24541,
+     "runs": 60000
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 11552,
+     "either": 27602,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 13842,
+     "either": 29171,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 9986,
+     "either": 24858,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 9872,
+     "either": 24941,
+     "runs": 60000
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 11900,
+     "either": 27861,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 11328,
+     "either": 26339,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 11218,
+     "either": 26418,
+     "runs": 60000
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 13617,
+     "either": 28967,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 8390,
+     "either": 21077,
+     "runs": 60000
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 9746,
+     "either": 24669,
+     "runs": 60000
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 9816,
+     "either": 24568,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:R_DONE_BUILD|rule:R_DONE_SERVER": {
+     "both": 0.1962,
+     "either": 0.4635
+    },
+    "rule:R_DONE_BUILD|rule:R_CORRECTION": {
+     "both": 0.2245,
+     "either": 0.4822
+    },
+    "rule:R_DONE_BUILD|rule:R_ALIAS": {
+     "both": 0.161,
+     "either": 0.4096
+    },
+    "rule:R_DONE_BUILD|rule:R_FILTER": {
+     "both": 0.1611,
+     "either": 0.409
+    },
+    "rule:R_DONE_BUILD|rule:R_COMPLETION": {
+     "both": 0.1925,
+     "either": 0.46
+    },
+    "rule:R_DONE_SERVER|rule:R_CORRECTION": {
+     "both": 0.2307,
+     "either": 0.4862
+    },
+    "rule:R_DONE_SERVER|rule:R_ALIAS": {
+     "both": 0.1664,
+     "either": 0.4143
+    },
+    "rule:R_DONE_SERVER|rule:R_FILTER": {
+     "both": 0.1645,
+     "either": 0.4157
+    },
+    "rule:R_DONE_SERVER|rule:R_COMPLETION": {
+     "both": 0.1983,
+     "either": 0.4643
+    },
+    "rule:R_CORRECTION|rule:R_ALIAS": {
+     "both": 0.1888,
+     "either": 0.439
+    },
+    "rule:R_CORRECTION|rule:R_FILTER": {
+     "both": 0.187,
+     "either": 0.4403
+    },
+    "rule:R_CORRECTION|rule:R_COMPLETION": {
+     "both": 0.227,
+     "either": 0.4828
+    },
+    "rule:R_ALIAS|rule:R_FILTER": {
+     "both": 0.1398,
+     "either": 0.3513
+    },
+    "rule:R_ALIAS|rule:R_COMPLETION": {
+     "both": 0.1624,
+     "either": 0.4112
+    },
+    "rule:R_FILTER|rule:R_COMPLETION": {
+     "both": 0.1636,
+     "either": 0.4095
+    }
+   },
+   "run_score_band_10_90": [
+    0.7407,
+    0.9722
+   ],
+   "channels_hit_rate": {
+    "scale:comments": 0.4652,
+    "control:R_DONE_BUILD": 0.3771,
+    "control:R_DONE_SERVER": 0.1689,
+    "control:R_CORRECTION": 0.3964,
+    "control:R_ALIAS": 0.3305,
+    "control:R_FILTER": 0.4242,
+    "control:R_COMPLETION": 0.4031
+   },
+   "slots": {
+    "S25": {
+     "P_fail": 0.3954,
+     "P_fails_all_six": 0.0295
+    },
+    "S26": {
+     "P_fail": 0.3749,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3349,
+     "P_fails_all_six": 0.0368
+    },
+    "S14": {
+     "P_fail": 0.3312,
+     "P_fails_all_six": 0.0148
+    },
+    "S01": {
+     "P_fail": 0.3248,
+     "P_fails_all_six": 0.0332
+    },
+    "S24": {
+     "P_fail": 0.2849,
+     "P_fails_all_six": 0.0097
+    },
+    "S09": {
+     "P_fail": 0.2458,
+     "P_fails_all_six": 0.0106
+    },
+    "S05": {
+     "P_fail": 0.243,
+     "P_fails_all_six": 0.0038
+    },
+    "S07": {
+     "P_fail": 0.2263,
+     "P_fails_all_six": 0.0032
+    },
+    "S27": {
+     "P_fail": 0.1699,
+     "P_fails_all_six": 0.003
+    },
+    "S20": {
+     "P_fail": 0.11,
+     "P_fails_all_six": 0.0007
+    },
+    "S29": {
+     "P_fail": 0.0321,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0318,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0317,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0317,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0316,
+     "P_fails_all_six": 0.0
+    },
+    "T01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T03": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T05": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "T04": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S21": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S22": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S23": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D01": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D02": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S25": {
+     "P_fail": 0.3954,
+     "P_fails_all_six": 0.0295
+    },
+    "S26": {
+     "P_fail": 0.3749,
+     "P_fails_all_six": 0.0265
+    },
+    "S03": {
+     "P_fail": 0.3349,
+     "P_fails_all_six": 0.0368
+    },
+    "S14": {
+     "P_fail": 0.3312,
+     "P_fails_all_six": 0.0148
+    },
+    "S01": {
+     "P_fail": 0.3248,
+     "P_fails_all_six": 0.0332
+    },
+    "S24": {
+     "P_fail": 0.2849,
+     "P_fails_all_six": 0.0097
+    },
+    "S09": {
+     "P_fail": 0.2458,
+     "P_fails_all_six": 0.0106
+    },
+    "S05": {
+     "P_fail": 0.243,
+     "P_fails_all_six": 0.0038
+    },
+    "S07": {
+     "P_fail": 0.2263,
+     "P_fails_all_six": 0.0032
+    },
+    "S27": {
+     "P_fail": 0.1699,
+     "P_fails_all_six": 0.003
+    },
+    "S20": {
+     "P_fail": 0.11,
+     "P_fails_all_six": 0.0007
+    },
+    "S29": {
+     "P_fail": 0.0321,
+     "P_fails_all_six": 0.0
+    },
+    "S13": {
+     "P_fail": 0.0318,
+     "P_fails_all_six": 0.0
+    },
+    "S11": {
+     "P_fail": 0.0317,
+     "P_fails_all_six": 0.0
+    },
+    "S12": {
+     "P_fail": 0.0317,
+     "P_fails_all_six": 0.0
+    },
+    "S28": {
+     "P_fail": 0.0316,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  }
+ ],
+ "summary": {
+  "V3": {
+   "P_all_min": 0.0,
+   "P_all_max": 0.5735,
+   "E_average_range": [
+    0.8106,
+    0.8893
+   ],
+   "voi": [
+    "rule:R_FILTER",
+    "rule:R_CORRECTION",
+    "rule:R_COMPLETION",
+    "rule:R_ALIAS",
+    "rule:R_DONE_SERVER",
+    "rule:R_DONE_BUILD"
+   ]
+  }
+ },
+ "preregistration": {
+  "id": "hev_a821dfc67699e7d6",
+  "added": true,
+  "present": false,
+  "rejected": []
+ }
+}

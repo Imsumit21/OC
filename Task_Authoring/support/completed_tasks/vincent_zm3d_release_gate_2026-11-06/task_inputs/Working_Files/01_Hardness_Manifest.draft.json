@@ -1,0 +1,1455 @@
+{
+ "assignment_context": {
+  "context_hash": "fb209f3058d7e399087b2b69e0108dfc9429f64c9c1cb45eeb3e417275bd498a",
+  "assignment_hash": "c2f3888d53bd20f4900e4b71f1729712c8bb18a107b77a0547d1200b1cb6deac",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2025-10-01T00:00:00Z",
+  "difficulty_mode": "easy"
+ },
+ "persona": "vincent_parker",
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "volume_exception": {
+  "reason": "Honest necessary calls top out near 260 (about 155 per record): only Linear comments are a per-record surface here (GitHub reviews and comments are mirrored to #zombie-prs, Slack threads are search-sweepable, closed tickets take no new comments), and the widest natural gate scope is every open ZM ticket plus everything Done since the Sep 22 gate (~139 tickets). Reaching 500/300 would need padding, a failing error.",
+  "requester_confirmation": "The requester (task owner) chose floors 250 / 150 with the widest scope in this session on 2026-11-04 ('go with this'), after first confirming 280 / 170 on 2026-11-04 and being shown that 280 / 170 is unreachable without padding",
+  "call_budget_floor": 250,
+  "per_record_floor": 150
+ },
+ "requirements": {
+  "R1": "Gate scope in the register: one row for every open Zombie Match 3D ticket (the ZOM team in any state or label, plus other teams' tickets with ZM in the title) and every ticket moved to Done since the Sep 22 gate; release tickets and the perf-pass tickets stay out",
+  "R2": "Build status column for every ticket moved to Done since the Sep 22 gate: in the Sep 30 candidate builds or not, by the submission build rule",
+  "R3": "QA result column: the latest QA result on the candidate builds (or on prod for a server fix), not a developer's fixed note or an older build's pass",
+  "R4": "Live status for fixes that need a backend change: live only once deployed to prod; merged (even with an approval) is not live",
+  "R5": "Launch call for every register ticket in the call column: blocker, known issue, fixed or no call, by the severity rule and what is true on the candidates (not the Linear state)",
+  "R6": "Regression matrix verdict under the runbook update-path rule: a failed update column blocks the release",
+  "R7": "Blockers listed on the store release ticket, each by its existing ticket key (reuse, no duplicate tickets)",
+  "R8": "QA sign-off posted as a reply in Arthur's #zombie-bugs candidate thread before Friday's go/no-go",
+  "R9": "A bug filed for the failed update-path check with device, OS and source build",
+  "R10": "Register written as a new tab in Vincent's release gate sheet with the sheet's columns and call vocabulary"
+ },
+ "services": {
+  "slack": {
+   "role": "candidate builds, re-test reports, sign-off destination",
+   "weight_reason": "#builds Submission #135/#50 and #2028 posts decide build membership (R2); the #zombie-bugs candidate thread is the sign-off destination (R8); Brian's DM decides R3 for ZOM-473 and Douglas's DM that #36 is rolled out (code only) is the done source for ZOM-567 (R4)"
+  },
+  "linear": {
+   "role": "cohort, per-ticket QA notes, release ticket writes",
+   "weight_reason": "every open ZM ticket and every Done-since-gate ticket is a register row (R1); per-ticket comments carry the QA observations that decide the call (R5); the release ticket carries the blocker list (R7) and the filed bug (R9)"
+  },
+  "github": {
+   "role": "fix provenance",
+   "weight_reason": "match3d PR merge times place each Done fix before or after the 18:43Z cut (R2); match3d-backend#36 shows the chest fix merged with Arthur's approval, and only its inline review comment says the chest rows are still dev-only (R4)"
+  },
+  "confluence": {
+   "role": "QA rules (base pages, not injected)",
+   "weight_reason": "the runbook's update-path rule decides R6 and its sign-off channel R8; the checklist decides the filed bug's content R9; the CI/CD page defines a backend deploy as manual (R4)"
+  },
+  "gmail": {
+   "role": "external report",
+   "weight_reason": "the playtest vendor's Sep 30 session notes are the only record that the boss-arena orphans leave players unable to finish the fight, which escalates ZOM-562 (R5)"
+  },
+  "gsheets": {
+   "role": "destination and format",
+   "weight_reason": "Vincent's 'ZM3D Release Gate' sheet fixes the register columns and call vocabulary (R10) and is the write target"
+  },
+  "gdocs": {
+   "role": "hidden authorities and update-path evidence",
+   "weight_reason": "Leonard's Sep 23 rules doc decides scope, verification and severity (R1, R3, R5); Arthur's Sep 24 doc decides build membership and backend liveness (R2, R4); Brian's test log is the only record of the update from the N-1 store build failing on iOS #50 with device and OS (R6, R9)"
+  },
+  "gdrive": {
+   "role": "discovery and ownership",
+   "weight_reason": "Drive search is how the rule docs and their older look-alikes are found (R1-R5); the gate sheet's Drive row makes Vincent its owner (write access for R10); the test log's Drive row shares it with him"
+  },
+  "gcal": {
+   "role": "deadline",
+   "weight_reason": "the Friday Oct 3 go/no-go on Vincent's calendar is the deadline the sign-off serves (R8)"
+  },
+  "trello": {
+   "role": "reuse instruction and an off-path correction",
+   "weight_reason": "Arthur's comment on the ZM tech-issues card sets the reuse rule (R7); Leonard's later comment there is the only record that ZOM-435 is back on #135 (R3)"
+  },
+  "contacts": {
+   "role": "identity of the external reporter",
+   "weight_reason": "maps the vendor sender to the ZM playtest vendor, so the session report is a report against the candidate (R5)"
+  }
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "prompt_reference": "the store release ticket",
+   "service": "linear",
+   "locator": "ZOM-570",
+   "seeded_ids": [
+    "ZOM-570"
+   ],
+   "requirement_ids": [
+    "R7"
+   ]
+  },
+  {
+   "id": "A2",
+   "prompt_reference": "the QA regression runbook",
+   "service": "confluence",
+   "locator": "page_qa_runbook",
+   "base_pointers": [
+    "page_qa_runbook"
+   ],
+   "requirement_ids": [
+    "R6",
+    "R8"
+   ]
+  },
+  {
+   "id": "A3",
+   "prompt_reference": "my release gate sheet",
+   "service": "gsheets",
+   "locator": "f_0ebfccf33076f9dbf086bc",
+   "seeded_ids": [
+    "f_0ebfccf33076f9dbf086bc"
+   ],
+   "requirement_ids": [
+    "R10"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "gdocs",
+   "container": "file:f_632c44650df44fe252ee59",
+   "locator": "f_632c44650df44fe252ee59",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_632c44650df44fe252ee59"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "Leonard's submission rules",
+   "requirement_ids": [
+    "R1",
+    "R5"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "every ZM ticket that's still open"
+    }
+   ]
+  },
+  {
+   "id": "K1b",
+   "service": "gdocs",
+   "container": "file:f_632c44650df44fe252ee59",
+   "locator": "f_632c44650df44fe252ee59",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_632c44650df44fe252ee59"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "Leonard's submission rules",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "gdocs",
+   "container": "file:f_a038a576ca8db6955fae95",
+   "locator": "f_a038a576ca8db6955fae95",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_a038a576ca8db6955fae95"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "my note on how we cut submissions",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "exactly what was on main when its job started"
+    }
+   ]
+  },
+  {
+   "id": "K2b",
+   "service": "gdocs",
+   "container": "file:f_a038a576ca8db6955fae95",
+   "locator": "f_a038a576ca8db6955fae95",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_a038a576ca8db6955fae95"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "my note on how we cut submissions",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K3",
+   "service": "confluence",
+   "container": "confluence:page_cicd_pipeline",
+   "locator": "page_cicd_pipeline",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2b"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "page_cicd_pipeline"
+   ],
+   "delegated_by_record": "f_a038a576ca8db6955fae95",
+   "delegation_quote": "CI/CD page",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K4",
+   "service": "confluence",
+   "container": "confluence:page_release_checklist",
+   "locator": "page_release_checklist",
+   "kind": "format",
+   "incorporated_via": [
+    "A2"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "page_release_checklist"
+   ],
+   "delegated_by_record": "page_qa_runbook",
+   "delegation_quote": "tick the QA sign-off on the",
+   "requirement_ids": [
+    "R9"
+   ]
+  },
+  {
+   "id": "K6",
+   "service": "gsheets",
+   "container": "file:f_0ebfccf33076f9dbf086bc",
+   "locator": "f_0ebfccf33076f9dbf086bc",
+   "kind": "format",
+   "incorporated_via": [
+    "A3"
+   ],
+   "seeded_ids": [
+    "f_0ebfccf33076f9dbf086bc"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_0ebfccf33076f9dbf086bc",
+   "delegation_quote": "How we gate",
+   "requirement_ids": [
+    "R10"
+   ]
+  },
+  {
+   "id": "K7",
+   "service": "gcal",
+   "container": "gcal:19c1511dd209208f50aabe12f04a6d44@hg4",
+   "locator": "evt_81e6dc4dbfd331f1a6a317",
+   "kind": "deadline",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "evt_81e6dc4dbfd331f1a6a317"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "go/no-go on Friday",
+   "requirement_ids": [
+    "R8"
+   ]
+  },
+  {
+   "id": "K8",
+   "service": "trello",
+   "container": "trello:68d1eb90bef538c7c5c5599d",
+   "locator": "68dc3ef455344e471b1d2ea9",
+   "kind": "reuse",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "68dc3ef455344e471b1d2ea9"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "tech-issues card",
+   "requirement_ids": [
+    "R7"
+   ]
+  },
+  {
+   "id": "K9",
+   "service": "slack",
+   "container": "linear:ZOM-570",
+   "locator": "C08R27X0EAH/1759263900.484190",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "C08R27X0EAH/1759263900.484190"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "post the candidates in #zombie-bugs",
+   "requirement_ids": [
+    "R8"
+   ]
+  },
+  {
+   "id": "K10",
+   "service": "linear",
+   "container": "linear:ZOM-570#comment",
+   "locator": "cmt_zom570_1",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "cmt_zom570_1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ZOM-570",
+   "delegation_quote": "push notes go in the comments here",
+   "requirement_ids": [
+    "R8"
+   ]
+  },
+  {
+   "id": "K11",
+   "service": "slack",
+   "container": "slack:C08R27X0EAH/1758485492.586459",
+   "locator": "C08R27X0EAH/1758485492.586459",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C08R27X0EAH/1758485492.586459"
+   ],
+   "delegated_by_record": "f_632c44650df44fe252ee59",
+   "delegation_quote": "like the orange juice one",
+   "requirement_ids": [
+    "R5"
+   ]
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "Arthur's submission build rules",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R2",
+    "R4"
+   ],
+   "findable_query": "submission builds",
+   "seeded_ids": [
+    "f_a038a576ca8db6955fae95"
+   ],
+   "decoy_seeded_ids": [
+    "f_fcb4f7c9b508088e0d5803"
+   ]
+  },
+  {
+   "id": "H2",
+   "name": "Leonard's ZM submission rules",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R1",
+    "R3",
+    "R5"
+   ],
+   "findable_query": "submission rules",
+   "seeded_ids": [
+    "f_632c44650df44fe252ee59"
+   ],
+   "decoy_seeded_ids": [
+    "f_5ae4332fb6927f84b3afdc"
+   ],
+   "decoy_scope": {
+    "dimension": "lot",
+    "decoy": "ZM TestFlight beta drops",
+    "task": "ZM store submission builds"
+   }
+  }
+ ],
+ "cohort": {
+  "definition_source": "K1",
+  "key": "ticket id",
+  "size": 132,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 132,
+    "seeded": true,
+    "seeded_ids": [
+     "ZOM-567",
+     "ZOM-568",
+     "ZOM-569",
+     "ZOM-570",
+     "ZOM-571",
+     "ZOM-572",
+     "ZOM-573",
+     "ZOM-574",
+     "ZOM-575",
+     "ZOM-576",
+     "ZOM-577",
+     "ZOM-578",
+     "ZOM-579",
+     "ZOM-580",
+     "ART-793",
+     "DES-313"
+    ],
+    "why_no_bulk": "linear_list_issues returns state, labels and a truncated description but never comments; the QA observations that decide the call live only in each ticket's comments (Ask_Carriers §6b)",
+    "short_circuit": "labels and state never decide the call: a VFX- or Improvement-labelled ticket can carry a freeze in its comments and a Bug-labelled one can be cosmetic, so a run that skips a ticket's comments mis-calls the unpredictable subset; no filtered search returns comment text",
+    "requirement": "R5",
+    "decides": "call column"
+   },
+   {
+    "service": "github",
+    "tool": "github_get_pull_request",
+    "per_record_calls": 0.75,
+    "records": 20,
+    "seeded": true,
+    "seeded_ids": [
+     "harmonygames-Games/match3d-backend#36"
+    ],
+    "why_no_bulk": "PR search returns merged_at only for PRs whose title or branch names the ticket; half the Done fixes are PRs without the key or direct commits, so each Done ticket's fix has to be traced (branch, PR body, #builds change line) one ticket at a time",
+    "short_circuit": "the ticket's Done state never decides build status: a fix merged after the 18:43Z cut or only in the backend repo is not in the candidate builds, so the trace is needed even when the ticket is Done",
+    "requirement": "R2",
+    "decides": "Build status column"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_conversations_search_messages",
+    "per_record_calls": 0.1,
+    "records": 132,
+    "seeded": true,
+    "seeded_ids": [
+     "C08R27X0EAH/1759140300.935009",
+     "D0770ET1HV2/1759267800.858041"
+    ],
+    "why_no_bulk": "re-test reports are spread over #zombie-bugs threads, DMs and #zombie-ops; a channel sweep returns them but not which ticket each refers to, so each ticket's latest result must be matched (counted at 0.1 per ticket: the sweep pages are shared)",
+    "short_circuit": "a developer's fixed note or Done state never decides the QA result column; the latest re-test on the candidate does",
+    "requirement": "R3",
+    "decides": "QA result column"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "CH1",
+   "root_cause": "A24",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ZOM-569",
+     "finding": "closed at 18:05Z with a fixed-on-my-branch note"
+    },
+    {
+     "service": "slack",
+     "record": "C05433XK267/1759257934.076209",
+     "finding": "Android Submission #135 job started 18:45:34Z"
+    },
+    {
+     "service": "slack",
+     "record": "C05433XK267/1759268589.049939",
+     "finding": "the season pass fix lands in Android #2028 at 21:36Z"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_a038a576ca8db6955fae95",
+     "finding": "a submission has what was on main when its job started"
+    }
+   ]
+  },
+  {
+   "id": "CH2",
+   "root_cause": "A11",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ZOM-435",
+     "finding": "Done Sep 22 with Oliver's fix note"
+    },
+    {
+     "service": "slack",
+     "record": "C08R27X0EAH/1759140300.935009",
+     "finding": "Vincent's pass on Submission #133"
+    },
+    {
+     "service": "trello",
+     "record": "68dc63484a5b2d0a869e758f",
+     "finding": "Leonard reproduces the trophy-path lock on #135"
+    }
+   ]
+  },
+  {
+   "id": "CH3",
+   "root_cause": "A15",
+   "ends_in": "R6",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C08R27X0EAH/1759266600.265963",
+     "finding": "Brian calls regression green"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_5e40215b7d4d24b0455412",
+     "finding": "update from the N-1 store build to iOS #50 resets progress"
+    },
+    {
+     "service": "confluence",
+     "record": "page_qa_runbook",
+     "finding": "any failed update column blocks"
+    }
+   ]
+  },
+  {
+   "id": "CH4",
+   "root_cause": "A7",
+   "ends_in": "R5",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "vincent.parker@harmonygames.co/1844730396672762606",
+     "finding": "boss fight stuck after refill, life lost (Puzzles vs Zombies)"
+    },
+    {
+     "service": "contacts",
+     "record": "29016e2ba1a844a2509b847b",
+     "finding": "sender is the ZM playtest vendor"
+    },
+    {
+     "service": "linear",
+     "record": "ZOM-562",
+     "finding": "orphan items after refill"
+    }
+   ]
+  },
+  {
+   "id": "CH5",
+   "root_cause": "A25",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ZOM-563",
+     "finding": "In Progress: works on dev, not prod"
+    },
+    {
+     "service": "slack",
+     "record": "D079SNE2TL4/1759256193.859279",
+     "finding": "Douglas updates prod with the teams/social changes"
+    },
+    {
+     "service": "slack",
+     "record": "D079SNE2TL4/1759269524.769369",
+     "finding": "Vincent confirms it works"
+    }
+   ]
+  },
+  {
+   "id": "CH6",
+   "root_cause": "A17",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ART-793",
+     "finding": "ZM defect filed in the ART team"
+    },
+    {
+     "service": "linear",
+     "record": "DES-313",
+     "finding": "ZM defect filed in the DES team"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_632c44650df44fe252ee59",
+     "finding": "every ZM ticket that's still open, whatever team or label"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "done_gap",
+   "services": [
+    "linear",
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "ZOM-569"
+   ],
+   "base_pointers": [
+    "C05433XK267/1759268589.049939",
+    "C05433XK267/1759257934.076209"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "ZOM-569 was closed at 18:05Z, before both jobs started, with Oliver's 'fixed' note, so the fix ships in #135/#50",
+   "resolver": "H1: a submission has exactly what was on main when its job started; Oliver fixed it on his branch, and the change only reaches main in Android #2028 / iOS Internal #1759 (21:36Z), after both jobs started (18:43Z/18:45Z); How we gate goes by the close time only when nothing shows when the fix landed",
+   "discovery_order": "the Done state, the pre-cut close time and the fix note are on the ticket; when the fix landed on main is only in #builds (and GitHub's commit list); PR #473 'Addressables/sp' (merged 15:41Z) is season-pass work that does not fix it"
+  },
+  {
+   "id": "T2",
+   "family": "done_gap",
+   "services": [
+    "linear",
+    "github",
+    "slack",
+    "confluence"
+   ],
+   "seeded_ids": [
+    "ZOM-567",
+    "harmonygames-Games/match3d-backend#36",
+    "harmonygames-Games/match3d-backend#36#rev_1",
+    "harmonygames-Games/match3d-backend#36#rc_1",
+    "D079SNE2TL4/1759269712.483915"
+   ],
+   "base_pointers": [
+    "page_cicd_pipeline"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "ZOM-567 is Done, match3d-backend#36 is approved and merged, and Douglas says #36 is rolled out to prod, so players get their chests (fixed, not re-checked)",
+   "resolver": "Arthur's inline review comment on #36 (22:35Z, after Douglas's rollout): he claimed a chest on his prod account and nothing landed; the migration only creates the empty zombie_lane_chest_rows table, and the rows the grant reads come from the PR's load script, which runs by hand per environment and hasn't been run on prod (he is holding it until after the store push); so part of the fix isn't on prod (How we gate: server - not live, 'any part not on prod yet, even if its code is deployed'; H1: merged is not live) and the chests still don't land",
+   "discovery_order": "the Done ticket, the approved merged PR and Douglas's 'rolled out' DM are met first; the missing piece is only in the PR's inline review comment (match3d-backend has no Slack mirror)",
+   "version_records": [
+    {
+     "service": "linear",
+     "id": "ZOM-567",
+     "seeded": true,
+     "at": "2025-09-30T19:00:00Z",
+     "container": "linear:ZOM-567"
+    },
+    {
+     "service": "slack",
+     "id": "D079SNE2TL4/1759269712.483915",
+     "seeded": true,
+     "at": "2025-09-30T22:01:52Z",
+     "container": "slack:D079SNE2TL4"
+    },
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d-backend#36#rc_1",
+     "seeded": true,
+     "at": "2025-09-30T22:35:00Z",
+     "container": "github:harmonygames-Games/match3d-backend#36"
+    }
+   ]
+  },
+  {
+   "id": "T3",
+   "family": "superseding",
+   "services": [
+    "linear",
+    "slack",
+    "trello"
+   ],
+   "seeded_ids": [
+    "C08R27X0EAH/1759140300.935009",
+    "68dc63484a5b2d0a869e758f"
+   ],
+   "base_pointers": [
+    "ZOM-435"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-435 is Done and passed Vincent's #133 re-test, so it ships fixed",
+   "resolver": "H2: the latest QA result on the candidate counts; Leonard's Sep 30 Trello comment reproduces the trophy-path lock on #135",
+   "discovery_order": "the Done ticket and the #zombie-bugs pass are on the obvious path; the re-test on #135 is a comment on a roadmap card",
+   "version_records": [
+    {
+     "service": "linear",
+     "base_pointer": "ZOM-435",
+     "seeded": false,
+     "at": "2025-07-25T00:00:00Z",
+     "container": "linear:ZOM-435"
+    },
+    {
+     "service": "slack",
+     "id": "C08R27X0EAH/1759140300.935009",
+     "seeded": true,
+     "at": "2025-09-29T10:05:00Z",
+     "container": "slack:C08R27X0EAH/1759140300.935009"
+    },
+    {
+     "service": "trello",
+     "id": "68dc63484a5b2d0a869e758f",
+     "seeded": true,
+     "at": "2025-09-30T23:10:00Z",
+     "container": "trello:68d1eb90bef538c7c5c5599d"
+    }
+   ]
+  },
+  {
+   "id": "T3b",
+   "family": "superseding",
+   "services": [
+    "linear",
+    "slack"
+   ],
+   "seeded_ids": [
+    "D0770ET1HV2/1759267800.858041"
+   ],
+   "base_pointers": [
+    "ZOM-473"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-473 is Done (Sep 22), so the endless end screen ships fixed",
+   "resolver": "H2: Brian's re-test on iOS #50 (DM, Sep 30) shows the end screen can still be tapped away",
+   "discovery_order": "the Done state is in the list view; the re-test is in a DM",
+   "version_records": [
+    {
+     "service": "linear",
+     "base_pointer": "ZOM-473",
+     "seeded": false,
+     "at": "2025-08-14T08:24:51Z",
+     "container": "linear:ZOM-473"
+    },
+    {
+     "service": "slack",
+     "id": "D0770ET1HV2/1759267800.858041",
+     "seeded": true,
+     "at": "2025-09-30T21:30:00Z",
+     "container": "slack:D0770ET1HV2/1759267800.858041"
+    }
+   ]
+  },
+  {
+   "id": "T4",
+   "family": "authority",
+   "services": [
+    "gdocs",
+    "slack",
+    "confluence",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "f_5e40215b7d4d24b0455412",
+    "C08R27X0EAH/1759266600.265963"
+   ],
+   "base_pointers": [
+    "page_qa_runbook"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "Brian's 'regression green' reply and the passing fresh-install and N-1 rows clear the gate",
+   "resolver": "the runbook: both update rows are mandatory and a failure in any UPDATE column blocks; the test log's update from the N-1 store build to iOS #50 resets progress",
+   "discovery_order": "the green summary is in the sign-off thread every run reads; the failing row is in Brian's test log"
+  },
+  {
+   "id": "T5",
+   "family": "scope_alias",
+   "services": [
+    "gmail",
+    "contacts",
+    "linear"
+   ],
+   "seeded_ids": [
+    "vincent.parker@harmonygames.co/1844730396672762606",
+    "29016e2ba1a844a2509b847b"
+   ],
+   "base_pointers": [
+    "ZOM-562"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "the vendor's 'Puzzles vs Zombies' boss-fight report is a new or unrelated issue, and ZOM-562 (orphan items after refill) is cosmetic",
+   "resolver": "the report's boss-arena refill leaving single items that never form a set is ZOM-562; the player could not finish and lost a life, so H2 makes it a blocker",
+   "discovery_order": "ZOM-562's own text reads as cosmetic; the consequence is only in an external sender's mail under the game's old name"
+  },
+  {
+   "id": "T6",
+   "family": "exact_predicate",
+   "services": [
+    "linear",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "ART-793",
+    "DES-313",
+    "ZOM-578"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the gate covers ZOM-team tickets labelled Bug",
+   "resolver": "H2: every ZM ticket still open (any state but Done, Canceled or Duplicate) whatever team or label; ART-793 and DES-313 are ZM defects in other teams and ZOM-578 has no label",
+   "discovery_order": "the obvious filter is team ZOM + label Bug"
+  },
+  {
+   "id": "T7",
+   "family": "completion_elsewhere",
+   "services": [
+    "linear",
+    "slack"
+   ],
+   "base_pointers": [
+    "ZOM-563",
+    "D079SNE2TL4/1759256193.859279",
+    "D079SNE2TL4/1759269524.769369"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-563 is still In Progress and its lives/frames symptom on prod makes it a blocker",
+   "resolver": "H2 (server fixes count once QA confirms on prod after the deploy): Douglas updated prod at 18:16Z and Vincent confirmed it works at 21:58Z in their DM",
+   "discovery_order": "the ticket state is open; the confirmation is in a DM"
+  },
+  {
+   "id": "T8",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_fcb4f7c9b508088e0d5803",
+    "f_a038a576ca8db6955fae95"
+   ],
+   "base_pointers": [
+    "C05433XK267/1756826078.213299"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "submissions are built from a release branch, so main commits before the cut may not be in #135",
+   "resolver": "Arthur's Sep 24 doc: since the hotfix train ended every ZM store submission is cut straight from main",
+   "discovery_order": "the Sep 2 doc matches the same Drive search and the release-branch submissions in #builds are met in history first",
+   "version_records": [
+    {
+     "service": "slack",
+     "base_pointer": "C05433XK267/1756826078.213299",
+     "seeded": false,
+     "at": "2025-09-02T15:14:38Z",
+     "container": "slack:C05433XK267"
+    },
+    {
+     "service": "gdocs",
+     "id": "f_fcb4f7c9b508088e0d5803",
+     "seeded": true,
+     "at": "2025-09-02T15:40:00Z",
+     "container": "file:f_fcb4f7c9b508088e0d5803"
+    },
+    {
+     "service": "gdocs",
+     "id": "f_a038a576ca8db6955fae95",
+     "seeded": true,
+     "at": "2025-09-24T14:20:00Z",
+     "container": "file:f_a038a576ca8db6955fae95"
+    }
+   ]
+  },
+  {
+   "id": "T9",
+   "family": "distractor",
+   "distractor_type": "lookalike_entity",
+   "services": [
+    "slack",
+    "linear"
+   ],
+   "seeded_ids": [
+    "ZOM-570"
+   ],
+   "base_pointers": [
+    "C08R27X0EAH/1758409417.505029"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the submission candidate is TestFlight 39 (the last 'submission candidate' post)",
+   "resolver": "the release ticket names Android Submission #135 and iOS Submission #50",
+   "discovery_order": "a search for 'submission candidate' returns the Sep 20 post first"
+  },
+  {
+   "id": "T10",
+   "family": "distractor",
+   "distractor_type": "stale_summary",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "C08R27X0EAH/1759266600.265963"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "regression is green, good to go",
+   "resolver": "the runbook update-path rule and the test log",
+   "discovery_order": "the summary is a reply in the sign-off thread"
+  },
+  {
+   "id": "T11",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_5ae4332fb6927f84b3afdc"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "only crashes and progress wipes block (the July beta-drop rule)",
+   "resolver": "H2 governs store submission builds; the July note covers TestFlight beta drops only"
+  },
+  {
+   "id": "T12",
+   "family": "superseding",
+   "services": [
+    "gsheets",
+    "linear"
+   ],
+   "seeded_ids": [
+    "f_0ebfccf33076f9dbf086bc",
+    "cmt_zom559_1"
+   ],
+   "base_pointers": [
+    "ZOM-559"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "carry the Sep 22 tab's calls forward (ZOM-559 known issue)",
+   "resolver": "each call is made on the current evidence; Brian's Sep 29 re-test on Android Submission #133 records the victory screen freezing, which H2 makes a blocker",
+   "discovery_order": "the previous gate tab is the first tab of the destination sheet; the re-test is a comment on the ticket",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "id": "f_0ebfccf33076f9dbf086bc",
+     "seeded": true,
+     "at": "2025-09-22T17:05:00Z",
+     "container": "file:f_0ebfccf33076f9dbf086bc"
+    },
+    {
+     "service": "linear",
+     "id": "cmt_zom559_1",
+     "seeded": true,
+     "at": "2025-09-29T15:20:00Z",
+     "container": "linear:ZOM-559"
+    }
+   ]
+  },
+  {
+   "id": "T13",
+   "family": "distractor",
+   "distractor_type": "keyword_collision",
+   "services": [
+    "linear"
+   ],
+   "base_pointers": [
+    "ZOM-516"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "the refill report maps to ZOM-516 (endless mode refills one item less)",
+   "resolver": "ZOM-516 is a closed Duplicate about endless mode; the report is boss arena orphan items (ZOM-562)"
+  },
+  {
+   "id": "T14",
+   "family": "distractor",
+   "distractor_type": "partial_listing",
+   "services": [
+    "trello"
+   ],
+   "base_pointers": [
+    "68c451141c69fb8af1b4568e"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the 'Minor Bugs to Fix' card is the list to gate",
+   "resolver": "H2's scope is every open ZM ticket; the card is a September to-do list"
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "distractor_type": "already_done",
+   "services": [
+    "linear",
+    "github"
+   ],
+   "base_pointers": [
+    "ZOM-564",
+    "harmonygames-Games/match3d#466"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-564 is Todo, so the free label still eats boosters",
+   "resolver": "PR #466 (merged Sep 26) is in the candidates and Brian's re-test on iOS #50 is on the ticket"
+  },
+  {
+   "id": "T16",
+   "family": "cross_reference_gap",
+   "services": [
+    "linear",
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "D0770ET1HV2/1759160460.731000",
+    "cmt_zom458_1",
+    "cmt_zom535_1"
+   ],
+   "base_pointers": [
+    "ZOM-458",
+    "ZOM-535"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "ZOM-458 is a wrong animation and ZOM-535 a fast-matching inefficiency, both still there on #135 / #50: known issues",
+   "resolver": "H2 ('call it on how bad it is whatever the ticket says'): Brian's Sep 29 check on #133 / #49 (D0770ET1HV2) shows ZOM-458 marks the quit level passed and its chest claimed with nothing in the inventory (lost items) and ZOM-535 leaves the boss arena unfinishable (can't finish a level); Vincent's #135 / #50 notes confirm both still happen 'same as Brian found', so both are blockers",
+   "discovery_order": "the tickets' own text and Vincent's Sep 30 notes read like the cosmetic symptom; how bad it is sits only in an older message of the QA group DM, outside the post-candidate window"
+  },
+  {
+   "id": "T17",
+   "family": "exact_predicate",
+   "services": [
+    "linear",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "cmt_zom293_1"
+   ],
+   "base_pointers": [
+    "ZOM-293"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "ZOM-293's description is just 'Dynamic Difficulty Tiering' and it carries no Bug label, so it doesn't say what goes wrong: no call",
+   "resolver": "H2 (lost boosters / coins = blocker; 'a ticket that doesn't say what goes wrong' is no call): the reporter's own Jul 3 comment says what goes wrong, the pre-level boosters picked for the retry are charged and gone after the tier-change reload, so it is a blocker (build status n/a: open, nobody re-tested)",
+   "discovery_order": "the list view and the issue read show a bare description; what goes wrong is only in the ticket's comments, which a run that reads comments only on bug-looking tickets never opens"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "linear",
+   "calls": 3,
+   "reason": "open the release ticket, its comments (Leonard's push notes) and its description history"
+  },
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 3,
+   "reason": "find Arthur's candidate post in #zombie-bugs and read its thread (destination, Brian's summary)"
+  },
+  {
+   "phase": "discovery",
+   "service": "confluence",
+   "calls": 6,
+   "reason": "read the runbook, the release checklist and the CI/CD page the rules point to, plus the runbook's and checklist's comments"
+  },
+  {
+   "phase": "rules",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "search Drive for the rule docs ZOM-570 names; the same searches return the two older look-alike docs"
+  },
+  {
+   "phase": "rules",
+   "service": "gdocs",
+   "calls": 4,
+   "reason": "read Leonard's and Arthur's rule docs and the two older look-alike docs, one read each"
+  },
+  {
+   "phase": "rules",
+   "service": "gmail",
+   "calls": 1,
+   "reason": "read the playtest vendor's session notes"
+  },
+  {
+   "phase": "rules",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "read the gate sheet's metadata, its 'How we gate' tab and the Sep 22 tab"
+  },
+  {
+   "phase": "rules",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "locate the gate sheet and the test log by title and confirm the owner"
+  },
+  {
+   "phase": "rules",
+   "service": "gcal",
+   "calls": 2,
+   "reason": "find the go/no-go event and read its time"
+  },
+  {
+   "phase": "rules",
+   "service": "trello",
+   "calls": 3,
+   "reason": "read the tech-issues card and its comments, and the minor-bugs card it sits beside"
+  },
+  {
+   "phase": "rules",
+   "service": "contacts",
+   "calls": 2,
+   "reason": "look up the vendor sender of the session report"
+  },
+  {
+   "phase": "rules",
+   "service": "gdocs",
+   "calls": 1,
+   "reason": "read Brian's update-path test log"
+  },
+  {
+   "phase": "enumeration",
+   "service": "linear",
+   "calls": 8,
+   "reason": "list open ZOM issues (~110, 2 pages), Done since Sep 22, the ZM project view across teams, and ART/DES open issues"
+  },
+  {
+   "phase": "enumeration",
+   "service": "slack",
+   "calls": 26,
+   "reason": "page #builds Sep 22-30 (~450 Jenkins posts, 9 pages), #zombie-bugs Sep 22-30 (~450, 9 pages), #zombie-match3d (3), #zombie-ops (1), the Brian and Douglas DMs (2) and the two bug canvases' channels (2) for re-test reports"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 4,
+   "reason": "list match3d PRs merged Sep 22-30 and the backend repo's recent PRs"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gmail",
+   "calls": 3,
+   "reason": "search the mailbox for session reports and build notices since Sep 22"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 132,
+   "reason": "one linear_list_comments per register ticket: the QA observation deciding the call lives only in comments"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 15,
+   "reason": "trace the fix of each Done-since-gate ticket whose PR does not name it (branch, PR body, backend PR)"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 13,
+   "reason": "match re-test reports to tickets (thread reads beyond the shared sweep pages)"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "github",
+   "calls": 3,
+   "reason": "read the post-cut commit (a61cb2b9, #2028) and match3d-backend#36's merge state"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "linear",
+   "calls": 3,
+   "reason": "check the existing tickets the vendor report and the filter members map to before writing"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "slack",
+   "calls": 3,
+   "reason": "open the full change lists of Android Submission #135, iOS Submission #50 and Android #2028 (attachment text) to place each Done fix before or after the cut"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "add the gate tab and write the register (two value updates)"
+  },
+  {
+   "phase": "writes",
+   "service": "linear",
+   "calls": 2,
+   "reason": "update the release ticket's blocker list and create the update-path bug"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "reply in Arthur's candidate thread with the QA call"
+  },
+  {
+   "phase": "read-back",
+   "service": "gsheets",
+   "calls": 1,
+   "reason": "read the register back"
+  },
+  {
+   "phase": "read-back",
+   "service": "linear",
+   "calls": 2,
+   "reason": "read the release ticket and the new bug back"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_values_update",
+   "count": 1,
+   "depends_on": [
+    "R_DONE_BUILD",
+    "R_DONE_SERVER",
+    "R_CORRECTION",
+    "R_ALIAS",
+    "R_FILTER",
+    "R_COMPLETION",
+    "K1",
+    "K6"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R10"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue",
+   "count": 1,
+   "depends_on": [
+    "R_DONE_BUILD",
+    "R_DONE_SERVER",
+    "R_CORRECTION",
+    "R_ALIAS",
+    "R_FILTER",
+    "K8"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_issue",
+   "count": 1,
+   "depends_on": [
+    "T4",
+    "K4"
+   ],
+   "requirements": [
+    "R6",
+    "R9"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "T4",
+    "K9",
+    "K10"
+   ],
+   "requirements": [
+    "R8"
+   ]
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "R_DONE_BUILD",
+   "mechanism": "A24",
+   "prior_family": "A24",
+   "prior_family_reason": "same mechanism id; no Opus 5.5 ledger record yet (Beta(1,1), UNCALIBRATED)",
+   "nodes": [
+    "T1",
+    "CH1"
+   ],
+   "requirement": "R2",
+   "natural_reading": "a Done ticket with a merged fix is in the candidate builds",
+   "decides": [
+    "Build status column",
+    "call column"
+   ],
+   "source": "build-cut",
+   "signature": "fix-after-job-start",
+   "controls": [
+    "ZOM-506",
+    "ZOM-557",
+    "ZOM-561"
+   ],
+   "over_application": "over:every-done-not-in-build"
+  },
+  {
+   "id": "R_DONE_SERVER",
+   "mechanism": "A24",
+   "prior_family": "A24",
+   "prior_family_reason": "same mechanism id (done source vs missing deploy); no Opus 5.5 record yet",
+   "nodes": [
+    "T2"
+   ],
+   "requirement": "R4",
+   "natural_reading": "an approved, merged backend PR = live",
+   "decides": [
+    "call column"
+   ],
+   "source": "backend-deploy",
+   "signature": "merged-not-deployed",
+   "controls": [
+    "ZOM-563",
+    "ZOM-503"
+   ],
+   "over_application": "over:every-server-fix-not-live"
+  },
+  {
+   "id": "R_CORRECTION",
+   "mechanism": "A11",
+   "prior_family": "wrong summary + thread past its conclusion (A1)",
+   "prior_family_reason": "closest library family with Opus 5.5 records: a claim met first and overturned by a later record elsewhere (hev_0e23d0e0b6b029a5, hev_e0e5f73b1cee8d3d, hev_6b560d035cdf9211); differs in that the overturning record is a re-test in another service",
+   "nodes": [
+    "T3",
+    "T3b",
+    "CH2"
+   ],
+   "requirement": "R3",
+   "natural_reading": "Done (and an older pass) = fixed",
+   "decides": [
+    "QA result column",
+    "call column"
+   ],
+   "source": "retests",
+   "signature": "latest-retest-on-candidate",
+   "controls": [
+    "ZOM-506",
+    "ZOM-557"
+   ],
+   "over_application": "over:every-done-came-back"
+  },
+  {
+   "id": "R_ALIAS",
+   "mechanism": "A7",
+   "prior_family": "A7",
+   "prior_family_reason": "same mechanism id (scope/alias boundary; hev_83d7b0972f87a2ec)",
+   "nodes": [
+    "T5",
+    "CH4"
+   ],
+   "requirement": "R5",
+   "natural_reading": "ZOM-562 is cosmetic; the vendor report is unrelated or a new ticket",
+   "decides": [
+    "call column",
+    "blocker list"
+   ],
+   "source": "vendor-report",
+   "signature": "boss-arena-orphans",
+   "controls": [
+    "ZOM-546",
+    "ZOM-504"
+   ],
+   "over_application": "over:map-every-refill-report-to-562"
+  },
+  {
+   "id": "R_FILTER",
+   "mechanism": "A17",
+   "prior_family": "A17",
+   "prior_family_reason": "same mechanism id (cohort boundary; hev_971c5e5fdb2d2c1a)",
+   "nodes": [
+    "T6",
+    "CH6"
+   ],
+   "requirement": "R1",
+   "natural_reading": "scope = team ZOM, label Bug",
+   "decides": [
+    "register rows",
+    "call column"
+   ],
+   "source": "scope-rule",
+   "signature": "any-team-any-label",
+   "controls": [
+    "ZOM-565",
+    "ZOM-566",
+    "ART-790"
+   ],
+   "over_application": "over:every-non-bug-is-defect"
+  },
+  {
+   "id": "R_COMPLETION",
+   "mechanism": "A25",
+   "prior_family": "A25",
+   "prior_family_reason": "same mechanism id; no Opus 5.5 ledger record yet (Beta(1,1), UNCALIBRATED)",
+   "nodes": [
+    "T7",
+    "CH5"
+   ],
+   "requirement": "R3",
+   "natural_reading": "an open ticket is still broken",
+   "decides": [
+    "QA result column",
+    "call column"
+   ],
+   "source": "server-confirm",
+   "signature": "confirmed-on-prod",
+   "controls": [
+    "ZOM-534",
+    "ZOM-544"
+   ],
+   "over_application": "over:every-in-progress-ships"
+  },
+  {
+   "id": "R_OLD_NOTE",
+   "mechanism": "A14",
+   "prior_family": "A14",
+   "prior_family_reason": "same mechanism id (history outside the window the run reads; hev_ee2fa6cd86df8050, hev_0aea2ae9c00e83c2; UNCALIBRATED)",
+   "nodes": [
+    "T16"
+   ],
+   "requirement": "R5",
+   "natural_reading": "a ticket whose text and latest check read cosmetic is a known issue",
+   "decides": [
+    "call column",
+    "blocker list"
+   ],
+   "source": "older-dm",
+   "signature": "worse-than-it-looks",
+   "controls": [
+    "ZOM-481",
+    "ZOM-427"
+   ],
+   "over_application": "over:every-cosmetic-is-worse"
+  },
+  {
+   "id": "R_SYMPTOM_NOTE",
+   "mechanism": "A17",
+   "prior_family": "A17",
+   "prior_family_reason": "same mechanism id (an in-scope item outside the obvious filter; hev_95fae459cc9d282a, hev_971c5e5fdb2d2c1a; UNCALIBRATED)",
+   "nodes": [
+    "T17"
+   ],
+   "requirement": "R5",
+   "natural_reading": "a ticket whose description doesn't say what goes wrong is no call",
+   "decides": [
+    "call column",
+    "blocker list"
+   ],
+   "source": "reporter-note",
+   "signature": "what-goes-wrong-in-a-comment",
+   "controls": [
+    "ZOM-311",
+    "ZOM-130"
+   ],
+   "over_application": "over:every-vague-ticket-is-a-bug"
+  }
+ ],
+ "gradable_surface": {
+  "path": "01_Gradable_Surface.json"
+ }
+}

@@ -1,0 +1,710 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "vincent-zm3d-release-gate",
+ "revision": "scenario-01",
+ "classes": [
+  "BLOCKER",
+  "KNOWN ISSUE",
+  "FIXED",
+  "NO CALL"
+ ],
+ "truth_fields": {
+  "class": "call",
+  "groups": "groups"
+ },
+ "truth_keys": [
+  "ZOM-16",
+  "ZOM-48",
+  "ZOM-56",
+  "ZOM-62",
+  "ZOM-64",
+  "ZOM-65",
+  "ZOM-66",
+  "ZOM-69",
+  "ZOM-70",
+  "ZOM-73",
+  "ZOM-76",
+  "ZOM-78",
+  "ZOM-97",
+  "ZOM-104",
+  "ZOM-112",
+  "ZOM-118",
+  "ZOM-119",
+  "ZOM-121",
+  "ZOM-122",
+  "ZOM-130",
+  "ZOM-137",
+  "ZOM-147",
+  "ZOM-148",
+  "ZOM-150",
+  "ZOM-151",
+  "ZOM-155",
+  "ZOM-168",
+  "ZOM-169",
+  "ZOM-171",
+  "ZOM-181",
+  "ZOM-182",
+  "ZOM-184",
+  "ZOM-202",
+  "ZOM-236",
+  "ZOM-237",
+  "ZOM-239",
+  "ZOM-243",
+  "ZOM-255",
+  "ZOM-292",
+  "ZOM-293",
+  "ZOM-311",
+  "ZOM-317",
+  "ZOM-342",
+  "ZOM-344",
+  "ZOM-348",
+  "ZOM-386",
+  "ZOM-387",
+  "ZOM-390",
+  "ZOM-400",
+  "ZOM-419",
+  "ZOM-427",
+  "ZOM-429",
+  "ZOM-432",
+  "ZOM-434",
+  "ZOM-435",
+  "ZOM-438",
+  "ZOM-439",
+  "ZOM-441",
+  "ZOM-442",
+  "ZOM-443",
+  "ZOM-449",
+  "ZOM-453",
+  "ZOM-458",
+  "ZOM-465",
+  "ZOM-467",
+  "ZOM-468",
+  "ZOM-471",
+  "ZOM-473",
+  "ZOM-477",
+  "ZOM-481",
+  "ZOM-482",
+  "ZOM-483",
+  "ZOM-484",
+  "ZOM-498",
+  "ZOM-503",
+  "ZOM-504",
+  "ZOM-505",
+  "ZOM-506",
+  "ZOM-507",
+  "ZOM-508",
+  "ZOM-513",
+  "ZOM-514",
+  "ZOM-517",
+  "ZOM-520",
+  "ZOM-521",
+  "ZOM-526",
+  "ZOM-528",
+  "ZOM-534",
+  "ZOM-535",
+  "ZOM-536",
+  "ZOM-538",
+  "ZOM-539",
+  "ZOM-541",
+  "ZOM-542",
+  "ZOM-543",
+  "ZOM-544",
+  "ZOM-545",
+  "ZOM-546",
+  "ZOM-548",
+  "ZOM-549",
+  "ZOM-552",
+  "ZOM-553",
+  "ZOM-554",
+  "ZOM-555",
+  "ZOM-556",
+  "ZOM-557",
+  "ZOM-558",
+  "ZOM-559",
+  "ZOM-560",
+  "ZOM-561",
+  "ZOM-562",
+  "ZOM-563",
+  "ZOM-564",
+  "ZOM-565",
+  "ZOM-566",
+  "ZOM-567",
+  "ZOM-568",
+  "ZOM-569",
+  "ZOM-571",
+  "ZOM-572",
+  "ZOM-573",
+  "ZOM-574",
+  "ZOM-575",
+  "ZOM-576",
+  "ZOM-577",
+  "ZOM-578",
+  "ZOM-579",
+  "ZOM-580",
+  "ART-790",
+  "ART-792",
+  "ART-793",
+  "DES-313"
+ ],
+ "deliverables": {
+  "register": {
+   "kind": "table",
+   "name_regex": "(?:#135|#50|gate|sep 30)",
+   "key_column": "ticket",
+   "key_regex": "(?:ZOM|ART|DES)-[0-9]{1,4}",
+   "columns": [
+    "ticket",
+    "title",
+    "build status",
+    "QA result",
+    "call",
+    "evidence"
+   ],
+   "class_column": "call",
+   "reason_column": "evidence",
+   "comparators": {
+    "call": "norm",
+    "build status": "norm"
+   },
+   "missing_values": [
+    "",
+    "-",
+    "n/a"
+   ]
+  },
+  "tracker": {
+   "kind": "text",
+   "tool": "linear_update_issue",
+   "issue": "ZOM-570",
+   "key_regex": "(?:ZOM|ART|DES)-[0-9]{1,4}",
+   "groups": [
+    [
+     "blocker",
+     "blocker"
+    ]
+   ]
+  },
+  "newbug": {
+   "kind": "json_text",
+   "tool": "linear_create_issue"
+  },
+  "slack": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  }
+ },
+ "slots": [
+  {
+   "id": "S01",
+   "title": "ZOM-569 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the Done state, the fix commit's time in #builds, both candidate job starts and Arthur's build rule must be reconciled",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ZOM-569",
+    "call"
+   ],
+   "fact_id": "ZOM-569.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_DONE_BUILD"
+   ],
+   "singled_out_by": "H1"
+  },
+  {
+   "id": "T01",
+   "title": "Release ticket lists ZOM-569 as a blocker",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same reconciliation decides the blocker list write",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "tracker_lists",
+    "blocker",
+    "ZOM-569"
+   ],
+   "fact_id": "ZOM-569.call",
+   "group": "blockers",
+   "mechanisms": [
+    "R_DONE_BUILD"
+   ],
+   "singled_out_by": "H1"
+  },
+  {
+   "id": "S03",
+   "title": "ZOM-567 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the Done ticket, the approved and merged backend PR, Arthur's later withdrawal in #zombie-ops and the CI/CD page must be reconciled",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ZOM-567",
+    "call"
+   ],
+   "fact_id": "ZOM-567.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_DONE_SERVER"
+   ],
+   "singled_out_by": "H1"
+  },
+  {
+   "id": "T02",
+   "title": "Release ticket lists ZOM-567 as a blocker",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same reconciliation decides the blocker list write",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "tracker_lists",
+    "blocker",
+    "ZOM-567"
+   ],
+   "fact_id": "ZOM-567.call",
+   "group": "blockers",
+   "mechanisms": [
+    "R_DONE_SERVER"
+   ],
+   "singled_out_by": "H1"
+  },
+  {
+   "id": "S05",
+   "title": "ZOM-435 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the Done ticket, the #133 pass and Leonard's #135 re-test on Trello must be ordered and weighed under Leonard's rule",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ZOM-435",
+    "call"
+   ],
+   "fact_id": "ZOM-435.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_CORRECTION"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "T03",
+   "title": "Release ticket lists ZOM-435 as a blocker",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same reconciliation decides the blocker list write",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "tracker_lists",
+    "blocker",
+    "ZOM-435"
+   ],
+   "fact_id": "ZOM-435.call",
+   "group": "blockers",
+   "mechanisms": [
+    "R_CORRECTION"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S07",
+   "title": "ZOM-473 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the Done ticket and Brian's iOS #50 re-test in a DM must be reconciled, then the severity rule applied",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ZOM-473",
+    "call"
+   ],
+   "fact_id": "ZOM-473.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_CORRECTION"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "T05",
+   "title": "Release ticket lists ZOM-473 as a blocker",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same reconciliation (Brian's iOS #50 re-test in the Turkish DM against the Done ticket) decides the blocker list write",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "tracker_lists",
+    "blocker",
+    "ZOM-473"
+   ],
+   "fact_id": "ZOM-473.call",
+   "group": "blockers",
+   "mechanisms": [
+    "R_CORRECTION"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "B01",
+   "title": "Filed bug covers the update from 1.3.24 to iOS Submission #50",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the test log's failing row, the runbook's update rule and the checklist's bug-content rule must be combined",
+   "class": "write_content",
+   "role": "core",
+   "selector": [
+    "text",
+    "newbug",
+    "1\\.3\\.24"
+   ],
+   "fact_id": "updatepath.bug",
+   "mechanisms": [
+    "R_UPDATE_RULE"
+   ]
+  },
+  {
+   "id": "S09",
+   "title": "ZOM-562 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "an external report under the old game name must be mapped to ZOM-562 and the consequence weighed under the severity rule",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ZOM-562",
+    "call"
+   ],
+   "fact_id": "ZOM-562.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_ALIAS"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "T04",
+   "title": "Release ticket lists ZOM-562 as a blocker",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the alias mapping decides which existing ticket the blocker list reuses",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "tracker_lists",
+    "blocker",
+    "ZOM-562"
+   ],
+   "fact_id": "ZOM-562.call",
+   "group": "blockers",
+   "mechanisms": [
+    "R_ALIAS"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S11",
+   "title": "ART-793 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a ZM defect in the ART team is brought into scope by Leonard's rule and called by its report",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ART-793",
+    "call"
+   ],
+   "fact_id": "ART-793.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_FILTER"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S12",
+   "title": "DES-313 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a ZM defect in the DES team is brought into scope by Leonard's rule and called by its report",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "DES-313",
+    "call"
+   ],
+   "fact_id": "DES-313.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_FILTER"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S13",
+   "title": "ZOM-578 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "an unlabeled ZOM ticket outside the Bug view is brought into scope and called by its report",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ZOM-578",
+    "call"
+   ],
+   "fact_id": "ZOM-578.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_FILTER"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S14",
+   "title": "ZOM-563 call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the open ticket, Douglas's prod deploy and Vincent's confirmation in a DM must be reconciled",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "ZOM-563",
+    "call"
+   ],
+   "fact_id": "ZOM-563.call",
+   "group": "exception",
+   "mechanisms": [
+    "R_COMPLETION"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S20",
+   "title": "ZOM-559 call",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the ticket's own report (hard freeze at the victory screen) is read against the severity rule",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-559",
+    "call"
+   ],
+   "fact_id": "ZOM-559.call",
+   "group": "open"
+  },
+  {
+   "id": "S21",
+   "title": "ZOM-560 call",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a purchased pack's missing reward is read against the severity rule",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-560",
+    "call"
+   ],
+   "fact_id": "ZOM-560.call",
+   "group": "open"
+  },
+  {
+   "id": "S22",
+   "title": "ZOM-481 call",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the QA observation in the comments (a lingering health bar, play unaffected) is read against the severity rule",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-481",
+    "call"
+   ],
+   "fact_id": "ZOM-481.call",
+   "group": "open"
+  },
+  {
+   "id": "S23",
+   "title": "ZOM-458 call",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a cosmetic animation defect is read against the severity rule",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-458",
+    "call"
+   ],
+   "fact_id": "ZOM-458.call",
+   "group": "open"
+  },
+  {
+   "id": "S24",
+   "title": "ZOM-564 call",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the merged PR and the re-test note on the ticket are reconciled with its Todo state",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-564",
+    "call"
+   ],
+   "fact_id": "ZOM-564.call",
+   "group": "open"
+  },
+  {
+   "id": "S25",
+   "title": "ZOM-506 call",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "the fix commit in PR #471 (merged 15:52Z) is compared with the 18:43Z cut",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-506",
+    "call"
+   ],
+   "fact_id": "ZOM-506.call",
+   "group": "done"
+  },
+  {
+   "id": "S26",
+   "title": "ZOM-557 call",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "the fix's #builds change line is compared with the cut",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-557",
+    "call"
+   ],
+   "fact_id": "ZOM-557.call",
+   "group": "done"
+  },
+  {
+   "id": "S27",
+   "title": "ZOM-561 call",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "the fix PR #469 (merged Sep 30 01:50Z) is compared with the cut",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-561",
+    "call"
+   ],
+   "fact_id": "ZOM-561.call",
+   "group": "done"
+  },
+  {
+   "id": "S28",
+   "title": "ZOM-513 call",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "an art task's label decides no call",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-513",
+    "call"
+   ],
+   "fact_id": "ZOM-513.call",
+   "group": "nocall"
+  },
+  {
+   "id": "S29",
+   "title": "ZOM-387 call",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "an analytics task's label decides no call",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "ZOM-387",
+    "call"
+   ],
+   "fact_id": "ZOM-387.call",
+   "group": "nocall"
+  },
+  {
+   "id": "V01",
+   "title": "Register has a row for every in-scope ticket and no other existing ticket",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the scope rule applied to the open and Done-since-gate sets fixes the key set",
+   "class": "delivery",
+   "role": "volume",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "fact_id": "register.keys",
+   "mechanisms": [
+    "R_FILTER"
+   ],
+   "volume_for": [
+    "open",
+    "done",
+    "nocall",
+    "exception"
+   ]
+  },
+  {
+   "id": "D01",
+   "title": "Sign-off posted in Arthur's candidate thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery into the named thread is a direct check",
+   "class": "delivery",
+   "role": "core",
+   "selector": [
+    "delivery",
+    "slack_thread",
+    "1759263900.484190"
+   ],
+   "fact_id": "signoff.thread"
+  },
+  {
+   "id": "D02",
+   "title": "Sign-off calls the candidates not ready to ship",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the call follows from the blocker list, which already holds clear base blockers (ZOM-546, ZOM-560) whatever the traps decide",
+   "class": "write_content",
+   "role": "core",
+   "selector": [
+    "text",
+    "slack",
+    "no[- ]?go|not (?:ready|shipping)|hold|block"
+   ],
+   "fact_id": "signoff.call"
+  }
+ ]
+}

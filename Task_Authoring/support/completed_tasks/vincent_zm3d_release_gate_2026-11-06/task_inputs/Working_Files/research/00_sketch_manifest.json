@@ -1,0 +1,61 @@
+{
+  "_note": "PRE-SCENARIO SKETCH for 00_Pre_Scenario_Analysis.md only: storyline A trap geometry, so tools/hardness_v2_check.py can answer the Hardness v2 Part 7 checks before /create-scenario. Not the draft manifest; ids marked planned: are illustrative and are minted and collision-checked at /create-scenario S2.",
+  "persona": "vincent_parker",
+  "horizon": "Long Horizon",
+  "effective_profile": "extreme",
+  "requirements": {
+    "R1": "register: whether each in-scope ticket's fix is inside the release candidate builds (Android Submission #135 / iOS Submission #50)",
+    "R2": "register: whether a fix that needs a server change is live on prod, not only merged",
+    "R3": "register: latest QA result on the candidate for each in-scope ticket",
+    "R4": "regression matrix verdict under the runbook's update-path rule, and the bug it requires to be filed",
+    "R5": "release ticket blockers reuse the existing ticket for each blocking defect",
+    "R6": "register scope: every player-facing defect reported against a submission build since the last shipped version",
+    "R7": "register: tickets verified fixed in the candidate are not blockers"
+  },
+  "anchors": [
+    {"id": "A1", "prompt_reference": "the store release ticket", "service": "linear", "locator": "planned:ZOM-RELEASE", "requirement_ids": ["R5"]},
+    {"id": "A2", "prompt_reference": "the QA release runbook", "service": "confluence", "locator": "confluence:page_qa_runbook", "requirement_ids": ["R4"]}
+  ],
+  "ask_fragments": [],
+  "traps": [
+    {"id": "T_C1", "family": "done_gap", "services": ["linear", "github", "slack"], "requirement": "R1",
+     "expected_wrong_reading": "Linear Done + merged match3d PR = in the candidate",
+     "resolver": "the fix merged after the Android Submission #135 job started; its change is absent from that build's change list in #builds"},
+    {"id": "T_C2", "family": "done_gap", "services": ["linear", "github", "slack"], "requirement": "R2",
+     "expected_wrong_reading": "client PR in the build + server PR merged = fixed for players",
+     "resolver": "backend deploys are manual (CI/CD page); the deploy note shows the server change only on dev"},
+    {"id": "T_C3", "family": "superseding", "services": ["slack", "linear"], "requirement": "R3",
+     "expected_wrong_reading": "the developer's 'fixed' in #zombie-bugs and the Done state stand",
+     "resolver": "a later re-test on the candidate, reported in another channel's thread, reproduces the defect",
+     "version_records": [
+       {"service": "slack", "id": "planned:zombie-bugs fixed claim", "seeded": true, "at": "2025-09-26T15:10:00Z", "container": "slack:C08R27X0EAH/planned-root-0926"},
+       {"service": "linear", "id": "planned:ZOM-X3 state Done", "seeded": true, "at": "2025-09-26T15:20:00Z", "container": "linear:planned-ZOM-X3"},
+       {"service": "slack", "id": "planned:re-test reply on 0.3.135", "seeded": true, "at": "2025-09-30T22:40:00Z", "container": "slack:C0880U9751A/planned-root-0930"}
+     ]},
+    {"id": "T_C4", "family": "authority", "services": ["confluence", "gsheets", "slack"], "requirement": "R4",
+     "expected_wrong_reading": "fresh-install rows green and a 'regression green' summary = sign off",
+     "resolver": "the runbook makes any failed UPDATE column a release block; the tester's matrix fails update-from-N-2 save/progression"},
+    {"id": "T_C5", "family": "scope_alias", "services": ["slack", "linear"], "requirement": "R5",
+     "expected_wrong_reading": "the symptom-named report is a new defect: create a new ticket",
+     "resolver": "the existing, differently titled ZOM ticket is the same defect (same device, repro and build history)"},
+    {"id": "T_C6", "family": "exact_predicate", "services": ["linear"], "requirement": "R6",
+     "expected_wrong_reading": "scope = open ZOM issues labelled Bug",
+     "resolver": "the scope rule covers every player-facing defect reported against a submission build whatever its label or state"},
+    {"id": "T_C7", "family": "completion_elsewhere", "services": ["linear", "github"], "requirement": "R7",
+     "expected_wrong_reading": "Todo in Linear = still a blocker",
+     "resolver": "a QA verification on the candidate recorded away from the ticket shows it fixed",
+     "version_records": [
+       {"service": "linear", "id": "planned:ZOM-X7 state Todo", "seeded": false, "at": "2025-09-24T10:00:00Z", "container": "linear:planned-ZOM-X7"},
+       {"service": "github", "id": "planned:review comment verifying on 0.3.135", "seeded": true, "at": "2025-09-30T21:00:00Z", "container": "github:harmonygames-Games/match3d#planned"}
+     ]}
+  ],
+  "mechanism_portfolio": [
+    {"id": "R_DONE_BUILD", "mechanism": "A24", "nodes": ["T_C1"], "requirement": "R1", "natural_reading": "Done+merged counts as in the candidate", "prior_family": "A24", "prior_family_reason": "same mechanism id (no Opus 5.5 records yet: Beta(1,1))"},
+    {"id": "R_DONE_SERVER", "mechanism": "A24", "nodes": ["T_C2"], "requirement": "R2", "natural_reading": "merged server PR counts as live", "prior_family": "A24", "prior_family_reason": "same mechanism id"},
+    {"id": "R_CORRECTION", "mechanism": "A11", "nodes": ["T_C3"], "requirement": "R3", "natural_reading": "the first 'fixed' stands", "prior_family": "A11", "prior_family_reason": "v2 trap 2 maps to A1/A11/A16; retraction after admission is closest"},
+    {"id": "R_UPDATE_RULE", "mechanism": "A15", "nodes": ["T_C4"], "requirement": "R4", "natural_reading": "a green fresh-install pass signs the gate", "prior_family": "A15", "prior_family_reason": "same mechanism id (house rule overriding the natural reading)"},
+    {"id": "R_ALIAS", "mechanism": "A8", "nodes": ["T_C5"], "requirement": "R5", "natural_reading": "a new ticket per report", "prior_family": "A8", "prior_family_reason": "reuse-vs-duplicate write (v2 trap 6)"},
+    {"id": "R_FILTER", "mechanism": "A17", "nodes": ["T_C6"], "requirement": "R6", "natural_reading": "Bug-labelled ZOM view only", "prior_family": "A17", "prior_family_reason": "same mechanism id (cohort-boundary)"},
+    {"id": "R_COMPLETION", "mechanism": "A25", "nodes": ["T_C7"], "requirement": "R7", "natural_reading": "Linear state decides", "prior_family": "A25", "prior_family_reason": "same mechanism id (no Opus 5.5 records yet)"}
+  ]
+}
