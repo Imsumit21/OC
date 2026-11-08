@@ -139,6 +139,13 @@ human-time slot; `/create-humantime` writes the graded worksheet to
 
 Every command except `/create-goal` (which runs its own self-checks; see its `SKILL.md`) is blocked at handoff until `python3 Task_Authoring/tools/stage_gate.py <stage> Task_Authoring/task_inputs --paste` prints PASS (stages: scenario, injection, hardening, reference-files, error-async, prompt-writing, prompt-check, humantime, oe-writing, oe-check, rubric-writing, rubric-check, allfail, difficulty).
 
+New V3 work also uses immutable stage attestations and stage-specific difficulty
+reviews. See [Readiness and evidence](Guide/Readiness_And_Evidence.md) for exact
+schemas, task selection, verifier binding, corrections, Mode B and migration.
+`stage_gate.py --readiness local --task-dir DIR` checks local construction;
+`--readiness platform` checks separately supplied platform proof. Neither deploys
+or launches a run. `--paste` records evidence only after a full PASS.
+
 Full flow, gates and loop-backs: `Guide/How_To_Author_A_Task.md`. Copy-paste
 equivalents of every command: `Guide/Manual_Commands.md`.
 
@@ -256,4 +263,5 @@ HarmonyGames set would tighten them further.
 - **Personas.** 17 usable. `thomas` and `tim_steudler` are on the taxonomy list but fail
   `/prompt`'s identity gate and have too little data.
 - **External reviews.** The user operates Eval Portal, including its five review
-  pass screens and uploads. The local release gate does not collect those proofs.
+  pass screens and uploads. Local controls consume supplied, reviewed environment
+  evidence and bound baseline exports; they do not operate Portal or invent proof.

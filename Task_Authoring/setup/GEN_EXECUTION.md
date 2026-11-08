@@ -167,9 +167,9 @@ the data clock), policy, roster and the full source block (paths, fingerprint, K
 status). Every tool cache is keyed by it (`support/local_search/cache/<hash>/`, patched
 helper copies in `support/local_search/contexts/<hash>/`; KB intermediates by universe
 and fingerprint), so a new date, data refresh, KB status or policy starts fresh caches.
-Two task folders with the same assignment share one cache folder, which holds only data
-derived from the universe: each task's SQL overlay is re-read from its own folder on every
-run, so one task never sees another task's seeded rows. Every tool recomputes the
+The resolved task directory identity is included in that context, so even tasks
+with identical assignments have separate cache folders. Each task's SQL overlay
+is re-read from its selected folder on every run. Every tool recomputes the
 context from `00_Assigments.md` on each run: `Working_Files/00_Task_Context.json` is a
 record for people and manifests, never read back for routing (refresh it with `--write`
 after changing the assignment or the data).
@@ -645,7 +645,13 @@ fact, actual source value, reachable evidence path and accepted alternatives. Se
 `Guide/How_To_Author_A_Task.md` for the schema and artifact-hash command. These
 checks verify supplied evidence, source values and bindings; a passing structure
 does not prove the reviewer's semantic judgment. Eval Portal screenshots and uploads
-are handled entirely by the user and are not collected or gated locally.
+are handled entirely by the user. New V3 gates additionally consume immutable
+stage attestations, stage-specific hardness reviews and, only at the platform
+handoff/final run boundary, supplied platform evidence. Follow
+`Guide/Readiness_And_Evidence.md` for schemas and commands. Local build readiness
+does not require deployment or a baseline. Rubric planning does not require final
+rubric-row evidence; rubric-check does. Existing records remain historical until
+rechecked, without automatically rewriting task folders.
 
 **Residual gaps (harness red team A, 2026-10-05 — documented, not implemented).** These findings are not closed by a
 mechanical check; the partial answer is named so nobody mistakes a gate PASS for them.

@@ -12,7 +12,7 @@ import os
 import sys
 from pathlib import Path
 
-from task_context import BUNDLE, DEFAULT_TASK, ContextError, load_context, is_v3_assignment
+from task_context import BUNDLE, DEFAULT_TASK, ContextError, load_context, is_v3_assignment, select_task, validate_task_paths
 
 MODULES = ("sql_lint", "base_check", "persona_view", "fact_check", "hardness_gate", "shortcut_probe", "entity")
 WORKSPACE = BUNDLE.parent                                 # holds Evals/, Universe_*/ and HarmonyGames_*/
@@ -123,7 +123,7 @@ def _apply(namespace, context, force=False):
 
 
 def activate(namespace=None, task_dir=None, require_source=False, force=False):
-    task_dir = Path(task_dir or os.environ.get("TASK_AUTHORING_TASK_DIR", DEFAULT_TASK)).resolve()
+    task_dir = select_task(task_dir)
     context = load_context(task_dir, require_source=require_source)
     os.environ.pop("TASK_AUTHORING_LEGACY_V2", None)
     os.environ["TASK_AUTHORING_TASK_DIR"] = str(task_dir)
@@ -425,9 +425,7 @@ def cli_entry(namespace, require_source=False):
     while "--task-dir" in sys.argv:
         index = sys.argv.index("--task-dir")
         del sys.argv[index:index + 2]
-    if task_dir is None and not os.environ.get("TASK_AUTHORING_TASK_DIR"):
-        task_dir = _inferred_task(argv)
-    selected = Path(task_dir or os.environ.get("TASK_AUTHORING_TASK_DIR", DEFAULT_TASK))
+    selected = select_task(task_dir, artifact_paths=sys.argv[1:])
     assignment = selected / "00_Assigments.md"
     if not assignment.is_file() or not is_v3_assignment(assignment.read_text()):
         raise ContextError("V3 commands require a complete assignment. --legacy-v2 is only for archived V2 diagnostics")

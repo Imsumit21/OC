@@ -53,6 +53,8 @@ Exit 0 = ok, 1 = a record was rejected, 2 = usage error.
 from __future__ import annotations
 
 import argparse
+import fcntl
+import os
 import collections
 import math
 import hashlib
@@ -182,6 +184,9 @@ def check(rec: dict) -> dict:
 class Ledger:
     def __init__(self, path=DEFAULT_LEDGER):
         self.path = Path(path)
+        self._reload()
+
+    def _reload(self):
         self.records = []
         if self.path.is_file():
             for n, line in enumerate(self.path.read_text().splitlines(), 1):
@@ -193,6 +198,27 @@ class Ledger:
         self.by_id = {r["id"]: r for r in self.records}
 
     def append(self, records) -> dict:
+        """Serialize reload, conflict checks and durable commit as one transaction.
+
+        The stable sidecar lock survives atomic replacement of the ledger itself.
+        Readers see either complete snapshot; merely constructing Ledger does not write.
+        """
+        from trajectory_ledger import safe_out
+        self.path = safe_out(self.path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        lock_path = self.path.with_name(self.path.name + ".lock")
+        flags = os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0)
+        fd = os.open(lock_path, flags, 0o600)
+        try:
+            with os.fdopen(fd, "a+") as lock:
+                fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+                self._reload()  # never validate against an object's pre-lock snapshot
+                return self._append_locked(records)
+        except BaseException:
+            self._reload()
+            raise
+
+    def _append_locked(self, records) -> dict:
         """{'added': [...], 'present': [...], 'rejected': [(id or '?', reason)]}; writes only the added ones."""
         added, present, rejected = [], [], []
         for rec in records:
@@ -216,12 +242,22 @@ class Ledger:
             self.records.append(r)
             added.append(r)
         if added:
-            from trajectory_ledger import safe_out
-            safe_out(self.path)
-            self.path.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.path, "a", encoding="utf-8") as fh:
-                for r in added:
-                    fh.write(canonical(r) + "\n")
+            fd, temp = tempfile.mkstemp(dir=self.path.parent, prefix=self.path.name + ".", suffix=".tmp")
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                    for r in self.records:
+                        fh.write(canonical(r) + "\n")
+                    fh.flush()
+                    os.fsync(fh.fileno())
+                os.replace(temp, self.path)
+                directory = os.open(self.path.parent, os.O_RDONLY)
+                try:
+                    os.fsync(directory)
+                finally:
+                    os.close(directory)
+            finally:
+                if os.path.exists(temp):
+                    os.unlink(temp)
         return {"added": [r["id"] for r in added], "present": present, "rejected": rejected}
 
     def current(self) -> list:

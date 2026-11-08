@@ -382,8 +382,57 @@ def source_context(date, freeze, registry_path=SOURCES_PATH, *, module=None):
     return out
 
 
-def load_context(task_dir=DEFAULT_TASK, require_source=False, *, policy_path=POLICY_PATH,
+def artifact_tasks(paths):
+    """Find nearest assignment owners, including symlink targets and future outputs."""
+    found = set()
+    for raw in paths:
+        value = str(raw)
+        if value.startswith("--"):
+            if "=" not in value:
+                continue
+            value = value.split("=", 1)[1]
+        if not value or value == "-":
+            continue
+        path = Path(value)
+        if not path.exists() and not (path.is_absolute() or "/" in value):
+            continue
+        for start in (path.absolute(), path.resolve()):
+            for parent in (start, *start.parents):
+                if (parent / "00_Assigments.md").is_file():
+                    found.add(parent.resolve())
+                    break
+    return sorted(found)
+
+
+def validate_task_paths(task_dir, paths):
+    selected = Path(task_dir).resolve()
+    mismatched = [p for p in artifact_tasks(paths) if p != selected]
+    if mismatched:
+        raise ContextError("Selected task disagrees with artifact owner: " + str(selected)
+                           + " versus " + ", ".join(map(str, mismatched)))
+    return selected
+
+
+def select_task(task_dir=None, artifact_paths=(), allow_implicit_single=True):
+    """Resolve an unambiguous production task; archives require an explicit path."""
+    owners = artifact_tasks(artifact_paths)
+    if len(owners) > 1:
+        raise ContextError("Mixed task artifacts: " + ", ".join(map(str, owners)))
+    selected = task_dir or os.environ.get("TASK_AUTHORING_TASK_DIR")
+    if selected is None and owners:
+        selected = owners[0]
+    if selected is None and allow_implicit_single:
+        candidates = sorted(p.parent.resolve() for p in BUNDLE.glob("task_inputs*/00_Assigments.md"))
+        if len(candidates) == 1:
+            selected = candidates[0]
+    if selected is None:
+        raise ContextError("Task selection is ambiguous or missing; supply --task-dir explicitly")
+    return validate_task_paths(selected, artifact_paths)
+
+
+def load_context(task_dir=None, require_source=False, *, policy_path=POLICY_PATH,
                  registry_path=SOURCES_PATH, roster_path=ROSTER_PATH):
+    task_dir = select_task(task_dir)
     refuse_read_only(task_dir, "The task directory")
     task_dir = Path(task_dir).resolve()
     try:
@@ -417,7 +466,8 @@ def load_context(task_dir=DEFAULT_TASK, require_source=False, *, policy_path=POL
         if mirror.get(key) and mirror[key].casefold() != str(expected).casefold():
             raise ContextError(f"Stale assignment mirror {key}: {mirror[key]!r}; expected {expected!r}")
     source = source_context(date, freeze, registry_path, module=universe_module)
-    out = {"spec_version": "V3", **assigned, **derived, "universe_date_key": date,
+    out = {"spec_version": "V3", "task_dir": str(task_dir),
+           "task_identity": digest(str(task_dir)), **assigned, **derived, "universe_date_key": date,
            "freeze_utc": freeze, "freeze_basis": "V3 assigned-date mapping = seed bound; the eval clock is universe.clock_utc",
            "universe": universe,
            "difficulty_cap": policy["difficulty_caps"][mode], "baseline_model": policy["model"],
@@ -447,11 +497,12 @@ def date_acceptance(utc_value, prompt_timezone=None):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--task-dir", type=Path, default=Path(os.environ.get("TASK_AUTHORING_TASK_DIR", DEFAULT_TASK)))
+    ap.add_argument("--task-dir", type=Path, default=None)
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--require-source", action="store_true")
     args = ap.parse_args(argv)
     try:
+        args.task_dir = select_task(args.task_dir)
         context = load_context(args.task_dir)
         if args.write:
             out = args.task_dir / "Working_Files" / "00_Task_Context.json"

@@ -1141,6 +1141,7 @@ def _task_files(a):
     wf = td / "Working_Files" if td else None
     solver = a.solver or (wf / "solver" / "solver.py" if wf else None)
     sql = a.sql or (td / "01_Universe_Inject.sql" if td else None)
+    tl.forensic_task(td, [solver, sql])
     if not solver or not solver.is_file() or not sql or not sql.is_file():
         raise ValueError("need --solver and --sql (or --task-dir with Working_Files/solver/solver.py and "
                          "01_Universe_Inject.sql)")
@@ -1152,6 +1153,7 @@ def _layout(a, wf):
         slots, surface = legacy_layout(json.loads(a.layout.read_text()), a.with_cases)
         return slots, surface, {"layout": tl._rel(a.layout), "sha256": tl.sha256_file(a.layout), "with_cases": a.with_cases}
     path = a.surface or (wf / "01_Gradable_Surface.json" if wf else None)
+    tl.forensic_task(getattr(a, 'task_dir', None), [path])
     if not path or not path.is_file():
         raise ValueError("need --surface (or --task-dir with Working_Files/01_Gradable_Surface.json) or --layout")
     surface = gs.load(path)
@@ -1212,6 +1214,10 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    path_inputs = [value for key, value in vars(a).items()
+                   if isinstance(value, Path) and key not in ('task_dir', 'out')]
+    path_inputs += getattr(a, 'briefs', [])
+    a.task_dir = tl.forensic_task(getattr(a, 'task_dir', None), path_inputs, [getattr(a, 'out', None)])
     if a.cmd in ("stress", "plan"):
         spec = json.loads(a.spec.read_text())
         base = a.spec.parent / spec.get("base", ".")

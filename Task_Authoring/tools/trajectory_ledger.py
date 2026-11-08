@@ -72,7 +72,7 @@ for _p in (BUNDLE / "tools", HERE):
         sys.path.insert(0, str(_p))
 import difficulty_stats as ds  # noqa: E402  (counted calls and the trajectory status have one owner)
 
-VERSION = "trajectory_ledger/1"
+VERSION = "trajectory_ledger/2"
 BRIEF_TOOLS = ("Agent", "Task")
 READ_VERBS = {"get", "list", "search", "read", "show", "describe", "query", "fetch", "check", "find", "lookup",
               "count", "download", "export", "view", "submit", "status", "preview", "diff", "history", "health",
@@ -174,6 +174,28 @@ def safe_out(p) -> Path:
     if root is not None:
         raise ValueError(f"refusing to write into the frozen copy {root}")
     return p
+
+
+def forensic_task(task_dir=None, inputs=(), outputs=()):
+    """Validate parsed forensic paths before reads or writes.
+
+    Explicit ownerless archival fixtures remain diagnostic flows with no default
+    task. Task-owned artifacts or inherited selection require one matching owner;
+    task outputs cannot escape through a different owner or an ownerless folder.
+    Callers must decode LABEL=PATH arguments before passing their paths here.
+    """
+    import os
+    from task_context import artifact_tasks, select_task, ContextError
+    paths = [Path(p) for p in (*inputs, *outputs) if p is not None]
+    selected = task_dir or os.environ.get('TASK_AUTHORING_TASK_DIR')
+    owners = artifact_tasks(paths)
+    if selected is None and not owners:
+        return None
+    selected = select_task(selected, artifact_paths=paths, allow_implicit_single=False)
+    for output in outputs:
+        if output is not None and not Path(output).resolve().is_relative_to(selected):
+            raise ContextError('Output must remain inside selected task: ' + str(output))
+    return selected
 
 
 def key_regex_list(rx):
@@ -1379,6 +1401,164 @@ def _self_test() -> None:
           "--sole-revision refused when another revision is stored), derived 1-based ledgers, output boundary)")
 
 
+# ------------------------------------------------------------------ verifier/export identity
+
+def export_run_ids(path: Path) -> set:
+    """Only root harness init/result metadata is identity; tool payload IDs are not."""
+    try:
+        events = json.loads(Path(path).read_text())
+    except (ValueError, OSError):
+        return set()
+    ids = set()
+    for event in events if isinstance(events, list) else []:
+        if not isinstance(event, dict) or event.get('parent_tool_use_id'):
+            continue
+        if event.get('type') == 'result' or (event.get('type') == 'system' and event.get('subtype') == 'init'):
+            for key in ('session_id', 'run_id', 'sessionId', 'runId'):
+                value = event.get(key)
+                if isinstance(value, str) and value.strip():
+                    ids.add(value)
+    return ids
+
+
+def binding_bundle_hash(task_dir, rubrics_path=None, *, stage='baseline'):
+    """Stage-specific submitted inputs, excluding outputs and generated certificates.
+
+    A precheck precedes OE/rubric authoring, so neither their absence nor later
+    creation can invalidate that run's input identity. Baseline binding retains
+    those final inputs. Text normalization follows the stage gate's certificate
+    convention; JSON, SQL and attachments retain their byte-level identity.
+    """
+    if stage not in ('precheck', 'baseline'):
+        raise ValueError('binding stage must be precheck or baseline')
+    from stage_gate import file_digest
+    root = Path(task_dir)
+    names = ['00_Assigments.md', '01_Universe_Inject.sql', '03_Error_Async_Config.txt',
+             '04_Prompt.txt']
+    if stage == 'baseline':
+        names += ['08_Oracle_Events.md', '09_Rubrics.json']
+    def artifact_digest(path):
+        return file_digest(path) if path.suffix in ('.md', '.txt') else sha256_file(path)
+    digests = {name: artifact_digest(root / name) for name in names if (root / name).is_file()}
+    refs = root / '02_Reference_Files'
+    if refs.is_dir():
+        digests.update({str(p.relative_to(root)): sha256_file(p) for p in sorted(refs.rglob('*')) if p.is_file()})
+    if stage == 'baseline' and rubrics_path is not None:
+        digests['09_Rubrics.json'] = sha256_file(Path(rubrics_path))
+    return hashlib.sha256(json.dumps(digests, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
+def bind_verifier_exports(verifier_path, paths, *, task_id, revision, bundle_hash,
+                          receipt=None, task_dir=None):
+    """Bind by exact export content, never by filename. Raises on unresolved identity.
+
+    Text-only verifier exports require an evidenced review receipt. A platform
+    export may instead supply Task ID / Revision / Bundle SHA256 and, in each
+    Run #N block, Export SHA256 or Session ID. Verifier-observed end-state IDs
+    need not all occur in the export.
+    """
+    verifier_path = Path(verifier_path)
+    paths = [Path(p) for p in paths]
+    if not all(isinstance(v, str) and v.strip() for v in (task_id, revision, bundle_hash)):
+        raise ValueError('UNBOUND: task, revision and bundle identity are required')
+    verifier_sha = sha256_file(verifier_path)
+    by_hash = {}
+    for path in paths:
+        by_hash.setdefault(sha256_file(path), []).append(path)
+    receipt_path = None
+    inline_metadata = receipt is None
+    if isinstance(receipt, (str, Path)):
+        receipt_path = Path(receipt).resolve()
+        receipt = json.loads(receipt_path.read_text())
+    text = verifier_path.read_text()
+    sections = {}
+    parts = re.split(r'(?m)^Run\s*#\s*(\d+)\s*$', text)
+    for offset in range(1, len(parts), 2):
+        sections[int(parts[offset])] = parts[offset + 1]
+    if receipt is None:
+        meta = {}
+        rows = []
+        current = None
+        for line in text.splitlines():
+            match = re.match(r'^Run\s*#\s*(\d+)\s*$', line.strip())
+            if match:
+                current = {'number': int(match.group(1))}
+                rows.append(current)
+                continue
+            match = re.match(r'^(Task ID|Revision|Bundle SHA256|Export SHA256|Session ID):\s*(\S+)\s*$', line.strip(), re.I)
+            if match:
+                key = {'task id':'task_id', 'revision':'revision', 'bundle sha256':'bundle_hash',
+                       'export sha256':'export_sha256', 'session id':'run_id'}[match.group(1).lower()]
+                (current if key in ('export_sha256', 'run_id') and current is not None else meta)[key] = match.group(2)
+        receipt = dict(schema_version=1, kind='VERIFIER_EXPORT_BINDING', verifier_sha256=verifier_sha,
+                       runs=rows, source='platform-metadata', **meta)
+    if not isinstance(receipt, dict) or receipt.get('schema_version') != 1 or receipt.get('kind') != 'VERIFIER_EXPORT_BINDING':
+        raise ValueError('UNBOUND: supported verifier/export binding evidence required')
+    for key, expected in [('task_id', task_id), ('revision', revision), ('bundle_hash', bundle_hash), ('verifier_sha256', verifier_sha)]:
+        if receipt.get(key) != expected:
+            raise ValueError(f'UNBOUND: missing/stale {key} in verifier binding')
+    if receipt.get('source') != 'platform-metadata':
+        if not all(isinstance(receipt.get(k), str) and receipt[k].strip() for k in ('reviewer', 'reason')):
+            raise ValueError('REVIEW_REQUIRED: binding receipt needs reviewer and causal reason')
+        from platform_handoff import evidence_errors
+        root = Path(task_dir) if task_dir is not None else verifier_path.parent
+        errors = evidence_errors(receipt.get('evidence'), root)
+        if errors:
+            raise ValueError('REVIEW_REQUIRED: ' + '; '.join(errors))
+    elif not inline_metadata:
+        raise ValueError('REVIEW_REQUIRED: external receipt cannot claim inline platform metadata')
+    entries = receipt.get('runs')
+    if not isinstance(entries, list) or not entries:
+        raise ValueError('UNBOUND: run identity entries missing')
+    mapped, identities, used = {}, [], set()
+    for entry in entries:
+        if not isinstance(entry, dict) or type(entry.get('number')) is not int or entry['number'] < 1:
+            raise ValueError('UNBOUND: invalid run number')
+        number = entry['number']
+        if number in mapped:
+            raise ValueError('UNBOUND: duplicate verifier run identity')
+        digest, run_id = entry.get('export_sha256'), entry.get('run_id')
+        candidates = by_hash.get(digest, []) if digest else [p for p in paths if run_id and run_id in export_run_ids(p)]
+        if len(candidates) != 1:
+            raise ValueError(f'UNBOUND: run {number} has {len(candidates)} matching exports; filenames are not evidence')
+        path = candidates[0]
+        if path in used:
+            raise ValueError('UNBOUND: an export is assigned to multiple verifier runs')
+        if run_id and run_id not in export_run_ids(path):
+            raise ValueError(f'UNBOUND: run {number} session identity mismatch')
+        # A reviewed comparison identifies the actual observed output or run metadata;
+        # a generic statement that filenames correspond is not evidence.
+        if receipt.get('source') != 'platform-metadata':
+            comparison = entry.get('comparison')
+            if not isinstance(comparison, dict) or not isinstance(comparison.get('reason'), str) or not comparison['reason'].strip():
+                raise ValueError(f'REVIEW_REQUIRED: run {number} comparison rationale missing')
+            observed = comparison.get('export_observation')
+            if not isinstance(observed, str) or not observed.strip() or observed not in path.read_text():
+                raise ValueError(f'REVIEW_REQUIRED: run {number} discriminating export observation missing')
+            if not run_id and sum(observed in candidate.read_text() for candidate in paths) != 1:
+                raise ValueError(f'REVIEW_REQUIRED: run {number} export observation is not discriminating')
+            evidence_observation = comparison.get('verifier_observation')
+            if not isinstance(evidence_observation, str) or not evidence_observation.strip() or evidence_observation not in sections.get(number, ''):
+                raise ValueError(f'REVIEW_REQUIRED: run {number} verifier observation missing from its run block')
+            if sum(evidence_observation in block for block in sections.values()) != 1:
+                raise ValueError(f'REVIEW_REQUIRED: run {number} verifier observation is not discriminating')
+        mapped[number] = path
+        used.add(path)
+        identities.append({'number': number, 'export_sha256': sha256_file(path), 'run_id': run_id})
+    if set(mapped) != set(ds.parse_verifier(verifier_path)):
+        # Receipts also enumerate errored slots, which have no grading rows.
+        missing = set(ds.parse_verifier(verifier_path)) - set(mapped)
+        if missing:
+            raise ValueError(f'UNBOUND: verifier runs missing binding: {sorted(missing)}')
+    if used != set(paths):
+        raise ValueError('UNBOUND: every supplied export, including error slots, needs identity evidence')
+    return {'verdict': 'BOUND', 'runs': mapped,
+            'evidence': {'schema_version': 1, 'task_id': task_id, 'revision': revision, 'bundle_hash': bundle_hash,
+                         'verifier_sha256': verifier_sha, 'runs': identities,
+                         'receipt_path': str(receipt_path) if receipt_path else None,
+                         'receipt': receipt}}
+
+
 # ------------------------------------------------------------------ main
 
 def main(argv) -> int:
@@ -1404,13 +1584,20 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    a.task_dir = forensic_task(a.task_dir,
+        [p for _, p in _pairs(a.run) + _pairs(a.derived) + _pairs(a.sql)] + [a.surface, a.prompt],
+        [a.out_dir])
     runs = [(lab, p, "run") for lab, p in _pairs(a.run)] + [(lab, p, "derived") for lab, p in _pairs(a.derived)]
     if not runs and a.task_dir:
         runs = [(lab, p, "run") for lab, p in task_runs(a.task_dir)]
+    forensic_task(a.task_dir, [p for _, p, _ in runs], [a.out_dir])
     if not runs:
         ap.print_usage(sys.stderr)
         return 2
     surface = a.surface or (a.task_dir / "Working_Files" / "01_Gradable_Surface.json" if a.task_dir else None)
+    default_sql = a.task_dir / '01_Universe_Inject.sql' if a.task_dir else None
+    default_prompt = a.prompt or (a.task_dir / '04_Prompt.txt' if a.task_dir else None)
+    forensic_task(a.task_dir, [surface, default_sql, default_prompt], [a.out_dir])
     spec, krx_s = table_spec_from_surface(surface) if surface and surface.is_file() else (None, None)
     key_rx = key_regex_list(a.key_regex or krx_s)
     sqls = [(lab, p.read_text(errors="replace")) for lab, p in _pairs(a.sql)]

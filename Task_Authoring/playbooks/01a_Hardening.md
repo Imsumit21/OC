@@ -308,6 +308,15 @@ A16 after retrieval).
 
 ### Report skeleton (`01a_Hardening_Report.md`)
 
+For current V3 work also supply `Working_Files/mode_b_request.json`; the hardening
+gate recomputes `mode_b_report.py` from current bound exports. It requires the
+raw/corrected heavy-row matrix, original transitive failure groups, diagnoses
+citing actual zero-based events, and bounded repair proposals. A precheck remains
+provisional and needs no final rubric/verifier. See
+`Guide/Readiness_And_Evidence.md`. Classify scope additions as difficulty,
+missing-data, fairness or grader-defect repair; volume alone cannot repair
+difficulty, while legitimate missing-data/fairness fixes remain possible.
+
 1. Mode, inputs read, inputs missing, run validity (B0). Write `MODE A` or `MODE B` here first; the gate takes the first mention as the mode (MODE B: every register row cites a rollout and a step, e.g. `run-3 · event 212`). MODE B (pre-check): the intake's six results — binding verdict, mixed-model flags, proposals and their dispositions with review coverage, the deliverable diff, the ledger record ids, the pre-registered posterior forecast id with its P(all gates) range (UNCALIBRATED), and the go / no-go call.
 2. Gate status, copied from `12`, beside the clean average and mechanism weight share (B3d) (MODE B baseline only).
 3. Predicted `/hardness` band with its requirement map and neighbour reasoning (B3c).

@@ -44,6 +44,9 @@ Writes only Task_Authoring/references/universe_kb/entities.json.
 from __future__ import annotations
 
 import argparse
+import fcntl
+import os
+import tempfile
 import datetime as dt
 import json
 import re
@@ -742,6 +745,29 @@ def _self_test() -> int:
 
 # ---------------------------------------------------------------- CLI
 
+def build_to(target):
+    """Serialize shared per-universe builds and publish only a complete snapshot."""
+    from trajectory_ledger import safe_out
+    target = safe_out(target)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = target.with_name(target.name + ".lock")
+    fd = os.open(lock_path, os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0), 0o600)
+    with os.fdopen(fd, "a+") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        data = build()
+        fd, temporary = tempfile.mkstemp(dir=target.parent, prefix=target.name + ".", suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                json.dump(data, handle, indent=1, ensure_ascii=False, default=list)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary, target)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
+    return data
+
+
 def main(argv: list) -> int:
     if "--self-test" in argv:
         try:
@@ -766,11 +792,7 @@ def main(argv: list) -> int:
             raise SystemExit(f"error: no KB output path is configured for the {source.get('universe') or 'selected'} "
                              "universe; set kb_output_path in references/universe_sources.json")
         target = Path(output) / "entities.json" if context else OUT
-        data = build()
-        target.parent.mkdir(parents=True, exist_ok=True)
-        tmp = target.with_suffix(".tmp")
-        tmp.write_text(json.dumps(data, indent=1, ensure_ascii=False, default=list))
-        tmp.replace(target)
+        data = build_to(target)
         m = data["_meta"]
         print(f"wrote {target.relative_to(pv.WS)}: {m['entity_count']} entities {m['kinds']}")
         print(f"unresolved: {dict(m['counts']['unresolved'])}  integrity flags: {dict(m['counts']['integrity_flags'])}")

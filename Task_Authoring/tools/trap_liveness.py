@@ -483,6 +483,8 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    a.task_dir = tl.forensic_task(a.task_dir,
+        [a.manifest, a.sql, a.prompt, a.verdicts, a.dispositions], [a.out])
     td = a.task_dir
     wf = td / "Working_Files" if td else None
     names = ("01_Hardness_Manifest.draft.json", "01_Hardness_Manifest.json") if a.design else (
@@ -490,6 +492,7 @@ def main(argv) -> int:
     man = a.manifest or (next((wf / n for n in names if (wf / n).is_file()), None) if wf else None)
     sql = None if a.design else (a.sql or (td / "01_Universe_Inject.sql" if td else None))
     prompt = a.prompt or (td / "04_Prompt.txt" if td else None)
+    tl.forensic_task(td, [man, sql, prompt])
     if not man or not Path(man).is_file() or (not a.design and (not sql or not sql.is_file())):
         print("trap_liveness: need --manifest and --sql (or --task-dir), or --design", file=sys.stderr)
         return 2

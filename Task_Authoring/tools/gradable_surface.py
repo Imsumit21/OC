@@ -1390,12 +1390,15 @@ def _self_test() -> None:
 # ------------------------------------------------------------------ main
 
 def _manifest_for(task_dir: Path | None, path: Path | None):
+    from trajectory_ledger import forensic_task
     if path:
+        forensic_task(task_dir, [path])
         return json.loads(Path(path).read_text())
     if task_dir:
         for name in ("01_Hardness_Manifest.json", "01_Hardness_Manifest.draft.json"):
             p = task_dir / "Working_Files" / name
             if p.is_file():
+                forensic_task(task_dir, [p])
                 return json.loads(p.read_text())
     return None
 
@@ -1419,8 +1422,12 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    from trajectory_ledger import forensic_task
+    a.task_dir = forensic_task(a.task_dir,
+        [a.path, a.manifest, a.solver, a.sql, a.deliverables], [a.out])
     if a.command == "validate":
         path = a.path or (a.task_dir / "Working_Files" / "01_Gradable_Surface.json" if a.task_dir else None)
+        forensic_task(a.task_dir, [path, a.task_dir / 'Working_Files/01_Hardness_Manifest.json' if a.task_dir else None])
         if not path or not path.is_file():
             print("gradable_surface: no surface file (give a path or --task-dir)", file=sys.stderr)
             return 2
@@ -1433,6 +1440,7 @@ def main(argv) -> int:
         return 0 if r["verdict"] == "PASS" else 1
     if a.command == "gradeable-report":
         path = a.path or (a.task_dir / "Working_Files" / "01_Gradable_Surface.json" if a.task_dir else None)
+        forensic_task(a.task_dir, [path])
         if not path or not path.is_file():
             print("gradable_surface: no surface file (give a path or --task-dir)", file=sys.stderr)
             return 2

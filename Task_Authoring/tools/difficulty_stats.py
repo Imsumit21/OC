@@ -57,12 +57,21 @@ Usage:
       --verifier Task_Authoring/task_inputs/10_Baseline_Verifier_Results.md \\
       --rubrics Task_Authoring/task_inputs/09_Rubrics.json \\
       --trajectories Task_Authoring/task_inputs/07_Baseline_Trajectories \\
-      --task-dir Task_Authoring/task_inputs [--task-type "Long Horizon"] \\
+      --task-dir Task_Authoring/task_inputs --revision rev1 [--task-type "Long Horizon"] \\
+      [--binding-receipt Task_Authoring/task_inputs/Working_Files/verifier_binding.json] \
       [--invalid R6,R7] [--judge-correction run-3:R5 ...] \\
       [--out Task_Authoring/task_inputs/Working_Files/12_difficulty_input.json]
   python3 Task_Authoring/tools/difficulty_stats.py <input.json>          # markdown
   python3 Task_Authoring/tools/difficulty_stats.py <input.json> --json   # machine-readable
   python3 Task_Authoring/tools/difficulty_stats.py --self-test
+
+V3 --build requires an explicit --revision and verifier/export identity. Use inline
+platform run/session IDs or export hashes with task/revision/bundle identity, or
+--binding-receipt with a reviewed, hash-bound comparison (trajectory_ledger.py's
+bind_verifier_exports schema). Filenames are never binding evidence. A stored V3
+matrix is revalidated against current exports before CLI scoring; raw grades
+cannot be edited through that path. --legacy-v2 remains a historical diagnostic,
+explicitly HISTORICAL_UNVERIFIED, and does not certify run association.
 
 --build parses the platform exports. Verifier results: the "Run verifiers" copy
 ("Run #N", "X/Y criteria passed", then one tab-separated "title<TAB>Pass|Fail<TAB>
@@ -765,7 +774,8 @@ def read_trajectory(path: Path) -> tuple[str, str, dict | None]:
 
 def build(verifier: Path, rubrics_path: Path, trajectories: Path, task_type: str,
           invalid: list[str] | None = None, corrections: list[str] | None = None,
-          *, context: dict | None = None, spec_version: str = "V3") -> tuple[dict, list[str]]:
+          *, context: dict | None = None, spec_version: str = "V3",
+          binding_receipt=None, revision: str | None = None) -> tuple[dict, list[str]]:
     if spec_version == "V3" and context is None:
         _fail("V3 build requires the normalized task context (CLI: --task-dir <task folder>)")
     rubrics, warnings = parse_rubrics(rubrics_path)
@@ -774,14 +784,34 @@ def build(verifier: Path, rubrics_path: Path, trajectories: Path, task_type: str
     for r in rubrics:
         by_title.setdefault(norm_title(r["title"]), []).append(r["id"])
 
+    binding_evidence = {"verdict": "HISTORICAL_UNVERIFIED", "reason": "legacy filename association; diagnostic only"}
     files = {}
-    for p in sorted(trajectories.glob("*.json")):
-        n = _run_number(p)
-        if n is None:
-            _fail(f"{p.name}: cannot read a run number from the file name")
-        if n in files:
-            _fail(f"two trajectory files for run {n}: {files[n].name}, {p.name}")
-        files[n] = p
+    if spec_version == "V3":
+        from task_context import validate_task_paths
+        from trajectory_ledger import bind_verifier_exports, binding_bundle_hash
+        task_dir = context.get("task_dir")
+        if not task_dir:
+            _fail("V3 binding requires explicit task directory identity")
+        validate_task_paths(task_dir, [verifier, rubrics_path, trajectories])
+        for selected_path in (verifier, rubrics_path, trajectories):
+            try:
+                Path(selected_path).resolve().relative_to(Path(task_dir).resolve())
+            except ValueError:
+                _fail(f"V3 input outside selected task: {selected_path}")
+        result = bind_verifier_exports(verifier, sorted(trajectories.glob("*.json")),
+                    task_id=context.get("task_identity"), revision=revision,
+                    bundle_hash=binding_bundle_hash(task_dir, rubrics_path),
+                    receipt=binding_receipt, task_dir=task_dir)
+        files = result["runs"]
+        binding_evidence = dict(result["evidence"], verdict="BOUND")
+    else:
+        for p in sorted(trajectories.glob("*.json")):
+            n = _run_number(p)
+            if n is None:
+                _fail(f"{p.name}: cannot read a run number from the file name")
+            if n in files:
+                _fail(f"two trajectory files for run {n}: {files[n].name}, {p.name}")
+            files[n] = p
     if not files:
         _fail(f"{trajectories}: no trajectory JSON files")
     if spec_version == "V3" and set(files) != set(range(1, BASELINE_RUNS + 1)):
@@ -835,11 +865,63 @@ def build(verifier: Path, rubrics_path: Path, trajectories: Path, task_type: str
         if run not in by_run or by_run[run]["status"] != "completed" or rub not in ids:
             _fail(f"--judge-correction {item!r}: expected <completed run id>:<rubric id>")
         by_run[run].setdefault("judge_corrections", {})[rub] = True
-    data = {"spec_version": spec_version, "task_type": _task_type(task_type), "rubrics": out_rubrics, "rollouts": rollouts}
+    data = {"spec_version": spec_version, "task_type": _task_type(task_type), "rubrics": out_rubrics, "rollouts": rollouts,
+            "verifier_binding": binding_evidence}
     if context is not None:
         bind_context(data, context, require_existing=False)
     validate(data)
     return data, warnings
+
+
+def revalidate_binding(data: dict, context: dict, *, verifier=None, rubrics=None, trajectories=None):
+    """Rebuild raw evidence before consuming a saved V3 matrix; corrections remain separate."""
+    evidence = data.get("verifier_binding") or {}
+    if evidence.get("verdict") != "BOUND":
+        _fail("saved matrix is HISTORICAL_UNVERIFIED/UNBOUND; rebuild with verified export identity")
+    root = Path(context["task_dir"])
+    receipt = evidence.get("receipt")
+    if isinstance(receipt, dict) and receipt.get("source") == "platform-metadata":
+        receipt = None  # Reparse actual inline metadata, never trust cached metadata.
+    raw, _ = build(Path(verifier) if verifier else root / "10_Baseline_Verifier_Results.md",
+                   Path(rubrics) if rubrics else root / "09_Rubrics.json",
+                   Path(trajectories) if trajectories else root / "07_Baseline_Trajectories",
+                   context["task_type"], context=context, binding_receipt=receipt,
+                   revision=evidence.get("revision"))
+    if raw["verifier_binding"]["bundle_hash"] != evidence.get("bundle_hash"):
+        _fail("saved matrix bundle identity changed")
+    if [{k: r.get(k) for k in ("id", "weight", "category", "title")} for r in data.get("rubrics", [])] != raw["rubrics"]:
+        _fail("saved matrix rubric rows differ from actual reviewed rubric")
+    expected = {r["id"]:r for r in raw["rollouts"]}
+    if len(data.get("rollouts", [])) != len(expected):
+        _fail("saved matrix run slots differ from bound exports")
+    seen = set()
+    for row in data.get("rollouts", []):
+        rid = row.get("id")
+        current = expected.get(rid)
+        if current is None or rid in seen:
+            _fail("saved matrix has duplicate/unbound run identity")
+        seen.add(rid)
+        for key in ("status", "results", "tool_calls", "models", "model_check"):
+            if row.get(key) != current.get(key):
+                _fail(f"saved matrix {rid} {key} differs from bound raw evidence")
+    from design_readiness import evidence_ok
+    corrections = data.get("correction_evidence")
+    if corrections is None:
+        correction_path = root / "Working_Files" / "Correction_Evidence.json"
+        corrections = json.loads(correction_path.read_text()) if correction_path.is_file() else {}
+    if not isinstance(corrections, dict):
+        _fail("correction evidence must be keyed by invalid:Rid or run-id:Rid")
+    for criterion in data.get("rubrics", []):
+        if criterion.get("valid") is False and not evidence_ok(corrections.get("invalid:" + criterion["id"]), root):
+            _fail(f"{criterion['id']}: invalidation lacks current evidence")
+    for row in data.get("rollouts", []):
+        if row.get("status") != "completed" and row.get("judge_corrections"):
+            _fail(f"{row['id']}: errored slot cannot carry score corrections")
+        for criterion_id in row.get("judge_corrections", {}):
+            key = row["id"] + ":" + criterion_id
+            if not evidence_ok(corrections.get(key), root):
+                _fail(f"{key}: correction lacks current evidence")
+    return raw["verifier_binding"]
 
 
 def bind_context(data: dict, context: dict, *, require_existing: bool = True) -> None:
@@ -1211,19 +1293,25 @@ def main(argv: list[str]) -> int:
             _fail("--legacy-v2 build requires --task-type")
         data, warnings = build(Path(needed["--verifier"]), Path(needed["--rubrics"]),
                                Path(needed["--trajectories"]), task_type, invalid, corrections,
-                               context=context, spec_version="V2" if "--legacy-v2" in argv else "V3")
+                               context=context, spec_version="V2" if "--legacy-v2" in argv else "V3",
+                               binding_receipt=_flag(argv, "--binding-receipt"), revision=_flag(argv, "--revision"))
         for w in warnings:
             print(f"difficulty_stats: warning: {w}", file=sys.stderr)
         text = json.dumps(data, indent=1, ensure_ascii=False)
         out = _flag(argv, "--out")
         if out:
+            if context is not None:
+                try:
+                    Path(out).resolve().relative_to(Path(context["task_dir"]).resolve())
+                except ValueError:
+                    _fail("--out must be inside the selected task")
             Path(out).write_text(text + "\n", encoding="utf-8")
             print(f"wrote {out}", file=sys.stderr)
         else:
             print(text)
         return 0
     value_flags = {"--out", "--verifier", "--rubrics", "--trajectories", "--task-type", "--invalid", "--judge-correction",
-                   "--task-dir"}
+                   "--task-dir", "--binding-receipt", "--revision"}
     paths = [a for i, a in enumerate(argv) if not a.startswith("--") and (i == 0 or argv[i - 1] not in value_flags)]
     if len(paths) != 1:
         print(__doc__, file=sys.stderr)
@@ -1234,18 +1322,21 @@ def main(argv: list[str]) -> int:
             _fail("--legacy-v2 cannot reinterpret a V3 matrix")
         data["spec_version"] = "V2"
     else:
-        bind_context(data, cli_context(argv, Path(paths[0])))
+        context = cli_context(argv, Path(paths[0]))
+        bind_context(data, context)
+        revalidate_binding(data, context, verifier=_flag(argv, "--verifier"),
+                           rubrics=_flag(argv, "--rubrics"), trajectories=_flag(argv, "--trajectories"))
     result = compute(data)
     print(json.dumps(result, indent=2) if "--json" in argv else to_markdown(result, data))
     return 1 if result["blocking"] else 0
 
 
 def cli_context(argv: list[str], *paths: Path) -> dict:
-    from task_context import load_context, ContextError
+    from task_context import load_context, select_task, ContextError
 
     task_dir = _flag(argv, "--task-dir")
     try:
-        return load_context(Path(task_dir) if task_dir else infer_task_dir(*paths))
+        return load_context(select_task(task_dir, artifact_paths=paths))
     except ContextError as error:
         _fail(str(error))
 

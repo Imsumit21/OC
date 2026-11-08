@@ -909,7 +909,10 @@ scenario stage) answers the self-checks from the manifest, SQL, gradable surface
 
 A container the tool cannot derive is UNRESOLVED, never clean; declare `version_records[].container` (key format in the
 tool's docstring) when a base record holds the correction. The tool is advisory (exit 0; `--strict` for design loops)
-and is not a stage-gate check; every FLAG needs a written disposition, and the response is a redesign, never a weaker
+and is not itself run in strict mode by every gate. New V3 gates require a current,
+stage-specific evidence-backed review through `design_readiness.py` (see
+`Guide/Readiness_And_Evidence.md`); design may defer materialization to injection.
+Every applicable FLAG needs a substantive disposition, and the response is a redesign, never a weaker
 fairness link or a raised weight.
 
 ### 13.3 Observed on this repo: dd-2024-release-cost rev1 (one Opus 5.5 pre-check, 2026-10-31)

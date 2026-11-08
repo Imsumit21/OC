@@ -1835,12 +1835,17 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    a.task_dir = tl.forensic_task(a.task_dir,
+        [a.solver, a.surface, a.manifest, a.reference, a.seed_ledger]
+        + [p for _, p in tl._pairs(a.sql) + tl._pairs(a.run)], [a.out, a.ledger_out])
     if a.seed_ledger and not a.reference:
         ap.error("--seed-ledger compares against --reference: give --reference ATTRIBUTION.json as well")
     td = a.task_dir
     wf = td / "Working_Files" if td else None
     solver = a.solver or (wf / "solver" / "solver.py" if wf else None)
     surface_path = a.surface or (wf / "01_Gradable_Surface.json" if wf else None)
+    man_path = a.manifest or (wf / "01_Hardness_Manifest.json" if wf else None)
+    tl.forensic_task(td, [solver, surface_path, man_path, td / '01_Universe_Inject.sql' if td else None])
     if not solver or not solver.is_file() or not surface_path or not surface_path.is_file():
         print("node_verdicts: need --solver and --surface (or --task-dir with Working_Files/solver/solver.py and "
               "01_Gradable_Surface.json)", file=sys.stderr)
@@ -1853,6 +1858,7 @@ def main(argv) -> int:
     if not sqls and td and (td / "01_Universe_Inject.sql").is_file():
         sqls = [("task", (td / "01_Universe_Inject.sql").read_text())]
     runs = tl._pairs(a.run) or (tl.task_runs(td) if td else [])
+    tl.forensic_task(td, [p for _, p in runs])
     if not sqls or not runs:
         print("node_verdicts: no SQL or no runs", file=sys.stderr)
         return 2

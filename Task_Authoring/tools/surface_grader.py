@@ -2376,7 +2376,11 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    a.task_dir = tl.forensic_task(a.task_dir,
+        [a.surface, a.truth, a.solver, a.oracle_dir, a.sql, a.compare, a.official]
+        + [p for _, p in tl._pairs(a.run)], [a.out])
     surface_path = a.surface or (a.task_dir / "Working_Files" / "01_Gradable_Surface.json" if a.task_dir else None)
+    tl.forensic_task(a.task_dir, [surface_path])
     if not surface_path or not surface_path.is_file():
         print("surface_grader: no surface (give --surface or --task-dir with Working_Files/01_Gradable_Surface.json)",
               file=sys.stderr)
@@ -2384,9 +2388,11 @@ def main(argv) -> int:
     surface = gs.load(surface_path)
     sql = a.sql or (a.task_dir / "01_Universe_Inject.sql" if a.task_dir else None)
     truth_default = a.task_dir / "Working_Files" / "solver" / "truth.json" if a.task_dir else None
+    tl.forensic_task(a.task_dir, [sql, truth_default])
     truth, tprov = load_truth(a.truth or (truth_default if not (a.solver or a.oracle_dir) and truth_default
                                           and truth_default.is_file() else None), a.solver, a.oracle_dir, sql)
     runs = tl._pairs(a.run) or (tl.task_runs(a.task_dir) if a.task_dir else [])
+    tl.forensic_task(a.task_dir, [p for _, p in runs])
     if not runs:
         print("surface_grader: no runs", file=sys.stderr)
         return 2

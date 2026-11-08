@@ -100,6 +100,12 @@ Readings the rules leave open — the calculator applies the strictest and print
 
 ## Diagnosis and routing
 
+Current V3 `difficulty_stats.py --build` requires `--revision` and inline platform
+identity or `--binding-receipt`; filenames are not run identity. Scoring saved
+matrices revalidates the raw source mapping and correction evidence. The all-fail,
+difficulty and release handoffs also verify the bound exports against the reviewed
+platform environment. See `Guide/Readiness_And_Evidence.md` for exact commands.
+
 The score-shape rows from `/create-hardening` B3b are merged into this table (plan §2, §9: content move). The universe
 fixes in the Route column are designed in `/create-scenario --revise` from the MODE B forensics.
 

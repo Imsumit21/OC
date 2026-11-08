@@ -124,6 +124,15 @@ print(json.dumps(out))
 """
 
 
+# A maintained synthetic control, not a historical production-ledger dependency.
+# cases.json cites its content-addressed identity; construction validates it with Ledger.append.
+CALIBRATION_FORECAST = {
+    "kind": "forecast", "task": "isolated-stage-gate-calibration", "revision": "fixture-v1",
+    "source": "forecast", "model": "fixture-model",
+    "harness": {"name": "selftest-sandbox", "version": "1"}, "epistemic": "inferred",
+    "evidence": {"text": "Synthetic calibration forecast; never platform evidence", "label": "UNCALIBRATED"}}
+
+
 def scratch_tmp(prefix: str) -> tempfile.TemporaryDirectory:
     """A unique self-test folder under the scratch root, removed when the context exits."""
     SCRATCH.mkdir(parents=True, exist_ok=True)
@@ -229,6 +238,19 @@ class Sandbox:
                 raise Leak(f"linked folder {target} missing")
             (self.ws / name).symlink_to(Path(target).resolve(), target_is_directory=True)
         self.tmp.mkdir()
+        if (self.bundle / "tools" / "hardness_ledger.py").is_file():
+            # Import the sandbox copy so every output boundary is its own bundle. The fake
+            # sandbox self-test has no ledger tool and needs no calibration record.
+            seed = subprocess.run(
+                [sys.executable, "-B", "-c",
+                 "import json,sys; sys.path.insert(0,sys.argv[1]); "
+                 "from hardness_ledger import Ledger; "
+                 "result=Ledger().append([json.loads(sys.argv[2])]); "
+                 "print(json.dumps(result)); sys.exit(bool(result['rejected']))",
+                 str(self.bundle / "tools"), json.dumps(CALIBRATION_FORECAST)],
+                cwd=self.ws, env=self.env(), capture_output=True, text=True, timeout=30)
+            if seed.returncode:
+                raise Leak("Cannot seed isolated calibration forecast: " + seed.stderr + seed.stdout)
 
     def env(self, extra: dict | None = None) -> dict:
         env = {k: v for k, v in os.environ.items() if not k.startswith("TASK_AUTHORING_")}

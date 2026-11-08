@@ -1874,6 +1874,13 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    path_inputs = [value for key, value in vars(a).items()
+                   if isinstance(value, Path) and key not in ('task_dir', 'out', 'md', 'ledger')]
+    path_inputs += getattr(a, 'freeze', []) + getattr(a, 'briefs', [])
+    if a.cmd == 'compare':
+        path_inputs += [Path(spec.split('=', 1)[-1]) for spec in a.forecast]
+    a.task_dir = tl.forensic_task(getattr(a, 'task_dir', None), path_inputs,
+                                 [getattr(a, 'out', None), getattr(a, 'md', None)])
     max_k_disclosure = None
     if a.cmd in ("forecast", "exhaustive"):
         try:
@@ -1995,6 +2002,7 @@ def main(argv) -> int:
     else:
         man_path = a.manifest or (next((wf / n for n in ("01_Hardness_Manifest.json", "01_Hardness_Manifest.draft.json")
                                          if (wf / n).is_file()), None) if wf else None)
+        tl.forensic_task(td, [man_path])
         manifest = json.loads(man_path.read_text()) if man_path else None
         portfolio = (manifest or {}).get("mechanism_portfolio") or []
         overrides = dict(x.split("=", 1) for x in a.family)

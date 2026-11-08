@@ -24,7 +24,7 @@ def review_digest(stage, task_dir):
         projection = {"context_hash": data.get("context_hash"),
                       "role_review": data.get("role_reviews", {}).get(stage),
                       "outcome_review": data.get("outcome_reviews", {}).get(stage)}
-        if stage in ("rubric-writing", "rubric-check", "release"):
+        if stage in ("rubric-check", "release"):
             projection["rubric_rows"] = data.get("rubric_rows")
         return hashlib.sha256(json.dumps(projection, sort_keys=True).encode()).hexdigest()[:12]
     except (OSError, ValueError, AttributeError):
@@ -266,7 +266,10 @@ def check_evidence(stage, task_dir, context, artifact_hash, reachable, workspace
     """Return (check id, success, detail) tuples; every judgment must be recorded against current content."""
     need_role = stage in ("scenario", "prompt-check")
     need_outcomes = stage in ("prompt-writing", "prompt-check")
-    need_rubric = stage in ("rubric-writing", "rubric-check", "release")
+    # Planning owns provisional outcome slots, not the rubric produced afterwards.
+    # The existing plan gate checks coverage, reachability, weights and atomicity;
+    # final row/source evidence becomes required at rubric-check.
+    need_rubric = stage in ("rubric-check", "release")
     if not (need_role or need_outcomes or need_rubric):
         return []
     path = Path(task_dir) / "Working_Files" / EVIDENCE_FILE

@@ -253,6 +253,9 @@ def main(argv) -> int:
     if a.self_test:
         _self_test()
         return 0
+    a.task_dir = tl.forensic_task(a.task_dir,
+        [a.solver, a.sql, a.surface, a.manifest, a.prompt, a.dispositions,
+         a.previous_sql, a.previous_truth, a.forecast], [a.out])
     try:
         max_k, disclosure = dm.resolve_max_k(a.max_k, a.allow_max_k)        # default 8; above only disclosed
     except dm.Unsupported as exc:
@@ -268,6 +271,8 @@ def main(argv) -> int:
     manifest = a.manifest or (wf / "01_Hardness_Manifest.json" if wf else None)
     prompt = a.prompt or (td / "04_Prompt.txt" if td else None)
     disp = a.dispositions or (wf / "01c_Dispositions.json" if wf else None)
+    tl.forensic_task(td, [solver, sql, surface, manifest, prompt, disp],
+                     [a.out or (wf / '01c_Preflight_Report.json' if wf else None)])
     for name, p in (("solver", solver), ("sql", sql), ("surface", surface)):
         if not p or not p.is_file():
             print(f"preflight_report: no {name} (give --{name} or --task-dir)", file=sys.stderr)

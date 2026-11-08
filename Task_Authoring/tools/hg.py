@@ -18,8 +18,7 @@ workspace root:
   python3 Task_Authoring/tools/hg.py lint [--sql PATH] [--checks a,b] [--no-base] [--summary]
   python3 Task_Authoring/tools/hg.py rubric-lint <rubric.json>
 
-The task (and so the universe) comes from `--task-dir <dir>` or TASK_AUTHORING_TASK_DIR, else
-Task_Authoring/task_inputs/. `search` = hg_search.py, `records` = hg_records.py, `reference` = hg_reference.py,
+The task (and so the universe) comes from `--task-dir <dir>` or TASK_AUTHORING_TASK_DIR, else an unambiguous artifact owner or the only active task folder. `search` = hg_search.py, `records` = hg_records.py, `reference` = hg_reference.py,
 `context` = hg_context.py, `universe` = hg_universe.py, `lint` = hg_injection_lint.py,
 `rubric-lint` = hg_rubric_lint.py. `lint` defaults `--sql` to
 <TASK_AUTHORING_TASK_DIR>/01_Universe_Inject.sql. The upstream linter exits 0 even with
@@ -94,6 +93,8 @@ def main(argv: list[str]) -> int:
         print("Task_Authoring never reads <workspace>/Evals/task_inputs/ (" + ", ".join(refused) + "); "
               "task inputs live under Task_Authoring/task_inputs/", file=sys.stderr)
         return 2
+    from runtime_context import select_task, validate_task_paths
+    validate_task_paths(select_task(), args)
     built = build()
     script = Path(built["local_tools"]) / HELPERS[command]
     return subprocess.call([sys.executable, str(script), *args])
@@ -103,6 +104,10 @@ if __name__ == "__main__":
     if sys.argv[1:] in (["-h"], ["--help"]):    # usage needs no task context
         print(__doc__)
         raise SystemExit(0)
+    refused = [a for a in sys.argv[1:] if _inside_eval_inputs(a)]
+    if refused:
+        print("Task_Authoring never reads Evals/task_inputs: " + ", ".join(refused), file=sys.stderr)
+        raise SystemExit(2)
     from runtime_context import guarded_entry
     guarded_entry(globals(), require_source=requires_source(sys.argv[1:]))
     raise SystemExit(main(sys.argv[1:]))

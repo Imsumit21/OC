@@ -397,7 +397,7 @@ def file_digest(p: Path) -> str:
     if p.is_dir():
         h = hashlib.sha256()
         for f in sorted(x for x in p.rglob("*") if x.is_file()):
-            h.update(f.name.encode() + f.read_bytes())
+            h.update(f.relative_to(p).as_posix().encode() + f.read_bytes())
         return h.hexdigest()[:12]
     if p.suffix in (".md", ".txt"):
         return digest_text(p.read_text(errors="replace"))
@@ -526,7 +526,15 @@ def virtual_digests(ctx, stage):
     if not ctx.context:
         return {}
     from v3_artifact_checks import review_digest
-    files = sorted(HERE.glob("*.py"))
+    # A baseline parser change is not a change to scenario validation. Keep
+    # implementation identities stage-specific just like artifact dependencies.
+    files = [HERE / name for name in ("stage_gate.py", "task_context.py", "runtime_context.py", "v3_artifact_checks.py")]
+    stage_tools = {"scenario": ("hardness_gate.py", "gradable_surface.py"),
+                   "injection": ("sql_lint.py", "base_check.py", "hardness_gate.py", "preflight_report.py"),
+                   "hardening": ("trajectory_ledger.py", "mode_b_report.py"),
+                   "difficulty": ("difficulty_stats.py", "trajectory_ledger.py"),
+                   "allfail": ("difficulty_stats.py",), "release": ("difficulty_stats.py", "platform_handoff.py")}
+    files += [HERE / name for name in stage_tools.get(stage, ()) if (HERE / name).exists()]
     policy = hashlib.sha256(b"".join(p.read_bytes() for p in files)).hexdigest()[:12]
     return {"__context__": str(ctx.context["context_hash"])[:12],
             "__assignment__": str(ctx.context["assignment_hash"])[:12],
@@ -3216,7 +3224,8 @@ STAGES = {
     "reference-files": dict(fn=st_reference_files, primary="02_Reference_Files_Manifest.md",
                             outputs=["02_Reference_Files_Manifest.md"],
                             inputs=["00_Assigments.md", "01_Grounding_Dossier.md", "01_Universe_Inject.sql"],
-                            optional=["03_Error_Async_Config.txt"], upstream=[("injection", "01_Grounding_Dossier.md")]),
+                            optional=["03_Error_Async_Config.txt"], upstream=[("injection", "01_Grounding_Dossier.md")],
+                            digest_extra=["02_Reference_Files"]),
     "error-async": dict(fn=st_error_async, primary="03_Error_Async_Config.txt", outputs=["03_Error_Async_Config.txt"],
                         inputs=["00_Assigments.md", "01_Grounding_Dossier.md", "01_Universe_Inject.sql"],
                         optional=[], upstream=[("injection", "01_Grounding_Dossier.md")]),
@@ -3287,9 +3296,13 @@ def run_stage(stage, task_dir, rerun="all", selftest=False):
             spec["fn"](ctx)
             if ctx.v3:
                 v3_checks(ctx)
+                if not ctx.selftest:
+                    import readiness_controls
+                    readiness_controls.check_stage(sys.modules[__name__], ctx)
         except Exception as e:  # noqa: BLE001 - a crash must block, never pass
             ctx.add("internal.error", False, f"{type(e).__name__}: {e}")
         own_paste(ctx, spec["primary"], spec["outputs"])
+        ctx.executed_gate = True
     return ctx
 
 
@@ -3582,6 +3595,10 @@ def main(argv) -> int:
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--artifact-hash", type=Path, help="print the normalized content hash used by V3 review records")
+    ap.add_argument("--attest", action="store_true", help="save immutable evidence after a full PASS")
+    ap.add_argument("--reviewer", default="stage_gate automated checks", help="attestation check owner")
+    ap.add_argument("--readiness", choices=("local", "platform"), help="derive readiness without executing platform actions")
+    ap.add_argument("--task-dir", dest="selected_task", type=Path, help="explicit task for readiness commands")
     a = ap.parse_args(argv)
     if a.artifact_hash:
         if not a.artifact_hash.exists():
@@ -3596,10 +3613,32 @@ def main(argv) -> int:
             print(f"{s:16} writes {', '.join(spec['outputs'])}  ← {', '.join(spec['inputs'])}"
                   + (f"  · upstream {', '.join(u for u, _ in spec['upstream'])}" if spec["upstream"] else ""))
         return 0
+    if a.readiness:
+        try:
+            from task_context import select_task
+            import readiness_controls
+            task = select_task(a.selected_task or a.task_dir)
+            ctx = Ctx("release", task)
+            if not assignment_context(ctx):
+                raise ValueError("assignment/source context invalid")
+            result = readiness_controls.readiness(sys.modules[__name__], ctx, a.readiness)
+            print(json.dumps(result, indent=2))
+            return 0 if result['ready'] else 1
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            print(json.dumps({'ready': False, 'errors': [str(exc)]}, indent=2))
+            return 1
     if not a.stage or not a.task_dir:
         ap.print_usage(sys.stderr)
         return 2
-    ctx = run_stage(a.stage, Path(a.task_dir), a.rerun)
+    try:
+        from task_context import select_task
+        task = select_task(a.task_dir)
+        if a.selected_task and task.resolve() != a.selected_task.resolve():
+            raise ValueError("positional task and --task-dir disagree")
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    ctx = run_stage(a.stage, task, a.rerun)
     v = verdict_of(ctx)
     text = render(ctx, v)
     if a.json:
@@ -3616,6 +3655,14 @@ def main(argv) -> int:
             print(f"\n(pasted into {STAGES[a.stage]['primary']} Self-review)", file=sys.stderr)
         else:
             print("\n(--paste ignored: only a PASS is pasted)", file=sys.stderr)
+    if ctx.v3 and v == "PASS" and (a.attest or a.paste):
+        try:
+            import readiness_controls
+            record = readiness_controls.attest(sys.modules[__name__], ctx, a.reviewer)
+            print(f"\n(attested {record['evidence_id']})", file=sys.stderr)
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            print(f"attestation failed: {exc}", file=sys.stderr)
+            return 1
     return 0 if v == "PASS" else 1
 
 

@@ -661,7 +661,16 @@ def _self_test() -> None:
         assert own[0]["status"] == "PASS", own
         # M5: golden values in base records are read through tools/hg.py records (sandboxed): a value in its record
         # passes, a wrong value and an absent record fail. The base record: Linear team team_ZOM, "Zombie Match 3D".
-        ctx = BUNDLE / "support" / "fixtures" / "season_pass_rev13"               # a V3 assignment for hg.py
+        # The old external season_pass_rev13 assignment is not installed in every
+        # checkout. Keep this golden-source probe self-contained: a synthetic V3
+        # assignment selects the fixture universe, while hg.py still reads and
+        # verifies the real base record through its ordinary guarded route.
+        ctx = Path(tmp) / 'golden_task'
+        ctx.mkdir()
+        (ctx / '00_Assigments.md').write_text(
+            '🏢 Business Function\nExecutive\n🧑 Persona\nFrederick Stone\nRole: Co-founder\n'
+            '🎯 Competency\nCorporate Ops\n🛠️ Task Skill\nAuthoring\n📋 Task Type\nlong-horizon\n'
+            '🎚️ Difficulty Mode\neasy\n📅 Universe Date\nOctober 1, 2025 07:00\n')
         assert _FIXTURE_SOLVER.count('"status": status,') == 1
         base_solver = _FIXTURE_SOLVER.replace('"status": status,', '"status": status, "team": "TEAM",') + (
             "\n_orig_e = evidence\n"
@@ -778,9 +787,15 @@ def main(argv) -> int:
             return sb.run_isolated(["oracle_kit.py", "--self-test"], source=BUNDLE)
         _self_test()
         return 0
+    from trajectory_ledger import forensic_task
+    a.task_dir = forensic_task(a.task_dir,
+        [a.solver, a.sql, a.previous_sql, a.previous_truth, a.manifest, a.surface], [a.out])
     td, wf = _task_paths(a.task_dir)
     solver_path = a.solver or (wf / "solver" / "solver.py" if wf else None)
     sql_path = a.sql or (td / "01_Universe_Inject.sql" if td else None)
+    forensic_task(td, [solver_path, sql_path,
+        a.manifest or (wf / '01_Hardness_Manifest.json' if wf else None),
+        a.surface or (wf / '01_Gradable_Surface.json' if wf else None)])
     if not a.command or not solver_path or not solver_path.is_file() or not sql_path or not sql_path.is_file():
         print("oracle_kit: give check|truth with --solver and --sql (or --task-dir holding Working_Files/solver/solver.py)",
               file=sys.stderr)
