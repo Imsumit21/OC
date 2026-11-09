@@ -1,0 +1,1697 @@
+[
+ {
+  "event": 389,
+  "id": "toolu_vrtx_01Jm8FgeJGr9XcziQoBwKtdJ",
+  "tool": "linear_create_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 390,
+  "input": {
+   "team": "Design",
+   "title": "String: Lapsed 7 days headline → \"Your Squad Needs You Back\"",
+   "parentId": "DES-314",
+   "description": "The Lapsed 7 days message (DES-317) is a Go for beta. Leonard's latest call on the headline is \"Your Squad Needs You Back\" (body stays). The client currently ships \"They’ve Taken Over… Can You Stop Them? 😱\" as WeeklyReminderTitle in Assets/Scripts/Notifications/NotificationManager.cs (match3d). The strings are hard-coded, so the change has to be made in the client.\n\nChange: WeeklyReminderTitle → \"Your Squad Needs You Back\". Leave WeeklyReminderMessage (the body) as it is.\n\nThis message fires on days 7, 14, 21 and 28 after the last session (BatchScheduleWeeklyNotifications), so all four sends pick up the new line.",
+   "priority": 2,
+   "assignee": "me",
+   "state": "Todo"
+  }
+ },
+ {
+  "event": 392,
+  "id": "toolu_vrtx_013s89ozLpdtcekHNRHXQLpW",
+  "tool": "gdrive_create_file",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 393,
+  "input": {
+   "name": "Beta player messages – calls (Oct 1)",
+   "mimeType": "application/vnd.google-apps.spreadsheet",
+   "driveMimeType": "application/vnd.google-apps.spreadsheet",
+   "parentId": "d_caafeec2804b3a67ce46aa",
+   "description": "One row per beta phone message with the call under the Beta message rule. Source for DES-314."
+  }
+ },
+ {
+  "event": 394,
+  "id": "toolu_vrtx_01VjJWMCuAkqswqZCiCFDHYK",
+  "tool": "gsheets_create_spreadsheet",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 395,
+  "title": "Beta player messages – calls (Oct 1)",
+  "spreadsheet_id": "744c0c58e5d9c4c5"
+ },
+ {
+  "event": 397,
+  "id": "toolu_vrtx_01LKCSGBZmKhMuA1VgTEkhLK",
+  "tool": "gsheets_batch_update",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 398,
+  "input": {
+   "spreadsheetId": "744c0c58e5d9c4c5",
+   "requests": [
+    {
+     "updateSheetProperties": {
+      "properties": {
+       "sheetId": 0,
+       "title": "Calls"
+      },
+      "fields": "title"
+     }
+    }
+   ]
+  }
+ },
+ {
+  "event": 399,
+  "id": "toolu_vrtx_01Uii6nZBdqoVeCtw5dJoEfT",
+  "tool": "gsheets_values_update",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": false,
+  "result_event": 400,
+  "spreadsheet_id": "744c0c58e5d9c4c5",
+  "range": "Sheet1!A1",
+  "values": [
+   [
+    "Message",
+    "Ticket",
+    "Call",
+    "What's missing",
+    "Audience",
+    "Final headline",
+    "String change"
+   ],
+   [
+    "Lapsed 1 day",
+    "DES-316",
+    "Go",
+    "—",
+    "Everyone who has stopped",
+    "The Horde Is Growing… 🧟‍♂️",
+    "No"
+   ],
+   [
+    "Lapsed 7 days",
+    "DES-317",
+    "Go",
+    "—",
+    "Everyone who has stopped",
+    "Your Squad Needs You Back",
+    "Yes – DES-346 (client ships \"They’ve Taken Over… Can You Stop Them? 😱\")"
+   ],
+   [
+    "Lives recharged",
+    "DES-315",
+    "Hold",
+    "Test 6: Vincent took his tick off. On iOS 0.3.49 it didn't arrive after a full refill (tried twice), so it hasn't been seen on both platforms",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Finish first mission",
+    "DES-318",
+    "Hold",
+    "Test 4: it's for players below level 20, but our own permission ask only runs after level 20, so nobody it's written for counts (Vincent only saw it with the settings toggle on, which doesn't count)",
+    "New players below level 20",
+    "",
+    ""
+   ],
+   [
+    "Plague Race (race start)",
+    "DES-319",
+    "Hold",
+    "Test 6: iOS tick was on the 5-minute-timer build, which doesn't count. On the real iOS 0.3.40 it never showed. Android is fine",
+    "Players past the race unlock",
+    "",
+    ""
+   ],
+   [
+    "Weekly Leaderboard reset",
+    "DES-320",
+    "Hold",
+    "Test 5: client schedules it 7/14/21/28 days after the app was last closed, not on the server's weekly reset day, so it fires on the wrong day",
+    "Players past the leaderboard unlock",
+    "",
+    ""
+   ],
+   [
+    "Quests rollover",
+    "DES-321",
+    "Hold",
+    "Test 3: client doesn't schedule it yet (not in NotificationManager). Local timer is enough per Blake",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Login Calendar update",
+    "DES-322",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Daily reset, local timer works",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Season Pass start or reward",
+    "DES-323",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Client has the season dates",
+    "Players past the pass unlock",
+    "",
+    ""
+   ],
+   [
+    "Win & Collect start",
+    "DES-313",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Windows are fixed, local timer can do it. (Existing ticket from Calvin, no new ticket made)",
+    "Players on the event",
+    "",
+    ""
+   ],
+   [
+    "Hourly Coins",
+    "DES-324",
+    "Drop",
+    "Test 1: Hourly coins aren't in Zombie Match today and Hourly Collection sits in Backlog, not on the BETA list",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Nathan's Treasure Hunt start",
+    "DES-325",
+    "Drop",
+    "Test 1: Treasure Hunt isn't in Zombie Match and isn't on the BETA list",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Streak Fever start",
+    "DES-326",
+    "Drop",
+    "Test 1: Streak Fever isn't in Zombie Match and isn't on the BETA list",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Axe Arena start",
+    "DES-327",
+    "Drop",
+    "Test 1: Axe Arena isn't live in Zombie Match and is on the Oct 21 list, not BETA",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Endless entries are back",
+    "DES-328",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Entries come back on a timer, so local works",
+    "Players who used all their entries",
+    "",
+    ""
+   ],
+   [
+    "Endless weekly result",
+    "DES-329",
+    "Hold",
+    "Test 2: needs a server send. The phone doesn't know the final standings",
+    "Players who ranked that week",
+    "",
+    ""
+   ],
+   [
+    "Boss Arena is open",
+    "DES-330",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Client has the board times",
+    "Players past the arena unlock",
+    "",
+    ""
+   ],
+   [
+    "Boss Arena last hours",
+    "DES-331",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer off the end time",
+    "Players who started the arena",
+    "",
+    ""
+   ],
+   [
+    "Season Pass last 48 hours",
+    "DES-332",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Client has the end date",
+    "Players with unclaimed tiers",
+    "",
+    ""
+   ],
+   [
+    "Season Pass premium nudge",
+    "DES-333",
+    "Hold",
+    "Test 2: needs a server send. It's picked per player from server data",
+    "Free-track players near a premium reward",
+    "",
+    ""
+   ],
+   [
+    "Plague Race last hour",
+    "DES-334",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Race end is known, local timer is fine",
+    "Players in a race",
+    "",
+    ""
+   ],
+   [
+    "Plague Race result",
+    "DES-335",
+    "Hold",
+    "Test 2: needs a server send. The final placing only exists on the server",
+    "Players in a race",
+    "",
+    ""
+   ],
+   [
+    "Zombie Lane reward ready",
+    "DES-336",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer can do it",
+    "Players with a reward to claim",
+    "",
+    ""
+   ],
+   [
+    "Achievement reward waiting",
+    "DES-337",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer is enough",
+    "Players with a reward to claim",
+    "",
+    ""
+   ],
+   [
+    "Daily chest ready",
+    "DES-338",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Chest timer is local",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Free shop coins ready",
+    "DES-339",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer is enough",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Support reply waiting",
+    "DES-340",
+    "Hold",
+    "Test 2: needs a server send. The reply comes from Helpshift",
+    "Players with an open support thread",
+    "",
+    ""
+   ],
+   [
+    "New levels added",
+    "DES-341",
+    "Hold",
+    "Test 2: needs a server send. Nothing on the phone knows we shipped levels",
+    "Players past the hand-made levels",
+    "",
+    ""
+   ],
+   [
+    "Lapsed 3 days",
+    "DES-342",
+    "Hold",
+    "Test 3: client doesn't schedule a day-3 reminder. Local timer, same as the other lapsed ones",
+    "Everyone who has stopped",
+    "",
+    ""
+   ],
+   [
+    "Lapsed 30 days",
+    "DES-343",
+    "Hold",
+    "Test 3: client doesn't schedule a day-30 reminder (the weekly batch stops at day 28)",
+    "Everyone who has stopped",
+    "",
+    ""
+   ],
+   [
+    "Lapsed 14 days",
+    "DES-344",
+    "Drop",
+    "Already covered: the client's Lapsed 7 days message (DES-317) fires again on day 14 (and 21, 28)",
+    "Everyone who has stopped",
+    "",
+    ""
+   ],
+   [
+    "Comeback gift on tap",
+    "DES-345",
+    "Drop",
+    "Test 1: a reward on tap is a version 2 idea and isn't in the beta (Leonard on DES-345)",
+    "Everyone who has stopped",
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "event": 402,
+  "id": "toolu_vrtx_01PfxV46yFfACND7grFH9Btc",
+  "tool": "gsheets_values_update",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 403,
+  "spreadsheet_id": "744c0c58e5d9c4c5",
+  "range": "Calls!A1",
+  "values": [
+   [
+    "Message",
+    "Ticket",
+    "Call",
+    "What's missing",
+    "Audience",
+    "Final headline",
+    "String change"
+   ],
+   [
+    "Lapsed 1 day",
+    "DES-316",
+    "Go",
+    "—",
+    "Everyone who has stopped",
+    "The Horde Is Growing… 🧟‍♂️",
+    "No"
+   ],
+   [
+    "Lapsed 7 days",
+    "DES-317",
+    "Go",
+    "—",
+    "Everyone who has stopped",
+    "Your Squad Needs You Back",
+    "Yes – DES-346 (client ships \"They’ve Taken Over… Can You Stop Them? 😱\")"
+   ],
+   [
+    "Lives recharged",
+    "DES-315",
+    "Hold",
+    "Test 6: Vincent took his tick off. On iOS 0.3.49 it didn't arrive after a full refill (tried twice), so it hasn't been seen on both platforms",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Finish first mission",
+    "DES-318",
+    "Hold",
+    "Test 4: it's for players below level 20, but our own permission ask only runs after level 20, so nobody it's written for counts (Vincent only saw it with the settings toggle on, which doesn't count)",
+    "New players below level 20",
+    "",
+    ""
+   ],
+   [
+    "Plague Race (race start)",
+    "DES-319",
+    "Hold",
+    "Test 6: iOS tick was on the 5-minute-timer build, which doesn't count. On the real iOS 0.3.40 it never showed. Android is fine",
+    "Players past the race unlock",
+    "",
+    ""
+   ],
+   [
+    "Weekly Leaderboard reset",
+    "DES-320",
+    "Hold",
+    "Test 5: client schedules it 7/14/21/28 days after the app was last closed, not on the server's weekly reset day, so it fires on the wrong day",
+    "Players past the leaderboard unlock",
+    "",
+    ""
+   ],
+   [
+    "Quests rollover",
+    "DES-321",
+    "Hold",
+    "Test 3: client doesn't schedule it yet (not in NotificationManager). Local timer is enough per Blake",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Login Calendar update",
+    "DES-322",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Daily reset, local timer works",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Season Pass start or reward",
+    "DES-323",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Client has the season dates",
+    "Players past the pass unlock",
+    "",
+    ""
+   ],
+   [
+    "Win & Collect start",
+    "DES-313",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Windows are fixed, local timer can do it. (Existing ticket from Calvin, no new ticket made)",
+    "Players on the event",
+    "",
+    ""
+   ],
+   [
+    "Hourly Coins",
+    "DES-324",
+    "Drop",
+    "Test 1: Hourly coins aren't in Zombie Match today and Hourly Collection sits in Backlog, not on the BETA list",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Nathan's Treasure Hunt start",
+    "DES-325",
+    "Drop",
+    "Test 1: Treasure Hunt isn't in Zombie Match and isn't on the BETA list",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Streak Fever start",
+    "DES-326",
+    "Drop",
+    "Test 1: Streak Fever isn't in Zombie Match and isn't on the BETA list",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Axe Arena start",
+    "DES-327",
+    "Drop",
+    "Test 1: Axe Arena isn't live in Zombie Match and is on the Oct 21 list, not BETA",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Endless entries are back",
+    "DES-328",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Entries come back on a timer, so local works",
+    "Players who used all their entries",
+    "",
+    ""
+   ],
+   [
+    "Endless weekly result",
+    "DES-329",
+    "Hold",
+    "Test 2: needs a server send. The phone doesn't know the final standings",
+    "Players who ranked that week",
+    "",
+    ""
+   ],
+   [
+    "Boss Arena is open",
+    "DES-330",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Client has the board times",
+    "Players past the arena unlock",
+    "",
+    ""
+   ],
+   [
+    "Boss Arena last hours",
+    "DES-331",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer off the end time",
+    "Players who started the arena",
+    "",
+    ""
+   ],
+   [
+    "Season Pass last 48 hours",
+    "DES-332",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Client has the end date",
+    "Players with unclaimed tiers",
+    "",
+    ""
+   ],
+   [
+    "Season Pass premium nudge",
+    "DES-333",
+    "Hold",
+    "Test 2: needs a server send. It's picked per player from server data",
+    "Free-track players near a premium reward",
+    "",
+    ""
+   ],
+   [
+    "Plague Race last hour",
+    "DES-334",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Race end is known, local timer is fine",
+    "Players in a race",
+    "",
+    ""
+   ],
+   [
+    "Plague Race result",
+    "DES-335",
+    "Hold",
+    "Test 2: needs a server send. The final placing only exists on the server",
+    "Players in a race",
+    "",
+    ""
+   ],
+   [
+    "Zombie Lane reward ready",
+    "DES-336",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer can do it",
+    "Players with a reward to claim",
+    "",
+    ""
+   ],
+   [
+    "Achievement reward waiting",
+    "DES-337",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer is enough",
+    "Players with a reward to claim",
+    "",
+    ""
+   ],
+   [
+    "Daily chest ready",
+    "DES-338",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Chest timer is local",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Free shop coins ready",
+    "DES-339",
+    "Hold",
+    "Test 3: client doesn't schedule it yet. Local timer is enough",
+    "Everyone",
+    "",
+    ""
+   ],
+   [
+    "Support reply waiting",
+    "DES-340",
+    "Hold",
+    "Test 2: needs a server send. The reply comes from Helpshift",
+    "Players with an open support thread",
+    "",
+    ""
+   ],
+   [
+    "New levels added",
+    "DES-341",
+    "Hold",
+    "Test 2: needs a server send. Nothing on the phone knows we shipped levels",
+    "Players past the hand-made levels",
+    "",
+    ""
+   ],
+   [
+    "Lapsed 3 days",
+    "DES-342",
+    "Hold",
+    "Test 3: client doesn't schedule a day-3 reminder. Local timer, same as the other lapsed ones",
+    "Everyone who has stopped",
+    "",
+    ""
+   ],
+   [
+    "Lapsed 30 days",
+    "DES-343",
+    "Hold",
+    "Test 3: client doesn't schedule a day-30 reminder (the weekly batch stops at day 28)",
+    "Everyone who has stopped",
+    "",
+    ""
+   ],
+   [
+    "Lapsed 14 days",
+    "DES-344",
+    "Drop",
+    "Already covered: the client's Lapsed 7 days message (DES-317) fires again on day 14 (and 21, 28)",
+    "Everyone who has stopped",
+    "",
+    ""
+   ],
+   [
+    "Comeback gift on tap",
+    "DES-345",
+    "Drop",
+    "Test 1: a reward on tap is a version 2 idea and isn't in the beta (Leonard on DES-345)",
+    "Everyone who has stopped",
+    "",
+    ""
+   ]
+  ]
+ },
+ {
+  "event": 405,
+  "id": "toolu_vrtx_01KLxbUea6XUrXUimCGWBpep",
+  "tool": "gdrive_create_file",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 406,
+  "input": {
+   "name": "Beta player messages – team note (Oct 1)",
+   "mimeType": "application/vnd.google-apps.document",
+   "driveMimeType": "application/vnd.google-apps.document",
+   "parentId": "d_caafeec2804b3a67ce46aa"
+  }
+ },
+ {
+  "event": 407,
+  "id": "toolu_vrtx_01CATCTwymjjqRHuSb8GVa81",
+  "tool": "gdocs_create_document",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 408,
+  "input": {
+   "driveFileId": "e7f9abbce62b0fd4",
+   "bodyText": "Beta player messages – what we say to players (Oct 1, 2025)\n\nRetention we're judged on: Sep 15 install week (warehouse, USER_COHORT_RETENTION, Zombie Match 3D)\n- iOS: 237 installs, D1 31.65%, D7 9.28%\n- Android: 103 installs, D1 37.86%, D7 10.68%\n\nLapsed reminders the client schedules, day by day (NotificationManager, rescheduled every time the app closes, so \"day\" means days since the last session)\n- Day 1: Lapsed 1 day, \"The Horde Is Growing… 🧟‍♂️\". Go.\n- Days 2–6: nothing.\n- Day 7: Lapsed 7 days. Go, with the headline changing to \"Your Squad Needs You Back\" (DES-346). The client still ships \"They’ve Taken Over… Can You Stop Them? 😱\" until that string lands.\n- Days 14, 21, 28: the same Lapsed 7 days message again (weekly batch of 4). This already covers the 14-day ask, so DES-344 is a Drop.\n- Day 3 and day 30: not scheduled. Both asks (DES-342, DES-343) are Hold on test 3.\n- Nothing after day 28.\nOnly players who have been through our own permission ask (after level 20) get any of these. The settings toggle doesn't count and neither does the iOS launch popup.\n\nAlready scheduled by the client but still a Hold, and why\n- Lives recharged (DES-315), test 6: Vincent took his tick off. On iOS 0.3.49 it didn't arrive after a full refill (tried twice).\n- Finish first mission (DES-318), test 4: it targets players below level 20, but our permission ask only runs after level 20, so none of them count. It only arrived for Vincent with the settings toggle on.\n- Plague Race start (DES-319), test 6: the iOS pass was on the 5-minute-timer build. On the real 0.3.40 it never showed. Android is fine.\n- Weekly Leaderboard reset (DES-320), test 5: it fires 7/14/21/28 days after the app last closed, not on the server's weekly reset day.\n\nTotals across all 32 messages (14 sheet rows + 18 asks): 2 Go, 24 Hold, 6 Drop. The Go list is on the Push Notifications card for Vincent. The full per-message sheet is \"Beta player messages – calls (Oct 1)\" in this folder. Held tickets go to Backlog, unassigned, per the BETA card.\n",
+   "title": "Beta player messages – team note (Oct 1)"
+  }
+ },
+ {
+  "event": 415,
+  "id": "toolu_vrtx_011evm1Jh3dw9nzDem9tmXc7",
+  "tool": "gdocs_batch_update",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 416,
+  "input": {
+   "documentId": "e7f9abbce62b0fd4",
+   "requests": [
+    {
+     "insertText": {
+      "location": {
+       "index": 1
+      },
+      "text": "Beta player messages – what we say to players (Oct 1, 2025)\n\nRetention we're judged on: Sep 15 install week (warehouse, USER_COHORT_RETENTION, Zombie Match 3D)\n- iOS: 237 installs, D1 31.65%, D7 9.28%\n- Android: 103 installs, D1 37.86%, D7 10.68%\n\nLapsed reminders the client schedules, day by day (NotificationManager, rescheduled every time the app closes, so \"day\" means days since the last session)\n- Day 1: Lapsed 1 day, \"The Horde Is Growing… 🧟‍♂️\". Go.\n- Days 2–6: nothing.\n- Day 7: Lapsed 7 days. Go, with the headline changing to \"Your Squad Needs You Back\" (DES-346). The client still ships \"They’ve Taken Over… Can You Stop Them? 😱\" until that string lands.\n- Days 14, 21, 28: the same Lapsed 7 days message again (weekly batch of 4). This already covers the 14-day ask, so DES-344 is a Drop.\n- Day 3 and day 30: not scheduled. Both asks (DES-342, DES-343) are Hold on test 3.\n- Nothing after day 28.\nOnly players who have been through our own permission ask (after level 20) get any of these. The settings toggle doesn't count and neither does the iOS launch popup.\n\nAlready scheduled by the client but still a Hold, and why\n- Lives recharged (DES-315), test 6: Vincent took his tick off. On iOS 0.3.49 it didn't arrive after a full refill (tried twice).\n- Finish first mission (DES-318), test 4: it targets players below level 20, but our permission ask only runs after level 20, so none of them count. It only arrived for Vincent with the settings toggle on.\n- Plague Race start (DES-319), test 6: the iOS pass was on the 5-minute-timer build. On the real 0.3.40 it never showed. Android is fine.\n- Weekly Leaderboard reset (DES-320), test 5: it fires 7/14/21/28 days after the app last closed, not on the server's weekly reset day.\n\nTotals across all 32 messages (14 sheet rows + 18 asks): 2 Go, 24 Hold, 6 Drop. The Go list is on the Push Notifications card for Vincent. The full per-message sheet is \"Beta player messages – calls (Oct 1)\" in this folder. Held tickets go to Backlog, unassigned, per the BETA card."
+     }
+    }
+   ]
+  }
+ },
+ {
+  "event": 418,
+  "id": "toolu_vrtx_01DEniSRmDM9KnWDqCxvE4nQ",
+  "tool": "trello_create_checklist",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 419,
+  "input": {
+   "idCard": "6851a769c65dc0017a227bb7",
+   "name": "Beta messages – Go (check on store builds, iOS + Android)"
+  }
+ },
+ {
+  "event": 420,
+  "id": "toolu_vrtx_01CuHaPSwuHomPbZ3W3M38e2",
+  "tool": "trello_create_check_item",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 421,
+  "input": {
+   "checklistId": "68dcd3106d8834740b54c6f1",
+   "name": "Lapsed 1 day (DES-316) – \"The Horde Is Growing… 🧟‍♂️\" – day 1 after last session"
+  }
+ },
+ {
+  "event": 422,
+  "id": "toolu_vrtx_01SQp6mnqzyJbdTyCvjfRhF2",
+  "tool": "trello_create_check_item",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 423,
+  "input": {
+   "checklistId": "68dcd3106d8834740b54c6f1",
+   "name": "Lapsed 7 days (DES-317) – \"Your Squad Needs You Back\" (string change DES-346) – days 7/14/21/28 after last session"
+  }
+ },
+ {
+  "event": 429,
+  "id": "toolu_vrtx_014u8nwSCVYKkfrWopEaVtQR",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 430,
+  "issue": "DES-316",
+  "body": "Call: **Go** (beta message rule, passes all six tests). Final headline: \"The Horde Is Growing… 🧟‍♂️\". No string change needed, the client already ships this line. Added to the Go checklist on the Push Notifications card."
+ },
+ {
+  "event": 431,
+  "id": "toolu_vrtx_015ywAvuiaD3GWhpKZytKFnb",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 432,
+  "issue": "DES-317",
+  "body": "Call: **Go** (beta message rule, passes all six tests). Final headline: \"Your Squad Needs You Back\" (Leonard's latest call, body stays). The client still ships \"They’ve Taken Over… Can You Stop Them? 😱\", so the string change is on DES-346. Fires on days 7, 14, 21 and 28 after the last session. Added to the Go checklist on the Push Notifications card."
+ },
+ {
+  "event": 433,
+  "id": "toolu_vrtx_01G3E64i1r1BVcmVYuB6L9qE",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 434,
+  "issue": "DES-324",
+  "body": "Call: **Drop**. Fails test 1 (feature in the beta): hourly coins aren't in Zombie Match today, and Hourly Collection is in Backlog on the ZM ROADMAP board, not on the BETA list. Moving to Canceled."
+ },
+ {
+  "event": 435,
+  "id": "toolu_vrtx_01XFmd77KLtHhLwhKiiKxiVv",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 436,
+  "issue": "DES-325",
+  "body": "Call: **Drop**. Fails test 1 (feature in the beta): Nathan's Treasure Hunt isn't in Zombie Match and isn't on the BETA list. Moving to Canceled."
+ },
+ {
+  "event": 437,
+  "id": "toolu_vrtx_01GvYZ8MHRFBCh3ycEELHVbD",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 438,
+  "issue": "DES-326",
+  "body": "Call: **Drop**. Fails test 1 (feature in the beta): Streak Fever isn't in Zombie Match and isn't on the BETA list. Moving to Canceled."
+ },
+ {
+  "event": 439,
+  "id": "toolu_vrtx_01L7Hjthy1qV2X9Mp3hY9Dnc",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 440,
+  "issue": "DES-327",
+  "body": "Call: **Drop**. Fails test 1 (feature in the beta): Axe Arena isn't live in Zombie Match and sits on the Oct 21 list of the ZM ROADMAP board, not BETA. Moving to Canceled."
+ },
+ {
+  "event": 441,
+  "id": "toolu_vrtx_01Ejy6hQZL7NoC6VJumDCNdj",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 442,
+  "issue": "DES-344",
+  "body": "Call: **Drop**. The client already covers this under **Lapsed 7 days** (DES-317). NotificationManager schedules that message as a weekly batch on days 7, 14, 21 and 28 after the last session, so day 14 already gets a reminder. Moving to Canceled."
+ },
+ {
+  "event": 443,
+  "id": "toolu_vrtx_01PKB6ngafwVEsnqQz8753CD",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 444,
+  "issue": "DES-345",
+  "body": "Call: **Drop**. Fails test 1 (feature in the beta): a reward on tap is a version 2 idea and isn't in the beta (per Leonard above). Moving to Canceled."
+ },
+ {
+  "event": 445,
+  "id": "toolu_vrtx_015Cz49ALcTqkgrcqyk4LyzP",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 446,
+  "issue": "DES-324",
+  "state": "Canceled",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 447,
+  "id": "toolu_vrtx_012a3eGz1dPiynbPW7zV3k7h",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 448,
+  "issue": "DES-325",
+  "state": "Canceled",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 449,
+  "id": "toolu_vrtx_01GYBjag9pHffXNNzYeMdPE7",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 450,
+  "issue": "DES-326",
+  "state": "Canceled",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 451,
+  "id": "toolu_vrtx_01R7XFN3nXYnfbjTWtqAxwzW",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 452,
+  "issue": "DES-327",
+  "state": "Canceled",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 453,
+  "id": "toolu_vrtx_01LFaCXRL5g3pWKCKUMM8Vi7",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 454,
+  "issue": "DES-344",
+  "state": "Canceled",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 455,
+  "id": "toolu_vrtx_01PwCdVofyhFi2bSyZ9YHQvM",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 456,
+  "issue": "DES-345",
+  "state": "Canceled",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 461,
+  "id": "toolu_vrtx_01QurbHSzubM2xuGcMLe76wB",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 462,
+  "issue": "DES-315",
+  "body": "Call: **Hold**, fails test 6 (seen on both iOS and Android). Vincent took his tick off: on iOS 0.3.49 Full Ammo didn't arrive after a full refill, and he tried twice. Tests 1–5 pass. Moving to Backlog, unassigned, per the BETA card (held tickets don't land in Todo until the beta build is out)."
+ },
+ {
+  "event": 463,
+  "id": "toolu_vrtx_011fdgLUxrQdaCaLNmUGkZ5A",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 464,
+  "issue": "DES-318",
+  "body": "Call: **Hold**, fails test 4 (reaches the players it's written for). It's for new players below level 20, but our own permission ask only runs after level 20 (NotificationPermissionRequester, Robert kept it there for beta). So none of the players it's written for count, and the settings toggle doesn't count. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 465,
+  "id": "toolu_vrtx_01Ps3k4Aib1UWmCw5EA7t4tc",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 466,
+  "issue": "DES-319",
+  "body": "Call: **Hold**, fails test 6 (seen on both iOS and Android). Vincent scratched the iOS pass: that phone was still on the 5-minute-timer build, which doesn't count under his QA note. On the real 0.3.40 it never showed. Android is fine. Tests 1–5 pass (daily is fine per Leonard). Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 467,
+  "id": "toolu_vrtx_017mpsYbUVnac4SxgVeveFP2",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 468,
+  "issue": "DES-320",
+  "body": "Call: **Hold**, fails test 5 (fires on the right day). NotificationManager schedules it 7/14/21/28 days after the app was last closed (BatchScheduleWeeklyLeaderboardNotifications off today's date). It doesn't use the server's WeeklyEndDate, so it lands on the reset day only by chance. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 469,
+  "id": "toolu_vrtx_01NZaQLG4dWgTt746oyiedQJ",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 470,
+  "issue": "DES-321",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). Not in NotificationManager yet. Quests are live and a local timer can send it, so tests 1–2 pass. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 471,
+  "id": "toolu_vrtx_014sXnr4QmZjYuwJE9KepNTc",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 472,
+  "issue": "DES-322",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). Daily login is live and a local timer works, but NotificationManager doesn't schedule it yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 473,
+  "id": "toolu_vrtx_01AzDkZ83F6awF4a82aPX67t",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 474,
+  "issue": "DES-323",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). Season Pass is on the BETA list and the client has the season dates, but nothing schedules this yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 475,
+  "id": "toolu_vrtx_01SS6aeMhjGbCyNpxkSPmEx8",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 476,
+  "issue": "DES-313",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). This is the \"Win & Collect event start\" row on the PNs Beta tab, so this ticket covers it and there's no second ticket. Win & Collect is on the BETA list and the windows are fixed, so a local timer can do it, but it isn't in NotificationManager yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 477,
+  "id": "toolu_vrtx_01Hj8iARpfurLfAmnaLqEvzs",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 478,
+  "issue": "DES-328",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). Endless is live and entries come back on a timer, so a local notification works, but NotificationManager doesn't schedule it yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 479,
+  "id": "toolu_vrtx_01F3XEctYkPX5GrhmNpCwYJk",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 480,
+  "issue": "DES-329",
+  "body": "Call: **Hold**, fails test 2 (client can send it without a server). The phone doesn't know the final standings, so this needs a server send. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 481,
+  "id": "toolu_vrtx_01TwXfJjauCSWaAVcuFWe2mH",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 482,
+  "issue": "DES-330",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). Boss Arena is on the BETA list and the client has the board times, but nothing schedules this yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 483,
+  "id": "toolu_vrtx_0175rQWYjKm6xXBhLHdMPiYe",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 484,
+  "issue": "DES-331",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). A local timer off the end time would work, but NotificationManager doesn't schedule it yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 485,
+  "id": "toolu_vrtx_01NYk6JKqg9XKiJe9UDFjb2B",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 486,
+  "issue": "DES-332",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). The client has the season end date, but nothing schedules this yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 487,
+  "id": "toolu_vrtx_019rEwxNdnwieX68hDgbDrZL",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 488,
+  "issue": "DES-333",
+  "body": "Call: **Hold**, fails test 2 (client can send it without a server). It's picked per player from server data, so it needs a server send. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 489,
+  "id": "toolu_vrtx_016FZD1Qg43ZUjjN7Tpve2Fi",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 490,
+  "issue": "DES-334",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). The race end is known locally, but the client only schedules the race-start message, not a last-hour one. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 491,
+  "id": "toolu_vrtx_01P6uFdW9BnqT9ZfR7PF2Rny",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 492,
+  "issue": "DES-335",
+  "body": "Call: **Hold**, fails test 2 (client can send it without a server). The final placing only exists on the server. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 493,
+  "id": "toolu_vrtx_01QYZLyZ5Rx48PEXg5WUdhfm",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 494,
+  "issue": "DES-336",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). Zombie Lane is live and the client knows what's unclaimed, but NotificationManager doesn't schedule this yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 495,
+  "id": "toolu_vrtx_01FrYzH6K8MLnCFTDcV28duo",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 496,
+  "issue": "DES-337",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). Achievements are live and a local timer is enough, but nothing schedules this yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 497,
+  "id": "toolu_vrtx_018RNhRP3efCee6Dgq5tLXSn",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 498,
+  "issue": "DES-338",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). The daily chest timer is local, but NotificationManager doesn't schedule this yet. It's separate from the calendar refresh on DES-322, which isn't scheduled either. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 499,
+  "id": "toolu_vrtx_01HENEJTwGNWgqF3HpwxQ4Zf",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 500,
+  "issue": "DES-339",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). The free shop coins are live and a local timer is enough, but nothing schedules this yet. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 501,
+  "id": "toolu_vrtx_01FE6SB9fzXZdWFDyaxZqW52",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 502,
+  "issue": "DES-340",
+  "body": "Call: **Hold**, fails test 2 (client can send it without a server). The reply comes from Helpshift, so this needs a server send. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 503,
+  "id": "toolu_vrtx_01H78e4Tww6AUgXPHQWgvCB8",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 504,
+  "issue": "DES-341",
+  "body": "Call: **Hold**, fails test 2 (client can send it without a server). Nothing on the phone knows we shipped levels, so this needs a server send. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 505,
+  "id": "toolu_vrtx_01WFnUQPktPfDyLYCHXvhpRD",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 506,
+  "issue": "DES-342",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). The client sends day 1, then days 7/14/21/28. There's nothing on day 3. A local timer would work, same as the other lapsed ones. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 507,
+  "id": "toolu_vrtx_01VXYKzZ8yU1qVuhS1zsW1eE",
+  "tool": "linear_create_comment",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 508,
+  "issue": "DES-343",
+  "body": "Call: **Hold**, fails test 3 (client already schedules it). The weekly lapsed batch stops at day 28, so nothing goes out on day 30. A local timer can do it. Moving to Backlog, unassigned, per the BETA card."
+ },
+ {
+  "event": 510,
+  "id": "toolu_vrtx_01GxqozaUVFwWuaig7BjrxYg",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 511,
+  "issue": "DES-313",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 512,
+  "id": "toolu_vrtx_01TwqHqKPYtYjVmMWqKAs95X",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 513,
+  "issue": "DES-315",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 515,
+  "id": "toolu_vrtx_01HAY6kXW25pUxzjgonwj9HC",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 516,
+  "issue": "DES-318",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 517,
+  "id": "toolu_vrtx_01FfiCcmbNaQQn5tv6NxqEeF",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 518,
+  "issue": "DES-319",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 519,
+  "id": "toolu_vrtx_01VHsdZH1oKAYUqiDLhEhrXg",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 520,
+  "issue": "DES-320",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 521,
+  "id": "toolu_vrtx_01Q6Uda1R6vvTQ1incKUBLTN",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 522,
+  "issue": "DES-321",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 523,
+  "id": "toolu_vrtx_01HEqeY31bHsV4Q8ABojHNoS",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 524,
+  "issue": "DES-322",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 525,
+  "id": "toolu_vrtx_012YC8GvtK7R7EwBSRi5MqCa",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 526,
+  "issue": "DES-323",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 527,
+  "id": "toolu_vrtx_01PuJxjGrtfApNagCr35Fze5",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 528,
+  "issue": "DES-328",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 529,
+  "id": "toolu_vrtx_016RR5eaVQWwDqFW57p4tNpN",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 530,
+  "issue": "DES-329",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 531,
+  "id": "toolu_vrtx_01FNSBa1u6jN9jCacgGZTQ7v",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 532,
+  "issue": "DES-330",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 533,
+  "id": "toolu_vrtx_01D9q8j2VhVyK7Up7NyfSq2K",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 534,
+  "issue": "DES-331",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 535,
+  "id": "toolu_vrtx_01QQYFKyR354G5ymtFshgJR5",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 536,
+  "issue": "DES-332",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 537,
+  "id": "toolu_vrtx_01LRYhHP1QdrN38zZ5zQ6Rsp",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 538,
+  "issue": "DES-333",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 539,
+  "id": "toolu_vrtx_015aWAfqfKLbPBQbur2QF2cY",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 540,
+  "issue": "DES-334",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 541,
+  "id": "toolu_vrtx_01UF1sKHJZWt9C1xePfgtwjN",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 542,
+  "issue": "DES-335",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 543,
+  "id": "toolu_vrtx_01WeJvGSdVGxa8iGteetoXcx",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 544,
+  "issue": "DES-336",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 545,
+  "id": "toolu_vrtx_0128rhKCA5D74MT5yHNGjebz",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 546,
+  "issue": "DES-337",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 547,
+  "id": "toolu_vrtx_01QmoXuUu6K6mLmA9sf2RC28",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 548,
+  "issue": "DES-338",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 549,
+  "id": "toolu_vrtx_0113hMWW3y1gnvtEMXfk7JyB",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 550,
+  "issue": "DES-339",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 551,
+  "id": "toolu_vrtx_01TF3RxYPXxnRJfQRcb3sV1F",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 552,
+  "issue": "DES-340",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 553,
+  "id": "toolu_vrtx_012hWfaKpLon5G8uPBBwEU3M",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 554,
+  "issue": "DES-341",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 555,
+  "id": "toolu_vrtx_01Gvygr9zsCqZHpPLRoBVmcB",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 556,
+  "issue": "DES-342",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 557,
+  "id": "toolu_vrtx_01UkbirA6qZ6cHodfy6AvNJu",
+  "tool": "linear_update_issue",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 558,
+  "issue": "DES-343",
+  "state": "Backlog",
+  "description": null,
+  "patch": null,
+  "appended": []
+ },
+ {
+  "event": 560,
+  "id": "toolu_vrtx_01Ln1Fdkr2NV6xLSbcfYUdis",
+  "tool": "gmail_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 561,
+  "message_id": null,
+  "to": [
+   "calvin.price@harmonygames.co"
+  ],
+  "cc": null,
+  "bcc": null,
+  "subject": "Your beta phone message asks – what happened",
+  "body": "Hi Calvin,\n\nI went through every beta phone message against Leonard's Beta message rule. Here's where your two asks landed:\n\n- DES-313 Ping when a Collect & Win window opens: Hold. Win & Collect is on the beta list and a local timer can send it, but the client doesn't schedule it yet (test 3). This one is also the \"Win & Collect event start\" row on the PN sheet, so it's the only ticket for it.\n- DES-338 Daily chest ready: Hold. The chest timer is local, but the client doesn't schedule it yet (test 3).\n\nBoth tickets are in Backlog, unassigned, until the beta build is out, per the BETA card. The reasoning is on each ticket.\n\nThanks,\nSamuel",
+  "reply_all": null,
+  "attachments": null
+ },
+ {
+  "event": 562,
+  "id": "toolu_vrtx_01E16yj65Zg3QxztvnGsHKN4",
+  "tool": "gmail_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 563,
+  "message_id": null,
+  "to": [
+   "brian.foster@harmonygames.co"
+  ],
+  "cc": null,
+  "bcc": null,
+  "subject": "Your beta phone message asks – what happened",
+  "body": "Hi Brian,\n\nI went through every beta phone message against Leonard's Beta message rule. Here's where your asks landed:\n\n- DES-328 Endless entries are back: Hold. A local timer works, but the client doesn't schedule it yet (test 3).\n- DES-329 Endless weekly result: Hold. It needs a server send because the phone doesn't know the final standings (test 2).\n- DES-333 Season Pass premium nudge: Hold. It needs a server send because it's picked per player from server data (test 2).\n- DES-345 Comeback gift on tap: Drop. A reward on tap is a version 2 idea and isn't in the beta (test 1). The ticket is Canceled.\n\nThe Holds are in Backlog, unassigned, until the beta build is out, per the BETA card. The reasoning is on each ticket.\n\nThanks,\nSamuel",
+  "reply_all": null,
+  "attachments": null
+ },
+ {
+  "event": 564,
+  "id": "toolu_vrtx_01PyuiG238TJFECVVq4pCH1W",
+  "tool": "gmail_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 565,
+  "message_id": null,
+  "to": [
+   "robert@harmonygames.co"
+  ],
+  "cc": null,
+  "bcc": null,
+  "subject": "Your beta phone message asks – what happened",
+  "body": "Hi Robert,\n\nI went through every beta phone message against Leonard's Beta message rule. Here's where your asks landed:\n\n- DES-330 Boss Arena is open: Hold. Boss Arena is in the beta and the client has the board times, but it doesn't schedule this yet (test 3).\n- DES-331 Boss Arena last hours: Hold. Same reason, a local timer would work but nothing schedules it yet (test 3).\n- DES-344 Lapsed 14 days: Drop. The client already covers it: the Lapsed 7 days message fires again on days 14, 21 and 28. The ticket is Canceled.\n\nThe Holds are in Backlog, unassigned, until the beta build is out, per the BETA card. The reasoning is on each ticket.\n\nThanks,\nSamuel",
+  "reply_all": null,
+  "attachments": null
+ },
+ {
+  "event": 566,
+  "id": "toolu_vrtx_015RfKGoEuoWHXdYUcGPPEKC",
+  "tool": "gmail_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 567,
+  "message_id": null,
+  "to": [
+   "oliver.brooks@harmonygames.co"
+  ],
+  "cc": null,
+  "bcc": null,
+  "subject": "Your beta phone message ask – what happened",
+  "body": "Hi Oliver,\n\nI went through every beta phone message against Leonard's Beta message rule. Here's where your ask landed:\n\n- DES-332 Season Pass last 48 hours: Hold. The client has the season end date, so a local timer can send it, but it doesn't schedule it yet (test 3).\n\nThe ticket is in Backlog, unassigned, until the beta build is out, per the BETA card. The reasoning is on the ticket.\n\nThanks,\nSamuel",
+  "reply_all": null,
+  "attachments": null
+ },
+ {
+  "event": 568,
+  "id": "toolu_vrtx_01JDW9SmETcoAmxdtzC7erzb",
+  "tool": "gmail_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 569,
+  "message_id": null,
+  "to": [
+   "julia.lawson@harmonygames.co"
+  ],
+  "cc": null,
+  "bcc": null,
+  "subject": "Your beta phone message asks – what happened",
+  "body": "Hi Julia,\n\nI went through every beta phone message against Leonard's Beta message rule. Here's where your asks landed:\n\n- DES-334 Plague Race last hour: Hold. The race end is known locally, but the client only schedules the race-start message, not a last-hour one (test 3).\n- DES-335 Plague Race result: Hold. It needs a server send because the final placing only exists on the server (test 2).\n- DES-341 New levels added: Hold. It needs a server send because nothing on the phone knows we shipped levels (test 2).\n\nAll three are in Backlog, unassigned, until the beta build is out, per the BETA card. The reasoning is on each ticket.\n\nThanks,\nSamuel",
+  "reply_all": null,
+  "attachments": null
+ },
+ {
+  "event": 570,
+  "id": "toolu_vrtx_01GCPKcXLXj6jRUevJCPnPen",
+  "tool": "gmail_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 571,
+  "message_id": null,
+  "to": [
+   "owen.baker@harmonygames.co"
+  ],
+  "cc": null,
+  "bcc": null,
+  "subject": "Your beta phone message asks – what happened",
+  "body": "Hi Owen,\n\nI went through every beta phone message against Leonard's Beta message rule. Here's where your asks landed:\n\n- DES-336 Zombie Lane reward ready: Hold. A local timer can do it, but the client doesn't schedule it yet (test 3).\n- DES-337 Achievement reward waiting: Hold. Same reason (test 3).\n- DES-340 Support reply waiting: Hold. It needs a server send because the reply comes from Helpshift (test 2).\n\nAll three are in Backlog, unassigned, until the beta build is out, per the BETA card. The reasoning is on each ticket.\n\nThanks,\nSamuel",
+  "reply_all": null,
+  "attachments": null
+ },
+ {
+  "event": 572,
+  "id": "toolu_vrtx_01XiK22dENzA34GsCbSRxf6h",
+  "tool": "gmail_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 573,
+  "message_id": null,
+  "to": [
+   "martin.walsh@harmonygames.co"
+  ],
+  "cc": null,
+  "bcc": null,
+  "subject": "Your beta phone message ask – what happened",
+  "body": "Hi Martin,\n\nI went through every beta phone message against Leonard's Beta message rule. Here's where your ask landed:\n\n- DES-339 Free shop coins ready: Hold. The free coins are live and a local timer is enough, but the client doesn't schedule this yet (test 3).\n\nThe ticket is in Backlog, unassigned, until the beta build is out, per the BETA card. The reasoning is on the ticket.\n\nThanks,\nSamuel",
+  "reply_all": null,
+  "attachments": null
+ },
+ {
+  "event": 575,
+  "id": "toolu_vrtx_01Q15zhNVe9JChJ6ShwtMmJd",
+  "tool": "slack_send_message",
+  "context": "main",
+  "model": "claude-opus-5-5",
+  "ok": true,
+  "result_event": 576,
+  "channel": "D06L58XCVKK",
+  "thread_ts": null,
+  "text": "Done. All 32 messages (14 PNs Beta rows + 18 asks) are called against the rule doc: *2 Go, 24 Hold, 6 Drop*.\n\n• *Go:* Lapsed 1 day and Lapsed 7 days. Lapsed 7 gets your \"Your Squad Needs You Back\" headline; the string ticket is DES-346. Both are on a checklist on the Push Notifications card for Vincent.\n• *Drop:* Hourly Coins, Treasure Hunt, Streak Fever and Axe Arena (not in the beta), Lapsed 14 days (already covered by the Lapsed 7 days batch on day 14), Comeback gift (v2).\n• *Hold:* everything else. Four of these the client already schedules: Lives recharged (Vincent's iOS 0.3.49 tick came off), Finish first mission (our ask only runs after level 20), Plague Race (iOS was on the short-timer build) and Weekly Leaderboard (fires 7 days after the last session, not on the reset day).\n\nSep 15 cohort: iOS D1 31.65% / D7 9.28%, Android D1 37.86% / D7 10.68%.\n\nThe sheet and the one-page note are in my Drive folder. Every ticket has the call as a comment. Drops are Canceled, Holds are in Backlog unassigned per the BETA card, and Win & Collect stayed on Calvin's existing DES-313 instead of getting a new ticket. Everyone who filed an ask has an email."
+ }
+]

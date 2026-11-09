@@ -1,0 +1,97 @@
+[
+ {
+  "id": "record ids (all elements)",
+  "change": "Slack 'channel/ts' pointers to seeded messages -> their 32-hex row ids; Gmail thread pointers in Owen's mailbox -> the message row (thread ids kept alongside in seeded_ids)",
+  "reason": "the gate reads text and timestamps from SQL rows"
+ },
+ {
+  "id": "surface selectors",
+  "change": "22 slots read solver fields (['field', key, 'Outcome' or 'Ticket']) instead of a text pattern on the sheet; L1, A1 and A2 became direct slots",
+  "reason": "the solver contract needs every direct slot to read a solver value, so the mutation run can see a flip; weights and titles are unchanged"
+ },
+ {
+  "id": "control names",
+  "change": "manifest controls now use solver keys: 'the Purple bg line' -> 'Purple bg visual issues', and the same for the other named lines; FOLLOW keeps ENG-2417 as a control with no over-application operator",
+  "reason": "contract.controls: every control member is a solver key, and a closing note on a child has nothing to over-apply"
+ },
+ {
+  "id": "channel members",
+  "change": "channel members moved from trap ids to solver keys; CH-FOLLOW is latent 'run' over the 28 children",
+  "reason": "contract.controls reads members as solver keys; a run that misses the card misses the build on every note"
+ },
+ {
+  "id": "PR comments",
+  "change": "conversation comments on 10 PRs (the 8 that close open children, plus #1915 and #1916), not the 13 first planned",
+  "reason": "only these PRs decide a child or a build line; a comment on an already Done child's PR would decide nothing"
+ },
+ {
+  "id": "tracker sheet",
+  "change": "added Brian's UI pass tracker (Drive and Sheets rows, Nov 20) as a second stale summary beside the wrap deck",
+  "reason": "gsheets needs a seeded record that serves a decision: it is the screen-to-ticket list the child records overturn"
+ },
+ {
+  "id": "calendar copies",
+  "change": "each attendee's calendar copy has its own event id and they share ical_uid; evt_6e2c91d4b07f3a58c1d2e4 is Owen's copy",
+  "reason": "gcal.event_id is unique per row"
+ },
+ {
+  "id": "invitation mails",
+  "change": "invitation mails seeded for Owen, Oliver and Robert",
+  "reason": "INT-11: Arthur invited them; the time and guests are already on the event"
+ },
+ {
+  "id": "tree states and notes",
+  "change": "the SQL updates no L01, L03 or L07 ticket: the 14 PR-state children and ENG-2405 keep their base state, the planned move to Validation is dropped, Brian's check notes stay only on the Validation children ENG-2410, ENG-2429 and ENG-2430, and hazard_acknowledgements L01, L03 and L07 become dated_claim",
+  "reason": "stage_gate re-runs base_check without the manifest, so any UPDATE of such a ticket fails even as a verified repair; Arthur's ask is itself the reconciliation, which base_check accepts as the explicit job"
+ },
+ {
+  "id": "Brian's screen checklist",
+  "change": "a 28-item 'Screens checked' checklist on the Trello card (Daily Gift unticked) replaces the per-child notes as the per-screen record; the rule doc now says Brian and Oliver left notes on some of the open children",
+  "reason": "it closes the fork on children with no record (ENG-2427, ENG-2431) without touching a hazard ticket, and it is one more claim the inline comments overturn"
+ },
+ {
+  "id": "td_note and axe_note",
+  "change": "Brian's Linear notes on ENG-2434 and ENG-2426 are gone; the done claims met first are Owen's PR comments #1905#c_3 and #1908#c_3 and Brian's ticks",
+  "reason": "both tickets are L01 and L07 records; a comment on them needs an updated_at UPDATE"
+ },
+ {
+  "id": "rev2: blind fork sweep before /prompt",
+  "change": "hub drops 'those fix notes'; rule doc: a design question for Leonard isn't a bug post, one record per canvas line and one per bug posted after it, title without the tick box, nothing in the description, a child also stays if its screen is switched off, Brian's rule applies to the line on every child; Brian's comment names the current public build; folder dated 23:00Z, before the hub",
+  "reason": "a fresh blind agent reproduced the outcome counts but found three blocking forks (the build each note names, ENG-2424, the Dec 31 no-ads question) and smaller ones; the platform /injection advisory 2 on the folder date is folded in; truth is unchanged"
+ },
+ {
+  "id": "rev3: platform /prompt FAIL on rev2",
+  "change": "rule doc: a comment whose line was deleted carries nothing, a follow-up on a bug already posted is part of that bug, a post that points at a QA doc isn't a bug post, a canvas line and a later post stay separate, 0.3.310 came off the economy line; Robert's reply under his sub-250 report says both flickers are gone; Arthur puts Owen on a spare paid seat and he rejoins four DD channels on Feb 12; ENG-2403 and ENG-2404 checklists cleared; inline comments moved to just after their reviews, before the merges; distractor D_CHECKLIST dropped; Marcus's DM moved to Dec 11 and names the Android build, after the Gacha commit; the deck, tracker and checklist speak of main screens; the bottom bar reply covers the top panel; the doc's tree test reads 'a piece of its UI work never made it into that build'; the population bound reads 'the last line in that comment channel'; the deck reads 'UI pass wrapped up' and leaves Daily Gift out; Vincent's ENG-2363 note says Android still hits this; Marcus's mega tile reply says it still happens; the rule doc says the Android build; mirror review and comment ids follow the base sequence; the card's last activity is its comment",
+  "reason": "run_forensics/rev2/1_prompt_FAIL_r2.md scored UGT 2, Clarity 2 and Coherence 2 on forks F1 to F4, NB-1 and NB-14, every other dimension 5; truth is unchanged; a blind item-by-item sweep then flagged the deck against the inline comments and four smaller points; a blind coherence audit raised these, each re-checked through hg.py. Its claims on Vincent's Nov 22 replies were rejected: commits 3646982c and 'Fix trains a bit better' precede them, and he posts until Nov 23"
+ },
+ {
+  "id": "rev4: platform /injection FAIL on rev3",
+  "change": "Owen's channel_join rows in CE156FDFB428 and C09Q4S613CN removed; the two rows for C05V5FNLB9V and C050WGU41HR stay",
+  "reason": "run_forensics/rev3/0_injection_FAIL_r3.md C1: the base has no leave for Owen in those two channels, so a join there is an impossible membership history; he stays a listed member of both"
+ },
+ {
+  "id": "rev5: platform /prompt FAIL on rev4",
+  "change": "Owen gets a leave on Feb 11 and a join on Feb 12 in CE156FDFB428, C09Q4S613CN, C05433XK267 and C09SWTHEMEW; card 690b27282f4c1b7a6e93d512 dateLastActivity back to 2025-11-21T15:30:00Z",
+  "reason": "run_forensics/rev4/1_prompt_FAIL_r4.md scored Coherence 2 on his guest period and the card date, every other dimension 5; rev3's /injection said a join needs a matching leave; C09SWTHEMEW has the same gap and the task reads it, so it gets the same pair"
+ },
+ {
+  "id": "rev6: baseline spread and failure patterns",
+  "change": "Brian's DM with Owen (D07E9PSQB6W) gets three lines on Dec 11: Marcus's Tavern report and that his fix didn't hold, Vincent's tie of the Apple sync line to ENG-2073, and that he never got back to the Axe Arena info popup or the Tile Dozer how-to-play popup from Arthur's reviews. The original records stay; truth is unchanged.",
+  "reason": "12 rev5 baselines missed the ENG-2073 mail, Marcus's DM and both inline reviews 0 of 12, so 4 of 6 runs failed identically (patterns 67 %) and SD was about 0.04. Over the 7 stored runs Brian's DM history past early December reached 3 of 7. Putting all four in that one place makes the runs that read it differ from the runs that don't; a bootstrap from the runs' measured exposure gave P(all gates) about 0.44-0.60 against about 0.05 for a deck-plus-DM split (plan/boot_rev6.py, run_forensics/rev5/baseline/summary.md)."
+ },
+ {
+  "id": "rev7: platform /prompt FAIL on rev6",
+  "change": "Vincent replies in the navigation bar tooltips thread (CE156FDFB428, parent 1763394941.178509) on 2025-11-22 21:05 UTC, in the same retest session as his train and lives replies: Brian's second fix closed the 1 pixel gap. The parent's reply_count goes 6 to 7 and latest_reply moves to the new reply. Truth is unchanged (the line was already Fixed).",
+  "reason": "/prompt on rev6 (platform revision 10) scored Unique Ground Truth and Clarity 2: Vincent's 1 pixel gap 'but that's okay' (18:03 UTC Nov 21) is followed by Brian's 'I'll send another fix' (18:07 UTC) and nothing later, so Done vs Bugs and 9 vs 10 still broken were both fair. Its minimum fix asked for one dated record in that thread or the Owen-Brian DM saying the gap is fixed or still there; the closing reply keeps the outcome every earlier round accepted."
+ },
+ {
+  "id": "rev8: platform /hardness FAIL 1 on rev7",
+  "change": "Brian's Dec 11 Apple line in D07E9PSQB6W (1765471447.518229, 'Vincent told me before he left that the Apple sync line ... is the same sync problem as ENG-2073') is removed. The Tavern and popup lines stay. Apple Covered by ENG-2073 rests on Vincent's email in Owen's inbox, as on rev5. Truth unchanged.",
+  "reason": "/hardness on rev7 (run_forensics/rev7/1a_hardness_FAIL1_r7.md) scored 1: the pre-check run swept every Brian message from Nov 1 to Dec 15 (slack_conversations_search_messages filter_users_from, calls 217-221) and the three Dec 11 lines settled Tavern, Apple and both popups at once. rev6 was placed by baseline spread alone and never modelled the one pre-check run. plan/boot_rev8.py ranks all 27 placements of the three corrections over 8 measured runs: dropping only the Apple line gives P(/hardness >= 3) about 0.69-0.80 (a DM reader still misses Vincent's email, 0 of 8 runs) and P(all baseline gates) about 0.51-0.72; dropping all three gives about 1.00 and 0.00 (spread, as measured twice on rev5)."
+ },
+ {
+  "id": "rev9: platform /hardness FAIL 2 on rev8",
+  "change": "Brian's Tavern line D07E9PSQB6W/1765471351.236119 is removed (Tavern rests on Marcus's DM D05USBTQY1F/1765452012.418229). Brian's Daily Gift note comment_3e81bf306c58746580a9cfa0ca12bd60 on ENG-2437 moves to his DM with Owen as D07E9PSQB6W/1765471651.208713 (2025-12-11T16:47:31Z, 'Daily Gift isn't finished either, the panel never got its last pass.'). The popups line D07E9PSQB6W/1765471563.704419 drops its opening 'And'. Truth unchanged.",
+  "reason": "/hardness on rev8 (run_forensics/rev8/1a_hardness_FAIL2_r8.md) scored 2: one cause, about 14 % against the 15 % loss. The run read Brian's DM, like the rev7 run. Every Brian-authored carrier is caught by the same from:Brian sweep, so rev8 needed two causes outside it. plan/boot_rev9.py models that sweep as one behaviour over 9 measured runs: rev9 gives P(/hardness >= 3) about 0.98 (Apple and Tavern sit in records 0 of 9 runs opened) and P(all baseline gates) about 0.53-0.68, against 0.62 and 0.73 for rev8."
+ }
+]

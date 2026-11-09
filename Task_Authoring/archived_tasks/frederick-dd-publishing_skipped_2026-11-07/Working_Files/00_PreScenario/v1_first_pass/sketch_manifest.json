@@ -1,0 +1,305 @@
+{
+ "_note": "PRE-SCENARIO SKETCH for hardness_v2_check.py only (recommended storyline A: Domino Delights publishing-rights model). Not the /create-scenario draft manifest. Ids prefixed NEW- are planned seeds with declared containers; other ids are real synth-cut records Frederick can open (cansee_anchors.txt). Trap wording describes design intent, not prompt, Oracle Event or criterion text.",
+ "effective_profile": "extreme",
+ "horizon": "Long Horizon",
+ "anchors": [
+  {
+   "id": "AN1",
+   "locator": "gmail:NEW-leonard-dd-model-mail",
+   "prompt_reference": "Leonard's email from yesterday"
+  },
+  {
+   "id": "AN2",
+   "locator": "gsheets:NEW-outreach-log",
+   "prompt_reference": "my publisher outreach sheet"
+  },
+  {
+   "id": "AN3",
+   "locator": "trello:670015c2ecd45b634d5eec81",
+   "prompt_reference": "the BD Follow Up list"
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "F1",
+   "seeded_ids": [
+    "NEW-leonard-dd-model-mail"
+   ],
+   "delegated_by_record": "NEW-leonard-dd-model-mail",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+   ]
+  },
+  {
+   "id": "F2",
+   "seeded_ids": [
+    "NEW-model-ground-rules-doc"
+   ],
+   "delegated_by_record": "NEW-leonard-dd-model-mail",
+   "requirement_ids": [
+    "R2",
+    "R3",
+    "R5",
+    "R7"
+   ]
+  },
+  {
+   "id": "F3",
+   "seeded_ids": [
+    "NEW-deck-numbers-reply"
+   ],
+   "delegated_by_record": "NEW-model-ground-rules-doc",
+   "requirement_ids": [
+    "R6"
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T_DONE",
+   "family": "done_gap",
+   "mechanism": "A24",
+   "services": [
+    "gmail",
+    "trello",
+    "slack"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the first advance tranche from PA is earned: PA's partner manager mails that the KPI test cleared and the BD Follow Up card says test passed, so it counts as Q4 cash",
+   "resolver": "the term mail ties that tranche to installs from non-incent traffic; a later #analytics reply by the person who ran the test shows the window was filled from the incent campaign, so one required part never happened",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "NEW-pub-PA-kpi-cleared",
+     "container": "gmail:NEW-pub-PA-terms-thread",
+     "seeded": true,
+     "at": "2025-09-26T16:00:00Z"
+    },
+    {
+     "service": "slack",
+     "id": "NEW-analytics-test-source-reply",
+     "container": "slack:C069FF9Q57S/NEW-unrelated-analytics-root",
+     "seeded": true,
+     "at": "2025-09-29T18:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T_CORR",
+   "family": "superseding",
+   "mechanism": "A11",
+   "services": [
+    "gmail",
+    "gcal"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "PB's advance is the figure in PB's term mail",
+   "resolver": "Leonard's note on the calendar entry for the follow-up call, dated after the mail, records the lower figure PB came back with and says the rest stands",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "NEW-pub-PB-terms",
+     "container": "gmail:NEW-pub-PB-terms-thread",
+     "seeded": true,
+     "at": "2025-09-22T15:00:00Z"
+    },
+    {
+     "service": "gcal",
+     "id": "NEW-pub-PB-followup-event",
+     "container": "gcal:NEW-pub-PB-followup-event",
+     "seeded": true,
+     "at": "2025-09-29T20:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T_ALIAS",
+   "family": "alias",
+   "mechanism": "A7",
+   "services": [
+    "gmail",
+    "contacts",
+    "slack"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "PC's offer is live: its term mail is unanswered and no Slack hit carries PC's trading name",
+   "resolver": "a founder's post says the parent group's person pulled out, naming her and the group; her signature on PC's mail and a Contacts row tie that person and group to PC",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "NEW-pub-PC-terms",
+     "container": "gmail:NEW-pub-PC-terms-thread",
+     "seeded": true,
+     "at": "2025-09-18T15:00:00Z"
+    },
+    {
+     "service": "slack",
+     "id": "NEW-founder-post-parent-group-out",
+     "container": "slack:C07C2866011/NEW-group-out-root",
+     "seeded": true,
+     "at": "2025-09-28T17:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T_FILT1",
+   "family": "exact_predicate",
+   "mechanism": "A17",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the population is the outreach tab plus Frederick's own inbox",
+   "resolver": "the rule record brings in any publisher that came to the company about Domino Delights; PH came to Robert and his relay sits in a founders' thread",
+   "version_records": []
+  },
+  {
+   "id": "T_FILT2",
+   "family": "exact_predicate",
+   "mechanism": "A17",
+   "services": [
+    "linear",
+    "gsheets"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the population is the outreach tab plus Frederick's own inbox",
+   "resolver": "PI's terms reached Arthur during an SDK question and are recorded in a comment on a Linear ticket about Domino Delights ads",
+   "version_records": []
+  },
+  {
+   "id": "T_EXC",
+   "family": "house_rule",
+   "mechanism": "A15",
+   "services": [
+    "gdocs",
+    "slack",
+    "gmail"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "PD is the best deal: it has the largest 12-month value and a clean mobile rev share",
+   "resolver": "the founders' Aug 2025 position keeps code, IP and non-mobile distribution rights (base, exec sync and #executives); PD's grant is worded across all digital storefronts, so it fails",
+   "version_records": []
+  },
+  {
+   "id": "T_INPUT",
+   "family": "superseding",
+   "mechanism": "A11",
+   "services": [
+    "gmail",
+    "trello"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "PE's monthly install commitment is the figure in PE's term mail, and the forecast multiplies that",
+   "resolver": "a later comment on PE's BD Follow Up card gives the lower commitment PE confirmed by phone and says the rest stands",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "NEW-pub-PE-terms",
+     "container": "gmail:NEW-pub-PE-terms-thread",
+     "seeded": true,
+     "at": "2025-09-19T15:00:00Z"
+    },
+    {
+     "service": "trello",
+     "id": "NEW-pub-PE-card-comment",
+     "container": "trello:NEW-pub-PE-card",
+     "seeded": true,
+     "at": "2025-09-30T16:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T_FOLLOW",
+   "family": "follow_through",
+   "mechanism": "A15",
+   "services": [
+    "slack",
+    "gmail",
+    "gsheets"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "a model and a reply finish the job; nothing is owed to publishers who were sent the paid-traffic numbers",
+   "resolver": "Leonard's standing line, in a reply under a root about deck numbers, says anyone quoted paid-traffic numbers gets the organic figures before their terms are relied on; the outreach log shows who",
+   "version_records": []
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "DONE",
+   "mechanism": "A24",
+   "nodes": [
+    "T_DONE"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the partner's own 'cleared' mail means the tranche is earned"
+  },
+  {
+   "id": "CORR",
+   "mechanism": "A11",
+   "nodes": [
+    "T_CORR"
+   ],
+   "requirement": "R2",
+   "natural_reading": "the term mail holds the current advance"
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "nodes": [
+    "T_ALIAS"
+   ],
+   "requirement": "R1",
+   "natural_reading": "no hit under the trading name means the offer stands"
+  },
+  {
+   "id": "FILT1",
+   "mechanism": "A17",
+   "nodes": [
+    "T_FILT1"
+   ],
+   "requirement": "R1",
+   "natural_reading": "the tab and my inbox are the population"
+  },
+  {
+   "id": "FILT2",
+   "mechanism": "A17",
+   "nodes": [
+    "T_FILT2"
+   ],
+   "requirement": "R7",
+   "natural_reading": "deal terms do not live on engineering tickets"
+  },
+  {
+   "id": "EXC",
+   "mechanism": "A15",
+   "nodes": [
+    "T_EXC"
+   ],
+   "requirement": "R4",
+   "natural_reading": "the highest value wins"
+  },
+  {
+   "id": "INPUT",
+   "mechanism": "A11",
+   "nodes": [
+    "T_INPUT"
+   ],
+   "requirement": "R5",
+   "natural_reading": "the term mail's commitment feeds the forecast"
+  },
+  {
+   "id": "FOLLOW",
+   "mechanism": "A15",
+   "nodes": [
+    "T_FOLLOW"
+   ],
+   "requirement": "R6",
+   "natural_reading": "the model and the reply are all that is asked"
+  }
+ ]
+}

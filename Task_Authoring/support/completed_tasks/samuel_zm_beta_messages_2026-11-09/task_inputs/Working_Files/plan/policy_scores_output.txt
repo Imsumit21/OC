@@ -1,0 +1,40 @@
+UNCALIBRATED · surface 57 slots, weight 227, mechanism-flippable 181 (79.7%), always-pass 46 (20.3%)
+
+Whole policies
+  100.0%  Perfect  [lands: -]
+   20.3%  Sheet flags and the parent's children only  [lands: ALIAS, BUILT, CORR, DEP, DONE, FILT, FOLLOW, PULL, QA]
+   83.3%  Thorough on tickets, never opens GitHub  [lands: BUILT, DONE]
+   72.2%  Thorough on tickets and GitHub, never opens Slack threads or the calendar  [lands: CORR, PULL, QA]
+   86.8%  Reads everything, takes each flag literally (no join)  [lands: DEP]
+   56.8%  Trusts Done tickets, otherwise thorough  [lands: DEP, DONE, PULL, QA]
+   78.9%  Stays inside the sheet's names and the parent  [lands: ALIAS, FILT]
+   93.4%  Right calls, misses the freeze note  [lands: FOLLOW]
+   50.2%  The rev5 pre-check run, replayed on rev6 (its reads, new records unseen)  [lands: CORR, FILT, FOLLOW, PULL, QA]
+
+Single misses
+  DONE     89.0%
+  CORR     95.6%
+  DEP      86.8%
+  QA       89.0%
+  PULL     85.5%
+  ALIAS    95.6%
+  FILT     83.3%
+  BUILT    94.3%
+  FOLLOW   93.4%
+
+Pairs at or above the 80 % bar: ['DONE+CORR', 'DONE+QA', 'DONE+ALIAS', 'DONE+BUILT', 'DONE+FOLLOW', 'CORR+DEP', 'CORR+QA', 'CORR+PULL', 'CORR+ALIAS', 'CORR+BUILT', 'CORR+FOLLOW', 'DEP+ALIAS', 'DEP+BUILT', 'DEP+FOLLOW', 'QA+ALIAS', 'QA+BUILT', 'QA+FOLLOW', 'PULL+ALIAS', 'ALIAS+BUILT', 'ALIAS+FOLLOW', 'BUILT+FOLLOW']
+
+Design landing rates {'DONE': 0.1, 'CORR': 0.6, 'DEP': 0.05, 'QA': 0.65, 'PULL': 0.6, 'ALIAS': 0.1, 'FILT': 0.65, 'BUILT': 0.05, 'FOLLOW': 0.4}; sum 3.20, mean 0.36
+P(one run catches every trap) ~ 0.009 under independence -> E[full passes of 6] ~ 0.05
+
+Six-run Monte Carlo (run latent rho, plus shared latents for code-read and thread-open behaviour)
+  scale mean-rate rho   E[avg]  P(<80)  P(<85)  P(SD)  P(<5 full)  P(patterns)  P(all, 80 bar)  P(all, 85 cap)
+  1.00    0.36   0.30  66.6%    0.97    1.00   0.86       1.00        1.00           0.83           0.85
+  1.00    0.36   0.50  66.7%    0.95    0.99   0.93       1.00        0.99           0.88           0.91
+  0.80    0.28   0.35  73.0%    0.83    0.95   0.91       1.00        1.00           0.76           0.87
+  0.70    0.25   0.35  76.2%    0.69    0.89   0.89       1.00        1.00           0.64           0.81
+  0.60    0.21   0.35  79.4%    0.52    0.78   0.87       1.00        0.99           0.48           0.72
+  0.60    0.21   0.50  79.5%    0.51    0.75   0.90       1.00        0.99           0.49           0.72
+  0.50    0.18   0.35  82.7%    0.33    0.61   0.81       1.00        0.99           0.31           0.56
+  0.40    0.14   0.35  86.0%    0.17    0.41   0.71       1.00        0.98           0.16           0.38
+  0.30    0.11   0.35  89.3%    0.06    0.21   0.58       0.99        0.97           0.05           0.19

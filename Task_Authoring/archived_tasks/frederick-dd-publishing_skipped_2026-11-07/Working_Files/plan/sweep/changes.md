@@ -1,0 +1,5 @@
+- Gradable surface: text-selector slots moved from aggregate or direct to `write_content` (a text selector can't read a solver value), and the scenario gate was re-sealed. No slot id or weight changed.
+- Scenario builder: writes only when run as a script, so the solver and SQL builder can import it without touching certified files.
+- Solver contract: each channel has its own operator, because Tallwater, Harbor Lane and Wavecrest each sit on two channels. Moonrail is in FOLLOW's touched set, because a missed Kestrel join makes it owed a note.
+- Manifest: `design_delta` lists the row ids, controls and channels, and the K1, K3 and T13 record pointers. Harbor Lane and Wavecrest calls are declared `no_notify` in `integration_exceptions`.
+- Records changed after the blind sweeps: see Blind sweeps. The solver's truth didn't change in any field.

@@ -1,0 +1,231 @@
+{
+ "_note": "PRE-SCENARIO SKETCH surface for hardness_v2_check.py and policy_model.py; not 01_Gradable_Surface.json. Fact slots only, no criterion text. Weights follow kind of work: 1 lookup, 3 interpretation or limited reconciliation, 5 multi-source reconciliation.",
+ "slots": [
+  {
+   "id": "V1_go_count",
+   "weight": 5,
+   "class": "aggregate",
+   "mechanisms": [
+    "DONE",
+    "DATE",
+    "EXC"
+   ],
+   "note": "number of messages going out at beta (rule x sheet x tickets x reviews)"
+  },
+  {
+   "id": "V2_new_ticket_count",
+   "weight": 5,
+   "class": "aggregate",
+   "mechanisms": [
+    "ALIAS",
+    "FILT"
+   ],
+   "note": "number of new engineering tickets (reuse rule x ticket history)"
+  },
+  {
+   "id": "V3_member_count",
+   "weight": 3,
+   "class": "aggregate",
+   "mechanisms": [
+    "FILT"
+   ],
+   "note": "messages on the plan, sheet rows plus asks"
+  },
+  {
+   "id": "D1_race_decision",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "DONE"
+   ],
+   "note": "race reminder decision (sheet x PR review x rule)"
+  },
+  {
+   "id": "D2_race_blocker",
+   "weight": 5,
+   "class": "write_content",
+   "mechanisms": [
+    "DONE"
+   ],
+   "note": "what is missing and on which platform, on its ticket"
+  },
+  {
+   "id": "C1_lapsed7_final_line",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "CORR"
+   ],
+   "note": "final headline on the plan (sheet x thread reply)"
+  },
+  {
+   "id": "C2_lapsed7_build_ticket",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "CORR"
+   ],
+   "note": "same line on the string-change ticket"
+  },
+  {
+   "id": "T1_first_session_decision",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "DATE"
+   ],
+   "note": "first-session message decision (trigger x ask point x rule)"
+  },
+  {
+   "id": "T2_first_session_reason",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "DATE"
+   ],
+   "note": "the level gap named in the report"
+  },
+  {
+   "id": "E1_pass_decision",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "EXC"
+   ],
+   "note": "paid-pass message decision (sheet x older mail x settings ticket)"
+  },
+  {
+   "id": "E2_pass_missing_piece",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "EXC"
+   ],
+   "note": "the opt-in named as the missing piece"
+  },
+  {
+   "id": "A1_reused_ticket",
+   "weight": 5,
+   "class": "write_content",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "note": "work recorded on the existing ticket (page x ticket history)"
+  },
+  {
+   "id": "A2_event_name_in_copy",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "note": "event named as players see it in Zombie Match"
+  },
+  {
+   "id": "F1_ask_member_row",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "FILT"
+   ],
+   "note": "the off-sheet ask appears on the plan (comment x scope rule)"
+  },
+  {
+   "id": "F2_ask_trigger",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [
+    "FILT"
+   ],
+   "note": "its trigger as asked"
+  },
+  {
+   "id": "O1_held_ticket_notes",
+   "weight": 5,
+   "class": "aggregate",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "note": "held messages carrying a note on their own ticket (rule x plan x tickets)"
+  },
+  {
+   "id": "O2_sample_note_names_gap",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "note": "one held ticket's note names the missing piece"
+  },
+  {
+   "id": "K1_lives_go",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "lives-recharged control"
+  },
+  {
+   "id": "K2_lapsed1_go",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "one-day lapsed control, current game name"
+  },
+  {
+   "id": "K3_arena_out",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "postponed arena control (sheet x #company-internal)"
+  },
+  {
+   "id": "K4_streak_drop",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "Domino-only event control"
+  },
+  {
+   "id": "K5_hourly_drop",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "backlog feature control (sheet x Trello)"
+  },
+  {
+   "id": "K6_rate_levels",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "rating prompt levels, ticket over card"
+  },
+  {
+   "id": "K7_message_type",
+   "weight": 1,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "local vs server label"
+  },
+  {
+   "id": "K8_plan_in_folder",
+   "weight": 1,
+   "class": "delivery",
+   "mechanisms": [],
+   "note": "plan filed in Samuel's folder"
+  },
+  {
+   "id": "K9_card_checklist",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [],
+   "note": "one item per going message on the card"
+  },
+  {
+   "id": "K10_reply_to_leonard",
+   "weight": 1,
+   "class": "delivery",
+   "mechanisms": [],
+   "note": "summary back to Leonard"
+  }
+ ]
+}

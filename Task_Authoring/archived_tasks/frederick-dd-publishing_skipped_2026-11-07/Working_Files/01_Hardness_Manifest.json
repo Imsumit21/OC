@@ -1,0 +1,2092 @@
+{
+ "_note": "Final manifest (/create-injection rev2). Draft 01_Hardness_Manifest.draft.json plus the ids, facts and bindings only the SQL settles; every change is in design_delta.",
+ "persona": "frederick_stone",
+ "assignment_context": {
+  "context_hash": "ec895c36b5f1a007df87b81a9c3e1b32f012753826ebffb8a1971dca9a216dc3",
+  "assignment_hash": "a95625679300a11b865d11727fc6a455610ba1d62fe9e47cfc863ef59684ea0c",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2025-10-01T00:00:00Z",
+  "difficulty_mode": "medium"
+ },
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "author_targets": {
+  "min_calls_per_run": 130,
+  "max_avg_weighted_pass": 0.8,
+  "requester_confirmation": "task author in chat on 2026-11-06: 'my task is a long horizon task soo i want over 130 tool calls in each runs and also i want difficulty pass rate under 80% and also have to folllow all other difficulty guidelines soo you can choose from your self which option is best fit for my requirements in this task'"
+ },
+ "volume_exception": {
+  "reason": "26 publishers and 10 sets of terms; mail and calendars are bulk-readable, so honest necessary calls are about 200. Reaching 500 would need padding, which fails on its own",
+  "requester_confirmation": "task author in chat on 2026-11-06: 'my task is a long horizon task soo i want over 130 tool calls in each runs and also i want difficulty pass rate under 80% and also have to folllow all other difficulty guidelines soo you can choose from your self which option is best fit for my requirements in this task'",
+  "call_budget_floor": 180,
+  "per_record_floor": 60
+ },
+ "cohort_exception": {
+  "reason": "no natural 40-record publisher cohort exists; padding it would add always-pass rows that cut the SD",
+  "requester_confirmation": "task author in chat on 2026-11-06: 'my task is a long horizon task soo i want over 130 tool calls in each runs and also i want difficulty pass rate under 80% and also have to folllow all other difficulty guidelines soo you can choose from your self which option is best fit for my requirements in this task'",
+  "cohort_floor": 24
+ },
+ "requirements": {
+  "R1": "the publisher population: every publisher on the outreach sheet plus any publisher that came to the founders about Domino Delights since Apr 1, 2025; one row per publisher",
+  "R2": "status per publisher (Withdrawn, Out on rights, Live, Passed, Waiting on us, No reply)",
+  "R3": "latest terms per Live offer: rev share, advance, monthly installs",
+  "R4": "12-month value per Live offer",
+  "R5": "Q4 cash per Live offer and money banked so far",
+  "R6": "rights test: whether an offer's terms take something the founders keep",
+  "R7": "first pick",
+  "R8": "keep value of the game",
+  "R9": "board writes: a checklist per status with one item per publisher, a follow-up card per Live, Waiting on us and No reply publisher, reusing existing cards, and a nudge draft per No reply publisher",
+  "R10": "a contact per publisher person who gave terms or said no, skipping existing contacts",
+  "R11": "a reminder on each Live offer's response date",
+  "R12": "a draft note with the organic figure to each Live publisher that got the May one-pager",
+  "R13": "the reply to Leonard: first pick, its 12-month value, its Q4 cash and money banked"
+ },
+ "services": {
+  "gmail": {
+   "role": "Leonard's ask and the report destination; each publisher's thread; ESG's signing date; Oakline's payment confirmation; follow-through drafts",
+   "weight_reason": "the ask, who answered and the signing date live in mail"
+  },
+  "gdocs": {
+   "role": "the ground rules doc (H1), its co-dev decoy, ten-odd publisher term sheets, the base exec sync (H2)",
+   "weight_reason": "rules, terms and the rights position"
+  },
+  "gsheets": {
+   "role": "Fred's outreach sheet (population, what each got); the model itself",
+   "weight_reason": "the population and the deliverable"
+  },
+  "gdrive": {
+   "role": "the DD publishing folder and term-sheet filing",
+   "weight_reason": "the destination Frederick owns"
+  },
+  "gslides": {
+   "role": "the May one-pager that carried the paid-traffic numbers",
+   "weight_reason": "who was told what, behind the follow-through"
+  },
+  "slack": {
+   "role": "Arthur's cash note, Robert's relay, the Kestrel post, Leonard's standing line, the analytics pointer",
+   "weight_reason": "four deciding records sit in Slack"
+  },
+  "gcal": {
+   "role": "Tallwater's follow-up note; Monday's sit-down; reminders",
+   "weight_reason": "a corrected advance and the reminders"
+  },
+  "trello": {
+   "role": "the DD publishing card (H3); existing follow-up cards with a comment on Sunfold's commitment; new cards",
+   "weight_reason": "the board ask, a corrected input and the board writes"
+  },
+  "contacts": {
+   "role": "who Anika works for; existing and new contacts",
+   "weight_reason": "the alias join and the contact writes"
+  },
+  "linear": {
+   "role": "Arthur's comment on ENG-2362 holding Redwood's terms",
+   "weight_reason": "an in-scope offer outside the inbox"
+  },
+  "snowflake": {
+   "role": "REVENUE_DAILY for the keep value",
+   "weight_reason": "the only home of the keep value"
+  }
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "prompt_reference": "Leonard's email from yesterday",
+   "service": "gmail",
+   "locator": "frederick.stone@harmonygames.co/<CAY2swo8Vt78l2VvRPI7Ywn-45Te8GyWBcazV7hy@mail.gmail.com>",
+   "record": "frederick.stone@harmonygames.co/<CAY2swo8Vt78l2VvRPI7Ywn-45Te8GyWBcazV7hy@mail.gmail.com>",
+   "requirement_ids": [
+    "R10",
+    "R13"
+   ]
+  },
+  {
+   "id": "A2",
+   "prompt_reference": "the DD publishing card",
+   "service": "trello",
+   "locator": "68dab660c900179df4f5f92d",
+   "record": "68dab660c900179df4f5f92d",
+   "requirement_ids": [
+    "R9"
+   ]
+  },
+  {
+   "id": "A3",
+   "prompt_reference": "my DD publishing folder",
+   "service": "gdrive",
+   "locator": "d_6fc54be60d1377e340a5b5",
+   "record": "d_6fc54be60d1377e340a5b5",
+   "requirement_ids": []
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "gdocs",
+   "container": "f_5e355d03f6eb6a4e866ead",
+   "locator": "f_5e355d03f6eb6a4e866ead",
+   "kind": "delegation",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_5e355d03f6eb6a4e866ead"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAY2swo8Vt78l2VvRPI7Ywn-45Te8GyWBcazV7hy@mail.gmail.com>",
+   "delegation_quote": "The ground rules doc has how we're doing this",
+   "requirement_ids": [
+    "R2",
+    "R4",
+    "R5",
+    "R7",
+    "R11"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "ground rules"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "gsheets",
+   "container": "f_fd467bd2ae0c6d4f3bd2bc",
+   "locator": "f_fd467bd2ae0c6d4f3bd2bc",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_fd467bd2ae0c6d4f3bd2bc"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "Every publisher on Fred's outreach sheet",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K3",
+   "service": "gdocs",
+   "container": "f_26e1f9a86761e35049192a",
+   "locator": "f_26e1f9a86761e35049192a",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_5e355d03f6eb6a4e866ead"
+   ],
+   "base_pointers": [
+    "f_26e1f9a86761e35049192a"
+   ],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "The position from the August sync",
+   "requirement_ids": [
+    "R6"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "The position from the August sync"
+    }
+   ]
+  },
+  {
+   "id": "K4",
+   "service": "trello",
+   "container": "68dab660c900179df4f5f92d",
+   "locator": "68dab660c900179df4f5f92d",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A2"
+   ],
+   "seeded_ids": [
+    "68dab660c900179df4f5f92d"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "68dab660c900179df4f5f92d",
+   "delegation_quote": "One checklist per status on this card",
+   "requirement_ids": [
+    "R9"
+   ],
+   "names_authorities": [
+    {
+     "id": "H3",
+     "quote": "One checklist per status on this card"
+    }
+   ]
+  },
+  {
+   "id": "K5",
+   "service": "gdrive",
+   "container": "d_6fc54be60d1377e340a5b5",
+   "locator": "d_6fc54be60d1377e340a5b5",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "d_6fc54be60d1377e340a5b5"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAY2swo8Vt78l2VvRPI7Ywn-45Te8GyWBcazV7hy@mail.gmail.com>",
+   "delegation_quote": "Put the model in your DD publishing folder",
+   "requirement_ids": [
+    "R13"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K6",
+   "service": "gmail",
+   "container": "frederick.stone@harmonygames.co/1844620296192667598",
+   "locator": "frederick.stone@harmonygames.co/<CAP16wHs998luhyUQ3U3Bw_EguUS8xoTcGPbTVkR@mail.gmail.com>",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/<CAP16wHs998luhyUQ3U3Bw_EguUS8xoTcGPbTVkR@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/<CA9raR_pqldShsvOhd5Uwxoj8zJh2-tzH0UJ5JLd@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/1844620296192667598"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "If our lawyers give us a later date, use theirs",
+   "requirement_ids": [
+    "R5"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K7",
+   "service": "gcal",
+   "container": "evt_43fda04cd11b9d58a05161",
+   "locator": "evt_43fda04cd11b9d58a05161",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "evt_43fda04cd11b9d58a05161"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "Use the latest terms we have from them, wherever they are",
+   "requirement_ids": [
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K8",
+   "service": "trello",
+   "container": "68d598387dea3e7fe85e3a0a",
+   "locator": "68d598387dea3e7fe85e3a0a",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "68d598387dea3e7fe85e3a0a",
+    "68dbfe80ef9c41b4f4fa8fe9"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "Use the latest terms we have from them, wherever they are",
+   "requirement_ids": [
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K9",
+   "service": "slack",
+   "container": "C096HFA5Z8W/1758147530.732569",
+   "locator": "C096HFA5Z8W/1758147530.732569",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f55bd27436eb285a15d833648b922e9b"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "the notes I asked you for on what goes out to publishers still aren't done",
+   "requirement_ids": [
+    "R12"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K10",
+   "service": "gslides",
+   "container": "f_4b3ef3dcf76258a6fda5cd",
+   "locator": "f_4b3ef3dcf76258a6fda5cd",
+   "kind": "format",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K9"
+   ],
+   "seeded_ids": [
+    "f_4b3ef3dcf76258a6fda5cd"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f55bd27436eb285a15d833648b922e9b",
+   "delegation_quote": "the May one-pager",
+   "requirement_ids": [
+    "R12"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K11",
+   "service": "slack",
+   "container": "C07C2866011/1758736960.824899",
+   "locator": "C07C2866011/1758736960.824899",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "495d71a7e14dfaa68cac26fc4a6c4e03"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "however it reached us",
+   "requirement_ids": [
+    "R1",
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K12",
+   "service": "linear",
+   "container": "ENG-2362",
+   "locator": "ENG-2362",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "lc_674982ffdca63f854ec6f591"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "however it reached us",
+   "requirement_ids": [
+    "R1",
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K13",
+   "service": "slack",
+   "container": "C069FF9Q57S",
+   "locator": "C069FF9Q57S",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "e64606893af9f4316891a357ec26a691"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "however it reached us",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K14",
+   "service": "snowflake",
+   "container": "snowflake:ANALYTICS.MONETIZATION.REVENUE_DAILY",
+   "locator": "snowflake:ANALYTICS.MONETIZATION.REVENUE_DAILY",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "ANALYTICS.MONETIZATION.REVENUE_DAILY"
+   ],
+   "delegated_by_record": "f_5e355d03f6eb6a4e866ead",
+   "delegation_quote": "ANALYTICS.MONETIZATION.REVENUE_DAILY",
+   "requirement_ids": [
+    "R8"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K15",
+   "service": "contacts",
+   "container": "5373edb55ca853d6052ecce5",
+   "locator": "5373edb55ca853d6052ecce5",
+   "kind": "recipient",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "5373edb55ca853d6052ecce5",
+    "1d6fd505d2fea08fa0f26c6e"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "frederick.stone@harmonygames.co/<CAY2swo8Vt78l2VvRPI7Ywn-45Te8GyWBcazV7hy@mail.gmail.com>",
+   "delegation_quote": "Everyone at a publisher who has given us terms or told us no should be in Contacts",
+   "requirement_ids": [
+    "R10"
+   ],
+   "names_authorities": []
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "the ground rules doc",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R2",
+    "R4",
+    "R5",
+    "R7",
+    "R8",
+    "R11"
+   ],
+   "findable_query": "ground rules",
+   "seeded_ids": [
+    "f_5e355d03f6eb6a4e866ead"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "f_21203dbcdf780cc07c76cb"
+   ],
+   "decoy_base_pointers": [],
+   "decoy_scope": {
+    "dimension": "game",
+    "decoy": "co-dev terms for a new title, not DD (Sep 19)",
+    "task": "publishing rights for Domino Delights"
+   }
+  },
+  {
+   "id": "H2",
+   "name": "the rights position from the August sync",
+   "home_service": "gdocs",
+   "decoy_service": "gmail",
+   "governs": [
+    "R6"
+   ],
+   "findable_query": "publishing rights",
+   "seeded_ids": [],
+   "base_pointers": [
+    "f_26e1f9a86761e35049192a"
+   ],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "frederick.stone@harmonygames.co/1829687508014442264"
+   ],
+   "decoy_scope": {
+    "dimension": "issuer",
+    "decoy": "Appodeal's own programme line that it takes no game transfer or IP rights",
+    "task": "what the founders keep"
+   }
+  },
+  {
+   "id": "H3",
+   "name": "the DD publishing card",
+   "home_service": "trello",
+   "decoy_service": "trello",
+   "governs": [
+    "R9"
+   ],
+   "findable_query": "DD publishing",
+   "seeded_ids": [
+    "68dab660c900179df4f5f92d"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "trello:/cards/557"
+   ],
+   "decoy_scope": {
+    "dimension": "lot",
+    "decoy": "the four Oct 2024 BD Follow Up cards from the first partner round",
+    "task": "the Sep 2025 publisher round"
+   }
+  }
+ ],
+ "cohort": {
+  "definition": "every publisher on Fred's outreach sheet plus any publisher that came to the founders about Domino Delights since Apr 1, 2025 (26: 24 on the sheet, 2 outside it)",
+  "definition_source": [
+   "f_5e355d03f6eb6a4e866ead",
+   "f_fd467bd2ae0c6d4f3bd2bc"
+  ],
+  "key": "publisher",
+  "size": 26,
+  "evidence_surfaces": [
+   {
+    "service": "gmail",
+    "tool": "gmail_search_messages+gmail_get_thread",
+    "per_record_calls": 0.75,
+    "records": 24,
+    "requirement": "R2",
+    "decides": "status per publisher",
+    "why_no_bulk": "gmail_search_messages returns ids only; gmail_get_messages_batch reads bodies in bulk, so three quarters of a call per publisher is counted",
+    "short_circuit": "only a publisher's own thread shows whether it answered, passed or wrote first; no list records outcomes, and the outreach sheet carries none",
+    "seeded_ids": []
+   },
+   {
+    "service": "gdocs",
+    "tool": "gdocs_get_document_text",
+    "per_record_calls": 1.0,
+    "records": 8,
+    "seeded": true,
+    "seeded_ids": [
+     "f_27cac0eed300cc33eeb4fd",
+     "f_e8cb875d5b7c8d9972d259",
+     "f_8ddfb9901891eb8e9dcab8",
+     "f_d72e8b34e7496f0de668bc",
+     "f_a6a5647f977d4638b2b8b1",
+     "f_464839da025a0a01f53979",
+     "f_3eccf6e0bb63955dc51e27",
+     "f_5f3ef4a4760d18e696a41a"
+    ],
+    "requirement": "R3",
+    "decides": "latest terms per Live offer",
+    "why_no_bulk": "each term sheet is its own document; no call returns several bodies",
+    "short_circuit": "rights, net terms, installs and advance are only in that sheet; the covering mail says terms are attached, not what they are"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_search_public_and_private",
+    "per_record_calls": 1.0,
+    "records": 26,
+    "requirement": "R2",
+    "decides": "status per publisher",
+    "why_no_bulk": "channel history returns roots only and a generic search misses a record that names a person or a group",
+    "short_circuit": "a later founder note can change a publisher's standing, so a thread that looks settled still needs its own search",
+    "seeded_ids": []
+   },
+   {
+    "service": "gcal",
+    "tool": "gcal_search_events",
+    "per_record_calls": 1.0,
+    "records": 9,
+    "requirement": "R3",
+    "decides": "latest terms per Live offer",
+    "why_no_bulk": "gcal_list_events shows the start of a description only; the rest needs the event itself",
+    "short_circuit": "a call note can move a term after the sheet was sent; the sheet can't show that",
+    "seeded_ids": []
+   },
+   {
+    "service": "contacts",
+    "tool": "contacts_search_contacts",
+    "per_record_calls": 0.5,
+    "records": 16,
+    "requirement": "R10",
+    "decides": "a contact per publisher person who gave terms or said no",
+    "why_no_bulk": "contacts_get_contacts lists everyone in bulk, so half a call per publisher is counted",
+    "short_circuit": "Leonard asks to skip anyone already there, so each person has to be checked before each add",
+    "seeded_ids": []
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A24",
+   "ends_in": "R5",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1842077918822838564",
+     "finding": "Marek confirms the wire"
+    },
+    {
+     "service": "trello",
+     "record": "68dabd6800e271eb0608d2d6",
+     "finding": "the card repeats it"
+    },
+    {
+     "service": "slack",
+     "record": "0230b2df24ec829928fe1c55ad6185bf",
+     "finding": "it never hit SVB"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A11",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_e8cb875d5b7c8d9972d259",
+     "finding": "$60,000"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_43fda04cd11b9d58a05161",
+     "finding": "$40,000 on the call"
+    },
+    {
+     "service": "gsheets",
+     "record": "model",
+     "finding": "advance, value and Q4 cash follow"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A7",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1842077918822811962",
+     "finding": "Anika's signature names Kestrel"
+    },
+    {
+     "service": "contacts",
+     "record": "5373edb55ca853d6052ecce5",
+     "finding": "her row says Kestrel Group"
+    },
+    {
+     "service": "slack",
+     "record": "e44da6a468e7795a1b5853cfb0763aaf",
+     "finding": "Kestrel's offer is off"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A17",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_5e355d03f6eb6a4e866ead",
+     "finding": "anyone who came to the four of us"
+    },
+    {
+     "service": "slack",
+     "record": "e64606893af9f4316891a357ec26a691",
+     "finding": "a publisher's tech lead, notes on ENG-2362"
+    },
+    {
+     "service": "linear",
+     "record": "lc_674982ffdca63f854ec6f591",
+     "finding": "Redwood's terms"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A15",
+   "ends_in": "R6",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_3eccf6e0bb63955dc51e27",
+     "finding": "all digital storefronts"
+    },
+    {
+     "service": "slack",
+     "record": "C07C2866011/1756140953.197759",
+     "finding": "keep code, IP and non-mobile rights"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_5e355d03f6eb6a4e866ead",
+     "finding": "Out on rights"
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "root_cause": "A13",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_8ddfb9901891eb8e9dcab8",
+     "finding": "50,000 a month"
+    },
+    {
+     "service": "trello",
+     "record": "68d598387dea3e7fe85e3a0a",
+     "finding": "card titled by Lena's first name"
+    },
+    {
+     "service": "trello",
+     "record": "68dbfe80ef9c41b4f4fa8fe9",
+     "finding": "30,000 a month"
+    }
+   ]
+  },
+  {
+   "id": "C7",
+   "root_cause": "A4",
+   "ends_in": "R5",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_5e355d03f6eb6a4e866ead",
+     "finding": "Oct 31, unless ESG says later"
+    },
+    {
+     "service": "gmail",
+     "record": "frederick.stone@harmonygames.co/1844620296192667598",
+     "finding": "Nov 14"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_d72e8b34e7496f0de668bc",
+     "finding": "net 60 lands Jan 13"
+    }
+   ]
+  },
+  {
+   "id": "C8",
+   "root_cause": "A14",
+   "ends_in": "R12",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_5e355d03f6eb6a4e866ead",
+     "finding": "the notes are owed as part of this"
+    },
+    {
+     "service": "slack",
+     "record": "f55bd27436eb285a15d833648b922e9b",
+     "finding": "a note to anyone Live who got the one-pager"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_fd467bd2ae0c6d4f3bd2bc",
+     "finding": "who got it"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "done_gap",
+   "services": [
+    "gmail",
+    "trello",
+    "slack"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1842077918822838564",
+    "68dabd6800e271eb0608d2d6",
+    "0230b2df24ec829928fe1c55ad6185bf"
+   ],
+   "base_pointers": [
+    "C07C2866011/1757345405.134829"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "Oakline's $10,000 is banked: Marek confirms the wire and the card says it went out, so Q4 cash is only the remaining $20,000",
+   "resolver": "Arthur's Sep 30 reply: the $10K first-look never hit SVB, the bank sent it back and it will be resent next week; the rule doc says banked means in the SVB account",
+   "discovery_order": "Marek's mail and the card are met first, in Oakline's own thread and on the board; Arthur's note sits in a reply under an older root about a banker"
+  },
+  {
+   "id": "T2",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "f_e8cb875d5b7c8d9972d259",
+    "evt_43fda04cd11b9d58a05161"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "Tallwater's advance is the $60,000 in its term sheet",
+   "resolver": "Leonard's note on the follow-up call: $40,000 now, everything else stands",
+   "discovery_order": "the term sheet is opened with every other offer; the note sits past the agenda in a calendar description",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "id": "f_e8cb875d5b7c8d9972d259",
+     "container": "file:f_e8cb875d5b7c8d9972d259",
+     "seeded": true,
+     "at": "2025-09-26T15:00:00Z"
+    },
+    {
+     "service": "gcal",
+     "id": "evt_43fda04cd11b9d58a05161",
+     "container": "gcal:evt_43fda04cd11b9d58a05161",
+     "seeded": true,
+     "at": "2025-09-29T20:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T3",
+   "family": "scope_alias",
+   "services": [
+    "gmail",
+    "contacts",
+    "slack"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1842077918822811962",
+    "5373edb55ca853d6052ecce5",
+    "e44da6a468e7795a1b5853cfb0763aaf"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "Moonrail's offer is Live: its term sheet is open and nothing carries the Moonrail name",
+   "resolver": "the post says Kestrel; Anika's signature and her Contacts row tie Kestrel to Moonrail",
+   "discovery_order": "a name search for Moonrail returns nothing in Slack, so the thread reads as open"
+  },
+  {
+   "id": "T4",
+   "family": "exact_predicate",
+   "services": [
+    "slack",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "495d71a7e14dfaa68cac26fc4a6c4e03"
+   ],
+   "base_pointers": [
+    "C07C2866011/1758736960.824899"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the population is the outreach sheet and Frederick's inbox",
+   "resolver": "the rule doc brings in anyone who came to one of the four of us; Robert pasted Copperleaf's note into a thread",
+   "discovery_order": "the sheet is read first and looks complete"
+  },
+  {
+   "id": "T5",
+   "family": "exact_predicate",
+   "services": [
+    "linear",
+    "slack",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "e64606893af9f4316891a357ec26a691",
+    "lc_674982ffdca63f854ec6f591"
+   ],
+   "base_pointers": [
+    "ENG-2362"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "deal terms don't live on engineering tickets",
+   "resolver": "Arthur's post points at ENG-2362, whose comment holds Redwood's terms",
+   "discovery_order": "the sheet is read first; Linear isn't on the mail path"
+  },
+  {
+   "id": "T6",
+   "family": "authority",
+   "services": [
+    "gdocs",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_3eccf6e0bb63955dc51e27"
+   ],
+   "base_pointers": [
+    "f_26e1f9a86761e35049192a",
+    "C07C2866011/1756140953.197759"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "Northglow is the best deal: the largest 12-month value and a clean rev share",
+   "resolver": "the founders keep non-mobile distribution rights; Northglow's grant covers all digital storefronts, including PC and web",
+   "discovery_order": "the term sheet's numbers are met first; the rights position is an old record the rule doc points at by role"
+  },
+  {
+   "id": "T7",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "trello"
+   ],
+   "seeded_ids": [
+    "f_8ddfb9901891eb8e9dcab8",
+    "68d598387dea3e7fe85e3a0a",
+    "68dbfe80ef9c41b4f4fa8fe9"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "Sunfold commits 50,000 installs a month",
+   "resolver": "Frederick's Sep 30 card comment: 30,000 a month, rest stands",
+   "discovery_order": "the term sheet is opened first; the card is titled by Lena's first name",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "id": "f_8ddfb9901891eb8e9dcab8",
+     "container": "file:f_8ddfb9901891eb8e9dcab8",
+     "seeded": true,
+     "at": "2025-09-25T15:00:00Z"
+    },
+    {
+     "service": "trello",
+     "id": "68dbfe80ef9c41b4f4fa8fe9",
+     "container": "trello:68d598387dea3e7fe85e3a0a",
+     "seeded": true,
+     "at": "2025-09-30T16:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T8",
+   "family": "synthesis_omission",
+   "services": [
+    "slack",
+    "gsheets",
+    "gslides"
+   ],
+   "seeded_ids": [
+    "f55bd27436eb285a15d833648b922e9b",
+    "f_4b3ef3dcf76258a6fda5cd"
+   ],
+   "base_pointers": [
+    "C096HFA5Z8W/1758147530.732569"
+   ],
+   "requirement": "R12",
+   "expected_wrong_reading": "the model, the board and the reply finish the job",
+   "resolver": "Leonard's line under his Sep 17 root: anyone who got the May one-pager and is still Live hears the organic figure, as a draft",
+   "discovery_order": "the rule doc points at it by role only; the reply sits under a root about raising"
+  },
+  {
+   "id": "T9",
+   "family": "effective_date",
+   "services": [
+    "gdocs",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "f_5e355d03f6eb6a4e866ead",
+    "frederick.stone@harmonygames.co/1844620296192667598"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "the signing date is Oct 31, so net-60 advances land by Dec 30",
+   "resolver": "ESG's Sep 29 note and Leonard's Sep 30 reply make it Nov 14, so net-60 money lands Jan 13",
+   "discovery_order": "the rule doc is read first; ESG's thread doesn't name a publisher",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "id": "f_5e355d03f6eb6a4e866ead",
+     "container": "file:f_5e355d03f6eb6a4e866ead",
+     "seeded": true,
+     "at": "2025-09-29T16:00:00Z"
+    },
+    {
+     "service": "gmail",
+     "id": "frederick.stone@harmonygames.co/<CAP16wHs998luhyUQ3U3Bw_EguUS8xoTcGPbTVkR@mail.gmail.com>",
+     "container": "gmail:frederick.stone@harmonygames.co/1844620296192667598",
+     "seeded": true,
+     "at": "2025-09-30T16:10:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T10",
+   "family": "reuse_exclusion",
+   "services": [
+    "trello"
+   ],
+   "seeded_ids": [
+    "68d5913004a98be3b4c45408",
+    "68d598387dea3e7fe85e3a0a"
+   ],
+   "base_pointers": [],
+   "requirement": "R9",
+   "expected_wrong_reading": "every Live publisher needs a new card",
+   "resolver": "two cards already exist under contacts' first names: leave a comment there"
+  },
+  {
+   "id": "T11",
+   "family": "near_miss_mention",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [
+    "frederick.stone@harmonygames.co/1842077918822746195"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "Summit answered: there's a message from it",
+   "resolver": "an automatic acknowledgement doesn't count, so No reply"
+  },
+  {
+   "id": "T12",
+   "family": "tool_surface",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [
+    "bda432db3ac81bf7f0c8903f0465ec9d"
+   ],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1842348778705877030",
+    "D05S58U4SAK/1757009185.631739"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Frederick replied to Rayking, so it isn't waiting on us",
+   "resolver": "his Sep 4 message is an unsent draft addressed to Leonard, and his Sep 5 DM says he found no one on LinkedIn and they still owe an answer, so Rayking is Waiting on us"
+  },
+  {
+   "id": "T13",
+   "family": "superseding",
+   "services": [
+    "gmail",
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_5e355d03f6eb6a4e866ead"
+   ],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1830890312657338682",
+    "D05S58U4SAK/1758735778.095599"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "value an install at the paid-traffic numbers ($0.87 ARPDAU, an LTV of $7)",
+   "resolver": "the rule doc fixes $0.50, the organic D30 ARPI",
+   "discovery_order": "the Sep 24 DM and the April board note are met by a metrics search",
+   "version_records": [
+    {
+     "service": "gmail",
+     "base_pointer": "gmail:threads/frederick@harmonygames.co_1830890312657338682.json /messages/0",
+     "container": "gmail:frederick.stone@harmonygames.co/1830890312657338682",
+     "seeded": false,
+     "at": "2025-05-01T04:19:37Z"
+    },
+    {
+     "service": "slack",
+     "base_pointer": "D05S58U4SAK/1758735778.095599",
+     "container": "slack:D05S58U4SAK/1758735778.095599",
+     "seeded": false,
+     "at": "2025-09-24T17:42:58Z"
+    },
+    {
+     "service": "gdocs",
+     "id": "f_5e355d03f6eb6a4e866ead",
+     "container": "file:f_5e355d03f6eb6a4e866ead",
+     "seeded": true,
+     "at": "2025-09-29T16:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T14",
+   "family": "authority",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_5f3ef4a4760d18e696a41a"
+   ],
+   "base_pointers": [
+    "f_26e1f9a86761e35049192a"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "Pinegrove is Live: its grant is mobile only",
+   "resolver": "it takes source code and the build pipeline; the founders keep the code"
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C096HFA5Z8W/1758210489.170809",
+    "C07C2866011/1757516293.887729"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Homa and NCsoft are publishers in talks",
+   "resolver": "the rule doc leaves co-dev and investment talks out",
+   "distractor_type": "other_title"
+  },
+  {
+   "id": "T16",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "frederick.stone@harmonygames.co/1842443183462721250"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Tilting Point is a publisher we approached",
+   "resolver": "the rule doc leaves its UA funding form out",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "T17",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C07C2866011/1756261199.570279"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Apple Arcade is a dominoes lead",
+   "resolver": "it isn't on the sheet, and it had already signed someone",
+   "distractor_type": "keyword_collision"
+  },
+  {
+   "id": "T18",
+   "family": "distractor",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "f_10dfa1b4236a7c35dcb632"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Frederick's Publishing Partners doc is the population",
+   "resolver": "it's a candidate list; the outreach sheet records who was approached",
+   "distractor_type": "partial_listing"
+  },
+  {
+   "id": "T19",
+   "family": "distractor",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "f_0d17fc08eddaf231cf7f28"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the Biz Dev Notes regional list is the population",
+   "resolver": "it's an April candidate list with a template",
+   "distractor_type": "stale_summary"
+  },
+  {
+   "id": "T20",
+   "family": "distractor",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "D05S58U4SAK/1758736842.534589"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the Sep 24 lead is a publisher to add",
+   "resolver": "Leonard's mail leaves him out: he only wants hypercasual",
+   "distractor_type": "withdrawn_ask"
+  },
+  {
+   "id": "T21",
+   "family": "distractor",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_21203dbcdf780cc07c76cb"
+   ],
+   "base_pointers": [],
+   "requirement": "R4",
+   "expected_wrong_reading": "the co-dev doc's rules value an offer",
+   "resolver": "it's about co-dev, not DD; the ground rules govern",
+   "distractor_type": "near_duplicate_record"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "DONE",
+   "mechanism": "A24",
+   "prior_family": "done_gap",
+   "prior_family_reason": "v2 trap 1: a paid claim and its missing piece in another service",
+   "nodes": [
+    "T1",
+    "C1"
+   ],
+   "requirement": "R5",
+   "natural_reading": "Oakline's $10,000 counts as banked",
+   "decides": [
+    "B_PA",
+    "VQ_PA",
+    "K_r_banked"
+   ],
+   "controls": [
+    "Tallwater Games"
+   ],
+   "over_application": "done_over",
+   "source": "slack-reply",
+   "signature": "Oakline wire SVB returned",
+   "prior": {
+    "alpha": 3.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_7f44d83eaad625e9",
+     "hev_522f1ca2bc9062de",
+     "hev_b8f28a892a74b855",
+     "hev_fa790909c7cd5693",
+     "hev_f9b2298b6c9739d4"
+    ]
+   },
+   "description_controls": [
+    "Tallwater Games (no first-look payment, nothing banked)"
+   ]
+  },
+  {
+   "id": "CORR",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 2: a later note in another service changes one number",
+   "nodes": [
+    "T2",
+    "C2"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the term sheet's advance stands",
+   "decides": [
+    "A_adv_PB",
+    "V12_PB",
+    "VQ_PB"
+   ],
+   "controls": [
+    "Harbor Lane Games"
+   ],
+   "over_application": "corr_over",
+   "source": "gcal-note",
+   "signature": "Tallwater advance $40,000",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_febd018417f4bd36",
+     "hev_26ecd3a4fc80313c"
+    ]
+   },
+   "description_controls": [
+    "Harbor Lane Games (a call with no change to its terms)"
+   ]
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "prior_family": "scope_alias",
+   "prior_family_reason": "v2 trap 6: a person-to-company link in Contacts and a signature",
+   "nodes": [
+    "T3",
+    "C3"
+   ],
+   "requirement": "R2",
+   "natural_reading": "Moonrail is Live",
+   "decides": [
+    "S_out_PC",
+    "T_item_PC"
+   ],
+   "controls": [
+    "Wavecrest Play"
+   ],
+   "over_application": "alias_over",
+   "source": "alias-join",
+   "signature": "Anika Kestrel Moonrail",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_ab2508cad060b0ac",
+     "hev_ace612d2f2268cdf",
+     "hev_9cefe52f59fd5be5"
+    ]
+   },
+   "description_controls": [
+    "Wavecrest Play (no founder note about it)"
+   ]
+  },
+  {
+   "id": "FILT",
+   "mechanism": "A17",
+   "prior_family": "exact_predicate",
+   "prior_family_reason": "v2 trap 7: in-scope items outside the obvious filter",
+   "nodes": [
+    "T4",
+    "T5",
+    "C4"
+   ],
+   "requirement": "R1",
+   "natural_reading": "the outreach sheet and the inbox are the population",
+   "decides": [
+    "S_in_PH",
+    "S_in_PI",
+    "S_total"
+   ],
+   "controls": [
+    "Homa",
+    "NCsoft"
+   ],
+   "over_application": "filt_over",
+   "source": "outside-filter",
+   "signature": "Copperleaf Redwood outside the sheet",
+   "prior": {
+    "alpha": 2.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_9c403cae42eb4df8",
+     "hev_c2297d21ba5cbc7b",
+     "hev_0148aad4d8a4eb2d",
+     "hev_2da16037a402bf13",
+     "hev_b76760802056e969"
+    ]
+   },
+   "description_controls": [
+    "Homa and NCsoft stay out"
+   ]
+  },
+  {
+   "id": "EXC",
+   "mechanism": "A15",
+   "prior_family": "authority",
+   "prior_family_reason": "v2 trap 5: a rule in an older record changes the obvious answer",
+   "nodes": [
+    "T6",
+    "T14",
+    "C5"
+   ],
+   "requirement": "R6",
+   "natural_reading": "value alone decides",
+   "decides": [
+    "S_out_PD",
+    "S_out_PJ",
+    "R_top"
+   ],
+   "controls": [
+    "Sunfold Mobile"
+   ],
+   "over_application": "exc_over",
+   "source": "sync-record",
+   "signature": "retain code IP non-mobile",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_d17e4abe74f0e7e0",
+     "hev_1de494f0682754d6",
+     "hev_633340c96ebfc696"
+    ]
+   },
+   "description_controls": [
+    "Sunfold Mobile (mobile stores only)"
+   ]
+  },
+  {
+   "id": "INPUT",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 8: a changed input to a figure, in a card comment",
+   "nodes": [
+    "T7",
+    "C6"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the term sheet's commitment feeds the forecast",
+   "decides": [
+    "A_com_PE",
+    "V12_PE",
+    "R_top"
+   ],
+   "controls": [
+    "Oakline Games"
+   ],
+   "over_application": "input_over",
+   "source": "card-comment",
+   "signature": "Sunfold 30,000 installs",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_febd018417f4bd36",
+     "hev_26ecd3a4fc80313c"
+    ]
+   },
+   "description_controls": [
+    "Oakline Games (its card comment changes no term)"
+   ]
+  },
+  {
+   "id": "DATE",
+   "mechanism": "A4",
+   "prior_family": "boundary_date",
+   "prior_family_reason": "v2 trap 4: a moved date changes which payments land in the window",
+   "nodes": [
+    "T9",
+    "C7"
+   ],
+   "requirement": "R5",
+   "natural_reading": "signing is Oct 31",
+   "decides": [
+    "VQ_PF",
+    "VQ_PG"
+   ],
+   "controls": [
+    "Sunfold Mobile"
+   ],
+   "over_application": "date_over",
+   "source": "esg-thread",
+   "signature": "Nov 14 signing",
+   "prior": {
+    "alpha": 2.0,
+    "beta": 1.0,
+    "record_ids": [
+     "hev_3d96146a0a8b19a5"
+    ]
+   },
+   "description_controls": [
+    "Sunfold Mobile (net 45 lands Dec 29 either way)"
+   ]
+  },
+  {
+   "id": "FOLLOW",
+   "mechanism": "A15",
+   "prior_family": "authority",
+   "prior_family_reason": "v2 trap 3: a write a standing line requires",
+   "nodes": [
+    "T8",
+    "C8"
+   ],
+   "requirement": "R12",
+   "natural_reading": "no note is owed",
+   "decides": [
+    "W_count",
+    "W_1",
+    "W_2",
+    "W_3"
+   ],
+   "controls": [
+    "Oakline Games"
+   ],
+   "over_application": "follow_over",
+   "source": "bridge-reply",
+   "signature": "May one-pager organic note",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_d17e4abe74f0e7e0",
+     "hev_1de494f0682754d6",
+     "hev_633340c96ebfc696"
+    ]
+   },
+   "description_controls": [
+    "Oakline Games (got Intro only, so no note)"
+   ]
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-DONE",
+   "kind": "scale",
+   "degrade": "ch_done",
+   "members": [
+    "Oakline Games"
+   ],
+   "latent": "member",
+   "family": "done_gap",
+   "rule": "DONE",
+   "source": "slack-reply",
+   "description": "Arthur's reply under the banker post is not found: the money looks banked"
+  },
+  {
+   "id": "CH-CORR",
+   "kind": "scale",
+   "degrade": "ch_corr",
+   "members": [
+    "Tallwater Games"
+   ],
+   "latent": "member",
+   "family": "superseding",
+   "rule": "CORR",
+   "source": "gcal-note",
+   "description": "the note past the agenda on the Tallwater event is not read"
+  },
+  {
+   "id": "CH-ALIAS",
+   "kind": "scale",
+   "degrade": "ch_alias",
+   "members": [
+    "Moonrail Studios"
+   ],
+   "latent": "member",
+   "family": "scope_alias",
+   "rule": "ALIAS",
+   "source": "alias-join",
+   "description": "Robert's Kestrel post is not joined to Moonrail through the signature or Contacts"
+  },
+  {
+   "id": "CH-FILT1",
+   "kind": "scale",
+   "degrade": "ch_filt1",
+   "members": [
+    "Copperleaf Games"
+   ],
+   "latent": "member",
+   "family": "exact_predicate",
+   "rule": "FILT",
+   "source": "slack-thread-reply",
+   "description": "Robert's pasted offer in a reply under an unrelated #executives post is not found"
+  },
+  {
+   "id": "CH-FILT2",
+   "kind": "scale",
+   "degrade": "ch_filt2",
+   "members": [
+    "Redwood Arcade"
+   ],
+   "latent": "member",
+   "family": "exact_predicate",
+   "rule": "FILT",
+   "source": "linear-comment",
+   "description": "the ENG-2362 comment behind Arthur's #analytics pointer is not opened"
+  },
+  {
+   "id": "CH-EXC",
+   "kind": "scale",
+   "degrade": "ch_exc",
+   "members": [
+    "Northglow Publishing",
+    "Pinegrove Games"
+   ],
+   "latent": "member",
+   "family": "authority",
+   "rule": "EXC",
+   "source": "sync-record",
+   "description": "the August position is not applied to the terms that take what we keep"
+  },
+  {
+   "id": "CH-INPUT",
+   "kind": "scale",
+   "degrade": "ch_input",
+   "members": [
+    "Sunfold Mobile"
+   ],
+   "latent": "member",
+   "family": "superseding",
+   "rule": "INPUT",
+   "source": "card-comment",
+   "description": "the comment on F/up with Lena is not read"
+  },
+  {
+   "id": "CH-DATE",
+   "kind": "scale",
+   "degrade": "ch_date",
+   "members": [
+    "Harbor Lane Games",
+    "Wavecrest Play"
+   ],
+   "latent": "member",
+   "family": "effective_date",
+   "rule": "DATE",
+   "source": "esg-thread",
+   "description": "the ESG thread is not read: net-60 advances look like Q4 money"
+  },
+  {
+   "id": "CH-FOLLOW",
+   "kind": "scale",
+   "degrade": "ch_follow",
+   "members": [
+    "Tallwater Games",
+    "Harbor Lane Games",
+    "Wavecrest Play"
+   ],
+   "latent": "member",
+   "family": "authority",
+   "rule": "FOLLOW",
+   "source": "bridge-reply",
+   "description": "Leonard's standing line under the Matthew post is not found"
+  },
+  {
+   "id": "CH-SLIP",
+   "kind": "scale",
+   "degrade": null,
+   "members": [],
+   "latent": "member",
+   "family": "slip",
+   "slots": [
+    "S_live_PA",
+    "S_live_PG",
+    "S_passed_1",
+    "S_silent_1",
+    "V12_Harbor"
+   ],
+   "description": "a base slip on a control row"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "gmail",
+   "calls": 3,
+   "reason": "read Leonard's ask; open the ESG thread; open Oakline's payment mail"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 3,
+   "reason": "read the ground rules doc and the August sync; reject the co-dev doc"
+  },
+  {
+   "phase": "discovery",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "read the outreach sheet's tabs"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 3,
+   "reason": "list the DD publishing folder; find term sheets"
+  },
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 4,
+   "reason": "search founder talk on publishing, numbers and rights"
+  },
+  {
+   "phase": "discovery",
+   "service": "trello",
+   "calls": 3,
+   "reason": "read the board, the BD Follow Up list and the DD publishing card"
+  },
+  {
+   "phase": "discovery",
+   "service": "snowflake",
+   "calls": 4,
+   "reason": "list and describe the table; query three months of revenue"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gmail",
+   "calls": 6,
+   "reason": "census threads since Apr 1 by publisher, offer and rights terms"
+  },
+  {
+   "phase": "enumeration",
+   "service": "slack",
+   "calls": 5,
+   "reason": "census publisher talk; Slack search has no bulk read of replies"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gcal",
+   "calls": 3,
+   "reason": "list calls in the window; read Monday's sit-down"
+  },
+  {
+   "phase": "enumeration",
+   "service": "linear",
+   "calls": 3,
+   "reason": "follow the pointer to ENG-2362 and its comments"
+  },
+  {
+   "phase": "enumeration",
+   "service": "contacts",
+   "calls": 2,
+   "reason": "list contacts; resolve people named in posts"
+  },
+  {
+   "phase": "per-record",
+   "service": "gmail",
+   "calls": 18,
+   "reason": "each publisher's thread (three quarters of a call each, bulk reads discounted)"
+  },
+  {
+   "phase": "per-record",
+   "service": "gdocs",
+   "calls": 8,
+   "reason": "each term sheet: terms and rights"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 26,
+   "reason": "a search per publisher, since a later founder note can change its standing"
+  },
+  {
+   "phase": "per-record",
+   "service": "gcal",
+   "calls": 9,
+   "reason": "a search per Live or Out offer for a call note"
+  },
+  {
+   "phase": "per-record",
+   "service": "contacts",
+   "calls": 8,
+   "reason": "a lookup before each add (two already exist)"
+  },
+  {
+   "phase": "per-record",
+   "service": "trello",
+   "calls": 4,
+   "reason": "read comments on the existing follow-up cards"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 5,
+   "reason": "create the model, write two tabs, move it into the folder"
+  },
+  {
+   "phase": "writes",
+   "service": "contacts",
+   "calls": 14,
+   "reason": "a contact for each publisher person who gave terms or said no, minus two that exist"
+  },
+  {
+   "phase": "writes",
+   "service": "trello",
+   "calls": 32,
+   "reason": "six checklists and one item per publisher"
+  },
+  {
+   "phase": "writes",
+   "service": "trello",
+   "calls": 17,
+   "reason": "15 new follow-up cards and comments on two existing ones"
+  },
+  {
+   "phase": "writes",
+   "service": "gcal",
+   "calls": 7,
+   "reason": "a reminder on each Live offer's response date"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 4,
+   "reason": "three follow-through drafts and the reply"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 7,
+   "reason": "a one-line nudge draft to each No reply publisher"
+  },
+  {
+   "phase": "read-back",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "check the model"
+  },
+  {
+   "phase": "read-back",
+   "service": "trello",
+   "calls": 1,
+   "reason": "check the card"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_create_spreadsheet+gsheets_values_update+gdrive_move_file",
+   "count": 5,
+   "depends_on": [
+    "K1",
+    "K2",
+    "K5",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T9"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R7",
+    "R8"
+   ]
+  },
+  {
+   "service": "trello",
+   "tool": "trello_create_checklist+trello_create_check_item",
+   "count": 32,
+   "depends_on": [
+    "K4",
+    "C3",
+    "C4",
+    "C5"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "trello",
+   "tool": "trello_create_card+trello_add_comment",
+   "count": 17,
+   "depends_on": [
+    "K4",
+    "T10",
+    "C3",
+    "C4",
+    "C5"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "contacts",
+   "tool": "contacts_add_new_contact",
+   "count": 14,
+   "depends_on": [
+    "K15",
+    "C4"
+   ],
+   "requirements": [
+    "R10"
+   ]
+  },
+  {
+   "service": "gcal",
+   "tool": "gcal_create_event",
+   "count": 7,
+   "depends_on": [
+    "K1",
+    "C3",
+    "C4",
+    "C5"
+   ],
+   "requirements": [
+    "R11"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_create_draft",
+   "count": 3,
+   "depends_on": [
+    "K9",
+    "C8"
+   ],
+   "requirements": [
+    "R12"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_create_draft",
+   "count": 7,
+   "depends_on": [
+    "K4",
+    "T11"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_reply_to_message",
+   "count": 1,
+   "depends_on": [
+    "K1",
+    "C1",
+    "C2",
+    "C4",
+    "C5",
+    "C6"
+   ],
+   "requirements": [
+    "R13"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [
+  {
+   "hazard_id": "Q01",
+   "resolution": "dated_claim",
+   "requirement": "R5",
+   "why_safe": "seeded replies under three base roots change reply_count and latest_reply; SQL updates those counters as companions and each text is an attributed, dated claim"
+  }
+ ],
+ "denied_probes": [],
+ "gradable_surface": "01_Gradable_Surface.json",
+ "design_delta": [
+  {
+   "id": "anchor A1",
+   "change": "record/locator frederick.stone@harmonygames.co/1844732284109533347 -> frederick.stone@harmonygames.co/<CAY2swo8Vt78l2VvRPI7Ywn-45Te8GyWBcazV7hy@mail.gmail.com> (thread kept in the fragments' seeded_ids)",
+   "reason": "the anchor's text is on Leonard's message row"
+  },
+  {
+   "id": "record ids (all elements)",
+   "change": "Slack 'channel/ts' pointers to seeded messages -> the messages' 32-hex row ids; Gmail fragment locators, delegating records and version records -> the message row that carries the quoted words or was sent at the declared time (thread ids kept alongside)",
+   "reason": "the gate reads text and timestamps from SQL rows: a Slack message row is keyed by its id, and a Gmail thread row holds only a snippet"
+  },
+  {
+   "id": "mechanism_portfolio controls and channels",
+   "change": "controls name solver keys (FILT's are Homa and NCsoft, two out-of-scope rows); over_application names the solver operator; the draft's wording stays in description_controls; each channel gets its own operator, kind scale and latent member, and CH-SLIP's slot id V12_PF follows the surface id V12_Harbor",
+   "reason": "contract.controls needs declared members to be solver keys and operators solve() accepts; three members sit on two channels, so one shared operator would not be separable"
+  },
+  {
+   "id": "K1, K3, T13 record pointers",
+   "change": "K1 names H1 by the words in its own title; K3 carries the rule doc whose sentence names the August position beside the base sync doc; T13's first version points at the Apr 30 message row inside the board thread",
+   "reason": "the gate reads a name from the fragment's own record and a timestamp from a message row, not a thread"
+  }
+ ],
+ "facts": [
+  {
+   "key": "Oakline wire returned",
+   "value": "never hit the account",
+   "kind": "status",
+   "home_ids": [
+    "0230b2df24ec829928fe1c55ad6185bf"
+   ]
+  },
+  {
+   "key": "Tallwater advance",
+   "value": "The advance is $40,000 now",
+   "kind": "status",
+   "home_ids": [
+    "evt_43fda04cd11b9d58a05161",
+    "evt_c6d68c2a6f110765c48b9b"
+   ]
+  },
+  {
+   "key": "Kestrel freeze",
+   "value": "frozen every outside signing",
+   "kind": "status",
+   "home_ids": [
+    "e44da6a468e7795a1b5853cfb0763aaf"
+   ]
+  },
+  {
+   "key": "Copperleaf terms",
+   "value": "28% of net",
+   "kind": "status",
+   "home_ids": [
+    "495d71a7e14dfaa68cac26fc4a6c4e03"
+   ]
+  },
+  {
+   "key": "Redwood terms",
+   "value": "24% of net",
+   "kind": "status",
+   "home_ids": [
+    "lc_674982ffdca63f854ec6f591"
+   ]
+  },
+  {
+   "key": "Sunfold installs",
+   "value": "only commit 30,000 installs a month",
+   "kind": "status",
+   "home_ids": [
+    "68dbfe80ef9c41b4f4fa8fe9"
+   ]
+  },
+  {
+   "key": "signing date",
+   "value": "Nov 14",
+   "kind": "date",
+   "must_appear_in": [
+    "frederick.stone@harmonygames.co/<CA9raR_pqldShsvOhd5Uwxoj8zJh2-tzH0UJ5JLd@mail.gmail.com>",
+    "frederick.stone@harmonygames.co/<CAP16wHs998luhyUQ3U3Bw_EguUS8xoTcGPbTVkR@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "organic figure line",
+   "value": "hears the organic figure from us",
+   "kind": "status",
+   "home_ids": [
+    "f55bd27436eb285a15d833648b922e9b"
+   ]
+  },
+  {
+   "key": "Northglow grant",
+   "value": "all digital storefronts and platforms",
+   "kind": "status",
+   "home_ids": [
+    "f_3eccf6e0bb63955dc51e27"
+   ]
+  },
+  {
+   "key": "Pinegrove grant",
+   "value": "full source code and build pipeline",
+   "kind": "status",
+   "home_ids": [
+    "f_5f3ef4a4760d18e696a41a"
+   ]
+  },
+  {
+   "key": "model sheet name",
+   "value": "DD publishing model",
+   "kind": "status",
+   "must_appear_in": [
+    "f_5e355d03f6eb6a4e866ead"
+   ]
+  }
+ ],
+ "integration_exceptions": [
+  {
+   "record_id": "30f44011dd4c930bf394e789ce5bbf20@hg4",
+   "reason": "no_notify: Frederick organized the Harbor Lane call himself; the only other attendee is external, so no invitation mail lands in any HarmonyGames mailbox"
+  },
+  {
+   "record_id": "850b316226236edc02527182107f9227@hg4",
+   "reason": "no_notify: Frederick organized the Wavecrest call himself; the only other attendee is external, so no invitation mail lands in any HarmonyGames mailbox"
+  }
+ ],
+ "solver": {
+  "path": "Working_Files/solver/solver.py",
+  "digest": "92f94f353626938526f390d379bc55bbac8f37950062e4706009300a8057c181"
+ }
+}

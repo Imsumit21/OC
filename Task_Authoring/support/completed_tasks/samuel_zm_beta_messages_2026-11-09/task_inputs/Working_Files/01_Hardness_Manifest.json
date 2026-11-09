@@ -1,0 +1,2261 @@
+{
+ "_note": "Final manifest (/create-injection rev6). The scenario-certified draft plus the ids, facts and bindings only the SQL settles; every change is in design_delta.",
+ "persona": "samuel_turner",
+ "assignment_context": {
+  "context_hash": "72168f70a409e479fb8aa52422f41d28359a3918458e6fbf45a57899eed5f511",
+  "assignment_hash": "3adec6ac02d7cd224c0fb10d3ba94beecc150db97e022bc479f8cffaff923416",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2025-10-01T00:00:00Z",
+  "difficulty_mode": "medium"
+ },
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "author_targets": {
+  "min_calls_per_run": 130,
+  "max_avg_weighted_pass": 0.8,
+  "requester_confirmation": "task author in chat on 2026-11-04: 'my task is a long horizon task soo i want over 130 tool calls in each runs and also i want difficulty pass rate under 80% and also have to folllow all other difficulty guidelines soo you can choose from your self which option is best fit for my requirements in this task'"
+ },
+ "volume_exception": {
+  "reason": "36 real messages; mail, channels and sheets are bulk-readable, so honest necessary calls are about 225 and a lean correct run about 145; reaching 500 would need padding, which fails on its own",
+  "requester_confirmation": "task author in chat on 2026-11-04 set the horizon target at 'over 130 tool calls in each runs' and delegated the choice ('you can choose from your self which option is best fit for my requirements in this task'), after the pre-scenario analysis proposed this exception",
+  "call_budget_floor": 200,
+  "per_record_floor": 75
+ },
+ "requirements": {
+  "R1": "plan population: every row on the PNs Beta tab plus every ask for a new phone message filed on a ticket or a card by Sep 30 - 36 messages; in-game prompts, red dots and Domino-only tabs stay off",
+  "R2": "a Call per message (Go, Hold, Drop) under the message rule's ordered tests, and the Audience each message is written for",
+  "R3": "What's missing for each Hold: the first test it failed",
+  "R4": "Final headline for each Go: the latest line Leonard has called, and a String change value that says whether the client ships a different line",
+  "R5": "the team note: D1 and D7 for the Sep 15 cohort week, iOS and Android separately, then the lapsed reminders the client schedules day by day, and anything the client already schedules that's still a Hold and why",
+  "R6": "the call as a comment on every message's ticket, reusing an existing ticket under whatever name, and a new ticket only for a message with none",
+  "R7": "each ticket moved to match its call: Drop to Canceled, Hold parked as the roadmap's freeze says",
+  "R8": "a string ticket for each line the client must change, and none for a line already right",
+  "R9": "the plan and note in Samuel's Drive folder, every Go on a checklist on the push notifications card, an email to each person who asked, and the counts back to Leonard"
+ },
+ "services": {
+  "slack": {
+   "role": "hub DM; Robert's ask decision; Leonard's Sep 29 line; Vincent's DM reply and his channel post; feature talk",
+   "weight_reason": "the ask, the ask point, the first line change and both withdrawn QA passes live here"
+  },
+  "gsheets": {
+   "role": "the PN sheet (population, June flags and copy); Vincent's pass log; the plan sheet",
+   "weight_reason": "the population, the build behind each pass, and the deliverable"
+  },
+  "gdocs": {
+   "role": "the message rule doc; the team note",
+   "weight_reason": "the ordered tests, and the note that tells the team what players hear"
+  },
+  "gdrive": {
+   "role": "Samuel's folder, owner of the plan",
+   "weight_reason": "the destination the plan must land in"
+  },
+  "linear": {
+   "role": "one ticket per message, its notes and comments, off-parent asks, new tickets",
+   "weight_reason": "per-message build, QA and client-or-server facts, and the ticket writes"
+  },
+  "trello": {
+   "role": "ZM ROADMAP lists for beta scope, the push notifications card, the freeze note in a card description, the list rename",
+   "weight_reason": "In the beta, the Go checklist and the Hold parking rule"
+  },
+  "github": {
+   "role": "match3d#248, Arthur's inline comment, the client source",
+   "weight_reason": "what the client schedules and when"
+  },
+  "gmail": {
+   "role": "Vincent's QA note; the GitHub mail for Arthur's comment; the emails to each asker",
+   "weight_reason": "what counts as seen, and telling each asker the outcome"
+  },
+  "gcal": {
+   "role": "the cancelled ladder review; the copy check note",
+   "weight_reason": "the completion note that settles the day-14 ask, and the final headline"
+  },
+  "gslides": {
+   "role": "beta readiness deck, a stale summary",
+   "weight_reason": "the convincing wrong count of six"
+  },
+  "confluence": {
+   "role": "live-ops page and release checklist, base only",
+   "weight_reason": "the Collect & Win name map and feature state"
+  },
+  "snowflake": {
+   "role": "USER_COHORT_RETENTION, read only",
+   "weight_reason": "the D1 and D7 baseline the note opens with"
+  }
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "service": "slack",
+   "record": "6fd96f3c3977cee8345e685d31cbc177",
+   "locator": "6fd96f3c3977cee8345e685d31cbc177",
+   "prompt_reference": "Leonard's DM from yesterday",
+   "requirement_ids": [
+    "R1",
+    "R6",
+    "R9"
+   ]
+  },
+  {
+   "id": "A2",
+   "service": "gsheets",
+   "record": "f_a325dd4af80afc5994d5dc",
+   "locator": "f_a325dd4af80afc5994d5dc",
+   "prompt_reference": "the Zombie Match PN sheet",
+   "requirement_ids": [
+    "R1"
+   ]
+  },
+  {
+   "id": "A3",
+   "service": "gdrive",
+   "record": "d_caafeec2804b3a67ce46aa",
+   "locator": "d_caafeec2804b3a67ce46aa",
+   "prompt_reference": "my Drive folder",
+   "requirement_ids": [
+    "R9"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "slack",
+   "container": "6fd96f3c3977cee8345e685d31cbc177",
+   "locator": "6fd96f3c3977cee8345e685d31cbc177",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "6fd96f3c3977cee8345e685d31cbc177"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "every row on the PNs Beta tab plus every ask for a new phone message that's been filed on a ticket or a card up to today",
+   "requirement_ids": [
+    "R1",
+    "R6",
+    "R9"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "the message rule doc"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "gdocs",
+   "container": "f_dc45e0e5a8b8635c1b82b2",
+   "locator": "f_dc45e0e5a8b8635c1b82b2",
+   "kind": "delegation",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_dc45e0e5a8b8635c1b82b2"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "using the message rule doc",
+   "requirement_ids": [
+    "R2",
+    "R3",
+    "R4",
+    "R8"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "his QA note"
+    },
+    {
+     "id": "H3",
+     "quote": "unless the roadmap says otherwise"
+    }
+   ]
+  },
+  {
+   "id": "K3",
+   "service": "gsheets",
+   "container": "f_a325dd4af80afc5994d5dc",
+   "locator": "f_a325dd4af80afc5994d5dc",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "every row on the PNs Beta tab",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K4",
+   "service": "linear",
+   "container": "DES-314",
+   "locator": "DES-314",
+   "kind": "delegation",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "DES-314"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "I made tickets for the sheet rows under DES-314",
+   "requirement_ids": [
+    "R6",
+    "R7"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K5",
+   "service": "gdrive",
+   "container": "d_caafeec2804b3a67ce46aa",
+   "locator": "d_caafeec2804b3a67ce46aa",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "d_caafeec2804b3a67ce46aa"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "Put it in one sheet in your Drive folder",
+   "requirement_ids": [
+    "R9"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K6",
+   "service": "trello",
+   "container": "6851a769c65dc0017a227bb7",
+   "locator": "6851a769c65dc0017a227bb7",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "6851a769c65dc0017a227bb7"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "Every Go goes on a checklist on our push notifications card",
+   "requirement_ids": [
+    "R9"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K7",
+   "service": "trello",
+   "container": "6851a6569f3bf818760632ab",
+   "locator": "6851a6569f3bf818760632ab",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "6851a6569f3bf818760632ab"
+   ],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "on the BETA list of the ZM ROADMAP board",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K8",
+   "service": "gmail",
+   "container": "samuel.turner@harmonygames.co/1843335316636662321",
+   "locator": "samuel.turner@harmonygames.co/<CAYr96MXDLI990PHRTvHgBNzJ5rcdWTpWyXj8JCA@mail.gmail.com>",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "samuel.turner@harmonygames.co/<CAYr96MXDLI990PHRTvHgBNzJ5rcdWTpWyXj8JCA@mail.gmail.com>",
+    "samuel.turner@harmonygames.co/1843335316636662321"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "What Vincent counts as seen is in his QA note",
+   "requirement_ids": [
+    "R2",
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K9",
+   "service": "slack",
+   "container": "37c5701a1780374401d295e86884f276",
+   "locator": "37c5701a1780374401d295e86884f276",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "37c5701a1780374401d295e86884f276"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "The permission ask is Robert's call",
+   "requirement_ids": [
+    "R2",
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K10",
+   "service": "trello",
+   "container": "68d1eb90bef538c7c5c5599d",
+   "locator": "68d1eb90bef538c7c5c5599d",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "68dae8c7d95e24b55b69bf80"
+   ],
+   "base_pointers": [
+    "68d1eb90bef538c7c5c5599d"
+   ],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "unless the roadmap says otherwise",
+   "requirement_ids": [
+    "R7"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K11",
+   "service": "slack",
+   "container": "d2b16907dc8c10fe5052805751097b58",
+   "locator": "d2b16907dc8c10fe5052805751097b58",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "d2b16907dc8c10fe5052805751097b58"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "the latest line I've called",
+   "requirement_ids": [
+    "R4"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K12",
+   "service": "github",
+   "container": "harmonygames-Games/match3d#248",
+   "locator": "harmonygames-Games/match3d#248",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#248#rc_18"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#248"
+   ],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "The client already schedules it",
+   "requirement_ids": [
+    "R2",
+    "R3",
+    "R5"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K13",
+   "service": "linear",
+   "container": "ZOM-542",
+   "locator": "ZOM-542",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "cmt_f1b8a109dfa70cdc4565"
+   ],
+   "base_pointers": [
+    "ZOM-542"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "filed on a ticket or a card up to today",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K14",
+   "service": "linear",
+   "container": "ZOM-556",
+   "locator": "ZOM-556",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "cmt_2b519285937e7fa79453"
+   ],
+   "base_pointers": [
+    "ZOM-556"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "filed on a ticket or a card up to today",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K15",
+   "service": "confluence",
+   "container": "page_liveops_calendar",
+   "locator": "page_liveops_calendar",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "page_liveops_calendar"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "under whatever name",
+   "requirement_ids": [
+    "R6"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K16",
+   "service": "gcal",
+   "container": "evt_b56d5b19baa0a573da4553",
+   "locator": "evt_b56d5b19baa0a573da4553",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "evt_b56d5b19baa0a573da4553"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "the client already covers it under another message",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K17",
+   "service": "snowflake",
+   "container": "wh_USER_COHORT_RETENTION",
+   "locator": "wh_USER_COHORT_RETENTION",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "wh_USER_COHORT_RETENTION"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "D1 and D7 for the Sep 15 cohort week from the warehouse, iOS and Android separately",
+   "requirement_ids": [
+    "R5"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K18",
+   "service": "linear",
+   "container": "ZOM-563",
+   "locator": "ZOM-563",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "cmt_eabac5435f2b3a575aad"
+   ],
+   "base_pointers": [
+    "ZOM-563"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "filed on a ticket or a card up to today",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K19",
+   "service": "linear",
+   "container": "ZOM-483",
+   "locator": "ZOM-483",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "cmt_e2e2926a2080ca53c4ea"
+   ],
+   "base_pointers": [
+    "ZOM-483"
+   ],
+   "delegated_by_record": "6fd96f3c3977cee8345e685d31cbc177",
+   "delegation_quote": "filed on a ticket or a card up to today",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K20",
+   "service": "gcal",
+   "container": "evt_f2c03e69f50acf62c9d1c3",
+   "locator": "evt_f2c03e69f50acf62c9d1c3",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "evt_f2c03e69f50acf62c9d1c3"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "the latest line I've called",
+   "requirement_ids": [
+    "R4"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K21",
+   "service": "slack",
+   "container": "363d61ffd3daeb6972a01cdb92db9520",
+   "locator": "363d61ffd3daeb6972a01cdb92db9520",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "363d61ffd3daeb6972a01cdb92db9520"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_dc45e0e5a8b8635c1b82b2",
+   "delegation_quote": "Vincent has seen it arrive on both iOS and Android",
+   "requirement_ids": [
+    "R2",
+    "R3"
+   ],
+   "names_authorities": []
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "the message rule doc",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R2",
+    "R4"
+   ],
+   "findable_query": "message rule",
+   "seeded_ids": [
+    "f_dc45e0e5a8b8635c1b82b2"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "f_ffbe775ff72a994c5d6b7c"
+   ],
+   "decoy_scope": {
+    "dimension": "game",
+    "decoy": "Domino Delights beta launch plan, 2024",
+    "task": "Zombie Match 3D beta player messages"
+   }
+  },
+  {
+   "id": "H2",
+   "name": "Vincent's QA note",
+   "home_service": "gmail",
+   "decoy_service": "confluence",
+   "governs": [
+    "R3"
+   ],
+   "findable_query": "phone messages",
+   "seeded_ids": [
+    "samuel.turner@harmonygames.co/<CAYr96MXDLI990PHRTvHgBNzJ5rcdWTpWyXj8JCA@mail.gmail.com>",
+    "samuel.turner@harmonygames.co/1843335316636662321"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "page_release_checklist"
+   ],
+   "decoy_scope": {
+    "dimension": "team",
+    "decoy": "whole-build store submission checklist",
+    "task": "phone message checks"
+   }
+  },
+  {
+   "id": "H3",
+   "name": "the roadmap freeze",
+   "home_service": "trello",
+   "decoy_service": "trello",
+   "governs": [
+    "R7"
+   ],
+   "findable_query": "Held tickets",
+   "seeded_ids": [
+    "68dae8c7d95e24b55b69bf80"
+   ],
+   "base_pointers": [
+    "68d1eb90bef538c7c5c5599d"
+   ],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "68c451141c69fb8af1b4568e"
+   ],
+   "decoy_scope": {
+    "dimension": "team",
+    "decoy": "the Minor Bugs to Fix card, for bug tickets",
+    "task": "held message tickets"
+   }
+  }
+ ],
+ "cohort": {
+  "definition": "every row on the PNs Beta tab plus every ask for a new phone message filed on a ticket or a card by Sep 30 (43 looked at); 36 pass the rule's definition of a message and Leonard's scope",
+  "definition_source": [
+   "D06L58XCVKK/1759264851.763895",
+   "f_a325dd4af80afc5994d5dc",
+   "DES-314"
+  ],
+  "key": "message",
+  "size": 43,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 32,
+    "requirement": "R2",
+    "seeded": true,
+    "seeded_ids": [
+     "DES-314"
+    ],
+    "decides": "the Audience each message is written for",
+    "why_no_bulk": "linear_list_issues returns descriptions but no comments; comments come one issue at a time",
+    "short_circuit": "each message's Audience and whether it needs a server send live only in its ticket's comments, and both are plan values, so the read cannot be skipped once the client source shows a message is unbuilt"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_search_public_and_private",
+    "per_record_calls": 0.5,
+    "records": 36,
+    "requirement": "R2",
+    "decides": "a Call per message",
+    "why_no_bulk": "no channel read covers DMs, threads and every project channel at once; a search is keyed to one feature name",
+    "short_circuit": "a feature can be cut, moved or re-judged in chat after its ticket was written, so each feature needs its own look before its call stands",
+    "seeded_ids": []
+   },
+   {
+    "service": "trello",
+    "tool": "trello_get_cards_in_list",
+    "per_record_calls": 0.25,
+    "records": 36,
+    "requirement": "R2",
+    "decides": "a Call per message",
+    "why_no_bulk": "cards_in_list returns one list; the feature-to-card match is a name join per message",
+    "short_circuit": "whether a feature is in the beta depends on which list its card sits in, and the ticket does not say",
+    "seeded_ids": []
+   },
+   {
+    "service": "github",
+    "tool": "github_get_pull_request_comments + github_get_file_contents",
+    "per_record_calls": 3.0,
+    "records": 6,
+    "requirement": "R5",
+    "decides": "the lapsed reminders the client schedules day by day",
+    "why_no_bulk": "review comments come one PR at a time and the schedule is only in the client source; github_search_pull_requests carries neither",
+    "short_circuit": "the six built messages are the only Go candidates, and when each really fires is not on the sheet or the ticket",
+    "seeded_ids": []
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A24",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_a325dd4af80afc5994d5dc",
+     "finding": "Weekly Leaderboard reset: Status Ready, When Weekly Rollover"
+    },
+    {
+     "service": "linear",
+     "record": "DES-320",
+     "finding": "ticket Done; Vincent saw it arrive on both store builds"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#248#rc_18",
+     "finding": "Arthur, Jun 26: counts seven days from the last leave, not tied to the rollover"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#248",
+     "finding": "the schedule adds i * 7 days to today, so the day depends on when the player left"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A11",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_a325dd4af80afc5994d5dc",
+     "finding": "Lapsed 7 days headline from June"
+    },
+    {
+     "service": "linear",
+     "record": "DES-317",
+     "finding": "ticket repeats the June line"
+    },
+    {
+     "service": "slack",
+     "record": "d2b16907dc8c10fe5052805751097b58",
+     "finding": "Leonard's thread reply replaces the line with Your Squad Needs You Back"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_f2c03e69f50acf62c9d1c3",
+     "finding": "Leonard's later note on the copy check makes the final line Your Squad Is Waiting"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A4",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_a325dd4af80afc5994d5dc",
+     "finding": "first-session message: level 20 not completed, 12 hours"
+    },
+    {
+     "service": "slack",
+     "record": "D06KPMDV2JZ/1752162738.497679",
+     "finding": "Robert, Jul 10: shove the ask to level 20"
+    },
+    {
+     "service": "slack",
+     "record": "37c5701a1780374401d295e86884f276",
+     "finding": "Robert, Sep 29: stays after level 20, nothing before it in the beta build"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_dc45e0e5a8b8635c1b82b2",
+     "finding": "a player only counts once the ask has happened"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A14",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "cmt_fd950c410ed25c447c02",
+     "finding": "Vincent, Sep 24: arrived on both, the same words as every other pass"
+    },
+    {
+     "service": "gmail",
+     "record": "samuel.turner@harmonygames.co/<CAYr96MXDLI990PHRTvHgBNzJ5rcdWTpWyXj8JCA@mail.gmail.com>",
+     "finding": "a build with shortened timers does not count"
+    },
+    {
+     "service": "slack",
+     "record": "4a5ee02518ff2fbeacaef2fc6d5a9ef9",
+     "finding": "Vincent, Sep 29: that iPhone was on the 5-minute timers build, and on 0.3.40 it never showed up"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A7",
+   "ends_in": "R6",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_a325dd4af80afc5994d5dc",
+     "finding": "row says Win & Collect event start"
+    },
+    {
+     "service": "confluence",
+     "record": "page_liveops_calendar",
+     "finding": "Collect & Win is the same feature under a different name"
+    },
+    {
+     "service": "linear",
+     "record": "DES-313",
+     "finding": "an existing ticket outside the parent carries the work"
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "root_cause": "A17",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "6fd96f3c3977cee8345e685d31cbc177",
+     "finding": "asks filed on any ticket or card count"
+    },
+    {
+     "service": "linear",
+     "record": "DES-330",
+     "finding": "a child ticket with a relates-to link to ZOM-542"
+    },
+    {
+     "service": "linear",
+     "record": "cmt_f1b8a109dfa70cdc4565",
+     "finding": "Brian's ask sits in a comment on ZOM-542"
+    }
+   ]
+  },
+  {
+   "id": "C7",
+   "root_cause": "A25",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "DES-344",
+     "finding": "Robert's ask for a day-14 message, no note from Arthur"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_b56d5b19baa0a573da4553",
+     "finding": "cancelled review: the weekly one repeats, day 14 is covered"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#248",
+     "finding": "the weekly batch fires on days 7, 14, 21 and 28"
+    }
+   ]
+  },
+  {
+   "id": "C8",
+   "root_cause": "A15",
+   "ends_in": "R7",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_dc45e0e5a8b8635c1b82b2",
+     "finding": "Hold tickets go back to Todo unless the roadmap says otherwise"
+    },
+    {
+     "service": "trello",
+     "record": "68d1eb90bef538c7c5c5599d",
+     "finding": "the tech issues card on the BETA list"
+    },
+    {
+     "service": "trello",
+     "record": "68dae8c7d95e24b55b69bf80",
+     "finding": "Leonard, Sep 29, in the card's description: held tickets sit in Backlog, unassigned"
+    }
+   ]
+  },
+  {
+   "id": "C9",
+   "root_cause": "A14",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "cmt_51e018b23e18c2f680cd",
+     "finding": "Vincent, Sep 24: arrived on both on store builds"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_8eb8c04713ff6a6ef4a265",
+     "finding": "the pass log shows Lives recharged on 0.3.127 and 0.3.40"
+    },
+    {
+     "service": "slack",
+     "record": "C0880U9751A/1759182908.627389",
+     "finding": "Leonard, Sep 29: released 0.3.49 on iOS"
+    },
+    {
+     "service": "slack",
+     "record": "363d61ffd3daeb6972a01cdb92db9520",
+     "finding": "Vincent, Sep 30: Full Ammo did not show on 0.3.49, he takes his tick off it"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "done_gap",
+   "services": [
+    "gsheets",
+    "linear",
+    "github"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#248#rc_18",
+    "cmt_f76672cf21387ec1eeab"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc",
+    "harmonygames-Games/match3d#248"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the weekly leaderboard message is finished: the sheet says Ready, its ticket is Done, Vincent saw it arrive and PR #248 merged approved",
+   "resolver": "Arthur's inline comment on PR #248 and the schedule in the client: it counts seven days from the last leave, so it misses the rollover day: Hold, fires on the wrong day",
+   "discovery_order": "the sheet, the ticket and the approval come back first; the comment needs github_get_pull_request_comments, or the source read closely"
+  },
+  {
+   "id": "T2",
+   "family": "superseding",
+   "services": [
+    "gsheets",
+    "linear",
+    "slack",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "d2b16907dc8c10fe5052805751097b58",
+    "evt_f2c03e69f50acf62c9d1c3",
+    "DES-317"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc",
+    "C08R8CHB0QL/1759159849.386619"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "Leonard's Sep 29 reply is the latest line: Your Squad Needs You Back",
+   "resolver": "Leonard's Sep 30 note on the copy check replaces that line with Your Squad Is Waiting; the client still ships the June line, so a string ticket follows",
+   "discovery_order": "a search for Leonard's posts finds the Sep 29 reply and the hunt stops there; the later note sits on a calendar event",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "seeded": false,
+     "at": "2025-06-23T07:02:43Z",
+     "base_pointer": "gdrive:data.json /drive_files/42750",
+     "container": "file:f_a325dd4af80afc5994d5dc"
+    },
+    {
+     "service": "linear",
+     "seeded": true,
+     "at": "2025-09-23T16:40:12Z",
+     "id": "DES-317",
+     "container": "linear:DES-317"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-09-29T18:05:29Z",
+     "id": "d2b16907dc8c10fe5052805751097b58",
+     "container": "slack:C08R8CHB0QL/1759159849.386619"
+    },
+    {
+     "service": "gcal",
+     "seeded": true,
+     "at": "2025-09-30T17:02:41Z",
+     "id": "evt_f2c03e69f50acf62c9d1c3",
+     "container": "gcal:evt_f2c03e69f50acf62c9d1c3"
+    }
+   ]
+  },
+  {
+   "id": "T3",
+   "family": "cross_reference_gap",
+   "services": [
+    "gsheets",
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "37c5701a1780374401d295e86884f276",
+    "09aae609aa744fb23288c7dcbac9926c",
+    "cmt_f4960d3c073493b6bfc6",
+    "f_dc45e0e5a8b8635c1b82b2"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc",
+    "D06KPMDV2JZ/1752162738.497679"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the first-session message is Ready and LIVE with a level 20 trigger, Vincent saw it arrive, so it goes",
+   "resolver": "its trigger selects players below level 20, our own ask is after level 20 and nothing is scheduled before it runs, and the rule counts a player only once asked: Hold, cannot reach its players",
+   "discovery_order": "each record is plain on its own; only the join shows it"
+  },
+  {
+   "id": "T4",
+   "family": "superseding",
+   "services": [
+    "linear",
+    "gsheets",
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [
+    "cmt_fd950c410ed25c447c02",
+    "f_8eb8c04713ff6a6ef4a265",
+    "samuel.turner@harmonygames.co/<CAYr96MXDLI990PHRTvHgBNzJ5rcdWTpWyXj8JCA@mail.gmail.com>",
+    "samuel.turner@harmonygames.co/1843335316636662321",
+    "4a5ee02518ff2fbeacaef2fc6d5a9ef9"
+   ],
+   "base_pointers": [
+    "D06UFE81RF0/1759163970.141449"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "Vincent passed the race message on both platforms on its ticket",
+   "resolver": "Vincent's later thread reply in his DM with Samuel: that iPhone was on the 5-minute timers build, which his QA note says does not count, and on 0.3.40 it never showed up: Hold, not seen on both platforms",
+   "discovery_order": "the sheet and ticket read like every other pass, so nothing prompts a hunt; the reply sits in a DM thread under a build request and says 'the race one'",
+   "version_records": [
+    {
+     "service": "linear",
+     "seeded": true,
+     "at": "2025-09-24T14:02:22Z",
+     "id": "cmt_fd950c410ed25c447c02",
+     "container": "linear:DES-319"
+    },
+    {
+     "service": "gsheets",
+     "seeded": true,
+     "at": "2025-09-24T15:00:05Z",
+     "id": "f_8eb8c04713ff6a6ef4a265",
+     "container": "file:f_8eb8c04713ff6a6ef4a265"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-09-29T19:40:46Z",
+     "id": "4a5ee02518ff2fbeacaef2fc6d5a9ef9",
+     "container": "slack:D06UFE81RF0/1759163970.141449"
+    }
+   ]
+  },
+  {
+   "id": "T5",
+   "family": "scope_alias",
+   "services": [
+    "gsheets",
+    "confluence",
+    "linear"
+   ],
+   "seeded_ids": [
+    "DES-313"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc",
+    "page_liveops_calendar"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "the Win & Collect row has no ticket under the parent, so it needs a new one",
+   "resolver": "the live-ops page says Collect & Win is the same feature under another name, and DES-313 already carries it: reuse it",
+   "discovery_order": "the parent's children and a Win & Collect search both miss it; the ticket predates the parent"
+  },
+  {
+   "id": "T6",
+   "family": "exact_predicate",
+   "services": [
+    "linear",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "cmt_f1b8a109dfa70cdc4565",
+    "cmt_2b519285937e7fa79453",
+    "cmt_eabac5435f2b3a575aad",
+    "cmt_e2e2926a2080ca53c4ea"
+   ],
+   "base_pointers": [
+    "ZOM-542",
+    "ZOM-556",
+    "ZOM-563",
+    "ZOM-483",
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the sheet rows and the parent's children are the whole list",
+   "resolver": "Leonard's scope takes in asks on any ticket or card: DES-330 relates to ZOM-542, DES-338 relates to ZOM-556 and DES-315 relates to ZOM-563 and ZOM-483, and each holds an ask in a comment",
+   "discovery_order": "the relation shows on linear_get_issue with relations; the ask needs linear_list_comments on a ticket about something else"
+  },
+  {
+   "id": "T7",
+   "family": "completion_elsewhere",
+   "services": [
+    "linear",
+    "gcal",
+    "github"
+   ],
+   "seeded_ids": [
+    "DES-344",
+    "evt_b56d5b19baa0a573da4553"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#248"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Robert's day-14 ask is not scheduled, so it is a Hold",
+   "resolver": "the weekly message already repeats on days 7, 14, 21 and 28 (the source, and Leonard's cancelled review): Drop, covered by Lapsed 7 days",
+   "discovery_order": "the ask reads as new work; the source or the cancelled invite settles it"
+  },
+  {
+   "id": "T8",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "trello"
+   ],
+   "seeded_ids": [
+    "f_dc45e0e5a8b8635c1b82b2",
+    "68dae8c7d95e24b55b69bf80"
+   ],
+   "base_pointers": [
+    "68d1eb90bef538c7c5c5599d"
+   ],
+   "requirement": "R7",
+   "expected_wrong_reading": "the rule doc says Hold tickets go back to Todo",
+   "resolver": "Leonard's later note in the description of the tech issues card: held tickets sit in Backlog, unassigned",
+   "discovery_order": "the doc is read first; the note is in the description of a card read only for its list position, so a comment listing never shows it",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "seeded": true,
+     "at": "2025-09-26T17:10:54Z",
+     "id": "f_dc45e0e5a8b8635c1b82b2",
+     "container": "file:f_dc45e0e5a8b8635c1b82b2"
+    },
+    {
+     "service": "trello",
+     "seeded": true,
+     "at": "2025-09-29T20:15:03Z",
+     "id": "68dae8c7d95e24b55b69bf80",
+     "container": "trello:68d1eb90bef538c7c5c5599d"
+    }
+   ]
+  },
+  {
+   "id": "T9",
+   "family": "superseding",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "37c5701a1780374401d295e86884f276"
+   ],
+   "base_pointers": [
+    "D06KPMDV2JZ/1752162738.497679",
+    "C08R27X0EAH/1755084279.518809"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the permission ask moves further out, as Robert said on Sep 18, or sits at level 13 on variant C",
+   "resolver": "Robert's Sep 29 post settles it for the beta build: after level 20, not pushed further",
+   "discovery_order": "older DM and channel records come back first",
+   "version_records": [
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-07-10T15:52:18Z",
+     "base_pointer": "D06KPMDV2JZ/1752162738.497679",
+     "container": "slack:D06KPMDV2JZ/1752162738.497679"
+    },
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-08-13T11:24:39Z",
+     "base_pointer": "C08R27X0EAH/1755084279.518809",
+     "container": "slack:C08R27X0EAH/1755084066.905699"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-09-29T17:40:08Z",
+     "id": "37c5701a1780374401d295e86884f276",
+     "container": "slack:C0880U9751A/1759167608.326578"
+    }
+   ]
+  },
+  {
+   "id": "T10",
+   "family": "distractor",
+   "services": [
+    "gslides"
+   ],
+   "seeded_ids": [
+    "f_de7a1ae20201816a67750d"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "the beta readiness deck says six messages are Ready, so six go",
+   "resolver": "the deck repeats the June sheet flags; the rule says neither flag decides",
+   "distractor_type": "stale_summary"
+  },
+  {
+   "id": "T11",
+   "family": "distractor",
+   "services": [
+    "gsheets"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the PN BETA Translated tab and the older PNs tab are part of the list",
+   "resolver": "both hold Domino copy; Leonard's scope is the PNs Beta tab",
+   "distractor_type": "near_duplicate_record"
+  },
+  {
+   "id": "T12",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "394f73aa43aa303a755bc81b2cf43840"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "Brian's 'send all the Ready ones' settles the calls",
+   "resolver": "Brian does not own the rule; the rule doc decides",
+   "distractor_type": "non_authoritative_instruction"
+  },
+  {
+   "id": "T13",
+   "family": "distractor",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "ENG-2311"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "ENG-2311 is Done, so event start messages are built",
+   "resolver": "that ticket is Domino Delights; the Zombie Match client schedules six messages",
+   "distractor_type": "other_title"
+  },
+  {
+   "id": "T14",
+   "family": "distractor",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "ZOM-471",
+    "ZOM-539"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "red-dot tickets are asks for notifications",
+   "resolver": "a red dot is in the game; the rule covers what reaches a closed phone",
+   "distractor_type": "keyword_collision"
+  },
+  {
+   "id": "T16",
+   "family": "superseding",
+   "services": [
+    "linear",
+    "gsheets",
+    "slack"
+   ],
+   "seeded_ids": [
+    "cmt_51e018b23e18c2f680cd",
+    "f_8eb8c04713ff6a6ef4a265",
+    "363d61ffd3daeb6972a01cdb92db9520"
+   ],
+   "base_pointers": [
+    "C0880U9751A/1759182908.627389"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "Vincent passed Lives recharged on both store builds, so it goes",
+   "resolver": "Vincent's Sep 30 post in #zombie-match3d: on 0.3.49 the Full Ammo one did not show up and he takes his tick off it: Hold, not seen on both platforms",
+   "discovery_order": "the ticket and pass log are clean and read first; the post names the headline, not the row, and sits outside the DM and the search terms the rule gives",
+   "version_records": [
+    {
+     "service": "linear",
+     "seeded": true,
+     "at": "2025-09-24T14:10:16Z",
+     "id": "cmt_51e018b23e18c2f680cd",
+     "container": "linear:DES-315"
+    },
+    {
+     "service": "gsheets",
+     "seeded": true,
+     "at": "2025-09-24T15:00:05Z",
+     "id": "f_8eb8c04713ff6a6ef4a265",
+     "container": "file:f_8eb8c04713ff6a6ef4a265"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-09-30T15:12:26Z",
+     "id": "363d61ffd3daeb6972a01cdb92db9520",
+     "container": "slack:C0880U9751A/1759245146.720608"
+    }
+   ]
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "services": [
+    "trello",
+    "linear"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "6874409dfe0decf6f8fca64f",
+    "ZOM-397"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Rate Us and the permission popup are messages on the plan",
+   "resolver": "both show inside the game; the rule covers a closed game",
+   "distractor_type": "scope_adjacent"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "DONE",
+   "mechanism": "A24",
+   "prior_family": "done_gap",
+   "prior_family_reason": "v2 trap 1: Ready, Done and an approved merge against a review comment and the schedule in the source",
+   "nodes": [
+    "T1",
+    "C1"
+   ],
+   "requirement": "R3",
+   "natural_reading": "Weekly Leaderboard reset Go: Ready, Done, seen on both",
+   "decides": [
+    "X1",
+    "X2",
+    "X2b",
+    "X1c"
+   ],
+   "controls": [
+    "Lapsed 1 day (right day: Go)",
+    "Lapsed 7 days (seven days is the right day: Go)"
+   ],
+   "over_application": "over-application holds Lapsed 1 day for not being exactly 24 hours",
+   "source": "pr-inline",
+   "signature": "Arthur inline rollover"
+  },
+  {
+   "id": "CORR",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 2: the convincing answer is itself replaced by a later note in a service the run did not open",
+   "nodes": [
+    "T2",
+    "C2"
+   ],
+   "requirement": "R4",
+   "natural_reading": "Lapsed 7 days takes Leonard's Sep 29 thread line",
+   "decides": [
+    "X3",
+    "X4"
+   ],
+   "controls": [
+    "Lapsed 1 day (line unchanged)"
+   ],
+   "over_application": "over-application rewrites another lapsed headline",
+   "source": "calendar-note",
+   "signature": "copy check later line"
+  },
+  {
+   "id": "DEP",
+   "mechanism": "A4",
+   "prior_family": "authority",
+   "prior_family_reason": "v2 trap 4 (no ledger family for dependencies): closest is a stated rule applied through a join; here the permission ask gates the trigger",
+   "nodes": [
+    "T3",
+    "C3"
+   ],
+   "requirement": "R3",
+   "natural_reading": "Finish first mission Go: Ready, LIVE, seen on both",
+   "decides": [
+    "X5",
+    "X6",
+    "X6b",
+    "X6c",
+    "X20"
+   ],
+   "controls": [
+    "Lapsed 1 day (players past the ask: Go)"
+   ],
+   "over_application": "over-application holds Lives recharged because some of its players are below the ask",
+   "source": "join",
+   "signature": "level 20 ask vs level 20 trigger"
+  },
+  {
+   "id": "QA",
+   "mechanism": "A14",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 2 on a status: Vincent's own later DM thread reply withdraws his ticket comment",
+   "nodes": [
+    "T4",
+    "C4"
+   ],
+   "requirement": "R3",
+   "natural_reading": "Plague Race Go: Vincent passed it on the ticket",
+   "decides": [
+    "X7",
+    "X8",
+    "X8b",
+    "X8c"
+   ],
+   "controls": [
+    "Lapsed 7 days (store builds on both: Go)"
+   ],
+   "over_application": "over-application doubts every QA comment",
+   "source": "dm-thread",
+   "signature": "race one 5-minute timers build"
+  },
+  {
+   "id": "PULL",
+   "mechanism": "A14",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 2 on a Go: Vincent's later channel post takes his pass off a clean row",
+   "nodes": [
+    "T16",
+    "C9"
+   ],
+   "requirement": "R3",
+   "natural_reading": "Lives recharged Go: Vincent's tick stands",
+   "decides": [
+    "K1",
+    "X21",
+    "X21b",
+    "X21c",
+    "X22"
+   ],
+   "controls": [
+    "Lapsed 1 day (still coming through: Go)"
+   ],
+   "over_application": "over-application pulls Lapsed 1 day as well",
+   "source": "channel-root",
+   "signature": "Full Ammo tick off"
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "prior_family": "scope_alias",
+   "prior_family_reason": "v2 trap 6: an existing ticket under another name; the page maps the two names",
+   "nodes": [
+    "T5",
+    "C5"
+   ],
+   "requirement": "R6",
+   "natural_reading": "a new ticket for the Win & Collect row",
+   "decides": [
+    "X9",
+    "X10"
+   ],
+   "controls": [
+    "Login Calendar update (ticket under its own name)",
+    "Season Pass start (its own ticket)"
+   ],
+   "over_application": "over-application merges Season Pass start into Season Pass last 48 hours",
+   "source": "linear-name",
+   "signature": "Collect and Win ping"
+  },
+  {
+   "id": "FILT",
+   "mechanism": "A17",
+   "prior_family": "exact_predicate",
+   "prior_family_reason": "v2 trap 7: in-scope asks outside the sheet and the parent, one relation away on tickets about other things",
+   "nodes": [
+    "T6",
+    "C6"
+   ],
+   "requirement": "R1",
+   "natural_reading": "the plan stops at the sheet rows and the parent's children",
+   "decides": [
+    "X11",
+    "X12",
+    "X11b",
+    "X12b",
+    "X13",
+    "X13b",
+    "X13c",
+    "K19"
+   ],
+   "controls": [
+    "ZOM-471 red dot (in the game: off the plan)",
+    "Plague Race red dot (ZOM-471, in the game: off the plan)"
+   ],
+   "over_application": "over-application adds red dots and in-game prompts",
+   "source": "linear-offlist",
+   "signature": "phone reminder comment"
+  },
+  {
+   "id": "BUILT",
+   "mechanism": "A25",
+   "prior_family": "completion_elsewhere",
+   "prior_family_reason": "v2 trap 9: an ask looks open but the weekly batch already covers it, recorded in the source and a cancelled invite",
+   "nodes": [
+    "T7",
+    "C7"
+   ],
+   "requirement": "R2",
+   "natural_reading": "Lapsed 14 days is a Hold",
+   "decides": [
+    "X15",
+    "X15b"
+   ],
+   "controls": [
+    "Lapsed 30 days (past the four-week batch: Hold)"
+   ],
+   "over_application": "over-application drops Lapsed 30 days too",
+   "source": "code-read",
+   "signature": "weekly batch day 14"
+  },
+  {
+   "id": "FOLLOW",
+   "mechanism": "A15",
+   "prior_family": "superseding",
+   "prior_family_reason": "v2 trap 3: a follow-through rule amended in the description of a card the prompt never names",
+   "nodes": [
+    "T8",
+    "C8"
+   ],
+   "requirement": "R7",
+   "natural_reading": "Hold tickets go back to Todo",
+   "decides": [
+    "X18",
+    "X19",
+    "X19b"
+   ],
+   "controls": [
+    "Axe Arena (Drop: Canceled either way)"
+   ],
+   "over_application": "over-application parks Drop tickets too",
+   "source": "card-desc",
+   "signature": "held tickets Backlog"
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-DONE",
+   "kind": "member",
+   "rule": "DONE",
+   "degrade": "Weekly Leaderboard reset Go: Ready, Done, seen on both",
+   "members": [
+    "Weekly Leaderboard reset"
+   ],
+   "latent": "pr-inline",
+   "family": "done_gap"
+  },
+  {
+   "id": "CH-CORR",
+   "kind": "member",
+   "rule": "CORR",
+   "degrade": "Lapsed 7 days takes Leonard's Sep 29 thread line",
+   "members": [
+    "Lapsed 7 days"
+   ],
+   "latent": "calendar-note",
+   "family": "superseding"
+  },
+  {
+   "id": "CH-DEP",
+   "kind": "member",
+   "rule": "DEP",
+   "degrade": "Finish first mission Go: Ready, LIVE, seen on both",
+   "members": [
+    "Finish first mission"
+   ],
+   "latent": "join",
+   "family": "authority"
+  },
+  {
+   "id": "CH-QA",
+   "kind": "member",
+   "rule": "QA",
+   "degrade": "Plague Race Go: Vincent passed it on the ticket",
+   "members": [
+    "Plague Race"
+   ],
+   "latent": "dm-thread",
+   "family": "superseding"
+  },
+  {
+   "id": "CH-PULL",
+   "kind": "member",
+   "rule": "PULL",
+   "degrade": "Lives recharged Go: Vincent's tick stands",
+   "members": [
+    "Lives recharged"
+   ],
+   "latent": "channel-root",
+   "family": "superseding"
+  },
+  {
+   "id": "CH-ALIAS",
+   "kind": "member",
+   "rule": "ALIAS",
+   "degrade": "a new ticket for the Win & Collect row",
+   "members": [
+    "Win & Collect start"
+   ],
+   "latent": "linear-name",
+   "family": "scope_alias"
+  },
+  {
+   "id": "CH-FILT",
+   "kind": "member",
+   "rule": "FILT",
+   "degrade": "the plan stops at the sheet rows and the parent's children",
+   "members": [
+    "Boss Arena attempts refilled",
+    "Daily gift about to reset",
+    "Teammate sent lives",
+    "Infinite lives ending"
+   ],
+   "latent": "linear-offlist",
+   "family": "exact_predicate"
+  },
+  {
+   "id": "CH-BUILT",
+   "kind": "member",
+   "rule": "BUILT",
+   "degrade": "Lapsed 14 days is a Hold",
+   "members": [
+    "Lapsed 14 days"
+   ],
+   "latent": "code-read",
+   "family": "completion_elsewhere"
+  },
+  {
+   "id": "CH-FOLLOW",
+   "kind": "member",
+   "rule": "FOLLOW",
+   "degrade": "Hold tickets go back to Todo",
+   "members": [
+    "Quests rollover",
+    "Login Calendar update"
+   ],
+   "latent": "card-desc",
+   "family": "superseding"
+  },
+  {
+   "id": "CH-SLIP",
+   "kind": "slip",
+   "degrade": "base slip on control rows",
+   "slots": [
+    "K2",
+    "K3",
+    "K5",
+    "K6",
+    "K9",
+    "K14",
+    "K15",
+    "X17",
+    "X20"
+   ]
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 4,
+   "reason": "read the hub; read the DM history around it; find the PN thread in #zombie-bugs"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 2,
+   "reason": "read the rule doc; reject the 2024 GTM - Beta doc on scope"
+  },
+  {
+   "phase": "discovery",
+   "service": "gsheets",
+   "calls": 4,
+   "reason": "list the tabs; read PNs Beta; read the older PNs tab; read PN BETA Translated to rule it out"
+  },
+  {
+   "phase": "discovery",
+   "service": "trello",
+   "calls": 5,
+   "reason": "board lists; BETA, Oct 21 and Backlog lists for beta scope; the push notifications card"
+  },
+  {
+   "phase": "discovery",
+   "service": "confluence",
+   "calls": 3,
+   "reason": "live-ops page for feature state and names; GDD; release checklist"
+  },
+  {
+   "phase": "discovery",
+   "service": "gslides",
+   "calls": 1,
+   "reason": "read the beta readiness deck the search returns and reject it"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "confirm the folder; find the rule doc"
+  },
+  {
+   "phase": "discovery",
+   "service": "gcal",
+   "calls": 2,
+   "reason": "list the window for message reviews and QA sessions"
+  },
+  {
+   "phase": "discovery",
+   "service": "gmail",
+   "calls": 3,
+   "reason": "find Vincent's QA note; open it; search for message mail"
+  },
+  {
+   "phase": "discovery",
+   "service": "linear",
+   "calls": 4,
+   "reason": "read the parent; its comments; page its children; search for message asks"
+  },
+  {
+   "phase": "discovery",
+   "service": "snowflake",
+   "calls": 2,
+   "reason": "describe the cohort table; read the Sep 15 week"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 32,
+   "reason": "one linear_list_comments per message ticket: Audience and the client-or-server note exist nowhere else"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 22,
+   "reason": "a search per feature family (the stored Frederick run made 39 for 36 members): a feature can be cut or re-judged in chat after its ticket was written"
+  },
+  {
+   "phase": "per-record",
+   "service": "trello",
+   "calls": 9,
+   "reason": "a card check per feature: which list it sits on decides In the beta"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 18,
+   "reason": "PR reviews, inline comments and source for the six built messages"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 32,
+   "reason": "one linear_create_comment per ticket: the call lands on each ticket, no batch form exists"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 30,
+   "reason": "one linear_update_issue per Hold and Drop ticket: the state follows the call, no batch form exists"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 5,
+   "reason": "new tickets for the four off-parent asks and the one string change"
+  },
+  {
+   "phase": "per-record",
+   "service": "trello",
+   "calls": 3,
+   "reason": "the checklist and one trello_create_check_item per Go message"
+  },
+  {
+   "phase": "per-record",
+   "service": "gmail",
+   "calls": 8,
+   "reason": "one email per person who asked: each lists that person's asks and their calls"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "create the plan sheet; write the rows; check it"
+  },
+  {
+   "phase": "writes",
+   "service": "gdocs",
+   "calls": 1,
+   "reason": "create the team note"
+  },
+  {
+   "phase": "writes",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "move the sheet and the note into the folder"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "report the counts to Leonard"
+  },
+  {
+   "phase": "readback",
+   "service": "gsheets",
+   "calls": 1,
+   "reason": "read the plan back"
+  },
+  {
+   "phase": "readback",
+   "service": "linear",
+   "calls": 2,
+   "reason": "spot-check ticket states"
+  },
+  {
+   "phase": "readback",
+   "service": "trello",
+   "calls": 1,
+   "reason": "read the checklist back"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_create_spreadsheet+gsheets_values_update",
+   "count": 3,
+   "depends_on": [
+    "K1",
+    "K2",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C9"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R9"
+   ]
+  },
+  {
+   "service": "gdocs",
+   "tool": "gdocs_create_document",
+   "count": 1,
+   "depends_on": [
+    "K1",
+    "K17",
+    "C7"
+   ],
+   "requirements": [
+    "R5"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_move_file",
+   "count": 2,
+   "depends_on": [
+    "K5"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_comment",
+   "count": 32,
+   "depends_on": [
+    "K4",
+    "C1",
+    "C3",
+    "C4",
+    "C5",
+    "C9"
+   ],
+   "requirements": [
+    "R6"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue",
+   "count": 30,
+   "depends_on": [
+    "K4",
+    "K10",
+    "C8"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_issue",
+   "count": 5,
+   "depends_on": [
+    "K13",
+    "K14",
+    "K18",
+    "K19",
+    "C2",
+    "C6"
+   ],
+   "requirements": [
+    "R6",
+    "R8"
+   ]
+  },
+  {
+   "service": "trello",
+   "tool": "trello_create_checklist+trello_create_check_item",
+   "count": 3,
+   "depends_on": [
+    "K6",
+    "C1",
+    "C3",
+    "C4",
+    "C9"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_send_message",
+   "count": 8,
+   "depends_on": [
+    "K1",
+    "C6",
+    "C7"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "K1"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [
+  {
+   "hazard_id": "Q01",
+   "resolution": "dated_claim",
+   "requirement": "R4",
+   "why_safe": "Leonard's seeded reply under Martin's Sep 29 root changes that root's reply counters; the SQL updates them as companions and the text is an attributed, dated claim"
+  },
+  {
+   "hazard_id": "Q01",
+   "resolution": "dated_claim",
+   "requirement": "R3",
+   "why_safe": "Vincent's seeded DM reply under Samuel's Sep 29 root changes that root's counters; updated as companions"
+  }
+ ],
+ "denied_probes": [],
+ "gradable_surface": "01_Gradable_Surface.json",
+ "facts": [
+  {
+   "key": "Arthur's rollover note",
+   "value": "isn't tied to the rollover",
+   "kind": "status",
+   "home_ids": [
+    "harmonygames-Games/match3d#248#rc_18",
+    "samuel.turner@harmonygames.co/<[SOURCE_ORG_0001]-Games/match3d/pull/248/review/2963610417@github.com>"
+   ]
+  },
+  {
+   "key": "final line for the seven-day message",
+   "value": "Your Squad Is Waiting",
+   "kind": "status",
+   "home_ids": [
+    "evt_f2c03e69f50acf62c9d1c3",
+    "evt_bbc253a99f21bfbaa87a7c"
+   ]
+  },
+  {
+   "key": "interim line for the seven-day message",
+   "value": "Your Squad Needs You Back",
+   "kind": "status",
+   "home_ids": [
+    "d2b16907dc8c10fe5052805751097b58"
+   ]
+  },
+  {
+   "key": "Lives recharged pass withdrawn",
+   "value": "taking my tick off Full Ammo",
+   "kind": "status",
+   "home_ids": [
+    "363d61ffd3daeb6972a01cdb92db9520"
+   ]
+  },
+  {
+   "key": "teammate lives ask",
+   "value": "when a teammate sends you lives",
+   "kind": "status",
+   "home_ids": [
+    "cmt_eabac5435f2b3a575aad"
+   ]
+  },
+  {
+   "key": "infinite lives ask",
+   "value": "infinite lives are about to run out",
+   "kind": "status",
+   "home_ids": [
+    "cmt_e2e2926a2080ca53c4ea"
+   ]
+  },
+  {
+   "key": "permission ask for the beta build",
+   "value": "leaving our own ask after level 20",
+   "kind": "status",
+   "home_ids": [
+    "37c5701a1780374401d295e86884f276"
+   ]
+  },
+  {
+   "key": "what switches messages on",
+   "value": "only schedules once our own ask has run",
+   "kind": "status",
+   "home_ids": [
+    "09aae609aa744fb23288c7dcbac9926c"
+   ]
+  },
+  {
+   "key": "what counts as seen",
+   "value": "Seen only counts on a store build",
+   "kind": "status",
+   "home_ids": [
+    "samuel.turner@harmonygames.co/<CAYr96MXDLI990PHRTvHgBNzJ5rcdWTpWyXj8JCA@mail.gmail.com>",
+    "vincent.parker@harmonygames.co/<CAYr96MXDLI990PHRTvHgBNzJ5rcdWTpWyXj8JCA@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "race pass withdrawn",
+   "value": "5-minute timers build",
+   "kind": "status",
+   "home_ids": [
+    "4a5ee02518ff2fbeacaef2fc6d5a9ef9"
+   ]
+  },
+  {
+   "key": "roadmap freeze",
+   "value": "Held tickets sit in Backlog",
+   "kind": "status",
+   "home_ids": [
+    "68dae8c7d95e24b55b69bf80",
+    "68d1eb90bef538c7c5c5599d"
+   ]
+  },
+  {
+   "key": "day 14 already covered",
+   "value": "day 14 is already covered",
+   "kind": "status",
+   "home_ids": [
+    "samuel.turner@harmonygames.co/<calendar-c3b6ab0e-584f-11f3-3a4e-21f2067d4780@google.com>"
+   ]
+  },
+  {
+   "key": "Boss Arena ask",
+   "value": "once the daily Boss Arena attempts refill",
+   "kind": "status",
+   "home_ids": [
+    "cmt_f1b8a109dfa70cdc4565"
+   ]
+  },
+  {
+   "key": "daily gift ask",
+   "value": "the evening before the daily gift streak resets",
+   "kind": "status",
+   "home_ids": [
+    "cmt_2b519285937e7fa79453"
+   ]
+  },
+  {
+   "key": "comeback gift scope",
+   "value": "version 2 idea",
+   "kind": "status",
+   "home_ids": [
+    "cmt_13477aa8d1468ae11c9d"
+   ]
+  },
+  {
+   "key": "race timing",
+   "value": "Daily is fine for this one",
+   "kind": "status",
+   "home_ids": [
+    "cmt_9338bb2c286a6c207792"
+   ]
+  },
+  {
+   "key": "reach test",
+   "value": "the settings toggle doesn't count",
+   "kind": "status",
+   "home_ids": [
+    "f_dc45e0e5a8b8635c1b82b2"
+   ]
+  },
+  {
+   "key": "emoji rule",
+   "value": "Emoji don't count as a different line",
+   "kind": "status",
+   "home_ids": [
+    "f_dc45e0e5a8b8635c1b82b2"
+   ]
+  },
+  {
+   "key": "stale deck count",
+   "value": "6 Ready on the PN sheet",
+   "kind": "status",
+   "must_appear_in": [
+    "f_de7a1ae20201816a67750d"
+   ]
+  }
+ ],
+ "solver": {
+  "path": "Working_Files/solver/solver.py",
+  "digest": "a1ac742c0f4729cffd5a1aa0bd079a8c481b6647ae8d970590bb8a2d63ff3a1d"
+ },
+ "design_delta": [
+  {
+   "id": "record ids (all elements)",
+   "change": "Slack channel/ts pointers to seeded messages became the messages' 32-hex row ids; Vincent's QA note is cited by its message row with the thread kept alongside",
+   "reason": "the gate reads text and timestamps from SQL rows: a Slack row is keyed by its id, and a Gmail thread row holds only a snippet"
+  },
+  {
+   "id": "per-ticket note times",
+   "change": "Arthur's pass runs from Sep 25 20:30Z, after the last ask of that day; 24 tickets carry his note in his own words, and the two filed after it do not",
+   "reason": "ticket numbers rise with filing time, so a ticket filed after Lapsed 14 days cannot have been in a pass that missed Lapsed 14 days"
+  },
+  {
+   "id": "K3 delegation",
+   "change": "delegated_by_record and delegation_quote now cite Leonard's DM ('every row on the PNs Beta tab'), not the sheet",
+   "reason": "the sheet does not name itself: the words that delegate it are in the hub, and the gate reads them from the delegating record"
+  },
+  {
+   "id": "T2 version_records[0]",
+   "change": "base_pointer f_a325dd4af80afc5994d5dc -> gdrive:data.json /drive_files/42750",
+   "reason": "same record, in the pointer form the gate can read a timestamp from"
+  },
+  {
+   "id": "rev2 record wording",
+   "change": "Arthur's reply now says messages are scheduled once our own ask has run or the player switches them on from settings; Brian is added to the Beta readiness deck's shares",
+   "reason": "the /injection review of rev1 failed the unqualified 'only': harmonygames-Games/match3d#263#rc_4 shows the settings toggle calling EnableNotifications with no ask, and Vincent's comment on DES-318 shows a message arriving that way. Brian's post cites the deck he could not open"
+  },
+  {
+   "id": "rev4 record wording",
+   "change": "the rule doc's string ticket sentence ends 'so open one when you make the call'",
+   "reason": "an independent read of the prompt found a write-versus-no-write fork: the doc said a line needs a string ticket without saying who files it, and the prompt waives any check-in"
+  },
+  {
+   "id": "rev5 record wording",
+   "change": "Leonard's DM: the note no longer asks who hears from us once they stop playing; it asks for D1 and D7 with iOS and Android separately, the lapsed reminders the client schedules day by day, and anything the client already schedules that's still a Hold and why. Slot X20 follows it. Leonard's comment on the Rewarded ad ready ticket now says no bonus ad is live today",
+   "reason": "/prompt failed rev4 on Unique Ground Truth and Cross-Service Coherence (run_forensics/rev4/prompt_report_FAIL.md): Snowflake PUSH_NOTIFICATION_STATS shows weekly Firebase pushes to lapsed players against records saying every message is local, and Snowflake cannot be injected, so the question was removed. Per-platform and settings opt-in forks went with it. A blind sweep (plan/sweep_fork_rev5.md F1) then showed the warehouse's rewarded_video rows touch the rule's live prong, which Leonard's line left to inference; those rows use the rewarded_continue placement, with no bonus placement. No call, count or ticket state changes"
+  },
+  {
+   "id": "rev6 hardness moves",
+   "change": "Plague Race reads like every other pass and Vincent's reply drops the store build wording; Vincent's channel post takes his pass off Lives recharged (Go 2); Leonard's calendar note replaces his Sep 29 line; the Hold rule moves from a card comment to the card's description; two more comment asks sit outside the parent, one from Douglas; one Trello action renames the list to BETA: Oct 10; the Rewarded ad ready ask is removed",
+   "reason": "/hardness scored rev5 2 (run_forensics/rev5/hardness_report_FAIL_2.md): 188 calls, about 90% right, one independent cause. /prompt scored Coherence 3 on SC-13. Moves chosen from the run's own call ledger (01a_Hardening_Report.md §5, §10) under the requester's delegation. The blind sweep of rev6 (plan/sweep_fork_rev6.md F1) found AD_IMPRESSION_EVENTS can answer the rule's live-today test for the rewarded ask, the rev4 failure pattern, and Snowflake cannot be injected, so the ask goes; F2 moved Douglas's comment after his Sep 30 prod update, F3 and F4 fixed two timelines"
+  },
+  {
+   "id": "rev3 record wording",
+   "change": "Leonard's comment on the Rewarded ad ready ticket; Julia's ask says the gift streak is live and is separate from Calvin's chest ping; the rule's in-the-beta test names Zombie Match; the hub says one email per person, apart from Leonard",
+   "reason": "a blind fork sweep on rev2 (plan/sweep_fork_rev2.md) showed these four could each move Hold or Drop by one or leave the email count open, and /prompt fails on a classification fork no record settles"
+  },
+  {
+   "id": "mechanism_portfolio.ALIAS.controls",
+   "change": "added Season Pass start as a control member",
+   "reason": "the draft's over_application already acts on this member; contract.controls needs the operator to move a declared control"
+  },
+  {
+   "id": "mechanism_portfolio.FILT.controls",
+   "change": "added Plague Race red dot as a control member",
+   "reason": "the draft's over_application already acts on this member; contract.controls needs the operator to move a declared control"
+  }
+ ]
+}

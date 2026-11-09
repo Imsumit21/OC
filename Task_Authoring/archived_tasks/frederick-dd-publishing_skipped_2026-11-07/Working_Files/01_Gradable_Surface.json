@@ -1,0 +1,1345 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "frederick_dd_publishing",
+ "revision": "design-1",
+ "truth_keys": [
+  "Oakline Games",
+  "Tallwater Games",
+  "Sunfold Mobile",
+  "Harbor Lane Games",
+  "Wavecrest Play",
+  "Copperleaf Games",
+  "Redwood Arcade",
+  "Moonrail Studios",
+  "Northglow Publishing",
+  "Pinegrove Games",
+  "Fernhollow Media",
+  "Quietbay Games",
+  "Slatewood Mobile",
+  "Ironbridge Interactive",
+  "Tidewell Studios",
+  "Marlin Play",
+  "Appodeal",
+  "Rayking Game",
+  "Kitebridge Games",
+  "Orchard Lane Games",
+  "Summit Mobile",
+  "Silverlake Mobile",
+  "Cedarbrook Play",
+  "Foxglove Games",
+  "Riverstone Interactive",
+  "Bellwether Arcade"
+ ],
+ "classes": [
+  "Live",
+  "Withdrawn",
+  "Out on rights",
+  "Passed",
+  "Waiting on us",
+  "No reply"
+ ],
+ "truth_fields": {
+  "class": "Status",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "model": {
+   "kind": "table",
+   "name_regex": "(?i).*dd publishing model.*",
+   "key_column": "Publisher",
+   "key_regex": ".+",
+   "columns": [
+    "Publisher",
+    "Status",
+    "Advance",
+    "Monthly installs",
+    "12-month value",
+    "Q4 cash"
+   ],
+   "class_column": "Status",
+   "reason_column": "Status",
+   "comparators": {
+    "Status": "norm"
+   }
+  },
+  "summary": {
+   "kind": "json_text",
+   "tool": "gsheets_values_update"
+  },
+  "replies": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  },
+  "drafts": {
+   "kind": "json_text",
+   "tool": "gmail_create_draft"
+  },
+  "events": {
+   "kind": "json_text",
+   "tool": "gcal_create_event"
+  },
+  "cards": {
+   "kind": "json_text",
+   "tool": "trello_create_card"
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "trello_add_comment"
+  },
+  "checklists": {
+   "kind": "json_text",
+   "tool": "trello_create_checklist"
+  },
+  "checklist_items": {
+   "kind": "json_text",
+   "tool": "trello_create_check_item"
+  },
+  "contacts": {
+   "kind": "json_text",
+   "tool": "contacts_add_new_contact"
+  }
+ },
+ "slots": [
+  {
+   "id": "K_home",
+   "title": "model in his folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "folder named by Leonard",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_6fc54be60d1377e340a5b5"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K_reply",
+   "title": "reply on Leonard's thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "reply on the hub",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "hub-message"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "S_total",
+   "title": "publishers on the model",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "sheet plus records in Slack and Linear, by the rule",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "FILT"
+   ],
+   "volume_for": [
+    "Live",
+    "Passed",
+    "No reply",
+    "Waiting on us"
+   ],
+   "fact_id": "population"
+  },
+  {
+   "id": "S_in_PH",
+   "title": "Copperleaf on the model",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "relay in a Slack thread joined to the rule",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Copperleaf Games",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "Live"
+  },
+  {
+   "id": "S_in_PI",
+   "title": "Redwood on the model",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Slack pointer, Linear comment and the rule",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Redwood Arcade",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FILT"
+   ],
+   "group": "Live"
+  },
+  {
+   "id": "S_live_PA",
+   "title": "Oakline Live",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread and sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Oakline Games",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Live"
+  },
+  {
+   "id": "S_live_PG",
+   "title": "Wavecrest Live",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread and sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Wavecrest Play",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Live"
+  },
+  {
+   "id": "S_out_PC",
+   "title": "Moonrail Withdrawn",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "mail signature, Contacts and a founder post joined",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Moonrail Studios",
+    "Status"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "singled_out_by": "H1"
+  },
+  {
+   "id": "S_out_PD",
+   "title": "Northglow Out on rights",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "term sheet joined to the August sync",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Northglow Publishing",
+    "Status"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "EXC"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S_out_PJ",
+   "title": "Pinegrove Out on rights",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "term sheet joined to the August sync",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pinegrove Games",
+    "Status"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "EXC"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S_passed_1",
+   "title": "Fernhollow Media Passed",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Fernhollow Media",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Passed"
+  },
+  {
+   "id": "S_passed_2",
+   "title": "Slatewood Mobile Passed",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Slatewood Mobile",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Passed"
+  },
+  {
+   "id": "S_passed_3",
+   "title": "Tidewell Studios Passed",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Tidewell Studios",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Passed"
+  },
+  {
+   "id": "S_silent_1",
+   "title": "Summit Mobile No reply",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread; Summit's is an automatic acknowledgement",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Summit Mobile",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "No reply"
+  },
+  {
+   "id": "S_silent_2",
+   "title": "Orchard Lane Games No reply",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread; Summit's is an automatic acknowledgement",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Orchard Lane Games",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "No reply"
+  },
+  {
+   "id": "S_silent_3",
+   "title": "Bellwether Arcade No reply",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread; Summit's is an automatic acknowledgement",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Bellwether Arcade",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "No reply"
+  },
+  {
+   "id": "S_wait_1",
+   "title": "Rayking Game Waiting on us",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Rayking Game",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Waiting on us"
+  },
+  {
+   "id": "S_wait_2",
+   "title": "Appodeal Waiting on us",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Appodeal",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Waiting on us"
+  },
+  {
+   "id": "S_wait_3",
+   "title": "Kitebridge Games Waiting on us",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "rule applied to one thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Kitebridge Games",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "Waiting on us"
+  },
+  {
+   "id": "A_adv_PB",
+   "title": "Tallwater advance",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "term sheet against the calendar note",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Tallwater Games",
+    "Advance"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR"
+   ]
+  },
+  {
+   "id": "A_com_PE",
+   "title": "Sunfold monthly installs",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "term sheet against the card comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Sunfold Mobile",
+    "Monthly installs"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INPUT"
+   ]
+  },
+  {
+   "id": "A_adv_PH",
+   "title": "Copperleaf advance",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "read from a pasted note",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Copperleaf Games",
+    "Advance"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "A_adv_PI",
+   "title": "Redwood advance",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "read from a ticket comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Redwood Arcade",
+    "Advance"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "V12_Tallwater",
+   "title": "Tallwater Games 12-month value",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "formula on a corrected input",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Tallwater Games",
+    "12-month value"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR"
+   ]
+  },
+  {
+   "id": "V12_Sunfold",
+   "title": "Sunfold Mobile 12-month value",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "formula on a corrected input",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Sunfold Mobile",
+    "12-month value"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INPUT"
+   ]
+  },
+  {
+   "id": "V12_Copperleaf",
+   "title": "Copperleaf Games 12-month value",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "formula on terms outside the sheet",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Copperleaf Games",
+    "12-month value"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "V12_Redwood",
+   "title": "Redwood Arcade 12-month value",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "formula on terms outside the sheet",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Redwood Arcade",
+    "12-month value"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "V12_Oakline",
+   "title": "Oakline Games 12-month value",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "formula on one term sheet",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Oakline Games",
+    "12-month value"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "V12_Harbor",
+   "title": "Harbor Lane Games 12-month value",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "formula on one term sheet",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Harbor Lane Games",
+    "12-month value"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "V12_Wavecrest",
+   "title": "Wavecrest Play 12-month value",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "formula on one term sheet",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Wavecrest Play",
+    "12-month value"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "VQ_Oakline",
+   "title": "Oakline Games Q4 cash",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "mail and card against Arthur's note",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Oakline Games",
+    "Q4 cash"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE"
+   ]
+  },
+  {
+   "id": "VQ_Harbor",
+   "title": "Harbor Lane Games Q4 cash",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "net 60 from the moved signing date",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Harbor Lane Games",
+    "Q4 cash"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DATE"
+   ]
+  },
+  {
+   "id": "VQ_Wavecrest",
+   "title": "Wavecrest Play Q4 cash",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "net 60 from the moved signing date",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Wavecrest Play",
+    "Q4 cash"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DATE"
+   ]
+  },
+  {
+   "id": "VQ_Tallwater",
+   "title": "Tallwater Games Q4 cash",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "corrected advance, net 30",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Tallwater Games",
+    "Q4 cash"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR"
+   ]
+  },
+  {
+   "id": "VQ_Sunfold",
+   "title": "Sunfold Mobile Q4 cash",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "net 45 lands either way",
+   "class": "aggregate",
+   "selector": [
+    "field",
+    "Sunfold Mobile",
+    "Q4 cash"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "B_PA",
+   "title": "Oakline banked",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "wire confirmation against Arthur's note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "summary",
+    ".*[Bb]anked.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE"
+   ],
+   "fact_id": "banked"
+  },
+  {
+   "id": "V_keep",
+   "title": "keep value",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "three warehouse months under the rule",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "summary",
+    ".*12,?72[34].*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "keep"
+  },
+  {
+   "id": "R_top",
+   "title": "first pick",
+   "weight": 5,
+   "work_kind": "deeper_reasoning",
+   "work_reason": "the ranking after every correction",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "summary",
+    ".*[Cc]opperleaf.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXC",
+    "INPUT",
+    "FILT"
+   ],
+   "fact_id": "pick"
+  },
+  {
+   "id": "T_chk_live",
+   "title": "Live checklist size",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the status work across services, on the board",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklists",
+    ".*Live.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS",
+    "EXC",
+    "FILT"
+   ],
+   "fact_id": "live_count"
+  },
+  {
+   "id": "T_chk_passed",
+   "title": "Passed checklist size",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "count from threads",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklists",
+    ".*Passed.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "passed_count"
+  },
+  {
+   "id": "T_chk_silent",
+   "title": "No reply checklist size",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "count from threads",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklists",
+    ".*No reply.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "silent_count"
+  },
+  {
+   "id": "T_chk_wait",
+   "title": "Waiting checklist size",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "count from threads",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklists",
+    ".*Waiting.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "wait_count"
+  },
+  {
+   "id": "T_item_PC",
+   "title": "Moonrail on the Withdrawn checklist",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same join, on the board",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklist_items",
+    ".*Moonrail.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "fact_id": "moonrail_item"
+  },
+  {
+   "id": "T_item_PH",
+   "title": "Copperleaf item",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same join, on the board",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklist_items",
+    ".*Copperleaf.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "fact_id": "copperleaf_item"
+  },
+  {
+   "id": "T_item_PI",
+   "title": "Redwood item",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same join, on the board",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checklist_items",
+    ".*Redwood.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "fact_id": "redwood_item"
+  },
+  {
+   "id": "T_cards",
+   "title": "new follow-up cards",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "count after reuse",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "cards",
+    ".*F/up with.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS",
+    "EXC",
+    "FILT"
+   ],
+   "fact_id": "card_count"
+  },
+  {
+   "id": "T_card_1",
+   "title": "follow-up card for Silverlake Mobile",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "status decides the card",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "cards",
+    ".*Silverlake.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "card_1"
+  },
+  {
+   "id": "T_card_2",
+   "title": "follow-up card for Kitebridge Games",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "status decides the card",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "cards",
+    ".*Kitebridge.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "card_2"
+  },
+  {
+   "id": "T_card_3",
+   "title": "follow-up card for Harbor Lane Games",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "status decides the card",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "cards",
+    ".*Harbor.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "card_3"
+  },
+  {
+   "id": "T_reuse_PE",
+   "title": "comment on Lena's card",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "first-name card mapped to Sunfold",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    ".*(Live|live).*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "reuse_lena"
+  },
+  {
+   "id": "C_vol",
+   "title": "contacts added",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "count after skipping two",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "contacts",
+    ".*(Copperleaf|Redwood).*"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "FILT"
+   ],
+   "fact_id": "contact_count",
+   "volume_for": [
+    "contacts"
+   ]
+  },
+  {
+   "id": "C_1",
+   "title": "contact for Paola",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one signature",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "contacts",
+    ".*Paola.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "contacts",
+   "fact_id": "contact_1"
+  },
+  {
+   "id": "C_2",
+   "title": "contact for Diego",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one signature",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "contacts",
+    ".*Diego.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "contacts",
+   "fact_id": "contact_2"
+  },
+  {
+   "id": "C_3",
+   "title": "contact for Rhys",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one signature",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "contacts",
+    ".*Rhys.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "contacts",
+   "fact_id": "contact_3"
+  },
+  {
+   "id": "M_vol",
+   "title": "reminders added",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "one per Live offer",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "events",
+    ".*(Copperleaf|Redwood).*"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "ALIAS",
+    "EXC",
+    "FILT"
+   ],
+   "fact_id": "reminder_count",
+   "volume_for": [
+    "reminders"
+   ]
+  },
+  {
+   "id": "M_1",
+   "title": "reminder for Tallwater",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one term sheet's date",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "events",
+    ".*2025-10-17.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "reminders",
+   "fact_id": "reminder_1"
+  },
+  {
+   "id": "M_2",
+   "title": "reminder for Wavecrest",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one term sheet's date",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "events",
+    ".*2025-10-31.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "reminders",
+   "fact_id": "reminder_2"
+  },
+  {
+   "id": "W_count",
+   "title": "drafts owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "standing line joined to the sheet and to status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "drafts",
+    ".*0\\.50.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW",
+    "ALIAS"
+   ],
+   "fact_id": "draft_count"
+  },
+  {
+   "id": "W_1",
+   "title": "draft to Tallwater",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "standing line joined to the sheet and to status, per target",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "drafts",
+    ".*Tallwater.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "fact_id": "draft_1"
+  },
+  {
+   "id": "W_2",
+   "title": "draft to Harbor Lane",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "standing line joined to the sheet and to status, per target",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "drafts",
+    ".*Harbor.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "fact_id": "draft_2"
+  },
+  {
+   "id": "W_3",
+   "title": "draft to Wavecrest",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "standing line joined to the sheet and to status, per target",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "drafts",
+    ".*Wavecrest.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "fact_id": "draft_3"
+  },
+  {
+   "id": "N_vol",
+   "title": "nudges drafted",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "one per No reply publisher",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "drafts",
+    ".*(Foxglove|Bellwether).*"
+   ],
+   "role": "volume",
+   "mechanisms": [],
+   "fact_id": "nudge_count",
+   "volume_for": [
+    "nudges"
+   ]
+  },
+  {
+   "id": "N_1",
+   "title": "nudge to Summit",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "status decides the draft",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "drafts",
+    ".*Summit.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "nudges",
+   "fact_id": "nudge_1"
+  },
+  {
+   "id": "N_2",
+   "title": "nudge to Riverstone",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "status decides the draft",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "drafts",
+    ".*Riverstone.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "nudges",
+   "fact_id": "nudge_2"
+  },
+  {
+   "id": "K_r_top",
+   "title": "first pick in the reply",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "states the pick",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*[Cc]opperleaf.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXC",
+    "INPUT",
+    "FILT"
+   ],
+   "fact_id": "pick"
+  },
+  {
+   "id": "K_r_value",
+   "title": "its 12-month value in the reply",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "states the value",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*67,?200.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXC",
+    "INPUT",
+    "FILT"
+   ],
+   "fact_id": "pick_value"
+  },
+  {
+   "id": "K_r_q4",
+   "title": "its Q4 cash in the reply",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "states the Q4 cash",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*32,?000.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXC",
+    "INPUT",
+    "FILT"
+   ],
+   "fact_id": "pick_q4"
+  },
+  {
+   "id": "K_r_banked",
+   "title": "money banked in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "wire confirmation against Arthur's note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*(\\$0|nothing|none|no publisher money).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE"
+   ],
+   "fact_id": "banked"
+  },
+  {
+   "id": "P_sheet",
+   "title": "reply after the sheet",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "order of the writes",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "hub-message"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "order_sheet"
+  },
+  {
+   "id": "P_checklists",
+   "title": "reply after the checklists",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "order of the writes",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "hub-message"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "order_checklists"
+  },
+  {
+   "id": "P_cards",
+   "title": "reply after the cards",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "order of the writes",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "hub-message"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "order_cards"
+  },
+  {
+   "id": "P_drafts",
+   "title": "reply after the drafts",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "order of the writes",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "hub-message"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "order_drafts"
+  }
+ ]
+}

@@ -1,0 +1,1095 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "samuel_zm_beta_messages",
+ "revision": "design-1",
+ "truth_keys": [
+  "Win & Collect start",
+  "Lives recharged",
+  "Lapsed 1 day",
+  "Lapsed 7 days",
+  "Finish first mission",
+  "Plague Race",
+  "Weekly Leaderboard reset",
+  "Quests rollover",
+  "Login Calendar update",
+  "Season Pass start",
+  "Hourly Coins",
+  "Nathan's Treasure Hunt",
+  "Streak Fever",
+  "Axe Arena",
+  "Endless entries back",
+  "Endless weekly result",
+  "Boss Arena open",
+  "Boss Arena last hours",
+  "Season Pass last 48 hours",
+  "Season Pass premium nudge",
+  "Plague Race last hour",
+  "Plague Race result",
+  "Zombie Lane reward ready",
+  "Achievement reward waiting",
+  "Daily chest ready",
+  "Free shop coins ready",
+  "Support reply waiting",
+  "New levels added",
+  "Lapsed 3 days",
+  "Lapsed 30 days",
+  "Lapsed 14 days",
+  "Comeback gift",
+  "Boss Arena attempts refilled",
+  "Daily gift about to reset",
+  "Teammate sent lives",
+  "Infinite lives ending"
+ ],
+ "classes": [
+  "Go",
+  "Hold",
+  "Drop"
+ ],
+ "truth_fields": {
+  "class": "Call",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "plan": {
+   "kind": "table",
+   "name_regex": "(?i).*(beta|message|pn|player).*",
+   "key_column": "Message",
+   "key_regex": ".+",
+   "columns": [
+    "Message",
+    "Ticket",
+    "Call",
+    "What's missing",
+    "Audience",
+    "Final headline",
+    "String change"
+   ],
+   "class_column": "Call",
+   "reason_column": "What's missing",
+   "comparators": {
+    "Call": "norm",
+    "Ticket": "issue_key",
+    "String change": "yes_no",
+    "Final headline": "norm",
+    "Audience": "norm"
+   }
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "updates": {
+   "kind": "json_text",
+   "tool": "linear_update_issue"
+  },
+  "tickets": {
+   "kind": "json_text",
+   "tool": "linear_create_issue"
+  },
+  "note": {
+   "kind": "json_text",
+   "tool": "gdocs_create_document"
+  },
+  "emails": {
+   "kind": "json_text",
+   "tool": "gmail_send_message"
+  },
+  "checks": {
+   "kind": "json_text",
+   "tool": "trello_create_check_item"
+  },
+  "dm": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  }
+ },
+ "slots": [
+  {
+   "id": "X1",
+   "title": "Weekly Leaderboard reset call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "sheet, ticket and approved PR against Arthur's inline comment and the source",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Weekly Leaderboard reset",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE"
+   ],
+   "group": "call_hold"
+  },
+  {
+   "id": "X2",
+   "title": "Weekly Leaderboard reset what's missing",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the gap is only in the inline comment and the source",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Weekly Leaderboard reset",
+    ".*([Ww]rong day|[Rr]ollover|[Rr]eset day|not tied|[Ss]even days from|last left).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DONE"
+   ],
+   "group": "missing",
+   "fact_id": "weekly_gap"
+  },
+  {
+   "id": "X2b",
+   "title": "Weekly Leaderboard reset note on its ticket",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket says Done; the note must carry the gap from GitHub",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    ".*(wrong day|not tied|reset day|seven days from).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE"
+   ],
+   "fact_id": "weekly_gap"
+  },
+  {
+   "id": "X1c",
+   "title": "Weekly Leaderboard reset ticket leaves Done",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket moves only if the gap from GitHub was found",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(?:(?:backlog|canceled|todo)\\s*){27}"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE"
+   ]
+  },
+  {
+   "id": "X3",
+   "title": "Lapsed 7 days final headline",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "sheet, ticket and Leonard's Sep 29 reply against his later calendar note",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lapsed 7 days",
+    "Final headline"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "CORR"
+   ],
+   "group": "headline",
+   "fact_id": "line7"
+  },
+  {
+   "id": "X4",
+   "title": "Lapsed 7 days string ticket carries the line",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the line reaches Linear only through the calendar note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "tickets",
+    ".*Your Squad Is Waiting.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "CORR"
+   ],
+   "fact_id": "line7"
+  },
+  {
+   "id": "X16",
+   "title": "Lapsed 7 days string change",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the client ships the June line; Leonard's calls show it must change",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lapsed 7 days",
+    "String change"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "string"
+  },
+  {
+   "id": "X5",
+   "title": "Finish first mission call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the trigger on the sheet joined to the ask point and the rule's reach sentence",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Finish first mission",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DEP"
+   ],
+   "group": "call_hold"
+  },
+  {
+   "id": "X6",
+   "title": "Finish first mission what's missing",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the join names the gap",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Finish first mission",
+    ".*([Pp]ermission|[Aa]sk|[Rr]each|level 20).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "DEP"
+   ],
+   "group": "missing",
+   "fact_id": "ftue_gap"
+  },
+  {
+   "id": "X6b",
+   "title": "Finish first mission note on its ticket",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket says Done; the note must carry the join",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    ".*(cannot reach|can't reach|permission ask|our own ask|level 20).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DEP"
+   ],
+   "fact_id": "ftue_gap"
+  },
+  {
+   "id": "X6c",
+   "title": "Finish first mission ticket leaves Done",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket moves only if the join was made",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(?:(?:backlog|canceled|todo)\\s*){28}"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DEP"
+   ]
+  },
+  {
+   "id": "X7",
+   "title": "Plague Race call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "ticket pass against the QA note and Vincent's DM thread reply",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Plague Race",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "QA"
+   ],
+   "group": "call_hold"
+  },
+  {
+   "id": "X8",
+   "title": "Plague Race what's missing",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the withdrawn platform is only in the DM reply",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Plague Race",
+    ".*(i[Pp]hone|iOS|store build|both platforms).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "QA"
+   ],
+   "group": "missing",
+   "fact_id": "race_gap"
+  },
+  {
+   "id": "X8b",
+   "title": "Plague Race note on its ticket",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket says Done; the note must carry the DM reply",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    ".*(timers|never showed|not seen on both|iPhone|iOS).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "QA"
+   ],
+   "fact_id": "race_gap"
+  },
+  {
+   "id": "X8c",
+   "title": "Plague Race ticket leaves Done",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket moves only if the DM reply was found",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(?:(?:backlog|canceled|todo)\\s*){29}"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "QA"
+   ]
+  },
+  {
+   "id": "K1",
+   "title": "Lives recharged call",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket and pass log against Vincent's later channel post",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lives recharged",
+    "Call"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "PULL"
+   ],
+   "singled_out_by": "K21"
+  },
+  {
+   "id": "X21",
+   "title": "Lives recharged what's missing",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the withdrawn pass is only in the channel post",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Lives recharged",
+    ".*(i[Pp]hone|iOS|both platforms|0[.]3[.]49|[Tt]ick|[Ss]een).*"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "PULL"
+   ],
+   "fact_id": "lives_gap",
+   "singled_out_by": "K21"
+  },
+  {
+   "id": "X21b",
+   "title": "Lives recharged note on its ticket",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket says Done; the note must carry the post",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    ".*(0[.]3[.]49|Full Ammo|tick off|not seen on both).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "PULL"
+   ],
+   "fact_id": "lives_gap"
+  },
+  {
+   "id": "X21c",
+   "title": "Lives recharged ticket leaves Done",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket moves only if the post was found",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(?:(?:backlog|canceled|todo)\\s*){30}"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "PULL"
+   ]
+  },
+  {
+   "id": "X22",
+   "title": "the note lists Lives recharged as built but held",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the client schedules it but Vincent took his tick off",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "note",
+    ".*[Ll]ives [Rr]echarged.*(i[Pp]hone|iOS|[Ss]een|Vincent|0[.]3[.]49|[Tt]est 6).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "PULL"
+   ]
+  },
+  {
+   "id": "X9",
+   "title": "Win & Collect row points at the existing ticket",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "row name joined to a ticket under another name through the live-ops page",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Win & Collect start",
+    "Ticket"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "singled_out_by": "K15"
+  },
+  {
+   "id": "X10",
+   "title": "the call lands on the existing Collect & Win ticket",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket is outside the parent and outside the sheet's name",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "tickets",
+    "^(?!.*(?:collect\\s*(?:&|and)\\s*win|win\\s*(?:&|and)\\s*collect)).*boss.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ]
+  },
+  {
+   "id": "X11",
+   "title": "Boss Arena attempts refilled on the plan",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "an ask in a comment on a home-screen ticket, reached through a relation",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Boss Arena attempts refilled",
+    "Call"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "FILT"
+   ],
+   "singled_out_by": "K13"
+  },
+  {
+   "id": "X12",
+   "title": "Daily gift about to reset on the plan",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "an ask in a comment on a daily-gift bug, reached through a relation",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Daily gift about to reset",
+    "Call"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "FILT"
+   ],
+   "singled_out_by": "K14"
+  },
+  {
+   "id": "X11b",
+   "title": "Teammate sent lives on the plan",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "an ask in a comment on a teams bug, from someone with no other ask",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Teammate sent lives",
+    "Call"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "FILT"
+   ],
+   "singled_out_by": "K18"
+  },
+  {
+   "id": "X12b",
+   "title": "Infinite lives ending on the plan",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "an ask in a comment on an old lives bug",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Infinite lives ending",
+    "Call"
+   ],
+   "role": "exception",
+   "mechanisms": [
+    "FILT"
+   ],
+   "singled_out_by": "K19"
+  },
+  {
+   "id": "X13",
+   "title": "a new ticket for the Boss Arena ask",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "no ticket exists for it",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "tickets",
+    ".*[Bb]oss.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "X13b",
+   "title": "a new ticket for the teammate lives ask",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "no ticket exists for it",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "tickets",
+    ".*([Tt]eammate|[Tt]eam).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "X13c",
+   "title": "a new ticket for the infinite lives ask",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "no ticket exists for it",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "tickets",
+    ".*[Ii]nfinite.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "X15",
+   "title": "Lapsed 14 days call",
+   "weight": 5,
+   "work_kind": "cross_modal",
+   "work_reason": "the ask against the batch in the source and the cancelled review",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lapsed 14 days",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "BUILT"
+   ],
+   "group": "call_drop"
+  },
+  {
+   "id": "X15b",
+   "title": "Lapsed 14 days names what covers it",
+   "weight": 5,
+   "work_kind": "cross_modal",
+   "work_reason": "the covering message is only in the source and the cancelled review",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Lapsed 14 days",
+    ".*([Ll]apsed 7|[Ww]eekly|[Cc]overed|batch).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "BUILT"
+   ],
+   "group": "missing"
+  },
+  {
+   "id": "X17",
+   "title": "the note gives the lapsed ladder by day",
+   "weight": 5,
+   "work_kind": "cross_modal",
+   "work_reason": "days 1, 7, 14, 21 and 28 from the source; the sheet says only 1 day and 7 days",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "note",
+    ".*(7, 14, 21|14, 21, 28|7, 14 and 21|days 7).*"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "X20",
+   "title": "the note lists Finish first mission as built but held",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the client schedules it but its players have not had our own ask: the source, the rule's reach sentence and Robert's post joined",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "note",
+    ".*[Ff]irst mission.*([Ll]evel 20|[Pp]ermission|[Oo]ur (?:own )?ask|[Rr]each).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DEP"
+   ]
+  },
+  {
+   "id": "X18",
+   "title": "a held ticket parked in Backlog",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "rule doc amended on a card the prompt never names, applied to a Linear ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*[Bb]acklog.*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "group": "state"
+  },
+  {
+   "id": "X19",
+   "title": "a second held ticket parked in Backlog",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same amendment on another ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(?:(?:backlog|canceled)\\s*){15}"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "group": "state"
+  },
+  {
+   "id": "X19b",
+   "title": "a held ask's ticket parked in Backlog",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same amendment on an ask's ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(?:(?:backlog|canceled)\\s*){25}"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "group": "state"
+  },
+  {
+   "id": "T1",
+   "title": "Go count back to Leonard",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the count follows every call across services",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "dm",
+    ".*(Go: 2|2 Go|Go 2).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "DONE",
+    "DEP",
+    "QA",
+    "PULL"
+   ]
+  },
+  {
+   "id": "T2",
+   "title": "Hold count back to Leonard",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "count over the Hold rows, including the asks outside the parent",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "dm",
+    ".*(Hold: 28|28 Hold|Hold 28).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT",
+    "PULL"
+   ]
+  },
+  {
+   "id": "T3",
+   "title": "Drop count back to Leonard",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "count over the Drop rows",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "dm",
+    ".*(Drop: 6|6 Drop|Drop 6).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BUILT"
+   ]
+  },
+  {
+   "id": "K2",
+   "title": "Lapsed 1 day call",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the day is right and it reaches players past the ask",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lapsed 1 day",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "call_go"
+  },
+  {
+   "id": "K3",
+   "title": "Axe Arena call",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "sheet row against the Sep 22 post and the Oct 21 list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Axe Arena",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "call_drop"
+  },
+  {
+   "id": "K5",
+   "title": "Hourly Coins call",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "sheet row against the Backlog card",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Hourly Coins",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "call_drop"
+  },
+  {
+   "id": "K6",
+   "title": "Login Calendar update call",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "feature live, nothing scheduled",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Login Calendar update",
+    "Call"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "call_hold"
+  },
+  {
+   "id": "K9",
+   "title": "Plague Race result what's missing",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "Arthur's note on the ticket",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Plague Race result",
+    ".*([Ss]erver).*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "missing"
+  },
+  {
+   "id": "K10",
+   "title": "Lapsed 1 day final headline",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "unchanged from the sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lapsed 1 day",
+    "Final headline"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "headline"
+  },
+  {
+   "id": "K11",
+   "title": "Lapsed 1 day on the card's checklist",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "a Go lands on the card",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "checks",
+    ".*([Ll]apsed 1|Horde).*"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K12",
+   "title": "a Drop ticket canceled",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the call decides the state",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*[Cc]ancel.*"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "state"
+  },
+  {
+   "id": "K13",
+   "title": "the call on an ordinary ticket",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one comment per ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    ".*\\b(Go|Hold|Drop)\\b.*"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K14",
+   "title": "Boss Arena open audience",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the asker's comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Boss Arena open",
+    "Audience"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "audience"
+  },
+  {
+   "id": "K15",
+   "title": "Plague Race result audience",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the asker's comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Plague Race result",
+    "Audience"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "audience"
+  },
+  {
+   "id": "K16",
+   "title": "the note opens with iOS D1 and D7",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the warehouse's Sep 15 cohort week, iOS",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "note",
+    ".*31[.](65|7|6).*9[.](28|3).*"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K17",
+   "title": "the note opens with Android D1 and D7",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the warehouse's Sep 15 cohort week, Android",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "note",
+    ".*37[.](86|9).*10[.](68|7).*"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K18",
+   "title": "Robert told what happened to his asks",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "a join of his asks and their calls",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "emails",
+    ".*robert@harmonygames\\.co.*"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K19",
+   "title": "Douglas told what happened to his ask",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "his only ask sits outside the parent",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "emails",
+    ".*douglas@harmonygames\\.co.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ]
+  },
+  {
+   "id": "V1",
+   "title": "every message on the plan, and no others",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the volume row for the population",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "FILT"
+   ],
+   "volume_for": [
+    "call_go",
+    "call_hold",
+    "call_drop",
+    "missing",
+    "headline",
+    "string",
+    "state",
+    "audience"
+   ]
+  },
+  {
+   "id": "D1",
+   "title": "plan in Samuel's folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "folder named in the prompt",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_caafeec2804b3a67ce46aa"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D2",
+   "title": "counts back to Leonard",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "reply in the DM",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_channel_post",
+    "D06L58XCVKK",
+    "Go"
+   ],
+   "role": "core",
+   "mechanisms": []
+  }
+ ]
+}

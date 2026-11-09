@@ -1,0 +1,1666 @@
+{
+ "_note": "DRAFT manifest (scenario stage). Seeded ids are planned (plan/build_scenario.py, plan/seed_text.json); /create-injection writes the final manifest.",
+ "persona": "owen_baker",
+ "assignment_context": {
+  "context_hash": "ba6bb23d4a12165dbe9b44cf44b8ec5000f3d71063878279b1caa50952d96bf0",
+  "assignment_hash": "560a0d2ca2a952f5c9164a4bd693631bb336e4dd360f03607cabb7f4e8a0b886",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2026-02-14T00:00:00Z",
+  "difficulty_mode": "medium"
+ },
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "author_targets": {
+  "calls_per_run": "over 130 in every run",
+  "average": "strictly under 80 %",
+  "design_target": "E[avg] <= 72 %",
+  "source": "requester, 2026-11-07"
+ },
+ "volume_exception": {
+  "reason": "102 cohort records and about 285 honest calls; reaching 500 would need padding, which fails on its own",
+  "requester_confirmation": "requester, Claude Code chat 2026-11-07: 'i want over 130 tool calls in each runs ... you can choose from your self which option is best fit for my requirements in this task' (choice delegated; recorded in 00_Pre_Scenario_Analysis.md section 11, item 2)",
+  "call_budget_floor": 250,
+  "per_record_floor": 100
+ },
+ "requirements": {
+  "R1": "population: every canvas line with a comment thread and every bug posted in the bug channel after it",
+  "R2": "outcome of each bug in the build players have: Fixed, Broken, Gone or Covered",
+  "R3": "a bug an open ticket already covers gets a note on that ticket and no new ticket",
+  "R4": "new ticket fields: Engineering team, Bug label, parent ENG-2401, title with the [2231] prefix, no assignee",
+  "R5": "state of each UI tree child: Done unless a record shows part of its screen never made it into the build players have",
+  "R6": "a note on every UI child naming the build it was checked on",
+  "R7": "index sheet with columns Bug, Outcome, Ticket, Why in the DD bug carry-over folder, shared with the review attendees",
+  "R8": "reply to Arthur in the DM with how many are still broken, how many new tickets and how many of the 28 UI children are Done",
+  "R9": "a bug in something the build players no longer have is filed Canceled"
+ },
+ "services": {
+  "slack": {
+   "role": "canvas lines, later bugs, hub, corrections",
+   "weight_reason": "the bug record and every correction live here"
+  },
+  "linear": {
+   "role": "destination and tree",
+   "weight_reason": "every record is written here and the tree states are decided here"
+  },
+  "github": {
+   "role": "PR truth",
+   "weight_reason": "open and merged PRs and inline review comments decide fixes and child states"
+  },
+  "gdocs": {
+   "role": "rule doc and economy doc",
+   "weight_reason": "the outcomes and the lives removal are read here"
+  },
+  "gdrive": {
+   "role": "destination folder",
+   "weight_reason": "the sheet goes in Owen's folder"
+  },
+  "gsheets": {
+   "role": "index sheet",
+   "weight_reason": "the deliverable index"
+  },
+  "gslides": {
+   "role": "sprint wrap deck",
+   "weight_reason": "the convincing done summary the child records overturn"
+  },
+  "trello": {
+   "role": "closing rule",
+   "weight_reason": "Brian's rule sets what every child note must name"
+  },
+  "gmail": {
+   "role": "alias note",
+   "weight_reason": "Vincent's mail ties the Apple sync line to its ticket"
+  },
+  "gcal": {
+   "role": "share list",
+   "weight_reason": "the review invite fixes who the sheet is shared with"
+  }
+ },
+ "anchors": [
+  {
+   "id": "AN1",
+   "prompt_reference": "Arthur's DM from Thursday",
+   "service": "slack",
+   "locator": "D05S1S2AB5M/1770937805.214409",
+   "requirement_ids": [
+    "R1",
+    "R5",
+    "R7",
+    "R8"
+   ]
+  },
+  {
+   "id": "AN2",
+   "prompt_reference": "the UI Changes master ticket",
+   "service": "linear",
+   "locator": "ENG-2401",
+   "requirement_ids": [
+    "R5"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "gdocs",
+   "container": "f_3ca9e15d7b20f4e681ad52",
+   "locator": "f_3ca9e15d7b20f4e681ad52",
+   "kind": "delegation",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "f_3ca9e15d7b20f4e681ad52"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05S1S2AB5M/1770937805.214409",
+   "delegation_quote": "the carry-over notes doc",
+   "requirement_ids": [
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R9"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "Brian's closing rule from the UI work"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "slack",
+   "container": "CE156FDFB428",
+   "locator": "CE156FDFB428",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "CE156FDFB428/1763041126.468099"
+   ],
+   "delegated_by_record": "D05S1S2AB5M/1770937805.214409",
+   "delegation_quote": "Vincent's Android canvas",
+   "requirement_ids": [
+    "R1"
+   ]
+  },
+  {
+   "id": "K3",
+   "service": "slack",
+   "container": "C05V5FNLB9V",
+   "locator": "C05V5FNLB9V",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C05V5FNLB9V/1764256187.655299"
+   ],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "every bug posted in the bug channel after the last line in that comment channel",
+   "requirement_ids": [
+    "R1"
+   ]
+  },
+  {
+   "id": "K4",
+   "service": "linear",
+   "container": "ENG-2401",
+   "locator": "ENG-2401",
+   "kind": "amendment",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "comment_49b5ac4788465f72ddf245e34f2b7034"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "If anything changes after this I'll put it on the master ticket",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K5",
+   "service": "trello",
+   "container": "690b27282f4c1b7a6e93d512",
+   "locator": "690b27282f4c1b7a6e93d512",
+   "kind": "format",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "690b29bc3c7d2e51b0f86a47"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "Brian's closing rule from the UI work",
+   "requirement_ids": [
+    "R6"
+   ]
+  },
+  {
+   "id": "K6",
+   "service": "gcal",
+   "container": "evt_6e2c91d4b07f3a58c1d2e4",
+   "locator": "evt_6e2c91d4b07f3a58c1d2e4",
+   "kind": "recipient",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "evt_6e2c91d4b07f3a58c1d2e4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05S1S2AB5M/1770937805.214409",
+   "delegation_quote": "everyone on Sunday's bug review",
+   "requirement_ids": [
+    "R7"
+   ]
+  },
+  {
+   "id": "K7",
+   "service": "gdrive",
+   "container": "d_9b41e7c2a05d36f8e1c7a4",
+   "locator": "d_9b41e7c2a05d36f8e1c7a4",
+   "kind": "destination",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "d_9b41e7c2a05d36f8e1c7a4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05S1S2AB5M/1770937805.214409",
+   "delegation_quote": "your DD bug carry-over folder",
+   "requirement_ids": [
+    "R7"
+   ]
+  },
+  {
+   "id": "K8",
+   "service": "gmail",
+   "container": "owen.baker@harmonygames.co/1849333980856689601",
+   "locator": "owen.baker@harmonygames.co/1849333980856689601",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "owen.baker@harmonygames.co/1849333980856689601"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "Vincent tied a few lines to tickets before he left",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K9",
+   "service": "linear",
+   "container": "ENG-2363",
+   "locator": "ENG-2363",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "comment_7ab5299cbb609d95ba12249d315daedc"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "Vincent tied a few lines to tickets before he left",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K10",
+   "service": "slack",
+   "container": "C09SWTHEMEW",
+   "locator": "C09SWTHEMEW",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C09SWTHEMEW/1770926214.816149"
+   ],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "which came off the economy line",
+   "requirement_ids": [
+    "R2"
+   ]
+  },
+  {
+   "id": "K11",
+   "service": "linear",
+   "container": "ENG-2428",
+   "locator": "ENG-2428",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "comment_d6aee2099bd71050facc422ccef8f809"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "Brian and Oliver left notes on some of the open children",
+   "requirement_ids": [
+    "R5"
+   ]
+  },
+  {
+   "id": "K12",
+   "service": "linear",
+   "container": "ENG-2437",
+   "locator": "ENG-2437",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "comment_3e81bf306c58746580a9cfa0ca12bd60"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_3ca9e15d7b20f4e681ad52",
+   "delegation_quote": "Brian and Oliver left notes on some of the open children",
+   "requirement_ids": [
+    "R5"
+   ]
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "the carry-over notes doc",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R2",
+    "R3",
+    "R4",
+    "R9"
+   ],
+   "findable_query": "carry-over notes",
+   "seeded_ids": [
+    "f_3ca9e15d7b20f4e681ad52"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "f_72e0b4c3d91a5f68c2b7e4"
+   ],
+   "decoy_base_pointers": [],
+   "decoy_scope": {
+    "dimension": "game",
+    "decoy": "Zombie Match 3D",
+    "task": "Domino Delights"
+   }
+  },
+  {
+   "id": "H2",
+   "name": "Brian's closing rule from the UI work",
+   "home_service": "trello",
+   "decoy_service": "trello",
+   "governs": [
+    "R6"
+   ],
+   "findable_query": "close these out",
+   "seeded_ids": [
+    "690b29bc3c7d2e51b0f86a47"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "68d284b84b7e9a3c5d16e208"
+   ],
+   "decoy_base_pointers": [],
+   "decoy_scope": {
+    "dimension": "game",
+    "decoy": "Zombie Match 3D",
+    "task": "Domino Delights"
+   }
+  }
+ ],
+ "cohort": {
+  "definition": "63 canvas lines with a comment thread, 7 bugs posted in the bug channel after the canvas's last line, and 32 UI tree records: 102 records",
+  "definition_source": [
+   "D05S1S2AB5M/1770937805.214409",
+   "f_3ca9e15d7b20f4e681ad52"
+  ],
+  "key": "bug line or tree ticket",
+  "size": 102,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 32,
+    "seeded": true,
+    "seeded_ids": [
+     "comment_d6aee2099bd71050facc422ccef8f809",
+     "comment_3e81bf306c58746580a9cfa0ca12bd60"
+    ],
+    "requirement": "R5",
+    "decides": "state of each UI tree child",
+    "why_no_bulk": "linear_list_issues returns no comments; each child's sign-off note needs its own linear_list_comments",
+    "short_circuit": "a child's state turns on its own note; the master checklist is unreliable (NB-14), so no other record decides it, and one search cannot page every child's comments"
+   },
+   {
+    "service": "github",
+    "tool": "github_get_pull_request_reviews and github_get_pull_request_comments",
+    "per_record_calls": 2.0,
+    "records": 13,
+    "seeded": true,
+    "seeded_ids": [
+     "harmonygames-Games/GameOfDominoes#1905#rc_1",
+     "harmonygames-Games/GameOfDominoes#1908#rc_1"
+    ],
+    "requirement": "R5",
+    "decides": "state of each UI tree child",
+    "why_no_bulk": "github_search_pull_requests does not return reviews or inline comments, and in:comments misses inline ones",
+    "short_circuit": "merged state does not decide a child; only the PR's own review surfaces show a held piece, and no search sweeps inline comments"
+   },
+   {
+    "service": "linear",
+    "tool": "linear_list_issues by subject and linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 15,
+    "seeded": true,
+    "seeded_ids": [
+     "comment_7ab5299cbb609d95ba12249d315daedc"
+    ],
+    "requirement": "R3",
+    "decides": "a note on that ticket and no new ticket",
+    "why_no_bulk": "titles use other words, so each unticked line or later bug needs its own ticket search and comment read",
+    "short_circuit": "reuse cannot be decided from the canvas; the tie sits on or about the ticket"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_read_thread",
+    "per_record_calls": 0.5,
+    "records": 70,
+    "seeded": false,
+    "requirement": "R2",
+    "decides": "outcome of each bug",
+    "why_no_bulk": "slack_read_channel returns roots without replies, and fixes and doubts sit in replies; a search can sweep some, so this surface counts at half",
+    "short_circuit": "the outcome needs the thread's last word on each line; a search for fixed misses replies in other words"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A24",
+   "ends_in": "R5",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ENG-2434",
+     "finding": "child still shows PR and Brian ticked it off"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/GameOfDominoes#1905",
+     "finding": "merged with Arthur's approval"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/GameOfDominoes#1905#rc_1",
+     "finding": "inline comment holds the how-to-play popup"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A15",
+   "ends_in": "R9",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "CE156FDFB428/1763548856.943389",
+     "finding": "unticked lives line"
+    },
+    {
+     "service": "slack",
+     "record": "C09SWTHEMEW/1764659626.614679",
+     "finding": "Leonard: removing lives"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_948768f5a462e7037d17c9",
+     "finding": "economy spec replaces lives with tickets"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A11",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "CE156FDFB428/1763642831.967359",
+     "finding": "ticked Tavern line"
+    },
+    {
+     "service": "slack",
+     "record": "CE156FDFB428/1763642831.967359",
+     "finding": "Brian sent the fix"
+    },
+    {
+     "service": "slack",
+     "record": "D05USBTQY1F/1765452012.418229",
+     "finding": "Marcus: lost the frame again"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2401",
+     "finding": "the bug is filed as Bugs under the master"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A25",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C05V5FNLB9V/1764659550.713509",
+     "finding": "thread ends at testing a fix now"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/GameOfDominoes#1914",
+     "finding": "fix commit on the economy line"
+    },
+    {
+     "service": "slack",
+     "record": "C05433XK267/1765310004.760809",
+     "finding": "change line in a submission build"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A7",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "CE156FDFB428/1763041538.186339",
+     "finding": "unticked Apple sync line"
+    },
+    {
+     "service": "gmail",
+     "record": "owen.baker@harmonygames.co/1849333980856689601",
+     "finding": "Vincent ties it to ENG-2073"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2073",
+     "finding": "open ticket takes the note"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T_INLINE_TD",
+   "family": "done_gap",
+   "services": [
+    "github",
+    "linear",
+    "gslides"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/GameOfDominoes#1905#rc_1",
+    "harmonygames-Games/GameOfDominoes#1905#c_3",
+    "f_d15a8c70e3f2b94a61c8d3"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/GameOfDominoes#1905"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "ENG-2434 is finished: #1905 merged with Arthur's approval, Brian ticked the screen off and the wrap deck says shipped",
+   "resolver": "Arthur's inline comment on #1905 says the how-to-play popup must be swapped before the ticket closes; the review body is silent",
+   "discovery_order": "the merged PR and Brian's tick come back from the tree read; the inline comment needs github_get_pull_request_comments"
+  },
+  {
+   "id": "T_WINGS",
+   "family": "eliminating_evidence",
+   "services": [
+    "slack",
+    "github"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C9CA62B5180A/1765927876.696389"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "ENG-2424 goes Done like the other merged children",
+   "resolver": "Owen disabled Win & Collect on Dec 16, so that screen is not in the build; no re-enable is on record",
+   "discovery_order": "the child reads as finished until the disable post or its commit is found"
+  },
+  {
+   "id": "T_INLINE_AXE",
+   "family": "done_gap",
+   "services": [
+    "github",
+    "linear"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/GameOfDominoes#1908#rc_1",
+    "harmonygames-Games/GameOfDominoes#1908#c_3"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/GameOfDominoes#1908"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "ENG-2426 is finished: #1908 merged and Brian ticked the panel off",
+   "resolver": "Arthur's inline comment on #1908 says the info popup keeps the old frame and must be done first",
+   "discovery_order": "Brian's tick is read first; the inline comment sits behind a separate call"
+  },
+  {
+   "id": "T_SEASON",
+   "family": "superseding",
+   "services": [
+    "gslides",
+    "linear"
+   ],
+   "seeded_ids": [
+    "f_d15a8c70e3f2b94a61c8d3",
+    "comment_d6aee2099bd71050facc422ccef8f809"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "the wrap deck says the UI pass wrapped up, so ENG-2428 is Done",
+   "resolver": "Oliver's later note on ENG-2428 says the reward track still uses the old frames",
+   "version_records": [
+    {
+     "service": "gslides",
+     "seeded": true,
+     "at": "2025-11-21T20:30:00Z",
+     "container": "file:f_d15a8c70e3f2b94a61c8d3",
+     "id": "f_d15a8c70e3f2b94a61c8d3"
+    },
+    {
+     "service": "linear",
+     "seeded": true,
+     "at": "2025-12-05T12:30:00Z",
+     "container": "linear:ENG-2428",
+     "id": "comment_d6aee2099bd71050facc422ccef8f809"
+    }
+   ]
+  },
+  {
+   "id": "T_REPLY",
+   "family": "superseding",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "C09Q4S613CN/1764606918.318209"
+   ],
+   "base_pointers": [
+    "CE156FDFB428/1763549455.195819"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the River Tile and Memory Tile shop icons line is ticked, so it is fixed",
+   "resolver": "Brian's later reply under an unrelated sub-250 post says the round icons came back",
+   "discovery_order": "the tick is read from the canvas; the reply sits under a gems question",
+   "version_records": [
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-11-19T10:50:55Z",
+     "container": "slack:CE156FDFB428/1763549455.195819",
+     "base_pointer": "CE156FDFB428/1763549455.195819"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-12-01T16:35:18Z",
+     "container": "slack:C09Q4S613CN/1764042435.541279",
+     "id": "C09Q4S613CN/1764606918.318209"
+    }
+   ]
+  },
+  {
+   "id": "T_BACK",
+   "family": "superseding",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "D05USBTQY1F/1765452012.418229"
+   ],
+   "base_pointers": [
+    "CE156FDFB428/1763642831.967359"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the Tavern buttons line is ticked and Brian sent the fix, so it is fixed",
+   "resolver": "Marcus's later 1:1 note to Owen says the frame was lost again and Brian's fix did not hold",
+   "discovery_order": "the tick and Brian's fix are in the canvas thread; the note sits in a DM no anchor names",
+   "version_records": [
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-11-20T12:47:11Z",
+     "container": "slack:CE156FDFB428/1763642831.967359",
+     "base_pointer": "CE156FDFB428/1763642831.967359"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-12-11T11:20:12Z",
+     "container": "slack:D05USBTQY1F/1765452012.418229",
+     "id": "D05USBTQY1F/1765452012.418229"
+    }
+   ]
+  },
+  {
+   "id": "T_GONE",
+   "family": "effective_date",
+   "services": [
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "CE156FDFB428/1763548856.943389",
+    "C09SWTHEMEW/1764659626.614679",
+    "f_948768f5a462e7037d17c9"
+   ],
+   "requirement": "R9",
+   "expected_wrong_reading": "the unticked lives lines are still broken",
+   "resolver": "the lives feature was removed: Leonard's BoomBit post, the economy doc and his Jan no-lives note; the live build has tickets",
+   "discovery_order": "the unticked lines come first; the removal sits in another channel and a doc",
+   "version_records": [
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-11-19T10:40:56Z",
+     "container": "slack:CE156FDFB428/1763548856.943389",
+     "base_pointer": "CE156FDFB428/1763548856.943389"
+    },
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-12-02T07:13:46Z",
+     "container": "slack:C09SWTHEMEW/1764659626.614679",
+     "base_pointer": "C09SWTHEMEW/1764659626.614679"
+    },
+    {
+     "service": "gdocs",
+     "seeded": false,
+     "at": "2025-12-12T21:47:11Z",
+     "container": "file:f_948768f5a462e7037d17c9",
+     "base_pointer": "gdocs:data.json /docs_documents/371"
+    }
+   ]
+  },
+  {
+   "id": "T_LINE",
+   "family": "done_gap",
+   "services": [
+    "slack",
+    "github"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C05V5FNLB9V/1764329192.159229",
+    "harmonygames-Games/GameOfDominoes#1913"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the tile dozer window is fixed: Marcus fixed it and did a PR",
+   "resolver": "GameOfDominoes#1913 is still open and its commit is not in #1914's list, so the fix never reached that build",
+   "discovery_order": "Marcus's reply reads as closed before any PR lookup"
+  },
+  {
+   "id": "T_ELSE_FLICKER",
+   "family": "completion_elsewhere",
+   "services": [
+    "slack",
+    "github"
+   ],
+   "seeded_ids": [
+    "C09Q4S613CN/1766164222.418229"
+   ],
+   "base_pointers": [
+    "C05V5FNLB9V/1764659550.713509",
+    "C05433XK267/1765310004.760809"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the flicker thread ends at testing a fix now, so it is still broken",
+   "resolver": "Robert's later reply under his sub-250 report says both flickers are gone, and the fix commit is on the economy line"
+  },
+  {
+   "id": "T_ELSE_MUSIC",
+   "family": "completion_elsewhere",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "D07E9PSQB6W/1765206644.602119"
+   ],
+   "base_pointers": [
+    "C05V5FNLB9V/1764660142.352319"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Owen said he would check the music next and nothing closed it",
+   "resolver": "Brian's DM to Owen says music plays normally since the audio player change"
+  },
+  {
+   "id": "T_ELSE_ACID",
+   "family": "completion_elsewhere",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "D07E9PSQB6W/1765206644.602119"
+   ],
+   "base_pointers": [
+    "C05V5FNLB9V/1764661312.152719"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Brian's I'm checking is the last word on the acid delay",
+   "resolver": "the same DM says the acid throw lines up after his animation fix"
+  },
+  {
+   "id": "T_ALIAS_APPLE",
+   "family": "scope_alias",
+   "services": [
+    "slack",
+    "gmail",
+    "linear"
+   ],
+   "seeded_ids": [
+    "owen.baker@harmonygames.co/1849333980856689601"
+   ],
+   "base_pointers": [
+    "CE156FDFB428/1763041538.186339"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "no ticket has the canvas wording, so a new one is filed",
+   "resolver": "Vincent's mail ties the Apple sync line to ENG-2073"
+  },
+  {
+   "id": "T_ALIAS_SPLASH",
+   "family": "scope_alias",
+   "services": [
+    "slack",
+    "linear"
+   ],
+   "seeded_ids": [
+    "comment_7ab5299cbb609d95ba12249d315daedc"
+   ],
+   "base_pointers": [
+    "CE156FDFB428/1763132009.017599"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "no ticket has the canvas wording, so a new one is filed",
+   "resolver": "Vincent's note on ENG-2363 ties the manual sign-in line to it"
+  },
+  {
+   "id": "T_FILT",
+   "family": "exact_predicate",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C05V5FNLB9V/1764256187.655299",
+    "C05V5FNLB9V/1766415326.501939"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the canvas is the whole list",
+   "resolver": "the rule doc brings in bugs posted in the bug channel after the canvas's last line"
+  },
+  {
+   "id": "T_FOLLOW",
+   "family": "authority",
+   "services": [
+    "trello",
+    "linear"
+   ],
+   "seeded_ids": [
+    "690b29bc3c7d2e51b0f86a47"
+   ],
+   "base_pointers": [],
+   "requirement": "R6",
+   "expected_wrong_reading": "any line on a child is enough",
+   "resolver": "Brian's comment on the UI work card says every close-out note names the current public build"
+  },
+  {
+   "id": "D_ZMCANVAS",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C3DD99314033/1758276844.870419"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the ZM Collect & Win canvas is part of the job",
+   "resolver": "the rule doc leaves the ZM canvas where it is",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "D_SIGNIN",
+   "family": "distractor",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "ENG-2280"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "ENG-2280 covers the Apple sign-in line",
+   "resolver": "Vincent's mail names ENG-2073",
+   "distractor_type": "near_duplicate_record"
+  },
+  {
+   "id": "D_LIVESTICKETS",
+   "family": "distractor",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "ENG-2277",
+    "ENG-2400"
+   ],
+   "requirement": "R9",
+   "expected_wrong_reading": "the open lives tickets mean those lines have a ticket",
+   "resolver": "the feature is gone from the live build",
+   "distractor_type": "keyword_collision"
+  },
+  {
+   "id": "D_ZMDOC",
+   "family": "distractor",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_72e0b4c3d91a5f68c2b7e4"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "the ZM notes set how ticks and close-outs work",
+   "resolver": "they cover the other game",
+   "distractor_type": "other_title"
+  },
+  {
+   "id": "D_SUB250",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C09Q4S613CN/1764013026.858409"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Robert's sub-250 reports are extra bugs",
+   "resolver": "the rule doc leaves them out",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "D_DECK",
+   "family": "distractor",
+   "services": [
+    "gslides"
+   ],
+   "seeded_ids": [
+    "f_d15a8c70e3f2b94a61c8d3"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "the wrap deck proves the UI work finished",
+   "resolver": "child records decide",
+   "distractor_type": "stale_summary"
+  },
+  {
+   "id": "D_ECONCANVAS",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C4208B207A1A/1765298859.629579"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the economy canvas is part of the list",
+   "resolver": "the rule doc leaves it where it is",
+   "distractor_type": "scope_adjacent"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "INLINE",
+   "mechanism": "A24",
+   "prior_family": "done_gap",
+   "prior_family_reason": "same mechanism: a merged PR is the done source and the missing piece sits in an inline review comment",
+   "nodes": [
+    "T_INLINE_TD",
+    "T_INLINE_AXE"
+   ],
+   "requirement": "R5",
+   "natural_reading": "a merged PR with Brian's tick means the child is Done",
+   "decides": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "V4"
+   ],
+   "controls": [
+    "ENG-2417",
+    "ENG-2432"
+   ],
+   "over_application": "inline_over: holds a child whose PR has no inline comment",
+   "source": "github-inline",
+   "signature": "how-to-play popup",
+   "prior": {
+    "alpha": 3.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_7f44d83eaad625e9",
+     "hev_522f1ca2bc9062de",
+     "hev_b8f28a892a74b855",
+     "hev_8dcd719a9d6f614d",
+     "hev_fa790909c7cd5693",
+     "hev_e572a5dca937a9e7",
+     "hev_bec393d63b5410e0",
+     "hev_f9b2298b6c9739d4"
+    ]
+   }
+  },
+  {
+   "id": "REPLY",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "same mechanism: a dated correction in a thread reply under an unrelated root",
+   "nodes": [
+    "T_REPLY"
+   ],
+   "requirement": "R2",
+   "natural_reading": "a ticked line is fixed",
+   "decides": [
+    "B3",
+    "B4",
+    "V1",
+    "V3"
+   ],
+   "controls": [
+    "the Purple bg line"
+   ],
+   "over_application": "reply_over: reopens another ticked line",
+   "source": "unrelated-thread-reply",
+   "signature": "round icons",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_d3b1b9dcf4e19fcc",
+     "hev_22d4191952144533",
+     "hev_c3cc19b1927c1302",
+     "hev_8130210e56a8c375"
+    ]
+   }
+  },
+  {
+   "id": "BACK",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "same mechanism: a dated correction in a 1:1 DM off the delegation path",
+   "nodes": [
+    "T_BACK"
+   ],
+   "requirement": "R2",
+   "natural_reading": "a ticked line is fixed",
+   "decides": [
+    "B1",
+    "B2",
+    "V1",
+    "V3"
+   ],
+   "controls": [
+    "the character frames line"
+   ],
+   "over_application": "back_over: reopens another ticked line",
+   "source": "one-to-one-dm",
+   "signature": "Tavern buttons",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_d3b1b9dcf4e19fcc",
+     "hev_22d4191952144533",
+     "hev_c3cc19b1927c1302",
+     "hev_8130210e56a8c375"
+    ]
+   }
+  },
+  {
+   "id": "FOLLOW",
+   "mechanism": "A15",
+   "prior_family": "authority",
+   "prior_family_reason": "closest ledger family: a rule homed in a card comment off the named path; house_rule has no record",
+   "nodes": [
+    "T_FOLLOW"
+   ],
+   "requirement": "R6",
+   "natural_reading": "any note on a child is enough",
+   "decides": [
+    "O1",
+    "O2",
+    "O3"
+   ],
+   "controls": [
+    "the moved children"
+   ],
+   "over_application": "follow_over: none",
+   "source": "trello-comment",
+   "signature": "current public build",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 1.0,
+    "record_ids": [
+     "hev_d17e4abe74f0e7e0",
+     "hev_1de494f0682754d6",
+     "hev_4638d80f1d9f6311",
+     "hev_12437e8852e6e57e",
+     "hev_633340c96ebfc696",
+     "hev_6e9ca23ac4d84281"
+    ]
+   }
+  },
+  {
+   "id": "GONE",
+   "mechanism": "A15",
+   "prior_family": "exact_predicate",
+   "prior_family_reason": "closest ledger family: a condition in older records changes which items qualify; house_rule has no record",
+   "nodes": [
+    "T_GONE",
+    "T_WINGS"
+   ],
+   "requirement": "R9",
+   "natural_reading": "an unticked line is still broken",
+   "decides": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "V1",
+    "V3",
+    "V4"
+   ],
+   "controls": [
+    "the team navigation line"
+   ],
+   "over_application": "gone_over: cancels a line that is not about lives",
+   "source": "economy-change",
+   "signature": "no-lives",
+   "prior": {
+    "alpha": 2.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_9c403cae42eb4df8",
+     "hev_c2297d21ba5cbc7b",
+     "hev_0e15eed886c6fd32",
+     "hev_0148aad4d8a4eb2d",
+     "hev_2da16037a402bf13",
+     "hev_b76760802056e969"
+    ]
+   }
+  },
+  {
+   "id": "LINE",
+   "mechanism": "A24",
+   "prior_family": "done_gap",
+   "prior_family_reason": "same mechanism: a done claim in one service with the missing piece in another",
+   "nodes": [
+    "T_LINE"
+   ],
+   "requirement": "R2",
+   "natural_reading": "fixed and did a PR means it shipped",
+   "decides": [
+    "L1",
+    "L2",
+    "V1",
+    "V3"
+   ],
+   "controls": [
+    "the treasure button post"
+   ],
+   "over_application": "line_over: holds a post whose fix did land",
+   "source": "open-pr",
+   "signature": "tile dozer window",
+   "prior": {
+    "alpha": 3.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_7f44d83eaad625e9",
+     "hev_522f1ca2bc9062de",
+     "hev_b8f28a892a74b855",
+     "hev_8dcd719a9d6f614d",
+     "hev_fa790909c7cd5693",
+     "hev_e572a5dca937a9e7",
+     "hev_bec393d63b5410e0",
+     "hev_f9b2298b6c9739d4"
+    ]
+   }
+  },
+  {
+   "id": "ELSE",
+   "mechanism": "A25",
+   "prior_family": "completion_elsewhere",
+   "prior_family_reason": "same mechanism: a thread left open while another record shows the work done",
+   "nodes": [
+    "T_ELSE_FLICKER",
+    "T_ELSE_MUSIC",
+    "T_ELSE_ACID"
+   ],
+   "requirement": "R2",
+   "natural_reading": "a thread nobody closed is still broken",
+   "decides": [
+    "E1",
+    "E2",
+    "E3",
+    "V1",
+    "V3"
+   ],
+   "controls": [
+    "the mega tile post"
+   ],
+   "over_application": "else_over: closes a post nobody fixed",
+   "source": "brian-dm-and-builds",
+   "signature": "audio player change",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_13d86dcf23442708",
+     "hev_638d1ef495e65d17",
+     "hev_58dcdb13d83f424d",
+     "hev_34b1b726275909e0",
+     "hev_1b7e37504971c652",
+     "hev_7c74ef96692be1e3",
+     "hev_d2253957e65e0329"
+    ]
+   }
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "prior_family": "scope_alias",
+   "prior_family_reason": "same mechanism: a line and an existing ticket named differently, tied by a dated note",
+   "nodes": [
+    "T_ALIAS_APPLE",
+    "T_ALIAS_SPLASH"
+   ],
+   "requirement": "R3",
+   "natural_reading": "no matching title means a new ticket",
+   "decides": [
+    "A1",
+    "A2",
+    "A3",
+    "V2"
+   ],
+   "controls": [
+    "the team navigation line"
+   ],
+   "over_application": "alias_over: reuses a ticket for a line with none",
+   "source": "gmail-and-ticket-note",
+   "signature": "same thing as ENG-2073",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_ab2508cad060b0ac",
+     "hev_ace612d2f2268cdf",
+     "hev_9cefe52f59fd5be5"
+    ]
+   }
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-INLINE",
+   "kind": "scale",
+   "rule": "INLINE",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "done_gap",
+   "source": "github-inline",
+   "members": [
+    "T_INLINE_TD",
+    "T_INLINE_AXE"
+   ],
+   "description": "a merged PR with Brian's tick means the child is Done"
+  },
+  {
+   "id": "CH-REPLY",
+   "kind": "scale",
+   "rule": "REPLY",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "superseding",
+   "source": "unrelated-thread-reply",
+   "members": [
+    "T_REPLY"
+   ],
+   "description": "a ticked line is fixed"
+  },
+  {
+   "id": "CH-BACK",
+   "kind": "scale",
+   "rule": "BACK",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "superseding",
+   "source": "one-to-one-dm",
+   "members": [
+    "T_BACK"
+   ],
+   "description": "a ticked line is fixed"
+  },
+  {
+   "id": "CH-FOLLOW",
+   "kind": "scale",
+   "rule": "FOLLOW",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "authority",
+   "source": "trello-comment",
+   "members": [
+    "T_FOLLOW"
+   ],
+   "description": "any note on a child is enough"
+  },
+  {
+   "id": "CH-GONE",
+   "kind": "scale",
+   "rule": "GONE",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "exact_predicate",
+   "source": "economy-change",
+   "members": [
+    "T_GONE",
+    "T_WINGS"
+   ],
+   "description": "an unticked line is still broken"
+  },
+  {
+   "id": "CH-LINE",
+   "kind": "scale",
+   "rule": "LINE",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "done_gap",
+   "source": "open-pr",
+   "members": [
+    "T_LINE"
+   ],
+   "description": "fixed and did a PR means it shipped"
+  },
+  {
+   "id": "CH-ELSE",
+   "kind": "scale",
+   "rule": "ELSE",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "completion_elsewhere",
+   "source": "brian-dm-and-builds",
+   "members": [
+    "T_ELSE_FLICKER",
+    "T_ELSE_MUSIC",
+    "T_ELSE_ACID"
+   ],
+   "description": "a thread nobody closed is still broken"
+  },
+  {
+   "id": "CH-ALIAS",
+   "kind": "scale",
+   "rule": "ALIAS",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "scope_alias",
+   "source": "gmail-and-ticket-note",
+   "members": [
+    "T_ALIAS_APPLE",
+    "T_ALIAS_SPLASH"
+   ],
+   "description": "no matching title means a new ticket"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 4,
+   "reason": "Arthur's DM, #prototype context, canvas channel lookup"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 2,
+   "reason": "rule doc read"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 3,
+   "reason": "folder and doc location"
+  },
+  {
+   "phase": "discovery",
+   "service": "gcal",
+   "calls": 2,
+   "reason": "review invite attendees"
+  },
+  {
+   "phase": "discovery",
+   "service": "linear",
+   "calls": 6,
+   "reason": "tree parents, statuses, labels, users"
+  },
+  {
+   "phase": "rules",
+   "service": "trello",
+   "calls": 3,
+   "reason": "finding Brian's closing rule"
+  },
+  {
+   "phase": "enumeration",
+   "service": "slack",
+   "calls": 14,
+   "reason": "canvas pages, #god-bugs pages, #builds searches, BoomBit posts"
+  },
+  {
+   "phase": "enumeration",
+   "service": "linear",
+   "calls": 4,
+   "reason": "open ENG tickets"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 6,
+   "reason": "PR search for tree and bug fixes"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gdocs",
+   "calls": 2,
+   "reason": "economy doc"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gmail",
+   "calls": 2,
+   "reason": "sign-in mail search"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gslides",
+   "calls": 1,
+   "reason": "wrap deck"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 47,
+   "reason": "comments on 32 tree records and about 15 candidate tickets: each answers a distinct question"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 26,
+   "reason": "reviews and inline comments on 13 merged PRs"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 35,
+   "reason": "thread reads on lines that need one"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 117,
+   "reason": "one record per bug line, child moves and child notes: each is a distinct target with no batch form"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "index sheet create and fill"
+  },
+  {
+   "phase": "writes",
+   "service": "gdrive",
+   "calls": 2,
+   "reason": "move and share"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "reply to Arthur"
+  },
+  {
+   "phase": "read-back",
+   "service": "linear",
+   "calls": 3,
+   "reason": "confirm filed records"
+  },
+  {
+   "phase": "read-back",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "confirm the index"
+  }
+ ],
+ "writes": [
+  {
+   "service": "linear",
+   "tool": "linear_create_issue",
+   "count": 68,
+   "depends_on": [
+    "T_GONE",
+    "T_LINE",
+    "T_REPLY",
+    "T_BACK",
+    "T_ELSE_FLICKER",
+    "T_ALIAS_APPLE"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R4",
+    "R9"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_comment",
+   "count": 30,
+   "depends_on": [
+    "T_ALIAS_APPLE",
+    "T_ALIAS_SPLASH",
+    "T_FOLLOW"
+   ],
+   "requirements": [
+    "R3",
+    "R6"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue",
+   "count": 14,
+   "depends_on": [
+    "T_INLINE_TD",
+    "T_INLINE_AXE",
+    "T_SEASON",
+    "T_WINGS"
+   ],
+   "requirements": [
+    "R5"
+   ]
+  },
+  {
+   "service": "gsheets",
+   "tool": "gsheets_values_update",
+   "count": 3,
+   "depends_on": [
+    "T_GONE",
+    "T_ALIAS_APPLE"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_share_file",
+   "count": 3,
+   "depends_on": [
+    "K6"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "T_GONE",
+    "T_INLINE_TD",
+    "T_ALIAS_APPLE"
+   ],
+   "requirements": [
+    "R8"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [
+  {
+   "hazard_id": "L01",
+   "resolution": "dated_claim",
+   "why_safe": "the SQL leaves ticket state alone; Arthur says the tree never got closed out, so PR on a merged ticket is the stale status the job reconciles",
+   "requirement": "R5"
+  },
+  {
+   "hazard_id": "L07",
+   "resolution": "dated_claim",
+   "why_safe": "the SQL leaves ticket state alone; moving these children is the job",
+   "requirement": "R5"
+  },
+  {
+   "hazard_id": "L03",
+   "resolution": "dated_claim",
+   "why_safe": "the SQL leaves ENG-2405 alone; the rule doc keeps the masters as they are",
+   "requirement": "R5"
+  }
+ ],
+ "denied_probes": [],
+ "gradable_surface": "01_Gradable_Surface.json"
+}

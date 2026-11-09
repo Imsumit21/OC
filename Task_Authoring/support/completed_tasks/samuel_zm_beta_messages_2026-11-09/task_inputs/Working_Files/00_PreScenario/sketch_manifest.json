@@ -1,0 +1,237 @@
+{
+ "_note": "PRE-SCENARIO SKETCH for hardness_v2_check.py only (recommended storyline B: Zombie Match 3D beta player messages). Not the /create-scenario draft manifest. Ids prefixed NEW- are planned seeds with declared containers; every other id is a real synth-cut record Samuel can open (cansee_anchors.txt). Trap wording below describes design intent, not prompt, Oracle Event or criterion text.",
+ "effective_profile": "extreme",
+ "horizon": "Long Horizon",
+ "anchors": [
+  {
+   "id": "AN1",
+   "locator": "slack:D06L58XCVKK/NEW-leonard-beta-messages-dm",
+   "prompt_reference": "Leonard's DM from yesterday"
+  },
+  {
+   "id": "AN2",
+   "locator": "gsheets:f_a325dd4af80afc5994d5dc",
+   "prompt_reference": "the Zombie Match PN sheet"
+  },
+  {
+   "id": "AN3",
+   "locator": "trello:6851a769c65dc0017a227bb7",
+   "prompt_reference": "our push notifications card"
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "F1",
+   "seeded_ids": [
+    "NEW-leonard-beta-messages-dm"
+   ],
+   "delegated_by_record": "NEW-leonard-beta-messages-dm",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R5",
+    "R6"
+   ]
+  },
+  {
+   "id": "F2",
+   "seeded_ids": [
+    "NEW-beta-message-rule-doc"
+   ],
+   "delegated_by_record": "NEW-leonard-beta-messages-dm",
+   "requirement_ids": [
+    "R2",
+    "R3",
+    "R4"
+   ]
+  },
+  {
+   "id": "F3",
+   "seeded_ids": [
+    "NEW-robert-ask-point-decision"
+   ],
+   "delegated_by_record": "NEW-leonard-beta-messages-dm",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "F4",
+   "seeded_ids": [
+    "NEW-roadmap-card-standing-rule"
+   ],
+   "delegated_by_record": "NEW-leonard-beta-messages-dm",
+   "requirement_ids": [
+    "R7"
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T_DONE",
+   "family": "done_gap",
+   "mechanism": "A24",
+   "services": [
+    "gsheets",
+    "github",
+    "linear"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the race reminder is finished: the sheet says Ready, its string shipped in merged and approved match3d#248, and a QA ticket for the message pass closed Done",
+   "resolver": "a dated inline review comment on a later match3d PR, by the QA owner, says that reminder did not fire on one platform on a current build; the rule needs both platforms"
+  },
+  {
+   "id": "T_CORR",
+   "family": "superseding",
+   "mechanism": "A11",
+   "services": [
+    "gsheets",
+    "slack"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "the headline on the PNs Beta tab is the final line for the seven-day lapsed message",
+   "resolver": "a later thread reply by the copy owner under an unrelated #zombie-art post replaces that line, worded by its nickname rather than by the sheet's words",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "id": "f_a325dd4af80afc5994d5dc",
+     "container": "file:f_a325dd4af80afc5994d5dc",
+     "seeded": false,
+     "at": "2025-06-23T07:02:43Z"
+    },
+    {
+     "service": "slack",
+     "id": "NEW-copy-owner-thread-reply",
+     "container": "slack:C08R8CHB0QL/NEW-unrelated-art-root",
+     "seeded": true,
+     "at": "2025-09-29T17:00:00Z"
+    }
+   ]
+  },
+  {
+   "id": "T_DATE",
+   "family": "boundary_date",
+   "mechanism": "A4",
+   "services": [
+    "gsheets",
+    "slack"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the first-session message is Ready and LIVE with a level 20 / 12 hour trigger, so it goes out",
+   "resolver": "the permission ask sits after that level (Robert's Jul 10 DM and the seeded beta decision), so the players the trigger selects have not been asked yet: the dependency, not the flag, decides it"
+  },
+  {
+   "id": "T_EXC",
+   "family": "house_rule",
+   "mechanism": "A15",
+   "services": [
+    "gmail",
+    "gsheets"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "an event row with finished copy and Everyone as its audience can go once the feature is in the beta",
+   "resolver": "an older store-review note in Samuel's own mailbox says promotional messages need an explicit player opt-in; the settings panel has none, so the paid-pass row waits"
+  },
+  {
+   "id": "T_ALIAS",
+   "family": "scope_alias",
+   "mechanism": "A7",
+   "services": [
+    "confluence",
+    "linear"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "no ticket exists for the Win & Collect message, so a new one is needed",
+   "resolver": "the live-ops page says Collect & Win is the same feature under another name, and a ZOM ticket titled with that name already carries the work: reuse it"
+  },
+  {
+   "id": "T_FILT",
+   "family": "exact_predicate",
+   "mechanism": "A17",
+   "services": [
+    "linear",
+    "gsheets"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the PNs Beta tab is the whole list of messages",
+   "resolver": "Leonard's scope also takes in asks people made after the tab was frozen; one sits in a comment on a Regression ticket about the home screen, outside the sheet and outside any notification search"
+  },
+  {
+   "id": "T_FOLLOW",
+   "family": "house_rule",
+   "mechanism": "A15",
+   "services": [
+    "trello",
+    "linear"
+   ],
+   "requirement": "R7",
+   "expected_wrong_reading": "the plan sheet records why a message is held, so nothing else is owed",
+   "resolver": "a standing team rule on a roadmap card other than the one the prompt names says a held item gets a note on its own ticket naming what is missing, so each held message owes one write on its ticket"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "DONE",
+   "mechanism": "A24",
+   "nodes": [
+    "T_DONE"
+   ],
+   "requirement": "R2",
+   "natural_reading": "Ready plus a merged PR means it works"
+  },
+  {
+   "id": "CORR",
+   "mechanism": "A11",
+   "nodes": [
+    "T_CORR"
+   ],
+   "requirement": "R4",
+   "natural_reading": "the sheet holds the current copy"
+  },
+  {
+   "id": "DATE",
+   "mechanism": "A4",
+   "nodes": [
+    "T_DATE"
+   ],
+   "requirement": "R3",
+   "natural_reading": "a Ready message reaches the players its trigger names"
+  },
+  {
+   "id": "EXC",
+   "mechanism": "A15",
+   "nodes": [
+    "T_EXC"
+   ],
+   "requirement": "R6",
+   "natural_reading": "a finished event message can go"
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "nodes": [
+    "T_ALIAS"
+   ],
+   "requirement": "R5",
+   "natural_reading": "search the ticket by the sheet's name"
+  },
+  {
+   "id": "FILT",
+   "mechanism": "A17",
+   "nodes": [
+    "T_FILT"
+   ],
+   "requirement": "R1",
+   "natural_reading": "the sheet is the population"
+  },
+  {
+   "id": "FOLLOW",
+   "mechanism": "A15",
+   "nodes": [
+    "T_FOLLOW"
+   ],
+   "requirement": "R7",
+   "natural_reading": "the plan sheet is the only record owed"
+  }
+ ]
+}

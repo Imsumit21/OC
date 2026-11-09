@@ -1,0 +1,61 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Owen Baker · DD bug carry-over into Linear · normal universe, clock 2026-02-14T00:00:00Z (Fri Feb 13, 4:00 PM PT) · injection rev9.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+On screen 16, leave every field empty.
+
+Reason: nothing in the scenario is about a tool outage or a slow search. The task's difficulty and horizon come from the seeded records (`Working_Files/01_Grounding_Dossier.md`), never from friction (playbook 03, hard gate 1).
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No forced errors and no async waits, so the Oracle Events need no recovery or wait steps.
+
+## Post-baseline checks
+
+- Forced error fired (failed calls visible in the trajectories): n/a (Friction: none)
+- Async submit → check → get appeared, with the delay: n/a (Friction: none)
+- Only 1.0 / 30 / 35 have been exercised before; any other value confirmed in the first trajectory: n/a (Friction: none)
+
+## Self-review
+
+Checks walked: `Evals/1_Prompt_Eval.md` §2.2 (feasibility, persona ACL) and `Evals/2_Oracle_Events_Eval.md` §3.5. With no friction, every read stays on its normal path, so there is no alternate path to prove.
+
+| Area | Counter-reading (strongest argument it fails) | Evidence that resolves it | Verdict |
+|---|---|---|---|
+| Is the scenario about an outage | The wind-down could read as an outage worth simulating: Slack is about to drop to the free plan and its history goes. | That is a future plan in Arthur's DM D05S1S2AB5M/1770937805.214409, not a live failure; every read works at the clock, and the job is to move records while they still exist. | none stands |
+| Horizon / difficulty | Friction could add calls to help the requester's over-130-calls target, or lower the pass rate. | Playbook 03 hard gate 1: friction is never a horizon or hardness lever, and retries never count. Volume comes from 102 cohort records and the per-entry writes (01_Hardness_Manifest.json call_budget, 285). | none stands |
+| Alternate paths | An errored Linear or GitHub read could remove the only route to a deciding record, such as comment_d6aee2099bd71050facc422ccef8f809 or harmonygames-Games/GameOfDominoes#1905#rc_1. | No error is configured, so no route is removed. | none stands |
+| Async twins and verifier reads | A wait on Slack search could change which records a run meets first, which is the designed order. | No wait is configured, so the discovery order in the dossier stands unchanged (D05USBTQY1F/1764760812.418229). | none stands |
+
+Unresolved: none. The config is not supplied to `/prompt` (no friction).
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputs · 03_Error_Async_Config.txt#3d3ae3f9720a · 00_Assigments.md#c039da1b9b09 · 01_Grounding_Dossier.md#9c226652d6ec · 01_Universe_Inject.sql#ea5b542897c8 · __context__#ba6bb23d4a12 · __assignment__#560a0d2ca2a9 · __policy__#dc4ab5df3cdd · __gate_policy__#f8638415ca2c · __review__#a52cce78498e · blocking 0 · warnings 0 · checks 12
+[PASS] assignment.v3_context: Owen Baker / Game Engineer (Unity); medium cap <85%; freeze 2026-02-14T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe normal; KB bound; clock Clock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#ea5b542897c8, 01_Hardness_Manifest.json#ec4cc1070c06, 01_Grounding_Dossier.md#9c226652d6ec, solver/solver.py#c2eca0f97c62, 01c_Dispositions.json#b86f62194ac2, 01c_Preflight_Report.json#2580b7c15c79, 00_Assigments.md#c039da1b9b09, 01_Scenario_Design.md#de755e35633e, 01_Hardness_Manifest.draft.json#459add197b56, 01_Gradable_Surface.json#6d9cd388cdbb, __context__#ba6bb23d4a12, __assignment__#560a0d2ca2a9, __policy__#dc4ab5df3cdd, __gate_policy__#f8638415ca2c, __review__#a52cce78498e)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 4 evidenced counter-readings (of 4 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+
+

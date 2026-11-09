@@ -1,0 +1,53 @@
+UNCALIBRATED · surface: 47 slots, total weight 135, mechanism-flippable 102 (75.6%)
+
+Whole policies
+  100.0%  Perfect  [lands: -]
+   24.4%  Canvas ticks at face value, nothing else  [lands: ALIAS, BACK, FILT, FOLLOW, GONE, INLINE, LINE, REPLY]
+   83.0%  Reads PR reviews but never inline comments, otherwise perfect  [lands: INLINE]
+   67.4%  Thorough, never opens threads under unrelated posts or other DMs  [lands: BACK, INLINE, REPLY]
+   72.6%  Stays inside the canvas, otherwise thorough  [lands: BACK, FILT, REPLY]
+   80.7%  Reads everything, never asks what the live build contains  [lands: GONE, LINE]
+   91.9%  Right calls, misses the note rule  [lands: FOLLOW]
+
+Single misses
+  INLINE  83.0%
+  REPLY   90.4%
+  BACK    90.4%
+  FOLLOW  91.9%
+  GONE    86.7%
+  LINE    90.4%
+  FILT    84.4%
+  ALIAS   88.9%
+
+Pairs at or above the 80 % line: ['REPLY+BACK', 'REPLY+FOLLOW', 'REPLY+GONE', 'REPLY+LINE', 'BACK+FOLLOW', 'BACK+GONE', 'BACK+LINE', 'FOLLOW+LINE', 'FOLLOW+ALIAS', 'GONE+LINE']
+
+P(one run catches every trap) ~ 0.004 (independence); expected landings per run at design rates 3.60
+Triples at or above the 80 % line: none
+
+One pre-check run under the narrow-miss rule (one cause under 15 % caps /hardness at 2), independence
+  scale 1.00: P(two or more causes, or one cause losing 15 % or more) = 0.98
+  scale 0.70: P(two or more causes, or one cause losing 15 % or more) = 0.86
+  scale 0.50: P(two or more causes, or one cause losing 15 % or more) = 0.68
+
+Six-run Monte Carlo, carrier rates (scale x rho)
+  scale  rho   mean-land  E[avg]  P(<80)  P(SD)  P(<5 full)  P(pat)  P(>130 all six)  mean-min-calls  P(all)
+  1.00  0.30      0.45   60.5%    1.00   0.88       1.00    1.00            1.00            177    0.88
+  1.00  0.60      0.45   61.0%    0.98   0.95       1.00    1.00            1.00            177    0.93
+  0.80  0.35      0.36   67.9%    0.93   0.93       1.00    1.00            1.00            177    0.87
+  0.70  0.35      0.32   71.7%    0.85   0.93       1.00    1.00            1.00            177    0.80
+  0.60  0.35      0.27   75.5%    0.70   0.91       1.00    1.00            1.00            178    0.67
+  0.60  0.60      0.27   75.9%    0.65   0.92       1.00    0.99            1.00            178    0.62
+  0.50  0.35      0.23   79.3%    0.51   0.87       1.00    0.99            1.00            178    0.49
+  0.40  0.35      0.18   83.2%    0.30   0.80       1.00    0.99            1.00            178    0.29
+
+Ledger view (scale x rho)
+  1.00  0.35      0.34   69.9%    0.89   0.94       1.00    1.00            1.00            176    0.85
+  0.70  0.35      0.24   78.3%    0.56   0.89       1.00    1.00            1.00            177    0.53
+
+Rubric inflation view: /rubric adds always-pass per-target rows (carrier rates, rho .35)
+  + 30 weight  1.00  0.35      0.45   67.7%    0.98   0.80       1.00    1.00            1.00            177    0.78
+  + 30 weight  0.70  0.35      0.32   76.8%    0.67   0.84       1.00    1.00            1.00            177    0.59
+  + 60 weight  1.00  0.35      0.45   72.7%    0.92   0.64       1.00    1.00            1.00            177    0.59
+  + 60 weight  0.70  0.35      0.32   80.4%    0.46   0.71       1.00    1.00            1.00            177    0.36
+  +100 weight  1.00  0.35      0.45   77.3%    0.72   0.41       1.00    1.00            1.00            177    0.29
+  +100 weight  0.70  0.35      0.32   83.7%    0.21   0.48       1.00    1.00            1.00            177    0.12

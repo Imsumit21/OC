@@ -1,0 +1,293 @@
+{
+ "_note": "PRE-SCENARIO SKETCH surface for hardness_v2_check.py and policy_model.py; not 01_Gradable_Surface.json. Fact slots only, no criterion text. Weights follow kind of work: 1 lookup, 3 interpretation or limited reconciliation, 5 multi-source reconciliation.",
+ "slots": [
+  {
+   "id": "V1_new_ticket_count",
+   "weight": 5,
+   "class": "aggregate",
+   "mechanisms": [
+    "GONE",
+    "LINE",
+    "BACK",
+    "ELSE",
+    "ALIAS",
+    "FILT"
+   ],
+   "note": "new tickets filed (rule x canvas x builds x tickets)"
+  },
+  {
+   "id": "V2_still_broken_count",
+   "weight": 5,
+   "class": "aggregate",
+   "mechanisms": [
+    "GONE",
+    "LINE",
+    "BACK",
+    "ELSE",
+    "FILT"
+   ],
+   "note": "bugs still broken for players"
+  },
+  {
+   "id": "V3_tree_done_count",
+   "weight": 5,
+   "class": "aggregate",
+   "mechanisms": [
+    "LINE",
+    "TREE"
+   ],
+   "note": "tree children that end Done"
+  },
+  {
+   "id": "G1_lives_loss_line",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "GONE"
+   ],
+   "note": "call on the lives-after-a-loss line"
+  },
+  {
+   "id": "G2_lives_twice_line",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "GONE"
+   ],
+   "note": "call on the losing-twice line"
+  },
+  {
+   "id": "G3_gone_reason",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "GONE"
+   ],
+   "note": "reason names the ticket economy"
+  },
+  {
+   "id": "L1_window_carried",
+   "weight": 5,
+   "class": "write_content",
+   "mechanisms": [
+    "LINE"
+   ],
+   "note": "tile dozer window carried as still broken"
+  },
+  {
+   "id": "L2_window_points_to_open_pr",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "LINE"
+   ],
+   "note": "ticket names the unmerged PR"
+  },
+  {
+   "id": "B1_ticked_line_carried",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "BACK"
+   ],
+   "note": "ticked line carried after the later note"
+  },
+  {
+   "id": "B2_ticked_line_master",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "BACK"
+   ],
+   "note": "its ticket sits under the right master"
+  },
+  {
+   "id": "E1_flicker_closed",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "note": "flicker closed, no ticket"
+  },
+  {
+   "id": "E2_flicker_cites_fix",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "note": "row cites the build change"
+  },
+  {
+   "id": "A1_apple_signin_reused",
+   "weight": 5,
+   "class": "write_content",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "note": "reuses the existing sign-in ticket"
+  },
+  {
+   "id": "A2_android_signin_reused",
+   "weight": 5,
+   "class": "write_content",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "note": "reuses the existing splash ticket"
+  },
+  {
+   "id": "F1_mega_tile_row",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "FILT"
+   ],
+   "note": "mega tile bug present"
+  },
+  {
+   "id": "F2_bottom_bar_row",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [
+    "FILT"
+   ],
+   "note": "Android bottom bar bug present"
+  },
+  {
+   "id": "O1_moved_tickets_noted",
+   "weight": 5,
+   "class": "aggregate",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "note": "moved tickets carry the note"
+  },
+  {
+   "id": "O2_sample_note",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [
+    "FOLLOW"
+   ],
+   "note": "sample note names the build"
+  },
+  {
+   "id": "T1_unmerged_child_stays",
+   "weight": 5,
+   "class": "direct",
+   "mechanisms": [
+    "TREE"
+   ],
+   "note": "child with no merged work stays open (member chosen after census)"
+  },
+  {
+   "id": "T2_second_child_stays",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [
+    "TREE"
+   ],
+   "note": "second child stays open"
+  },
+  {
+   "id": "K1_ticked_sample_1",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "control: ticked line closed"
+  },
+  {
+   "id": "K2_ticked_sample_2",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "control: ticked line closed"
+  },
+  {
+   "id": "K3_unticked_sample",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "control: unticked line carried"
+  },
+  {
+   "id": "K4_new_ticket_team_label",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [],
+   "note": "new tickets sit on ENG with the bug label"
+  },
+  {
+   "id": "K5_master_sample_1",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [],
+   "note": "control: core screen under Core master"
+  },
+  {
+   "id": "K6_master_sample_2",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [],
+   "note": "control: event screen under Live-Ops master"
+  },
+  {
+   "id": "K7_child_done_1",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [],
+   "note": "control: merged child moved to Done"
+  },
+  {
+   "id": "K8_child_done_2",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [],
+   "note": "control: merged child moved to Done"
+  },
+  {
+   "id": "K9_child_done_3",
+   "weight": 3,
+   "class": "write_content",
+   "mechanisms": [],
+   "note": "control: merged child moved to Done"
+  },
+  {
+   "id": "K10_zm_canvas_out",
+   "weight": 3,
+   "class": "direct",
+   "mechanisms": [],
+   "note": "control: other game's canvas left out"
+  },
+  {
+   "id": "K11_sheet_row_volume",
+   "weight": 3,
+   "class": "aggregate",
+   "mechanisms": [],
+   "note": "sheet carries every bug in scope"
+  },
+  {
+   "id": "K12_sheet_in_drive",
+   "weight": 1,
+   "class": "delivery",
+   "mechanisms": [],
+   "note": "sheet in Owen's Drive"
+  },
+  {
+   "id": "K13_sheet_shared",
+   "weight": 1,
+   "class": "delivery",
+   "mechanisms": [],
+   "note": "shared with the Monday invite"
+  },
+  {
+   "id": "K14_reply_in_dm",
+   "weight": 1,
+   "class": "delivery",
+   "mechanisms": [],
+   "note": "reply in Arthur's DM"
+  }
+ ]
+}

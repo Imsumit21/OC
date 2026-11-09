@@ -1,0 +1,64 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Decision for samuel_zm_beta_messages (injection rev6, SQL sha256 6d162cfd1032): no forced errors and no async waits.
+Reason: the scenario is a beta player-message review, not an outage story, and friction is never a hardness or horizon
+lever (playbooks/03_Error_Async_Config.md hard gate 1). Applies to the baseline run and the verifier; nothing is
+configured, so this file is not supplied to /prompt.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+On screen 16, leave every field empty.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No forced errors and no async waits, so the Oracle Events need no recovery or wait steps.
+
+## Post-baseline checks
+
+- Forced error fired: n/a (none configured)
+- Async submit, check, get appeared: n/a (none configured)
+- Non-default values confirmed: n/a
+
+## Self-review
+
+Checked against playbook 03 gates 1 to 4 and GEN_EXECUTION §6a.
+
+| Area | Counter-reading (strongest argument against Friction: none) | Evidence that resolves it | Verdict |
+|---|---|---|---|
+| Is the scenario about an outage? | A push message that never arrives on a store build (D06UFE81RF0/1759163970.141449 thread) could make a forced error on a read realistic | That is a game delivery problem in the task's facts, not an outage of any tool Samuel uses; no record mentions a service being down | none stands |
+| Horizon / difficulty | Async waits on the per-feature searches could push the call count past 130 | Waits and retries are never counted toward the horizon and are not a lever (playbook gate 1); the call budget of 202 comes from per-ticket reads and writes (01_Hardness_Manifest.json call_budget) | none stands |
+| Verifier and OE | A configured error would change what /oe and /rubric can require | With nothing configured, every OE step uses the plain read path, e.g. 6fd96f3c3977cee8345e685d31cbc177 and DES-314 | none stands |
+
+Unresolved: none. Every deciding record is persona-readable (dossier 1.E check-sql PASS).
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputsK · 03_Error_Async_Config.txt#4a9d7adf67a3 · 00_Assigments.md#55f6d8057880 · 01_Grounding_Dossier.md#4aa9b3c38219 · 01_Universe_Inject.sql#6d162cfd1032 · __context__#72168f70a409 · __assignment__#3adec6ac02d7 · __policy__#dc4ab5df3cdd · __gate_policy__#115714063000 · __review__#95f1481dfb3c · blocking 0 · warnings 0 · checks 12
+[PASS] assignment.v3_context: Samuel Turner / Game Designer; medium cap <85%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#6d162cfd1032, 01_Hardness_Manifest.json#09ddeab36568, 01_Grounding_Dossier.md#4aa9b3c38219, solver/solver.py#a1ac742c0f47, 01c_Dispositions.json#1e6cb127a339, 01c_Preflight_Report.json#d1bfc2687c65, 00_Assigments.md#55f6d8057880, 01_Scenario_Design.md#a477a8d3015e, 01_Hardness_Manifest.draft.json#ed860637b593, 01_Gradable_Surface.json#095a6e4fc9df, __context__#72168f70a409, __assignment__#3adec6ac02d7, __policy__#dc4ab5df3cdd, __gate_policy__#115714063000, __review__#95f1481dfb3c)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 3 evidenced counter-readings (of 3 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+
+
+
+
+

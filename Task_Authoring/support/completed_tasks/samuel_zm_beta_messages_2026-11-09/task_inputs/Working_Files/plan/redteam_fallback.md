@@ -1,0 +1,31 @@
+RED TEAM UNAVAILABLE: redteam_review: set REDTEAM_MODEL or pass --model (REDTEAM_* is unset in this environment).
+
+RED TEAM FALLBACK: a fresh-context Claude agent with none of this session's reasoning reviewed the design on 2026-11-04 as the platform's strict reviewer: it read the design, the builder, Evals/1_Prompt_Eval.md and the known-issue cards, and checked the planned seeds against the universe through tools/hg.py and tools/persona_view.py plus NotificationManager.cs. Report: plan/redteam_independent.md. It is one reviewer from the same model family, not the two-family review the gate intends, so this stays in Unresolved until the blind sweeps or the pre-check cover it. The requester delegated this choice on 2026-11-04.
+
+Verdict on the first draft: FAIL, four blocking findings. The same agent then re-checked the revision and found B1 to B4 closed and one new blocker, B5. Every finding and what was done:
+
+| Finding | Source | Disposition | Evidence |
+|---|---|---|---|
+| B1 the two off-parent asks cannot be found by any fair route | plan/redteam_independent.md | fixed: each child ticket carries a relates-to link to the ticket that holds the ask, and linear_list_issues returns relations (Ask_Carriers §6b) | T6, C6, ZOM-542, ZOM-556 |
+| B2 "can reach" unsettled for the first-session message, and Lives and lapsed passed on a different standard | plan/redteam_independent.md | fixed: the reach test now says a player counts only once the ask has happened and the settings toggle doesn't count; Robert's post is scoped to the beta build | T3, C0880U9751A/1758216118.113509 |
+| B3 Lapsed 14 days contradicts the code, because the weekly batch fires on days 7, 14, 21 and 28 | plan/redteam_independent.md | fixed and turned into the design's work-already-done trap: Drop, covered by Lapsed 7 days; Lapsed 30 days added as the control past the batch | T7, harmonygames-Games/match3d#248 |
+| B4 two Drop values rest on no record | plan/redteam_independent.md | fixed: Comeback gift has a planned Leonard comment; Pop-up offer live removed because ZOM-225 leaves its state unclear | T7, ZOM-225 |
+| N1 the job reads as a release sign-off, which is Engineering Ops | plan/redteam_independent.md | changed the job: framed on D1 and D7, a team note on what a lapsed player hears with a warehouse baseline, an Audience column, and an email to each asker | wh_USER_COHORT_RETENTION |
+| N2 most traps leak one hop past the four sources | plan/redteam_independent.md | title aliases removed, the correction now quotes the old line's words, the QA reply avoids the note's keywords; design rates lowered to a 0.42 mean | T2, T4 |
+| N3 the old-name trap defeats itself | plan/redteam_independent.md | dropped as a trap and kept as a control; BUILT now rests on the day-14 join | T7 |
+| N4 the planned QA builds clash with #builds | plan/redteam_independent.md | fixed: comments cite store versions Android 0.3.127 and iOS 0.3.40 and give no iPhone build on the race ticket | C0880U9751A/1758643365.607149 |
+| N5 comment reads could be skipped, dropping the lean run under 130 | plan/redteam_independent.md | fixed: Audience and the client-or-server note exist only in comments, and both are plan values | T4, surface linear_list_comments |
+| N6 asks looked generated, and gcal and gslides existed for service count | plan/redteam_independent.md | six one-to-one Backlog asks removed; gcal now carries the completion note; the deck stays a stale summary | T7, T10 |
+| N7 "name the one thing missing" had no order | plan/redteam_independent.md | fixed: the rule's tests are numbered and stop at the first failure, and test 2 makes server sends a rule test | K2 |
+| N8 emoji fork settled only by the grader | plan/redteam_independent.md | fixed: the rule says emoji don't count as a different line | K2 |
+| N9 live today has no single authority | plan/redteam_independent.md | accepted: ticket descriptions state the feature's state in plain words; those members converge on Hold either way | K7 |
+| N10 housekeeping | plan/redteam_independent.md | Robert's Sep 18 post is now answered by his seeded post; hub wording and ticket times fixed; stale counts regenerate from the builder | C0880U9751A/1758215775.137159 |
+| B5 "five messages over 28 days" is not one value: it depends on level, lives and the ask | plan/redteam_independent.md, Delta review | fixed: no total is graded. The note now gives the lapsed ladder by day and says who hears nothing, which is also the retention finding. Self-verified against the source: days 1, 7, 14, 21, 28; NotificationsEnabled stays false before the ask. The reviewer has not re-read this fix | harmonygames-Games/match3d#248, X17, X20 |
+| N11 Leonard's daily-is-fine comment had no planned wording | plan/redteam_independent.md, Delta review | fixed: wording added to the builder and the record plan | T4 |
+| N12 the first-session message could stop at the day test | plan/redteam_independent.md, Delta review | fixed: the reach test now runs before the day test, so it has one stopping point | K2, T3 |
+| N13 a delegation quote no longer matched the hub | plan/redteam_independent.md, Delta review | fixed: fragment K4 quotes the current wording | K4 |
+| N14 three state rows required Backlog, making FOLLOW the largest choke | plan/redteam_independent.md, Delta review | fixed: those rows accept Backlog or Todo and now test only that the ticket left Done | X1c, X6c, X8c |
+| N15 the cohort floor of 40 is met only by counting ruled-out records | plan/redteam_independent.md, Delta review | accepted and disclosed: 42 looked at, 35 in scope, the same reading frederick_q4 used | T14, T15 |
+| N16 baseline rows checked D1 only | plan/redteam_independent.md, Delta review | fixed: both regexes now need D1 and D7 | K16, K17 |
+| Competency after the revision: defensible, not yet clearly Marketing and GTM | plan/redteam_independent.md, Delta review | improved by making the reach gap the note's graded core at weight 5; most writes stay on Linear because they carry the horizon, so this stays an open risk for /prompt | X20 |
+| B1 depended on relations being visible | plan/redteam_independent.md, Delta review | checked: stored Douglas runs show a relations object in Linear tool output; seeded rows must still be seen rendering in the pre-check | ZOM-542 |

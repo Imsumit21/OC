@@ -1,0 +1,891 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "owen_dd_bug_carryover",
+ "revision": "design-1",
+ "classes": [
+  "Broken",
+  "Fixed",
+  "Gone",
+  "Covered"
+ ],
+ "truth_fields": {
+  "class": "Outcome",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "sheet": {
+   "kind": "table",
+   "name_regex": "(?i).*(carry|bug|index|canvas|dd).*",
+   "key_column": "Bug",
+   "key_regex": "(?:Bug 1|[A-Za-z][A-Za-z0-9 .()&/-]*)",
+   "columns": [
+    "Bug",
+    "Outcome",
+    "Ticket",
+    "Why"
+   ],
+   "class_column": "Outcome",
+   "reason_column": "Why",
+   "comparators": {
+    "Outcome": "yes_no"
+   },
+   "yes_no": {
+    "Broken": [
+     "Broken",
+     "Still broken",
+     "Bugs",
+     "Open"
+    ],
+    "Fixed": [
+     "Fixed",
+     "Done"
+    ],
+    "Gone": [
+     "Gone",
+     "Canceled",
+     "Cancelled"
+    ],
+    "Covered": [
+     "Covered",
+     "Has a ticket",
+     "Existing ticket",
+     "Reused"
+    ]
+   }
+  },
+  "reply": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  },
+  "issues": {
+   "kind": "json_text",
+   "tool": "linear_create_issue"
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "updates": {
+   "kind": "json_text",
+   "tool": "linear_update_issue"
+  }
+ },
+ "slots": [
+  {
+   "id": "V1",
+   "title": "Broken count in the sheet",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "counts outcomes joined across the canvas, builds, DMs and PRs",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Broken"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GONE",
+    "LINE",
+    "BACK",
+    "REPLY",
+    "ELSE"
+   ]
+  },
+  {
+   "id": "V5",
+   "title": "Fixed count in the sheet",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "ticked lines and closed bugs counted against the rule",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Fixed"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "BACK",
+    "REPLY",
+    "ELSE"
+   ],
+   "volume_for": [
+    "ticked"
+   ]
+  },
+  {
+   "id": "V2",
+   "title": "New tickets in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "line count less reuse decided across Slack, mail and Linear",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b68\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ]
+  },
+  {
+   "id": "V3",
+   "title": "Still broken in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same outcomes plus the two reused tickets",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b9\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GONE",
+    "LINE",
+    "BACK",
+    "REPLY",
+    "ELSE"
+   ]
+  },
+  {
+   "id": "V4",
+   "title": "UI children Done in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "tree states joined across Linear and GitHub",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b23\\b"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "INLINE",
+    "GONE"
+   ],
+   "volume_for": [
+    "moves"
+   ]
+  },
+  {
+   "id": "I1",
+   "title": "ENG-2434 note says it stays open",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "inline review on a merged PR against Brian's tick and the deck",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(ENG-2434|tile dozer)[ -~\\u00a0-\\uffff]{0,240}(stay|open|not done|held|popup)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ]
+  },
+  {
+   "id": "I2",
+   "title": "ENG-2426 note says it stays open",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "inline review on a merged PR against Brian's tick",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(ENG-2426|axe arena)[ -~\\u00a0-\\uffff]{0,240}(stay|open|not done|held|popup)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ]
+  },
+  {
+   "id": "I3",
+   "title": "ENG-2434 note names the popup",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "reads the held piece from the review",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "how.to.play"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ]
+  },
+  {
+   "id": "I4",
+   "title": "ENG-2426 note names the popup",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "reads the held piece from the review",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "info popup"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ]
+  },
+  {
+   "id": "B1",
+   "title": "Tavern buttons line is Still broken",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "canvas tick against a later DM",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Tavern buttons lost its frame",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ]
+  },
+  {
+   "id": "B2",
+   "title": "Tavern record filed as Bugs",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the outcome",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "(tavern)[ -~\\u00a0-\\uffff]{0,240}\"?state\"?[: ]+\"?Bugs"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ]
+  },
+  {
+   "id": "B3",
+   "title": "Shop icons line is Still broken",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "canvas tick against a reply under another post",
+   "class": "direct",
+   "selector": [
+    "field",
+    "shops from rivertile and memory tile has weird shop",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REPLY"
+   ]
+  },
+  {
+   "id": "B4",
+   "title": "Shop icons record filed as Bugs",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the outcome",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "(rivertile|river tile)[ -~\\u00a0-\\uffff]{0,240}\"?state\"?[: ]+\"?Bugs"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REPLY"
+   ]
+  },
+  {
+   "id": "G1",
+   "title": "Lives after a loss line is Gone",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "line against the economy change and the live build",
+   "class": "direct",
+   "selector": [
+    "field",
+    "I found the issue lives are not decreased after",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GONE"
+   ]
+  },
+  {
+   "id": "G2",
+   "title": "Losing twice line is Gone",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "line against the economy change and the live build",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lives are only decreased after losing twice in a",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GONE"
+   ]
+  },
+  {
+   "id": "G3",
+   "title": "Character change line is Gone",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "same rule on a third line",
+   "class": "direct",
+   "selector": [
+    "field",
+    "When I change the character it just adds 1",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GONE"
+   ]
+  },
+  {
+   "id": "G4",
+   "title": "ENG-2424 note says it stays open",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "disable post read against the tree",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(ENG-2424|wings)[ -~\\u00a0-\\uffff]{0,240}(stay|open|not done|disabled|off)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GONE"
+   ]
+  },
+  {
+   "id": "L1",
+   "title": "Tile dozer window is Still broken",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Slack claim against the open PR",
+   "class": "direct",
+   "selector": [
+    "field",
+    "tile dozer window background",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LINE"
+   ]
+  },
+  {
+   "id": "L2",
+   "title": "Its row names the open PR",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "PR status read from GitHub",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sheet",
+    "(window)[ -~\\u00a0-\\uffff]{0,240}1913"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LINE"
+   ]
+  },
+  {
+   "id": "E1",
+   "title": "Flicker bug is Fixed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "open thread against the commit and build log",
+   "class": "direct",
+   "selector": [
+    "field",
+    "flickering",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ]
+  },
+  {
+   "id": "E2",
+   "title": "Music bug is Fixed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "open thread against Brian's DM and the audio change",
+   "class": "direct",
+   "selector": [
+    "field",
+    "music plays only sometimes",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ]
+  },
+  {
+   "id": "E3",
+   "title": "Acid delay is Fixed",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "open thread against Brian's DM",
+   "class": "direct",
+   "selector": [
+    "field",
+    "acid animation delay",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ]
+  },
+  {
+   "id": "A1",
+   "title": "Apple sync line uses ENG-2073",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "line tied to a ticket by a mail",
+   "class": "direct",
+   "selector": [
+    "field",
+    "In general I cannot sync and sign in with",
+    "Ticket"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ]
+  },
+  {
+   "id": "A2",
+   "title": "Manual sign-in line uses ENG-2363",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "line tied to a ticket by a note",
+   "class": "direct",
+   "selector": [
+    "field",
+    "On android manual sign-in has an issue after the",
+    "Ticket"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ]
+  },
+  {
+   "id": "A3",
+   "title": "Note on ENG-2073",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "write on the reused ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "[Aa]pple"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ]
+  },
+  {
+   "id": "O1",
+   "title": "Child notes name the build",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "rule from a card comment across every child note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "0\\.3\\.310"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW"
+   ]
+  },
+  {
+   "id": "O2",
+   "title": "A moved child's note names the build",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "sample note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(ENG-2417)[ -~\\u00a0-\\uffff]{0,240}0\\.3\\.310"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW"
+   ]
+  },
+  {
+   "id": "O3",
+   "title": "A held child's note names the build",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "sample note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(ENG-2428|season pass)[ -~\\u00a0-\\uffff]{0,240}0\\.3\\.310"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FOLLOW"
+   ]
+  },
+  {
+   "id": "F1",
+   "title": "Mega tile bug is Still broken",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a later post with no fix anywhere",
+   "class": "direct",
+   "selector": [
+    "field",
+    "mega tile missing a face",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "F2",
+   "title": "Bottom bar bug is Fixed",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "later post closed in its own thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "android bottom bar invisible",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "F3",
+   "title": "Treasure button bug is Fixed",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "later post closed in its own thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "treasure button opens axe arena",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K1",
+   "title": "Ticked sample: offers no visuals",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "tick read from the canvas",
+   "class": "direct",
+   "selector": [
+    "field",
+    "offers has no visuals",
+    "Outcome"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "ticked"
+  },
+  {
+   "id": "K2",
+   "title": "Ticked sample: Teams addressable",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "tick read from the canvas",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Teams addressable doesn t work",
+    "Outcome"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "ticked"
+  },
+  {
+   "id": "K3",
+   "title": "Ticked sample: top hud",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "tick read from the canvas",
+   "class": "direct",
+   "selector": [
+    "field",
+    "top hud",
+    "Outcome"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "ticked"
+  },
+  {
+   "id": "K4",
+   "title": "Ticked sample: Streak Fever text",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "tick read from the canvas",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Streak Fever has overflowing text on its pop up",
+    "Outcome"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "ticked"
+  },
+  {
+   "id": "K5",
+   "title": "Ticked sample: Win & Collect null ref",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "tick read from the canvas",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Win & Collect gives a null ref every time",
+    "Outcome"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "ticked"
+  },
+  {
+   "id": "K6",
+   "title": "Train backgrounds line carried",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "commit then a later reply saying it is still off",
+   "class": "direct",
+   "selector": [
+    "field",
+    "train level backgrounds are broken",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K7",
+   "title": "Team navigation line carried",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "commit then a later reply saying it still happens",
+   "class": "direct",
+   "selector": [
+    "field",
+    "When I created a team and quitted it the",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K8",
+   "title": "Lost level errors line carried",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "unticked with no later record",
+   "class": "direct",
+   "selector": [
+    "field",
+    "When I lost a level I got some backend",
+    "Outcome"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K9",
+   "title": "Child moved: ENG-2417",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "merged child set to Done",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ENG-2417)[ -~\\u00a0-\\uffff]{0,240}Done"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "moves"
+  },
+  {
+   "id": "K10",
+   "title": "Child moved: ENG-2418",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "merged child set to Done",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ENG-2418)[ -~\\u00a0-\\uffff]{0,240}Done"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "moves"
+  },
+  {
+   "id": "K11",
+   "title": "Child moved: ENG-2425",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "merged child set to Done",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ENG-2425)[ -~\\u00a0-\\uffff]{0,240}Done"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "moves"
+  },
+  {
+   "id": "K12",
+   "title": "Child moved: ENG-2432",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "merged child set to Done",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ENG-2432)[ -~\\u00a0-\\uffff]{0,240}Done"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "moves"
+  },
+  {
+   "id": "K13",
+   "title": "Child moved: ENG-2410",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "merged child set to Done",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ENG-2410)[ -~\\u00a0-\\uffff]{0,240}Done"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "moves"
+  },
+  {
+   "id": "K15",
+   "title": "Tickets on the Engineering team",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "field from the rule doc",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "\"team\": \"(ENG|Engineering)\""
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K16",
+   "title": "Tickets take the title prefix",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "field from the amendment",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "\\[2231\\]"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K17",
+   "title": "Ticket key in a sheet row",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "row joined to the filed ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sheet",
+    "ENG-24[4-9][0-9]|ENG-25[0-9]{2}"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D1",
+   "title": "Sheet in the folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "destination named in the DM",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_9b41e7c2a05d36f8e1c7a4"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D2",
+   "title": "Reply in Arthur's DM",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "destination named in the prompt",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "reply"
+   ],
+   "role": "core",
+   "mechanisms": []
+  }
+ ]
+}
