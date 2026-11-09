@@ -1,0 +1,35 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Leonard · stockholder close-out · normal universe, clock 2026-02-14T00:00:00Z (Fri Feb 13, 4:00 PM PT) · injection rev2 (SQL sha256 78af8ace66a9, after /create-hardening on the platform pre-check).
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+Reason: nothing in the scenario is about a tool outage or a slow search. The task's difficulty and horizon come from the seeded records (see `Working_Files/01_Grounding_Dossier.md`), never from friction (playbook 03, hard gate 1).
+
+## Post-baseline checks
+
+- Forced error fired (failed calls visible in the trajectories): n/a (Friction: none)
+- Async submit → check → get appeared, with the delay: n/a (Friction: none)
+- Only 1.0 / 30 / 35 have been exercised before; any other value confirmed in the first trajectory: n/a (Friction: none)
+
+## Self-review
+
+| Area | Counter-reading (strongest argument it fails) | Evidence that resolves it | Verdict |
+|---|---|---|---|
+| Is the scenario about an outage | A wind-down might read as an outage worth simulating (accounts being archived after Feb 15). | The close-out notes f_a37b403d5200d4f0a31d31 say google stays until the data is extracted, and #winddown C0ADGSZKR3R/1770933903.645709 keeps accounts with data. No record or ask turns on a tool failing. | none stands |
+| Horizon / difficulty | Friction could add calls toward the requester's 130+ calls per run. | Playbook 03, hard gate 1: friction is never a horizon or hardness lever, and retries never count. The horizon comes from 26 per-issue reads and writes and the per-holder mail and Slack checks (Working_Files/01_Hardness_Manifest.json call_budget). | none stands |
+| Alternate paths | An errored Gmail read could remove the only route to a last day (the Carta notices such as leonard.hayes@harmonygames.co/1856960478782792748). | With no error configured, no route is removed. | none stands |
+| Drafts | `gmail_create_draft` could fail and look like friction. | It is a catalog write; the platform pre-check ran it 14 times without an error (Working_Files/run_forensics/rev1p/precheck/precheck/calls.jsonl); no error is configured on it. | none stands |
+| Async twins and verifier reads | A wait on a search tool could change which records a run meets first. | No wait is configured, so the discovery order in the dossier stands (Findability section, the Feb 12 list C0ADGSZKR3R/1770934638.035469 met before Robert's reply). | none stands |
+
+Unresolved: none. The config is not supplied to `/prompt` (no friction).

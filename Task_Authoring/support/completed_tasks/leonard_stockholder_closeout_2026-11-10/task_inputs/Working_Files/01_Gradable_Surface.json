@@ -1,0 +1,1846 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "leonard_stockholder_closeout",
+ "revision": "design-1",
+ "classes": [
+  "First note",
+  "Covered",
+  "Date note",
+  "Full note",
+  "Already told",
+  "Nothing"
+ ],
+ "truth_fields": {
+  "class": "Owed",
+  "groups": "groups"
+ },
+ "truth_keys": [
+  "ENG-2438",
+  "ENG-2439",
+  "ENG-2440",
+  "ENG-2441",
+  "ENG-2442",
+  "ENG-2443",
+  "ENG-2444",
+  "ENG-2445",
+  "ENG-2446",
+  "ENG-2447",
+  "ENG-2448",
+  "ENG-2449",
+  "ENG-2450",
+  "ENG-2451",
+  "ENG-2452",
+  "ENG-2453",
+  "ENG-2454",
+  "ENG-2455",
+  "ENG-2456",
+  "ENG-2457",
+  "ENG-2458",
+  "ENG-2459",
+  "ENG-2460",
+  "ENG-2461",
+  "ENG-2462",
+  "ENG-2463"
+ ],
+ "deliverables": {
+  "schedule": {
+   "kind": "table",
+   "name_regex": ".*(holder|stockholder|close.?out|schedule).*",
+   "key_column": "Issue",
+   "key_regex": "ENG-\\d{4}",
+   "columns": [
+    "Issue",
+    "Holder",
+    "Instrument",
+    "Shares held now",
+    "Options now",
+    "Last day",
+    "Told",
+    "Owed"
+   ],
+   "class_column": "Owed",
+   "comparators": {
+    "Issue": "issue_key",
+    "Owed": "yes_no",
+    "Told": "yes_no"
+   },
+   "yes_no": {
+    "First note": [
+     "First note",
+     "First",
+     "Closing"
+    ],
+    "Covered": [
+     "Covered",
+     "Covered by Enes",
+     "Family note",
+     "Via family"
+    ],
+    "Date note": [
+     "Date note",
+     "Date",
+     "Last day"
+    ],
+    "Full note": [
+     "Full note",
+     "Full",
+     "Closing and last day"
+    ],
+    "Already told": [
+     "Already told",
+     "None, told"
+    ],
+    "Nothing": [
+     "Nothing",
+     "None",
+     "Lapsed",
+     "Holds nothing"
+    ],
+    "Yes": [
+     "Yes",
+     "Told",
+     "Y"
+    ],
+    "No": [
+     "No",
+     "Not told",
+     "N"
+    ]
+   }
+  },
+  "letter": {
+   "kind": "json_text",
+   "tool": "gdocs_create_document"
+  },
+  "notes": {
+   "kind": "json_text",
+   "tool": "gmail_create_draft"
+  },
+  "griffin": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  },
+  "kpmg": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  },
+  "reply": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "moves": {
+   "kind": "json_text",
+   "tool": "linear_update_issue"
+  }
+ },
+ "slots": [
+  {
+   "id": "K1",
+   "title": "Series Seed total",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the lines tie only after advisor options come out",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "3,?051,?879"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV"
+   ]
+  },
+  {
+   "id": "K2",
+   "title": "Griffin II shares",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the owner list merges the two funds",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2438",
+    "Shares held now"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K3",
+   "title": "Side Fund shares",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the owner list merges the two funds",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2439",
+    "Shares held now"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "K4",
+   "title": "stock for Collins",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "owner list less the advisor table, tied to the total",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2447",
+    "Shares held now"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV"
+   ]
+  },
+  {
+   "id": "K5",
+   "title": "stock for Segerstråle",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "owner list less the advisor table, tied to the total",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2440",
+    "Shares held now"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV"
+   ]
+  },
+  {
+   "id": "K6",
+   "title": "stock for Nebojsa",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "owner list less the advisor table, tied to the total",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2446",
+    "Shares held now"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV"
+   ]
+  },
+  {
+   "id": "K7",
+   "title": "stock for Deepak",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "owner list less the advisor table, tied to the total",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2449",
+    "Shares held now"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV"
+   ]
+  },
+  {
+   "id": "K8",
+   "title": "Collins's option grant",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the part of his line that is not stock",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "(Collins|11362|ENG-2447)[ -~\\u00a0-\\uffff]{0,160}61,?038"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV"
+   ]
+  },
+  {
+   "id": "K13",
+   "title": "stock line TOR",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one line on the owner list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2448",
+    "Shares held now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "stock"
+  },
+  {
+   "id": "K14",
+   "title": "stock line Schaeppi",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one line on the owner list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2441",
+    "Shares held now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "stock"
+  },
+  {
+   "id": "K15",
+   "title": "stock line Bergmann",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one line on the owner list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2442",
+    "Shares held now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "stock"
+  },
+  {
+   "id": "K16",
+   "title": "every project issue on the sheet",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "output volume",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact",
+    "schedule"
+   ],
+   "role": "volume",
+   "mechanisms": [],
+   "volume_for": [
+    "stock",
+    "live"
+   ]
+  },
+  {
+   "id": "P1",
+   "title": "live options at the clock",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "vested live lines plus advisor grants, across notices, Calvin's forward and the advisor table",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "164,?114"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV",
+    "EXT"
+   ]
+  },
+  {
+   "id": "P_lapsed_ES2",
+   "title": "ES2 holds nothing",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice's last day",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2451",
+    "Owed"
+   ],
+   "role": "exception",
+   "mechanisms": [],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "P_lapsed_ES5",
+   "title": "ES5 holds nothing",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice's last day",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2454",
+    "Owed"
+   ],
+   "role": "exception",
+   "mechanisms": [],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "P_lapsed_ES6",
+   "title": "ES6 holds nothing",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice's last day",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2455",
+    "Owed"
+   ],
+   "role": "exception",
+   "mechanisms": [],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "P_lapsed_ES16",
+   "title": "ES16 holds nothing",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice's last day",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2461",
+    "Owed"
+   ],
+   "role": "exception",
+   "mechanisms": [],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "P_FRED",
+   "title": "ES-17 holds nothing",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "the largest non-Griffin line, set against its notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2462",
+    "Owed"
+   ],
+   "role": "exception",
+   "mechanisms": [],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "P_live_ES-1",
+   "title": "ES-1 vested",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2450",
+    "Options now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "live"
+  },
+  {
+   "id": "P_live_ES-4",
+   "title": "ES-4 vested",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2453",
+    "Options now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "live"
+  },
+  {
+   "id": "P_live_ES-7",
+   "title": "ES-7 vested",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2456",
+    "Options now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "live"
+  },
+  {
+   "id": "P_live_ES-12",
+   "title": "ES-12 vested",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2457",
+    "Options now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "live"
+  },
+  {
+   "id": "P_live_ES-13",
+   "title": "ES-13 vested",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one notice",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2458",
+    "Options now"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "live"
+  },
+  {
+   "id": "P_first",
+   "title": "ES-3 last day",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "the earliest of the live dates, from Carta's later update",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "(ENG-2452)[ -~\\u00a0-\\uffff]{0,160}Feb[a-z]*\\.? ?20|2026-02-20|2/20"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXT"
+   ]
+  },
+  {
+   "id": "C_ES14",
+   "title": "ES-14 owed a full note",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "no letter: six recipients joined to eight Carta entries",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2459",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LETTER"
+   ],
+   "fact_id": "owed_es14"
+  },
+  {
+   "id": "C_ES18",
+   "title": "ES-18 owed a full note",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "no letter: six recipients joined to eight Carta entries",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2463",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LETTER"
+   ],
+   "fact_id": "owed_es18"
+  },
+  {
+   "id": "C_DATE",
+   "title": "date notes total",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "live lines with a letter that was delivered",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "([Dd]ate note|Last day)[ -~\\u00a0-\\uffff]{0,160}(5|five)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LETTER",
+    "BOUNCE"
+   ]
+  },
+  {
+   "id": "C_ES12",
+   "title": "ES-12 owed the closing and last day",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "his letter bounced: a delivery failure in its thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2457",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BOUNCE"
+   ],
+   "fact_id": "owed_es12"
+  },
+  {
+   "id": "C_ES3",
+   "title": "ES-3 owed the closing and last day",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "Carta's later update, forwarded by the holder, keeps the line live",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2452",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXT"
+   ],
+   "fact_id": "owed_es3"
+  },
+  {
+   "id": "C_SEG",
+   "title": "Segerstrale already told",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a DM against the list that says angels are open",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2440",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "TOLD"
+   ],
+   "fact_id": "owed_seg"
+  },
+  {
+   "id": "C_NEB",
+   "title": "Nebojsa already told",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Robert's reply against the same list",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2446",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "TOLD"
+   ],
+   "fact_id": "owed_neb"
+  },
+  {
+   "id": "C_TOR",
+   "title": "Tor still owed a first note",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a runway warning is not the closing",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2448",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "owed_tor"
+  },
+  {
+   "id": "C_FIRST",
+   "title": "first notes total",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "stock lines not yet told",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "([Ff]irst note|Closing)[ -~\\u00a0-\\uffff]{0,160}(5|five)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "TOLD",
+    "ALIAS"
+   ]
+  },
+  {
+   "id": "C_COL",
+   "title": "Collins already told",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "a mail to 'Akin' at an address on no other record, tied to him only by his own old mail",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2447",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "fact_id": "owed_col"
+  },
+  {
+   "id": "TC_ES14",
+   "title": "ES-14 not told",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "resigned before the closing, outside every Feb 11 channel",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2459",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LETTER"
+   ],
+   "fact_id": "told_es14"
+  },
+  {
+   "id": "TC_ES18",
+   "title": "ES-18 not told personally",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a channel post is not a personal message",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2463",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LETTER"
+   ],
+   "fact_id": "told_es18"
+  },
+  {
+   "id": "TC_SEG",
+   "title": "Segerstrale told",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a personal DM",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2440",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "TOLD"
+   ],
+   "fact_id": "told_seg"
+  },
+  {
+   "id": "TC_NEB",
+   "title": "Nebojsa told",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "Robert's reply",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2446",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "TOLD"
+   ],
+   "fact_id": "told_neb"
+  },
+  {
+   "id": "TC_TOR",
+   "title": "Tor not told",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a runway warning, not the closing",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2448",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "told_tor"
+  },
+  {
+   "id": "TC_ES12",
+   "title": "ES-12 not told",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a letter that came back did not reach him",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2457",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BOUNCE"
+   ],
+   "fact_id": "told_es12"
+  },
+  {
+   "id": "TC_COL",
+   "title": "Collins told",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "Leonard's Feb 12 mail to Akin",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2447",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "fact_id": "told_col"
+  },
+  {
+   "id": "TC_ES3",
+   "title": "ES-3 not told",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a live line with no letter and no message about the closing",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2452",
+    "Told"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXT"
+   ],
+   "fact_id": "told_es3"
+  },
+  {
+   "id": "B1",
+   "title": "directors in office",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "two resignations traced across mail against the financing documents",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "director[ -~\\u00a0-\\uffff]{0,80}(Leonard[ -~\\u00a0-\\uffff]{0,40}Robert|Robert[ -~\\u00a0-\\uffff]{0,40}Leonard)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BOARD"
+   ]
+  },
+  {
+   "id": "B2",
+   "title": "Griffin carries the preferred vote",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "share of preferred",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "schedule",
+    "90(\\.0)? ?%"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BOARD",
+    "ADV"
+   ]
+  },
+  {
+   "id": "L3",
+   "title": "no distribution promised",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "from the draft, the outline's headings and the letters' line",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "letter",
+    "(no|not expect)[ -~\\u00a0-\\uffff]{0,60}(distribut|return|proceeds)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "L4",
+   "title": "write-off papers",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "from the draft, the outline's headings and the letters' line",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "letter",
+    "(tax|write.?off)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "L5",
+   "title": "IP and code",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "from the draft, the outline's headings and the letters' line",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "letter",
+    "(IP|codebase)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "L2",
+   "title": "Sunset named as running the close",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the draft predates the signing",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "letter",
+    "sunset"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "L6",
+   "title": "letter states the board",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the draft predates the resignation",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "letter",
+    "(board|director)[ -~\\u00a0-\\uffff]{0,120}(Robert|resign)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BOARD"
+   ]
+  },
+  {
+   "id": "L8",
+   "title": "letter's option paragraph",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "from the letters' own paragraph",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "letter",
+    "(option|exercise)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "G1",
+   "title": "heads-up sent to Griffin",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one write",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "griffin"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "G2",
+   "title": "heads-up names the holder vote",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a vote of the preferred, not a board seat",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "griffin",
+    "(consent|vote|preferred)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BOARD"
+   ]
+  },
+  {
+   "id": "NC_Schaeppi",
+   "title": "note to Schaeppi states the holding",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the holder's own line",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Schaeppi|3083|3063)[ -~\\u00a0-\\uffff]{0,160}(25,?432|50,?865)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "NC_Bergmann",
+   "title": "note to Bergmann states the holding",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the holder's own line",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Bergmann|4468|0693)[ -~\\u00a0-\\uffff]{0,160}(25,?432|50,?865)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "NC_Deepak",
+   "title": "note to Deepak states the holding",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the holder's own line",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Deepak|1287)[ -~\\u00a0-\\uffff]{0,160}(25,?432|50,?865)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ADV"
+   ]
+  },
+  {
+   "id": "NC_Tor",
+   "title": "note to Tor states the holding",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the holder's own line",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Tor|TOR|5275)[ -~\\u00a0-\\uffff]{0,160}(25,?432|50,?865)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "F4",
+   "title": "Patrick Lewis's line is covered",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the family rule on a name with no surname link",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2444",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FAM"
+   ],
+   "fact_id": "owed_pat"
+  },
+  {
+   "id": "F5",
+   "title": "Eren's line is covered",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the family rule; he has no mail of his own",
+   "class": "direct",
+   "selector": [
+    "field",
+    "ENG-2445",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FAM"
+   ],
+   "fact_id": "owed_eren"
+  },
+  {
+   "id": "F1",
+   "title": "one note to Enes covers the family",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "the link is in 2023 mail and the names show no shared surname",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Enes|52949|2260|ENG-2443)[ -~\\u00a0-\\uffff]{0,160}(brother|family|all three|Patrick|Eren|27652|2275)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FAM"
+   ]
+  },
+  {
+   "id": "F2",
+   "title": "that note covers three lines",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "three holdings in one note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(76,?296|three[ -~\\u00a0-\\uffff]{0,40}25,?432)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FAM"
+   ]
+  },
+  {
+   "id": "F3",
+   "title": "reason comment on a covered line",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the line is covered by Enes's note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(enes|family|brother)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FAM"
+   ]
+  },
+  {
+   "id": "N_COUNT",
+   "title": "bare count of notes",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "first, date and full notes after the family rule",
+   "class": "write_content",
+   "selector": [
+    "link",
+    "notes"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FAM",
+    "TOLD",
+    "LETTER",
+    "EXT"
+   ],
+   "fact_id": "note_count"
+  },
+  {
+   "id": "ND_ES-1",
+   "title": "date note to ES-1",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the date is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Julia|0043)[ -~\\u00a0-\\uffff]{0,160}Mar"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "date"
+  },
+  {
+   "id": "ND_ES-4",
+   "title": "date note to ES-4",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the date is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Claire)[ -~\\u00a0-\\uffff]{0,160}Mar"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "date"
+  },
+  {
+   "id": "ND_ES-7",
+   "title": "date note to ES-7",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the date is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Marcus)[ -~\\u00a0-\\uffff]{0,160}Apr"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "date"
+  },
+  {
+   "id": "ND_ES-15",
+   "title": "date note to ES-15",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the date is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Brian|ENG-2460)[ -~\\u00a0-\\uffff]{0,160}Mar"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "date"
+  },
+  {
+   "id": "ND_ES-13",
+   "title": "date note to ES-13",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the date is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Martin)[ -~\\u00a0-\\uffff]{0,160}Apr"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "date"
+  },
+  {
+   "id": "ND_vol",
+   "title": "every date note",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "output volume",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "notes"
+   ],
+   "role": "volume",
+   "mechanisms": [],
+   "fact_id": "date_vol",
+   "volume_for": [
+    "date"
+   ]
+  },
+  {
+   "id": "N_Vincent",
+   "title": "ES-14's note covers the closing and Feb 21",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "a holder outside every Feb 11 channel",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Vincent|0051|ENG-2459)[ -~\\u00a0-\\uffff]{0,160}(clos|shut|wind)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LETTER"
+   ]
+  },
+  {
+   "id": "N_Oliver",
+   "title": "ES-18's note covers the closing",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "no letter on file",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Oliver|0022|ENG-2463)[ -~\\u00a0-\\uffff]{0,160}(clos|shut|wind)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "LETTER"
+   ]
+  },
+  {
+   "id": "N_Calvin",
+   "title": "ES-3's note gives his Feb 20 last day",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "the date is only in Carta's later update, forwarded by the holder",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Calvin|ENG-2452)[ -~\\u00a0-\\uffff]{0,160}Feb[a-z]*\\.? ?20|2/20|2026-02-20"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXT"
+   ]
+  },
+  {
+   "id": "Q1",
+   "title": "Claire's note answers her equity question",
+   "weight": 5,
+   "work_kind": "tracing",
+   "work_reason": "a group-DM question joined to the letter's equity paragraph and her notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "notes",
+    "(Claire|ENG-2453)[ -~\\u00a0-\\uffff]{0,160}(no action|nothing|not (need|required|have to)|do(n't| not) (need|have)|not recommend)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ASK"
+   ]
+  },
+  {
+   "id": "A1",
+   "title": "options at the as-of date",
+   "weight": 5,
+   "work_kind": "deeper_reasoning",
+   "work_reason": "effective dates across every notice, not entry dates",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "243,?757"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ASOF",
+    "ADV"
+   ]
+  },
+  {
+   "id": "A2",
+   "title": "issued plus options at the as-of date",
+   "weight": 5,
+   "work_kind": "deeper_reasoning",
+   "work_reason": "derived from the same dates",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "9,?295,?636"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ASOF"
+   ]
+  },
+  {
+   "id": "AL_ES-7",
+   "title": "ES-7 at the as-of date",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "terminated after the as-of date: the full grant still counts",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "(Marcus)[ -~\\u00a0-\\uffff]{0,160}22,?889"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ASOF"
+   ],
+   "group": "asof",
+   "fact_id": "asof_ES-7"
+  },
+  {
+   "id": "AL_ES-12",
+   "title": "ES-12 at the as-of date",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "terminated after the as-of date: the full grant still counts",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "(Owen|0068)[ -~\\u00a0-\\uffff]{0,160}16,?277"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ASOF"
+   ],
+   "group": "asof",
+   "fact_id": "asof_ES-12"
+  },
+  {
+   "id": "AL_ES-1",
+   "title": "ES-1 at the as-of date",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "terminated on the as-of date: vested only",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "(Julia|0043)[ -~\\u00a0-\\uffff]{0,160}17,?802"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ASOF"
+   ],
+   "group": "asof",
+   "fact_id": "asof_ES-1"
+  },
+  {
+   "id": "AL_ES-14",
+   "title": "ES-14 at the as-of date",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "effective in November, entered in February",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "(Vincent|0051)[ -~\\u00a0-\\uffff]{0,160}1,?530"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ASOF"
+   ],
+   "group": "asof",
+   "fact_id": "asof_ES-14"
+  },
+  {
+   "id": "AL_ES-16",
+   "title": "ES-16 at the as-of date",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "lapsed since, but open at the as-of date",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "(ES-16|2768|35,?605)[ -~\\u00a0-\\uffff]{0,160}10,?384"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ASOF"
+   ],
+   "group": "asof",
+   "fact_id": "asof_ES-16"
+  },
+  {
+   "id": "AL_vol",
+   "title": "every option line at the as-of date",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "output volume",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "kpmg"
+   ],
+   "role": "volume",
+   "mechanisms": [],
+   "fact_id": "asof_vol",
+   "volume_for": [
+    "asof"
+   ]
+  },
+  {
+   "id": "A3",
+   "title": "each fund's shares",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "two lines, not one",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "84,?438"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "A9",
+   "title": "common shares",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the founders' three lines",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "6,?000,?000"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "A5",
+   "title": "later event disclosed",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the closing falls after the as-of date",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "(clos|shut|wind)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "A7",
+   "title": "no new financing",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "ledger and mail",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "kpmg",
+    "(no new|since the seed|no (further|additional) financ)"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "A8",
+   "title": "reply goes to all",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "KPMG's own request",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "kpmg"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "kpmg_all"
+  },
+  {
+   "id": "LC_Seg",
+   "title": "reason comment on Segerstråle's issue",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "says who told him",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(segerstr|0089|ENG-2440)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "TOLD"
+   ]
+  },
+  {
+   "id": "LC_Col",
+   "title": "reason comment on Collins's issue",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "says who told him",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(collins|11362|ENG-2447|akin)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ]
+  },
+  {
+   "id": "LC_Neb",
+   "title": "reason comment on Nebojsa's issue",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "says who told him",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(nebojsa|3941|robert|ENG-2446)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "TOLD"
+   ]
+  },
+  {
+   "id": "LC_ES-2",
+   "title": "reason comment on ES-2's issue",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the last day is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "ENG-2451|lapsed"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "lc"
+  },
+  {
+   "id": "LC_ES-5",
+   "title": "reason comment on ES-5's issue",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the last day is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "ENG-2454|lapsed"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "lc"
+  },
+  {
+   "id": "LC_ES-16",
+   "title": "reason comment on ES-16's issue",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the last day is on one notice",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "ENG-2461|lapsed"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "lc"
+  },
+  {
+   "id": "LC_vol",
+   "title": "a reason comment wherever no note goes",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "output volume",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "comments"
+   ],
+   "role": "volume",
+   "mechanisms": [],
+   "fact_id": "lc_vol",
+   "volume_for": [
+    "lc"
+   ]
+  },
+  {
+   "id": "LS_ES-3",
+   "title": "state of ES-3's issue",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "state by class",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "moves"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "st",
+   "fact_id": "state_ES-3"
+  },
+  {
+   "id": "LS_ES-6",
+   "title": "state of ES-6's issue",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "state by class",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "moves"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "st",
+   "fact_id": "state_ES-6"
+  },
+  {
+   "id": "LS_ES-12",
+   "title": "state of ES-12's issue",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "state by class",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "moves"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "st",
+   "fact_id": "state_ES-12"
+  },
+  {
+   "id": "LS_vol",
+   "title": "every issue moved",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "output volume",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "moves"
+   ],
+   "role": "volume",
+   "mechanisms": [],
+   "fact_id": "state_vol",
+   "volume_for": [
+    "st"
+   ]
+  },
+  {
+   "id": "D1",
+   "title": "schedule in the close-out folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "named destination",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_601064334a0b493022fe83"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D2",
+   "title": "shared with Robert",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the notes",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "share_reader"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D4",
+   "title": "shared with Arthur",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the reply's change",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "share_reader"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "share_arthur"
+  },
+  {
+   "id": "D3",
+   "title": "letter in the folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "named destination",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "letter"
+   ],
+   "role": "core",
+   "mechanisms": []
+  },
+  {
+   "id": "D5",
+   "title": "thread reply",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "named destination",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "reply"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "reply_sent"
+  },
+  {
+   "id": "D6",
+   "title": "reply names who goes first",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the earliest last day, from Carta's later update",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "(calvin|ENG-2452|ES-3\\b|Feb[a-z]*\\.? ?20)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXT"
+   ]
+  }
+ ]
+}

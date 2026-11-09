@@ -1,0 +1,2319 @@
+{
+ "_note": "Final manifest (/create-injection rev2). Draft 01_Hardness_Manifest.draft.json plus the ids, facts and bindings only the SQL settles; every change is in design_delta.",
+ "persona": "leonard_hayes",
+ "assignment_context": {
+  "context_hash": "0f9314599d48bdb5d6eb0ba105c1f7d7c19f7f8e5a0bb621a365c7f447ced0a5",
+  "assignment_hash": "49d5e1d57a30ff919fad94f046dcb560dca2ef282b13ac7653c0f0937a25c6ce",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2026-02-14T00:00:00Z",
+  "difficulty_mode": "medium"
+ },
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "author_targets": {
+  "counted_calls_every_run_gt": 130,
+  "average_lt": 0.7,
+  "design_E_avg_le": 0.62,
+  "platform_cap": 0.85,
+  "source": "requester chat 2026-11-07: 'assignemt is medium but we have to target hard difficulty'; 'go with your recommendations on all six' (aim under 70 %, 62 % a stretch)"
+ },
+ "volume_exception": {
+  "reason": "26 non-founder holders; mail reads batch, so about 145 honest calls per run; reaching 500 would need padding, which fails on its own",
+  "requester_confirmation": "requester, Claude Code chat 2026-11-07: 'go with your recommendations on all six' (00_Pre_Scenario_Analysis.md §10 decision 3)",
+  "call_budget_floor": 130,
+  "per_record_floor": 85
+ },
+ "cohort_exception": {
+  "reason": "the company has 29 holders on Carta, 26 of them non-founders; no honest cohort of 40 exists and padding one fails on its own",
+  "requester_confirmation": "requester, Claude Code chat 2026-11-07: 'go with your recommendations on all six' (00_Pre_Scenario_Analysis.md §10 decision 3)",
+  "cohort_floor": 26
+ },
+ "requirements": {
+  "R1": "holder schedule: one row per project issue with holder, instrument and shares held now",
+  "R2": "live or lapsed state and last day of every option line, from Carta",
+  "R3": "stock apart from advisor options on merged lines, and the Series Seed total",
+  "R4": "told column: who has already had a personal written message about the closing",
+  "R5": "what is owed to each holder under the closed rule",
+  "R6": "personal notes by class, with the earliest last day going first",
+  "R8": "KPMG confirmation: share counts and options outstanding at the as-of date, plus later events",
+  "R9": "directors in office and the preferred vote, with a heads-up to Griffin",
+  "R10": "investor letter updated from the draft",
+  "R11": "project issue states by what is owed, and a reason comment where no note goes",
+  "R12": "an answer to any open written equity question on a live line",
+  "R13": "destination, sharing and the founders' thread reply"
+ },
+ "services": {
+  "slack": {
+   "role": "the draft, Leonard's promise and list, the done claims, DMs that decide who was told",
+   "weight_reason": "the ask, the wrong sources and the records that beat them; the founders' reply"
+  },
+  "gmail": {
+   "role": "Carta notices, letters, the owner list, side letter chain, resignations, KPMG and Sunset requests",
+   "weight_reason": "every line's live state and the as-of date live here; notes and replies go here"
+  },
+  "gcal": {
+   "role": "the Tuesday hold",
+   "weight_reason": "the date the notes are due"
+  },
+  "gdrive": {
+   "role": "the close-out folder",
+   "weight_reason": "the destination of both files"
+  },
+  "gdocs": {
+   "role": "close-out notes, advisor table, term sheet, charter and side letter drafts",
+   "weight_reason": "the closed rule and the subtraction that ties the stock lines"
+  },
+  "gsheets": {
+   "role": "Task List, draft holder sheet, the deliverable",
+   "weight_reason": "the schedule itself"
+  },
+  "gslides": {
+   "role": "the update outline",
+   "weight_reason": "the letter's section order, supporting only"
+  },
+  "contacts": {
+   "role": "Bergmann's and Eren's name-to-address rows",
+   "weight_reason": "separates Bergmann from the Patrick line; Eren's row gives an address and nothing else"
+  },
+  "linear": {
+   "role": "the holder project",
+   "weight_reason": "the cohort, per-holder notes, states and reason comments"
+  },
+  "trello": {
+   "role": "Leonard's close-out card",
+   "weight_reason": "the order: the holder sheet comes first"
+  },
+  "snowflake": {
+   "role": "FINANCE_LEDGER financing rows",
+   "weight_reason": "confirms no new financing since 2023 for the KPMG reply, and Segerstrale's $50,000"
+  }
+ },
+ "anchors": [
+  {
+   "id": "AN1",
+   "service": "slack",
+   "locator": "C0ADGSZKR3R/1770664700.848759",
+   "prompt_reference": "the investor email draft in #winddown",
+   "requirement_ids": [
+    "R10"
+   ]
+  },
+  {
+   "id": "AN2",
+   "service": "linear",
+   "locator": "ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "prompt_reference": "the holder project in Linear",
+   "requirement_ids": [
+    "R1",
+    "R5",
+    "R11"
+   ]
+  },
+  {
+   "id": "AN3",
+   "service": "gmail",
+   "locator": "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+   "prompt_reference": "KPMG's audit request for Griffin",
+   "requirement_ids": [
+    "R8"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "slack",
+   "container": "C0ADGSZKR3R/1770664700.848759",
+   "locator": "C0ADGSZKR3R/1770664700.848759",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770664700.848759"
+   ],
+   "delegated_by_record": "C0ADGSZKR3R/1770664700.848759",
+   "delegation_quote": "I will send periodic updates as we complete the major steps",
+   "requirement_ids": [
+    "R10"
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "slack",
+   "container": "C0ADGSZKR3R/1770664924.520089",
+   "locator": "C0ADGSZKR3R/1770664924.520089",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770664924.520089"
+   ],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "the reach-out I promised",
+   "requirement_ids": [
+    "R6"
+   ]
+  },
+  {
+   "id": "K4",
+   "service": "slack",
+   "container": "C0ADGSZKR3R/1770934638.035469",
+   "locator": "C0ADGSZKR3R/1770934638.035469",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770934638.035469"
+   ],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "where I left things today",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K5",
+   "service": "gsheets",
+   "container": "f_31115ddb6ed866f2b10d60",
+   "locator": "f_31115ddb6ed866f2b10d60",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "gsheets:data.json /sheets_spreadsheets/76/sheets/0/grid/2/1"
+   ],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "the investor email on the Task List",
+   "requirement_ids": [
+    "R10"
+   ]
+  },
+  {
+   "id": "K6",
+   "service": "linear",
+   "container": "linear:project/ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "locator": "linear:project/ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "kind": "delegation",
+   "incorporated_via": [
+    "AN2"
+   ],
+   "seeded_ids": [
+    "ec2ea957-fc8e-4958-b809-0fb735b1e916"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "delegation_quote": "one issue per holder on Carta, live or lapsed",
+   "requirement_ids": [
+    "R1",
+    "R11"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "my close-out notes"
+    }
+   ]
+  },
+  {
+   "id": "K7",
+   "service": "gdocs",
+   "container": "f_a37b403d5200d4f0a31d31",
+   "locator": "f_a37b403d5200d4f0a31d31",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN2",
+    "K6"
+   ],
+   "seeded_ids": [
+    "f_a37b403d5200d4f0a31d31"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "delegation_quote": "my close-out notes have how each holder gets handled",
+   "requirement_ids": [
+    "R4",
+    "R5",
+    "R12"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "Carta is the record"
+    }
+   ]
+  },
+  {
+   "id": "K8",
+   "service": "gmail",
+   "container": "leonard.hayes@harmonygames.co/1857034369525983506",
+   "locator": "leonard.hayes@harmonygames.co/<mlkq74xd.3f9e2c1a-6b48-4d07-a1e5-8c2f0d7b6a94@we.are.superhuman.com>",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN2",
+    "K6"
+   ],
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<mlkq74xd.3f9e2c1a-6b48-4d07-a1e5-8c2f0d7b6a94@we.are.superhuman.com>",
+    "leonard.hayes@harmonygames.co/1857034369525983506"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "delegation_quote": "what Sunset asked for",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R9"
+   ]
+  },
+  {
+   "id": "K9",
+   "service": "gmail",
+   "container": "leonard.hayes@harmonygames.co/1857029474983245439",
+   "locator": "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN3"
+   ],
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+    "leonard.hayes@harmonygames.co/1857029474983245439"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+   "delegation_quote": "as of December 31, 2025",
+   "requirement_ids": [
+    "R8"
+   ],
+   "names_authorities": [
+    {
+     "id": "H4",
+     "quote": "2025 Audit Request"
+    }
+   ]
+  },
+  {
+   "id": "K10",
+   "service": "trello",
+   "container": "698e5a10c3f24b7e9d16a0e4",
+   "locator": "698e5a10c3f24b7e9d16a0e4",
+   "kind": "destination",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [
+    "698e5a10c3f24b7e9d16a0e4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "the holder sheet comes first",
+   "requirement_ids": [
+    "R13"
+   ]
+  },
+  {
+   "id": "K11",
+   "service": "gcal",
+   "container": "evt_6f1a2c9e4b7d3a58c0e1d2",
+   "locator": "evt_6f1a2c9e4b7d3a58c0e1d2",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [
+    "evt_6f1a2c9e4b7d3a58c0e1d2"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "notes ready for me by Tuesday",
+   "requirement_ids": [
+    "R6"
+   ]
+  },
+  {
+   "id": "K12",
+   "service": "gslides",
+   "container": "f_75dddccabb26eeea4842c8",
+   "locator": "f_75dddccabb26eeea4842c8",
+   "kind": "format",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [
+    "f_75dddccabb26eeea4842c8"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "the update outline",
+   "requirement_ids": [
+    "R10"
+   ]
+  },
+  {
+   "id": "K13",
+   "service": "gdrive",
+   "container": "d_601064334a0b493022fe83",
+   "locator": "d_601064334a0b493022fe83",
+   "kind": "destination",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [
+    "d_601064334a0b493022fe83"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "everything goes in the close-out folder",
+   "requirement_ids": [
+    "R13"
+   ]
+  },
+  {
+   "id": "K14",
+   "service": "slack",
+   "container": "C0ADGSZKR3R/1770949310.220519",
+   "locator": "C0ADGSZKR3R/1770949310.220519",
+   "kind": "amendment",
+   "incorporated_via": [
+    "AN2",
+    "K6",
+    "K7"
+   ],
+   "seeded_ids": [
+    "4f54dff9722aaeef2ba59316ff0cf2f9"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_a37b403d5200d4f0a31d31",
+   "delegation_quote": "reply under my list in #winddown",
+   "requirement_ids": [
+    "R6",
+    "R13"
+   ]
+  },
+  {
+   "id": "K15",
+   "service": "slack",
+   "container": "C0ADGSZKR3R/1770938120.410229",
+   "locator": "C0ADGSZKR3R/1770938120.410229",
+   "kind": "delegation",
+   "incorporated_via": [
+    "AN2",
+    "K6"
+   ],
+   "seeded_ids": [
+    "d281112d634372d5a8b35fc49a3e4b8c"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "delegation_quote": "as I said in #winddown",
+   "requirement_ids": [
+    "R11"
+   ]
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "my close-out notes",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R4",
+    "R5",
+    "R12"
+   ],
+   "findable_query": "close-out notes",
+   "seeded_ids": [
+    "f_a37b403d5200d4f0a31d31"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "f_762c60832854d3e7a7f7df"
+   ],
+   "decoy_base_pointers": []
+  },
+  {
+   "id": "H2",
+   "name": "Carta's termination details",
+   "home_service": "gmail",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R2"
+   ],
+   "findable_query": "Termination details",
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<177093551461.10.12358585394423780893@notifications-email-sending-worker-5fc9459db-km7pv>"
+   ],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "gdocs:data.json /docs_documents/40"
+   ]
+  },
+  {
+   "id": "H4",
+   "name": "KPMG's FY25 request",
+   "home_service": "gmail",
+   "decoy_service": "gmail",
+   "governs": [
+    "R8"
+   ],
+   "findable_query": "Audit Request",
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+    "leonard.hayes@harmonygames.co/1857029474983245439"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "gmail:threads/leonard@harmonygames.co_1817557789846606177.json /messages/6"
+   ],
+   "decoy_scope": {
+    "dimension": "fiscal year",
+    "decoy": "FY24 request, as of September 30, 2024",
+    "task": "FY25 request, as of December 31, 2025"
+   }
+  }
+ ],
+ "cohort": {
+  "definition": "every holder on a Carta record, live or lapsed, other than the three founders: 12 Series Seed lines and 14 option-only lines, one project issue each",
+  "definition_source": [
+   "ec2ea957-fc8e-4958-b809-0fb735b1e916",
+   "f_a37b403d5200d4f0a31d31"
+  ],
+  "key": "holder issue",
+  "size": 26,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 26,
+    "seeded": true,
+    "requirement": "R5",
+    "decides": "what is owed",
+    "why_no_bulk": "linear_list_issues returns titles and states but no comments; each issue's notes need their own read",
+    "short_circuit": "each issue's notes carry that holder's own contact history; skipping the read leaves the row's last contact and any stale claim unchecked",
+    "seeded_ids": [
+     "ENG-2438",
+     "ENG-2439",
+     "ENG-2440",
+     "ENG-2441",
+     "ENG-2442"
+    ]
+   },
+   {
+    "service": "gmail",
+    "tool": "gmail_search_messages (per holder address)",
+    "per_record_calls": 1.0,
+    "records": 12,
+    "seeded": false,
+    "requirement": "R4",
+    "decides": "told",
+    "why_no_bulk": "gmail_search_messages returns ids only and no mail lists who was told; each address needs its own search",
+    "short_circuit": "only a per-address search finds a personal message; the Feb 12 list and the letters cover different people"
+   },
+   {
+    "service": "gmail",
+    "tool": "gmail_get_thread (notice, letter, last contact)",
+    "per_record_calls": 1.0,
+    "records": 26,
+    "seeded": false,
+    "requirement": "R2",
+    "decides": "last day",
+    "why_no_bulk": "the notices are one per thread and the date is only in the body; the owner list has no dates",
+    "short_circuit": "the last day exists nowhere else, so the notice cannot be skipped for an option line"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_search_public_and_private (per holder name)",
+    "per_record_calls": 1.0,
+    "records": 12,
+    "seeded": false,
+    "requirement": "R4",
+    "decides": "told",
+    "why_no_bulk": "no channel holds every holder's contact; DMs need a name search",
+    "short_circuit": "a personal DM counts as told and shows up nowhere else"
+   },
+   {
+    "service": "gdocs",
+    "tool": "gdocs_get_document_text (agreement or consent)",
+    "per_record_calls": 1.0,
+    "records": 14,
+    "seeded": false,
+    "requirement": "R3",
+    "decides": "stock apart from advisor options",
+    "why_no_bulk": "agreements and consents are separate documents with no index",
+    "short_circuit": "the grant size on an agreement separates a holder's stock from options where the owner list merges them"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A17",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAPBs_a6zM=or+nDw0YSrZ3Rmkvzr0fnVHNBaaRqx6vN6Uxrs_Q@mail.gmail.com>",
+     "finding": "owner list: 86,470, 81,383, 31,536 twice"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_6a37227593d0977fdbdd7a",
+     "finding": "advisor table: 61,038, 30,518, 6,104, 6,104"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_11040fe5d66821bd6951aa",
+     "finding": "term sheet total 3,051,879 ties only after subtracting"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/1782897835407336831",
+     "finding": "Carta: option grants ES-9 and ES-11 (NEW digest of Nov 20, 2023: ES-8 and ES-10 accepted)"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A24",
+   "ends_in": "R5",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C0ADGSZKR3R/1770841239.761999",
+     "finding": "Leonard: all termination letters are sent"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAPBs_a68Agj+37mZ6abeW5KEKTh00he+mgOpLP2FrpDjeO-37Q@mail.gmail.com>",
+     "finding": "six letters to six recipients"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<177093551461.10.12358585394423780893@notifications-email-sending-worker-5fc9459db-km7pv>",
+     "finding": "eight Carta entries on Feb 12"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAEH8bLxfNq9vp7-VSMQdpetPWQxBhv2pcPE=xj=oX9c8MxNFtA@mail.gmail.com>",
+     "finding": "ES-14 resigned in November, before any letter"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A25",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C0ADGSZKR3R/1770934638.035469",
+     "finding": "angels still to do on Feb 12"
+    },
+    {
+     "service": "slack",
+     "record": "D04UC0UEN2V/1770664988.379119",
+     "finding": "Feb 9 DM told Segerstrale"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAGkro_PbX4mT7nQe2LwV9sKd1YhJ3uF6aRc8ZoGi5NtEyMq0Bw@mail.gmail.com>",
+     "finding": "NEW Robert told Nebojsa on Feb 12"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A19",
+   "ends_in": "R8",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+     "finding": "NEW as-of date Dec 31, 2025"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<177093551461.10.12358585394423780893@notifications-email-sending-worker-5fc9459db-km7pv>",
+     "finding": "effective Nov 21, entered Feb 12"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<177093559600.10.6851662374290149851@notifications-email-sending-worker-5fc9459db-b2dtx>",
+     "finding": "effective Jan 30: full grant still held at Dec 31"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_6a37227593d0977fdbdd7a",
+     "finding": "advisor grants count at every date"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A11",
+   "ends_in": "R9",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_966445655f653d26dc8537",
+     "finding": "board of four in the financing documents"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAMy0Hx1va3q4zH2HyPiqfm8Je2fm5A=JHKf8LrXWb12z2FHr6w@mail.gmail.com>",
+     "finding": "Matthew resigned May 1, 2025"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<BYAPR02MB435880CCF501BE0AE906AFFDC460A@BYAPR02MB4358.namprd02.prod.outlook.com>",
+     "finding": "Griffin's director resigned Feb 12, 2026"
+    }
+   ]
+  },
+  {
+   "id": "C7",
+   "root_cause": "A7",
+   "ends_in": "R6",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAPBs_a6zM=or+nDw0YSrZ3Rmkvzr0fnVHNBaaRqx6vN6Uxrs_Q@mail.gmail.com>",
+     "finding": "three lines, no shared surname"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<A658306E-3D13-458C-A311-95454D575822@librasoftworks.com>",
+     "finding": "Enes supplies all three addresses"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<0CDD5A07-0BE6-4909-8188-93E10FBF4E16@librasoftworks.com>",
+     "finding": "all three brothers wired"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2444",
+     "finding": "the project shows a name with no link to the family"
+    }
+   ]
+  },
+  {
+   "id": "C9",
+   "root_cause": "A24",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C0ADGSZKR3R/1770841239.761999",
+     "finding": "Leonard: all termination letters are sent"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAPBs_a5HKTOGV3nwn6iyxz8GhwLGRaF_Gs-uii3x7tVQ9eTfQQ@mail.gmail.com>",
+     "finding": "Owen's letter went to his personal address"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<698ce305.050a0220.3b7f1c.9d2e.GMR@mx.google.com>",
+     "finding": "NEW the mail system: that address is inactive, not delivered"
+    }
+   ]
+  },
+  {
+   "id": "C10",
+   "root_cause": "A11",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ENG-2452",
+     "finding": "Calvin's issue: his address, 'No mail with that address before Feb'"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<176175436721.10.9685252272573766647@notifications-email-sending-worker-6b65bf6cf7-dg8x2>",
+     "finding": "Carta: ES-3 last day Jan 24, 2026"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAJr7mPx2QwF8nVb4LtK9sYd3HcE6uZaR1oGiN5tMeBq0WsXkQz@mail.gmail.com>",
+     "finding": "NEW from the issue's address on Feb 3: Carta's Jan 23 update moved the last day to Feb 20, 2026"
+    }
+   ]
+  },
+  {
+   "id": "C11",
+   "root_cause": "A7",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ENG-2447",
+     "finding": "Husnu Matthew Collins at his work address; last mail Oct 28, 2025"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAPBs_aLeDrdRoqOb0LrQ1AfGvbpmR-YdoG8A6PGmPay5Sc-ng=@mail.gmail.com>",
+     "finding": "NEW Feb 12: Leonard tells 'Akin' at a personal address that the company is closing"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAMy0Hx2S+a4q+PUkFZM1ifrcEKv-y7AWWtQHrEsWg2qRxvFo3Q@mail.gmail.com>",
+     "finding": "Matthew Collins signs his own mail 'akin'"
+    }
+   ]
+  },
+  {
+   "id": "C8",
+   "root_cause": "A9",
+   "ends_in": "R12",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "C51ECE5102ED/1770903714.600249",
+     "finding": "Claire asks about equity"
+    },
+    {
+     "service": "slack",
+     "record": "C51ECE5102ED/1770906363.694689",
+     "finding": "Leonard's replies answer the deletion question only"
+    },
+    {
+     "service": "gmail",
+     "record": "leonard.hayes@harmonygames.co/<CAPBs_a68Agj+37mZ6abeW5KEKTh00he+mgOpLP2FrpDjeO-37Q@mail.gmail.com>",
+     "finding": "the letter's equity paragraph gives no date"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "exact_predicate",
+   "services": [
+    "gmail",
+    "gdocs"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<CAPBs_a6zM=or+nDw0YSrZ3Rmkvzr0fnVHNBaaRqx6vN6Uxrs_Q@mail.gmail.com>",
+    "gdocs:data.json /docs_documents/262"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the owner list's 86,470, 81,383 and 31,536 lines are stock, so Series Seed sums too high or the difference goes unnoticed",
+   "resolver": "Due Diligence Disclosures' advisor table: four angels also hold advisor options, 103,764 in all, and only the subtraction ties to the term sheet's 3,051,879",
+   "discovery_order": "the owner list is one read and carries every line; the advisor table is a 2023 doc with no holder word in its title"
+  },
+  {
+   "id": "T2",
+   "family": "stale_summary",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<CAPBs_a6zM=or+nDw0YSrZ3Rmkvzr0fnVHNBaaRqx6vN6Uxrs_Q@mail.gmail.com>",
+    "C04UEQVDVB7/1732646280.941869"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the Nov 2024 owner list is the current holder list, with option grants as shares and Griffin as one line",
+   "resolver": "Carta's certificates and awards: option lines are not stock, and Griffin is two fund lines",
+   "discovery_order": "a search on any holder figure returns the owner list first"
+  },
+  {
+   "id": "T3",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "gdocs:data.json /docs_documents/40",
+    "leonard.hayes@harmonygames.co/<177093551461.10.12358585394423780893@notifications-email-sending-worker-5fc9459db-km7pv>"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "options outstanding are the term sheet's 268,772",
+   "resolver": "the term sheet is a Jan 22 snapshot: the October windows closed Jan 24-28 (ES-3's was moved to Feb 20) and the Feb 12 entries cut unvested grants, leaving 164,114 live at the clock",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "seeded": false,
+     "at": "2026-01-23T00:09:05Z",
+     "container": "file:f_11040fe5d66821bd6951aa",
+     "base_pointer": "gdocs:data.json /docs_documents/40"
+    },
+    {
+     "service": "gmail",
+     "seeded": false,
+     "at": "2026-02-12T22:31:54Z",
+     "container": "gmail:1856960478782792748",
+     "base_pointer": "leonard.hayes@harmonygames.co/<177093551461.10.12358585394423780893@notifications-email-sending-worker-5fc9459db-km7pv>"
+    }
+   ]
+  },
+  {
+   "id": "T4",
+   "family": "done_gap",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770841239.761999",
+    "C07C2866011/1770837454.464209",
+    "leonard.hayes@harmonygames.co/<177093551461.10.12358585394423780893@notifications-email-sending-worker-5fc9459db-km7pv>",
+    "leonard.hayes@harmonygames.co/<CAPBs_a68Agj+37mZ6abeW5KEKTh00he+mgOpLP2FrpDjeO-37Q@mail.gmail.com>"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "'All termination letters are sent' means every Carta termination has a letter, so ES-14 and ES-18 were told like the others",
+   "resolver": "Six letters exist against eight Feb 12 Carta entries; matching letter recipients to Carta addresses leaves ES-14 and ES-18 with no letter",
+   "discovery_order": "Leonard's own #winddown line says the letters are done; the gap shows only by joining recipients to Carta"
+  },
+  {
+   "id": "T5",
+   "family": "conclusion_stop",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770935621.095649",
+    "leonard.hayes@harmonygames.co/<CAPBs_a68Agj+37mZ6abeW5KEKTh00he+mgOpLP2FrpDjeO-37Q@mail.gmail.com>"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "'Carta terminations are done' closes the option side, so nothing more is owed to live holders",
+   "resolver": "The letters only promise a Carta mail; no holder-facing record gives any live holder a last day, so a date note is still owed"
+  },
+  {
+   "id": "T6",
+   "family": "completion_elsewhere",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770934638.035469",
+    "D04UC0UEN2V/1770664988.379119"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "Leonard's Feb 12 list says the angels are still to do, so Segerstråle gets a first note",
+   "resolver": "Leonard's Feb 9 DM told him personally",
+   "discovery_order": "#winddown is read first; the DM is off every channel listing"
+  },
+  {
+   "id": "T7",
+   "family": "completion_elsewhere",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<CAGkro_PbX4mT7nQe2LwV9sKd1YhJ3uF6aRc8ZoGi5NtEyMq0Bw@mail.gmail.com>"
+   ],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770934638.035469"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "no angel but Segerstråle has been told, so Nebojsa gets a first note",
+   "resolver": "NEW Robert's Feb 12 reply on his old thread with Nebojsa, Leonard copied, tells him about the closing",
+   "discovery_order": "a reply on a 2023 thread about a wire, with no holder word in its subject",
+   "version_records": [
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2026-02-12T22:17:18Z",
+     "container": "slack:C0ADGSZKR3R/1770934638.035469",
+     "base_pointer": "C0ADGSZKR3R/1770934638.035469"
+    },
+    {
+     "service": "gmail",
+     "seeded": true,
+     "at": "2026-02-12T23:41:12Z",
+     "container": "gmail:1773963101399472184",
+     "id": "leonard.hayes@harmonygames.co/<CAGkro_PbX4mT7nQe2LwV9sKd1YhJ3uF6aRc8ZoGi5NtEyMq0Bw@mail.gmail.com>"
+    }
+   ]
+  },
+  {
+   "id": "T8",
+   "family": "near_miss_mention",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "D09R59580EM/1762285888.654689"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "Tor was told in November, so he needs nothing",
+   "resolver": "The Nov 4 DM warned of about three months of runway; nothing says the company is closing, so Tor still gets a first note"
+  },
+  {
+   "id": "T10",
+   "family": "superseding",
+   "services": [
+    "gdocs",
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "gdocs:data.json /docs_documents/381",
+    "leonard.hayes@harmonygames.co/<CAMy0Hx1va3q4zH2HyPiqfm8Je2fm5A=JHKf8LrXWb12z2FHr6w@mail.gmail.com>",
+    "leonard.hayes@harmonygames.co/<BYAPR02MB435880CCF501BE0AE906AFFDC460A@BYAPR02MB4358.namprd02.prod.outlook.com>"
+   ],
+   "requirement": "R9",
+   "expected_wrong_reading": "the board is the four named in the financing documents",
+   "resolver": "Matthew's May 1, 2025 mail and Phil's Feb 12, 2026 mail leave Leonard and Robert",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "seeded": false,
+     "at": "2023-06-21T15:53:29Z",
+     "container": "file:f_966445655f653d26dc8537",
+     "base_pointer": "gdocs:data.json /docs_documents/381"
+    },
+    {
+     "service": "gmail",
+     "seeded": false,
+     "at": "2025-05-01T22:42:49Z",
+     "container": "gmail:1830959847543474636",
+     "base_pointer": "leonard.hayes@harmonygames.co/<CAMy0Hx1va3q4zH2HyPiqfm8Je2fm5A=JHKf8LrXWb12z2FHr6w@mail.gmail.com>"
+    },
+    {
+     "service": "gmail",
+     "seeded": false,
+     "at": "2026-02-12T22:05:07Z",
+     "container": "gmail:1856958794180374704",
+     "base_pointer": "leonard.hayes@harmonygames.co/<BYAPR02MB435880CCF501BE0AE906AFFDC460A@BYAPR02MB4358.namprd02.prod.outlook.com>"
+    }
+   ]
+  },
+  {
+   "id": "T11",
+   "family": "authority",
+   "services": [
+    "gmail",
+    "gdocs"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<BYAPR02MB435880CCF501BE0AE906AFFDC460A@BYAPR02MB4358.namprd02.prod.outlook.com>",
+    "gdocs:data.json /docs_documents/360"
+   ],
+   "requirement": "R9",
+   "expected_wrong_reading": "Griffin's director resigned, so Griffin has nothing left to sign",
+   "resolver": "The charter's protective provision is a vote of the preferred, not a board seat; Griffin holds 90.0 % of the preferred"
+  },
+  {
+   "id": "T12",
+   "family": "effective_date",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+    "leonard.hayes@harmonygames.co/1857029474983245439"
+   ],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<LV3PR19MB8524A7F34357829DDCA90153CA302@LV3PR19MB8524.namprd19.prod.outlook.com>",
+    "leonard.hayes@harmonygames.co/<177093551461.10.12358585394423780893@notifications-email-sending-worker-5fc9459db-km7pv>"
+   ],
+   "requirement": "R8",
+   "expected_wrong_reading": "KPMG gets today's holdings, or last year's as-of date",
+   "resolver": "NEW FY25 request fixes Dec 31, 2025 and a generic cut-off regardless of when things were recorded; entries made in February carry earlier effective dates",
+   "version_records": [
+    {
+     "service": "gmail",
+     "seeded": false,
+     "at": "2024-12-05T00:22:55Z",
+     "container": "gmail:1817557789846606177",
+     "base_pointer": "gmail:threads/leonard@harmonygames.co_1817557789846606177.json /messages/6"
+    },
+    {
+     "service": "gmail",
+     "seeded": true,
+     "at": "2026-02-13T16:48:33Z",
+     "container": "gmail:1857029474983245439",
+     "id": "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>"
+    }
+   ]
+  },
+  {
+   "id": "T13",
+   "family": "entity_collision",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [
+    "4f54dff9722aaeef2ba59316ff0cf2f9"
+   ],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<A658306E-3D13-458C-A311-95454D575822@librasoftworks.com>",
+    "leonard.hayes@harmonygames.co/<0CDD5A07-0BE6-4909-8188-93E10FBF4E16@librasoftworks.com>"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "three record holders mean three separate first notes",
+   "resolver": "Enes has handled everything for the three Disli lines; NEW Leonard's reply under his Feb 12 list says one note to whoever has always handled it for a family covers the rest",
+   "discovery_order": "neither the owner list nor the issue titles show a shared surname: 'Patrick Lewis' reads as unrelated"
+  },
+  {
+   "id": "T14",
+   "family": "scope_alias",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<CAPBs_a6zM=or+nDw0YSrZ3Rmkvzr0fnVHNBaaRqx6vN6Uxrs_Q@mail.gmail.com>"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "'Patrick' is one person",
+   "resolver": "The wires and owner list separate Bergmann from the Disli line"
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<176175429549.10.8466995912642267217@notifications-email-sending-worker-6b65bf6cf7-gcpxf>"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the roster's co-founder holds a founder's stake",
+   "resolver": "ES-17 is an option line that lapsed; Frederick Stone holds nothing at the clock",
+   "distractor_type": "lookalike_entity"
+  },
+  {
+   "id": "T16",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<CAPBs_a6mwZj_4JRyPpidJCWgK9auo+34NVhirFGhKMHi3d5OmA@mail.gmail.com>",
+    "leonard.hayes@harmonygames.co/<176175429549.10.8466995912642267217@notifications-email-sending-worker-6b65bf6cf7-gcpxf>"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "ES-17's letter figures (34,409, Jan 22) are the record",
+   "resolver": "The letter itself says Carta shows the exact numbers: 34,439 and Jan 28, both before the clock",
+   "distractor_type": "near_duplicate_record"
+  },
+  {
+   "id": "T17",
+   "family": "synthesis_omission",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C51ECE5102ED/1770903714.600249"
+   ],
+   "requirement": "R12",
+   "expected_wrong_reading": "Claire's note only needs her date",
+   "resolver": "Her Feb 12 group-DM question about equity was never answered, and the closed rule says an open question on a live line is answered in the note",
+   "discovery_order": "the group DM is not a channel; Leonard's reply in it answers a different question"
+  },
+  {
+   "id": "T18",
+   "family": "superseding",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_762c60832854d3e7a7f7df",
+    "f_a37b403d5200d4f0a31d31"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "the earlier notes doc still governs",
+   "resolver": "NEW the later close-out notes replace it",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "seeded": true,
+     "at": "2026-02-10T17:41:09Z",
+     "container": "file:f_762c60832854d3e7a7f7df",
+     "id": "f_762c60832854d3e7a7f7df"
+    },
+    {
+     "service": "gdocs",
+     "seeded": true,
+     "at": "2026-02-13T01:05:41Z",
+     "container": "file:f_a37b403d5200d4f0a31d31",
+     "id": "f_a37b403d5200d4f0a31d31"
+    }
+   ]
+  },
+  {
+   "id": "T19",
+   "family": "distractor",
+   "services": [
+    "gslides"
+   ],
+   "seeded_ids": [
+    "f_75dddccabb26eeea4842c8"
+   ],
+   "base_pointers": [],
+   "requirement": "R10",
+   "expected_wrong_reading": "the outline deck's holder count is current",
+   "resolver": "NEW deck quotes the Nov 2024 owner list, attributed and dated",
+   "distractor_type": "stale_summary"
+  },
+  {
+   "id": "T20",
+   "family": "distractor",
+   "services": [
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "f_5ecaa967db3adcfa440b09"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "the draft sheet is the holder list",
+   "resolver": "NEW partial sheet dated before the Carta entries",
+   "distractor_type": "partial_listing"
+  },
+  {
+   "id": "T21",
+   "family": "distractor",
+   "services": [
+    "trello"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "68c5a49e8491a9d7faf869d0"
+   ],
+   "requirement": "R10",
+   "expected_wrong_reading": "the investor update is done because its card sits in Done",
+   "resolver": "the card has no description and no update followed it",
+   "distractor_type": "already_done"
+  },
+  {
+   "id": "T22",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<LV3PR19MB8524A7F34357829DDCA90153CA302@LV3PR19MB8524.namprd19.prod.outlook.com>"
+   ],
+   "requirement": "R8",
+   "expected_wrong_reading": "last year's as-of date applies",
+   "resolver": "FY24 was Sep 30, 2024; the FY25 request names its own date",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "T23",
+   "family": "done_gap",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<698ce305.050a0220.3b7f1c.9d2e.GMR@mx.google.com>"
+   ],
+   "base_pointers": [
+    "C0ADGSZKR3R/1770841239.761999",
+    "leonard.hayes@harmonygames.co/<CAPBs_a5HKTOGV3nwn6iyxz8GhwLGRaF_Gs-uii3x7tVQ9eTfQQ@mail.gmail.com>"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "'All termination letters are sent' and Owen's Feb 11 letter mean Owen was told, so his note gives his date only",
+   "resolver": "NEW a delivery failure came back on Owen's letter nine seconds after it went: it never reached him, so he is untold and is owed the closing and his last day",
+   "discovery_order": "the letters are single-message threads read by message id; the failure is the second message in Owen's thread, from the mail system, with no holder word in its subject",
+   "version_records": [
+    {
+     "service": "gmail",
+     "seeded": true,
+     "at": "2026-02-11T20:13:57Z",
+     "container": "gmail:1856860994291529096",
+     "id": "leonard.hayes@harmonygames.co/<698ce305.050a0220.3b7f1c.9d2e.GMR@mx.google.com>"
+    },
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2026-02-11T20:20:39Z",
+     "container": "slack:C0ADGSZKR3R/1770841239.761999",
+     "base_pointer": "C0ADGSZKR3R/1770841239.761999"
+    }
+   ]
+  },
+  {
+   "id": "T25",
+   "family": "scope_alias",
+   "services": [
+    "gmail",
+    "linear"
+   ],
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<CAPBs_aLeDrdRoqOb0LrQ1AfGvbpmR-YdoG8A6PGmPay5Sc-ng=@mail.gmail.com>"
+   ],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<CAMy0Hx2S+a4q+PUkFZM1ifrcEKv-y7AWWtQHrEsWg2qRxvFo3Q@mail.gmail.com>"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "no mail went to Collins's address after the closing, so he is untold and gets a first note",
+   "resolver": "NEW Leonard's Feb 12 mail to 'Husnu Akin' at a personal address tells him about the closing; Carta's SSP-10 holder is Husnu Matthew Collins and he signs his own mail 'akin', so he is already told",
+   "discovery_order": "the mail names only 'Akin' and an address on no other record; the issue carries Collins's work address and its comment shows no mail since Oct 28"
+  },
+  {
+   "id": "T24",
+   "family": "superseding",
+   "services": [
+    "gmail",
+    "linear"
+   ],
+   "seeded_ids": [
+    "leonard.hayes@harmonygames.co/<CAJr7mPx2QwF8nVb4LtK9sYd3HcE6uZaR1oGiN5tMeBq0WsXkQz@mail.gmail.com>"
+   ],
+   "base_pointers": [
+    "leonard.hayes@harmonygames.co/<176175436721.10.9685252272573766647@notifications-email-sending-worker-6b65bf6cf7-dg8x2>"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Carta's Oct 29 termination notice gives ES-3's last day as Jan 24, so the line holds nothing",
+   "resolver": "NEW Calvin forwarded Carta's Jan 23 update to Leonard on Feb 3: the last day moved to Feb 20, so the line is live, he is owed the closing and his date, and he goes first",
+   "discovery_order": "a holder's forward in its own thread with no Carta sender or message id; the obvious Carta search returns Carta's own notices",
+   "version_records": [
+    {
+     "service": "gmail",
+     "seeded": false,
+     "at": "2025-10-29T16:12:47Z",
+     "container": "gmail:1847333347700620793",
+     "base_pointer": "leonard.hayes@harmonygames.co/<176175436721.10.9685252272573766647@notifications-email-sending-worker-6b65bf6cf7-dg8x2>"
+    },
+    {
+     "service": "gmail",
+     "seeded": true,
+     "at": "2026-02-03T16:20:44Z",
+     "container": "gmail:1856121753612004097",
+     "id": "leonard.hayes@harmonygames.co/<CAJr7mPx2QwF8nVb4LtK9sYd3HcE6uZaR1oGiN5tMeBq0WsXkQz@mail.gmail.com>"
+    }
+   ]
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "ADV",
+   "mechanism": "A17",
+   "prior_family": "A17",
+   "prior_family_reason": "in-scope grants sit inside merged lines and outside the obvious Carta search",
+   "nodes": [
+    "T1",
+    "T2",
+    "C1"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the owner list's figure is the holder's stock",
+   "decides": [
+    "K1",
+    "K4",
+    "K5",
+    "K6",
+    "K7",
+    "K8",
+    "P1",
+    "A1",
+    "NC_Deepak"
+   ],
+   "controls": [
+    "ENG-2441",
+    "ENG-2442"
+   ],
+   "over_application": "adv_over: subtracts an advisor grant from a plain $25,000 line",
+   "source": "doc-table",
+   "signature": "Due Diligence advisor table 103,764"
+  },
+  {
+   "id": "LETTER",
+   "mechanism": "A24",
+   "prior_family": "A24",
+   "prior_family_reason": "a founder's done statement with a missing piece shown only by joining two records",
+   "nodes": [
+    "T4",
+    "T5",
+    "C2"
+   ],
+   "requirement": "R5",
+   "natural_reading": "every Carta termination had a letter, so every live option holder has been told",
+   "decides": [
+    "C_ES14",
+    "C_ES18",
+    "C_DATE",
+    "TC_ES14",
+    "TC_ES18",
+    "N_Vincent",
+    "N_Oliver"
+   ],
+   "controls": [
+    "ENG-2450",
+    "ENG-2460"
+   ],
+   "over_application": "letter_over: treats a holder with a real letter as untold",
+   "source": "founder-claim",
+   "signature": "six letters against eight entries"
+  },
+  {
+   "id": "TOLD",
+   "mechanism": "A25",
+   "prior_family": "A25",
+   "prior_family_reason": "a completion record sits away from the list that says the work is open",
+   "nodes": [
+    "T6",
+    "T7",
+    "T8",
+    "C3"
+   ],
+   "requirement": "R4",
+   "natural_reading": "the Feb 12 list means no angel has been told",
+   "decides": [
+    "C_SEG",
+    "C_NEB",
+    "C_FIRST",
+    "TC_SEG",
+    "TC_NEB",
+    "LC_Seg",
+    "LC_Neb"
+   ],
+   "controls": [
+    "ENG-2448"
+   ],
+   "over_application": "told_over: treats Tor's November runway warning as being told",
+   "source": "dm-and-mail",
+   "signature": "Feb 9 DM; Robert's Feb 12 reply"
+  },
+  {
+   "id": "ASOF",
+   "mechanism": "A19",
+   "prior_family": "A19",
+   "prior_family_reason": "the deciding figure must be derived from effective dates, not read off a record",
+   "nodes": [
+    "T12",
+    "C4"
+   ],
+   "requirement": "R8",
+   "natural_reading": "the confirmation reports today's option count or the term sheet's",
+   "decides": [
+    "A1",
+    "A2"
+   ],
+   "controls": [
+    "ENG-2455"
+   ],
+   "over_application": "asof_over: counts a line that lapsed before the as-of date as still open at it",
+   "source": "derived",
+   "signature": "243,757 options at Dec 31, 2025"
+  },
+  {
+   "id": "FAM",
+   "mechanism": "A7",
+   "prior_family": "A7",
+   "prior_family_reason": "one person speaks for lines whose names do not show the link",
+   "nodes": [
+    "T13",
+    "T14",
+    "C7"
+   ],
+   "requirement": "R6",
+   "natural_reading": "three record holders get three notes",
+   "decides": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "N_COUNT"
+   ],
+   "controls": [
+    "ENG-2441",
+    "ENG-2442"
+   ],
+   "over_application": "fam_over: folds the Solsten pair into one note",
+   "source": "dm-and-old-mail",
+   "signature": "all three brothers"
+  },
+  {
+   "id": "BOARD",
+   "mechanism": "A11",
+   "prior_family": "A11",
+   "prior_family_reason": "a dated resignation in mail overrides board lists in documents",
+   "nodes": [
+    "T10",
+    "T11",
+    "C5"
+   ],
+   "requirement": "R9",
+   "natural_reading": "the document board list stands and Griffin has nothing left to do",
+   "decides": [
+    "B1",
+    "B2",
+    "L6",
+    "G2"
+   ],
+   "controls": [
+    "SUMMARY"
+   ],
+   "over_application": "board_over: drops Robert with the outside directors",
+   "source": "mail",
+   "signature": "May 1, 2025 resignation"
+  },
+  {
+   "id": "ASK",
+   "mechanism": "A9",
+   "prior_family": "A9",
+   "prior_family_reason": "a written question with no matching reply",
+   "nodes": [
+    "T17",
+    "C8"
+   ],
+   "requirement": "R12",
+   "natural_reading": "Claire's note only needs her date",
+   "decides": [
+    "Q1"
+   ],
+   "controls": [
+    "ENG-2461"
+   ],
+   "over_application": "ask_over: writes to a lapsed holder because they once asked",
+   "source": "group-dm",
+   "signature": "Claire's equity question"
+  },
+  {
+   "id": "BOUNCE",
+   "mechanism": "A24",
+   "prior_family": "A24",
+   "prior_family_reason": "a done record (the letter, Leonard's 'all sent') with a missing piece the mail system recorded",
+   "nodes": [
+    "T23",
+    "C9"
+   ],
+   "requirement": "R4",
+   "natural_reading": "a sent letter told its holder, so Owen gets his date only",
+   "decides": [
+    "C_ES12",
+    "TC_ES12",
+    "C_DATE"
+   ],
+   "controls": [
+    "ENG-2456"
+   ],
+   "over_application": "bounce_over: treats Marcus's delivered letter as bounced",
+   "source": "mail-bounce",
+   "signature": "delivery failure on Owen's Feb 11 letter"
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "prior_family": "A7",
+   "prior_family_reason": "the deciding message names the holder by a name only old mail ties to him",
+   "nodes": [
+    "T25",
+    "C11"
+   ],
+   "requirement": "R4",
+   "natural_reading": "no mail to Collins's address after the closing, so he is untold and gets a first note",
+   "decides": [
+    "C_COL",
+    "TC_COL",
+    "LC_Col",
+    "C_FIRST"
+   ],
+   "controls": [
+    "ENG-2449"
+   ],
+   "over_application": "alias_over: takes the Akin mail as telling Deepak too",
+   "source": "alias-mail",
+   "signature": "Leonard's Feb 12 mail to Akin"
+  },
+  {
+   "id": "EXT",
+   "mechanism": "A11",
+   "prior_family": "A11",
+   "prior_family_reason": "a later dated record elsewhere overrides the notice a run reads first",
+   "nodes": [
+    "T24",
+    "C10"
+   ],
+   "requirement": "R2",
+   "natural_reading": "Carta's Oct 29 termination notice gives ES-3's last day, Jan 24, so the line holds nothing",
+   "decides": [
+    "C_ES3",
+    "TC_ES3",
+    "P_first",
+    "N_Calvin",
+    "D6",
+    "P1",
+    "N_COUNT"
+   ],
+   "controls": [
+    "ENG-2454"
+   ],
+   "over_application": "ext_over: extends ES-5's window with Calvin's",
+   "source": "holder-forward",
+   "signature": "Carta's Jan 23 update forwarded by Calvin"
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-LIVE",
+   "kind": "scale",
+   "degrade": "live_miss",
+   "latent": "member",
+   "family": "exact_predicate",
+   "source": "carta-notices",
+   "members": [
+    "ENG-2451",
+    "ENG-2454",
+    "ENG-2455",
+    "ENG-2461",
+    "ENG-2462"
+   ],
+   "description": "a complexity channel, not a rule: Leonard's list names Carta, so a run reads the notices; a line is misread one at a time and stays live at its grant"
+  },
+  {
+   "id": "CH-ADV",
+   "kind": "scale",
+   "rule": "ADV",
+   "degrade": "ch_adv",
+   "latent": "member",
+   "family": "A17",
+   "source": "doc-table",
+   "members": [
+    "ENG-2440",
+    "ENG-2446",
+    "ENG-2447",
+    "ENG-2449",
+    "SUMMARY"
+   ],
+   "description": "the owner list's figure is the holder's stock"
+  },
+  {
+   "id": "CH-LETTER",
+   "kind": "scale",
+   "rule": "LETTER",
+   "degrade": "ch_letter",
+   "latent": "member",
+   "family": "A24",
+   "source": "founder-claim",
+   "members": [
+    "ENG-2459",
+    "ENG-2463"
+   ],
+   "description": "every Carta termination had a letter, so every live option holder has been told"
+  },
+  {
+   "id": "CH-TOLD",
+   "kind": "scale",
+   "rule": "TOLD",
+   "degrade": "ch_told",
+   "latent": "member",
+   "family": "A25",
+   "source": "dm-and-mail",
+   "members": [
+    "ENG-2440",
+    "ENG-2446"
+   ],
+   "description": "the Feb 12 list means no angel has been told"
+  },
+  {
+   "id": "CH-ASOF",
+   "kind": "scale",
+   "rule": "ASOF",
+   "degrade": "ch_asof",
+   "latent": "member",
+   "family": "A19",
+   "source": "derived",
+   "members": [
+    "ENG-2452",
+    "ENG-2454",
+    "ENG-2456",
+    "ENG-2457",
+    "ENG-2458",
+    "ENG-2461",
+    "ENG-2462",
+    "ENG-2463",
+    "SUMMARY"
+   ],
+   "description": "the confirmation reports today's option count or the term sheet's"
+  },
+  {
+   "id": "CH-FAM",
+   "kind": "scale",
+   "rule": "FAM",
+   "degrade": "ch_fam",
+   "latent": "member",
+   "family": "A7",
+   "source": "dm-and-old-mail",
+   "members": [
+    "ENG-2444",
+    "ENG-2445"
+   ],
+   "description": "three record holders get three notes"
+  },
+  {
+   "id": "CH-BOARD",
+   "kind": "scale",
+   "rule": "BOARD",
+   "degrade": "ch_board",
+   "latent": "member",
+   "family": "A11",
+   "source": "mail",
+   "members": [
+    "SUMMARY"
+   ],
+   "description": "the document board list stands and Griffin has nothing left to do"
+  },
+  {
+   "id": "CH-ASK",
+   "kind": "scale",
+   "rule": "ASK",
+   "degrade": "ch_ask",
+   "latent": "member",
+   "family": "A9",
+   "source": "group-dm",
+   "members": [
+    "ENG-2453"
+   ],
+   "description": "Claire's note only needs her date"
+  },
+  {
+   "id": "CH-BOUNCE",
+   "kind": "scale",
+   "rule": "BOUNCE",
+   "degrade": "ch_bounce",
+   "latent": "member",
+   "family": "A24",
+   "source": "mail-bounce",
+   "members": [
+    "ENG-2457"
+   ],
+   "description": "a sent letter told its holder, so Owen gets his date only"
+  },
+  {
+   "id": "CH-ALIAS",
+   "kind": "scale",
+   "rule": "ALIAS",
+   "degrade": "ch_alias",
+   "latent": "member",
+   "family": "A7",
+   "source": "alias-mail",
+   "members": [
+    "ENG-2447"
+   ],
+   "description": "no mail to Collins's address after the closing, so he is untold and gets a first note"
+  },
+  {
+   "id": "CH-EXT",
+   "kind": "scale",
+   "rule": "EXT",
+   "degrade": "ch_ext",
+   "latent": "member",
+   "family": "A11",
+   "source": "holder-forward",
+   "members": [
+    "ENG-2452",
+    "SUMMARY"
+   ],
+   "description": "Carta's Oct 29 termination notice gives ES-3's last day, Jan 24, so the line holds nothing"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 8,
+   "reason": "the draft, #winddown pages, the Feb 12 list, the founder DMs"
+  },
+  {
+   "phase": "discovery",
+   "service": "gmail",
+   "calls": 6,
+   "reason": "Sunset's request, KPMG's request and recent mail"
+  },
+  {
+   "phase": "discovery",
+   "service": "linear",
+   "calls": 3,
+   "reason": "project, issue list, status list"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 3,
+   "reason": "the close-out folder and Leonard's Drive listing"
+  },
+  {
+   "phase": "rules",
+   "service": "gdocs",
+   "calls": 6,
+   "reason": "close-out notes, earlier notes, charter, IRA, side letter draft, term sheet"
+  },
+  {
+   "phase": "rules",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "Task List and the draft holder sheet"
+  },
+  {
+   "phase": "rules",
+   "service": "gslides",
+   "calls": 1,
+   "reason": "the update outline deck"
+  },
+  {
+   "phase": "rules",
+   "service": "trello",
+   "calls": 2,
+   "reason": "the founders' close-out card and its comment"
+  },
+  {
+   "phase": "rules",
+   "service": "gcal",
+   "calls": 1,
+   "reason": "the Tuesday hold, found by a keyword search because lists spill"
+  },
+  {
+   "phase": "rules",
+   "service": "contacts",
+   "calls": 2,
+   "reason": "holders with no name in the mail: Bergmann and Eren"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 26,
+   "reason": "each holder's issue notes need their own linear_list_comments; list_issues returns no comments"
+  },
+  {
+   "phase": "per-record",
+   "service": "gmail",
+   "calls": 12,
+   "reason": "one search per stock holder address for the told column; search returns ids only"
+  },
+  {
+   "phase": "per-record",
+   "service": "gmail",
+   "calls": 14,
+   "reason": "termination notices and letters read per option line; a batch at full format is capped at 10 ids"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 12,
+   "reason": "name search per stock holder across DMs for any message about the closing"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "snowflake",
+   "calls": 2,
+   "reason": "FINANCE_LEDGER financing rows: dollars and no new money since 2023"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "gdocs",
+   "calls": 2,
+   "reason": "Due Diligence advisor table and the term sheet tie-out"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "gmail",
+   "calls": 4,
+   "reason": "side letter chain and the board resignations"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 4,
+   "reason": "create the schedule, fill it, read it back"
+  },
+  {
+   "phase": "writes",
+   "service": "gdocs",
+   "calls": 3,
+   "reason": "the letter"
+  },
+  {
+   "phase": "writes",
+   "service": "gdrive",
+   "calls": 6,
+   "reason": "move both files, share each with Robert and Arthur"
+  },
+  {
+   "phase": "writes",
+   "service": "linear",
+   "calls": 26,
+   "reason": "one state move per holder issue; no bulk form"
+  },
+  {
+   "phase": "writes",
+   "service": "linear",
+   "calls": 12,
+   "reason": "a reason comment on each issue where no note goes"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 2,
+   "reason": "Griffin heads-up and the KPMG reply"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "the founders' thread reply"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 14,
+   "reason": "one personal note per target; gmail_create_draft ran 14 times in the platform pre-check (run_forensics/rev1p/precheck/precheck/calls.jsonl)"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_create_spreadsheet+gsheets_values_update",
+   "count": 3,
+   "depends_on": [
+    "C1",
+    "C2",
+    "C3",
+    "T3",
+    "T14"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+   ]
+  },
+  {
+   "service": "gdocs",
+   "tool": "gdocs_create_document",
+   "count": 1,
+   "depends_on": [
+    "C5",
+    "K1"
+   ],
+   "requirements": [
+    "R10"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_move_file+gdrive_share_file",
+   "count": 6,
+   "depends_on": [
+    "K13",
+    "K14"
+   ],
+   "requirements": [
+    "R13"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_create_draft",
+   "count": 14,
+   "depends_on": [
+    "C2",
+    "C3",
+    "C7",
+    "C8"
+   ],
+   "requirements": [
+    "R6",
+    "R12"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_reply_to_message",
+   "count": 2,
+   "depends_on": [
+    "C4",
+    "C5"
+   ],
+   "requirements": [
+    "R8",
+    "R9"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue",
+   "count": 26,
+   "depends_on": [
+    "C2",
+    "C3",
+    "T15"
+   ],
+   "requirements": [
+    "R11"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_comment",
+   "count": 12,
+   "depends_on": [
+    "C3",
+    "T3"
+   ],
+   "requirements": [
+    "R11"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "C2"
+   ],
+   "requirements": [
+    "R13"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [
+  {
+   "hazard_id": "L13",
+   "resolution": "excluded",
+   "why_safe": "neither Combo-Fighters#37 nor the #company-internal repo post is cited; no row claims work stopped"
+  },
+  {
+   "hazard_id": "L08",
+   "resolution": "excluded",
+   "why_safe": "seeded issues are assigned only to the three founders, never to a holder"
+  },
+  {
+   "hazard_id": "R04",
+   "resolution": "excluded",
+   "why_safe": "neither the Slack folder link nor the dead 'Harmony Games Cap Table' link is cited; no row needs that sheet"
+  },
+  {
+   "hazard_id": "R08",
+   "resolution": "excluded",
+   "why_safe": "no base invitation is cited; the one seeded event has Leonard as its only attendee"
+  }
+ ],
+ "denied_probes": [],
+ "gradable_surface": "01_Gradable_Surface.json",
+ "facts": [
+  {
+   "key": "as-of date",
+   "value": "December 31, 2025",
+   "kind": "date",
+   "home_ids": [
+    "leonard.hayes@harmonygames.co/<LV3PR19MB8524F1C07D3A94E26B58D0AC7A1E2@LV3PR19MB8524.namprd19.prod.outlook.com>",
+    "leonard.hayes@harmonygames.co/<CAPBs_a7Tq2LmV9xYcR4KdN8wUe3HsJ6oFbZ1gPiA5tGyQnE0Xw@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "told rule",
+   "value": "Told means a written message about the closing, sent to them directly and delivered, from one of the three of us (a post in a channel doesn't count); for a fund, its partner.",
+   "kind": "status",
+   "home_ids": [
+    "f_a37b403d5200d4f0a31d31"
+   ]
+  },
+  {
+   "key": "line rule",
+   "value": "If a line's last day has passed, it holds nothing.",
+   "kind": "status",
+   "home_ids": [
+    "f_a37b403d5200d4f0a31d31"
+   ]
+  },
+  {
+   "key": "owed rule",
+   "value": "the closing if they have not been told, their last day if they have one",
+   "kind": "status",
+   "home_ids": [
+    "f_a37b403d5200d4f0a31d31"
+   ]
+  },
+  {
+   "key": "family rule",
+   "value": "covers the rest of the family's lines",
+   "kind": "status",
+   "home_ids": [
+    "4f54dff9722aaeef2ba59316ff0cf2f9"
+   ]
+  },
+  {
+   "key": "state rule",
+   "value": "Canceled where the line holds nothing",
+   "kind": "status",
+   "home_ids": [
+    "ec2ea957-fc8e-4958-b809-0fb735b1e916"
+   ]
+  },
+  {
+   "key": "closing told",
+   "value": "we're closing the company",
+   "kind": "status",
+   "home_ids": [
+    "leonard.hayes@harmonygames.co/<CAGkro_PbX4mT7nQe2LwV9sKd1YhJ3uF6aRc8ZoGi5NtEyMq0Bw@mail.gmail.com>",
+    "robert@harmonygames.co/<CAGkro_PbX4mT7nQe2LwV9sKd1YhJ3uF6aRc8ZoGi5NtEyMq0Bw@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "board after Feb 12",
+   "value": "That leaves Leonard and me on the board",
+   "kind": "status",
+   "home_ids": [
+    "leonard.hayes@harmonygames.co/<CAGkro_Tn7wQ2xLp9VbR4mYc8KsHd3EjUf6ZaNi1oGqX5tBe0Rw@mail.gmail.com>",
+    "robert@harmonygames.co/<CAGkro_Tn7wQ2xLp9VbR4mYc8KsHd3EjUf6ZaNi1oGqX5tBe0Rw@mail.gmail.com>",
+    "arthur.blake@harmonygames.co/<CAGkro_Tn7wQ2xLp9VbR4mYc8KsHd3EjUf6ZaNi1oGqX5tBe0Rw@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "Owen's letter not delivered",
+   "value": "Your message wasn't delivered to PERSON_3140_EMAIL",
+   "kind": "status",
+   "home_ids": [
+    "leonard.hayes@harmonygames.co/<698ce305.050a0220.3b7f1c.9d2e.GMR@mx.google.com>"
+   ]
+  },
+  {
+   "key": "ES-3 last day",
+   "value": "Last day to exercise Feb. 20, 2026",
+   "kind": "date",
+   "home_ids": [
+    "leonard.hayes@harmonygames.co/<CAJr7mPx2QwF8nVb4LtK9sYd3HcE6uZaR1oGiN5tMeBq0WsXkQz@mail.gmail.com>"
+   ]
+  },
+  {
+   "key": "Collins told",
+   "value": "Harmony is shutting down",
+   "kind": "status",
+   "home_ids": [
+    "leonard.hayes@harmonygames.co/<CAPBs_aLeDrdRoqOb0LrQ1AfGvbpmR-YdoG8A6PGmPay5Sc-ng=@mail.gmail.com>"
+   ]
+  }
+ ],
+ "integration_exceptions": [
+  {
+   "integration": "INT-11",
+   "record_id": "evt_6f1a2c9e4b7d3a58c0e1d2",
+   "reason": "no_notify: a solo hold on Leonard's own calendar, no guests, so no invitation mail"
+  },
+  {
+   "integration": "INT-13",
+   "record_id": "f_a37b403d5200d4f0a31d31",
+   "reason": "nothing is shared at seed time, and the Drive-app DM mirror ends 2026-01-19"
+  }
+ ],
+ "solver": {
+  "path": "Working_Files/solver/solver.py",
+  "digest": "8e27e3fd952d8e757c9b5b7441280d988aabd0dfa0b0cb87881a49706983db28"
+ },
+ "design_delta": [
+  {
+   "id": "record ids (all elements)",
+   "change": "Slack 'channel/ts' pointers to seeded messages -> their 32-hex row ids; Gmail thread pointers -> the message row that carries the text (thread ids kept alongside in seeded_ids)",
+   "reason": "the gate reads text and timestamps from SQL rows; a Gmail thread row holds only a snippet"
+  },
+  {
+   "id": "surface slots to the solver contract",
+   "change": "stock and vested slots read solver fields (Shares held now); totals and text slots are write_content; K8 is Collins's 61,038 grant, A9 added for common shares",
+   "reason": "oracle_kit contract.slots fails a direct or aggregate slot the solver cannot produce; K8's advisor total had no ask behind it"
+  },
+  {
+   "id": "controls and channels",
+   "change": "portfolio controls and channel members are solver keys; each channel has its own degrade (ch_adv, ch_letter, ...); ASOF's control is ENG-2455 with asof_over; CH members are the keys a rule really moves",
+   "reason": "contract.controls needs solver keys and a live operator; one shared ch_miss would fail a member's other rules together"
+  },
+  {
+   "id": "Sunset sentence on notices",
+   "change": "'formal notices are a separate step legal will walk you through later' instead of 'formal notices come from Sunset later'",
+   "reason": "research/s1_signed_pdfs.md: no SOW clause has Sunset send notices to investors; the outreach stays with the Company"
+  },
+  {
+   "id": "H1 extra lines",
+   "change": "H1 also says who the sheet and letter go to, that Griffin's partner gets a heads-up, and that a reply under the Feb 12 list says who goes first",
+   "reason": "R9 and R13 had no ask in any record"
+  },
+  {
+   "id": "drive parents",
+   "change": "the notes, draft sheet and deck sit in the close-out folder; the earlier notes stay in Leonard's root",
+   "reason": "a folder listing is the natural way in, and the older doc predates the folder"
+  },
+  {
+   "id": "linear project links",
+   "change": "no linear_project_teams or linear_project_members rows",
+   "reason": "not among the writable tables; the project keeps team_id and lead_id"
+  },
+  {
+   "id": "family sentence carrier",
+   "change": "K14 moves from a DM with Arthur to a reply under Leonard's Feb 12 list, C0ADGSZKR3R/1770949310.220519 with parent counters updated; H1 drops 'if anything changes I'll say in my DM with Arthur', and K14's quote becomes 'reply under my list in #winddown'",
+   "reason": "research/sweeps/rev1_run_sim.md: the DM was read about 95 % of the time; a reply on the message H1 names twice, where every run must write, is a correction on another path that a careful run still reaches"
+  },
+  {
+   "id": "KPMG item 2 and follow-up",
+   "change": "the root keeps 'using each effective date as Carta shows it, regardless of when recorded'; a follow-up from the same associate says a termination effective on December 31 counts as of that date; item 3 asks for shares plus those options as one figure",
+   "reason": "the rev1 draft's sentence stated the whole method (rev1_run_sim.md); delta_review.md section 5 still needs the boundary closed, and A2 needs an ask behind it"
+  },
+  {
+   "id": "H1 wording",
+   "change": "'handled on their stock if they have any' removed; 'from me, Robert or Arthur' is 'from one of the three of us'; the Griffin line says 'what we still need from Griffin'; 'Each note says what they hold' added; the Sunset onboarding named as still open; the Wind Down folder described, not refused; the google archive line squared with C0ADGSZKR3R/1770933903.645709",
+   "reason": "rev1_run_sim.md (hand-overs, and NC_* and F2 had no ask) and rev1_coherence.md B2, M1, m1"
+  },
+  {
+   "id": "T19 and the deck",
+   "change": "the deck says '27 holders on the Nov 2024 owner list', not '268,772 options outstanding (Jan 22 term sheet)'; title 'Harmony Games February 26 Update'",
+   "reason": "the term sheet pointer gave ADV away (rev1_run_sim.md); the short month form reads as a day in base titles (rev1_coherence.md m7)"
+  },
+  {
+   "id": "issue titles",
+   "change": "titles are the forms the owner list or Carta shows (plan/holder_facts.json title_form), not the friendly names in the design's §2 table",
+   "reason": "research/g2_holder_facts.md: 13 of 26 were not owner-list forms and plain names gave the token-to-name join"
+  },
+  {
+   "id": "seeded rows added",
+   "change": "KPMG's follow-up, Leonard's line to Sunset, Eren's Contacts row, Leonard's acknowledgement to KPMG, trello_boards activity",
+   "reason": "the follow-up carries the boundary, Leonard's line sets when Sunset gets the sheet, Eren's row is the address the design's call budget already reads; rev1_coherence.md m8"
+  },
+  {
+   "id": "mechanism tags",
+   "change": "B2 also tagged ADV; D6 no longer tagged LETTER; F1, NC, LC, S3 and A selectors accept the token forms",
+   "reason": "rev1_run_sim.md section 5"
+  },
+  {
+   "id": "delta review rev1 (research/sweeps/rev1_delta.md)",
+   "change": "'once the sheet is done' for the Griffin heads-up, the KPMG reply and the Trello card; 'Send KPMG's confirmation as a reply to all'; the family note says what each holds; Arthur is @-mentioned in the reply; the sheet table gains an 'Options now' column and option lines hold 0 shares; G1 retitled 'heads-up sent'; last-contact comments drop the channel word",
+   "reason": "the delta review's M1-M3 (a careful run could hold both replies as drafts; F2 had no ask; one field mixed stock and vested options) and its note that 'DM' on ENG-2440 made TOLD nearly free"
+  },
+  {
+   "id": "local /prompt round rev1 (research/prompt_review_rev1/)",
+   "change": "ENG-2447 titled with Carta's SSP-10 name 'Husnu Matthew Collins' and ENG-2460 'Brian Foster'; Robert's reply-all on the Feb 12 Board position thread says the board is Leonard and Robert; the notes say the Griffin heads-up goes reply-all and asks for their vote as preferred holders on the dissolution, that counts go by rows, that messages go to the investor update list address, and that the only notice extra is Tor's side letter, which Segerstrale signed too; KPMG's follow-up gives the prior-year class totals and says a line terminated on or before the as-of date counts only what had vested; the deck drops the holder count; mechanism SIDE retired",
+   "reason": "the main reviewer's F-1 (no reachable identity for the SSP-10 holder) and P1's forks F1-F9 (notice route, board, Series Seed total, Griffin's ask and recipients, draft addresses, option counting, ES-15's letter, counts, the deck's count); each settled in the records with the prompt unchanged"
+  },
+  {
+   "id": "P2 coherence rev1",
+   "change": "Leonard's Jan 14 note in #executives after his modelling posts says the seed figures there are 2 off (ledger 3,051,879 and 305,186); the draft sheet notes that the Nov 2024 list's percentages leave out the option pool; the close-out notes say Carta wins over any date in the letters; Collins's contact job reads 'Investor and advisor (left the board May 2025)'",
+   "reason": "research/prompt_review_rev1/P2.md DR1-DR4: pre-existing base inconsistencies on task-touched records, now explained in the records"
+  },
+  {
+   "id": "P1 rev2 forks",
+   "change": "each issue's description gives the holder's email as Leonard has it; the notes say messages go to that email and the only notice extra is for Tor and Segerstrale, who are both on Tor's side letter; Leonard's Jan 14 #executives note adds that the owner list counts the advisor options in with the stock",
+   "reason": "research/prompt_review_rev1/P1_rev2.md F1b, F5b, N1, N2, F6 (no address for two holders; which address; the ledger against the owner list)"
+  },
+  {
+   "id": "P1 rev3 recipients",
+   "change": "the notes say the Griffin heads-up is a reply to all on the partner's own Board position mail from Feb 12",
+   "reason": "research/prompt_review_rev1/P1_rev2.md F4 residual: three messages on the thread give different reply-all recipients"
+  },
+  {
+   "id": "P2 rev3 DR6",
+   "change": "ENG-2448's description adds 'Legal notices: [EMAIL_15398]'; the notes' notice route uses the legal-notice address on the issue where it gives one",
+   "reason": "research/prompt_review_rev1/P2_rev3.md DR6: TOR's own records name a separate legal-notice address"
+  },
+  {
+   "id": "notice route removed (rev7)",
+   "change": "Sunset's list drops 'How each holder gets formal notice, including any special terms' and the notes drop the notice-route line; requirement R7, trap T9, chain C6, authority H3 and slots S1-S3 leave the design; ENG-2448's legal-notice line goes with it; KPMG's follow-up closes item 4 ('any new financing and the decision to wind down'); the deck's 'What happened' slide drops 'and when the team stopped'",
+   "reason": "research/prompt_review_rev1/P2_rev5.md DR7 (Orrick copies in Leonard's financing papers), P1 rev3-rev5 and P1_cold.md F3, F4: the route column kept opening forks while Sunset says formal notices are a separate step legal handles; an open 'significant event' set and a team-stop date had no single answer"
+  },
+  {
+   "id": "cold P2 rev7",
+   "change": "each issue's first comment is 'Last mail with that address before Feb' plus the date (or 'No mail with that address before Feb'), computed from Leonard's mailbox for the address on the issue (plan/last_mail.py, complete scans)",
+   "reason": "research/prompt_review_rev1/P2_cold.md F1 and N3: 'last written contact' needed identity reading across anonymised tokens and a shared patrick@ address"
+  },
+  {
+   "id": "owner list total line",
+   "change": "UPDATE on both copies of the Nov 26, 2024 owner list (Leonard's and Arthur's) removes '(Total ownership percentage adds to 100%).'; every other byte unchanged",
+   "reason": "research/prompt_review_rev1/P2_cold_rev11.md F2: its 27 lines sum to 94.1 %, a quantitative inconsistency on a task-touched record"
+  },
+  {
+   "id": "rev2 intake (01a_Hardening_Report.md)",
+   "change": "the platform pre-check (Opus 5.5, SQL bc72db9c, historical) met six of seven rules; ADV landed fairly; BOARD was bypassed; T3, T8, T15, T16, T21, T22 were decoys never on the path",
+   "reason": "research/rev2/forensics_nodes.md and surface_handdiff.md (hand score 79.5 %, one root cause)"
+  },
+  {
+   "id": "ADV un-pointed (rev2)",
+   "change": "Leonard's Jan 14 #executives top-level note (the ledger figures and 'the owner list counts the advisor options in with the stock') becomes a numberless thread reply under his ChatGPT paste, 'fyi chatgpt has the seed count a couple of shares off in these, go by the ledger' (parent counters updated); KPMG's follow-up drops its item-1 sentence giving 3,051,879 Series Seed ('Two clarifications'); A2 leaves ADV",
+   "reason": "research/rev2/census_d_adv.md: both sentences handed over the split the advisor table and the ledger decide; A2 is 9,295,636 under both readings"
+  },
+  {
+   "id": "BOUNCE (rev2, new rule)",
+   "change": "a Gmail delivery failure (550 5.2.1 inactive) in Owen Baker's Feb 11 letter thread, nine seconds after the letter; ES-12 is untold, owed the closing and his last day; new slots C_ES12, TC_ES12; C_DATE expects five",
+   "reason": "Hardness v2 Part 3.1 (a done source with a missing piece); the pre-check read the letters by message id and never opened their threads (research/rev2/census_a_bounce.md)"
+  },
+  {
+   "id": "EXT (rev2, new rule)",
+   "change": "a new thread: Calvin Price forwards, from his issue address on Feb 3, Carta's Jan 23 update moving ES-3's last day from Jan 24 to Feb 20, 2026; ES-3 is live (4,408), untold, owed the closing and his date, and goes first; options now 164,114; new slots C_ES3, TC_ES3, N_Calvin; P_first and D6 move to ES-3; P_lapsed_ES3 and LC_ES-3 retire (LC sample ES-16); ND sample ES-12 becomes ES-15",
+   "reason": "Hardness v2 Part 3.2 (a correction somewhere else); the pre-check fetched only Carta message ids from its carta results and its date windows began Feb 8 (research/rev2/census_b_carta.md)"
+  },
+  {
+   "id": "max-k (rev2)",
+   "change": "difficulty_mutation, preflight_report and the forecasts run with --max-k 10 --allow-max-k 10",
+   "reason": "nine solver rules exceed the default k of 8"
+  },
+  {
+   "id": "ALIAS (rev2, new rule)",
+   "change": "Leonard's Feb 12 22:52Z mail to 'Akin' at a personal address (PERSON_8862_EMAIL, on no other record) tells Matthew Collins about the closing; ENG-2447 becomes Already told and Done, with no note; new slots C_COL, TC_COL, LC_Col; NC_Collins retires; C_FIRST expects five",
+   "reason": "Hardness v2 Part 3.6 (the deciding fact behind an alias that old mail resolves: Collins signs 'best / akin', 1847258343060233599); placed after the Feb 12 list per research/rev2/attack_coherence.md N3"
+  },
+  {
+   "id": "told rule wording (rev2)",
+   "change": "'Told means a written message about the closing, sent to them directly and delivered, from one of the three of us; for a fund, its partner.'",
+   "reason": "research/rev2/attack_ugt.md N1: 'sent' alone counts a bounced letter; 'reached' opens a fork on Owen's +1 to the Feb 11 @here post; 'and delivered' closes both without asking proof of receipt"
+  },
+  {
+   "id": "#executives reply wording (rev2)",
+   "change": "'fyi chatgpt has the other seed investors a couple of shares off in these, go by the ledger'",
+   "reason": "research/rev2/attack_ugt.md N4: the post's Griffin split (2,662,255 / 84,438) is right; only the other seed investors' figure (305,188) is off"
+  },
+  {
+   "id": "local /prompt round rev2 (research/prompt_review_rev2/)",
+   "change": "the told rule adds '(a post in a channel doesn't count)'; Leonard's Feb 12 mail goes to 'Husnu Akin', the first name of Carta's SSP-10 holder 'Husnu Matthew Collins'; a Carta digest of Nov 20, 2023 (sent Nov 21) shows the other two advisor holders accepting ES-8 and ES-10",
+   "reason": "P1 DR3 (Leonard's Feb 11 @here post reached Oliver, Calvin and Owen), P1 DR1 (no reachable record tied the Akin address to ENG-2447), P1 DR4 and the main reviewer's F1 (no Carta record named ES-8 or ES-10, so 'Carta is the record' did not cover two advisor lines)"
+  },
+  {
+   "id": "local /prompt round rev2, final (research/prompt_review_rev2/eval1_final.md)",
+   "change": "the notes add 'Finish my draft one in the folder rather than starting another.'; the Nov 20, 2023 Carta digest carries IMPORTANT like the base digests; Calvin's Date header carries -0600 (his base mail); Brian Foster's base Dec 31 termination against his January Slack activity accepted as the single low coherence item (no graded value reads it)",
+   "reason": "Eval 1 final: Clarity 3 (two files can be the holder sheet); P2_cold and Eval 0 advisories (label; Calvin's offset); Coherence 3 on a base lifecycle item that the Carta-date rule keeps out of every graded value"
+  }
+ ]
+}
