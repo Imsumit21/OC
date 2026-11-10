@@ -77,16 +77,16 @@ The scripts follow the folder they live in, so the bundle folder may carry anoth
 the paths below write it as `Task_Authoring/`.
 
 Reload the project if the commands are not discovered. Then start a task:
-`cp -Rn Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputs/` (`-n` never
-overwrites a task already in that folder; use another folder and `--task-dir` for a second task) and
+`cp -Rn Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputsRobert/` (each task in
+its own folder `task_inputs<Label>`; `-n` never overwrites a task already in that folder) and
 paste the eight-field assignment exactly into `00_Assigments.md`: business function,
 persona, role, competency, task skill, task type, difficulty mode and universe date.
 The emoji-labelled paste and nested `Role:` line are accepted. Normalize it, then
 validate the source before any universe grounding:
 
 ```sh
-python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputs --write
-python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputs --write --require-source
+python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputsRobert --write
+python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputsRobert --write --require-source
 ```
 
 Commands share `Working_Files/00_Task_Context.json`; use the same `--task-dir` for
@@ -123,10 +123,10 @@ human-time slot; `/create-humantime` writes the graded worksheet to
 |---|---|---|
 | `/create-goal` *(optional, first)* | `00_Session_Goal.md`: a copy-ready `/goal` for a fresh session, tailored to the assignment (no stage gate) | paste it into a fresh session; it writes `00_Pre_Scenario_Analysis.md` and stops → `/create-scenario` |
 | `/create-scenario` (`--revise` after `/create-hardening`) | `01_Scenario_Design.md`, draft `01_Hardness_Manifest.draft.json` (with the mechanism portfolio), `01_Gradable_Surface.json`, `01b_Redteam_Review.md` + `.second.md` (or a recorded `RED TEAM FALLBACK:`) | `/create-injection` |
-| `/create-injection` | `01_Universe_Inject.sql`, `01_Grounding_Dossier.md`, final `01_Hardness_Manifest.json`, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` | `/injection` |
+| `/create-injection` | `01_Universe_Inject.sql`, `01_Grounding_Dossier.md`, final `01_Hardness_Manifest.json`, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` | `/injection`, then straight to `/create-prompt-writing` |
 | `/create-hardening` *(forensics after a run)* | `01a_Hardening_Report.md`, `run_forensics/<revision>/`, ledger records (no SQL) | `/create-scenario --revise`; human revises prompt if needed |
-| `/create-reference-files` *(optional)* | `02_Reference_Files/`, `02_Reference_Files_Manifest.md` | — |
-| `/create-error-async` *(optional)* | `03_Error_Async_Config.txt` | — |
+| `/create-reference-files` *(skipped by default; only when the owner asks)* | `02_Reference_Files/`, `02_Reference_Files_Manifest.md` | — |
+| `/create-error-async` *(skipped by default; only when the owner asks)* | `03_Error_Async_Config.txt` | — |
 | `/create-prompt-writing` | `04_Prompt_Writing_Brief.md` (+ `04_Prompt.txt` draft on request) | `04_Prompt.txt` (Claude, Codex or human) |
 | `/create-prompt-writing check` | `04_Prompt_Check.md` | `/injection` + `/prompt` |
 | `/create-humantime` | `05_Human_Time_Worksheet.md` | Opus 5.5 pre-check → `/hardness` |
@@ -180,6 +180,22 @@ equivalents of every command: `Guide/Manual_Commands.md`.
 | `tools/node_verdicts.py` | Proposed node verdicts per run against the solver of the revision the run is bound to: LANDED / LEAKED / NOT-REACHED with event citations, brief transmission, every register difference classified once (mechanism · slip · representation · cascade); CONFOUNDED is only flagged, never assigned |
 | `tools/surface_grader.py` | Grades runs against the gradable surface before any rubric or verifier exists and runs the four gates through `difficulty_stats.compute()`; UNGRADED slots are listed with the coverage (a design check, not the grading of record) |
 | `tools/hardness_ledger.py append · seed · priors · write-priors · transfer · query` | The cross-task evidence ledger `support/hardness_ledger/ledger.jsonl`: content-addressed, append-only, conflict-rejecting; Beta priors per model with their record ids, never pooled across models |
+| `tools/first_pass_controls.py modes` · `run <stage> --task-dir T` | **First-pass checks** the V3 stage gates run (plan `Audit_2026-11-10_First_Pass_Root_Cause/PLAN.md`). Each check's mode (`off`, `warn`, `block`) is one word in `references/first_pass_policy.json`; all start in `warn` |
+| `tools/assignment_fit.py census --task-dir T [--write]` · `surface-map` · `cards` | Fit census at `/create-goal`: reach per service with rank and THIN flags, base cohorts for the competency, verdict `FIT` / `FIT WITH LIMITS` / `NO NATURAL COHORT` (built by injection; never skip, never another persona); the base surface map and persona cards |
+| `tools/difficulty_budget.py check · table · template · derive · backtest` | The difficulty budget `Working_Files/01_Difficulty_Budget.json`: anchors, independent coin-flip units, carriers, and a six-run simulation of the average, full-pass, signature and spread gates at both ends of the find-rate ranges |
+| `tools/carrier_backfill.py compute · show` | How often each carrier's deciding record was opened in the archived runs (`references/carrier_find_rates.json`), the basis for find-rate ranges |
+| `tools/path_exposure.py check --task-dir T [--write]` | Per budget unit: EXPOSED (keyword, named container, root or self, sweep window, pointer, thin search) or OFF-PATH, before any platform run |
+| `tools/coherence_sweep.py brief · candidates · check` | The fork and contradiction sweep `Working_Files/01d_Coherence_Sweep.json`: cold-reviewer briefs, a mechanical pre-pass, and the check that every fork is settled in data and every open set has a rule and a census |
+| `tools/revision_scope.py diff · scope · relocation` | What a SQL revision changed, what must be redone, and whether a post-pre-check revision is one relocation |
+| `tools/rubric_skeleton.py build · check · rebase · drift` | The rubric's rows and weights before the pre-check (one row per write target), and the budget on the final rubric |
+| `tools/budget_outcome.py compare · stop-rule` | Pre-check against the budget: was each unit's deciding record opened (GO / NO-GO), and the stop rule per design |
+| `tools/platform_delta_lint.py rubric · prompt · oe · rules` | The platform-only rules of `references/platform_rule_delta.json` applied to the artifact |
+| `tools/oe_qualifier_check.py check --task-dir T` | Every qualifier on an `Expected:` line checked against the record its event reads |
+| `tools/blind_review.py plan · record · summary` | Local rehearsal of the platform's blind passes and the cold solver, from briefs in the task folder; never a platform verdict |
+| `tools/report_intake.py intake · snapshot · list` | Takes in a platform report: task-id check, filing, register update, metrics, pairing with the local check |
+| `tools/release_drift.py scan · record · rebuild · status` | The platform rule register `references/platform_rule_delta.json` from stored reports: new releases, spec hashes and rule ids |
+| `tools/eval_scratch.py create · status · remove` | A per-task scratch copy of the evaluator with its own input store, so two tasks never share the global `Evals/` input store |
+| `tools/task_metrics.py record · summary · backfill-all` | Per-task counters (SQL revisions, pre-checks, baselines, rounds per eval, time per stage) against the plan's targets |
 
 Every tool has `--self-test`.
 

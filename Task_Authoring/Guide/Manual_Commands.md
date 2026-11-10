@@ -22,7 +22,7 @@ design choices. The user handles Eval Portal, including review proof uploads.
 
 ## 0 · Assignment (no command)
 
-Copy `Task_Authoring/references/Tasks_Template/.` into `Task_Authoring/task_inputs/`,
+Copy `Task_Authoring/references/Tasks_Template/.` into the task's own folder, `Task_Authoring/task_inputs<Label>/` (below: `Task_Authoring/task_inputs`; use your folder),
 paste the eight-field assignment exactly into `00_Assigments.md` (including role,
 difficulty mode and universe date), then run:
 
@@ -92,13 +92,13 @@ Read Task_Authoring/setup/GEN_EXECUTION.md (§3a hardness targets) and Task_Auth
 Read Task_Authoring/setup/GEN_EXECUTION.md, then follow Task_Authoring/playbooks/01_Universe_Injection.md in full. Implement task_inputs/Working_Files/01_Scenario_Design.md and its manifest: write task_inputs/01_Universe_Inject.sql, task_inputs/Working_Files/01_Grounding_Dossier.md (including "Facts for the human") and the final task_inputs/Working_Files/01_Hardness_Manifest.json with every planned id replaced by the minted id. Ground everything through Task_Authoring/tools/hg.py search, prove persona reach and findability, seed speakers, text and companions by references/universe_kb/activity.json, conventions.json and integrations.json, declare every load-bearing fact in the manifest's facts, then run sql_lint.py, base_check.py, fact_check.py, persona_view.py check-sql --load-bearing, hardness_gate.py and python3 Task_Authoring/tools/hg.py lint on the manifest + SQL until all pass. Never execute SQL; write only under Task_Authoring/. Before handoff run python3 Task_Authoring/tools/stage_gate.py injection Task_Authoring/task_inputs --paste and fix the artifact until it prints STAGE GATE injection: PASS.
 ```
 
-## 2 · Error / async friction (optional) · `/create-error-async`
+## 2 · Error / async friction (skipped by default; only when the owner asks) · `/create-error-async`
 
 ```
 Read Task_Authoring/setup/GEN_EXECUTION.md, then follow Task_Authoring/playbooks/03_Error_Async_Config.md. Decide whether friction deepens this task; if so, configure it from the selectable functions, prove the alternate path for every errored function, and record the discovery each async wait depends on. Write task_inputs/03_Error_Async_Config.txt (or the empty config with "Friction: none"). Before handoff run python3 Task_Authoring/tools/stage_gate.py error-async Task_Authoring/task_inputs --paste and fix the artifact until it prints STAGE GATE error-async: PASS.
 ```
 
-## 3 · Reference files (optional) · `/create-reference-files`
+## 3 · Reference files (skipped by default; only when the owner asks) · `/create-reference-files`
 
 ```
 Read Task_Authoring/setup/GEN_EXECUTION.md, then follow Task_Authoring/playbooks/02_Reference_Files.md. Only if the scenario genuinely needs an attachment, build task_inputs/02_Reference_Files/ and task_inputs/Working_Files/02_Reference_Files_Manifest.md (outside the folder), mirroring native records from Task_Authoring/references/Native_Artifact_Anatomy.md and citing every fact. Before handoff run python3 Task_Authoring/tools/stage_gate.py reference-files Task_Authoring/task_inputs --paste and fix the artifact until it prints STAGE GATE reference-files: PASS.

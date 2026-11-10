@@ -1,7 +1,8 @@
 """Service emitters, their record kinds, transforms and the conventions they rely on.
 
-A spec pins the emitter version of every service it uses ({"linear": "linear/1.0"}); a different installed version
-stops the render. Convention-bearing behaviour is listed in conventions/conventions.json with a status:
+A spec pins the emitter version of every service it uses ({"linear": "linear/1.0", "slack": "slack/1.0",
+"gmail": "gmail/1.0"}); a different installed version stops the render. Convention-bearing behaviour is listed in
+conventions/conventions.json with a status:
   base-verified      held on a base sample (exceptions listed in the evidence)
   platform-verified  a cited platform report or run-time trajectory shows it
   unverified         usable only with a spec override that states the reason and the platform follow-up
@@ -15,12 +16,12 @@ import json
 from pathlib import Path
 
 from ..core.values import SpecError
-from . import linear
+from . import gmail, linear, slack
 
 CONVENTIONS_PATH = Path(__file__).resolve().parents[1] / "conventions" / "conventions.json"
 STATUSES = ("base-verified", "platform-verified", "unverified")
 
-EMITTERS = {linear.SERVICE: linear}
+EMITTERS = {linear.SERVICE: linear, slack.SERVICE: slack, gmail.SERVICE: gmail}
 
 
 def emitter(service: str, pinned: str):
@@ -34,12 +35,24 @@ def emitter(service: str, pinned: str):
 
 
 def kind_schema(kind: str) -> tuple[str, dict]:
-    service = kind.split(".", 1)[0]
+    service = kind.split(".", 1)[0] if isinstance(kind, str) else ""
     mod = EMITTERS.get(service)
     if mod is None or kind not in mod.KINDS:
-        known = sorted(k for m in EMITTERS.values() for k in m.KINDS)
+        known = sorted([k for m in EMITTERS.values() for k in m.KINDS] + list(haystack_kinds()))
         raise SpecError(f"kind {kind}", f"unknown record kind (known: {known})")
     return service, mod.KINDS[kind]
+
+
+def haystack_kinds() -> dict:
+    """Haystack kind -> the emitter that expands it (services/haystack.py)."""
+    return {kind: mod for mod in EMITTERS.values() for kind in getattr(mod, "HAYSTACKS", {})}
+
+
+def expand_record(where: str, rec) -> list:
+    """A raw spec record as the list of records it stands for: itself, or the rows of a haystack."""
+    kind = rec.get("kind") if isinstance(rec, dict) else None
+    mod = haystack_kinds().get(kind) if isinstance(kind, str) else None
+    return [rec] if mod is None else mod.expand_haystack(where, rec)
 
 
 def transforms() -> dict:

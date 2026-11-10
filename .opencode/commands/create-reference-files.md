@@ -1,5 +1,5 @@
 ---
-description: Reference files, when the scenario needs an attachment
+description: Reference files; skipped by default, only when the owner asks
 ---
 Load the `create-reference-files` skill with the skill tool and follow it.
 

@@ -92,6 +92,11 @@ Fold-hardening families (plans/Fold_Hardening_Into_Scenario_And_Injection.md §4
                 run steps (evidence.register_run_step) and meets the counter-reading minimum - both copied from
                 `hardening`, which keeps them.                                                      blocking
 
+First-pass families (tools/first_pass_controls.py; plan Audit_2026-11-10_First_Pass_Root_Cause; real V3 gates only):
+  fit.* budget.* exposure.* sweep.* skeleton.* precheck.* oe.qualifiers rubric.eval_lint rubric.delta_lint
+  prompt.assignment_fit, and structure.accepted_outcomes on prompt-writing (the fork sweep replaces the unconditional
+  V3 pass). Each check's mode is set in references/first_pass_policy.json: off, warn (WARN, never blocking) or block.
+
 Digests: `<file>#<12 hex>` = sha256 of the file with every STAGE GATE output line removed,
 so pasting the block does not change the digest but any later edit does.
 
@@ -1524,7 +1529,12 @@ def canonical_outcome(ctx, doc):
     if ctx.v3:
         # V3 explicitly allows several fair readings. The current, content-bound outcomes review
         # is checked separately; this V2 table must not force one acceptance class.
-        ctx.add("structure.accepted_outcomes", True, "V3 accepts multiple fair outcomes; see v3.fair_outcomes_review")
+        # It does not allow an unresolved material fork (20 of 30 archived /prompt FAILs), so a real gate reads the
+        # fork sweep instead of passing unconditionally. Warn or block comes from references/first_pass_policy.json.
+        if ctx.selftest:
+            ctx.add("structure.accepted_outcomes", True, "V3 accepts multiple fair outcomes; see v3.fair_outcomes_review")
+        else:
+            fold_tool("first_pass_controls").accepted_outcomes(sys.modules[__name__], ctx)
         return
     tabs = [t for s in doc.sections(r"pinned final state|canonical outcome") for t in s.tables()
             if t.col(r"equivalence") is not None and t.col(r"material") is not None and t.col(r"delegat") is not None]
@@ -3299,6 +3309,9 @@ def run_stage(stage, task_dir, rerun="all", selftest=False):
                 if not ctx.selftest:
                     import readiness_controls
                     readiness_controls.check_stage(sys.modules[__name__], ctx)
+                    # First-pass checks (difficulty budget, path exposure, fork sweep, rubric lints ...): each one's
+                    # mode (off / warn / block) is set in references/first_pass_policy.json. Never raises.
+                    fold_tool("first_pass_controls").check_stage(sys.modules[__name__], ctx)
         except Exception as e:  # noqa: BLE001 - a crash must block, never pass
             ctx.add("internal.error", False, f"{type(e).__name__}: {e}")
         own_paste(ctx, spec["primary"], spec["outputs"])

@@ -1,0 +1,1173 @@
+{
+  "about": "What base holds per service and record type, whether it can be injected and whether reads are scoped to the persona. Built by tools/assignment_fit.py surface-map from the exports; counts are exact unless a note says otherwise. The scenario stage picks carriers from it; a read that returns nothing stays out of the call budget.",
+  "legend": {
+    "automated_only": "every author is a bot or an integration",
+    "in_eval_injection_schema": "the table is in the eval's injection schema snapshot",
+    "injectable": "the table is in the authoring lint allowlist (sql_lint.WRITABLE_TABLES)",
+    "known_entries": "the plan's known entries, each checked against this universe",
+    "metadata_only": "names and metadata are served, content is not",
+    "mostly_automated": "80% or more of authors are bots or integrations",
+    "none": "the record type exists and is empty in base",
+    "not_counted": "not counted by this tool",
+    "real": "base holds content written by people (or plain records)"
+  },
+  "schema": "base-surface-map-v1",
+  "tool": "assignment_fit",
+  "universes": {
+    "normal": {
+      "clock": "2026-02-14T00:00:00+00:00",
+      "known_entries": [
+        {
+          "claim": "base Linear has no comments",
+          "evidence": "0 Linear comments in base",
+          "status": "confirmed"
+        },
+        {
+          "claim": "base PR conversation comments are bots only",
+          "evidence": "790 of 884 are automated (bots or integrations); 94 are by people, on 83 of 2629 pull requests; 2 by people in the 180 days before the clock, last 2025-12-31",
+          "status": "partly"
+        },
+        {
+          "claim": "Snowflake cannot be injected",
+          "evidence": "the eval injection schema holds 0 of its tables; 3 platform report(s) in 3 task(s) say injection SQL cannot change it (\"Snowflake can't be edited\"); the authoring lint allows 0 record type(s) (none); 0 statement(s) in 0 of 17 archived injections",
+          "status": "confirmed"
+        },
+        {
+          "claim": "Confluence cannot be injected",
+          "conflict": "sql_lint.WRITABLE_TABLES lists confluence tables (Injection Schema Guideline 2026-10-22) although the platform does not load them; 5 archived task(s) wrote 25 statement(s) there",
+          "evidence": "the eval injection schema holds 0 of its tables; 4 platform report(s) in 1 task(s) say injection SQL cannot change it (\"Injection SQL can't edit Confluence\"); the authoring lint allows 3 record type(s) (comments, page_versions, pages); 25 statement(s) in 5 of 17 archived injections",
+          "status": "confirmed"
+        }
+      ],
+      "services": {
+        "confluence": {
+          "archived_injections": {
+            "statements": 25,
+            "tasks": 5
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "comments": {
+              "authors": {
+                "automated": 0,
+                "people": 12,
+                "people_in_window": 0,
+                "people_last": "2025-07-28"
+              },
+              "base_content": "real",
+              "containers": 31,
+              "containers_with_people": 6,
+              "count": 12,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": false,
+              "inject_table": "confluence.confluence_comments",
+              "injectable": false,
+              "injectable_basis": "not in the eval injection schema; the authoring lint (sql_lint.WRITABLE_TABLES) still allows it; 4 platform report(s) say injection SQL cannot change it",
+              "reads_scoped": false
+            },
+            "page_versions": {
+              "base_content": "real",
+              "count": 78,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": false,
+              "inject_table": "confluence.confluence_page_versions",
+              "injectable": false,
+              "injectable_basis": "not in the eval injection schema; the authoring lint (sql_lint.WRITABLE_TABLES) still allows it; 4 platform report(s) say injection SQL cannot change it",
+              "reads_scoped": false
+            },
+            "pages": {
+              "base_content": "real",
+              "count": 31,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": false,
+              "inject_table": "confluence.confluence_pages",
+              "injectable": false,
+              "injectable_basis": "not in the eval injection schema; the authoring lint (sql_lint.WRITABLE_TABLES) still allows it; 4 platform report(s) say injection SQL cannot change it",
+              "reads_scoped": false
+            }
+          }
+        },
+        "contacts": {
+          "archived_injections": {
+            "statements": 16,
+            "tasks": 7
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "contacts": {
+              "base_content": "real",
+              "count": 170,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "contacts.contacts",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            }
+          }
+        },
+        "gcal": {
+          "archived_injections": {
+            "statements": 80,
+            "tasks": 16
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "event_descriptions": {
+              "base_content": "none",
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gcal.gcal_events",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "events with a description or a location",
+              "reads_scoped": true
+            },
+            "events": {
+              "base_content": "real",
+              "count": 11130,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gcal.gcal_events",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gdocs": {
+          "archived_injections": {
+            "statements": 71,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "documents": {
+              "base_content": "real",
+              "count": 633,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gdocs.docs_documents",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gdrive": {
+          "archived_injections": {
+            "statements": 649,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "files": {
+              "base_content": "real",
+              "count": 53866,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gdrive.drive_files",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "files and folders",
+              "reads_scoped": true
+            }
+          }
+        },
+        "github": {
+          "archived_injections": {
+            "statements": 353,
+            "tasks": 9
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "commits": {
+              "base_content": "real",
+              "count": 12687,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_commits",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "issues": {
+              "base_content": "none",
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_issues",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "pull_request_comments": {
+              "authors": {
+                "automated": 790,
+                "people": 94,
+                "people_in_window": 2,
+                "people_last": "2025-12-31"
+              },
+              "base_content": "mostly_automated",
+              "containers": 2629,
+              "containers_with_people": 83,
+              "count": 884,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_pr_comments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "PR conversation comments",
+              "reads_scoped": false
+            },
+            "pull_requests": {
+              "base_content": "real",
+              "count": 2629,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_pull_requests",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "releases": {
+              "base_content": "none",
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_releases",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "repositories": {
+              "base_content": "real",
+              "count": 16,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_repositories",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "review_comments": {
+              "authors": {
+                "automated": 1024,
+                "people": 590,
+                "people_in_window": 49,
+                "people_last": "2026-02-12"
+              },
+              "base_content": "real",
+              "containers": 2629,
+              "containers_with_people": 143,
+              "count": 1614,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_review_comments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "inline comments; not returned by the reviews list",
+              "reads_scoped": false
+            },
+            "reviews": {
+              "authors": {
+                "automated": 273,
+                "people": 2148,
+                "people_in_window": 137,
+                "people_last": "2026-02-12"
+              },
+              "base_content": "real",
+              "containers": 2629,
+              "containers_with_people": 1831,
+              "count": 2421,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_reviews",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "review summaries",
+              "reads_scoped": false
+            }
+          }
+        },
+        "gmail": {
+          "archived_injections": {
+            "statements": 657,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "attachments": {
+              "base_content": "not_counted",
+              "count": null,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gmail.gmail_attachments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "names only; attachment reads return no bytes (acl.md); not counted here",
+              "reads_scoped": true
+            },
+            "messages": {
+              "base_content": "real",
+              "count": 104480,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gmail.gmail_messages",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            },
+            "threads": {
+              "base_content": "real",
+              "count": 88726,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gmail.gmail_threads",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gsheets": {
+          "archived_injections": {
+            "statements": 1092,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "spreadsheets": {
+              "base_content": "real",
+              "count": 398,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gsheets.sheets_spreadsheets",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            },
+            "tabs": {
+              "base_content": "real",
+              "count": 1553,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gsheets.sheets_sheets",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "one read returns every row of a tab",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gslides": {
+          "archived_injections": {
+            "statements": 134,
+            "tasks": 12
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "presentations": {
+              "base_content": "real",
+              "count": 164,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gslides.slides_presentations",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "linear": {
+          "archived_injections": {
+            "statements": 944,
+            "tasks": 16
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "attachments": {
+              "base_content": "real",
+              "count": 2027,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_attachments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "files with real content (acl.md)",
+              "reads_scoped": false
+            },
+            "comments": {
+              "authors": {
+                "automated": 0,
+                "people": 0,
+                "people_in_window": 0,
+                "people_last": null
+              },
+              "base_content": "none",
+              "containers": 3852,
+              "containers_with_people": 0,
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_comments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "one call per issue",
+              "reads_scoped": false
+            },
+            "issues": {
+              "base_content": "real",
+              "count": 3852,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_issues",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "the list call returns state, labels and description",
+              "reads_scoped": false
+            },
+            "projects": {
+              "base_content": "real",
+              "count": 2,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_projects",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "teams": {
+              "base_content": "real",
+              "count": 5,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_teams",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            }
+          }
+        },
+        "slack": {
+          "archived_injections": {
+            "statements": 227,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "channels": {
+              "base_content": "real",
+              "count": 985,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_channels",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            },
+            "files": {
+              "base_content": "metadata_only",
+              "count": 53422,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_files",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "names and metadata only; file content is not served (acl.md)",
+              "reads_scoped": true
+            },
+            "messages": {
+              "authors": {
+                "automated": 64053,
+                "people": 508349
+              },
+              "base_content": "real",
+              "count": 572402,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_messages",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "top-level posts",
+              "reads_scoped": true
+            },
+            "thread_replies": {
+              "authors": {
+                "automated": 16561,
+                "people": 98267
+              },
+              "base_content": "real",
+              "count": 114828,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_messages",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "channel history shows thread roots only; replies need a thread read or a search",
+              "reads_scoped": true
+            }
+          }
+        },
+        "snowflake": {
+          "archived_injections": {
+            "statements": 0,
+            "tasks": 0
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "tables": {
+              "base_content": "real",
+              "count": 40,
+              "in_authoring_lint": false,
+              "in_eval_injection_schema": false,
+              "inject_table": null,
+              "injectable": false,
+              "injectable_basis": "no injection table: the injection file cannot change this service",
+              "note": "warehouse tables; rows are not counted (one 2 GB line)",
+              "reads_scoped": false
+            }
+          }
+        },
+        "trello": {
+          "archived_injections": {
+            "statements": 210,
+            "tasks": 17
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "boards": {
+              "base_content": "real",
+              "count": 5,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_boards",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "cards": {
+              "base_content": "real",
+              "count": 803,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_cards",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "checklists": {
+              "base_content": "real",
+              "count": 54,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_checklists",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "comments": {
+              "authors": {
+                "automated": 1,
+                "people": 55,
+                "people_in_window": 0,
+                "people_last": "2025-07-02"
+              },
+              "base_content": "real",
+              "containers": 803,
+              "containers_with_people": 44,
+              "count": 56,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_actions",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "commentCard actions",
+              "reads_scoped": false
+            }
+          }
+        }
+      },
+      "source_fingerprint": "56f200f90f8ae5b1fdc87e4691f8d948dfdfb3010d889400d096cf987ded61d1"
+    },
+    "synthcut": {
+      "clock": "2025-10-01T07:00:00+00:00",
+      "known_entries": [
+        {
+          "claim": "base Linear has no comments",
+          "evidence": "0 Linear comments in base",
+          "status": "confirmed"
+        },
+        {
+          "claim": "base PR conversation comments are bots only",
+          "evidence": "595 of 687 are automated (bots or integrations); 92 are by people, on 81 of 2475 pull requests; 10 by people in the 180 days before the clock, last 2025-07-24",
+          "status": "partly"
+        },
+        {
+          "claim": "Snowflake cannot be injected",
+          "evidence": "the eval injection schema holds 0 of its tables; 3 platform report(s) in 3 task(s) say injection SQL cannot change it (\"Snowflake can't be edited\"); the authoring lint allows 0 record type(s) (none); 0 statement(s) in 0 of 17 archived injections",
+          "status": "confirmed"
+        },
+        {
+          "claim": "Confluence cannot be injected",
+          "conflict": "sql_lint.WRITABLE_TABLES lists confluence tables (Injection Schema Guideline 2026-10-22) although the platform does not load them; 5 archived task(s) wrote 25 statement(s) there",
+          "evidence": "the eval injection schema holds 0 of its tables; 4 platform report(s) in 1 task(s) say injection SQL cannot change it (\"Injection SQL can't edit Confluence\"); the authoring lint allows 3 record type(s) (comments, page_versions, pages); 25 statement(s) in 5 of 17 archived injections",
+          "status": "confirmed"
+        }
+      ],
+      "services": {
+        "confluence": {
+          "archived_injections": {
+            "statements": 25,
+            "tasks": 5
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "comments": {
+              "authors": {
+                "automated": 0,
+                "people": 12,
+                "people_in_window": 8,
+                "people_last": "2025-07-28"
+              },
+              "base_content": "real",
+              "containers": 30,
+              "containers_with_people": 6,
+              "count": 12,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": false,
+              "inject_table": "confluence.confluence_comments",
+              "injectable": false,
+              "injectable_basis": "not in the eval injection schema; the authoring lint (sql_lint.WRITABLE_TABLES) still allows it; 4 platform report(s) say injection SQL cannot change it",
+              "reads_scoped": false
+            },
+            "page_versions": {
+              "base_content": "real",
+              "count": 58,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": false,
+              "inject_table": "confluence.confluence_page_versions",
+              "injectable": false,
+              "injectable_basis": "not in the eval injection schema; the authoring lint (sql_lint.WRITABLE_TABLES) still allows it; 4 platform report(s) say injection SQL cannot change it",
+              "reads_scoped": false
+            },
+            "pages": {
+              "base_content": "real",
+              "count": 30,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": false,
+              "inject_table": "confluence.confluence_pages",
+              "injectable": false,
+              "injectable_basis": "not in the eval injection schema; the authoring lint (sql_lint.WRITABLE_TABLES) still allows it; 4 platform report(s) say injection SQL cannot change it",
+              "reads_scoped": false
+            }
+          }
+        },
+        "contacts": {
+          "archived_injections": {
+            "statements": 16,
+            "tasks": 7
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "contacts": {
+              "base_content": "real",
+              "count": 170,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "contacts.contacts",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            }
+          }
+        },
+        "gcal": {
+          "archived_injections": {
+            "statements": 80,
+            "tasks": 16
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "event_descriptions": {
+              "base_content": "none",
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gcal.gcal_events",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "events with a description or a location",
+              "reads_scoped": true
+            },
+            "events": {
+              "base_content": "real",
+              "count": 10395,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gcal.gcal_events",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gdocs": {
+          "archived_injections": {
+            "statements": 71,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "documents": {
+              "base_content": "real",
+              "count": 595,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gdocs.docs_documents",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gdrive": {
+          "archived_injections": {
+            "statements": 649,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "files": {
+              "base_content": "real",
+              "count": 53631,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gdrive.drive_files",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "files and folders",
+              "reads_scoped": true
+            }
+          }
+        },
+        "github": {
+          "archived_injections": {
+            "statements": 353,
+            "tasks": 9
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "commits": {
+              "base_content": "real",
+              "count": 11226,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_commits",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "issues": {
+              "base_content": "none",
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_issues",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "pull_request_comments": {
+              "authors": {
+                "automated": 595,
+                "people": 92,
+                "people_in_window": 10,
+                "people_last": "2025-07-24"
+              },
+              "base_content": "mostly_automated",
+              "containers": 2475,
+              "containers_with_people": 81,
+              "count": 687,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_pr_comments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "PR conversation comments",
+              "reads_scoped": false
+            },
+            "pull_requests": {
+              "base_content": "real",
+              "count": 2475,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_pull_requests",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "releases": {
+              "base_content": "none",
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_releases",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "repositories": {
+              "base_content": "real",
+              "count": 15,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_repositories",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "review_comments": {
+              "authors": {
+                "automated": 840,
+                "people": 547,
+                "people_in_window": 35,
+                "people_last": "2025-09-30"
+              },
+              "base_content": "real",
+              "containers": 2475,
+              "containers_with_people": 134,
+              "count": 1387,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_review_comments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "inline comments; not returned by the reviews list",
+              "reads_scoped": false
+            },
+            "reviews": {
+              "authors": {
+                "automated": 185,
+                "people": 2045,
+                "people_in_window": 263,
+                "people_last": "2025-09-30"
+              },
+              "base_content": "real",
+              "containers": 2475,
+              "containers_with_people": 1742,
+              "count": 2230,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "github.github_reviews",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "review summaries",
+              "reads_scoped": false
+            }
+          }
+        },
+        "gmail": {
+          "archived_injections": {
+            "statements": 657,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "attachments": {
+              "base_content": "not_counted",
+              "count": null,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gmail.gmail_attachments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "names only; attachment reads return no bytes (acl.md); not counted here",
+              "reads_scoped": true
+            },
+            "messages": {
+              "base_content": "real",
+              "count": 95164,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gmail.gmail_messages",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            },
+            "threads": {
+              "base_content": "real",
+              "count": 81404,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gmail.gmail_threads",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gsheets": {
+          "archived_injections": {
+            "statements": 1092,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "spreadsheets": {
+              "base_content": "real",
+              "count": 356,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gsheets.sheets_spreadsheets",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            },
+            "tabs": {
+              "base_content": "real",
+              "count": 1373,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gsheets.sheets_sheets",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "one read returns every row of a tab",
+              "reads_scoped": true
+            }
+          }
+        },
+        "gslides": {
+          "archived_injections": {
+            "statements": 134,
+            "tasks": 12
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "presentations": {
+              "base_content": "real",
+              "count": 132,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "gslides.slides_presentations",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            }
+          }
+        },
+        "linear": {
+          "archived_injections": {
+            "statements": 944,
+            "tasks": 16
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "attachments": {
+              "base_content": "real",
+              "count": 1955,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_attachments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "files with real content (acl.md)",
+              "reads_scoped": false
+            },
+            "comments": {
+              "authors": {
+                "automated": 0,
+                "people": 0,
+                "people_in_window": 0,
+                "people_last": null
+              },
+              "base_content": "none",
+              "containers": 3687,
+              "containers_with_people": 0,
+              "count": 0,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_comments",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "one call per issue",
+              "reads_scoped": false
+            },
+            "issues": {
+              "base_content": "real",
+              "count": 3687,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_issues",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "the list call returns state, labels and description",
+              "reads_scoped": false
+            },
+            "projects": {
+              "base_content": "real",
+              "count": 2,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_projects",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "teams": {
+              "base_content": "real",
+              "count": 5,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "linear.linear_teams",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            }
+          }
+        },
+        "slack": {
+          "archived_injections": {
+            "statements": 227,
+            "tasks": 17
+          },
+          "reads_scoped": true,
+          "record_types": {
+            "channels": {
+              "base_content": "real",
+              "count": 948,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_channels",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": true
+            },
+            "files": {
+              "base_content": "metadata_only",
+              "count": 47092,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_files",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "names and metadata only; file content is not served (acl.md)",
+              "reads_scoped": true
+            },
+            "messages": {
+              "authors": {
+                "automated": 56924,
+                "people": 452936
+              },
+              "base_content": "real",
+              "count": 509860,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_messages",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "top-level posts",
+              "reads_scoped": true
+            },
+            "thread_replies": {
+              "authors": {
+                "automated": 15568,
+                "people": 85040
+              },
+              "base_content": "real",
+              "count": 100608,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "slack.slack_messages",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "channel history shows thread roots only; replies need a thread read or a search",
+              "reads_scoped": true
+            }
+          }
+        },
+        "snowflake": {
+          "archived_injections": {
+            "statements": 0,
+            "tasks": 0
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "tables": {
+              "base_content": "real",
+              "count": 40,
+              "in_authoring_lint": false,
+              "in_eval_injection_schema": false,
+              "inject_table": null,
+              "injectable": false,
+              "injectable_basis": "no injection table: the injection file cannot change this service",
+              "note": "warehouse tables; rows are not counted (one 2 GB line)",
+              "reads_scoped": false
+            }
+          }
+        },
+        "trello": {
+          "archived_injections": {
+            "statements": 210,
+            "tasks": 17
+          },
+          "reads_scoped": false,
+          "record_types": {
+            "boards": {
+              "base_content": "real",
+              "count": 5,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_boards",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "cards": {
+              "base_content": "real",
+              "count": 803,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_cards",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "checklists": {
+              "base_content": "real",
+              "count": 54,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_checklists",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "reads_scoped": false
+            },
+            "comments": {
+              "authors": {
+                "automated": 1,
+                "people": 55,
+                "people_in_window": 13,
+                "people_last": "2025-07-02"
+              },
+              "base_content": "real",
+              "containers": 803,
+              "containers_with_people": 44,
+              "count": 56,
+              "in_authoring_lint": true,
+              "in_eval_injection_schema": true,
+              "inject_table": "trello.trello_actions",
+              "injectable": true,
+              "injectable_basis": "in the eval injection schema and the authoring lint allowlist",
+              "note": "commentCard actions",
+              "reads_scoped": false
+            }
+          }
+        }
+      },
+      "source_fingerprint": "35ef23cdb4f61763cdac79443c6bd19c1d93e766e3602a246575f8cdf199ba09"
+    }
+  },
+  "version": 1
+}

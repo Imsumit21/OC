@@ -7,7 +7,8 @@ description: "Build the copy-ready /goal for a fresh session that starts a Harmo
 
 Resolve this file through any symlink to locate `<bundle>/skills/<name>/SKILL.md`.
 The bundle's parent is the workspace. Read `<bundle>/setup/GEN_EXECUTION.md` § 0a (task date and universe) and § 1
-(write boundary). Write only `<task>/Working_Files/00_Session_Goal.md`. Never write to `Evals/`, `claude/`, the
+(write boundary). Write only `<task>/Working_Files/00_Session_Goal.md` and the fit census
+(`<task>/Working_Files/00_Assignment_Fit.json` and `.md`). Never write to `Evals/`, `claude/`, the
 universe folders or another task folder, never edit `Task_Authoring/tools/`, and never execute SQL.
 
 This command prepares a session; it designs, grounds and certifies nothing. The goal names no storyline, trap or
@@ -29,6 +30,9 @@ answer: the fresh session finds those.
 
 1. The task folder, from the user's message (`/create-goal Task_Authoring/<folder>`). If none is given and
    `TASK_AUTHORING_TASK_DIR` is unset, run `--list` and ask which folder; never guess.
+   A new task gets its own named folder (`Task_Authoring/task_inputs<Label>`), not a bare
+   `Task_Authoring/task_inputs`, so two tasks never share one; every later `/create-*` command takes that same folder
+   as its argument.
 2. Its `00_Assigments.md` with all eight V3 fields. A missing date or a roster mismatch stops the run (exit 2); there is
    no default date.
 3. Any standing decisions the user states for the new session (for example "skip red team and methodology; record the
@@ -40,6 +44,19 @@ answer: the fresh session finds those.
 python3 -B Task_Authoring/skills/create-goal/scripts/build_goal.py --task-dir <task folder> [--note "<decision>"]...
 python3 -B Task_Authoring/skills/create-goal/scripts/build_goal.py --list
 ```
+
+Then run the fit census for the same folder (plan of 2026-11-10, WS9):
+
+```sh
+python3 -B Task_Authoring/tools/assignment_fit.py census --task-dir <task folder> --write
+```
+
+It prints the persona's reach per service with its rank in the roster and a THIN flag per service, the base cohorts
+this persona can read that belong to the competency, the base-surface gaps that touch them, and one verdict: `FIT`,
+`FIT WITH LIMITS` (each limit named) or `NO NATURAL COHORT`. Report the verdict with the goal. A task is never
+skipped and its persona never changed: `NO NATURAL COHORT` means `/create-scenario` builds the scenario by injection
+(playbook `01_Scenario_Design.md` S2x). With `--stdout-only` (another session is working in the folder), run the
+census without `--write` and paste its output instead.
 
 Before writing, check the folder's `Working_Files/` for files you did not expect (research notes, drafts): if another
 session is already working there, add `--stdout-only`, which prints the goal and writes nothing. The script also
@@ -102,7 +119,8 @@ wording change gets an independent review (`Task_Authoring/plans/Create_Goal_Ski
 
 1. The goal in one copy-ready code block, exactly as printed.
 2. Up to five lines: the output path (or "stdout only"); what was tailored (non-default folder, store state, siblings
-   named, analysis cited, hardness guide used); the word count and any `WARN` line.
+   named, analysis cited, hardness guide used); the word count and any `WARN` line; the fit census verdict with
+   each limit it names.
 3. Next step for the user: open a fresh session at the workspace root and paste the goal. It writes
    `Working_Files/00_Pre_Scenario_Analysis.md`, lists the decisions it needs and stops. Take the decisions, then run
    `/create-scenario` in that session.

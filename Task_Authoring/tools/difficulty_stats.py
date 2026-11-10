@@ -450,7 +450,10 @@ def _gates(completed: list[dict], errored: list[str], total_runs: int, rubrics: 
         return 0.1 - EPS <= x <= 0.3 + EPS
 
     sd_verdict = ("PASS" if in_band(sd)
-                  else "FAIL (Spread Too Low — deterministic; add friction)" if sd < 0.1
+                  # Configured friction (forced errors, async waits) is realism only and never a spread lever
+                  # (playbooks/03_Error_Async_Config.md); spread comes from independent coin-flip units.
+                  else "FAIL (Spread Too Low — the runs fail the same rows; the design needs more independent "
+                       "coin-flip units, not configured friction)" if sd < 0.1
                   else "FAIL (Spread Too High — check rubric ambiguity)")
     alt = [x for x in (sd_sample, sd_unweighted) if in_band(x) != in_band(sd)]
     if alt:

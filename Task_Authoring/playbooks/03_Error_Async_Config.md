@@ -1,8 +1,12 @@
 # 03 — Error Injection & Async Wait Config (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-error-async` (optional step) · Writes: `task_inputs/03_Error_Async_Config.txt` · Paired eval: none of its own. `/prompt` takes the config as an input; `/oe` Phase 3.5 and `/rubric` grade what it implies · Gate: **`tools/stage_gate.py error-async` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
+> Command: `/create-error-async` (skipped by default; run only when the owner asks) · Writes: `<task_dir>/03_Error_Async_Config.txt` · Paired eval: none of its own. `/prompt` takes the config as an input; `/oe` Phase 3.5 and `/rubric` grade what it implies · Gate: **`tools/stage_gate.py error-async` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
 
 ## Purpose
+
+**This step is skipped by default.** The pipeline goes from `/create-injection` straight to
+`/create-prompt-writing`; a task without `03_Error_Async_Config.txt` has no configured friction, and the Configure
+Server Behavior screen is left empty. Run this playbook only when the owner asks for it.
 
 Decide whether the task gets forced tool errors or async (submit → check → get) search
 waits. **The default answer is `Friction: none`.** Configure friction only when the
@@ -17,7 +21,7 @@ Configured friction is **not** a difficulty lever. Use it for realism only:
   - Every failed row was a format row.
 - **Not counted by `/prompt`.** The complexity hard gate counts only Ambiguity, Dynamic Change and Multi-Source (`Evals/1_Prompt_Eval.md` §1.5).
 - **Not counted toward the horizon.** Blocked calls and repeated retries add nothing (`Evals/references/rules/long_horizon.md`).
-- **Not the fix for a too-deterministic baseline.** When `difficulty_stats.py` or `scoring.json` says "add friction" (per-rollout SD < 0.1), it means *information* friction across services, delivered by `/create-hardening`. It never means this config.
+- **Not the fix for a too-deterministic baseline.** `Evals/references/rules/scoring.json` says "add friction" for a per-rollout SD below 0.1. That never means this config. `difficulty_stats.py` says what it does mean: the runs fail the same rows, so the design needs more independent coin-flip units (`tools/difficulty_budget.py`, playbook `01_Scenario_Design.md`).
 
 Author this after `/create-injection`: you need the dossier to name the alternate path.
 
@@ -55,7 +59,7 @@ Inputs
 - `Evals/references/tools/catalog.json` for exact names and the alternate path's tools.
 
 Output
-- `task_inputs/03_Error_Async_Config.txt` in the `references/Tasks_Template/03_Error_Async_Config.txt` format, with a Self-review section. With no friction, write `Friction: none` and leave every field empty: delete the template's `[ ]` and `[ a | b ]` choices (the gate treats any left over as an unfilled placeholder), drop the empty tables, and write `pending (pre-baseline)` or the result on each post-baseline line. Supply the file to `/prompt` only when friction is configured.
+- `<task_dir>/03_Error_Async_Config.txt` in the `references/Tasks_Template/03_Error_Async_Config.txt` format, with a Self-review section. With no friction, write `Friction: none` and leave every field empty: delete the template's `[ ]` and `[ a | b ]` choices (the gate treats any left over as an unfilled placeholder), drop the empty tables, and write `pending (pre-baseline)` or the result on each post-baseline line. Supply the file to `/prompt` only when friction is configured.
 
 ## Hard gates
 
@@ -121,7 +125,7 @@ Output
 
 ## Deliver
 
-Run `python3 Task_Authoring/tools/stage_gate.py error-async Task_Authoring/task_inputs --paste`; handoff is blocked until it prints `STAGE GATE error-async: PASS`, and `--paste` writes that output into the Self-review of `03_Error_Async_Config.txt` (the next stage's gate refuses an upstream artifact without a current PASS block). The gate checks the picker values, the mode/rate pair, one alternate-path row (with a record pointer) per errored function and one discovery row per wait.
+Run `python3 Task_Authoring/tools/stage_gate.py error-async <task_dir> --paste`; handoff is blocked until it prints `STAGE GATE error-async: PASS`, and `--paste` writes that output into the Self-review of `03_Error_Async_Config.txt` (the next stage's gate refuses an upstream artifact without a current PASS block). The gate checks the picker values, the mode/rate pair, one alternate-path row (with a record pointer) per errored function and one discovery row per wait.
 
 Report the configured functions with mode/rate/wait (or `Friction: none`), the alternate path
 for each, the constraints for the brief and the reference files, and the post-baseline checks.

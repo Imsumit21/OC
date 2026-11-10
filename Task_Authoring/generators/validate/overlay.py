@@ -1,5 +1,8 @@
 """Load a Linear base export as DB-shaped rows and apply restricted INSERT/UPDATE ops.
 
+apply() and Overlay are service-neutral: validate/slack.py and validate/gmail.py load their own base rows and use them
+with the same overlay (tables not listed in PK are keyed by "id").
+
 The Linear export (`Services_Data/linear/data.json`) keeps the API shape: JSON-valued
 fields are Python lists, and `state_history_json` (a NOT NULL live column) is absent.
 This module maps that export onto the live column names taken from
@@ -27,6 +30,8 @@ PK = {
     "linear.linear_projects": ("id",),
     "linear.linear_teams": ("id",),
     "linear.linear_users": ("id",),
+    "gmail.gmail_users": ("email_address",),
+    "gmail.gmail_label_user_counters": ("label_id", "user_email"),
 }
 
 #: Non-SQL helper table (memberships are only consulted by validators, never emitted).
@@ -177,13 +182,24 @@ class Overlay:
         return None
 
 
-def _insert_row(table: str, cols: tuple[tuple[str, object], ...], state: dict) -> dict:
-    template = state.get(table) or {}
+def _table_columns(table: str, state: dict) -> list[str]:
+    """The live columns of `table` followed by any other column a row of it carries, each once."""
     columns: list[str] = list(DEFAULT_COLUMNS.get(table, ()))
-    for row in template.values():
+    seen = set(columns)
+    for row in (state.get(table) or {}).values():
         for col in row:
-            if col not in columns:
+            if col not in seen:
+                seen.add(col)
                 columns.append(col)
+    return columns
+
+
+def _insert_row(table: str, cols: tuple[tuple[str, object], ...], state: dict,
+                columns: list[str] | None = None) -> dict:
+    """A new row shaped like the table's other rows. `columns` is the table's column list kept by apply() across
+    statements (a Slack channel holds tens of thousands of rows; scanning them for every INSERT would not end)."""
+    if columns is None:
+        columns = _table_columns(table, state)
     provided = dict(cols)
     for col in provided:
         if col not in columns:
@@ -199,6 +215,12 @@ def apply(base: dict[str, dict[tuple, dict]], ops) -> Overlay:
     for table in state:
         overlay.inserted[table] = []
         overlay.updated[table] = []
+    columns: dict[str, list[str]] = {}             # table -> its column list, built once and kept current
+
+    def columns_of(table: str) -> list[str]:
+        if table not in columns:
+            columns[table] = _table_columns(table, state)
+        return columns[table]
 
     for op in ops:
         overlay.ops.append(op)
@@ -208,7 +230,7 @@ def apply(base: dict[str, dict[tuple, dict]], ops) -> Overlay:
             continue
 
         if op.op == "insert":
-            row = _insert_row(table, op.cols, state)
+            row = _insert_row(table, op.cols, state, columns_of(table))
             key_cols = pk_columns(table)
             if any(col not in row for col in key_cols):
                 overlay.errors.append(f"{table}: INSERT is missing primary key columns {key_cols}")
@@ -230,7 +252,10 @@ def apply(base: dict[str, dict[tuple, dict]], ops) -> Overlay:
                 overlay.errors.append(f"{table}: UPDATE of a missing key {key}")
                 continue
             row = state[table][key]
+            known = columns_of(table)
             for col, value in op.cols:
+                if col not in row and col not in known:
+                    known.append(col)
                 row[col] = value
             overlay.updated[table].append(key)
         else:                                        # Op already rejects this

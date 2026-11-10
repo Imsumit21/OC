@@ -98,13 +98,17 @@ class Fixture:
     def __init__(self):
         SCRATCH.mkdir(parents=True, exist_ok=True)
         self.root = Path(tempfile.mkdtemp(prefix="gen_fixture_", dir=SCRATCH))
-        self.task = self.root / "task"
-        self.spec_dir = self.task / "Working_Files" / "spec"
-        (self.spec_dir / "texts").mkdir(parents=True)
-        (self.task / "00_Assigments.md").write_text(ASSIGNMENT, encoding="utf-8")
-        self.ctx = context.recompute(self.task)
-        self.texts = {}
-        self.doc = self.default_spec()
+        try:                                    # setUp failing here never reaches tearDown: do not leak the folder
+            self.task = self.root / "task"
+            self.spec_dir = self.task / "Working_Files" / "spec"
+            (self.spec_dir / "texts").mkdir(parents=True)
+            (self.task / "00_Assigments.md").write_text(ASSIGNMENT, encoding="utf-8")
+            self.ctx = context.recompute(self.task)
+            self.texts = {}
+            self.doc = self.default_spec()
+        except BaseException:
+            self.cleanup()
+            raise
 
     def cleanup(self) -> None:
         shutil.rmtree(self.root, ignore_errors=True)

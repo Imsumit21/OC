@@ -1,6 +1,6 @@
 # 12 — Baseline Difficulty & Failure Patterns (Playbook) — HarmonyGames · V3
 
-> Command: `/create-difficulty` · Writes: `task_inputs/Working_Files/12_Difficulty_Stats.txt` (+ `task_inputs/Working_Files/12_difficulty_input.json`) · Paired eval: none (QC-scored as the Trajectory dimensions; rules `Evals/references/rules/scoring.json`) · Platform: screens 59–61 (`references/Taxonomy_V2_Step_Map.md`) · Gate: **`tools/stage_gate.py difficulty` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
+> Command: `/create-difficulty` · Writes: `<task_dir>/Working_Files/12_Difficulty_Stats.txt` (+ `<task_dir>/Working_Files/12_difficulty_input.json`) · Paired eval: none (QC-scored as the Trajectory dimensions; rules `Evals/references/rules/scoring.json`) · Platform: screens 59–61 (`references/Taxonomy_V2_Step_Map.md`) · Gate: **`tools/stage_gate.py difficulty` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
 
 ## Purpose
 
@@ -15,20 +15,23 @@ confirm screen 61.
 ## Inputs / Output
 
 Inputs (all required unless marked; stop and name what is missing)
-- `task_inputs/10_Baseline_Verifier_Results.md`, `07_Baseline_Trajectories/`, `09_Rubrics.json` (same version the verifier graded).
-- `task_inputs/00_Assigments.md` and its normalized task context — assigned mode, horizon,
+- `<task_dir>/10_Baseline_Verifier_Results.md`, `07_Baseline_Trajectories/`, `09_Rubrics.json` (same version the verifier graded).
+- `<task_dir>/00_Assigments.md` and its normalized task context — assigned mode, horizon,
   role, freeze (`freeze_utc`, the seed bound) and universe (`key`, `clock_utc`, shutdown rules).
   Never infer a mode or switch it to pass a cap. Per universe: normal applies the Feb 11, 2026
   shutdown and departed-person rules; synth-cut has neither, Victor Barnes departed April 2025,
   and nothing after 2025-09-30 23:59:59 PT exists.
-- `task_inputs/03_Error_Async_Config.txt` — friction to verify.
-- `task_inputs/11_AF_Justification.md` — its hand-off line (invalid rubrics, judge
+- `<task_dir>/03_Error_Async_Config.txt` — friction to verify.
+- `<task_dir>/Working_Files/01_Difficulty_Budget.json` with `rubric_rows` filled (each unit's final `09_Rubrics.json`
+  rows): run `python3 -B Task_Authoring/tools/rubric_skeleton.py drift --task-dir <task_dir>` before reading the
+  gates. Any change to the rubric's rows or weights re-runs it (gate `budget.rubric`).
+- `<task_dir>/11_AF_Justification.md` — its hand-off line (invalid rubrics, judge
   corrections). If all-fails exist and 11 does not, run `/create-allfail` first.
 - The numbers on platform screen 60, if the human pastes them (optional; compared in self-review).
 
 Output
-- `task_inputs/Working_Files/12_difficulty_input.json` — written by the parser (format in `tools/difficulty_stats.py`).
-- `task_inputs/Working_Files/12_Difficulty_Stats.txt` — the calculator output unchanged, plus the notes below.
+- `<task_dir>/Working_Files/12_difficulty_input.json` — written by the parser (format in `tools/difficulty_stats.py`).
+- `<task_dir>/Working_Files/12_Difficulty_Stats.txt` — the calculator output unchanged, plus the notes below.
 
 ## The gates (V3 overrides; other existing checks retained)
 
@@ -62,9 +65,9 @@ Readings the rules leave open — the calculator applies the strictest and print
 
 1. **Measure, never estimate.** Build the matrix with the parser (`/create-allfail` Step 1 — same
    command, adding `--invalid <ids>` and `--judge-correction run-k:Rn` from 11's hand-off line),
-   supplying `--task-dir Task_Authoring/task_inputs`. `--task-type` is optional; when supplied
+   supplying `--task-dir <task_dir>`. `--task-type` is optional; when supplied
    it must match the assignment. Then run
-   `python3 Task_Authoring/tools/difficulty_stats.py Task_Authoring/task_inputs/Working_Files/12_difficulty_input.json --task-dir Task_Authoring/task_inputs`.
+   `python3 Task_Authoring/tools/difficulty_stats.py <task_dir>/Working_Files/12_difficulty_input.json --task-dir <task_dir>`.
    The build stops on empty or template verifier output (not errored runs), unbound rows, header
    mismatches, a graded run with an empty trajectory, or truncated JSON — stop with it.
    Paste the output unchanged; disagree beside it, never edit numbers. The matrix records
@@ -111,13 +114,14 @@ fixes in the Route column are designed in `/create-scenario --revise` from the M
 
 | Symptom | Likely cause | Route |
 |---|---|---|
+| Any gate missed — read this first | The design budget and the baseline disagree, or the rubric grew past the budget | `python3 -B Task_Authoring/tools/budget_outcome.py compare --task-dir <task_dir> --trajectory <task_dir>/07_Baseline_Trajectories` gives, per budget unit, the share of runs that opened the deciding record against its declared range; `python3 -B Task_Authoring/tools/rubric_skeleton.py drift --task-dir <task_dir>` shows whether rows every run passes diluted the units. Route from those two tables, not from a hand review of all six runs |
 | Too Easy / average too high (uniform success, corrected avg ≥ assigned cap) | Evidence sits in one obvious place; rules stated where Opus reads first; the prompt names the artifact; a mechanical cohort; no rarely-opened evidence; no conclusion-sounding message to stop at; correction met before the claim it overturns | `/create-hardening` (MODE B forensics), then `/create-scenario --revise`: move rules to hidden authorities with decoys, add A13/A14/A15/A17 chains, never just add volume; prompt-side defects go to the human |
 | Material failures in most runs, corrected average ≥ assigned cap | Mechanism-dependent weight is too small (≈ 26 % in `Hardness_Mastery.md` §11, NF2) | `/create-scenario --revise`: add independent chains whose facts the deliverable must carry; never re-weight to hit the gate (geometry U and L_max in the preflight show the room) |
 | Gate fails only in the corrected fair view | Unfair rows were inflating difficulty | Fix the criteria and re-run the verifier; then deepen the universe if the assigned cap is reached |
 | Raw average low, clean (corrected) average high | All-fail rows from unincorporated rules, unauthorized criteria or verifier errors | Not hardness — route the defects (`/create-allfail`, `/create-rubric-writing check`); rebuild the difficulty on incorporated mechanisms (`Hardness_Mastery.md` §11, recert task: 48.7 % raw, ≈ 80 % clean) |
-| One pattern dominates (bimodal: some runs near 0, some near 100) | A single choke point carries the difficulty — usually one hidden authority (A12) gating most requirements | Add an independent difficulty source: split governance across 2–4 authorities in different rarely-searched services, or a chain landing on different rows (`Hardness_Mastery.md` §0) |
+| One pattern dominates (bimodal: some runs near 0, some near 100) — the gate the client checks most | A single choke point carries the difficulty — usually one hidden authority (A12) gating most requirements — or fewer than four independent coin-flip units (two units fail this gate one time in four) | Bring the design to four or more independent coin-flip units behind different retrieval habits (scenario S5c; `difficulty_budget.py check`). Add an independent difficulty source: split governance across 2–4 authorities in different rarely-searched services, or a chain landing on different rows (`Hardness_Mastery.md` §0) |
 | Over-concentrated only by single-linkage chaining | Rollouts differ by one rubric step by step | Report both readings; read screen 60; treat as at risk |
-| SD < 0.1 | Uniform success, or one universal blind spot everyone misses the same way | Uniform success → `/create-hardening` then `/create-scenario --revise`; uniform failure on the same rows → check those rows in 11 first, then make chains partially solvable with a different root cause each |
+| SD < 0.1 | Uniform success, or one universal blind spot everyone misses the same way: too few independent coin-flip units, or too little weight on them | **If every other gate passes, report the spread miss to the owner; it is not by itself a reason for a universe revision** (owner decision of 2026-11-10: the failure-signature gate comes first, spread second). Otherwise: uniform success → `/create-hardening` then `/create-scenario --revise`; uniform failure on the same rows → check those rows in 11 first, then add independent coin-flip units behind different retrieval habits (scenario S5c). Configured friction (errors, async waits) is never the fix |
 | Short runs (< 100 calls) on a cohort task | No cohort mandate reached the agent, or a bulk shortcut exists | Make the cohort rule an incorporated requirement; remove the shortcut (`Ask_Carriers.md` §3) |
 | Many calls, high score | Volume without judgment (the 0.984 / 816-call case) | Add per-record house rules, boundary records, derived figures |
 | Too Easy and every trap settled on its first read (Hardness v2) | A correction sits where the agent already is: the superseded record's container, an anchor's thread or file, or the record that delegates to it; or a bulk call carries the answer | `hardness_v2_check` SAME_PLACE names the traps; `/create-scenario --revise`: move each correction to a later reply on another item, a page comment, a review or another service (`Hardness_Mastery.md` §13.4) |
@@ -180,7 +184,7 @@ Screen 61: confirm only if every gate passes in the corrected fair view and corr
 4. **Re-verify inputs, not notes.** Spot-check one trajectory's counted calls by hand; confirm the
    `--invalid` / `--judge-correction` lists match 11 verbatim; confirm the rubric version,
    all six models, assigned mode and current assignment/policy hashes.
-5. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py difficulty Task_Authoring/task_inputs --paste` re-runs the calculator and requires the current gate-table lines and all-fail line pasted unchanged, every report line, and `Invalid rubrics` = 11's `--invalid` = the `"valid": false` rubrics in the input JSON. Address model provenance alongside the existing six gate counter-readings.
+5. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py difficulty <task_dir> --paste` re-runs the calculator and requires the current gate-table lines and all-fail line pasted unchanged, every report line, and `Invalid rubrics` = 11's `--invalid` = the `"valid": false` rubrics in the input JSON. Address model provenance alongside the existing six gate counter-readings.
 6. **Record** each gate's final verdict per view, its evidence, counter-readings and their
    resolution. Never edit a number, never soften a FAIL, never invent one.
 

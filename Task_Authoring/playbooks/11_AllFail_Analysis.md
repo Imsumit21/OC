@@ -1,6 +1,6 @@
 # 11 — All-Fail Rubric Analysis (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-allfail` · Writes: `task_inputs/11_AF_Justification.md` · Paired eval: none (QC-scored as "Rubrics — All-Failing Rubrics"; rule file `Evals/references/rules/all_failing.md`) · Platform: screens 56–58 (`references/Taxonomy_V2_Step_Map.md`) · Gate: **`tools/stage_gate.py allfail` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
+> Command: `/create-allfail` · Writes: `<task_dir>/11_AF_Justification.md` · Paired eval: none (QC-scored as "Rubrics — All-Failing Rubrics"; rule file `Evals/references/rules/all_failing.md`) · Platform: screens 56–58 (`references/Taxonomy_V2_Step_Map.md`) · Gate: **`tools/stage_gate.py allfail` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
 
 ## Purpose
 
@@ -28,19 +28,19 @@ precedence over the older V2 reference documents in `references/Docs/`; local au
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs (all required unless marked; stop and name what is missing)
-- `task_inputs/10_Baseline_Verifier_Results.md` — the platform verifier copy ("Run #N" blocks).
-- `task_inputs/07_Baseline_Trajectories/` — the six rollouts.
-- `task_inputs/09_Rubrics.json` — the criteria the verifier graded (same version).
-- `task_inputs/04_Prompt.txt`, `00_Assigments.md` (persona), `03_Error_Async_Config.txt`,
+- `<task_dir>/10_Baseline_Verifier_Results.md` — the platform verifier copy ("Run #N" blocks).
+- `<task_dir>/07_Baseline_Trajectories/` — the six rollouts.
+- `<task_dir>/09_Rubrics.json` — the criteria the verifier graded (same version).
+- `<task_dir>/04_Prompt.txt`, `00_Assigments.md` (persona), `03_Error_Async_Config.txt`,
   `01_Universe_Inject.sql` (or "no injection"), reference files the prompt uses.
 - `08_OE_Writing_Ledger.md`, `08_Oracle_Events.md` (optional — leads and a comparison path, never authority).
 
 Output (two files, one analysis)
-- `task_inputs/11_AF_Justification.md` — denominator, all-fail list, one
+- `<task_dir>/11_AF_Justification.md` — denominator, all-fail list, one
   classified block per all-fail rubric, the tally, and the hand-off line for `/create-difficulty`.
   `NONE` (with the denominator) when no rubric failed every completed rollout — the QC dimension
   is then an automatic 5.
-- `task_inputs/11_Baseline_AllFail_Justifications.md` — the screen-ready file and the artifact the
+- `<task_dir>/11_Baseline_AllFail_Justifications.md` — the screen-ready file and the artifact the
   platform saves under its `all-fail` input key (`Evals/INPUTS.md` stores it as
   `11_Baseline_AllFail_Justifications.txt`; the store renames on save). Step 9 writes it.
 
@@ -50,11 +50,11 @@ Run the parser; it binds every verifier row to `09_Rubrics.json` by title and co
 
 ```sh
 python3 Task_Authoring/tools/difficulty_stats.py --build \
-  --verifier Task_Authoring/task_inputs/10_Baseline_Verifier_Results.md \
-  --rubrics Task_Authoring/task_inputs/09_Rubrics.json \
-  --trajectories Task_Authoring/task_inputs/07_Baseline_Trajectories \
-  --task-type "<horizon from 00_>" --out Task_Authoring/task_inputs/Working_Files/12_difficulty_input.json
-python3 Task_Authoring/tools/difficulty_stats.py Task_Authoring/task_inputs/Working_Files/12_difficulty_input.json
+  --verifier <task_dir>/10_Baseline_Verifier_Results.md \
+  --rubrics <task_dir>/09_Rubrics.json \
+  --trajectories <task_dir>/07_Baseline_Trajectories \
+  --task-type "<horizon from 00_>" --out <task_dir>/Working_Files/12_difficulty_input.json
+python3 Task_Authoring/tools/difficulty_stats.py <task_dir>/Working_Files/12_difficulty_input.json
 ```
 
 Rubric ids are `R<n>` = position in `09_Rubrics.json`. The all-fail list is the
@@ -147,7 +147,7 @@ trajectory is empty; a trajectory is truncated JSON. Never bind by guesswork. A 
 
 ## Step 9 — write the screen file (mechanical render of Step 6)
 
-Write `task_inputs/11_Baseline_AllFail_Justifications.md` from the workbook, never from fresh prose.
+Write `<task_dir>/11_Baseline_AllFail_Justifications.md` from the workbook, never from fresh prose.
 The workspace reference is `Task_Authoring-2/task_inputs-Suryansh/11_Baseline_AllFail_Justifications.md`.
 
 ```text
@@ -186,7 +186,7 @@ Shared root cause: <row ids or none>
 Justification (VALID only): <1–2 sentences>
 Finding (otherwise): <test failed · rule · evidence · consequence>
 
-Screen file: task_inputs/11_Baseline_AllFail_Justifications.md (<s> section(s), one paragraph each; Not justified: <ids | none>)
+Screen file: <task_dir>/11_Baseline_AllFail_Justifications.md (<s> section(s), one paragraph each; Not justified: <ids | none>)
 
 Summary: valid <n> · invalid <n> (rubric <n>, environment <n>; ≥ 2 = QC Fail, 1 = Non-fail) · judge errors <n> · unresolved <n> · non-causal defects to fix <ids>
 Hand-off to /create-difficulty: --invalid <ids | none> --judge-correction <run-k:Rn … | none>
@@ -220,7 +220,7 @@ Hand-off to /create-difficulty: --invalid <ids | none> --judge-correction <run-k
    local file name, and every invalid row named as not justified. Read it as the reviewer will: the
    paragraph alone, without the workbook, must say what was required, what the runs did and why the
    failure is real.
-7. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py allfail Task_Authoring/task_inputs --paste` re-runs `difficulty_stats.py` on `12_difficulty_input.json` (write it in Step 1 with `--out`) and compares the all-fail list; checks one block per all-fail with an exact criterion quote, every completed run cited with an event, all eight tests, a 1–2 sentence justification for VALID; and needs one evidenced counter-reading per block plus the recomputation.
+7. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py allfail <task_dir> --paste` re-runs `difficulty_stats.py` on `12_difficulty_input.json` (write it in Step 1 with `--out`) and compares the all-fail list; checks one block per all-fail with an exact criterion quote, every completed run cited with an event, all eight tests, a 1–2 sentence justification for VALID; and needs one evidenced counter-reading per block plus the recomputation.
 8. **Re-run** the calculator after any binding fix; **record** each counter-reading, its
    resolution, and anything left unresolved. Never soften a finding to reach a count of zero
    invalid, never invent one. Criteria and the prompt are quoted; a proposed fix is labelled as such.

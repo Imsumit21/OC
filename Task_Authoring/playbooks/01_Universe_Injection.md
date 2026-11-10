@@ -1,6 +1,6 @@
 # 01 — Universe Injection (Playbook) — HarmonyGames · Spec V2 · effective profile (extreme by default)
 
-> Command: `/create-injection` · Writes: `task_inputs/01_Universe_Inject.sql` + `task_inputs/Working_Files/01_Grounding_Dossier.md` + final `task_inputs/Working_Files/01_Hardness_Manifest.json` + `Working_Files/solver/solver.py` + `Working_Files/01c_Dispositions.json` + `Working_Files/01c_Preflight_Report.json` (+ `.md`) · Checks: `tools/sql_lint.py`, `tools/base_check.py`, `tools/fact_check.py`, `tools/persona_view.py check-sql`, `tools/hardness_gate.py`, `tools/oracle_kit.py check`, `tools/difficulty_mutation.py`, `tools/preflight_report.py`, **`tools/stage_gate.py injection` (blocking)**; advisory (UNCALIBRATED): `tools/trap_liveness.py`, `tools/hardness_forecast.py --preregister` · Paired eval: `/injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`, `references/Ask_Carriers.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §4.5
+> Command: `/create-injection` · Writes: `<task_dir>/01_Universe_Inject.sql` + `<task_dir>/Working_Files/01_Grounding_Dossier.md` + final `<task_dir>/Working_Files/01_Hardness_Manifest.json` + `Working_Files/solver/solver.py` + `Working_Files/01c_Dispositions.json` + `Working_Files/01c_Preflight_Report.json` (+ `.md`) · Checks: `tools/sql_lint.py`, `tools/base_check.py`, `tools/fact_check.py`, `tools/persona_view.py check-sql`, `tools/hardness_gate.py`, `tools/oracle_kit.py check`, `tools/difficulty_mutation.py`, `tools/preflight_report.py`, **`tools/stage_gate.py injection` (blocking)**; advisory (UNCALIBRATED): `tools/trap_liveness.py`, `tools/hardness_forecast.py --preregister` · Paired eval: `/injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`, `references/Ask_Carriers.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §4.5
 
 ## Purpose
 
@@ -42,29 +42,29 @@ precedence over the older V2 reference documents in `references/Docs/`; local au
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs
-- `task_inputs/00_Assigments.md`, `01_Scenario_Design.md`, the draft `01_Hardness_Manifest.draft.json`, the gradable
+- `<task_dir>/00_Assigments.md`, `01_Scenario_Design.md`, the draft `01_Hardness_Manifest.draft.json`, the gradable
   surface `01_Gradable_Surface.json` (read only: this stage never rewrites it).
-  Nothing else from `task_inputs/`: reference files, error/async configuration and hardening outputs come later.
+  Nothing else from `<task_dir>/`: reference files, error/async configuration and hardening outputs come later.
 - `references/Ask_Carriers.md` — carriers, companion-field integrity, ID derivation, quoting, SQL skeletons.
 - `references/Native_Artifact_Anatomy.md` — voice, length, naming per service.
 - `references/universe_schema_live.json` — **private** column authority (144 tables, exported from the platform DB on 2026-10-04 with `setup/extract_schema.sql`). Do not paste it into `/injection`: supplied definitions become binding there; the eval compares against its own 58-table snapshot (advisory).
 - The universe through `Task_Authoring/tools/hg.py search` / `tools/hg.py records`; persona identity from `Evals/references/persona/roster.json` (17).
 
 Output
-- `task_inputs/01_Universe_Inject.sql` — line 1 exactly `-- Are you planning to inject? Yes` (or `No`); a short header (persona + roster email, horizon, services, statement counts); statements grouped by service in dependency order. No scenario spoilers or self-validation in the SQL.
-- `task_inputs/Working_Files/01_Grounding_Dossier.md` — grounding blocks 1.A–1.F · record ledger · findability and discovery-order proofs · self-validation table · integrations and companions · touched-data census and coherence hazards · intended disagreements · constraints for the prompt brief · **Facts for the human** · fact sheet · platform follow-ups · Self-review (tool outputs verbatim). The gate looks these headings up by name.
-- `task_inputs/Working_Files/01_Hardness_Manifest.json` — the final manifest: the draft's ids (any change listed in
+- `<task_dir>/01_Universe_Inject.sql` — line 1 exactly `-- Are you planning to inject? Yes` (or `No`); a short header (persona + roster email, horizon, services, statement counts); statements grouped by service in dependency order. No scenario spoilers or self-validation in the SQL.
+- `<task_dir>/Working_Files/01_Grounding_Dossier.md` — grounding blocks 1.A–1.F · record ledger · findability and discovery-order proofs · self-validation table · integrations and companions · touched-data census and coherence hazards · intended disagreements · constraints for the prompt brief · **Facts for the human** · fact sheet · platform follow-ups · Self-review (tool outputs verbatim). The gate looks these headings up by name.
+- `<task_dir>/Working_Files/01_Hardness_Manifest.json` — the final manifest: the draft's ids (any change listed in
   `design_delta`), the same `effective_profile`, plus everything only the SQL can settle (delegation quotes,
   version timestamps, `facts` with `home_ids`), the `mechanism_portfolio`, and `solver {path, digest}`,
   `gradable_surface` and `preflight {report, digest}`.
-- `task_inputs/Working_Files/solver/solver.py` (S4b) — the task's solver (`tools/oracle_kit.py` contract); it owns
+- `<task_dir>/Working_Files/solver/solver.py` (S4b) — the task's solver (`tools/oracle_kit.py` contract); it owns
   truth: `solver/truth.json`, every total in the dossier and in Facts for the human, and later the OE / rubric
   expected values come from it (`Hardness_Mastery.md` §2.6 item 14).
-- `task_inputs/Working_Files/01c_Dispositions.json` (S5b, S5c) — your written disposition for every mutation result
+- `<task_dir>/Working_Files/01c_Dispositions.json` (S5b, S5c) — your written disposition for every mutation result
   and every liveness flag.
-- `task_inputs/Working_Files/01c_Preflight_Report.json` (+ `.md`, S5e) — written by `tools/preflight_report.py`, bound
+- `<task_dir>/Working_Files/01c_Preflight_Report.json` (+ `.md`, S5e) — written by `tools/preflight_report.py`, bound
   by sha256 to the SQL, solver, surface, manifest and dispositions it checked.
-- `task_inputs/Working_Files/run_forensics/<rev>/01_Universe_Inject.sql` (S5e) — this revision's SQL, stored byte for
+- `<task_dir>/Working_Files/run_forensics/<rev>/01_Universe_Inject.sql` (S5e) — this revision's SQL, stored byte for
   byte and never edited: revision binding compares every run against every stored revision.
 
 ## Hard gates
@@ -95,6 +95,22 @@ Output
     passes only with a written `geometry.U` disposition in `01c_Dispositions.json` (`"geometry": {"geometry.U":
     {disposition: accepted-unverified | redesign | solver-gap, reason}}`), never a BLOCK.
 
+18. **Budget holds on the injected revision** (S5g, `budget.injection`): `tools/difficulty_budget.py check` PASS with
+    every unit's `decider` pointing at a record of this SQL or of base.
+19. **No deciding record on a swept path** (S5g, `exposure.units`): `tools/path_exposure.py check --write` reports
+    every anchor and coin-flip unit OFF-PATH. There is no "weak-accepted" disposition for a budget unit: an EXPOSED
+    unit is moved, not explained. A fairness pointer is allowed only if it does not name the container.
+20. **Coherence sweep clean** (S5g, `sweep.forks`): `tools/coherence_sweep.py check` PASS — no open material fork,
+    every open set has a written rule and a census, every defect has its siblings checked, every seeded fact checked
+    against the whole base.
+21. **Rubric shape carries the budget** (S5g, `skeleton.present`): `tools/rubric_skeleton.py build --write` then
+    `check` PASS — on one row per write target, the anchors still carry the mode's loss.
+
+Gates 18–21 are first-pass checks (`tools/first_pass_controls.py modes`): each prints WARN while its mode in
+`references/first_pass_policy.json` is `warn` and blocks once the owner sets it to `block`. Fix what they report
+before the platform run either way; every `/hardness` FAIL in 14 tasks was a deciding record on a swept path, and
+most `/prompt` rounds were forks and contradictions in the injected records.
+
 Advisory (UNCALIBRATED; never blocking): the geometry margin L_max, liveness flags (each with a written disposition),
 optional blind probes, and the pre-registered forecast.
 
@@ -108,7 +124,7 @@ Open 2–3 real sibling records before mirroring any shape (`Native_Artifact_Ana
 - **1.B Entity** — per person/channel/game/ticket/PR/doc/figure referenced: canonical spelling, every service it appears in (cited), value in each, `AGREE` / `DISAGREE (pre-existing: avoid or document)` / `DISAGREE (designed)`. Traps: three Marcuses + Oscar Bennett; Thomas vs Thomas Baker; `ENG-####` vs `ZOM-###`; Frederick Stone's GitHub login shows "Ryan".
 - **1.C Voice and realism** — per author: 3 quoted real messages, length band, capitalisation, emoji, sign-off, and posting hours (retain raw UTC; human-facing dates Pacific plus UTC when days differ). For **every seeded speaker** (Slack `user_id`, Gmail sender, Linear/Confluence author, PR comment author, Trello member) one line naming the person or email with its `status_at_clock` from the registered source's `activity.json`, verified at the assigned freeze — the gate lists the speakers from the SQL and checks each line. Take lengths, posting hours, subject/title prefixes and branch/PR title patterns from `references/universe_kb/conventions.json` (`slack.length_chars_by_channel_type`, `slack.per_person_hours_and_style`, `gmail.internal_subject_len_chars`, `linear.title_prefixes_by_team`, `github.pr_title_patterns` / `branch_patterns`, `gcal.duration_min`) and cite the key used.
 - **1.D Keyword** — per search term: hit count + pointer, or `NEW TERM — introduced in <records>, reached via <anchor>`. A bounded miss (`scan_complete:false`) proves nothing.
-- **1.E Persona reach** — per scoped record: service class + visibility path with a citation. Write every load-bearing record id (seeded and base) one per line to a scratch file and run `python3 Task_Authoring/tools/persona_view.py check-sql <persona> Task_Authoring/task_inputs/01_Universe_Inject.sql --load-bearing <file>`; paste the output (verdict PASS) under 1.E. The gate re-runs the check on every scoped id in 1.E, in Facts for the human and on rows marked `LB`. Required evidence must be YES. A designed denial (`DENIAL-INTENDED: <reason>`, NO) or an unverifiable record (`UNVERIFIED-OK: <reason>`) is a probe, never load-bearing: the row carries no `LB` and lists `alternate_evidence_ids: <ids>` that are YES; the manifest lists it in `denied_probes` and cites it only from traps or decoys. UNVERIFIED never satisfies a required dependency.
+- **1.E Persona reach** — per scoped record: service class + visibility path with a citation. Write every load-bearing record id (seeded and base) one per line to a scratch file and run `python3 Task_Authoring/tools/persona_view.py check-sql <persona> <task_dir>/01_Universe_Inject.sql --load-bearing <file>`; paste the output (verdict PASS) under 1.E. The gate re-runs the check on every scoped id in 1.E, in Facts for the human and on rows marked `LB`. Required evidence must be YES. A designed denial (`DENIAL-INTENDED: <reason>`, NO) or an unverifiable record (`UNVERIFIED-OK: <reason>`) is a probe, never load-bearing: the row carries no `LB` and lists `alternate_evidence_ids: <ids>` that are YES; the manifest lists it in `denied_probes` and cites it only from traps or decoys. UNVERIFIED never satisfies a required dependency.
 - **1.F Collision** — **identity tokens first**: header tokens (`PERSON_n_EMAIL`, `EMPLOYEE_00NN_SLACK_ID`) and body-text tokens (`[PERSON_NAME_n]`) are separate identity spaces; a new external person needs an unused header token (grep all three data folders for it: 0 hits) and must not reuse a token that already belongs to someone else. Then per minted ID: `python3 Task_Authoring/tools/hg.py search lookup <svc> --ids-file F --file <glob over the full collection>`, require `scan_complete:true` and 0 hits; format matches 1.A samples.
 
 ### S2 — Record ledger (from the design's record plan)
@@ -172,24 +188,24 @@ These are the eval's rules, not `sql_lint.py`'s; both sets must pass.
       - **Base routes.** `base_route(record_id)`, so the golden check reads base records through `tools/hg.py records`.
 
       `contract.controls` checks that every declared control and channel is live.
-- [ ] `python3 Task_Authoring/tools/oracle_kit.py check --task-dir Task_Authoring/task_inputs [--previous-sql <revision N-1
+- [ ] `python3 Task_Authoring/tools/oracle_kit.py check --task-dir <task_dir> [--previous-sql <revision N-1
       SQL> --previous-truth <its truth.json>]` → PASS. Then
-      `python3 Task_Authoring/tools/oracle_kit.py truth --task-dir Task_Authoring/task_inputs --out Task_Authoring/task_inputs/Working_Files/solver/truth.json`.
+      `python3 Task_Authoring/tools/oracle_kit.py truth --task-dir <task_dir> --out <task_dir>/Working_Files/solver/truth.json`.
 - [ ] Every total in the dossier and in Facts for the human comes from `truth.json`. Spot-check the golden values the
       contract lists as unverified (base records) through `tools/hg.py`.
 - [ ] Record `solver {path, digest}` in the final manifest.
 
 ### S5 — Validate
 
-- [ ] `python3 Task_Authoring/tools/sql_lint.py Task_Authoring/task_inputs/01_Universe_Inject.sql` → 0 errors; every warning dispositioned in the dossier.
-- [ ] `python3 Task_Authoring/tools/base_check.py Task_Authoring/task_inputs/01_Universe_Inject.sql` → PASS (the `/injection` Checks A + C against the base data; resolve every warning or justify it in the dossier).
+- [ ] `python3 Task_Authoring/tools/sql_lint.py <task_dir>/01_Universe_Inject.sql` → 0 errors; every warning dispositioned in the dossier.
+- [ ] `python3 Task_Authoring/tools/base_check.py <task_dir>/01_Universe_Inject.sql` → PASS (the `/injection` Checks A + C against the base data; resolve every warning or justify it in the dossier).
 - [ ] `python3 Task_Authoring/tools/hg.py lint --no-base` (drop `--no-base` once the universe data is installed) → the eval's `hg_injection_lint.py` on this SQL: fix every FAIL, disposition every CHECK in the Self-review, note every INFO. It exits 0 even with FAIL flags — read `counts.FAIL` and `flags[]`, never the exit status. Write one Self-review line per CHECK flag as `LINT <check> L<line>: <disposition and evidence>` (a grouped flag names its first line); the injection stage gate re-runs the lint with base data and blocks on any FAIL or undispositioned CHECK. `--no-base` cannot certify the base-dependent checks (identities, Drive bytes). A clean lint is not a PASS, and these are not `sql_lint.py`'s rules — keep all three tools.
-- [ ] `python3 Task_Authoring/tools/fact_check.py Task_Authoring/task_inputs/01_Universe_Inject.sql --manifest Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.json --no-leak` → PASS (declare every load-bearing fact in `facts`, per-record facts with `home_ids`; `tools/fact_check.py` verifies them). Paste the output in the fact sheet.
+- [ ] `python3 Task_Authoring/tools/fact_check.py <task_dir>/01_Universe_Inject.sql --manifest <task_dir>/Working_Files/01_Hardness_Manifest.json --no-leak` → PASS (declare every load-bearing fact in `facts`, per-record facts with `home_ids`; `tools/fact_check.py` verifies them). Paste the output in the fact sheet.
 - [ ] `persona_view.py check-sql … --load-bearing <file>` → PASS for every load-bearing seeded record (1.E).
 - [ ] Write the final manifest (every draft id kept, or listed in `design_delta`; each fragment's
       `delegation_quote` copied verbatim from its delegating record; each trap's `version_records` in the
       records' real time order; hazard acknowledgements with a verified `resolution`), then
-      `python3 Task_Authoring/tools/hardness_gate.py Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.json Task_Authoring/task_inputs/01_Universe_Inject.sql` → PASS
+      `python3 Task_Authoring/tools/hardness_gate.py <task_dir>/Working_Files/01_Hardness_Manifest.json <task_dir>/01_Universe_Inject.sql` → PASS
       (profile from the manifest; no `--profile` needed).
 - [ ] Self-validation table — every row holds. "Tool" rows are enforced by `sql_lint.py` / `base_check.py`
       (each rule measured at ~100 % in the base; proven by `support/examples/calibration/injection/mutation_matrix.py`);
@@ -206,14 +222,14 @@ These are the eval's rules, not `sql_lint.py`'s; both sets must pass.
 | Semantic / Category | — | labels, list names, channel purpose, doc titles match the content; one name per entity; deliberate dual naming listed for the human |
 | Other | — | voice matches; nothing reads as planted; no record states the conclusion |
 
-- [ ] **Base claims (blocking, before S4b):** `python3 Task_Authoring/tools/base_claims.py Task_Authoring/task_inputs/01_Universe_Inject.sql --task-dir Task_Authoring/task_inputs` → PASS. Seeded text that names a base branch (`release/<x>` or a bare `lava_fix_3`-style suffix) must agree with base git and `#builds`: the branch exists (B1); no record names it before its window opens (B2); a pick claim sits inside the window (B3); when commits name the ticket (or the PR has commits), the claimed branch contains one (`git branch --contains`, B4). B4' warnings (a backed-out pick git never shows) get a disposition; prefer telling backed-out stories on tickets with no commits. Origin: dd-2024-release-cost rev2 passed every local gate and `/injection`, then failed `/prompt` Cross-Service Coherence (2) on 14 pick notes git contradicts. Fix findings in the record plan, then rebuild the SQL and recompute the truth — never after Oracle Events or rubric work.
+- [ ] **Base claims (blocking, before S4b):** `python3 Task_Authoring/tools/base_claims.py <task_dir>/01_Universe_Inject.sql --task-dir <task_dir>` → PASS. Seeded text that names a base branch (`release/<x>` or a bare `lava_fix_3`-style suffix) must agree with base git and `#builds`: the branch exists (B1); no record names it before its window opens (B2); a pick claim sits inside the window (B3); when commits name the ticket (or the PR has commits), the claimed branch contains one (`git branch --contains`, B4). B4' warnings (a backed-out pick git never shows) get a disposition; prefer telling backed-out stories on tickets with no commits. Origin: dd-2024-release-cost rev2 passed every local gate and `/injection`, then failed `/prompt` Cross-Service Coherence (2) on 14 pick notes git contradicts. Fix findings in the record plan, then rebuild the SQL and recompute the truth — never after Oracle Events or rubric work.
 - [ ] **Self-review** (S7) written into the dossier.
 - [ ] Lazy-solver pass on the implemented records (first hits, no threads, bulk shortcuts, stop at the first conclusion) — fix every point it scores.
-- [ ] Local red team (recommended): `python3 Task_Authoring/tools/redteam_review.py --mode redteam --dual --in Task_Authoring/task_inputs/Working_Files/01_Grounding_Dossier.md --in Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.json --out Task_Authoring/task_inputs/Working_Files/01b_Redteam_Review.md`.
-- [ ] **Stage gate (blocking):** `python3 Task_Authoring/tools/stage_gate.py injection Task_Authoring/task_inputs --paste` → `STAGE GATE injection: PASS`. It re-runs `sql_lint`, `base_check`, `base_claims`, `fact_check --no-leak`, `hardness_gate` (at the manifest's `effective_profile`) and `persona_view` and compares them with the pastes, requires the upstream scenario PASS to be current, the final manifest to keep every draft id or list it in `design_delta`, every anchor name to be a noun phrase of ≤ 6 words, a disposition line per `sql_lint` warning class, the KB citations and the self-review. `--paste` writes the PASS into the Self-review.
+- [ ] Local red team (recommended): `python3 Task_Authoring/tools/redteam_review.py --mode redteam --dual --in <task_dir>/Working_Files/01_Grounding_Dossier.md --in <task_dir>/Working_Files/01_Hardness_Manifest.json --out <task_dir>/Working_Files/01b_Redteam_Review.md`.
+- [ ] **Stage gate (blocking):** `python3 Task_Authoring/tools/stage_gate.py injection <task_dir> --paste` → `STAGE GATE injection: PASS`. It re-runs `sql_lint`, `base_check`, `base_claims`, `fact_check --no-leak`, `hardness_gate` (at the manifest's `effective_profile`) and `persona_view` and compares them with the pastes, requires the upstream scenario PASS to be current, the final manifest to keep every draft id or list it in `design_delta`, every anchor name to be a noun phrase of ≤ 6 words, a disposition line per `sql_lint` warning class, the KB citations and the self-review. `--paste` writes the PASS into the Self-review.
 
 ### S5b — Mutation and interventions (blocking: a written disposition for every result)
-- [ ] `python3 Task_Authoring/tools/difficulty_mutation.py mutate --task-dir Task_Authoring/task_inputs` (plan §7.2):
+- [ ] `python3 Task_Authoring/tools/difficulty_mutation.py mutate --task-dir <task_dir>` (plan §7.2):
       every rule ablation, rule × shard ablation, degrade, and the exact whole-mechanism combination table (k ≤ 8, else
       UNSUPPORTED; `--max-k N` above 8 runs only with `--allow-max-k N`, an explicit override disclosed in the output,
       the same in `hardness_forecast.py` and `preflight_report.py`), each diagnosed KILLED / WEAK / SURVIVED / EQUIVALENT on the gradable surface; plus one intervention per
@@ -225,14 +241,14 @@ These are the eval's rules, not `sql_lint.py`'s; both sets must pass.
       incomplete solver: the author decides which.
 
 ### S5b′ — Geometry (U blocking, L_max advisory)
-- [ ] `python3 Task_Authoring/tools/difficulty_mutation.py geometry --task-dir Task_Authoring/task_inputs` (plan §5):
+- [ ] `python3 Task_Authoring/tools/difficulty_mutation.py geometry --task-dir <task_dir>` (plan §5):
       U = the weight share the designed mechanisms can flip (every per-record ablation subset, aggregates fed by a
       changeable record, degrades, the degrades of declared complexity channels; delivery slots never). U ≤ 1 − cap
       blocks; on a solver that is not composable U is UNVERIFIED and needs its `geometry.U` disposition (gate 17).
       L_max (the largest loss over whole-mechanism combinations) below (1 − cap) + 0.10 warns.
 
 ### S5c — Liveness flags (advisory; each flag dispositioned)
-- [ ] `python3 Task_Authoring/tools/trap_liveness.py --task-dir Task_Authoring/task_inputs` on the SQL; write a
+- [ ] `python3 Task_Authoring/tools/trap_liveness.py --task-dir <task_dir>` on the SQL; write a
       disposition per flag under `"liveness"` in `01c_Dispositions.json`. Redesign the difficulty; never remove a fairness
       link.
 
@@ -241,15 +257,15 @@ These are the eval's rules, not `sql_lint.py`'s; both sets must pass.
       from platform evidence.
 
 ### S5e — Forecast (advisory, UNCALIBRATED, pre-registered) and the preflight report
-- [ ] `python3 Task_Authoring/tools/hardness_forecast.py forecast --task-dir Task_Authoring/task_inputs --model <baseline
-      model> --preregister --out Task_Authoring/task_inputs/Working_Files/01c_Forecast.json` — priors per model from the
+- [ ] `python3 Task_Authoring/tools/hardness_forecast.py forecast --task-dir <task_dir> --model <baseline
+      model> --preregister --out <task_dir>/Working_Files/01c_Forecast.json` — priors per model from the
       ledger (another model only through a transfer record: TRANSFERRED · UNCALIBRATED), exact solver outcomes, 10,000
       simulated six-run baselines through `difficulty_stats.compute()` per scenario. Its ledger id is written before the
       platform run; nothing changes after. Declared channels take their rates from the model's ledger records of their
       family; a channel with none needs a disclosed `--channel-rate <channel>=<e>`, otherwise it prints UNPARAMETERIZED
       and is not simulated. The forecast also reports each slot's P(fail) and P(fails all six); the latter is all-fail
       justification workload, never a block.
-- [ ] `python3 Task_Authoring/tools/preflight_report.py --task-dir Task_Authoring/task_inputs --forecast Task_Authoring/task_inputs/Working_Files/01c_Forecast.json`
+- [ ] `python3 Task_Authoring/tools/preflight_report.py --task-dir <task_dir> --forecast <task_dir>/Working_Files/01c_Forecast.json`
       → writes `01c_Preflight_Report.json` + `.md` (solver contract, surface validation with expected values and
       `flipped_by`, mutation with dispositions, geometry, liveness, forecast). Record `preflight {report, digest}` in the
       final manifest. Any later edit to the SQL, solver, surface, manifest or dispositions makes it stale.
@@ -274,6 +290,50 @@ These are the eval's rules, not `sql_lint.py`'s; both sets must pass.
       rebuild. Control errors and unattributed slips count for neither.
       - At most two cycles; after that, change the scenario rather than iterate.
       - Season Pass spent 14 revisions without target-model evidence (`Hardness_Mastery.md` §12).
+
+### S5g — First-pass checks: budget, path exposure, coherence sweep, rubric shape (hard gates 18–21)
+Run these on the final SQL of the revision, after S5e and before `/injection`. They replace finding the same defects
+one platform round at a time.
+- [ ] **Budget on the injected revision.** Update `Working_Files/01_Difficulty_Budget.json`: each unit's `decider`
+      is the record as injected (id, container, `injected: true`) or the base record. `python3
+      Task_Authoring/tools/difficulty_budget.py check --task-dir <task_dir>` → PASS.
+- [ ] **Path exposure.** `python3 Task_Authoring/tools/path_exposure.py check --task-dir <task_dir> --write` →
+      `PATH EXPOSURE: PASS`. For each unit it reports EXPOSED, with the reason, when the deciding record: carries an
+      entity, project or prompt keyword; sits in a container the prompt, a hub or a rules document names; is a root
+      post, a comment on the cohort item itself or a tab of a listed sheet; falls in the dated window of a sender or
+      channel the task searches anyway; is pointed at by another record; or is reached by a search that returns so few
+      results in this persona's view that every run reads them all. Move an EXPOSED unit to another carrier (scenario
+      S5c) and re-run. Never accept it with a note.
+- [ ] **Coherence sweep** (`Working_Files/01d_Coherence_Sweep.json`).
+      1. `python3 Task_Authoring/tools/coherence_sweep.py candidates --task-dir <task_dir>` prints the mechanical
+         candidates: quantifiers without a closed rule, records that give one entity two values, known-issue cards
+         the injection touches, and the base search to run for each seeded fact.
+      2. `python3 Task_Authoring/tools/coherence_sweep.py brief --task-dir <task_dir> --reviewer 1` (and `2`) writes
+         a brief for a cold reviewer: the ask and the injected records only, with no design, answer or rubric. Give
+         each brief to a fresh subagent that has seen nothing else and ask for every material reading and every
+         contradiction.
+      3. Record every fork in the sweep file and settle each **in data**: change or add a dated record, re-render,
+         and name the changed record ids. A fork survives only as a both-fair *figure* with both values stated. Do not
+         settle a fork by adding a sentence to the prompt.
+      4. **Closed rule and census** for every open set ("every", "all", "what still has to land"): write the rule that
+         defines membership and list the full population from the universe.
+      5. **Sibling sweep.** A defect found in one record is looked for in every record of the same family (same
+         author, thread, template, service and type) before the next round.
+      6. **Whole-base consistency.** Check each seeded fact against the whole base, not only the records it cites,
+         and against `references/known_data_issues/<universe>.md`.
+      7. `python3 Task_Authoring/tools/coherence_sweep.py check --task-dir <task_dir>` → PASS.
+      On revision N+1 the sweep is scoped: `python3 Task_Authoring/tools/revision_scope.py scope --task-dir
+      <task_dir> --previous <revision N SQL>` lists the changed records, their neighbours and the dossier sections
+      and tool checks to redo. Redo those, not the whole dossier.
+- [ ] **Rubric shape before the pre-check.** `python3 Task_Authoring/tools/rubric_skeleton.py build --task-dir
+      <task_dir> --write` derives the rubric's rows and weights (not its wording) from the surface under the
+      platform's rules: one row per separate write target, atomic rows, weights by kind of work. Then `python3
+      Task_Authoring/tools/rubric_skeleton.py check --task-dir <task_dir>`: it fails when the rows every run will
+      pass leave the anchors with less than the mode's loss. Rows that all six runs passed carried 69–77 % of the
+      weight in two completed tasks, and rubric growth alone moved two predicted averages by 7 to 10 points. If the
+      check fails, change the task so the misses land on more weight; never tune the rows.
+- [ ] **Injection-built scenario** (scenario S2x): the SQL parts for the cohort and its haystack come from
+      `python3 Task_Authoring/generators/render.py render --task-dir <task_dir>`, never from hand-typed rows.
 
 ### S6 — Hand-off sections of the dossier
 - **Intended disagreements** — each designed contradiction, why it is realistic, what resolves it.
@@ -334,10 +394,10 @@ These are the eval's rules, not `sql_lint.py`'s; both sets must pass.
 - Contributes to `/prompt` feasibility, cross-service and pre-solved; and to the trajectory horizon via the call budget.
 
 ## Deliver
-Run `python3 Task_Authoring/tools/stage_gate.py injection Task_Authoring/task_inputs --paste`; handoff is blocked
+Run `python3 Task_Authoring/tools/stage_gate.py injection <task_dir> --paste`; handoff is blocked
 until it prints PASS. Report: the SQL path and row/schema counts (from `sql_lint.py`), the gate verdict, services
 carrying weight, hidden authorities and decoys, chains, any red-team findings and their
 disposition, the preflight (solver contract, mutation dispositions, U and L_max per gate view, liveness flags and
 their dispositions, the pre-registered forecast id with its P(all gates) range — labelled UNCALIBRATED), and open
-platform follow-ups. Next: paste the SQL into `/injection`; then
-`/create-error-async` / `/create-reference-files` if designed; then `/create-prompt-writing`.
+platform follow-ups. Next: paste the SQL into `/injection`; then `/create-prompt-writing`.
+`/create-error-async` and `/create-reference-files` are skipped by default; run one only when the owner asks for it.

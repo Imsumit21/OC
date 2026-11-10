@@ -30,18 +30,18 @@ into `Evals/`.
 # 1. See the stage order and what each gate writes
 python3 -B Task_Authoring/tools/stage_gate.py --list
 
-# 2. Create the task folder from the template (-n never overwrites a task already there;
-#    for a second task use another folder and pass --task-dir, see §5)
-cp -Rn Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputs/
+# 2. Create the task's own folder from the template: task_inputs<Label>, e.g. task_inputsRobert
+#    (-n never overwrites a task already there; every later command takes this folder, see §5)
+cp -Rn Task_Authoring/references/Tasks_Template/. Task_Authoring/task_inputsRobert/
 
 # 3. Paste the platform assignment into 00_Assigments.md, then normalize it
-python3 -B Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputs --write --require-source
+python3 -B Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputsRobert --write --require-source
 
 # 4. Prove the installed data matches its manifests (both universes; ~5 min)
 python3 -B Task_Authoring/tools/verify_universe_data.py
 
 # 5. Prove the universe your task reads is readable: one entry per service, directory_present true
-python3 -B Task_Authoring/tools/hg.py search inventory --task-dir Task_Authoring/task_inputs
+python3 -B Task_Authoring/tools/hg.py search inventory --task-dir Task_Authoring/task_inputsRobert
 ```
 
 Then start `/create-scenario` and follow the stage table in §7. Each `/create-*`
@@ -96,9 +96,11 @@ in the platform block. Common rejections:
 
 ## 5 · The task folder and the assignment file
 
-`Task_Authoring/task_inputs/` is the default task folder — the tools use it when
-no task is given. For any other task, pass `--task-dir <dir>` or set
-`TASK_AUTHORING_TASK_DIR=<abs dir>` in the environment.
+Give every task its own folder, `Task_Authoring/task_inputs<Label>`, and pass it
+to every command (`--task-dir <dir>`, or `TASK_AUTHORING_TASK_DIR=<abs dir>` in the
+environment). `Task_Authoring/task_inputs/` is still the tools' fallback when no
+task is given, which is why two sessions can end up in it: the stage gates warn
+on a task folder named exactly `task_inputs` (first-pass check `task.folder`).
 
 ```sh
 cp -Rn Task_Authoring/references/Tasks_Template/. /abs/path/my-task/
@@ -152,8 +154,7 @@ most common first-day blockers:
 python3 -B Task_Authoring/tools/stage_gate.py <stage> <task_dir> --paste
 ```
 
-`<stage>` is positional and the task folder defaults to
-`Task_Authoring/task_inputs`. `--paste` inserts the PASS block into the
+`<stage>` and `<task_dir>` are positional; always give the task folder. `--paste` inserts the PASS block into the
 artifact's Self-review, which is what the next stage requires.
 
 | # | Skill (in `Task_Authoring/skills/*/SKILL.md`) | Writes | Gate |
@@ -161,8 +162,8 @@ artifact's Self-review, which is what the next stage requires.
 | 0 | — (paste assignment) | `00_Assigments.md`, `Working_Files/00_Task_Context.json` | `task_context.py --require-source` says `ready` |
 | 1 | `/create-scenario` | `01_Scenario_Design.md`, `01_Hardness_Manifest.draft.json`, `01_Gradable_Surface.json` | `hardness_gate.py --design`, `stage_gate.py scenario` |
 | 2 | `/create-injection` | `01_Universe_Inject.sql`, `01_Hardness_Manifest.json`, `01_Grounding_Dossier.md`, `solver/solver.py`, `01c_Dispositions.json`, `01c_Preflight_Report.json` | `sql_lint`, `base_check`, `base_claims`, `hardness_gate`, `stage_gate.py injection` |
-| 3 | `/create-error-async` *(optional)* | `03_Error_Async_Config.txt` | `stage_gate.py error-async` |
-| 4 | `/create-reference-files` *(optional)* | `02_Reference_Files_Manifest.md` + `02_Reference_Files/` | `stage_gate.py reference-files` |
+| 3 | `/create-error-async` *(skipped by default; only when the owner asks)* | `03_Error_Async_Config.txt` | `stage_gate.py error-async` |
+| 4 | `/create-reference-files` *(skipped by default; only when the owner asks)* | `02_Reference_Files_Manifest.md` + `02_Reference_Files/` | `stage_gate.py reference-files` |
 | 5 | `/create-prompt-writing` → draft/human → check | `04_Prompt_Writing_Brief.md`, `04_Prompt.txt`, `04_Prompt_Check.md` | `stage_gate.py prompt-writing`, then `stage_gate.py prompt-check` |
 | 6 | `/create-humantime` | `Working_Files/05_Human_Time_Worksheet.md` | `stage_gate.py humantime` |
 | 7 | *platform*: pre-check (1 Opus 5.5 run) → `/create-hardening` MODE B | `06_PreCheck_Trajectory/trajectory.json`, `01a_Hardening_Report.md` | `stage_gate.py hardening`; go / no-go recorded (advisory) |

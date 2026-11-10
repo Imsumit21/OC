@@ -5,19 +5,25 @@ description: "Compute assignment-aware V3 baseline gates for a HarmonyGames task
 
 # Baseline difficulty & failure patterns (12)
 
+**Task folder (required).** `<task_dir>` in this skill and its playbook is the task folder given as this command's
+argument, for example `/create-difficulty Task_Authoring/task_inputsRobert`. If no folder is given and
+`TASK_AUTHORING_TASK_DIR` is unset, stop and ask which folder; never guess and never fall back to a default. Pass
+the same folder as `--task-dir` to every tool. A new task has its own named folder
+(`Task_Authoring/task_inputs<Label>`), not a bare `Task_Authoring/task_inputs`, so two tasks never share one.
+
 Resolve this file through any symlink to locate `<bundle>/skills/<name>/SKILL.md`.
 The bundle's parent is the workspace. Read `<bundle>/setup/GEN_EXECUTION.md` first, then follow the playbook
 `Task_Authoring/playbooks/12_Difficulty.md` in full. Write only under
-`Task_Authoring/task_inputs/` (plus the forecast score's ledger append through `tools/hardness_forecast.py`,
+`<task_dir>/` (plus the forecast score's ledger append through `tools/hardness_forecast.py`,
 GEN_EXECUTION §1); never write to `Evals/`, `claude/` or `HarmonyGames_*`, and never execute SQL.
 
 ## Inputs
-Upstream slots in `Task_Authoring/task_inputs/`: `10_Baseline_Verifier_Results.md`, `07_Baseline_Trajectories/`, `09_Rubrics.json`, `00_Assigments.md`, `03_Error_Async_Config.txt`, `11_AF_Justification.md` (required when any rubric failed every completed run). If a required one is
+Upstream slots in `<task_dir>/`: `10_Baseline_Verifier_Results.md`, `07_Baseline_Trajectories/`, `09_Rubrics.json`, `00_Assigments.md`, `03_Error_Async_Config.txt`, `11_AF_Justification.md` (required when any rubric failed every completed run). If a required one is
 missing, stop and name it. Read the normalized eight-field assignment before the universe.
 The assigned universe date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal, Oct 1, 2025 → synth-cut. Read only that universe, apply its state rules and clock, and stop if the date is missing — there is no default. Quote the context's `universe.clock_line` as the report's `Clock:` line. Under eval release `task-quality-v1` a rubric that lands NON-FAIL 3/4 on the narrow rubric-flow-v2 bands is still valid (not automatic rework), and a `BOTH_FAIR_FIGURE` fork recorded by the prompt review is intended, not a defect.
-Build the matrix with `python3 Task_Authoring/tools/difficulty_stats.py --build … --task-dir Task_Authoring/task_inputs`
+Build the matrix with `python3 Task_Authoring/tools/difficulty_stats.py --build … --task-dir <task_dir>`
 plus 11's `--invalid` / `--judge-correction` hand-off. Map each trajectory to its verifier `Run #N` by content, never by
-file order: `python3 Task_Authoring/tools/trajectory_ledger.py --task-dir Task_Authoring/task_inputs --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=Task_Authoring/task_inputs/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql …`
+file order: `python3 Task_Authoring/tools/trajectory_ledger.py --task-dir <task_dir> --sql <rev>=<task_dir>/01_Universe_Inject.sql --sql <older rev>=<task_dir>/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql …`
 (one `--sql` per stored revision; the first revision: `--sole-revision "<reason>"`) binds every export to its revision on evidence (one SQL alone is INSUFFICIENT) and reports validity, friction and the counted calls (`difficulty_stats.count_tool_calls`).
 
 Six **V3-valid** slots are required, and the tool owns the model labels (strip only a bracketed suffix, compare exactly; `mixed_model` and `v3_valid` are separate outcomes; an unrecognised label is UNKNOWN, never valid): a batch with mixed, wrong or unknown provenance is refused, and four runs (or any batch without the six slots, including errored exports) do not satisfy the six-slot requirement. The matrix binds `assignment_hash`, `policy_hash` and `context_hash`; `--build` stops when a verifier row does not bind exactly once to a `09_Rubrics.json` criterion or a criterion has no verifier row. The difficulty stage certificate digests `12_difficulty_input.json`, `09_Rubrics.json`, `10_Baseline_Verifier_Results.md` and `07_Baseline_Trajectories`: editing any of them after the paste makes the PASS stale — re-run and re-paste, never hand-edit.
@@ -29,10 +35,13 @@ Ground every fact through `Task_Authoring/tools/hg.py search` and
 apply the persona ACL yourself (search does not).
 
 ## Output
-`task_inputs/Working_Files/12_difficulty_input.json` and `task_inputs/Working_Files/12_Difficulty_Stats.txt`, including the **Self-review** section (gate numbers recomputed independently; playbook; GEN_EXECUTION §6a).
+`<task_dir>/Working_Files/12_difficulty_input.json` and `<task_dir>/Working_Files/12_Difficulty_Stats.txt`, including the **Self-review** section (gate numbers recomputed independently; playbook; GEN_EXECUTION §6a).
+
+## First-pass checks (playbook 12, routing table first row)
+Before routing a missed gate: `python3 -B Task_Authoring/tools/budget_outcome.py compare --task-dir <task_dir> --trajectory <task_dir>/07_Baseline_Trajectories` (per unit, the share of runs that opened the deciding record against its declared range) and `python3 -B Task_Authoring/tools/rubric_skeleton.py drift --task-dir <task_dir>` (whether rows every run passes diluted the units). A spread miss on a baseline that passes every other gate is reported to the owner; it is not by itself a reason for a universe revision. Configured friction is never the fix for low spread.
 
 ## Stage gate (blocking)
-Run `python3 Task_Authoring/tools/stage_gate.py difficulty Task_Authoring/task_inputs --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
+Run `python3 Task_Authoring/tools/stage_gate.py difficulty <task_dir> --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
 
 ## Deliver
 Report the output path(s), any blocking findings, the pre-registered forecast against the observed corrected gates (scored with `hardness_forecast.py score`; advisory, UNCALIBRATED, UNPARAMETERIZED channels disclosed), and the next step: confirm the platform check only if every gate passes; otherwise `/create-hardening` (MODE B forensics), whose output `/create-scenario --revise` consumes, and the routing in the report.

@@ -1,6 +1,6 @@
 # 01a — Hardening (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-hardening` · Writes: `task_inputs/Working_Files/01a_Hardening_Report.md` + `Working_Files/run_forensics/<revision>/` (ledgers, node verdicts) + ledger records in `support/hardness_ledger/ledger.jsonl` · Tools: `tools/trajectory_ledger.py`, `tools/node_verdicts.py`, `tools/surface_grader.py`, `tools/hardness_ledger.py`, `tools/hardness_forecast.py` · Consumed by: `/create-scenario --revise` (S0r), which decides; `/create-injection` makes every universe change · Gate: **`tools/stage_gate.py hardening` (blocking)** · Read first: `setup/GEN_EXECUTION.md`, then `playbooks/01_Universe_Injection.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §2, §7.7, §7.9
+> Command: `/create-hardening` · Writes: `<task_dir>/Working_Files/01a_Hardening_Report.md` + `Working_Files/run_forensics/<revision>/` (ledgers, node verdicts) + ledger records in `support/hardness_ledger/ledger.jsonl` · Tools: `tools/trajectory_ledger.py`, `tools/node_verdicts.py`, `tools/surface_grader.py`, `tools/hardness_ledger.py`, `tools/hardness_forecast.py` · Consumed by: `/create-scenario --revise` (S0r), which decides; `/create-injection` makes every universe change · Gate: **`tools/stage_gate.py hardening` (blocking)** · Read first: `setup/GEN_EXECUTION.md`, then `playbooks/01_Universe_Injection.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §2, §7.7, §7.9
 
 ## Purpose
 
@@ -48,7 +48,7 @@ Choose the mode from what exists:
 
 If an artifact a part needs is missing, name it and skip that part.
 
-Output: `task_inputs/Working_Files/01a_Hardening_Report.md`, the forensics under `Working_Files/run_forensics/<revision>/` and the dispositioned ledger records. A universe-side fix is not made here: `/create-scenario --revise` (S0r) decides it, and `/create-injection` implements it as the next revision with an updated dossier and Facts for the human (plan §2, B5–B6 and gate 7).
+Output: `<task_dir>/Working_Files/01a_Hardening_Report.md`, the forensics under `Working_Files/run_forensics/<revision>/` and the dispositioned ledger records. A universe-side fix is not made here: `/create-scenario --revise` (S0r) decides it, and `/create-injection` implements it as the next revision with an updated dossier and Facts for the human (plan §2, B5–B6 and gate 7).
 
 ## Hard gates
 
@@ -100,10 +100,10 @@ The design steps now run where the design is made (plan §2). For a legacy task 
 ### MODE B — forensics
 
 - [ ] **Run the shared tools first** (they do the mechanical part; the model reviews and dispositions):
-      `python3 Task_Authoring/tools/trajectory_ledger.py --task-dir Task_Authoring/task_inputs --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=Task_Authoring/task_inputs/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql … --out-dir Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>`
+      `python3 Task_Authoring/tools/trajectory_ledger.py --task-dir <task_dir> --sql <rev>=<task_dir>/01_Universe_Inject.sql --sql <older rev>=<task_dir>/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql … --out-dir <task_dir>/Working_Files/run_forensics/<rev>`
       (B0–B2: validity, provenance per phase and per brief, revision binding by content, decoded writes, briefs, counted
       calls through `difficulty_stats.count_tool_calls`), then
-      `python3 Task_Authoring/tools/node_verdicts.py --task-dir Task_Authoring/task_inputs --sql <rev>=… --sql <older rev>=… … --ledger-out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/proposals.jsonl --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/node_verdicts.json`
+      `python3 Task_Authoring/tools/node_verdicts.py --task-dir <task_dir> --sql <rev>=… --sql <older rev>=… … --ledger-out <task_dir>/Working_Files/run_forensics/<rev>/proposals.jsonl --out <task_dir>/Working_Files/run_forensics/<rev>/node_verdicts.json`
       (B3 proposals, each run graded with the solver of the revision it is bound to). Event numbers are 0-based indexes
       into the export array.
       **Pass every stored revision**, one `--sql` per `Working_Files/run_forensics/*/01_Universe_Inject.sql`
@@ -169,7 +169,7 @@ Give counts per node: runs LANDED · CONFOUNDED · LEAKED · BYPASSED · NOT-REA
     - **5:** the central result or delivery is defeated.
   - For a Haiku run, classify each failure as `CAPABILITY_FLOOR`, `JUDGMENT_AMBIGUITY`, `SCALE_COMPLETENESS` (all four 1B §4 conditions, measured on the tool surface) or `UNDETERMINED`. Only `JUDGMENT_AMBIGUITY` and `SCALE_COMPLETENESS` can carry the prediction. A run that stopped before the governing source gives no score (`INSUFFICIENT_EVIDENCE`). Apply the `enumerated_single_source` cap of 2 unless a qualifying chain exists.
 - [ ] **B3d Baseline projection and clean average** (baseline only). Before a rubric or verifier exists,
-      `python3 Task_Authoring/tools/surface_grader.py --task-dir Task_Authoring/task_inputs` grades the runs on the
+      `python3 Task_Authoring/tools/surface_grader.py --task-dir <task_dir>` grades the runs on the
       gradable surface and runs the four gates through `difficulty_stats.compute()` (a design check, labelled as such;
       the rubric and verifier remain the grading of record). After them, `difficulty_stats.py`'s corrected view is the
       number of record.
@@ -218,7 +218,7 @@ revision's label; `<harness>` is `NAME@VERSION`; `<model>` is the run's model la
       final result event, no compaction gap, no background events after the result); **revision binding by content**
       (the current revision's seeded ids and values appear in the results); prompt match by content (exports may omit the
       user prompt).
-      `python3 -B Task_Authoring/tools/trajectory_ledger.py --task-dir Task_Authoring/task_inputs --run precheck=Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json --surface Task_Authoring/task_inputs/Working_Files/01_Gradable_Surface.json --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=Task_Authoring/task_inputs/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql … --prompt Task_Authoring/task_inputs/04_Prompt.txt --source independent-harness --harness <harness> --out-dir Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>`
+      `python3 -B Task_Authoring/tools/trajectory_ledger.py --task-dir <task_dir> --run precheck=<task_dir>/06_PreCheck_Trajectory/trajectory.json --surface <task_dir>/Working_Files/01_Gradable_Surface.json --sql <rev>=<task_dir>/01_Universe_Inject.sql --sql <older rev>=<task_dir>/Working_Files/run_forensics/<older rev>/01_Universe_Inject.sql … --prompt <task_dir>/04_Prompt.txt --source independent-harness --harness <harness> --out-dir <task_dir>/Working_Files/run_forensics/<rev>`
       (one `--sql` per stored revision; the task's first revision: `--sole-revision "<reason>"` instead, refused while
       another revision is stored).
       Anything but BOUND on evidence (INSUFFICIENT, AMBIGUOUS, UNBOUND), or an errored run, stops the intake: the run is
@@ -236,14 +236,28 @@ revision's label; `<harness>` is `NAME@VERSION`; `<model>` is the run's model la
         the thread that wrote the row.
       - In Season Pass revision 14, every traced failure in the four fallback runs was the fallback model's
         (`Hardness_Mastery.md` §12).
+- [ ] **1b. Budget outcome — before any hand review** (plan WS6; gates `precheck.budget_outcome`,
+      `precheck.stop_rule`). `python3 -B Task_Authoring/tools/budget_outcome.py compare --task-dir <task_dir> --write`
+      answers, for each unit of `Working_Files/01_Difficulty_Budget.json`, whether the run opened the deciding record
+      and at which step.
+      - `GO`: no anchor's deciding record was opened. `NO-GO`: one was; the unit and the step are named.
+      - `HAND-REVIEW` lists only the units whose result contradicts the budget. Steps 2 and 3 are still run, but hand
+        dispositions are needed for those units alone, not for the whole run.
+      - **A NO-GO is repaired by one relocation.** Move the exposed deciding record to another carrier from scenario
+        S5c. Do not add rows, traps, volume or prompt rules. `python3 -B Task_Authoring/tools/revision_scope.py
+        relocation --task-dir <task_dir> --previous <revision N SQL>` checks that the new revision is one relocation,
+        and `revision_scope.py scope` lists the records, dossier sections and checks to redo: redo those only.
+      - **Stop rule, enforced.** `python3 -B Task_Authoring/tools/budget_outcome.py stop-rule --task-dir <task_dir>`:
+        two NO-GO pre-checks on one `design_id` send the task back to `/create-scenario` for a redesign, not to
+        another patch. A redesign gets a new `design_id`.
 - [ ] **2. Node verdicts** against **this revision's** solver, with the per-rule brief-transmission check over the
       subagent inputs:
-      `python3 -B Task_Authoring/tools/node_verdicts.py --task-dir Task_Authoring/task_inputs --run precheck=Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json --sql <rev>=Task_Authoring/task_inputs/01_Universe_Inject.sql --sql <older rev>=… … --source independent-harness --task <task> --ledger-out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.proposals.jsonl --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.node_verdicts.json`
+      `python3 -B Task_Authoring/tools/node_verdicts.py --task-dir <task_dir> --run precheck=<task_dir>/06_PreCheck_Trajectory/trajectory.json --sql <rev>=<task_dir>/01_Universe_Inject.sql --sql <older rev>=… … --source independent-harness --task <task> --ledger-out <task_dir>/Working_Files/run_forensics/<rev>/precheck.proposals.jsonl --out <task_dir>/Working_Files/run_forensics/<rev>/precheck.node_verdicts.json`
       (the same `--sql` set, or `--sole-revision`, as step 1).
       Review the queued calls (B1) and disposition each proposal (B3); CONFOUNDED is yours to assign.
 - [ ] **3. Deliverable comparison**: decode the write payloads (CSV, Sheets, comments, slides, mail) and diff them field
       by field against `truth.json`:
-      `python3 -B Task_Authoring/tools/surface_grader.py --task-dir Task_Authoring/task_inputs --run precheck=Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.surface_grades.json`
+      `python3 -B Task_Authoring/tools/surface_grader.py --task-dir <task_dir> --run precheck=<task_dir>/06_PreCheck_Trajectory/trajectory.json --out <task_dir>/Working_Files/run_forensics/<rev>/precheck.surface_grades.json`
       (a pre-check is graded but never enters the six-run gates; UNGRADED slots are listed with the coverage).
       **Confirm every failed slot against the write payload before it counts.** On Season Pass revision 14, the proxy's
       decoder defects failed slots the run had met, and moved one run by 20 points. They included:
@@ -261,7 +275,7 @@ revision's label; `<harness>` is `NAME@VERSION`; `<model>` is the run's model la
 - [ ] **5. Posterior forecast**: the priors now include this run's dispositioned verdicts (the revision has no platform
       runs yet, so the §11 rule that a revision's priors never use its own platform runs holds); forecast the six-run
       gates and pre-register the result before anything else changes:
-      `python3 -B Task_Authoring/tools/hardness_forecast.py forecast --task-dir Task_Authoring/task_inputs --model <model> --task <task> --preregister --harness <harness> --out Task_Authoring/task_inputs/Working_Files/run_forensics/<rev>/precheck.posterior_forecast.json`
+      `python3 -B Task_Authoring/tools/hardness_forecast.py forecast --task-dir <task_dir> --model <model> --task <task> --preregister --harness <harness> --out <task_dir>/Working_Files/run_forensics/<rev>/precheck.posterior_forecast.json`
       Another model's evidence enters only through a transfer record (printed TRANSFERRED · UNCALIBRATED). Declared
       channels need ledger records of their family or a disclosed `--channel-rate`. Pass this run's `briefs.json`
       (`--briefs`, from the `trajectory_ledger` output) so the batches scenario uses the run's real brief batches.
@@ -282,9 +296,10 @@ revision's label; `<harness>` is `NAME@VERSION`; `<model>` is the run's model la
       models are all the expected model, merged when they share a landed key or a source. It lists apart what it didn't
       count: other models' decisions, control over-applications, slips and `mechanism?` errors pending review.
 
-      **Stop rule:** at most two platform pre-checks per scenario. After two misses, change the scenario.
+      **Stop rule:** at most two platform pre-checks per scenario. After two misses, change the scenario. Step 1b's
+      `budget_outcome.py stop-rule` and the gate check `precheck.stop_rule` count them per `design_id`.
 - [ ] **7. Hardness v2 diagnosis** (`Hardness_Mastery.md` §13.4; Opus 5.5). Run
-      `python3 -B Task_Authoring/tools/hardness_v2_check.py --task-dir Task_Authoring/task_inputs` on the revision the run
+      `python3 -B Task_Authoring/tools/hardness_v2_check.py --task-dir <task_dir>` on the revision the run
       is bound to and quote its table in section 8. For every trap the run settled, state which kind of v2 failure it
       was, from the call ledger: the correction came back in the same call or container as the original
       (`same_container`), in an anchor's thread or file (`first_read`), or in the record that delegates to the original
@@ -364,7 +379,7 @@ Run this after the report is drafted and record it as the report's Self-review s
 
 ## Deliver
 
-Run `python3 Task_Authoring/tools/stage_gate.py hardening Task_Authoring/task_inputs --paste`; handoff is blocked until it prints `STAGE GATE hardening: PASS`, and `--paste` writes that output into the Self-review of `01a_Hardening_Report.md` (the next stage's gate refuses an upstream artifact without a current PASS block). The gate also re-runs the injection checks on the current revision (`revision.injection`), so this stage cannot pass while `stage_gate.py injection` fails.
+Run `python3 Task_Authoring/tools/stage_gate.py hardening <task_dir> --paste`; handoff is blocked until it prints `STAGE GATE hardening: PASS`, and `--paste` writes that output into the Self-review of `01a_Hardening_Report.md` (the next stage's gate refuses an upstream artifact without a current PASS block). The gate also re-runs the injection checks on the current revision (`revision.injection`), so this stage cannot pass while `stage_gate.py injection` fails.
 
 Report:
 - the report path and the mode that ran
