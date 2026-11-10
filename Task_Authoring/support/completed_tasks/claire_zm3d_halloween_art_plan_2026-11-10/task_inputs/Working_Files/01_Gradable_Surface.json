@@ -1,0 +1,740 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "claire-zm3d-halloween-art-plan",
+ "revision": "scenario-03",
+ "classes": [
+  "HALLOWEEN VERSION",
+  "REFRESH FIRST",
+  "REUSE",
+  "SKIP"
+ ],
+ "truth_fields": {
+  "class": "call",
+  "groups": "groups"
+ },
+ "truth_keys": [
+  "app icon",
+  "iPhone 6.5\" set",
+  "iPad 12.9\" set",
+  "Google Play phone set",
+  "couch boss 30",
+  "couch alpha 30",
+  "couch alpha 50",
+  "balloons alpha 50",
+  "balloons alpha 50 (1)",
+  "barrel alpha 30",
+  "couch marketing2 30s",
+  "couch marketing2 endcard",
+  "barrel alpha 30 endcard",
+  "couch alpha 30 endcard",
+  "balloons alpha 50 endcard",
+  "balloons marketing2 endcard",
+  "barrel marketing2 4:5",
+  "barrel marketing2 16:9",
+  "cheer 30p 9:16",
+  "cheer fastcouch 9:16",
+  "marcus.bennett 9:16",
+  "boris fastcouch 9:16",
+  "boris alin2 9:16",
+  "squirrelfail portrait",
+  "squirrelfail landscape",
+  "mrfluffernot portrait",
+  "mrfluffernot landscape",
+  "cinematicTutorial Ad 1",
+  "tutorialCinematic portrait",
+  "cheer fastcouch 16:9",
+  "marcus.bennett 16:9",
+  "marcus.bennett 4:5",
+  "marcus.bennett 1:1",
+  "boris fastcouch 16:9",
+  "cheer 30p 16:9",
+  "couch alpha 30 16:9",
+  "balloons alpha 50 16:9",
+  "couch alpha 50 16:9",
+  "barrel alpha 30 endcard 16:9",
+  "julia 1:1",
+  "julia 4:5",
+  "julia 9:16",
+  "julia 16:9",
+  "julia 1:1 android 1080",
+  "julia 4:5 android 1080x1350",
+  "marcus portrait UA end card",
+  "end card template 16:9",
+  "end card 001",
+  "end card 16:9 from 001",
+  "end card 1:1 from 001",
+  "couch boss 30 16:9",
+  "couch marketing2 30s 16:9",
+  "cinematicTutorial Ad 1 16:9",
+  "tutorialCinematic 1:1",
+  "cheer 30p 4:5",
+  "end card 4:5 from 001",
+  "julia 1:1 android tablet",
+  "boris alin2 16:9",
+  "cheer fastcouch 4:5",
+  "barrel marketing2 1:1",
+  "couch alpha 50 4:5",
+  "balloons alpha 50 (1) 16:9"
+ ],
+ "deliverables": {
+  "tracker": {
+   "kind": "table",
+   "name_regex": "(?:halloween)",
+   "key_column": "surface",
+   "key_regex": "[A-Za-z0-9][A-Za-z0-9 _:.,'\"()/&+-]{1,60}",
+   "columns": [
+    "surface",
+    "call",
+    "owner",
+    "due",
+    "notes"
+   ],
+   "class_column": "call",
+   "reason_column": "due",
+   "comparators": {
+    "call": "norm"
+   },
+   "missing_values": [
+    "",
+    "-",
+    "n/a"
+   ]
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "tickets": {
+   "kind": "json_text",
+   "tool": "linear_create_issue"
+  },
+  "slack": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  }
+ },
+ "slots": [
+  {
+   "id": "S03",
+   "title": "iPad 12.9-inch store set is a Halloween version still to make",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Martin's 'exported' claim, the Store tab's live sets and the Halloween Store folder listing must be reconciled",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "iPad 12.9\" set",
+    "call"
+   ],
+   "fact_id": "ipad.call",
+   "mechanisms": [
+    "R_DONE_EXPORT"
+   ],
+   "singled_out_by": "K12"
+  },
+  {
+   "id": "S26",
+   "title": "One new-ticket field (title or a description line) names the Halloween icon",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the icon is new store art the ask routes to a ticket",
+   "class": "write_content",
+   "role": "core",
+   "selector": [
+    "text",
+    "tickets",
+    "icon[^\\n]*halloween|halloween[^\\n]*icon"
+   ],
+   "fact_id": "icon.ticket"
+  },
+  {
+   "id": "S04",
+   "title": "One new-ticket field (title or a description line) names the Halloween iPad set",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the iPad gap found above becomes new store art with its own ticket",
+   "class": "write_content",
+   "role": "core",
+   "selector": [
+    "text",
+    "tickets",
+    "ipad[^\\n]*halloween|halloween[^\\n]*ipad"
+   ],
+   "fact_id": "ipad.ticket",
+   "mechanisms": [
+    "R_DONE_EXPORT"
+   ]
+  },
+  {
+   "id": "S05",
+   "title": "cheer fastcouch 9:16 gets a Halloween version (Marcus's test was turned down)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Marcus's DM and the file in UA masters are overturned by Robert's review in a #zombie-art thread, joined with the ticket's Sep 16 re-capture",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "cheer fastcouch 9:16",
+    "call"
+   ],
+   "fact_id": "reuse1.call",
+   "mechanisms": [
+    "R_TEST_TURNED_DOWN"
+   ],
+   "singled_out_by": "K21"
+  },
+  {
+   "id": "S06",
+   "title": "cheer fastcouch 16:9 gets a Halloween version (Marcus's test was turned down)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same review covers the tablet cut, matched to its own sheet row, ticket and file",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "cheer fastcouch 16:9",
+    "call"
+   ],
+   "fact_id": "reuse2.call",
+   "mechanisms": [
+    "R_TEST_TURNED_DOWN"
+   ],
+   "singled_out_by": "K21"
+  },
+  {
+   "id": "S08",
+   "title": "cheer 30p 16:9 is skipped for October",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket's campaign note is joined with the mail's Android US tablet end date, which outranks the cut's baked-in music",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "cheer 30p 16:9",
+    "call"
+   ],
+   "fact_id": "skip.call",
+   "mechanisms": [
+    "R_FLIGHT_CHANGE"
+   ],
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "S09",
+   "title": "couch alpha 50 16:9 is kept and refreshed first",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "its ticket's campaigns (iOS UK tablet as well) are compared with the mail's 'only runs there'",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "couch alpha 50 16:9",
+    "call"
+   ],
+   "fact_id": "twotab.call",
+   "mechanisms": [
+    "R_FLIGHT_CHANGE",
+    "R_ART_CURRENT"
+   ],
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "S28",
+   "title": "cheer fastcouch 4:5 gets a Halloween version (not covered by Marcus's DM)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Marcus's reply names the 9:16 and the 16:9, the UA masters folder holds those two only, and the 4:5's own ticket shows a later cut from the Sep 16 re-capture",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "cheer fastcouch 4:5",
+    "call"
+   ],
+   "fact_id": "cheer45.call",
+   "mechanisms": [
+    "R_TEST_TURNED_DOWN"
+   ],
+   "singled_out_by": "K16"
+  },
+  {
+   "id": "S29",
+   "title": "julia 1:1 android tablet is skipped for October",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a still's only campaign, from its ticket note, is compared with the mail's Android US tablet end date",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "julia 1:1 android tablet",
+    "call"
+   ],
+   "fact_id": "skipstatic.call",
+   "mechanisms": [
+    "R_FLIGHT_CHANGE"
+   ],
+   "singled_out_by": "H4"
+  },
+  {
+   "id": "S10",
+   "title": "julia 4:5 has a row and is refreshed first",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a static missing from the sheet is brought in by Frederick's card comment and judged by its ticket's Jun 5 source build under the deck's rule",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "julia 4:5",
+    "call"
+   ],
+   "fact_id": "static_off.call",
+   "mechanisms": [
+    "R_SCOPE_SERVING",
+    "R_ART_CURRENT"
+   ],
+   "singled_out_by": "K7"
+  },
+  {
+   "id": "S11",
+   "title": "marcus portrait UA end card has a row and is refreshed first",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "an end card missing from the sheet is shown serving by its own ticket, and its Android #1450 source is compared with the #1452 threshold",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "marcus portrait UA end card",
+    "call"
+   ],
+   "fact_id": "endcard_off.call",
+   "mechanisms": [
+    "R_SCOPE_SERVING",
+    "R_ART_CURRENT"
+   ],
+   "singled_out_by": "K11"
+  },
+  {
+   "id": "V01",
+   "title": "Tracker covers exactly the serving surfaces",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the sheet's Store and Unity rows plus the two off-sheet surfaces, minus the Archive tab",
+   "class": "delivery",
+   "role": "volume",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "fact_id": "tracker.keys",
+   "mechanisms": [
+    "R_SCOPE_SERVING"
+   ],
+   "volume_for": [
+    "calls"
+   ]
+  },
+  {
+   "id": "S14",
+   "title": "boris fastcouch 9:16 is refreshed first",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a Sep 12 post is overturned by its ticket's Jul 28 capture under Robert's rule (iOS 1232 / Android #1452, Jul 29)",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "boris fastcouch 9:16",
+    "call"
+   ],
+   "fact_id": "oldbuild1.call",
+   "mechanisms": [
+    "R_ART_CURRENT"
+   ],
+   "singled_out_by": "H3"
+  },
+  {
+   "id": "S15",
+   "title": "boris alin2 9:16 is refreshed first",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the cut's capture build from its ticket comment is compared with the deck's threshold build, against its September post",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "boris alin2 9:16",
+    "call"
+   ],
+   "fact_id": "oldbuild2.call",
+   "mechanisms": [
+    "R_ART_CURRENT"
+   ],
+   "singled_out_by": "H3"
+  },
+  {
+   "id": "S16",
+   "title": "marcus.bennett 9:16 is refreshed first (music baked in)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the deck's master-audio rule is joined with the cut's ticket comment on a current capture",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "marcus.bennett 9:16",
+    "call"
+   ],
+   "fact_id": "music.call",
+   "mechanisms": [
+    "R_ART_CURRENT"
+   ],
+   "singled_out_by": "H3"
+  },
+  {
+   "id": "S17",
+   "title": "couch alpha 50 gets a Halloween version (re-captured)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket's April capture is superseded by Marcus's #zm-animations note under the deck's newest-capture rule",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "couch alpha 50",
+    "call"
+   ],
+   "fact_id": "recap1.call",
+   "mechanisms": [
+    "R_RECAPTURE_NOTE"
+   ],
+   "singled_out_by": "K20"
+  },
+  {
+   "id": "S18",
+   "title": "barrel marketing2 4:5 gets a Halloween version (re-captured)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same note's #1896 is joined with the ticket's April capture and the deck's threshold",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "barrel marketing2 4:5",
+    "call"
+   ],
+   "fact_id": "recap2.call",
+   "mechanisms": [
+    "R_RECAPTURE_NOTE"
+   ],
+   "singled_out_by": "K20"
+  },
+  {
+   "id": "S30",
+   "title": "balloons alpha 50 (1) gets a Halloween version (re-captured)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same note's #1966 is joined with the ticket's April capture and the deck's threshold",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "balloons alpha 50 (1)",
+    "call"
+   ],
+   "fact_id": "recap3.call",
+   "mechanisms": [
+    "R_RECAPTURE_NOTE"
+   ],
+   "singled_out_by": "K20"
+  },
+  {
+   "id": "S37",
+   "title": "couch boss 30 is due by Fri Oct 10",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket's Android US phone campaign is joined with Frederick's thread reply, which overrides his Sep 30 mail",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "couch boss 30",
+    "^ *(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*,? )?(?:oct(?:ober)?\\.? ?(?:10|0?[6-9])(?:st|nd|rd|th)?\\b|10/(?:10|0?[6-9])\\b|2025-10-(?:10|0[6-9])|(?:10|0?[6-9])(?:st|nd|rd|th)? (?:of )?oct)"
+   ],
+   "fact_id": "android1.due",
+   "mechanisms": [
+    "R_REVIEW_WINDOW"
+   ],
+   "singled_out_by": "K19"
+  },
+  {
+   "id": "S38",
+   "title": "marcus.bennett 1:1 is due by Fri Oct 10",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a second ad on Android US phone under the same reply",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "marcus.bennett 1:1",
+    "^ *(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*,? )?(?:oct(?:ober)?\\.? ?(?:10|0?[6-9])(?:st|nd|rd|th)?\\b|10/(?:10|0?[6-9])\\b|2025-10-(?:10|0[6-9])|(?:10|0?[6-9])(?:st|nd|rd|th)? (?:of )?oct)"
+   ],
+   "fact_id": "android2.due",
+   "mechanisms": [
+    "R_REVIEW_WINDOW"
+   ],
+   "singled_out_by": "K19"
+  },
+  {
+   "id": "S39",
+   "title": "marcus.bennett 4:5 stays on Wed Oct 15",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "its ticket's iOS UK phone campaign is compared with 'iOS UK stays on the 15th'",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "marcus.bennett 4:5",
+    "^ *(?:(?:mon|tue|wed|thu|fri|sat|sun)[a-z]*,? )?(?:oct(?:ober)?\\.? ?1[1-5](?:st|nd|rd|th)?\\b|10/1[1-5]\\b|2025-10-1[1-5]|1[1-5](?:st|nd|rd|th)? (?:of )?oct)"
+   ],
+   "fact_id": "ios.due",
+   "mechanisms": [
+    "R_REVIEW_WINDOW"
+   ],
+   "singled_out_by": "K19"
+  },
+  {
+   "id": "S31",
+   "title": "julia 1:1 goes to Julia Lawson",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Leonard's split is overridden by Martin's #company-internal post and Leonard's reply, applied to a still",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "julia 1:1",
+    "owner"
+   ],
+   "fact_id": "static1.owner",
+   "mechanisms": [
+    "R_STATICS_COVER"
+   ],
+   "singled_out_by": "K22"
+  },
+  {
+   "id": "S32",
+   "title": "julia 9:16 goes to Julia Lawson",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same post, applied to a second still",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "julia 9:16",
+    "owner"
+   ],
+   "fact_id": "static2.owner",
+   "mechanisms": [
+    "R_STATICS_COVER"
+   ],
+   "singled_out_by": "K22"
+  },
+  {
+   "id": "S33",
+   "title": "squirrelfail landscape is skipped for October",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the ticket's campaign note is corrected by Frederick's restart mail, then his Sep 30 rule applies",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "squirrelfail landscape",
+    "call"
+   ],
+   "fact_id": "trim1.call",
+   "mechanisms": [
+    "R_TABLET_TRIM"
+   ],
+   "singled_out_by": "K23"
+  },
+  {
+   "id": "S34",
+   "title": "mrfluffernot landscape is skipped for October",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same mail, applied to the second landscape cut",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "mrfluffernot landscape",
+    "call"
+   ],
+   "fact_id": "trim2.call",
+   "mechanisms": [
+    "R_TABLET_TRIM"
+   ],
+   "singled_out_by": "K23"
+  },
+  {
+   "id": "S35",
+   "title": "end card 001 is refreshed first (old zombies on the packs)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a build that passes the deck's rule is overridden by Frederick's card comment, under the deck's re-render call",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "end card 001",
+    "call"
+   ],
+   "fact_id": "logo1.call",
+   "mechanisms": [
+    "R_OLD_PACKS"
+   ],
+   "singled_out_by": "K24"
+  },
+  {
+   "id": "S36",
+   "title": "end card 16:9 from 001 is refreshed first (old zombies on the packs)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same comment reaches the cut made from it, matched to its own ticket",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "end card 16:9 from 001",
+    "call"
+   ],
+   "fact_id": "logo2.call",
+   "mechanisms": [
+    "R_OLD_PACKS"
+   ],
+   "singled_out_by": "K24"
+  },
+  {
+   "id": "S21",
+   "title": "couch boss 30 is refreshed first",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "an April capture read against the deck's threshold",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "couch boss 30",
+    "call"
+   ],
+   "fact_id": "rf1.call",
+   "group": "calls"
+  },
+  {
+   "id": "S22",
+   "title": "julia 1:1 is refreshed first",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a June static whose source build predates the swap",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "julia 1:1",
+    "call"
+   ],
+   "fact_id": "rf2.call",
+   "group": "calls"
+  },
+  {
+   "id": "S23",
+   "title": "marcus.bennett 4:5 gets a Halloween version",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a current-build export with an SFX-only master read against the deck's calls",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "marcus.bennett 4:5",
+    "call"
+   ],
+   "fact_id": "hv1.call",
+   "group": "calls"
+  },
+  {
+   "id": "S24",
+   "title": "iPhone 6.5\" set is reused",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the Halloween iPhone set is in the Store folder",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "iPhone 6.5\" set",
+    "call"
+   ],
+   "fact_id": "iphone.call",
+   "group": "calls"
+  },
+  {
+   "id": "S25",
+   "title": "app icon gets a Halloween version",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Robert turned the concept down for the icon, so the icon is a new piece",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "app icon",
+    "call"
+   ],
+   "fact_id": "icon.call",
+   "group": "calls"
+  },
+  {
+   "id": "D01",
+   "title": "A reply is posted in Leonard's thread",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery into the named thread is a direct check",
+   "class": "delivery",
+   "role": "core",
+   "selector": [
+    "delivery",
+    "slack_thread",
+    "1759269913.882683"
+   ],
+   "fact_id": "reply.thread"
+  },
+  {
+   "id": "D02",
+   "title": "The tracker's own link (its file id) is in a Slack message, and the tracker is shared",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the decoded tracker's identity in the reply is a direct check",
+   "class": "delivery",
+   "role": "core",
+   "selector": [
+    "link",
+    "slack"
+   ],
+   "fact_id": "tracker.link"
+  }
+ ]
+}

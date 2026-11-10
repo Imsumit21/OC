@@ -1,0 +1,6862 @@
+{
+ "tool": "hardness_forecast/1",
+ "note": "model outputs, not measurements; the Season Pass backtests are development fixtures, not validation",
+ "revision": "rev1",
+ "sql_sha256": "ad50f039b5c28053bb1b1905c09ecb4b634918b2ab45ca3afc2163d035854a06",
+ "solver_sha256": "4c9f139f49408c1a678424509d8df8bb385eeb587c15a2a4fa13e2acd21d1b89",
+ "surface": "Task_Authoring/task_inputsS2/Working_Files/01_Gradable_Surface.json",
+ "sha256": "69b55f424206df7fd61b51ca8e746b5367385483582f90ac082082d9310cf507",
+ "views": {
+  "V3": {
+   "cap": 0.9,
+   "mode": "easy"
+  }
+ },
+ "task_type": "long-horizon",
+ "calls": 550,
+ "max_k": 8,
+ "max_k_override": null,
+ "kind": "HARDNESS_FORECAST",
+ "label": "UNCALIBRATED · advisory",
+ "model": "claude-opus-5-5",
+ "priors_from": "claude-opus-5-5",
+ "exclusions": {
+  "tasks": [],
+  "revisions": [],
+  "include_mixed": false
+ },
+ "ledger": "Task_Authoring/support/hardness_ledger/ledger.jsonl",
+ "ledger_sha256": "9fe3f19b7f42a6e1ec670e41ac55e349c480418eb8eafea5474064f055fcd83f",
+ "mechanisms": [
+  {
+   "id": "rule:RET",
+   "family": "A24",
+   "source": "founders-channel-by-name",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 2.0,
+    "beta": 2.0,
+    "mean": 0.5,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert_seed_bets_s2": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 1.0
+     },
+     "zm3d-halloween-art-plan": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_852b065152ade635",
+     "hev_efbca5607a047ac2"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:OFF",
+   "family": "A17",
+   "source": "mail-by-name",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert_seed_bets_s2": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "zm3d-halloween-art-plan": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_6b01d1489ea05d94",
+     "hev_e65926c500198d3c",
+     "hev_9a41d9388bc84c5b"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:ORPH",
+   "family": "A11",
+   "source": "channel-by-name",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert_seed_bets_s2": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "zm3d-halloween-art-plan": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_fe1047effcd69fe4",
+     "hev_33741eaee49bfa4a",
+     "hev_138abfcae201ca13"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:CORR",
+   "family": "A11",
+   "source": "recent-mail",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert_seed_bets_s2": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "zm3d-halloween-art-plan": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_fe1047effcd69fe4",
+     "hev_33741eaee49bfa4a",
+     "hev_138abfcae201ca13"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:ALIAS",
+   "family": "A17",
+   "source": "mail-by-token",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert_seed_bets_s2": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "zm3d-halloween-art-plan": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_6b01d1489ea05d94",
+     "hev_e65926c500198d3c",
+     "hev_9a41d9388bc84c5b"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:CLASS",
+   "family": "A15",
+   "source": "contract-doc",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert_seed_bets_s2": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "zm3d-halloween-art-plan": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_cdb4202aec019c58",
+     "hev_5500eb7aeca7ff2a",
+     "hev_6d4d83dd1e3c4878"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  },
+  {
+   "id": "rule:CURR",
+   "family": "A15",
+   "source": "notice-field",
+   "touched": 1,
+   "prior": {
+    "model": "claude-opus-5-5",
+    "alpha": 1.0,
+    "beta": 3.0,
+    "mean": 0.25,
+    "n_eff": 2.0,
+    "trials": 2,
+    "tasks": {
+     "robert_seed_bets_s2": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     },
+     "zm3d-halloween-art-plan": {
+      "trials": 1,
+      "weighted": 1.0,
+      "deff": 1.0,
+      "n_eff": 1.0,
+      "landed": 0.0
+     }
+    },
+    "rho": 0.5,
+    "record_ids": [
+     "hev_cdb4202aec019c58",
+     "hev_5500eb7aeca7ff2a",
+     "hev_6d4d83dd1e3c4878"
+    ],
+    "excluded": [],
+    "rule": "one trial per (task, revision, run, family); overlapping observation records collapse to one trial set (T = the largest counted outcome total, landed = max: a lower bound, with the upper bound reported); a task's evidence is divided by its Kish design effect 1 + (m - 1) rho over its m trials (weights scale the evidence; rho an assumption)",
+    "label": "UNCALIBRATED"
+   }
+  }
+ ],
+ "channels": [],
+ "unparameterized_channels": [
+  {
+   "id": "CH-RET",
+   "kind": "scale",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "CH-OFF",
+   "kind": "scale",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "CH-ORPH",
+   "kind": "scale",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "CH-CORR",
+   "kind": "scale",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "CH-ALIAS",
+   "kind": "scale",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "CH-CLASS",
+   "kind": "scale",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "CH-CURR",
+   "kind": "scale",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:RET",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:OFF",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:ORPH",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:CORR",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:ALIAS",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:CLASS",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  },
+  {
+   "id": "control:CURR",
+   "kind": "control",
+   "members": 1,
+   "why": "no ledger record and no --channel-rate override: not simulated",
+   "dropped": [],
+   "basis": "no eligible record after exclusions"
+  }
+ ],
+ "briefs": {
+  "files": [
+   "Task_Authoring/task_inputsS2/Working_Files/run_forensics/rev6/precheck/briefs.json"
+  ],
+  "sha256": {
+   "Task_Authoring/task_inputsS2/Working_Files/run_forensics/rev6/precheck/briefs.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "digest": "3b4ef98dae4d10c213509a8c9d51aa8e7b95b6ea5d043822f8fe7a0ca36acf87",
+  "content_digest": null,
+  "batches": null
+ },
+ "scenarios": [
+  {
+   "dependence": "independent",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8881,
+     "band_10_90": [
+      0.8388,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9989,
+      "avg_weighted_pass_rate": 0.608,
+      "per_rollout_sd": 0.0027,
+      "failure_patterns": 0.6507
+     },
+     "P_all": 0.0022,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.0008,
+       "spread": 0.0028
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.001,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0012,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.0028,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0026,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0026,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.002,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0004
+      }
+     ],
+     "E_patterns": 3.4387
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4995,
+    "rule:OFF": 0.2526,
+    "rule:ORPH": 0.2488,
+    "rule:CORR": 0.2535,
+    "rule:ALIAS": 0.2489,
+    "rule:CLASS": 0.2485,
+    "rule:CURR": 0.2483
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7511,
+     "either": 37618,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7461,
+     "either": 37439,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7626,
+     "either": 37559,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7382,
+     "either": 37525,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7387,
+     "either": 37498,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7453,
+     "either": 37419,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3746,
+     "either": 26339,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3851,
+     "either": 26519,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3739,
+     "either": 26353,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3790,
+     "either": 26280,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3712,
+     "either": 26345,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3752,
+     "either": 26389,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3744,
+     "either": 26119,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3657,
+     "either": 26184,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3620,
+     "either": 26208,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3817,
+     "either": 26331,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3825,
+     "either": 26301,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3678,
+     "either": 26435,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3827,
+     "either": 26021,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3662,
+     "either": 26173,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3741,
+     "either": 26072,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1252,
+     "either": 0.627
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1244,
+     "either": 0.624
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1271,
+     "either": 0.626
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.123,
+     "either": 0.6254
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1231,
+     "either": 0.625
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1242,
+     "either": 0.6237
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0624,
+     "either": 0.439
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0642,
+     "either": 0.442
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0623,
+     "either": 0.4392
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0632,
+     "either": 0.438
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0619,
+     "either": 0.4391
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.0625,
+     "either": 0.4398
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4353
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0609,
+     "either": 0.4364
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0603,
+     "either": 0.4368
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0636,
+     "either": 0.4389
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0638,
+     "either": 0.4384
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0613,
+     "either": 0.4406
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0638,
+     "either": 0.4337
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.061,
+     "either": 0.4362
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0624,
+     "either": 0.4345
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6816,
+     "P_fails_all_six": 0.1955
+    },
+    "X1": {
+     "P_fail": 0.4995,
+     "P_fails_all_six": 0.081
+    },
+    "X5": {
+     "P_fail": 0.2535,
+     "P_fails_all_six": 0.0119
+    },
+    "X3": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0114
+    },
+    "X6": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0122
+    },
+    "X8": {
+     "P_fail": 0.2485,
+     "P_fails_all_six": 0.0123
+    },
+    "X9": {
+     "P_fail": 0.2483,
+     "P_fails_all_six": 0.0116
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6816,
+     "P_fails_all_six": 0.1955
+    },
+    "X1": {
+     "P_fail": 0.4995,
+     "P_fails_all_six": 0.081
+    },
+    "X5": {
+     "P_fail": 0.2535,
+     "P_fails_all_six": 0.0119
+    },
+    "X3": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0114
+    },
+    "X6": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0122
+    },
+    "X8": {
+     "P_fail": 0.2485,
+     "P_fails_all_six": 0.0123
+    },
+    "X9": {
+     "P_fail": 0.2483,
+     "P_fails_all_six": 0.0116
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8884,
+     "band_10_90": [
+      0.8407,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9983,
+      "avg_weighted_pass_rate": 0.61,
+      "per_rollout_sd": 0.003,
+      "failure_patterns": 0.6603
+     },
+     "P_all": 0.0028,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0008
+      }
+     ],
+     "E_patterns": 3.4486
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4993,
+    "rule:OFF": 0.245,
+    "rule:ORPH": 0.2526,
+    "rule:CORR": 0.2488,
+    "rule:ALIAS": 0.2468,
+    "rule:CLASS": 0.2511,
+    "rule:CURR": 0.2529
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7355,
+     "either": 37304,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7637,
+     "either": 37478,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7536,
+     "either": 37349,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7397,
+     "either": 37368,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7533,
+     "either": 37489,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7486,
+     "either": 37644,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3705,
+     "either": 26155,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3552,
+     "either": 26078,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3607,
+     "either": 25903,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3750,
+     "either": 26017,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3728,
+     "either": 26147,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3782,
+     "either": 26304,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3790,
+     "either": 26176,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3824,
+     "either": 26399,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3853,
+     "either": 26478,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3745,
+     "either": 25991,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3751,
+     "either": 26242,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3812,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3629,
+     "either": 26244,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3752,
+     "either": 26229,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3828,
+     "either": 26410,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1226,
+     "either": 0.6217
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1273,
+     "either": 0.6246
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1256,
+     "either": 0.6225
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.1233,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1255,
+     "either": 0.6248
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1248,
+     "either": 0.6274
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0617,
+     "either": 0.4359
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0592,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0601,
+     "either": 0.4317
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4336
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0621,
+     "either": 0.4358
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.063,
+     "either": 0.4384
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0632,
+     "either": 0.4363
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0637,
+     "either": 0.44
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0642,
+     "either": 0.4413
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4332
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4374
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0635,
+     "either": 0.4381
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0605,
+     "either": 0.4374
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0625,
+     "either": 0.4371
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0638,
+     "either": 0.4402
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8884,
+     "band_10_90": [
+      0.8407,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9983,
+      "avg_weighted_pass_rate": 0.61,
+      "per_rollout_sd": 0.003,
+      "failure_patterns": 0.6603
+     },
+     "P_all": 0.0028,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0008
+      }
+     ],
+     "E_patterns": 3.4486
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4993,
+    "rule:OFF": 0.245,
+    "rule:ORPH": 0.2526,
+    "rule:CORR": 0.2488,
+    "rule:ALIAS": 0.2468,
+    "rule:CLASS": 0.2511,
+    "rule:CURR": 0.2529
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7355,
+     "either": 37304,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7637,
+     "either": 37478,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7536,
+     "either": 37349,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7397,
+     "either": 37368,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7533,
+     "either": 37489,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7486,
+     "either": 37644,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3705,
+     "either": 26155,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3552,
+     "either": 26078,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3607,
+     "either": 25903,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3750,
+     "either": 26017,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3728,
+     "either": 26147,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3782,
+     "either": 26304,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3790,
+     "either": 26176,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3824,
+     "either": 26399,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3853,
+     "either": 26478,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3745,
+     "either": 25991,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3751,
+     "either": 26242,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3812,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3629,
+     "either": 26244,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3752,
+     "either": 26229,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3828,
+     "either": 26410,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1226,
+     "either": 0.6217
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1273,
+     "either": 0.6246
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1256,
+     "either": 0.6225
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.1233,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1255,
+     "either": 0.6248
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1248,
+     "either": 0.6274
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0617,
+     "either": 0.4359
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0592,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0601,
+     "either": 0.4317
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4336
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0621,
+     "either": 0.4358
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.063,
+     "either": 0.4384
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0632,
+     "either": 0.4363
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0637,
+     "either": 0.44
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0642,
+     "either": 0.4413
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4332
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4374
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0635,
+     "either": 0.4381
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0605,
+     "either": 0.4374
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0625,
+     "either": 0.4371
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0638,
+     "either": 0.4402
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8884,
+     "band_10_90": [
+      0.8407,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9983,
+      "avg_weighted_pass_rate": 0.61,
+      "per_rollout_sd": 0.003,
+      "failure_patterns": 0.6603
+     },
+     "P_all": 0.0028,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0008
+      }
+     ],
+     "E_patterns": 3.4486
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4993,
+    "rule:OFF": 0.245,
+    "rule:ORPH": 0.2526,
+    "rule:CORR": 0.2488,
+    "rule:ALIAS": 0.2468,
+    "rule:CLASS": 0.2511,
+    "rule:CURR": 0.2529
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7355,
+     "either": 37304,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7637,
+     "either": 37478,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7536,
+     "either": 37349,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7397,
+     "either": 37368,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7533,
+     "either": 37489,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7486,
+     "either": 37644,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3705,
+     "either": 26155,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3552,
+     "either": 26078,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3607,
+     "either": 25903,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3750,
+     "either": 26017,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3728,
+     "either": 26147,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3782,
+     "either": 26304,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3790,
+     "either": 26176,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3824,
+     "either": 26399,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3853,
+     "either": 26478,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3745,
+     "either": 25991,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3751,
+     "either": 26242,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3812,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3629,
+     "either": 26244,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3752,
+     "either": 26229,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3828,
+     "either": 26410,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1226,
+     "either": 0.6217
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1273,
+     "either": 0.6246
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1256,
+     "either": 0.6225
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.1233,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1255,
+     "either": 0.6248
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1248,
+     "either": 0.6274
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0617,
+     "either": 0.4359
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0592,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0601,
+     "either": 0.4317
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4336
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0621,
+     "either": 0.4358
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.063,
+     "either": 0.4384
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0632,
+     "either": 0.4363
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0637,
+     "either": 0.44
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0642,
+     "either": 0.4413
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4332
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4374
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0635,
+     "either": 0.4381
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0605,
+     "either": 0.4374
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0625,
+     "either": 0.4371
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0638,
+     "either": 0.4402
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "independent",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8883,
+     "band_10_90": [
+      0.8388,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9995,
+      "avg_weighted_pass_rate": 0.6087,
+      "per_rollout_sd": 0.0038,
+      "failure_patterns": 0.6532
+     },
+     "P_all": 0.003,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0046,
+       "P_all_if_rate_below_median": 0.0014,
+       "spread": 0.0032
+      },
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.0042,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.002,
+       "P_all_if_rate_below_median": 0.004,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0016
+      }
+     ],
+     "E_patterns": 3.4348
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4978,
+    "rule:OFF": 0.2468,
+    "rule:ORPH": 0.2542,
+    "rule:CORR": 0.2514,
+    "rule:ALIAS": 0.2481,
+    "rule:CLASS": 0.2494,
+    "rule:CURR": 0.2489
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7390,
+     "either": 37285,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7696,
+     "either": 37419,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7502,
+     "either": 37445,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7441,
+     "either": 37308,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7461,
+     "either": 37369,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7343,
+     "either": 37457,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3693,
+     "either": 26367,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3753,
+     "either": 26139,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3620,
+     "either": 26074,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3769,
+     "either": 26006,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3636,
+     "either": 26109,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3826,
+     "either": 26506,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3759,
+     "either": 26375,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3794,
+     "either": 26421,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3859,
+     "either": 26326,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3676,
+     "either": 26290,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3780,
+     "either": 26267,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3780,
+     "either": 26237,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3693,
+     "either": 26156,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3713,
+     "either": 26106,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3639,
+     "either": 26261,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1232,
+     "either": 0.6214
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1283,
+     "either": 0.6237
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.125,
+     "either": 0.6241
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.124,
+     "either": 0.6218
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1244,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1224,
+     "either": 0.6243
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0616,
+     "either": 0.4395
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0625,
+     "either": 0.4356
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0603,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0628,
+     "either": 0.4334
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0606,
+     "either": 0.4351
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.0638,
+     "either": 0.4418
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0626,
+     "either": 0.4396
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0632,
+     "either": 0.4404
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0643,
+     "either": 0.4388
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0613,
+     "either": 0.4382
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.063,
+     "either": 0.4378
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.063,
+     "either": 0.4373
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0616,
+     "either": 0.4359
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0619,
+     "either": 0.4351
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0607,
+     "either": 0.4377
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6841,
+     "P_fails_all_six": 0.1966
+    },
+    "X1": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0825
+    },
+    "X4": {
+     "P_fail": 0.2542,
+     "P_fails_all_six": 0.0142
+    },
+    "X5": {
+     "P_fail": 0.2514,
+     "P_fails_all_six": 0.0117
+    },
+    "X8": {
+     "P_fail": 0.2494,
+     "P_fails_all_six": 0.0104
+    },
+    "X9": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0117
+    },
+    "X6": {
+     "P_fail": 0.2481,
+     "P_fails_all_six": 0.0118
+    },
+    "X3": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0116
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6841,
+     "P_fails_all_six": 0.1966
+    },
+    "X1": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0825
+    },
+    "X4": {
+     "P_fail": 0.2542,
+     "P_fails_all_six": 0.0142
+    },
+    "X5": {
+     "P_fail": 0.2514,
+     "P_fails_all_six": 0.0117
+    },
+    "X8": {
+     "P_fail": 0.2494,
+     "P_fails_all_six": 0.0104
+    },
+    "X9": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0117
+    },
+    "X6": {
+     "P_fail": 0.2481,
+     "P_fails_all_six": 0.0118
+    },
+    "X3": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0116
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8881,
+     "band_10_90": [
+      0.8388,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9989,
+      "avg_weighted_pass_rate": 0.608,
+      "per_rollout_sd": 0.0027,
+      "failure_patterns": 0.6507
+     },
+     "P_all": 0.0022,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.0008,
+       "spread": 0.0028
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.001,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0012,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.0028,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0026,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0026,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.0008
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.002,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0004
+      }
+     ],
+     "E_patterns": 3.4387
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4995,
+    "rule:OFF": 0.2526,
+    "rule:ORPH": 0.2488,
+    "rule:CORR": 0.2535,
+    "rule:ALIAS": 0.2489,
+    "rule:CLASS": 0.2485,
+    "rule:CURR": 0.2483
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7511,
+     "either": 37618,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7461,
+     "either": 37439,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7626,
+     "either": 37559,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7382,
+     "either": 37525,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7387,
+     "either": 37498,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7453,
+     "either": 37419,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3746,
+     "either": 26339,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3851,
+     "either": 26519,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3739,
+     "either": 26353,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3790,
+     "either": 26280,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3712,
+     "either": 26345,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3752,
+     "either": 26389,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3744,
+     "either": 26119,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3657,
+     "either": 26184,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3620,
+     "either": 26208,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3817,
+     "either": 26331,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3825,
+     "either": 26301,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3678,
+     "either": 26435,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3827,
+     "either": 26021,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3662,
+     "either": 26173,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3741,
+     "either": 26072,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1252,
+     "either": 0.627
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1244,
+     "either": 0.624
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1271,
+     "either": 0.626
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.123,
+     "either": 0.6254
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1231,
+     "either": 0.625
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1242,
+     "either": 0.6237
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0624,
+     "either": 0.439
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0642,
+     "either": 0.442
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0623,
+     "either": 0.4392
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0632,
+     "either": 0.438
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0619,
+     "either": 0.4391
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.0625,
+     "either": 0.4398
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4353
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0609,
+     "either": 0.4364
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0603,
+     "either": 0.4368
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0636,
+     "either": 0.4389
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0638,
+     "either": 0.4384
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0613,
+     "either": 0.4406
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0638,
+     "either": 0.4337
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.061,
+     "either": 0.4362
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0624,
+     "either": 0.4345
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6816,
+     "P_fails_all_six": 0.1955
+    },
+    "X1": {
+     "P_fail": 0.4995,
+     "P_fails_all_six": 0.081
+    },
+    "X5": {
+     "P_fail": 0.2535,
+     "P_fails_all_six": 0.0119
+    },
+    "X3": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0114
+    },
+    "X6": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0122
+    },
+    "X8": {
+     "P_fail": 0.2485,
+     "P_fails_all_six": 0.0123
+    },
+    "X9": {
+     "P_fail": 0.2483,
+     "P_fails_all_six": 0.0116
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6816,
+     "P_fails_all_six": 0.1955
+    },
+    "X1": {
+     "P_fail": 0.4995,
+     "P_fails_all_six": 0.081
+    },
+    "X5": {
+     "P_fail": 0.2535,
+     "P_fails_all_six": 0.0119
+    },
+    "X3": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0114
+    },
+    "X6": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0122
+    },
+    "X8": {
+     "P_fail": 0.2485,
+     "P_fails_all_six": 0.0123
+    },
+    "X9": {
+     "P_fail": 0.2483,
+     "P_fails_all_six": 0.0116
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8884,
+     "band_10_90": [
+      0.8407,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9983,
+      "avg_weighted_pass_rate": 0.61,
+      "per_rollout_sd": 0.003,
+      "failure_patterns": 0.6603
+     },
+     "P_all": 0.0028,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0008
+      }
+     ],
+     "E_patterns": 3.4486
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4993,
+    "rule:OFF": 0.245,
+    "rule:ORPH": 0.2526,
+    "rule:CORR": 0.2488,
+    "rule:ALIAS": 0.2468,
+    "rule:CLASS": 0.2511,
+    "rule:CURR": 0.2529
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7355,
+     "either": 37304,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7637,
+     "either": 37478,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7536,
+     "either": 37349,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7397,
+     "either": 37368,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7533,
+     "either": 37489,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7486,
+     "either": 37644,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3705,
+     "either": 26155,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3552,
+     "either": 26078,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3607,
+     "either": 25903,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3750,
+     "either": 26017,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3728,
+     "either": 26147,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3782,
+     "either": 26304,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3790,
+     "either": 26176,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3824,
+     "either": 26399,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3853,
+     "either": 26478,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3745,
+     "either": 25991,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3751,
+     "either": 26242,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3812,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3629,
+     "either": 26244,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3752,
+     "either": 26229,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3828,
+     "either": 26410,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1226,
+     "either": 0.6217
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1273,
+     "either": 0.6246
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1256,
+     "either": 0.6225
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.1233,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1255,
+     "either": 0.6248
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1248,
+     "either": 0.6274
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0617,
+     "either": 0.4359
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0592,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0601,
+     "either": 0.4317
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4336
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0621,
+     "either": 0.4358
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.063,
+     "either": 0.4384
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0632,
+     "either": 0.4363
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0637,
+     "either": 0.44
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0642,
+     "either": 0.4413
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4332
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4374
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0635,
+     "either": 0.4381
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0605,
+     "either": 0.4374
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0625,
+     "either": 0.4371
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0638,
+     "either": 0.4402
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8884,
+     "band_10_90": [
+      0.8407,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9983,
+      "avg_weighted_pass_rate": 0.61,
+      "per_rollout_sd": 0.003,
+      "failure_patterns": 0.6603
+     },
+     "P_all": 0.0028,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0008
+      }
+     ],
+     "E_patterns": 3.4486
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4993,
+    "rule:OFF": 0.245,
+    "rule:ORPH": 0.2526,
+    "rule:CORR": 0.2488,
+    "rule:ALIAS": 0.2468,
+    "rule:CLASS": 0.2511,
+    "rule:CURR": 0.2529
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7355,
+     "either": 37304,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7637,
+     "either": 37478,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7536,
+     "either": 37349,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7397,
+     "either": 37368,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7533,
+     "either": 37489,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7486,
+     "either": 37644,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3705,
+     "either": 26155,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3552,
+     "either": 26078,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3607,
+     "either": 25903,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3750,
+     "either": 26017,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3728,
+     "either": 26147,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3782,
+     "either": 26304,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3790,
+     "either": 26176,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3824,
+     "either": 26399,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3853,
+     "either": 26478,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3745,
+     "either": 25991,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3751,
+     "either": 26242,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3812,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3629,
+     "either": 26244,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3752,
+     "either": 26229,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3828,
+     "either": 26410,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1226,
+     "either": 0.6217
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1273,
+     "either": 0.6246
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1256,
+     "either": 0.6225
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.1233,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1255,
+     "either": 0.6248
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1248,
+     "either": 0.6274
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0617,
+     "either": 0.4359
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0592,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0601,
+     "either": 0.4317
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4336
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0621,
+     "either": 0.4358
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.063,
+     "either": 0.4384
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0632,
+     "either": 0.4363
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0637,
+     "either": 0.44
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0642,
+     "either": 0.4413
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4332
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4374
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0635,
+     "either": 0.4381
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0605,
+     "either": 0.4374
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0625,
+     "either": 0.4371
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0638,
+     "either": 0.4402
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8884,
+     "band_10_90": [
+      0.8407,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9983,
+      "avg_weighted_pass_rate": 0.61,
+      "per_rollout_sd": 0.003,
+      "failure_patterns": 0.6603
+     },
+     "P_all": 0.0028,
+     "value_of_information": [
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.0016,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.0036,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.0016
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0034,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0012
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.0032,
+       "P_all_if_rate_below_median": 0.0024,
+       "spread": 0.0008
+      }
+     ],
+     "E_patterns": 3.4486
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4993,
+    "rule:OFF": 0.245,
+    "rule:ORPH": 0.2526,
+    "rule:CORR": 0.2488,
+    "rule:ALIAS": 0.2468,
+    "rule:CLASS": 0.2511,
+    "rule:CURR": 0.2529
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7355,
+     "either": 37304,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7637,
+     "either": 37478,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7536,
+     "either": 37349,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7397,
+     "either": 37368,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7533,
+     "either": 37489,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7486,
+     "either": 37644,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3705,
+     "either": 26155,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3552,
+     "either": 26078,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3607,
+     "either": 25903,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3750,
+     "either": 26017,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3728,
+     "either": 26147,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3782,
+     "either": 26304,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3790,
+     "either": 26176,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3824,
+     "either": 26399,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3853,
+     "either": 26478,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3745,
+     "either": 25991,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3751,
+     "either": 26242,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3812,
+     "either": 26289,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3629,
+     "either": 26244,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3752,
+     "either": 26229,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3828,
+     "either": 26410,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1226,
+     "either": 0.6217
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1273,
+     "either": 0.6246
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.1256,
+     "either": 0.6225
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.1233,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1255,
+     "either": 0.6248
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1248,
+     "either": 0.6274
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0617,
+     "either": 0.4359
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0592,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0601,
+     "either": 0.4317
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4336
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0621,
+     "either": 0.4358
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.063,
+     "either": 0.4384
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0632,
+     "either": 0.4363
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0637,
+     "either": 0.44
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0642,
+     "either": 0.4413
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0624,
+     "either": 0.4332
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.0625,
+     "either": 0.4374
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.0635,
+     "either": 0.4381
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0605,
+     "either": 0.4374
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0625,
+     "either": 0.4371
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0638,
+     "either": 0.4402
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6822,
+     "P_fails_all_six": 0.1944
+    },
+    "X1": {
+     "P_fail": 0.4993,
+     "P_fails_all_six": 0.081
+    },
+    "X9": {
+     "P_fail": 0.2529,
+     "P_fails_all_six": 0.0128
+    },
+    "X4": {
+     "P_fail": 0.2526,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2511,
+     "P_fails_all_six": 0.0119
+    },
+    "X5": {
+     "P_fail": 0.2488,
+     "P_fails_all_six": 0.0112
+    },
+    "X6": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0113
+    },
+    "X3": {
+     "P_fail": 0.245,
+     "P_fails_all_six": 0.0092
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "source",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8883,
+     "band_10_90": [
+      0.8388,
+      0.9359
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9995,
+      "avg_weighted_pass_rate": 0.6087,
+      "per_rollout_sd": 0.0038,
+      "failure_patterns": 0.6532
+     },
+     "P_all": 0.003,
+     "value_of_information": [
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.0046,
+       "P_all_if_rate_below_median": 0.0014,
+       "spread": 0.0032
+      },
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.0042,
+       "P_all_if_rate_below_median": 0.0018,
+       "spread": 0.0024
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.002,
+       "P_all_if_rate_below_median": 0.004,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.004,
+       "P_all_if_rate_below_median": 0.002,
+       "spread": 0.002
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.0038,
+       "P_all_if_rate_below_median": 0.0022,
+       "spread": 0.0016
+      }
+     ],
+     "E_patterns": 3.4348
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.4978,
+    "rule:OFF": 0.2468,
+    "rule:ORPH": 0.2542,
+    "rule:CORR": 0.2514,
+    "rule:ALIAS": 0.2481,
+    "rule:CLASS": 0.2494,
+    "rule:CURR": 0.2489
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 7390,
+     "either": 37285,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 7696,
+     "either": 37419,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 7502,
+     "either": 37445,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 7441,
+     "either": 37308,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 7461,
+     "either": 37369,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 7343,
+     "either": 37457,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 3693,
+     "either": 26367,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 3753,
+     "either": 26139,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 3620,
+     "either": 26074,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 3769,
+     "either": 26006,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 3636,
+     "either": 26109,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 3826,
+     "either": 26506,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 3759,
+     "either": 26375,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 3794,
+     "either": 26421,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 3859,
+     "either": 26326,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 3676,
+     "either": 26290,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 3780,
+     "either": 26267,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 3780,
+     "either": 26237,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 3693,
+     "either": 26156,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 3713,
+     "either": 26106,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 3639,
+     "either": 26261,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.1232,
+     "either": 0.6214
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.1283,
+     "either": 0.6237
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.125,
+     "either": 0.6241
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.124,
+     "either": 0.6218
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.1244,
+     "either": 0.6228
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.1224,
+     "either": 0.6243
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.0616,
+     "either": 0.4395
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.0625,
+     "either": 0.4356
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.0603,
+     "either": 0.4346
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.0628,
+     "either": 0.4334
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.0606,
+     "either": 0.4351
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.0638,
+     "either": 0.4418
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.0626,
+     "either": 0.4396
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.0632,
+     "either": 0.4404
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.0643,
+     "either": 0.4388
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.0613,
+     "either": 0.4382
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.063,
+     "either": 0.4378
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.063,
+     "either": 0.4373
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.0616,
+     "either": 0.4359
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.0619,
+     "either": 0.4351
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.0607,
+     "either": 0.4377
+    }
+   },
+   "run_score_band_10_90": [
+    0.7912,
+    0.956
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "S6": {
+     "P_fail": 0.6841,
+     "P_fails_all_six": 0.1966
+    },
+    "X1": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0825
+    },
+    "X4": {
+     "P_fail": 0.2542,
+     "P_fails_all_six": 0.0142
+    },
+    "X5": {
+     "P_fail": 0.2514,
+     "P_fails_all_six": 0.0117
+    },
+    "X8": {
+     "P_fail": 0.2494,
+     "P_fails_all_six": 0.0104
+    },
+    "X9": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0117
+    },
+    "X6": {
+     "P_fail": 0.2481,
+     "P_fails_all_six": 0.0118
+    },
+    "X3": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0116
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "S6": {
+     "P_fail": 0.6841,
+     "P_fails_all_six": 0.1966
+    },
+    "X1": {
+     "P_fail": 0.4978,
+     "P_fails_all_six": 0.0825
+    },
+    "X4": {
+     "P_fail": 0.2542,
+     "P_fails_all_six": 0.0142
+    },
+    "X5": {
+     "P_fail": 0.2514,
+     "P_fails_all_six": 0.0117
+    },
+    "X8": {
+     "P_fail": 0.2494,
+     "P_fails_all_six": 0.0104
+    },
+    "X9": {
+     "P_fail": 0.2489,
+     "P_fails_all_six": 0.0117
+    },
+    "X6": {
+     "P_fail": 0.2481,
+     "P_fails_all_six": 0.0118
+    },
+    "X3": {
+     "P_fail": 0.2468,
+     "P_fails_all_six": 0.0116
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "whole",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8903,
+     "band_10_90": [
+      0.815,
+      0.9597
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9283,
+      "avg_weighted_pass_rate": 0.542,
+      "per_rollout_sd": 0.5119,
+      "failure_patterns": 0.3018
+     },
+     "P_all": 0.1584,
+     "value_of_information": [
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.188,
+       "P_all_if_rate_below_median": 0.1288,
+       "spread": 0.0592
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.1832,
+       "P_all_if_rate_below_median": 0.1336,
+       "spread": 0.0496
+      },
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.18,
+       "P_all_if_rate_below_median": 0.1368,
+       "spread": 0.0432
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.18,
+       "P_all_if_rate_below_median": 0.1368,
+       "spread": 0.0432
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.1786,
+       "P_all_if_rate_below_median": 0.1382,
+       "spread": 0.0404
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.1778,
+       "P_all_if_rate_below_median": 0.139,
+       "spread": 0.0388
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.1652,
+       "P_all_if_rate_below_median": 0.1516,
+       "spread": 0.0136
+      }
+     ],
+     "E_patterns": 1.9524
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.504,
+    "rule:OFF": 0.247,
+    "rule:ORPH": 0.2494,
+    "rule:CORR": 0.2503,
+    "rule:ALIAS": 0.252,
+    "rule:CLASS": 0.2497,
+    "rule:CURR": 0.2505
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 12738,
+     "either": 32318,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 12818,
+     "either": 32383,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 12747,
+     "either": 32508,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 13026,
+     "either": 32332,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 12762,
+     "either": 32462,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 12801,
+     "either": 32468,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 8482,
+     "either": 21297,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 8486,
+     "either": 21347,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 8531,
+     "either": 21405,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 8457,
+     "either": 21345,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 8499,
+     "either": 21348,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 8439,
+     "either": 21539,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 8668,
+     "either": 21413,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 8600,
+     "either": 21347,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 8624,
+     "either": 21368,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 8697,
+     "either": 21438,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 8581,
+     "either": 21420,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 8528,
+     "either": 21518,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 8626,
+     "either": 21478,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 8676,
+     "either": 21473,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 8524,
+     "either": 21491,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.2123,
+     "either": 0.5386
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.2136,
+     "either": 0.5397
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.2124,
+     "either": 0.5418
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.2171,
+     "either": 0.5389
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.2127,
+     "either": 0.541
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.2134,
+     "either": 0.5411
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.1414,
+     "either": 0.3549
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.1414,
+     "either": 0.3558
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.1422,
+     "either": 0.3568
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.1409,
+     "either": 0.3558
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.1416,
+     "either": 0.3558
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.1406,
+     "either": 0.359
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.1445,
+     "either": 0.3569
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.1433,
+     "either": 0.3558
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.1437,
+     "either": 0.3561
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.1449,
+     "either": 0.3573
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.143,
+     "either": 0.357
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.1421,
+     "either": 0.3586
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.1438,
+     "either": 0.358
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.1446,
+     "either": 0.3579
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.1421,
+     "either": 0.3582
+    }
+   },
+   "run_score_band_10_90": [
+    0.6813,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "X1": {
+     "P_fail": 0.504,
+     "P_fails_all_six": 0.087
+    },
+    "S6": {
+     "P_fail": 0.4676,
+     "P_fails_all_six": 0.0441
+    },
+    "X6": {
+     "P_fail": 0.252,
+     "P_fails_all_six": 0.0127
+    },
+    "X9": {
+     "P_fail": 0.2505,
+     "P_fails_all_six": 0.0114
+    },
+    "X5": {
+     "P_fail": 0.2503,
+     "P_fails_all_six": 0.0136
+    },
+    "X8": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0119
+    },
+    "X4": {
+     "P_fail": 0.2494,
+     "P_fails_all_six": 0.0112
+    },
+    "X3": {
+     "P_fail": 0.247,
+     "P_fails_all_six": 0.013
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "X1": {
+     "P_fail": 0.504,
+     "P_fails_all_six": 0.087
+    },
+    "S6": {
+     "P_fail": 0.4676,
+     "P_fails_all_six": 0.0441
+    },
+    "X6": {
+     "P_fail": 0.252,
+     "P_fails_all_six": 0.0127
+    },
+    "X9": {
+     "P_fail": 0.2505,
+     "P_fails_all_six": 0.0114
+    },
+    "X5": {
+     "P_fail": 0.2503,
+     "P_fails_all_six": 0.0136
+    },
+    "X8": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0119
+    },
+    "X4": {
+     "P_fail": 0.2494,
+     "P_fails_all_six": 0.0112
+    },
+    "X3": {
+     "P_fail": 0.247,
+     "P_fails_all_six": 0.013
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:32",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8902,
+     "band_10_90": [
+      0.8168,
+      0.9597
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9278,
+      "avg_weighted_pass_rate": 0.5411,
+      "per_rollout_sd": 0.5206,
+      "failure_patterns": 0.3054
+     },
+     "P_all": 0.1632,
+     "value_of_information": [
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.188,
+       "P_all_if_rate_below_median": 0.1384,
+       "spread": 0.0496
+      },
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.1864,
+       "P_all_if_rate_below_median": 0.14,
+       "spread": 0.0464
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.1858,
+       "P_all_if_rate_below_median": 0.1406,
+       "spread": 0.0452
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.1816,
+       "P_all_if_rate_below_median": 0.1448,
+       "spread": 0.0368
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.1808,
+       "P_all_if_rate_below_median": 0.1456,
+       "spread": 0.0352
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.1778,
+       "P_all_if_rate_below_median": 0.1486,
+       "spread": 0.0292
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.1718,
+       "P_all_if_rate_below_median": 0.1546,
+       "spread": 0.0172
+      }
+     ],
+     "E_patterns": 1.9629
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.5006,
+    "rule:OFF": 0.2497,
+    "rule:ORPH": 0.255,
+    "rule:CORR": 0.2534,
+    "rule:ALIAS": 0.249,
+    "rule:CLASS": 0.2484,
+    "rule:CURR": 0.2473
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 12773,
+     "either": 32243,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 13010,
+     "either": 32325,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 13029,
+     "either": 32212,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 12878,
+     "either": 32102,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 12746,
+     "either": 32195,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 12757,
+     "either": 32117,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 8627,
+     "either": 21650,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 8621,
+     "either": 21562,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 8497,
+     "either": 21425,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 8512,
+     "either": 21371,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 8552,
+     "either": 21264,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 8729,
+     "either": 21773,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 8649,
+     "either": 21592,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 8590,
+     "either": 21612,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 8608,
+     "either": 21527,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 8688,
+     "either": 21459,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 8660,
+     "either": 21448,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 8539,
+     "either": 21502,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 8454,
+     "either": 21393,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 8474,
+     "either": 21306,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 8459,
+     "either": 21282,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.2129,
+     "either": 0.5374
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.2168,
+     "either": 0.5387
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.2172,
+     "either": 0.5369
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.2146,
+     "either": 0.535
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.2124,
+     "either": 0.5366
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.2126,
+     "either": 0.5353
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.1438,
+     "either": 0.3608
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.1437,
+     "either": 0.3594
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.1416,
+     "either": 0.3571
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.1419,
+     "either": 0.3562
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.1425,
+     "either": 0.3544
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.1455,
+     "either": 0.3629
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.1442,
+     "either": 0.3599
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.1432,
+     "either": 0.3602
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.1435,
+     "either": 0.3588
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.1448,
+     "either": 0.3577
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.1443,
+     "either": 0.3575
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.1423,
+     "either": 0.3584
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.1409,
+     "either": 0.3565
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.1412,
+     "either": 0.3551
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.141,
+     "either": 0.3547
+    }
+   },
+   "run_score_band_10_90": [
+    0.6813,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "X1": {
+     "P_fail": 0.5006,
+     "P_fails_all_six": 0.0828
+    },
+    "S6": {
+     "P_fail": 0.465,
+     "P_fails_all_six": 0.0431
+    },
+    "X4": {
+     "P_fail": 0.255,
+     "P_fails_all_six": 0.0133
+    },
+    "X5": {
+     "P_fail": 0.2534,
+     "P_fails_all_six": 0.0142
+    },
+    "X3": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0138
+    },
+    "X6": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0125
+    },
+    "X8": {
+     "P_fail": 0.2484,
+     "P_fails_all_six": 0.0115
+    },
+    "X9": {
+     "P_fail": 0.2473,
+     "P_fails_all_six": 0.0115
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "X1": {
+     "P_fail": 0.5006,
+     "P_fails_all_six": 0.0828
+    },
+    "S6": {
+     "P_fail": 0.465,
+     "P_fails_all_six": 0.0431
+    },
+    "X4": {
+     "P_fail": 0.255,
+     "P_fails_all_six": 0.0133
+    },
+    "X5": {
+     "P_fail": 0.2534,
+     "P_fails_all_six": 0.0142
+    },
+    "X3": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0138
+    },
+    "X6": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0125
+    },
+    "X8": {
+     "P_fail": 0.2484,
+     "P_fails_all_six": 0.0115
+    },
+    "X9": {
+     "P_fail": 0.2473,
+     "P_fails_all_six": 0.0115
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "shard:14",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8902,
+     "band_10_90": [
+      0.8168,
+      0.9597
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9278,
+      "avg_weighted_pass_rate": 0.5411,
+      "per_rollout_sd": 0.5206,
+      "failure_patterns": 0.3054
+     },
+     "P_all": 0.1632,
+     "value_of_information": [
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.188,
+       "P_all_if_rate_below_median": 0.1384,
+       "spread": 0.0496
+      },
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.1864,
+       "P_all_if_rate_below_median": 0.14,
+       "spread": 0.0464
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.1858,
+       "P_all_if_rate_below_median": 0.1406,
+       "spread": 0.0452
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.1816,
+       "P_all_if_rate_below_median": 0.1448,
+       "spread": 0.0368
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.1808,
+       "P_all_if_rate_below_median": 0.1456,
+       "spread": 0.0352
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.1778,
+       "P_all_if_rate_below_median": 0.1486,
+       "spread": 0.0292
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.1718,
+       "P_all_if_rate_below_median": 0.1546,
+       "spread": 0.0172
+      }
+     ],
+     "E_patterns": 1.9629
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.5006,
+    "rule:OFF": 0.2497,
+    "rule:ORPH": 0.255,
+    "rule:CORR": 0.2534,
+    "rule:ALIAS": 0.249,
+    "rule:CLASS": 0.2484,
+    "rule:CURR": 0.2473
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 12773,
+     "either": 32243,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 13010,
+     "either": 32325,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 13029,
+     "either": 32212,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 12878,
+     "either": 32102,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 12746,
+     "either": 32195,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 12757,
+     "either": 32117,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 8627,
+     "either": 21650,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 8621,
+     "either": 21562,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 8497,
+     "either": 21425,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 8512,
+     "either": 21371,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 8552,
+     "either": 21264,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 8729,
+     "either": 21773,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 8649,
+     "either": 21592,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 8590,
+     "either": 21612,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 8608,
+     "either": 21527,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 8688,
+     "either": 21459,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 8660,
+     "either": 21448,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 8539,
+     "either": 21502,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 8454,
+     "either": 21393,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 8474,
+     "either": 21306,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 8459,
+     "either": 21282,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.2129,
+     "either": 0.5374
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.2168,
+     "either": 0.5387
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.2172,
+     "either": 0.5369
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.2146,
+     "either": 0.535
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.2124,
+     "either": 0.5366
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.2126,
+     "either": 0.5353
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.1438,
+     "either": 0.3608
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.1437,
+     "either": 0.3594
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.1416,
+     "either": 0.3571
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.1419,
+     "either": 0.3562
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.1425,
+     "either": 0.3544
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.1455,
+     "either": 0.3629
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.1442,
+     "either": 0.3599
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.1432,
+     "either": 0.3602
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.1435,
+     "either": 0.3588
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.1448,
+     "either": 0.3577
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.1443,
+     "either": 0.3575
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.1423,
+     "either": 0.3584
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.1409,
+     "either": 0.3565
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.1412,
+     "either": 0.3551
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.141,
+     "either": 0.3547
+    }
+   },
+   "run_score_band_10_90": [
+    0.6813,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "X1": {
+     "P_fail": 0.5006,
+     "P_fails_all_six": 0.0828
+    },
+    "S6": {
+     "P_fail": 0.465,
+     "P_fails_all_six": 0.0431
+    },
+    "X4": {
+     "P_fail": 0.255,
+     "P_fails_all_six": 0.0133
+    },
+    "X5": {
+     "P_fail": 0.2534,
+     "P_fails_all_six": 0.0142
+    },
+    "X3": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0138
+    },
+    "X6": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0125
+    },
+    "X8": {
+     "P_fail": 0.2484,
+     "P_fails_all_six": 0.0115
+    },
+    "X9": {
+     "P_fail": 0.2473,
+     "P_fails_all_six": 0.0115
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "X1": {
+     "P_fail": 0.5006,
+     "P_fails_all_six": 0.0828
+    },
+    "S6": {
+     "P_fail": 0.465,
+     "P_fails_all_six": 0.0431
+    },
+    "X4": {
+     "P_fail": 0.255,
+     "P_fails_all_six": 0.0133
+    },
+    "X5": {
+     "P_fail": 0.2534,
+     "P_fails_all_six": 0.0142
+    },
+    "X3": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0138
+    },
+    "X6": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0125
+    },
+    "X8": {
+     "P_fail": 0.2484,
+     "P_fails_all_six": 0.0115
+    },
+    "X9": {
+     "P_fail": 0.2473,
+     "P_fails_all_six": 0.0115
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "slip",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8902,
+     "band_10_90": [
+      0.8168,
+      0.9597
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9278,
+      "avg_weighted_pass_rate": 0.5411,
+      "per_rollout_sd": 0.5206,
+      "failure_patterns": 0.3054
+     },
+     "P_all": 0.1632,
+     "value_of_information": [
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.188,
+       "P_all_if_rate_below_median": 0.1384,
+       "spread": 0.0496
+      },
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.1864,
+       "P_all_if_rate_below_median": 0.14,
+       "spread": 0.0464
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.1858,
+       "P_all_if_rate_below_median": 0.1406,
+       "spread": 0.0452
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.1816,
+       "P_all_if_rate_below_median": 0.1448,
+       "spread": 0.0368
+      },
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.1808,
+       "P_all_if_rate_below_median": 0.1456,
+       "spread": 0.0352
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.1778,
+       "P_all_if_rate_below_median": 0.1486,
+       "spread": 0.0292
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.1718,
+       "P_all_if_rate_below_median": 0.1546,
+       "spread": 0.0172
+      }
+     ],
+     "E_patterns": 1.9629
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.5006,
+    "rule:OFF": 0.2497,
+    "rule:ORPH": 0.255,
+    "rule:CORR": 0.2534,
+    "rule:ALIAS": 0.249,
+    "rule:CLASS": 0.2484,
+    "rule:CURR": 0.2473
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 12773,
+     "either": 32243,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 13010,
+     "either": 32325,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 13029,
+     "either": 32212,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 12878,
+     "either": 32102,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 12746,
+     "either": 32195,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 12757,
+     "either": 32117,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 8627,
+     "either": 21650,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 8621,
+     "either": 21562,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 8497,
+     "either": 21425,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 8512,
+     "either": 21371,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 8552,
+     "either": 21264,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 8729,
+     "either": 21773,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 8649,
+     "either": 21592,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 8590,
+     "either": 21612,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 8608,
+     "either": 21527,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 8688,
+     "either": 21459,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 8660,
+     "either": 21448,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 8539,
+     "either": 21502,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 8454,
+     "either": 21393,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 8474,
+     "either": 21306,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 8459,
+     "either": 21282,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.2129,
+     "either": 0.5374
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.2168,
+     "either": 0.5387
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.2172,
+     "either": 0.5369
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.2146,
+     "either": 0.535
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.2124,
+     "either": 0.5366
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.2126,
+     "either": 0.5353
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.1438,
+     "either": 0.3608
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.1437,
+     "either": 0.3594
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.1416,
+     "either": 0.3571
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.1419,
+     "either": 0.3562
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.1425,
+     "either": 0.3544
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.1455,
+     "either": 0.3629
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.1442,
+     "either": 0.3599
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.1432,
+     "either": 0.3602
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.1435,
+     "either": 0.3588
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.1448,
+     "either": 0.3577
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.1443,
+     "either": 0.3575
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.1423,
+     "either": 0.3584
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.1409,
+     "either": 0.3565
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.1412,
+     "either": 0.3551
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.141,
+     "either": 0.3547
+    }
+   },
+   "run_score_band_10_90": [
+    0.6813,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "X1": {
+     "P_fail": 0.5006,
+     "P_fails_all_six": 0.0828
+    },
+    "S6": {
+     "P_fail": 0.465,
+     "P_fails_all_six": 0.0431
+    },
+    "X4": {
+     "P_fail": 0.255,
+     "P_fails_all_six": 0.0133
+    },
+    "X5": {
+     "P_fail": 0.2534,
+     "P_fails_all_six": 0.0142
+    },
+    "X3": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0138
+    },
+    "X6": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0125
+    },
+    "X8": {
+     "P_fail": 0.2484,
+     "P_fails_all_six": 0.0115
+    },
+    "X9": {
+     "P_fail": 0.2473,
+     "P_fails_all_six": 0.0115
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "X1": {
+     "P_fail": 0.5006,
+     "P_fails_all_six": 0.0828
+    },
+    "S6": {
+     "P_fail": 0.465,
+     "P_fails_all_six": 0.0431
+    },
+    "X4": {
+     "P_fail": 0.255,
+     "P_fails_all_six": 0.0133
+    },
+    "X5": {
+     "P_fail": 0.2534,
+     "P_fails_all_six": 0.0142
+    },
+    "X3": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0138
+    },
+    "X6": {
+     "P_fail": 0.249,
+     "P_fails_all_six": 0.0125
+    },
+    "X8": {
+     "P_fail": 0.2484,
+     "P_fails_all_six": 0.0115
+    },
+    "X9": {
+     "P_fail": 0.2473,
+     "P_fails_all_six": 0.0115
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  },
+  {
+   "dependence": "correlated",
+   "extent": "batches",
+   "draws": 10000,
+   "seed": 0,
+   "views": {
+    "V3": {
+     "E_average": 0.8897,
+     "band_10_90": [
+      0.815,
+      0.9597
+     ],
+     "P_gate": {
+      "pass_at_1": 0.9215,
+      "avg_weighted_pass_rate": 0.5489,
+      "per_rollout_sd": 0.5315,
+      "failure_patterns": 0.3044
+     },
+     "P_all": 0.163,
+     "value_of_information": [
+      {
+       "mechanism": "rule:RET",
+       "P_all_if_rate_above_median": 0.1912,
+       "P_all_if_rate_below_median": 0.1348,
+       "spread": 0.0564
+      },
+      {
+       "mechanism": "rule:OFF",
+       "P_all_if_rate_above_median": 0.187,
+       "P_all_if_rate_below_median": 0.139,
+       "spread": 0.048
+      },
+      {
+       "mechanism": "rule:ALIAS",
+       "P_all_if_rate_above_median": 0.1852,
+       "P_all_if_rate_below_median": 0.1408,
+       "spread": 0.0444
+      },
+      {
+       "mechanism": "rule:ORPH",
+       "P_all_if_rate_above_median": 0.1838,
+       "P_all_if_rate_below_median": 0.1422,
+       "spread": 0.0416
+      },
+      {
+       "mechanism": "rule:CLASS",
+       "P_all_if_rate_above_median": 0.1794,
+       "P_all_if_rate_below_median": 0.1466,
+       "spread": 0.0328
+      },
+      {
+       "mechanism": "rule:CORR",
+       "P_all_if_rate_above_median": 0.1786,
+       "P_all_if_rate_below_median": 0.1474,
+       "spread": 0.0312
+      },
+      {
+       "mechanism": "rule:CURR",
+       "P_all_if_rate_above_median": 0.1718,
+       "P_all_if_rate_below_median": 0.1542,
+       "spread": 0.0176
+      }
+     ],
+     "E_patterns": 1.9584
+    }
+   },
+   "landing_rate_simulated": {
+    "rule:RET": 0.5049,
+    "rule:OFF": 0.2533,
+    "rule:ORPH": 0.2512,
+    "rule:CORR": 0.2497,
+    "rule:ALIAS": 0.2525,
+    "rule:CLASS": 0.2504,
+    "rule:CURR": 0.2544
+   },
+   "landing_pair_counts": {
+    "rule:RET|rule:OFF": {
+     "both": 13144,
+     "either": 32346,
+     "runs": 60000
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 12985,
+     "either": 32379,
+     "runs": 60000
+    },
+    "rule:RET|rule:CORR": {
+     "both": 13034,
+     "either": 32241,
+     "runs": 60000
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 13096,
+     "either": 32344,
+     "runs": 60000
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 13001,
+     "either": 32311,
+     "runs": 60000
+    },
+    "rule:RET|rule:CURR": {
+     "both": 13141,
+     "either": 32416,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 8641,
+     "either": 21631,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 8705,
+     "either": 21478,
+     "runs": 60000
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 8770,
+     "either": 21578,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 8679,
+     "either": 21541,
+     "runs": 60000
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 8797,
+     "either": 21668,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 8678,
+     "either": 21379,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 8708,
+     "either": 21514,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 8750,
+     "either": 21344,
+     "runs": 60000
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 8699,
+     "either": 21640,
+     "runs": 60000
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 8686,
+     "either": 21447,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 8625,
+     "either": 21380,
+     "runs": 60000
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 8785,
+     "either": 21465,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 8674,
+     "either": 21496,
+     "runs": 60000
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 8716,
+     "either": 21699,
+     "runs": 60000
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 8702,
+     "either": 21585,
+     "runs": 60000
+    }
+   },
+   "landing_pairs": {
+    "rule:RET|rule:OFF": {
+     "both": 0.2191,
+     "either": 0.5391
+    },
+    "rule:RET|rule:ORPH": {
+     "both": 0.2164,
+     "either": 0.5396
+    },
+    "rule:RET|rule:CORR": {
+     "both": 0.2172,
+     "either": 0.5373
+    },
+    "rule:RET|rule:ALIAS": {
+     "both": 0.2183,
+     "either": 0.5391
+    },
+    "rule:RET|rule:CLASS": {
+     "both": 0.2167,
+     "either": 0.5385
+    },
+    "rule:RET|rule:CURR": {
+     "both": 0.219,
+     "either": 0.5403
+    },
+    "rule:OFF|rule:ORPH": {
+     "both": 0.144,
+     "either": 0.3605
+    },
+    "rule:OFF|rule:CORR": {
+     "both": 0.1451,
+     "either": 0.358
+    },
+    "rule:OFF|rule:ALIAS": {
+     "both": 0.1462,
+     "either": 0.3596
+    },
+    "rule:OFF|rule:CLASS": {
+     "both": 0.1447,
+     "either": 0.359
+    },
+    "rule:OFF|rule:CURR": {
+     "both": 0.1466,
+     "either": 0.3611
+    },
+    "rule:ORPH|rule:CORR": {
+     "both": 0.1446,
+     "either": 0.3563
+    },
+    "rule:ORPH|rule:ALIAS": {
+     "both": 0.1451,
+     "either": 0.3586
+    },
+    "rule:ORPH|rule:CLASS": {
+     "both": 0.1458,
+     "either": 0.3557
+    },
+    "rule:ORPH|rule:CURR": {
+     "both": 0.145,
+     "either": 0.3607
+    },
+    "rule:CORR|rule:ALIAS": {
+     "both": 0.1448,
+     "either": 0.3574
+    },
+    "rule:CORR|rule:CLASS": {
+     "both": 0.1437,
+     "either": 0.3563
+    },
+    "rule:CORR|rule:CURR": {
+     "both": 0.1464,
+     "either": 0.3578
+    },
+    "rule:ALIAS|rule:CLASS": {
+     "both": 0.1446,
+     "either": 0.3583
+    },
+    "rule:ALIAS|rule:CURR": {
+     "both": 0.1453,
+     "either": 0.3617
+    },
+    "rule:CLASS|rule:CURR": {
+     "both": 0.145,
+     "either": 0.3598
+    }
+   },
+   "run_score_band_10_90": [
+    0.6813,
+    1.0
+   ],
+   "channels_hit_rate": {},
+   "slots": {
+    "X1": {
+     "P_fail": 0.5049,
+     "P_fails_all_six": 0.0842
+    },
+    "S6": {
+     "P_fail": 0.4664,
+     "P_fails_all_six": 0.042
+    },
+    "X9": {
+     "P_fail": 0.2544,
+     "P_fails_all_six": 0.0131
+    },
+    "X3": {
+     "P_fail": 0.2533,
+     "P_fails_all_six": 0.013
+    },
+    "X6": {
+     "P_fail": 0.2525,
+     "P_fails_all_six": 0.0126
+    },
+    "X4": {
+     "P_fail": 0.2512,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2504,
+     "P_fails_all_six": 0.0114
+    },
+    "X5": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0109
+    },
+    "B1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "B4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "V2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "S5": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "C4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "R2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D1": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D2": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D3": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    },
+    "D4": {
+     "P_fail": 0.0,
+     "P_fails_all_six": 0.0
+    }
+   },
+   "slots_top_25": {
+    "X1": {
+     "P_fail": 0.5049,
+     "P_fails_all_six": 0.0842
+    },
+    "S6": {
+     "P_fail": 0.4664,
+     "P_fails_all_six": 0.042
+    },
+    "X9": {
+     "P_fail": 0.2544,
+     "P_fails_all_six": 0.0131
+    },
+    "X3": {
+     "P_fail": 0.2533,
+     "P_fails_all_six": 0.013
+    },
+    "X6": {
+     "P_fail": 0.2525,
+     "P_fails_all_six": 0.0126
+    },
+    "X4": {
+     "P_fail": 0.2512,
+     "P_fails_all_six": 0.0121
+    },
+    "X8": {
+     "P_fail": 0.2504,
+     "P_fails_all_six": 0.0114
+    },
+    "X5": {
+     "P_fail": 0.2497,
+     "P_fails_all_six": 0.0109
+    }
+   },
+   "slots_rule": "P_fails_all_six is all-fail justification workload (an all-fail rubric needs a written justification), never a block; slots reports every slot, slots_top_25 is the presentation short list"
+  }
+ ],
+ "summary": {
+  "V3": {
+   "P_all_min": 0.0022,
+   "P_all_max": 0.1632,
+   "E_average_range": [
+    0.8881,
+    0.8903
+   ],
+   "voi": [
+    "rule:ORPH",
+    "rule:CLASS",
+    "rule:ALIAS",
+    "rule:CURR",
+    "rule:OFF",
+    "rule:CORR",
+    "rule:RET"
+   ]
+  }
+ },
+ "preregistration": {
+  "id": "hev_643bd103399a65fc",
+  "added": true,
+  "present": false,
+  "rejected": []
+ }
+}

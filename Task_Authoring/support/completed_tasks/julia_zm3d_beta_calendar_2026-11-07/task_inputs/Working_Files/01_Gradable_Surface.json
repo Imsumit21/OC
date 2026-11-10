@@ -1,0 +1,801 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "julia-zm3d-beta-liveops-calendar",
+ "revision": "scenario-01",
+ "classes": [
+  "Run",
+  "Hold",
+  "Send"
+ ],
+ "truth_fields": {
+  "class": "Status",
+  "groups": "groups"
+ },
+ "truth_keys": [
+  "Plague Race",
+  "Collect & Win",
+  "Season Pass",
+  "Endless Monster Mode",
+  "Weekly Leagues",
+  "Quests",
+  "Daily Login"
+ ],
+ "deliverables": {
+  "calendar": {
+   "kind": "table",
+   "name_regex": "live.?ops calendar|calendar",
+   "key_column": "Beat",
+   "key_regex": "(?i)(?:plague race|collect (?:&|and) win|season pass|endless(?: monster mode)?|weekly leagues?|leagues?|weekly leaderboards?(?! reset)|zombie lane|trophy path|quests?(?: rollover)?|daily login(?: calendar)?|login calendar|daily gifts?)",
+   "columns": [
+    "Beat",
+    "First window (UTC)",
+    "Weeks running",
+    "Status",
+    "Still to do (owner)"
+   ],
+   "class_column": "Status",
+   "reason_column": "Still to do (owner)",
+   "comparators": {
+    "Status": "norm",
+    "First window (UTC)": "norm"
+   },
+   "missing_values": [
+    "",
+    "-",
+    "none",
+    "n/a",
+    "nothing"
+   ]
+  },
+  "pushes": {
+   "kind": "table",
+   "name_regex": "push",
+   "key_column": "Push name",
+   "key_regex": "(?i)(?:\\d{1,2}[- ]?days?[- ]?lapse(?:d)?|d0[- ]?1(?: ftue)?|ftue|lives recharged|finish first tutorial|plague race start(?: push)?|weekly leaderboard reset(?: push)?|quests? rollover push|win (?:&|and) collect(?: event)?(?: start)?(?: push)?|login calendar update(?: push)?|season pass activation(?: or reward unlock)?(?: push)?|hourly coins(?: push)?|(?:nathan['’]?s )?treasure hunt(?: event)?(?: start)?(?: push)?|streak fever(?: event)?(?: start)?(?: push)?|axe arena(?: event)?(?: start)?(?: push)?)",
+   "columns": [
+    "Push name",
+    "Send (UTC or trigger)",
+    "Send or hold",
+    "What is missing"
+   ],
+   "class_column": "Send or hold",
+   "reason_column": "What is missing",
+   "comparators": {
+    "Send or hold": "norm"
+   },
+   "missing_values": [
+    "",
+    "-",
+    "none",
+    "n/a"
+   ]
+  },
+  "slack": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  },
+  "linear": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "email": {
+   "kind": "json_text",
+   "tool": "gmail_reply_to_message"
+  }
+ },
+ "slots": [
+  {
+   "id": "S01",
+   "title": "Collect & Win first window is Fri Oct 10 00:00 UTC",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the merged client PRs and Julia's own 'feature completed' note must be weighed against Arthur's inline note on #470, left with his approval just before the merge (server windows on dev only), Douglas's Oct 8 release event (18:00 Europe/Istanbul = 15:00 UTC, after the Wed-Thu window opens 00:00 UTC) and the brief's Mon-Tue / Wed-Thu / Fri-Sun cadence, which compose to the first clean post-deploy window",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Collect & Win",
+    "First window (UTC)"
+   ],
+   "fact_id": "cw.first_window",
+   "group": "exception",
+   "mechanisms": [
+    "R_DONE_DEPLOY"
+   ],
+   "singled_out_by": "H3",
+   "accepted_outcomes": [
+    "Fri Oct 10 00:00 UTC",
+    "Oct 10 00:00 UTC",
+    "2025-10-10 00:00 UTC",
+    "2025-10-10T00:00:00Z",
+    "Fri Oct 10, 00:00 UTC",
+    "Thu Oct 9 5:00 PM PDT",
+    "Thu Oct 9 2025 5:00 PM PDT",
+    "Oct 10 00:00 UTC (Thu Oct 9 17:00 PDT)",
+    "Fri Oct 10 03:00 Istanbul (00:00 UTC)",
+    "2025-10-10T00:00:00+00:00",
+    "Fri Oct 10 2025 00:00 UTC",
+    "Friday, October 10, 2025 at 00:00 UTC"
+   ]
+  },
+  {
+   "id": "S02",
+   "title": "Plague Race runs all four weeks, the Halloween week included",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Robert's approval in Martin's #zombie-art thread must be weighed against his later message in his DM with Julia (a top-level message since revision 4, which since revision 9 calls it the themed prop set he okayed in Martin's thread), under the brief's one-off rule (the Product owner's latest dated call)",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Plague Race",
+    "Weeks running"
+   ],
+   "fact_id": "plague.weeks",
+   "group": "exception",
+   "mechanisms": [
+    "R_WITHDRAWN"
+   ],
+   "singled_out_by": "K4",
+   "accepted_outcomes": [
+    "All four weeks",
+    "All 4 weeks",
+    "Weeks 1-4",
+    "Oct 6 - Nov 2",
+    "Mon Oct 6 - Sun Nov 2",
+    "Oct 6 – Nov 2 (all four weeks)"
+   ]
+  },
+  {
+   "id": "S03",
+   "title": "Weekly leagues are held",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Douglas's restart note on ZOM-429 and the Sep 22 thread ending 'working fine' must be weighed against Vincent's Sep 30 re-test post in #zombie-match3d, under the brief's even-after-a-restart hold rule",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Weekly Leagues",
+    "Status"
+   ],
+   "fact_id": "leagues.status",
+   "group": "exception",
+   "mechanisms": [
+    "R_TECH_HOLD"
+   ],
+   "singled_out_by": "K3",
+   "accepted_outcomes": [
+    "Held",
+    "Hold",
+    "On hold",
+    "Paused"
+   ]
+  },
+  {
+   "id": "S04",
+   "title": "Quests rollover is on the calendar and runs",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the brief's scope (every window, reset or start push) must be applied to the quests rollover nobody lists as an event, with its push row, and ZOM-534's restart-clearing fault read as a known issue under the hold rule",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Quests",
+    "Status"
+   ],
+   "fact_id": "quests.status",
+   "group": "exception",
+   "mechanisms": [
+    "R_SCOPE_BEATS"
+   ],
+   "singled_out_by": "K1",
+   "accepted_outcomes": [
+    "Runs",
+    "Run",
+    "Go",
+    "Live",
+    "Running",
+    "In"
+   ]
+  },
+  {
+   "id": "S05",
+   "title": "Daily login (the daily gift) is on the calendar and runs",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same scope applied to the daily gift (Login Calendar on the push sheet, same beat), with ZOM-556's streak fault (claiming works) read as a known issue under the hold rule",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Daily Login",
+    "Status"
+   ],
+   "fact_id": "login.status",
+   "group": "exception",
+   "mechanisms": [
+    "R_SCOPE_BEATS"
+   ],
+   "singled_out_by": "K1",
+   "accepted_outcomes": [
+    "Runs",
+    "Run",
+    "Go",
+    "Live",
+    "Running",
+    "In"
+   ]
+  },
+  {
+   "id": "S07",
+   "title": "Daily login has nothing left to do (the gift frame shipped)",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "one ticket settles it since revision 5: ZOM-432 is Done and its own last note (Samuel, Sep 30) says the frame went out with PR #471 and is in both submission builds from that day (iOS 50, Android 135); Calvin's older note on the same ticket (Sep 24: still needed) is overtaken by the ticket's own state. A run that lists open issues never meets the ticket and leaves the cell empty anyway. A literal read of one record, so weight 1 (it was a weight-5 multi-source reconciliation while the completion was recorded on PR #471 and in #builds)",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Daily Login",
+    "Still to do (owner)"
+   ],
+   "fact_id": "login.todo",
+   "group": "exception",
+   "mechanisms": [
+    "R_SCOPE_BEATS",
+    "R_DONE_ELSEWHERE"
+   ],
+   "singled_out_by": "K6",
+   "accepted_outcomes": [
+    "",
+    "-",
+    "None",
+    "Nothing",
+    "n/a",
+    "Nothing left"
+   ]
+  },
+  {
+   "id": "S08",
+   "title": "Collect & Win still to do: the final vial models (Claire)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Arthur's review note on #468 (the vials that spawn in the levels still need their final models before the event runs, no blocker for that PR), left before its merge and found only in that PR's review list and inline comments, is read against the brief's still-to-do rule (player-facing art flagged since the brief as still needed)",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "Collect & Win",
+    "vial"
+   ],
+   "fact_id": "cw.todo.vials",
+   "group": "exception",
+   "mechanisms": [
+    "R_REVIEW_FLAGS"
+   ],
+   "singled_out_by": "K6"
+  },
+  {
+   "id": "S09",
+   "title": "Season Pass still to do: the premium strip moves to the November range (Oliver)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Arthur's inline note on #472 (the strip art still shows the October range and needs the November range before that season opens), left with his approval just before its merge and found only in that PR's inline review comments, is read against the still-to-do rule and the November season",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "Season Pass",
+    "premium|strip|banner"
+   ],
+   "fact_id": "sp.todo.strip",
+   "group": "exception",
+   "mechanisms": [
+    "R_REVIEW_FLAGS"
+   ],
+   "singled_out_by": "K6"
+  },
+  {
+   "id": "S10",
+   "title": "Season Pass still to do: the November config lands before Fri Oct 31 00:00 UTC (Brian)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Brian's handoff date, his later slip to Fri Oct 31 10:00 Istanbul time in another thread and the base page_season_pass_spec's 24 h lock before the 00:00 UTC season opening (the brief only points to it) must be put on one clock: the still-to-do cell states the corrected deadline (Oct 31 00:00 UTC / Oct 30 5pm PDT) or that Brian's date is late and must move earlier",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "Season Pass",
+    "(oct(ober)?\\.?\\s?31|10[-/]31)[\\s,t]{0,4}(00:00|midnight)|2025-10-31[t ]?00:00|2025-10-30[t ]?17:00|(oct(ober)?\\.?\\s?30|10[-/]30)[\\s,]{0,4}(5\\s?:?0?0?\\s?pm|17:00)|\\blate\\b|too late|7\\s?h(ours?)?\\s?(late|earlier)|move(d|s)?\\s(it\\s)?(earlier|up|forward|ahead)|bring\\s(it\\s)?(forward|earlier)|before the lock|ahead of the lock"
+   ],
+   "fact_id": "sp.todo.config",
+   "group": "exception",
+   "mechanisms": [
+    "R_HANDOFF_SLIP",
+    "R_LOCK_BOUNDARY"
+   ],
+   "singled_out_by": "H2"
+  },
+  {
+   "id": "S11",
+   "title": "Collect & Win still to do: the event icon animation (Marcus)",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "ZOM-465's master VFX ticket struck 'Idle Icon Animation for all event icons' as done and Marcus's first note says every event icon animates, but his later note on the same ticket says the Collect & Win icon animation is still to do, Brian, who wrote the master VFX list (ZOM-521), says there that it has to land before the event runs, and the three animation PRs (#454 Marcus, #456, #475) enumerate Quest/Season Pass/Zombie Lane/Plague Race/Endless/Infinite Boss icons and a card pack - Collect & Win is in none - so its icon animation is still to do (art, Marcus)",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "Collect & Win",
+    "icon"
+   ],
+   "fact_id": "cw.todo.icon",
+   "group": "exception",
+   "mechanisms": [
+    "R_ICON_SCOPE"
+   ],
+   "singled_out_by": "K6"
+  },
+  {
+   "id": "C01",
+   "title": "Plague Race runs",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "no open issue, fault thread or live-ops infra gap (the queue manager's un-ordered panel) stops players entering, scoring or claiming",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "Plague Race",
+    "Status"
+   ],
+   "fact_id": "plague.status",
+   "group": "calendar:Status",
+   "mechanisms": [
+    "R_INFRA_SCOPE"
+   ],
+   "accepted_outcomes": [
+    "Runs",
+    "Run",
+    "Go",
+    "Live",
+    "Running",
+    "In"
+   ]
+  },
+  {
+   "id": "C02",
+   "title": "Endless Monster Mode runs",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "its open issues are VFX or analytics, which never hold a beat",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "Endless Monster Mode",
+    "Status"
+   ],
+   "fact_id": "endless.status",
+   "group": "calendar:Status",
+   "mechanisms": [
+    "R_HOLD_SCOPE"
+   ],
+   "accepted_outcomes": [
+    "Runs",
+    "Run",
+    "Go",
+    "Live",
+    "Running"
+   ]
+  },
+  {
+   "id": "C04",
+   "title": "Season Pass runs",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the October season is live on both stores; its open issues are analytics",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "Season Pass",
+    "Status"
+   ],
+   "fact_id": "sp.status",
+   "group": "calendar:Status",
+   "mechanisms": [
+    "R_HOLD_SCOPE"
+   ],
+   "accepted_outcomes": [
+    "Runs",
+    "Run",
+    "Go",
+    "Live",
+    "Running"
+   ]
+  },
+  {
+   "id": "C05",
+   "title": "Collect & Win runs (it just starts later in the week)",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "a live beat once its prod server windows open (the brief: a beat whose server windows are waiting on the release starts late, it is not held); its late first window is graded separately (S01); the incomplete queue/addressables infra does not hold it",
+   "class": "direct",
+   "role": "sample",
+   "selector": [
+    "field",
+    "Collect & Win",
+    "Status"
+   ],
+   "fact_id": "cw.status",
+   "group": "calendar:Status",
+   "accepted_outcomes": [
+    "Runs",
+    "Run",
+    "Go",
+    "Live",
+    "Running",
+    "Starts late"
+   ]
+  },
+  {
+   "id": "V01",
+   "title": "The calendar covers exactly the seven beats players see",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "every beat by the brief's scope, a row per beat, with Zombie Lane (a permanent track, per Frederick's follow-up under his ask), Boss Arena, Axe Arena and the Halloween one-off off",
+   "class": "delivery",
+   "role": "volume",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "fact_id": "calendar.keys",
+   "mechanisms": [
+    "R_SCOPE_BEATS"
+   ],
+   "volume_for": [
+    "calendar:Status"
+   ]
+  },
+  {
+   "id": "P01",
+   "title": "1-day lapse push is held (old game name)",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the brief's copy rule applied to the Ready 1-day-lapse row, whose English copy still says 'Puzzles vs Zombies'",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "1-day lapse",
+    "Send or hold"
+   ],
+   "fact_id": "push.lapse1",
+   "group": "exception",
+   "mechanisms": [
+    "R_COPY_CURRENT"
+   ],
+   "singled_out_by": "K5",
+   "accepted_outcomes": [
+    "Held",
+    "Hold",
+    "On hold",
+    "Paused"
+   ]
+  },
+  {
+   "id": "P02",
+   "title": "D0-1 FTUE push is held (old game name)",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the same copy rule applied to the second Ready row with the old title",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "D0-1 FTUE",
+    "Send or hold"
+   ],
+   "fact_id": "push.ftue",
+   "group": "exception",
+   "mechanisms": [
+    "R_COPY_CURRENT"
+   ],
+   "singled_out_by": "K5",
+   "accepted_outcomes": [
+    "Held",
+    "Hold",
+    "On hold",
+    "Paused"
+   ]
+  },
+  {
+   "id": "P03",
+   "title": "Plague Race start push is held (row is WIP, not LIVE)",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the brief sends a push only when its row is Ready and LIVE; the Plague Race row is Ready but its 'Status (NA, WIP, LIVE)' column reads WIP, not LIVE",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Plague Race start",
+    "Send or hold"
+   ],
+   "fact_id": "push.plague",
+   "group": "exception",
+   "mechanisms": [
+    "R_WIRED"
+   ],
+   "singled_out_by": "K5",
+   "accepted_outcomes": [
+    "Held",
+    "Hold",
+    "On hold",
+    "Paused"
+   ]
+  },
+  {
+   "id": "P04",
+   "title": "Lives recharged push is sent",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the row is Ready and LIVE and its copy names no game at all; Frederick's follow-up under his ask says such copy is fine to go out (the naming rule is only about wrong names), where the brief's naming sentence read alone would hold it",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Lives recharged",
+    "Send or hold"
+   ],
+   "fact_id": "push.lives",
+   "group": "exception",
+   "mechanisms": [
+    "R_ASK_FOLLOWUP"
+   ],
+   "singled_out_by": "K17",
+   "accepted_outcomes": [
+    "Send",
+    "Sent",
+    "Go",
+    "Yes"
+   ]
+  },
+  {
+   "id": "P05",
+   "title": "7-day lapse push is sent",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the second Ready and LIVE row whose copy names no game at all, sent on the same sentence of Frederick's follow-up under his ask",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "7-day lapse",
+    "Send or hold"
+   ],
+   "fact_id": "push.lapse7",
+   "group": "exception",
+   "mechanisms": [
+    "R_ASK_FOLLOWUP"
+   ],
+   "singled_out_by": "K17",
+   "accepted_outcomes": [
+    "Send",
+    "Sent",
+    "Go",
+    "Yes"
+   ]
+  },
+  {
+   "id": "P06",
+   "title": "1-day lapse hold reason names the old-title copy fix",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the held push's 'what is missing' cell must name the copy fix (the old 'Puzzles vs Zombies' title / rename), not be blank",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "reason_matches",
+    "1-day lapse",
+    "puzzles|old (game|title|name)|rename|copy"
+   ],
+   "fact_id": "push.lapse1.reason",
+   "group": "exception",
+   "mechanisms": [
+    "R_COPY_CURRENT"
+   ],
+   "singled_out_by": "K5"
+  },
+  {
+   "id": "P07",
+   "title": "Weekly Leaderboard reset push is held (row is WIP, not LIVE)",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the brief sends a push only when its row is Ready and LIVE; the Weekly Leaderboard reset row is Ready but its 'Status (NA, WIP, LIVE)' column reads WIP, not LIVE",
+   "class": "direct",
+   "role": "exception",
+   "selector": [
+    "field",
+    "Weekly Leaderboard reset",
+    "Send or hold"
+   ],
+   "fact_id": "push.weekly",
+   "group": "exception",
+   "mechanisms": [
+    "R_WIRED"
+   ],
+   "singled_out_by": "K5",
+   "accepted_outcomes": [
+    "Held",
+    "Hold",
+    "On hold",
+    "Paused"
+   ]
+  },
+  {
+   "id": "V02",
+   "title": "The push plan covers exactly the ten beta rows (the four off-beta rows left off)",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "Frederick's follow-up under his ask makes the plan the PNs Beta tab as it stands, one line per row, local notifications included, with exactly four rows left off (Hourly Coins, Nathan's Treasure Hunt, Streak Fever, Axe Arena); the brief alone names no row set",
+   "class": "delivery",
+   "role": "volume",
+   "selector": [
+    "delivery",
+    "register_keys_exact",
+    "pushes"
+   ],
+   "fact_id": "pushes.keys",
+   "mechanisms": [
+    "R_ASK_FOLLOWUP"
+   ],
+   "volume_for": [
+    "pushes:Send or hold"
+   ],
+   "expected_keys": [
+    "1-day lapse",
+    "D0-1 FTUE",
+    "Plague Race start",
+    "Lives recharged",
+    "7-day lapse",
+    "Weekly Leaderboard reset",
+    "Quests rollover push",
+    "Win & Collect event start",
+    "Login Calendar update",
+    "Season Pass activation"
+   ]
+  },
+  {
+   "id": "W01",
+   "title": "Recommendation goes back to Frederick in his DM",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery into the named DM",
+   "class": "delivery",
+   "role": "core",
+   "selector": [
+    "delivery",
+    "slack_channel_post",
+    "D05SD5QLG94",
+    "calendar"
+   ],
+   "fact_id": "reply.dm"
+  },
+  {
+   "id": "W02",
+   "title": "Reply names Collect & Win's late start and why",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the deploy finding carried into the recommendation's tradeoffs",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "text",
+    "slack",
+    "collect (?:&|and) win.{0,200}(oct(ober)?\\.? ?(8|9|10)|release|deploy|prod)"
+   ],
+   "fact_id": "reply.cw",
+   "group": "tickets",
+   "mechanisms": [
+    "R_DONE_DEPLOY"
+   ],
+   "singled_out_by": "H3"
+  },
+  {
+   "id": "W03",
+   "title": "Reply says the Halloween one-off is off and why",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reply must carry Robert's latest call, which his later DM message shows without naming Halloween, against the approval Martin's thread shows; a withdrawal verb, not a bare 'off' a 'not off' could negate",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "text",
+    "slack",
+    "halloween.{0,240}(dropped|withdrawn|pulled|cancel|scrapped|removed|not running|no longer|won'?t run|will not run|not happening|taken back)|(dropped|withdrawn|pulled|cancel|scrapped|removed|no longer).{0,240}halloween"
+   ],
+   "fact_id": "reply.halloween",
+   "group": "tickets",
+   "mechanisms": [
+    "R_WITHDRAWN"
+   ],
+   "singled_out_by": "K4"
+  },
+  {
+   "id": "W04",
+   "title": "Calendar linked on ZOM-78",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the link goes on the existing calendar ticket",
+   "class": "write_content",
+   "role": "core",
+   "selector": [
+    "text",
+    "linear",
+    "docs\\.google\\.com/spreadsheets|f_e4a17c90b3d25f6a8c1d73"
+   ],
+   "fact_id": "zom78.link"
+  },
+  {
+   "id": "W05",
+   "title": "Leagues hold noted on ZOM-429",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the hold and its reason recorded on the held beat's open ticket",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "text",
+    "linear",
+    "(hold|held|holding).{0,200}(leagu|leaderboard|restart)|(leagu|leaderboard).{0,200}(hold|held)"
+   ],
+   "fact_id": "zom429.note",
+   "group": "tickets",
+   "mechanisms": [
+    "R_TECH_HOLD"
+   ],
+   "singled_out_by": "K3"
+  },
+  {
+   "id": "W06",
+   "title": "Reply to Brian's Season Pass mail",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "delivery as a reply to his latest mail, the one where he committed to the new date (the brief: you tell its owner in a reply on the mail where they committed to it)",
+   "class": "delivery",
+   "role": "core",
+   "selector": [
+    "delivery",
+    "email_reply",
+    "julia.lawson@harmonygames.co/<CAPT--p4a5fY9wd6vr+8JtjFXfffkxQOCEUYsuqSPy9HbQJu3Fs@mail.gmail.com>"
+   ],
+   "fact_id": "brian.reply"
+  },
+  {
+   "id": "W07",
+   "title": "Reply to Brian moves the November config before the lock",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "the corrected lock instant (Oct 31 00:00 UTC / Oct 30 5pm PDT) or an explicit late / move-earlier carried into the reply to the config owner",
+   "class": "write_content",
+   "role": "exception",
+   "selector": [
+    "text",
+    "email",
+    "(oct(ober)?\\.?\\s?31|10[-/]31)[\\s,t]{0,6}(00:00|midnight)|2025-10-31[t ]?00:00|2025-10-30[t ]?17:00|(oct(ober)?\\.?\\s?30|10[-/]30)[\\s,]{0,6}(5\\s?:?0?0?\\s?pm|17:00)|\\blate\\b|too late|7\\s?h(ours?)?\\s?(late|earlier)|move(d|s)?\\s(it\\s)?(earlier|up|forward|ahead)|bring\\s(it\\s)?(forward|earlier)|ahead of the lock"
+   ],
+   "fact_id": "brian.lock",
+   "group": "tickets",
+   "mechanisms": [
+    "R_LOCK_BOUNDARY"
+   ],
+   "singled_out_by": "H2"
+  }
+ ]
+}

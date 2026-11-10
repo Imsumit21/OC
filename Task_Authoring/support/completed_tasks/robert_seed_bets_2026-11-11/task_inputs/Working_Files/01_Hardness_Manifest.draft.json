@@ -1,0 +1,1720 @@
+{
+ "_note": "DRAFT manifest (scenario stage). Seeded ids are planned (minted in research/minted_ids.json, collision-checked across the base); /create-injection writes the final manifest.",
+ "persona": "robert",
+ "assignment_context": {
+  "context_hash": "f24f2cf97f30361aa820f7705e8a7e432d6bc356b3e09aae89b24cebcc950f23",
+  "assignment_hash": "a525bbe797a2d9c867b417b20f10e359ec6dbeec6a4388c7c206b9be0ae08f3b",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2026-02-14T00:00:00Z",
+  "difficulty_mode": "easy"
+ },
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "volume_exception": {
+  "reason": "22 real payees; the 132 notices collapse to about 16 reads because a full read takes 10 ids; the per-payee notes, lookups and closes give about 130 honest calls per run; reaching 500 would need padding, which fails on its own",
+  "requester_confirmation": "requester, Claude Code chat 2026-11-07: 'go with the best one that aligns with task requirement and the goal' on the \u00a710 proposals of 00_Pre_Scenario_Analysis.md",
+  "call_budget_floor": 120,
+  "per_record_floor": 40
+ },
+ "cohort_exception": {
+  "reason": "no natural cohort of 40 or more records has three no-bulk surfaces here: the 132 notices share one sender and are read in batches, so the honest unit is the 22 payees",
+  "requester_confirmation": "requester, Claude Code chat 2026-11-07: 'go with the best one that aligns with task requirement and the goal' on the \u00a710 proposals of 00_Pre_Scenario_Analysis.md",
+  "cohort_floor": 22
+ },
+ "requirements": {
+  "R1": "per-payee figure: what each payee on the bank was paid, from the Payment Processed notices, one sheet row per payee (paid figure)",
+  "R2": "money that left and stayed out: a returned wire does not count, money moved between the company's own accounts is not spending (paid figure, left-out rows)",
+  "R3": "a contractor paid some other way goes in only if a receipt for it reached Robert's mail, at the amount sent (paid figure)",
+  "R4": "buckets: Build, Marketing, Company; Marketing stays out of build cost and Company sits on its own line (bucket per payee)",
+  "R5": "which bet: the notice's Transaction Date against the bet calendar, each payment whole to one bet (bet columns, build cost per bet)",
+  "R6": "anything not paid in dollars stays in its own currency next to the line and out of dollar totals (company line)",
+  "R7": "what each game brought in: lifetime revenue from the warehouse's daily revenue table, as recorded, with Combo Fighter's left off for now (revenue per game)",
+  "R8": "the sheet in Robert's Drive with the working sheet's layout, shared with Leonard and Arthur",
+  "R9": "the Payee history project: each issue moved to Done once its line is right; a reason on the issue where the figure differs from the notices",
+  "R10": "a reply to Leonard in #winddown with what each bet cost and brought in, what changes on the draft deck, and the sheet's link"
+ },
+ "services": {
+  "slack": {
+   "role": "the ask in #winddown (anchor); #admin_foundersonly Apr 2024 wire notes; Robert's company card note; #leapblock statement; #playablex, #executives game ties",
+   "weight_reason": "the ask, the returned wire, the off-bank route and Leapblock's statement"
+  },
+  "gmail": {
+   "role": "132 Payment Processed notices and the Awaiting and Recipient notices; five Western Union receipts; Node Media's mail; Arthur's Chase mail; the Angel calls invitation",
+   "weight_reason": "the record every figure starts from, plus the deciding receipts and the correction"
+  },
+  "linear": {
+   "role": "the Payee history project (anchor), 22 issues with what Leonard and Arthur remember; closes and reason comments",
+   "weight_reason": "the cohort, the per-payee notes and the follow-through writes"
+  },
+  "gdocs": {
+   "role": "Leonard's method doc (H1); the Leapblock MSA",
+   "weight_reason": "what counts, buckets, bet calendar and the exception"
+  },
+  "gdrive": {
+   "role": "Robert's root (write home); Drive rows of the seeded doc, sheet and deck",
+   "weight_reason": "the sheet must sit in Robert's own Drive and be shared"
+  },
+  "gsheets": {
+   "role": "Leonard's working sheet (layout source, quick pass by date); the P&L costs tab; the sheet Robert writes",
+   "weight_reason": "the layout the ask names and the graded register"
+  },
+  "gslides": {
+   "role": "Leonard's draft deck with the quick figures",
+   "weight_reason": "the ask wants what changes on it, so its figures are compared with the result"
+  },
+  "snowflake": {
+   "role": "ANALYTICS.MONETIZATION.REVENUE_DAILY (H2), base only",
+   "weight_reason": "lifetime revenue per game"
+  },
+  "trello": {
+   "role": "Leonard's older quick plan on the Harmony Games board, replaced by the method; read only",
+   "weight_reason": "a superseded plan the method names"
+  },
+  "contacts": {
+   "role": "the contact row that spells the Telegram contractor's name",
+   "weight_reason": "a name the notices token out; the contract search needs it"
+  },
+  "gcal": {
+   "role": "the Angel calls hold on Leonard's and Robert's calendars",
+   "weight_reason": "when the figures are needed; context, holds no graded fact"
+  }
+ },
+ "anchors": [
+  {
+   "id": "AN1",
+   "service": "slack",
+   "locator": "C0ADGSZKR3R/1770945821.640039",
+   "prompt_reference": "Leonard's ask in #winddown",
+   "requirement_ids": [
+    "R8",
+    "R9",
+    "R10"
+   ]
+  },
+  {
+   "id": "AN2",
+   "service": "linear",
+   "locator": "linear:project/0742c172-85de-47ed-a111-316e5c8cb187",
+   "prompt_reference": "the Payee history project",
+   "requirement_ids": [
+    "R9"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "slack",
+   "container": "C0ADGSZKR3R/1770945821.640039",
+   "locator": "C0ADGSZKR3R/1770945821.640039",
+   "kind": "delegation",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "C0ADGSZKR3R/1770945821.640039"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "C0ADGSZKR3R/1770945821.640039",
+   "delegation_quote": "can you own it",
+   "requirement_ids": [
+    "R8",
+    "R10"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "Angel note: how to count the money"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "gdocs",
+   "container": "f_6feda53b2382c63bf47b25",
+   "locator": "f_6feda53b2382c63bf47b25",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_6feda53b2382c63bf47b25"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "C0ADGSZKR3R/1770945821.640039",
+   "delegation_quote": "how I want it counted is in the doc I just wrote",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "the warehouse\u2019s daily revenue table"
+    },
+    {
+     "id": "H3",
+     "quote": "SVB\u2019s Payment Processed notices"
+    }
+   ]
+  },
+  {
+   "id": "K16",
+   "service": "slack",
+   "container": "C0ADGSZKR3R/1770945859.212469",
+   "locator": "C0ADGSZKR3R/1770945859.212469",
+   "kind": "delegation",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "C0ADGSZKR3R/1770945859.212469"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "C0ADGSZKR3R/1770945821.640039",
+   "delegation_quote": "more below",
+   "requirement_ids": [
+    "R8",
+    "R9",
+    "R10"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K3",
+   "service": "linear",
+   "container": "linear:project/0742c172-85de-47ed-a111-316e5c8cb187",
+   "locator": "linear:project/0742c172-85de-47ed-a111-316e5c8cb187",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K16"
+   ],
+   "seeded_ids": [
+    "0742c172-85de-47ed-a111-316e5c8cb187"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "C0ADGSZKR3R/1770945859.212469",
+   "delegation_quote": "I put everyone on the SVB notices into the Payee history project in linear",
+   "requirement_ids": [
+    "R1",
+    "R9"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K4",
+   "service": "gsheets",
+   "container": "f_3304033843904a426f3c00",
+   "locator": "f_3304033843904a426f3c00",
+   "kind": "format",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K16"
+   ],
+   "seeded_ids": [
+    "f_3304033843904a426f3c00"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "C0ADGSZKR3R/1770945859.212469",
+   "delegation_quote": "use the layout of my Angel note working sheet",
+   "requirement_ids": [
+    "R8"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K5",
+   "service": "gslides",
+   "container": "f_a4b3c4287a4314d8e532e1",
+   "locator": "f_a4b3c4287a4314d8e532e1",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K16"
+   ],
+   "seeded_ids": [
+    "f_a4b3c4287a4314d8e532e1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "C0ADGSZKR3R/1770945859.212469",
+   "delegation_quote": "my quick numbers are on that sheet and on the draft deck",
+   "requirement_ids": [
+    "R10"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K6",
+   "service": "gcal",
+   "container": "evt_f21476dc404329f67fd60d",
+   "locator": "evt_f21476dc404329f67fd60d",
+   "kind": "destination",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "evt_f21476dc404329f67fd60d"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "C0ADGSZKR3R/1770945821.640039",
+   "delegation_quote": "before I start the angel calls on tuesday",
+   "requirement_ids": [
+    "R10"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K7",
+   "service": "trello",
+   "container": "698e55f9af74d68d679de7b3",
+   "locator": "698e55f9af74d68d679de7b3",
+   "kind": "amendment",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "698e55f9af74d68d679de7b3"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "It replaces the quick plan I left on our board",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K8",
+   "service": "gmail",
+   "container": "robert@harmonygames.co/1795282860741136988",
+   "locator": "robert@harmonygames.co/1795282860741136988",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "robert@harmonygames.co/1795282860741136988"
+   ],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "SVB\u2019s Payment Processed notices are the one place I know with a line per payment",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K9",
+   "service": "gmail",
+   "container": "robert@harmonygames.co/1800873055214061794",
+   "locator": "robert@harmonygames.co/1800873055214061794",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "robert@harmonygames.co/1800873055214061794"
+   ],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "it goes in only if a receipt for it reached your mail",
+   "requirement_ids": [
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K10",
+   "service": "snowflake",
+   "container": "snowflake:ANALYTICS.MONETIZATION.REVENUE_DAILY",
+   "locator": "snowflake:ANALYTICS.MONETIZATION.REVENUE_DAILY",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "snowflake:ANALYTICS.MONETIZATION.REVENUE_DAILY"
+   ],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "the warehouse\u2019s daily revenue table",
+   "requirement_ids": [
+    "R7"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K11",
+   "service": "slack",
+   "container": "C05URGU759U/1770971846.479179",
+   "locator": "C05URGU759U/1770971846.479179",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "C05URGU759U/1770971846.479179"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "A notice is where you start, not the last word",
+   "requirement_ids": [
+    "R1",
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K12",
+   "service": "gmail",
+   "container": "robert@harmonygames.co/1857028100194623541",
+   "locator": "robert@harmonygames.co/1857028100194623541",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "robert@harmonygames.co/1857028100194623541"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "Money we moved between our own accounts isn\u2019t spending",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K13",
+   "service": "slack",
+   "container": "C04UEQVDVB7/1712901800.684259",
+   "locator": "C04UEQVDVB7/1712901800.684259",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C04UEQVDVB7/1712901800.684259"
+   ],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "What counts is money that left the company and stayed out",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K14",
+   "service": "contacts",
+   "container": "564155d70112411151e512a6",
+   "locator": "564155d70112411151e512a6",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "564155d70112411151e512a6"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "Marketing is anything made or bought to get installs",
+   "requirement_ids": [
+    "R4"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K15",
+   "service": "gdocs",
+   "container": "f_20a0df3860bb5731d22f07",
+   "locator": "f_20a0df3860bb5731d22f07",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K2"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "f_20a0df3860bb5731d22f07"
+   ],
+   "delegated_by_record": "f_6feda53b2382c63bf47b25",
+   "delegation_quote": "Marketing is anything made or bought to get installs",
+   "requirement_ids": [
+    "R4"
+   ],
+   "names_authorities": []
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "the angel note method doc",
+   "home_service": "gdocs",
+   "decoy_service": "trello",
+   "governs": [
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6"
+   ],
+   "findable_query": "Angel note how to count",
+   "seeded_ids": [
+    "f_6feda53b2382c63bf47b25"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "698e55f9af74d68d679de7b3"
+   ],
+   "decoy_base_pointers": []
+  },
+  {
+   "id": "H2",
+   "name": "the warehouse's daily revenue table",
+   "home_service": "snowflake",
+   "decoy_service": "snowflake",
+   "governs": [
+    "R7"
+   ],
+   "findable_query": "REVENUE_DAILY",
+   "seeded_ids": [],
+   "base_pointers": [
+    "snowflake:ANALYTICS.MONETIZATION.REVENUE_DAILY"
+   ],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "snowflake:ANALYTICS.MONETIZATION.STORE_TRANSACTIONS"
+   ],
+   "decoy_scope": {
+    "dimension": "issuer",
+    "decoy": "the stores' own transaction rows, gross of refunds, no ad revenue",
+    "task": "each game's revenue as the company's daily table records it, ads included"
+   }
+  },
+  {
+   "id": "H3",
+   "name": "SVB's Payment Processed notices",
+   "home_service": "gmail",
+   "decoy_service": "gsheets",
+   "governs": [
+    "R1"
+   ],
+   "findable_query": "SVB Payment Notification Payment Processed",
+   "seeded_ids": [],
+   "base_pointers": [
+    "robert@harmonygames.co/1795282860741136988"
+   ],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "f_605121f4a36752645e0ac3"
+   ],
+   "decoy_scope": {
+    "dimension": "issuer",
+    "decoy": "the company's own monthly P&L cost lines by category",
+    "task": "the bank's own line per payment"
+   }
+  }
+ ],
+ "cohort": {
+  "definition": "every payee the bank shows on the Payment Processed notices since Sep 2023, one issue each in the Payee history project (22 real payees, 24 spellings, 132 notices)",
+  "definition_source": [
+   "C0ADGSZKR3R/1770945821.640039",
+   "0742c172-85de-47ed-a111-316e5c8cb187",
+   "f_6feda53b2382c63bf47b25"
+  ],
+  "key": "payee",
+  "size": 22,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 22,
+    "seeded": true,
+    "seeded_ids": [
+     "ENG-2438",
+     "ENG-2442",
+     "ENG-2450",
+     "ENG-2447",
+     "ENG-2455"
+    ],
+    "requirement": "R4",
+    "decides": "bucket per payee",
+    "why_no_bulk": "linear_list_issues returns descriptions and states but no comments; each payee's notes need its own linear_list_comments",
+    "short_circuit": "the notes are the only place that says what a payee on the bank's spelling was for; no other record lists all 22, so skipping a read leaves that row's bucket unsourced"
+   },
+   {
+    "service": "gmail",
+    "tool": "gmail_get_messages_batch (format full, 10 ids a call)",
+    "per_record_calls": 0.65,
+    "records": 22,
+    "requirement": "R1",
+    "decides": "paid figure",
+    "why_no_bulk": "gmail_search_messages returns ids only and the default snippet stops before payee and amount; format full is capped at 10 ids a call, so 132 notices need at least 14 reads",
+    "short_circuit": "no sheet or table carries payee-level payments: the ledger has no vendor names and the P&L is monthly by category"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_conversations_search_messages (per payee name)",
+    "per_record_calls": 0.5,
+    "records": 22,
+    "requirement": "R5",
+    "decides": "bet columns, build cost per bet",
+    "why_no_bulk": "no channel holds every payee; the ties sit in several private channels and one search needs the payee's own name",
+    "short_circuit": "a payee's return, re-send or game tie exists only in the channel where it was discussed"
+   },
+   {
+    "service": "gmail",
+    "tool": "gmail_search_messages (per payee name)",
+    "per_record_calls": 0.5,
+    "records": 22,
+    "requirement": "R3",
+    "decides": "paid figure",
+    "why_no_bulk": "gmail_search returns ids only and the notices are one sender; receipts and vendor mail come back only by the payee's own name",
+    "short_circuit": "payments the notices don't show exist only as a vendor or transfer mail"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A24",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "robert@harmonygames.co/1795282860741136988",
+     "finding": "Payment Processed, BANCO DE AMERICA ***8605, $4,032, Transaction Date Apr 2, 2024"
+    },
+    {
+     "service": "slack",
+     "record": "C04UEQVDVB7/1712331142.975829",
+     "finding": "Leonard Apr 5: this wire didn't go through"
+    },
+    {
+     "service": "slack",
+     "record": "C04UEQVDVB7/1712331718.859679",
+     "finding": "Arthur Apr 5: I messed up the bank account number, fixed up and resubmitted"
+    },
+    {
+     "service": "gmail",
+     "record": "robert@harmonygames.co/1795509850966005840",
+     "finding": "Recipient Modified to ***3341, then Processed again (Apr 5)"
+    },
+    {
+     "service": "slack",
+     "record": "C04UEQVDVB7/1712901800.684259",
+     "finding": "Leonard Apr 12: money returned to us, the bank returned our money"
+    },
+    {
+     "service": "slack",
+     "record": "C04UEQVDVB7/1770947533.284619",
+     "finding": "Leonard Feb 13: the Apr 2024 wire to the account ending 8605 came back; re-sent to 3341"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A17",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ENG-2447",
+     "finding": "Leonard's note: that's Lucas, mini games dev"
+    },
+    {
+     "service": "slack",
+     "record": "C04UEQVDVB7/1719603595.852129",
+     "finding": "Robert Jun 2024: sending Lucas's pay via company card"
+    },
+    {
+     "service": "gmail",
+     "record": "robert@harmonygames.co/1800873055214061794",
+     "finding": "five Western Union receipts, $7,525 received, Jun 3 to Aug 23, 2024"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A13",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "robert@harmonygames.co/1776934359028762037",
+     "finding": "Payment Awaiting Approval, Leapblock $33,290, Sep 13, 2023; no Processed notice in any mailbox"
+    },
+    {
+     "service": "slack",
+     "record": "C04UEQVDVB7/1694616951.239909",
+     "finding": "Arthur Sep 13, 2023 on Leonard's approval request: Done!"
+    },
+    {
+     "service": "slack",
+     "record": "C05URGU759U/1770971846.479179",
+     "finding": "Leapblock's closing statement: 30 wires, 407,944, first one 33,290 on 13 Sep 2023"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A11",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "gmail",
+     "record": "robert@harmonygames.co/1807851044809802572",
+     "finding": "Payment Processed, JPMorgan ***3203, $4,000, Aug 19, 2024"
+    },
+    {
+     "service": "linear",
+     "record": "ENG-2450",
+     "finding": "Leonard's note: approved it, thinks it was a contractor advance, cannot place which"
+    },
+    {
+     "service": "gmail",
+     "record": "robert@harmonygames.co/1857028100194623541",
+     "finding": "Arthur Feb 13: that was our own Chase account, money put back after Carta's renewal; it never left the company"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A7",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ENG-2444",
+     "finding": "the bank shows an LLC; Leonard's note: one payment when we closed the account"
+    },
+    {
+     "service": "slack",
+     "record": "C04UEQVDVB7/1735854841.070019",
+     "finding": "Leonard Jan 2, 2025: closing our account with Node Media LLC"
+    },
+    {
+     "service": "gmail",
+     "record": "robert@harmonygames.co/1815095592611804295",
+     "finding": "the agency's invoice note: Sept $1,428.57, Oct $5,000, Nov $5,000 behind the $16,428.57; UA agency, so Marketing"
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "root_cause": "A15",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "ENG-2455",
+     "finding": "Leonard's note: the contract sent out in Oct, $500 a month"
+    },
+    {
+     "service": "contacts",
+     "record": "564155d70112411151e512a6",
+     "finding": "the contact row spells the name the notices token out"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_20a0df3860bb5731d22f07",
+     "finding": "her contract's Exhibit A: run and optimize paid UA on Telegram, so Marketing under the method's bucket sentence"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "done_gap",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [
+    "C04UEQVDVB7/1770947533.284619"
+   ],
+   "base_pointers": [
+    "robert@harmonygames.co/1795282860741136988",
+    "C04UEQVDVB7/1712331142.975829",
+    "C04UEQVDVB7/1712331718.859679",
+    "C04UEQVDVB7/1712901800.684259"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the Processed notice means $4,032 went to MotMot on the wrong account, so the payee's total is $41,088",
+   "resolver": "the wire went to a bad account number and the bank returned it (#admin_foundersonly Apr 5 and Apr 12, 2024), so MotMot's net is $37,056",
+   "discovery_order": "the Processed notice is read first in every run; the return is in a founders' channel, two years back and in a Feb 13 note that names the account endings, neither on the doc or issue path",
+   "version_records": [
+    {
+     "service": "gmail",
+     "base_pointer": "robert@harmonygames.co/1795282860741136988",
+     "seeded": false,
+     "at": "2024-04-03T03:32:33Z",
+     "container": "gmail:1795282860741136988"
+    },
+    {
+     "service": "slack",
+     "base_pointer": "C04UEQVDVB7/1712331142.975829",
+     "seeded": false,
+     "at": "2024-04-05T15:32:22Z",
+     "container": "slack:C04UEQVDVB7/1712331142.975829"
+    },
+    {
+     "service": "slack",
+     "base_pointer": "C04UEQVDVB7/1712331718.859679",
+     "seeded": false,
+     "at": "2024-04-05T15:41:58Z",
+     "container": "slack:C04UEQVDVB7/1712331718.859679"
+    },
+    {
+     "service": "slack",
+     "base_pointer": "C04UEQVDVB7/1712901800.684259",
+     "seeded": false,
+     "at": "2024-04-12T06:03:20Z",
+     "container": "slack:C04UEQVDVB7/1712901800.684259"
+    },
+    {
+     "service": "slack",
+     "id": "C04UEQVDVB7/1770947533.284619",
+     "seeded": true,
+     "at": "2026-02-13T01:52:13Z",
+     "container": "slack:C04UEQVDVB7/1770947533.284619"
+    }
+   ]
+  },
+  {
+   "id": "T2",
+   "family": "exact_predicate",
+   "services": [
+    "gmail",
+    "slack",
+    "linear"
+   ],
+   "seeded_ids": [
+    "ENG-2447"
+   ],
+   "base_pointers": [
+    "C04UEQVDVB7/1719603595.852129",
+    "robert@harmonygames.co/1800873055214061794",
+    "robert@harmonygames.co/1802092844284446043",
+    "robert@harmonygames.co/1803223458475671884",
+    "robert@harmonygames.co/1805405368810910191",
+    "robert@harmonygames.co/1808201559428745555"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the notices hold every payment to Lucas, so he cost $6,450",
+   "resolver": "five Western Union receipts in the founders' mail add $7,525; the method brings a receipted contractor in, so he cost $13,975",
+   "discovery_order": "the notices and Leonard's note come first; the receipts share no sender or subject with the notices"
+  },
+  {
+   "id": "T3",
+   "family": "superseding",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [
+    "C05URGU759U/1770971846.479179"
+   ],
+   "base_pointers": [
+    "robert@harmonygames.co/1776934359028762037",
+    "C04UEQVDVB7/1694616951.239909"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "no Processed notice means the $33,290 never left, so Leapblock's total is $374,654",
+   "resolver": "Leapblock's own closing statement counts it among 30 wires, $407,944, and Arthur's Sep 2023 Done agrees",
+   "discovery_order": "a Processed-only read never sees the Awaiting notice; the statement is a Feb 13 post in a channel runs read only by name",
+   "version_records": [
+    {
+     "service": "gmail",
+     "base_pointer": "robert@harmonygames.co/1776934359028762037",
+     "seeded": false,
+     "at": "2023-09-13T14:50:58Z",
+     "container": "gmail:1776934359028762037"
+    },
+    {
+     "service": "slack",
+     "base_pointer": "C04UEQVDVB7/1694616951.239909",
+     "seeded": false,
+     "at": "2023-09-13T14:55:51Z",
+     "container": "slack:C04UEQVDVB7/1694616951.239909"
+    },
+    {
+     "service": "slack",
+     "id": "C05URGU759U/1770971846.479179",
+     "seeded": true,
+     "at": "2026-02-13T08:37:26Z",
+     "container": "slack:C05URGU759U/1770971846.479179"
+    }
+   ]
+  },
+  {
+   "id": "T4",
+   "family": "superseding",
+   "services": [
+    "gmail",
+    "linear"
+   ],
+   "seeded_ids": [
+    "ENG-2450",
+    "robert@harmonygames.co/1857028100194623541"
+   ],
+   "base_pointers": [],
+   "requirement": "R2",
+   "expected_wrong_reading": "the $4,000 to JPMorgan in Aug 2024 is a cost of the bet running that month",
+   "resolver": "Arthur's Feb 13 mail: that account is the company's own Chase, so the money never left and is left out",
+   "discovery_order": "the notice and Leonard's hedged note that it was a contractor advance come first; Arthur's later mail is about Chase records, not the project",
+   "version_records": [
+    {
+     "service": "gmail",
+     "base_pointer": "robert@harmonygames.co/1807851044809802572",
+     "seeded": false,
+     "at": "2024-08-19T20:58:27Z",
+     "container": "gmail:1807851044809802572"
+    },
+    {
+     "service": "linear",
+     "id": "ENG-2450",
+     "seeded": true,
+     "at": "2026-02-12T23:13:29Z",
+     "container": "linear:ENG-2450"
+    },
+    {
+     "service": "gmail",
+     "id": "robert@harmonygames.co/1857028100194623541",
+     "seeded": true,
+     "at": "2026-02-13T16:26:44Z",
+     "container": "gmail:1857028100194623541"
+    }
+   ]
+  },
+  {
+   "id": "T5",
+   "family": "scope_alias",
+   "services": [
+    "gmail",
+    "slack",
+    "linear"
+   ],
+   "seeded_ids": [
+    "ENG-2444"
+   ],
+   "base_pointers": [
+    "C04UEQVDVB7/1735854841.070019",
+    "robert@harmonygames.co/1815095592611804295"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "the $16,428.57 LLC is a build vendor of the bet running that day",
+   "resolver": "the LLC is Node Media, a UA agency (its own invoice note gives the exact amounts), so it is Marketing and outside build cost",
+   "discovery_order": "the bank shows only a token LLC; the name appears in a founders' channel and the agency's mail"
+  },
+  {
+   "id": "T6",
+   "family": "authority",
+   "services": [
+    "gdocs",
+    "contacts",
+    "linear"
+   ],
+   "seeded_ids": [
+    "f_6feda53b2382c63bf47b25",
+    "564155d70112411151e512a6",
+    "ENG-2455"
+   ],
+   "base_pointers": [
+    "f_20a0df3860bb5731d22f07"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "a monthly contractor on a contract is build cost, so her $1,500 falls in ZM and Combo Fighter by date",
+   "resolver": "her contract's Exhibit A is paid UA work on Telegram, so the method's bucket sentence makes it Marketing, outside build cost",
+   "discovery_order": "the note and the contact read as a contractor; only the contract says what the work was"
+  },
+  {
+   "id": "T7",
+   "family": "unit_or_timezone",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [
+    "ENG-2454"
+   ],
+   "base_pointers": [
+    "robert@harmonygames.co/1847427662807006290",
+    "C04UEQVDVB7/1761844454.096829"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "Martin's Oct 30, 2025 payment is $1,999 of build cost",
+   "resolver": "the notice is in BGN and #admin_foundersonly says it was his laptop: a Company line kept in its own currency, out of dollar totals",
+   "discovery_order": "a parser built for USD drops or mis-adds it"
+  },
+  {
+   "id": "T8",
+   "family": "stale_summary",
+   "services": [
+    "gsheets",
+    "gslides"
+   ],
+   "seeded_ids": [
+    "f_3304033843904a426f3c00",
+    "f_a4b3c4287a4314d8e532e1"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "Leonard's quick numbers ($985K, $609K, $74K) are the bets' build cost",
+   "resolver": "they are every notice added up by date; the method's buckets, exception and adjustments change all three",
+   "distractor_type": "stale_summary",
+   "discovery_order": "both records are named in the ask and read before the notices"
+  },
+  {
+   "id": "T9",
+   "family": "superseding",
+   "services": [
+    "trello",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "698e55f9af74d68d679de7b3",
+    "f_6feda53b2382c63bf47b25"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "the quick plan on the board (add up the notices by date and round) is the whole method",
+   "resolver": "the method says it replaces the plan: buckets, adjustments and the bet calendar apply",
+   "version_records": [
+    {
+     "service": "trello",
+     "id": "698e55f9af74d68d679de7b3",
+     "seeded": true,
+     "at": "2026-02-12T22:36:41Z",
+     "container": "trello:698e55f9af74d68d679de7b3"
+    },
+    {
+     "service": "gdocs",
+     "id": "f_6feda53b2382c63bf47b25",
+     "seeded": true,
+     "at": "2026-02-12T23:52:18Z",
+     "container": "file:f_6feda53b2382c63bf47b25"
+    }
+   ]
+  },
+  {
+   "id": "T10",
+   "family": "superseding",
+   "services": [
+    "gmail",
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "robert@harmonygames.co/1795509850966005840",
+    "robert@harmonygames.co/1795511257876658998",
+    "C04UEQVDVB7/1712331372.614469"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the Apr 5 $4,032 is a duplicate of the Apr 3 wire, so one of them should be dropped as a mistake and the account stays as it was",
+   "resolver": "the Apr 5 wire to the corrected account is the real payment; it stands",
+   "version_records": [
+    {
+     "service": "slack",
+     "base_pointer": "C04UEQVDVB7/1712331372.614469",
+     "seeded": false,
+     "at": "2024-04-05T15:36:12Z",
+     "container": "slack:C04UEQVDVB7/1712331372.614469"
+    },
+    {
+     "service": "gmail",
+     "base_pointer": "robert@harmonygames.co/1795511257876658998",
+     "seeded": false,
+     "at": "2024-04-05T16:02:49Z",
+     "container": "gmail:1795511257876658998"
+    }
+   ]
+  },
+  {
+   "id": "T11",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "robert@harmonygames.co/1795282860741136988"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "two same-amount Leapblock wires in Aug 2025 are a duplicate",
+   "resolver": "they pay separate months; both stand",
+   "distractor_type": "near_duplicate_record"
+  },
+  {
+   "id": "T12",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "robert@harmonygames.co/1776934359028762037"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Awaiting Approval and Scheduled notices are payments too",
+   "resolver": "only processed payments count; 130 Awaiting and 40 Scheduled notices repeat them",
+   "distractor_type": "keyword_collision"
+  },
+  {
+   "id": "T13",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C04UEQVDVB7/1719603590.685019"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the ZM animator paid on a card ($5,400 agreed) goes in like Lucas",
+   "resolver": "no receipt reached the mail, so the method leaves it out",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "T14",
+   "family": "distractor",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [
+    "ENG-2458"
+   ],
+   "base_pointers": [],
+   "requirement": "R4",
+   "expected_wrong_reading": "the $500 proposal helper is a Domino Delights or ZM cost",
+   "resolver": "the 4X proposal is not one of the three games; a Company line",
+   "distractor_type": "other_title"
+  },
+  {
+   "id": "T15",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C04UEQVDVB7/1754445622.992119"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Leonard's Aug 2025 note that the P&L is accurate makes the P&L the record to use",
+   "resolver": "that note is about balances; the method goes by the bank's line-per-payment notices",
+   "distractor_type": "non_authoritative_instruction"
+  },
+  {
+   "id": "T16",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "robert@harmonygames.co/1776123041340701955"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the second spelling on ***8380 is another payee",
+   "resolver": "same account as Deel, one payee",
+   "distractor_type": "lookalike_entity"
+  },
+  {
+   "id": "T17",
+   "family": "distractor",
+   "services": [
+    "snowflake",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_6feda53b2382c63bf47b25"
+   ],
+   "base_pointers": [
+    "snowflake:ANALYTICS.MONETIZATION.STORE_TRANSACTIONS"
+   ],
+   "requirement": "R7",
+   "expected_wrong_reading": "store transactions are each game's revenue",
+   "resolver": "the method names the daily revenue table, ads included",
+   "distractor_type": "partial_listing"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "RET",
+   "mechanism": "A24",
+   "prior_family": "A24",
+   "prior_family_reason": "same mechanism: a done source and the missing piece in another service",
+   "nodes": [
+    "T1",
+    "C1",
+    "T10"
+   ],
+   "requirement": "R2",
+   "natural_reading": "every Processed notice is money that stayed out",
+   "controls": [
+    "Leapblock"
+   ],
+   "over_application": "ret_over: treats the two Leapblock $3,700 wires of Aug 2025 as one returned and one re-sent",
+   "source": "founders-channel-by-name",
+   "signature": "thats the motmot one",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_852b065152ade635"
+    ]
+   },
+   "decides": [
+    "X1",
+    "B1",
+    "C1",
+    "R1"
+   ]
+  },
+  {
+   "id": "OFF",
+   "mechanism": "A17",
+   "prior_family": "A17",
+   "prior_family_reason": "same mechanism: in-scope payments outside the obvious search",
+   "nodes": [
+    "T2",
+    "C2",
+    "T13"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the notices are the whole population",
+   "controls": [
+    "Graham Porter"
+   ],
+   "over_application": "off_over: adds the card-paid ZM animator with no receipt",
+   "source": "mail-by-name",
+   "signature": "Western Union Lucas",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_6b01d1489ea05d94"
+    ]
+   },
+   "decides": [
+    "X3",
+    "B1",
+    "C2",
+    "R1"
+   ]
+  },
+  {
+   "id": "ORPH",
+   "mechanism": "A13",
+   "prior_family": "A11",
+   "prior_family_reason": "closest measured family: a later record elsewhere changes a figure",
+   "nodes": [
+    "T3",
+    "C3",
+    "T12"
+   ],
+   "requirement": "R1",
+   "natural_reading": "no Processed notice means no payment",
+   "controls": [
+    "Eveline Art"
+   ],
+   "over_application": "orph_over: counts Awaiting and Scheduled notices as payments for other payees",
+   "source": "channel-by-name",
+   "signature": "407,944 over 30 wires",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_fe1047effcd69fe4"
+    ]
+   },
+   "decides": [
+    "X4",
+    "B1",
+    "C3",
+    "R1"
+   ]
+  },
+  {
+   "id": "CORR",
+   "mechanism": "A11",
+   "prior_family": "A11",
+   "prior_family_reason": "same mechanism: a dated correction in another service",
+   "nodes": [
+    "T4",
+    "C4"
+   ],
+   "requirement": "R2",
+   "natural_reading": "every wire is a cost",
+   "controls": [
+    "Singular"
+   ],
+   "over_application": "corr_over: drops another one-off wire as an internal transfer",
+   "source": "recent-mail",
+   "signature": "our own Chase account",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_fe1047effcd69fe4"
+    ]
+   },
+   "decides": [
+    "X5",
+    "B1",
+    "C4",
+    "R1"
+   ]
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "prior_family": "A17",
+   "prior_family_reason": "closest measured family: the item hides from the obvious name",
+   "nodes": [
+    "T5",
+    "C5"
+   ],
+   "requirement": "R4",
+   "natural_reading": "the bank's payee name tells you what the payee is",
+   "controls": [
+    "Adjoe"
+   ],
+   "over_application": "alias_over: moves a studio such as Leapblock into Marketing",
+   "source": "mail-by-token",
+   "signature": "Sept $1,428.57",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_6b01d1489ea05d94"
+    ]
+   },
+   "decides": [
+    "X6",
+    "B1",
+    "R1"
+   ]
+  },
+  {
+   "id": "CLASS",
+   "mechanism": "A15",
+   "prior_family": "A15",
+   "prior_family_reason": "same mechanism: a house definition overrides the natural reading of a contractor",
+   "nodes": [
+    "T6",
+    "C6"
+   ],
+   "requirement": "R4",
+   "natural_reading": "a monthly contractor is build cost",
+   "controls": [
+    "Graham Porter"
+   ],
+   "over_application": "class_over: moves a build contractor such as Graham Porter into Marketing",
+   "source": "contract-doc",
+   "signature": "run and optimize paid UA",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_cdb4202aec019c58"
+    ]
+   },
+   "decides": [
+    "X8",
+    "B2",
+    "B3",
+    "S6"
+   ]
+  },
+  {
+   "id": "CURR",
+   "mechanism": "A10",
+   "prior_family": "A15",
+   "prior_family_reason": "closest measured family: one rule on one line, no Opus 5.5 prior for A10",
+   "nodes": [
+    "T7"
+   ],
+   "requirement": "R6",
+   "natural_reading": "every notice is USD and every person paid is build cost",
+   "controls": [
+    "Lauren Brooks"
+   ],
+   "over_application": "curr_over: treats a dollar wire as foreign",
+   "source": "notice-field",
+   "signature": "1,999.00 BGN",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 2.0,
+    "record_ids": [
+     "hev_cdb4202aec019c58"
+    ]
+   },
+   "decides": [
+    "X9",
+    "B2"
+   ]
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-RET",
+   "kind": "scale",
+   "rule": "RET",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "A24",
+   "source": "founders-channel-by-name",
+   "members": [
+    "MotMot"
+   ],
+   "description": "the Apr 2024 wire notes are not found: MotMot stays at $41,088"
+  },
+  {
+   "id": "CH-OFF",
+   "kind": "scale",
+   "rule": "OFF",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "A17",
+   "source": "mail-by-name",
+   "members": [
+    "Lucas"
+   ],
+   "description": "the Western Union receipts are not found: Lucas stays at $6,450"
+  },
+  {
+   "id": "CH-ORPH",
+   "kind": "scale",
+   "rule": "ORPH",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "A11",
+   "source": "channel-by-name",
+   "members": [
+    "Leapblock"
+   ],
+   "description": "the statement is not read: Leapblock stays at $374,654"
+  },
+  {
+   "id": "CH-CORR",
+   "kind": "scale",
+   "rule": "CORR",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "A11",
+   "source": "recent-mail",
+   "members": [
+    "JPMorgan"
+   ],
+   "description": "Arthur's mail is not found: $4,000 stays a cost"
+  },
+  {
+   "id": "CH-ALIAS",
+   "kind": "scale",
+   "rule": "ALIAS",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "A17",
+   "source": "mail-by-token",
+   "members": [
+    "Node Media"
+   ],
+   "description": "the LLC is not identified: $16,428.57 stays in Domino Delights build cost"
+  },
+  {
+   "id": "CH-CLASS",
+   "kind": "scale",
+   "rule": "CLASS",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "A15",
+   "source": "contract-doc",
+   "members": [
+    "Lauren Brooks"
+   ],
+   "description": "the contract is not read: her $1,500 stays in build cost by date"
+  },
+  {
+   "id": "CH-CURR",
+   "kind": "scale",
+   "rule": "CURR",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "A15",
+   "source": "notice-field",
+   "members": [
+    "Martin Walsh"
+   ],
+   "description": "the BGN payment is added as dollars or as build cost"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 10,
+   "reason": "the ask, #winddown pages, Feb #executives, the channels a payee's note points at"
+  },
+  {
+   "phase": "rules",
+   "service": "gdocs",
+   "calls": 2,
+   "reason": "the method doc and the Leapblock MSA"
+  },
+  {
+   "phase": "rules",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "the working sheet's layout and quick figures"
+  },
+  {
+   "phase": "rules",
+   "service": "gslides",
+   "calls": 1,
+   "reason": "the draft deck whose figures the reply compares"
+  },
+  {
+   "phase": "rules",
+   "service": "trello",
+   "calls": 2,
+   "reason": "the board card the method replaces"
+  },
+  {
+   "phase": "rules",
+   "service": "gcal",
+   "calls": 1,
+   "reason": "when the angel calls start"
+  },
+  {
+   "phase": "rules",
+   "service": "linear",
+   "calls": 3,
+   "reason": "the project and its 22 issues"
+  },
+  {
+   "phase": "rules",
+   "service": "snowflake",
+   "calls": 4,
+   "reason": "list, describe and the lifetime revenue query"
+  },
+  {
+   "phase": "per-record",
+   "service": "gmail",
+   "calls": 16,
+   "reason": "search pages and 14+ full-format reads over the 132 notices (10 ids a call)"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 22,
+   "reason": "each payee's notes (no bulk comment read)"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 11,
+   "reason": "a name search per payee with an open question: returns, re-sends, game ties"
+  },
+  {
+   "phase": "per-record",
+   "service": "gmail",
+   "calls": 11,
+   "reason": "a name search per payee for receipts and vendor mail"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "gdrive",
+   "calls": 3,
+   "reason": "Robert's root, the working sheet and the deck by title"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "contacts",
+   "calls": 2,
+   "reason": "the names the notices token out"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "the P&L costs tab for lines the notices don't name"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 22,
+   "reason": "closing each payee's issue, as the method asks (no batch write)"
+  },
+  {
+   "phase": "writes",
+   "service": "linear",
+   "calls": 4,
+   "reason": "a reason comment on each payee whose figure differs from the notices"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 4,
+   "reason": "create the sheet and write its rows"
+  },
+  {
+   "phase": "writes",
+   "service": "gdrive",
+   "calls": 3,
+   "reason": "move it to Robert's root and share it with Leonard and Arthur"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "the reply to Leonard"
+  },
+  {
+   "phase": "read-back",
+   "service": "gsheets",
+   "calls": 1,
+   "reason": "read the sheet back before replying"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_create_spreadsheet+gsheets_values_update",
+   "count": 4,
+   "depends_on": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "T3"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7",
+    "R8"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_move_file+gdrive_share_file",
+   "count": 3,
+   "depends_on": [
+    "K4"
+   ],
+   "requirements": [
+    "R8"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue",
+   "count": 22,
+   "depends_on": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_comment",
+   "count": 4,
+   "depends_on": [
+    "C1",
+    "C2",
+    "C3",
+    "C4"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "T8"
+   ],
+   "requirements": [
+    "R10"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [
+  {
+   "hazard_id": "R04",
+   "resolution": "excluded",
+   "why_safe": "no Slack Drive link is cited; files are named by title"
+  },
+  {
+   "hazard_id": "R08",
+   "resolution": "excluded",
+   "why_safe": "no invitation mail is relied on; the hold's invite is context only"
+  },
+  {
+   "hazard_id": "L08",
+   "resolution": "excluded",
+   "why_safe": "no base open issue is modified or cited; seeded payee issues go to active people only"
+  },
+  {
+   "hazard_id": "L13",
+   "resolution": "excluded",
+   "why_safe": "the design never asserts that work stopped at the shutdown"
+  }
+ ],
+ "denied_probes": [],
+ "gradable_surface": "01_Gradable_Surface.json"
+}

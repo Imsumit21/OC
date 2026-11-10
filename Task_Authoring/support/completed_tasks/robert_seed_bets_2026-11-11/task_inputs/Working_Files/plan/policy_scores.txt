@@ -1,0 +1,50 @@
+UNCALIBRATED · 30 slots, total weight 94, flippable 67 (71.3%), weight-5 slots 9
+
+Unit of discovery: weight each rule can flip (share of total; gate: none over half)
+  RET     16  17.0%
+  OFF     16  17.0%
+  ORPH    16  17.0%
+  CORR    19  20.2%
+  ALIAS   13  13.8%
+  CLASS   16  17.0%
+  CURR    11  11.7%
+
+Whole policies
+  100.0%  Perfect  [lands: -]
+   28.7%  Adds up the Processed notices by date, reads nothing else  [lands: ALIAS, CLASS, CORR, CURR, OFF, ORPH, RET]
+   31.9%  Notices, method and issue notes; no other Slack or mail  [lands: ALIAS, CLASS, CORR, OFF, ORPH, RET]
+   48.9%  Adds name searches in Slack, no mail beyond the notices  [lands: ALIAS, CLASS, CORR, OFF]
+   57.4%  Adds name searches in mail, no Slack  [lands: CLASS, ORPH, RET]
+   83.0%  Thorough except payee contracts  [lands: CLASS]
+   83.0%  Thorough except #leapblock  [lands: ORPH]
+   83.0%  Thorough, takes the bank's notice as money gone  [lands: RET]
+   79.8%  Thorough, treats every wire as a cost  [lands: CORR]
+   88.3%  Thorough, treats every notice as dollars  [lands: CURR]
+
+Single misses
+  RET     83.0%
+  OFF     83.0%
+  ORPH    83.0%
+  CORR    79.8%
+  ALIAS   86.2%
+  CLASS   83.0%
+  CURR    88.3%
+
+Highest pair: RET+ALIAS 77.7% · lowest pair: CORR+CLASS 62.8%
+Single misses that stay at or above the 90 % cap: none
+
+P(one run catches every trap) ~ 0.003 (independence) -> E[full passes of 6] ~ 0.02; traps landing per run at design rates 3.85
+
+Six-run Monte Carlo (landing scale x rho), Easy cap 90 %
+  scale  rho   E[avg]  P(<90)  P(SD)  P(<5 full)  P(patterns)  P(all gates)
+  1.00  0.10   54.1%    1.00   0.75        1.00         1.00          0.75
+  1.00  0.35   54.8%    1.00   0.91        1.00         0.99          0.91
+  1.00  0.60   55.7%    1.00   0.93        1.00         0.94          0.89
+  0.80  0.35   62.5%    1.00   0.94        1.00         1.00          0.94
+  0.70  0.10   65.5%    1.00   0.81        1.00         1.00          0.81
+  0.70  0.35   66.5%    1.00   0.95        1.00         1.00          0.94
+  0.60  0.35   70.6%    0.99   0.94        1.00         0.99          0.94
+  0.50  0.10   73.7%    1.00   0.81        1.00         0.99          0.81
+  0.50  0.35   74.8%    0.98   0.93        1.00         0.99          0.91
+  0.40  0.35   79.1%    0.93   0.90        1.00         0.98          0.86
+  0.30  0.35   83.7%    0.81   0.82        0.99         0.97          0.74

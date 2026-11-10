@@ -1,0 +1,427 @@
+{
+ "precheck": true,
+ "data_path": "Working_Files/run_forensics/rev6/precheck.matrix.json",
+ "trajectories": [
+  "06_PreCheck_Trajectory/trajectory.json"
+ ],
+ "task_id": "6abcd0ca93b21819205e962481f3357a788ef9ee657375c805c11234f97a4a7e",
+ "revision": "rev6",
+ "bundle_hash": "93414fcc1487ed623de0d29ed65936db4c33aadbea6341894d63bd4c947eea34",
+ "receipt": "Working_Files/run_forensics/rev6/precheck.export_review.json",
+ "diagnoses": [
+  {
+   "id": "D-RET",
+   "mechanism": "RET: done source with a missing piece in another service (A24). The run took all 11 MotMot notices as paid and never read the founders saying the Apr 2024 wire came back.",
+   "observation": "all_fail",
+   "criteria": [
+    "X1",
+    "B1",
+    "C1",
+    "R1"
+   ],
+   "trajectory_events": [
+    {
+     "run": "run-1",
+     "event": 463,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "none reported back"
+    },
+    {
+     "run": "run-1",
+     "event": 333,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "8605"
+    }
+   ],
+   "reason": "Sheet row at event 463 keeps 32,160 and asserts none reported back; only Gmail was checked for returns (events 193, 205), and the Apr 2/Apr 5 pair printed at event 333 was dropped.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/ret_motmot.md",
+     "sha256": "e6bc60b2746e0cd856e61d1f38e928bf5cc06b8990521c236bfef36cda949c0c"
+    },
+    {
+     "path": "Working_Files/run_forensics/rev6/review/calls_part2.md",
+     "sha256": "9a1ef2efb2f659c8223f380a5101eb0c4d22ca392dc571619ad9df8c4819fad3"
+    }
+   ],
+   "fairness": {
+    "reason": "Rule incorporated: the doc says a notice counts unless one of us has said the money came back; only 28,128 fits the records.",
+    "evidence": [
+     {
+      "path": "Working_Files/run_forensics/rev6/review/ret_motmot.md",
+      "sha256": "e6bc60b2746e0cd856e61d1f38e928bf5cc06b8990521c236bfef36cda949c0c"
+     }
+    ]
+   },
+   "readability": {
+    "reason": "Robert is a member of C04UEQVDVB7; the run read that channel without error at events 357 and 370; ordinary return wording finds the records.",
+    "evidence": [
+     {
+      "path": "Working_Files/run_forensics/rev6/review/ret_motmot.md",
+      "sha256": "e6bc60b2746e0cd856e61d1f38e928bf5cc06b8990521c236bfef36cda949c0c"
+     }
+    ]
+   },
+   "grader_accuracy": {
+    "reason": "Hand grade against truth; the platform /hardness reviewer checked Gmail and Linear only and so accepted the wrong total, which is a reviewer gap rather than a defect in the failure.",
+    "evidence": [
+     {
+      "path": "Working_Files/run_forensics/rev6/review/ret_motmot.md",
+      "sha256": "e6bc60b2746e0cd856e61d1f38e928bf5cc06b8990521c236bfef36cda949c0c"
+     },
+     {
+      "path": "Working_Files/run_forensics/rev6/review/surface_adjudication.md",
+      "sha256": "8c1a066059af87400dec4e60f441c8d8b4d65bdfeb7c189f6b5ded4fb164f95b"
+     }
+    ]
+   }
+  },
+  {
+   "id": "D-OFF",
+   "mechanism": "OFF: payments outside the bank notices (A17). LEAKED; the deliberate hunt missed and a date window for another trap found the first receipt.",
+   "observation": "heavy_all_pass",
+   "criteria": [
+    "X3"
+   ],
+   "trajectory_events": [
+    {
+     "run": "run-1",
+     "event": 321,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "your money transfer"
+    }
+   ],
+   "reason": "Five Western Union receipts read at events 299 and 321; rule read at event 18; pointer note read at event 52.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/other_traps.md",
+     "sha256": "499b16a91c126bf22e22d1877368a6c7ec797b82cd7558d25aeb2a17360daea6"
+    },
+    {
+     "path": "Working_Files/run_forensics/rev6/review/calls_part2.md",
+     "sha256": "9a1ef2efb2f659c8223f380a5101eb0c4d22ca392dc571619ad9df8c4819fad3"
+    }
+   ]
+  },
+  {
+   "id": "D-ORPH",
+   "mechanism": "ORPH: orphan wire settled by the close-out post (A13). LEAKED on the delegation path; the post gives the year split and names the missing wire.",
+   "observation": "first_read_correction",
+   "criteria": [
+    "X4"
+   ],
+   "trajectory_events": [
+    {
+     "run": "run-1",
+     "event": 244,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "407,944"
+    }
+   ],
+   "reason": "First Slack search at event 243 returned the seeded post at event 244.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/other_traps.md",
+     "sha256": "499b16a91c126bf22e22d1877368a6c7ec797b82cd7558d25aeb2a17360daea6"
+    },
+    {
+     "path": "Working_Files/run_forensics/rev6/review/calls_part1.md",
+     "sha256": "f0726b47bbe0584a5bf4edeb9d5109392389be9f704a2b5f91791cc315f786f2"
+    }
+   ]
+  },
+  {
+   "id": "D-CORR",
+   "mechanism": "CORR: own-account transfer corrected by a later mail (A11). LEAKED; a neutral note acted as a beacon and a token join reached the mail.",
+   "observation": "heavy_all_pass",
+   "criteria": [
+    "X5"
+   ],
+   "trajectory_events": [
+    {
+     "run": "run-1",
+     "event": 387,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "Going through the Chase statements"
+    }
+   ],
+   "reason": "About eight misses, then token 3203 found the mail, read at event 387.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/other_traps.md",
+     "sha256": "499b16a91c126bf22e22d1877368a6c7ec797b82cd7558d25aeb2a17360daea6"
+    },
+    {
+     "path": "Working_Files/run_forensics/rev6/review/calls_part2.md",
+     "sha256": "9a1ef2efb2f659c8223f380a5101eb0c4d22ca392dc571619ad9df8c4819fad3"
+    }
+   ]
+  },
+  {
+   "id": "D-ALIAS",
+   "mechanism": "ALIAS: token payee resolved through founders message and invite (A17). LEAKED; the note supplied the search word and window.",
+   "observation": "first_read_correction",
+   "criteria": [
+    "X6"
+   ],
+   "trajectory_events": [
+    {
+     "run": "run-1",
+     "event": 400,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "Node Media"
+    }
+   ],
+   "reason": "Event 399 used close plus a date window from the note at event 46; event 400 returned the name.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/other_traps.md",
+     "sha256": "499b16a91c126bf22e22d1877368a6c7ec797b82cd7558d25aeb2a17360daea6"
+    },
+    {
+     "path": "Working_Files/run_forensics/rev6/review/calls_part2.md",
+     "sha256": "9a1ef2efb2f659c8223f380a5101eb0c4d22ca392dc571619ad9df8c4819fad3"
+    }
+   ]
+  },
+  {
+   "id": "D-CLASS",
+   "mechanism": "CLASS: contractor bucket from the contract (A15). FALSE; the note states the conclusion, and the contract was never opened. It is the only rule on ZM and Combo Fighter build.",
+   "observation": "first_read_correction",
+   "criteria": [
+    "X8",
+    "B2",
+    "B3"
+   ],
+   "trajectory_events": [
+    {
+     "run": "run-1",
+     "event": 68,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "marketing, not build"
+    }
+   ],
+   "reason": "The note added in rev6 came back at event 68 with the other ENG-2455 note.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/other_traps.md",
+     "sha256": "499b16a91c126bf22e22d1877368a6c7ec797b82cd7558d25aeb2a17360daea6"
+    }
+   ]
+  },
+  {
+   "id": "D-TOOL",
+   "mechanism": "Proxy decoders: free-text payee labels break the register join; surface pins folder, role and thread the prompt does not.",
+   "observation": "reviewer_disagreement",
+   "criteria": [
+    "D1",
+    "D2",
+    "D4",
+    "S6"
+   ],
+   "trajectory_events": [
+    {
+     "run": "run-1",
+     "event": 463,
+     "export_sha256": "fc4e4ed2f1c73f3cf0184a5c9a3d97463dbce1879f08f69a9c7eec4c2c885b58",
+     "quote": "Name on the bank"
+    }
+   ],
+   "reason": "Slot-by-slot adjudication; 16 disagreements with the tool.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/surface_adjudication.md",
+     "sha256": "8c1a066059af87400dec4e60f441c8d8b4d65bdfeb7c189f6b5ded4fb164f95b"
+    }
+   ]
+  }
+ ],
+ "repairs": [
+  {
+   "id": "P-CORR",
+   "diagnosis": "D-CORR",
+   "artifact": "universe",
+   "owner": "create-scenario --revise",
+   "change_kind": "wrong_source_replaces_neutral_note",
+   "original_placement": "ENG-2450 comment_10121682aae484f81a11f3f8b3e0ee94, a neutral note that works as a beacon",
+   "proposed_change": "Leonard gives a hedged wrong recollection that would put the money in Build; Arthur's later Chase records mail stays and beats it.",
+   "affected_outcomes": [
+    "X5",
+    "B1",
+    "R1",
+    "C4"
+   ],
+   "scope_difference": {
+    "reason_class": "difficulty",
+    "rows_added": 0,
+    "rows_removed": 0,
+    "items_added": 0,
+    "writes_added": 0
+   },
+   "fair_discovery_path": "ENG-2450 shows account ending 3203; Gmail search on the token or the account finds Arthur's mail of 2026-02-13T16:26:44Z, addressed to Robert",
+   "required_reruns": [
+    "scenario",
+    "injection",
+    "prompt-check",
+    "precheck"
+   ],
+   "reason": "Red team: premise true, mail decisive, no record of a contractor advance in Aug 2024.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/repairs_redteam.md",
+     "sha256": "42f8878ae3c31bc24f5b5003d23632392eb2e911dde64095dffa2372f3476730"
+    }
+   ]
+  },
+  {
+   "id": "P-OFF",
+   "diagnosis": "D-OFF",
+   "artifact": "universe",
+   "owner": "create-scenario --revise",
+   "change_kind": "pointer_removed",
+   "original_placement": "ENG-2447 comment_b13f790bb95e249b8d3a48b1881c0e3a, which says the bank has him from Sep 2024",
+   "proposed_change": "Remove the pointer so the earlier off-bank payments sit outside the obvious filter; fairness to be tested before adoption.",
+   "affected_outcomes": [
+    "X3",
+    "B1",
+    "R1",
+    "C2"
+   ],
+   "scope_difference": {
+    "reason_class": "difficulty",
+    "rows_added": 0,
+    "rows_removed": 0,
+    "items_added": 0,
+    "writes_added": 0
+   },
+   "fair_discovery_path": "The doc rule on other ways of paying sends a run to Robert's mail; a mail search on the payee name reaches the five receipts",
+   "required_reruns": [
+    "scenario",
+    "injection",
+    "prompt-check",
+    "precheck"
+   ],
+   "reason": "Red team: the pointer is what directs the hunt; removal gives a distinct item-outside-the-filter trap.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/repairs_redteam.md",
+     "sha256": "42f8878ae3c31bc24f5b5003d23632392eb2e911dde64095dffa2372f3476730"
+    }
+   ]
+  },
+  {
+   "id": "P-RET",
+   "diagnosis": "D-RET",
+   "artifact": "universe",
+   "owner": "create-scenario --revise",
+   "change_kind": "reviewer_visible_record",
+   "original_placement": "Base-only records in C04UEQVDVB7, Apr 2024; nothing in the SQL",
+   "proposed_change": "Seed one top-level founder message in C04UEQVDVB7, 2026-02-13 00:05Z to 09:00Z, saying the Apr 2024 wire came back and was re-sent. Reviewer visibility only; it cannot make the trap harder.",
+   "affected_outcomes": [
+    "X1",
+    "B1",
+    "R1",
+    "C1"
+   ],
+   "scope_difference": {
+    "reason_class": "grader_defect",
+    "rows_added": 1,
+    "rows_removed": 0,
+    "items_added": 0,
+    "writes_added": 0
+   },
+   "fair_discovery_path": "Doc sentence on money that came back; Slack search or the founders channel",
+   "required_reruns": [
+    "scenario",
+    "injection",
+    "prompt-check",
+    "precheck"
+   ],
+   "reason": "Red team placement; the platform reviewer never opened the channel.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/repairs_redteam.md",
+     "sha256": "42f8878ae3c31bc24f5b5003d23632392eb2e911dde64095dffa2372f3476730"
+    },
+    {
+     "path": "Working_Files/run_forensics/rev6/review/ret_motmot.md",
+     "sha256": "e6bc60b2746e0cd856e61d1f38e928bf5cc06b8990521c236bfef36cda949c0c"
+    }
+   ]
+  },
+  {
+   "id": "P-ALIAS",
+   "diagnosis": "D-ALIAS",
+   "artifact": "universe",
+   "owner": "create-scenario --revise",
+   "change_kind": "search_key_removed",
+   "original_placement": "ENG-2444 comment_7453d8e60a3625923294c54e36a8667d names the close-out and the month",
+   "proposed_change": "Reduce the note to the date; the founders message, the invite and the invoice thread still resolve the name. Not counted as a loss channel.",
+   "affected_outcomes": [
+    "X6",
+    "B1",
+    "R1"
+   ],
+   "scope_difference": {
+    "reason_class": "difficulty",
+    "rows_added": 0,
+    "rows_removed": 0,
+    "items_added": 0,
+    "writes_added": 0
+   },
+   "fair_discovery_path": "A Gmail or Slack search on the LLC token or a date window around Jan 2, 2025",
+   "required_reruns": [
+    "scenario",
+    "injection",
+    "prompt-check",
+    "precheck"
+   ],
+   "reason": "Red team: cheap; costs a run one to three calls.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/repairs_redteam.md",
+     "sha256": "42f8878ae3c31bc24f5b5003d23632392eb2e911dde64095dffa2372f3476730"
+    }
+   ]
+  },
+  {
+   "id": "P-SURF",
+   "diagnosis": "D-TOOL",
+   "artifact": "rubric",
+   "owner": "create-rubric-writing",
+   "change_kind": "grader_fix",
+   "original_placement": "Surface slots D1, D2, D4, X5, C1-C4, S6",
+   "proposed_change": "Accept any folder Robert owns; either share role and bind the recipient; any reply in #winddown; a none or own-accounts bucket with the money out of cost; bind C1-C4 to their issue; exclude total rows from S6.",
+   "affected_outcomes": [
+    "D1",
+    "D2",
+    "D4",
+    "X5",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "S6"
+   ],
+   "scope_difference": {
+    "reason_class": "grader_defect",
+    "rows_added": 0,
+    "rows_removed": 0,
+    "items_added": 0,
+    "writes_added": 0
+   },
+   "fair_discovery_path": "Unchanged; these are grading corrections",
+   "required_reruns": [
+    "rubric-writing",
+    "rubric-check"
+   ],
+   "reason": "Adjudication of each slot against the prompt and the ask.",
+   "evidence": [
+    {
+     "path": "Working_Files/run_forensics/rev6/review/surface_adjudication.md",
+     "sha256": "8c1a066059af87400dec4e60f441c8d8b4d65bdfeb7c189f6b5ded4fb164f95b"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1 @@
+Walked Evals/1_Prompt_Eval.md §2.1 five checks on every fork above, and Evals/0_Injection_Quality_Eval.md Check C on every seeded claim through the cold reviews in §13. Load-bearing base values were re-read through hg.py: the notices (`00_PreScenario/svb_processed_robert.json`), REVENUE_DAILY sums, and the anchor messages (`00_PreScenario/verified_anchors.txt`).

@@ -1,0 +1,83 @@
+[
+ {
+  "id": "RO1",
+  "fact": "Every one of the 58 serving ad tickets gets its own comment with that ad's call (Skip included)",
+  "work_kind": "limited_reconciliation",
+  "weight": 3,
+  "mechanisms": [],
+  "why_not_surface": "no selector counts comments per issue"
+ },
+ {
+  "id": "RO2",
+  "fact": "Each comment on an ad that needs work carries its hand-off date: Fri Oct 10 on Android US phone, Wed Oct 15 otherwise",
+  "work_kind": "limited_reconciliation",
+  "weight": 3,
+  "mechanisms": [
+   "R_FLIGHT_CHANGE",
+   "R_REVIEW_WINDOW"
+  ],
+  "why_not_surface": "comment text is concatenated across issues"
+ },
+ {
+  "id": "RO3",
+  "fact": "Exactly the 48 ads that need new work are assigned to their maker (42 to Marcus, 6 to Julia); the 10 Skip ads stay unassigned",
+  "work_kind": "multi_source_reconciliation",
+  "weight": 5,
+  "mechanisms": [
+   "R_TEST_TURNED_DOWN",
+   "R_FLIGHT_CHANGE",
+   "R_STATICS_COVER",
+   "R_TABLET_TRIM"
+  ],
+  "why_not_surface": "assignee identity per issue is not decoded"
+ },
+ {
+  "id": "RO7",
+  "fact": "The plan doc and the tracker are shared with the review attendees so they can comment, and both links are in Leonard's thread",
+  "work_kind": "lookup",
+  "weight": 1,
+  "mechanisms": [],
+  "why_not_surface": "share_reader binds to the tracker and the reader role; the plan link is not a decoded identity"
+ },
+ {
+  "id": "RO8",
+  "fact": "The new Halloween icon ticket is due by the Thu Oct 16 12:00 PT merge cut; the iPad set ticket by the same cut",
+  "work_kind": "limited_reconciliation",
+  "weight": 3,
+  "mechanisms": [
+   "R_BUILD_CUT"
+  ],
+  "why_not_surface": "ticket text is concatenated across new tickets and a time of day is not decoded"
+ },
+ {
+  "id": "RO9",
+  "fact": "In the tracker, the app icon and the iPad and iPhone store sets are due by the Thu Oct 16 12:00 PT merge cut (an earlier internal date is fair); the Google Play set has no fixed date",
+  "work_kind": "multi_source_reconciliation",
+  "weight": 5,
+  "mechanisms": [
+   "R_BUILD_CUT"
+  ],
+  "why_not_surface": "a due window (any date up to the cut) needs a date comparison the field comparators do not have"
+ },
+ {
+  "id": "RO10",
+  "fact": "In the tracker, every ad on Android US phone that needs new work is due with Frederick by Fri Oct 10, every other working ad by Wed Oct 15 (not Fri Oct 17); Skip ads have no due date",
+  "work_kind": "multi_source_reconciliation",
+  "weight": 5,
+  "mechanisms": [
+   "R_FLIGHT_CHANGE",
+   "R_REVIEW_WINDOW"
+  ],
+  "why_not_surface": "as RO9"
+ },
+ {
+  "id": "RO6",
+  "fact": "The plan says the Halloween icon ships in the Oct 17 store build (merged by the Oct 16 12:00 PT cut), not as a standalone swap around Oct 24",
+  "work_kind": "interpretation",
+  "weight": 3,
+  "mechanisms": [
+   "R_BUILD_CUT"
+  ],
+  "why_not_surface": "plan text can arrive through gdocs_create_document bodyText or gdocs_batch_update; one deliverable reads one tool"
+ }
+]

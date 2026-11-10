@@ -1,0 +1,73 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Applies to the baseline run and the verifier, not to Universe Explorer.
+
+Friction: none
+
+No forced tool errors and no async search waits are configured for this task. Per the task goal and the hardness
+design, configured friction here would be realism-only and is never used as a difficulty or horizon lever: the
+Long-Horizon call budget (manifest `call_budget` 208, floor 130) and the difficulty come from cross-source
+reconciliation across nine services, not from injected failures or waits (01_Grounding_Dossier.md §3, §5; the four
+supersession traps and the 47-member cohort carry the horizon). All friction fields are therefore unset:
+
+- error_functions: (none)
+- error_mode: (none)
+- error_rate: (none)
+- wait_functions: (none)
+- wait_min_seconds: (none)
+- wait_max_seconds: (none)
+
+## Alternate path (required for every errored function)
+
+| Errored function | Same facts available from | Locator | Persona-readable? |
+|---|---|---|---|
+| none — no function is errored | n/a | n/a | n/a |
+
+## Discovery the async wait depends on
+
+| Async function | What the agent must search for | Must NOT be named in the prompt |
+|---|---|---|
+| none — no async wait configured | n/a | n/a |
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No friction is configured: the baseline and verifier run against the universe with no forced error and no async wait.
+  Every deciding record is reachable directly as itself — the scoped records are julia_lawson-visible (prompt brief §5a,
+  `check-sql verdict: PASS`) and the GitHub / Linear / Trello / Confluence reads are unscoped.
+
+## Post-baseline checks
+
+- Forced error fired (failed calls visible in the trajectories): n/a
+- Async submit → check → get appeared, with the delay: n/a
+- Only 1.0 / 30 / 35 have been exercised before; any other value confirmed in the first trajectory: n/a
+
+## Self-review
+
+Friction is none by design (realism-only friction is not a difficulty or horizon lever here; GEN_EXECUTION §3a is met by
+reconciliation volume, not injected friction). The scenario is **not about an outage** or a service failure: it is a
+planning task (build the beta live-ops + push calendar), and no beat is held because of an infra outage — the holds are
+readiness, wiring and copy decisions (01_Grounding_Dossier.md §5), so the storyline motivates no forced error or wait.
+
+Counter-readings considered:
+- One could **argue** a forced GitHub-read error on `#470#rc_10` (§3) **would** make the per-PR reconciliation harder — but difficulty already comes from reconciling 25 PRs across nine services, so a forced error **would** be realism-only noise and **would** risk blocking a load-bearing read with no fair alternate. Rejected.
+- One could **argue** an async wait on the Slack search for `D05GU6L0XFH/1759270200.638114` (Robert's withdrawal) **would** add horizon — but it is reachable directly and the approval→withdrawal trap already forces searching the reply, so a wait **would** add latency, not a decision. Rejected.
+
+No errored function, so no alternate-path proof is owed; no async wait, so no async-target artifact is hidden from the
+prompt. Nothing here adds a "must not appear in the prompt" constraint beyond 01_Grounding_Dossier.md §11 and the prompt
+brief §9. Unresolved: none.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputsS · 03_Error_Async_Config.txt#ca4def2fa591 · 00_Assigments.md#4844ae9f5ae7 · 01_Grounding_Dossier.md#2ed958107b88 · 01_Universe_Inject.sql#4c6328ab2e86 · __context__#7b0cc66ffd45 · __assignment__#e8b8269803d5 · __policy__#dc4ab5df3cdd · __gate_policy__#9b78441396d8 · __review__#16d4d727890d · blocking 0 · warnings 0 · checks 12
+[PASS] assignment.v3_context: Julia Lawson / Product Manager; medium cap <85%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#4c6328ab2e86, 01_Hardness_Manifest.json#cb64fe02fe26, 01_Grounding_Dossier.md#2ed958107b88, solver/solver.py#8c25e08e10c3, 01c_Dispositions.json#777cf02e465b, 01c_Preflight_Report.json#d01a61396e73, 00_Assigments.md#4844ae9f5ae7, 01_Scenario_Design.md#d3905efac6f9, 01_Hardness_Manifest.draft.json#a69a0e4fe2ed, 01_Gradable_Surface.json#f17918c8dfc4, __context__#7b0cc66ffd45, __assignment__#e8b8269803d5, __policy__#dc4ab5df3cdd, __gate_policy__#9b78441396d8, __review__#16d4d727890d)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 2 evidenced counter-readings (of 2 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
