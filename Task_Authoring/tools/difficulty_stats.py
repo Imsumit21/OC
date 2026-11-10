@@ -88,6 +88,7 @@ look like "not found" and are not detected — check them by hand.
 """
 from __future__ import annotations
 
+import html
 import itertools
 import json
 import re
@@ -642,6 +643,11 @@ _DECISIONS = {"pass": True, "passed": True, "fail": False, "failed": False}
 
 def norm_title(text: str) -> str:
     text = _LINK.sub(r"\1", text.replace('\\"', '"'))
+    # The platform's verifier copy escapes square brackets in titles (\[PERSON_NAME_0001\]); the rubric JSON does not.
+    text = text.replace("\\[", "[").replace("\\]", "]")
+    # It can also render HTML entities (&gt;) and wrap a title in markdown bold. Applied to both sides, so a title
+    # that really contains these still matches itself (archived tasks: 786 + 18 verifier rows bound only this way).
+    text = re.sub(r"\*\*(.+?)\*\*", r"\1", html.unescape(text))
     text = text.translate(str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'", " ": " "}))
     return re.sub(r"\s+", " ", text).strip()
 
