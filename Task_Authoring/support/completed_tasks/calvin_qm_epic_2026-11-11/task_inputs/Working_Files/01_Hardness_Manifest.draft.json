@@ -1,0 +1,2090 @@
+{
+ "_note": "DRAFT manifest (scenario stage, design-3). Seeded ids are planned (plan/build_scenario.py, plan/seed_text.json, plan/reports.py); /create-injection writes the final manifest.",
+ "persona": "calvin_price",
+ "assignment_context": {
+  "context_hash": "7be566a0936c7c432ca21eb14e8ec3505bdb0e9c2307cdcdf88105091ea32cba",
+  "assignment_hash": "d644f7ef43f640770023fb9b350c4d6e018a4ee9e96e70dca94cf1c71b5d2728",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2025-10-01T00:00:00Z",
+  "difficulty_mode": "hard"
+ },
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "author_targets": {
+  "calls_per_run": "over 130 in every run",
+  "average": "strictly under 60 %",
+  "largest_pattern": "under 50 % of failing runs",
+  "design_target": "E[avg] <= 52 %",
+  "source": "requester, 2026-11-10"
+ },
+ "volume_exception": {
+  "reason": "49 cohort records and about 200 honest calls; reaching 500 would need padding, which fails on its own. The per-record floor counts read surfaces only (20 ticket comment reads, 16 PR reads, 12 build lookups), so it is 40, not the 120 quoted in the analysis, which counted writes",
+  "requester_confirmation": "requester, Claude Code chat 2026-11-10: 'i want over 130 tool calls in each runs ... you can choose from your self which option is best fit for my requirements in this task' (choice delegated; recorded in 00_Pre_Scenario_Analysis.md section 11, item 2)",
+  "call_budget_floor": 180,
+  "per_record_floor": 40
+ },
+ "requirements": {
+  "R1": "population: the rows of Vincent's flow pass sheet plus any bug somebody else saw in a build and told Calvin about in a DM since 26 Sep about the home screen after a level",
+  "R2": "Status of each area: Clear when all its reports are Passed, otherwise Open, with its count of Open reports",
+  "R3": "Status of each report: Passed, Waiting on QA or Waiting on a fix",
+  "R4": "Ticket for each report: the ticket that already holds it is moved under the area child with a note and a matching state, otherwise a new sub-issue",
+  "R5": "Review list for each report: not Passed and in an area Leonard's review card lists",
+  "R6": "new sub-issue fields: ZOM team, parent the area child, report as title, state by status, no priority, no assignee",
+  "R7": "stock-take sheet with tabs Reports and Areas in the ZM queue manager folder, shared with everyone on the review invite",
+  "R8": "reply to Brian in the DM with the counts: passed, waiting on QA, waiting on a fix, clear areas, on the review list",
+  "R9": "one slide with the five numbers added to Calvin's queue manager deck"
+ },
+ "services": {
+  "slack": {
+   "role": "hub, QA chat, build log, corrections",
+   "weight_reason": "the ask, the branch each build came from, two later corrections and one report live here"
+  },
+  "linear": {
+   "role": "epic, tickets, destination",
+   "weight_reason": "Brian's note, the ticket ties and every structural write are here"
+  },
+  "github": {
+   "role": "PR truth",
+   "weight_reason": "merged PRs, Arthur's inline reviews and Oliver's comment decide whether a fix is merged"
+  },
+  "gsheets": {
+   "role": "Vincent's flow pass sheet and the stock-take sheet",
+   "weight_reason": "the report list is read here and the deliverable is written here"
+  },
+  "gdocs": {
+   "role": "Arthur's rule and the sheet legend",
+   "weight_reason": "which builds count for a pass, and what ok, nr and ok, chat mean"
+  },
+  "gdrive": {
+   "role": "destination folder and sharing",
+   "weight_reason": "the sheet goes in Calvin's folder and is shared"
+  },
+  "gmail": {
+   "role": "review invitations",
+   "weight_reason": "the invitation names the review, points at Leonard's card and carries the older list of areas the card replaced"
+  },
+  "gcal": {
+   "role": "review event",
+   "weight_reason": "the attendee list the sheet is shared with"
+  },
+  "trello": {
+   "role": "Leonard's review card",
+   "weight_reason": "the areas the review covers, which decide the review list"
+  },
+  "gslides": {
+   "role": "Calvin's queue manager deck",
+   "weight_reason": "the slide with the five numbers is written here"
+  }
+ },
+ "anchors": [
+  {
+   "id": "AN1",
+   "prompt_reference": "Brian's message from yesterday",
+   "service": "slack",
+   "locator": "D0770ET6WBW/1759264805.214409",
+   "requirement_ids": [
+    "R1",
+    "R7",
+    "R8",
+    "R9"
+   ]
+  },
+  {
+   "id": "AN2",
+   "prompt_reference": "the Queue Manager ticket",
+   "service": "linear",
+   "locator": "ZOM-543",
+   "requirement_ids": [
+    "R2",
+    "R4"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "linear",
+   "container": "ZOM-543",
+   "locator": "ZOM-543",
+   "kind": "delegation",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "comment_faaa792418a942cd40be046d8d217a7d"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D0770ET6WBW/1759264805.214409",
+   "delegation_quote": "I left a note on the ticket",
+   "requirement_ids": [
+    "R2",
+    "R3",
+    "R4",
+    "R6",
+    "R9"
+   ],
+   "names_authorities": [
+    {
+     "id": "H1",
+     "quote": "Arthur's rule for QA passes"
+    },
+    {
+     "id": "H2",
+     "quote": "the agenda of Thursday's review"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "service": "gsheets",
+   "container": "f_cb40955893624e1acb8500",
+   "locator": "f_cb40955893624e1acb8500",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "f_cb40955893624e1acb8500"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D0770ET6WBW/1759264805.214409",
+   "delegation_quote": "Vincent's flow pass",
+   "requirement_ids": [
+    "R1"
+   ]
+  },
+  {
+   "id": "K3",
+   "service": "gdocs",
+   "container": "f_6d0326fa006b136f1bbf82",
+   "locator": "f_6d0326fa006b136f1bbf82",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_6d0326fa006b136f1bbf82"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "Arthur's rule for QA passes",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K4",
+   "service": "trello",
+   "container": "68daad83bacf52c6ea7e1593",
+   "locator": "68daad83bacf52c6ea7e1593",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "68daad83bacf52c6ea7e1593",
+    "68dc11dceb76ad640995fd98"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "the agenda of Thursday's review",
+   "requirement_ids": [
+    "R5"
+   ]
+  },
+  {
+   "id": "K5",
+   "service": "gdrive",
+   "container": "d_36cdb0374c4aad3b8bf741",
+   "locator": "d_36cdb0374c4aad3b8bf741",
+   "kind": "destination",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "d_36cdb0374c4aad3b8bf741"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D0770ET6WBW/1759264805.214409",
+   "delegation_quote": "your ZM queue manager folder",
+   "requirement_ids": [
+    "R7"
+   ]
+  },
+  {
+   "id": "K6",
+   "service": "gdocs",
+   "container": "f_d3a1aa5976285aac98ffda",
+   "locator": "f_d3a1aa5976285aac98ffda",
+   "kind": "format",
+   "incorporated_via": [
+    "AN1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "f_d3a1aa5976285aac98ffda"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_cb40955893624e1acb8500",
+   "delegation_quote": "my pass sheet legend",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K7",
+   "service": "gcal",
+   "container": "evt_342a813cb7765d4a6fce8d",
+   "locator": "evt_342a813cb7765d4a6fce8d",
+   "kind": "recipient",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "evt_342a813cb7765d4a6fce8d"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D0770ET6WBW/1759264805.214409",
+   "delegation_quote": "everyone on the review invite",
+   "requirement_ids": [
+    "R7"
+   ]
+  },
+  {
+   "id": "K8",
+   "service": "slack",
+   "container": "D05U73FNDDL",
+   "locator": "D05U73FNDDL",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "D05U73FNDDL/1759252212.611349"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "told you about in a DM",
+   "requirement_ids": [
+    "R1"
+   ]
+  },
+  {
+   "id": "K9",
+   "service": "slack",
+   "container": "D06UPGF5PQV",
+   "locator": "D06UPGF5PQV",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K2",
+    "K6"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "D06UPGF5PQV/1758820544.160399"
+   ],
+   "delegated_by_record": "f_d3a1aa5976285aac98ffda",
+   "delegation_quote": "I told the dev ok in our chat",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K10",
+   "service": "github",
+   "container": "harmonygames-Games/match3d#472",
+   "locator": "harmonygames-Games/match3d#472",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#472#rc_1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "a fix for it is in main",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K16",
+   "service": "github",
+   "container": "harmonygames-Games/match3d#475",
+   "locator": "harmonygames-Games/match3d#475",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#475#rc_1"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "a fix for it is in main",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K11",
+   "service": "github",
+   "container": "harmonygames-Games/match3d#473",
+   "locator": "harmonygames-Games/match3d#473",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#473#c_2"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "a fix for it is in main",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K12",
+   "service": "linear",
+   "container": "ZOM-556",
+   "locator": "ZOM-556",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "comment_b3c560833d151268202546002e7613cf"
+   ],
+   "base_pointers": [
+    "ZOM-556"
+   ],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "if a ticket already has the report",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K13",
+   "service": "slack",
+   "container": "C08R27X0EAH",
+   "locator": "C08R27X0EAH",
+   "kind": "amendment",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K3"
+   ],
+   "seeded_ids": [
+    "C08R27X0EAH/1759267212.418339"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6d0326fa006b136f1bbf82",
+   "delegation_quote": "until somebody sees the bug again on a main build made after the one it passed on",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K18",
+   "service": "slack",
+   "container": "C08R27X0EAH",
+   "locator": "C08R27X0EAH",
+   "kind": "amendment",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K3"
+   ],
+   "seeded_ids": [
+    "C08R27X0EAH/1759268652.552719"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6d0326fa006b136f1bbf82",
+   "delegation_quote": "until somebody sees the bug again on a main build made after the one it passed on",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K21",
+   "service": "linear",
+   "container": "ZOM-585",
+   "locator": "ZOM-585",
+   "kind": "amendment",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K3"
+   ],
+   "seeded_ids": [
+    "comment_5f530dc138f29bec3080eb175df98921"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6d0326fa006b136f1bbf82",
+   "delegation_quote": "until somebody sees the bug again on a main build made after the one it passed on",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K22",
+   "service": "linear",
+   "container": "ZOM-586",
+   "locator": "ZOM-586",
+   "kind": "amendment",
+   "incorporated_via": [
+    "AN1",
+    "K1",
+    "K3"
+   ],
+   "seeded_ids": [
+    "comment_16aff20eceb0906dc0509214c2973635"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_6d0326fa006b136f1bbf82",
+   "delegation_quote": "until somebody sees the bug again on a main build made after the one it passed on",
+   "requirement_ids": [
+    "R3"
+   ]
+  },
+  {
+   "id": "K14",
+   "service": "slack",
+   "container": "D05HYDTG5TJ",
+   "locator": "D05HYDTG5TJ",
+   "kind": "format",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "D05HYDTG5TJ/1756838837.147599"
+   ],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "Julia's point about your tickets",
+   "requirement_ids": [
+    "R6"
+   ]
+  },
+  {
+   "id": "K15",
+   "service": "linear",
+   "container": "ZOM-560",
+   "locator": "ZOM-560",
+   "kind": "requirement",
+   "incorporated_via": [
+    "AN1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "comment_9f28b3d8d66bd04e3f7fc46bc6ed1ea9"
+   ],
+   "base_pointers": [
+    "ZOM-560"
+   ],
+   "delegated_by_record": "comment_faaa792418a942cd40be046d8d217a7d",
+   "delegation_quote": "if a ticket already has the report",
+   "requirement_ids": [
+    "R4"
+   ]
+  },
+  {
+   "id": "K19",
+   "service": "gslides",
+   "container": "f_637e63ae6c1b4a7eb016aa",
+   "locator": "f_637e63ae6c1b4a7eb016aa",
+   "kind": "destination",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "f_637e63ae6c1b4a7eb016aa"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D0770ET6WBW/1759264805.214409",
+   "delegation_quote": "your queue manager deck",
+   "requirement_ids": [
+    "R9"
+   ]
+  },
+  {
+   "id": "K20",
+   "service": "gmail",
+   "container": "calvin.price@harmonygames.co/<calendar-f2b39cd5-884e-2def-a4d7-d41d80d4c55b@google.com>",
+   "locator": "calvin.price@harmonygames.co/<calendar-f2b39cd5-884e-2def-a4d7-d41d80d4c55b@google.com>",
+   "kind": "recipient",
+   "incorporated_via": [
+    "AN1"
+   ],
+   "seeded_ids": [
+    "calvin.price@harmonygames.co/<calendar-f2b39cd5-884e-2def-a4d7-d41d80d4c55b@google.com>"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D0770ET6WBW/1759264805.214409",
+   "delegation_quote": "the review invite",
+   "requirement_ids": [
+    "R7"
+   ]
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "Arthur's rule for QA passes",
+   "home_service": "gdocs",
+   "decoy_service": "gdocs",
+   "governs": [
+    "R3"
+   ],
+   "findable_query": "QA passes",
+   "seeded_ids": [
+    "f_6d0326fa006b136f1bbf82"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "f_ea7517885d11570b54bf13"
+   ],
+   "decoy_base_pointers": [],
+   "decoy_scope": {
+    "dimension": "game",
+    "decoy": "Domino Delights",
+    "task": "ZM (match3d)"
+   }
+  },
+  {
+   "id": "H2",
+   "name": "Leonard's review card",
+   "home_service": "trello",
+   "decoy_service": "slack",
+   "governs": [
+    "R5"
+   ],
+   "findable_query": "flow review",
+   "seeded_ids": [
+    "68daad83bacf52c6ea7e1593",
+    "68dc11dceb76ad640995fd98"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "D0770ET6WBW/1759164072.337219",
+    "calvin.price@harmonygames.co/<calendar-019530c0-b92a-84ed-a231-b228911277e8@google.com>"
+   ],
+   "decoy_base_pointers": []
+  }
+ ],
+ "cohort": {
+  "definition": "38 rows of Vincent's flow pass sheet, 1 report raised outside it and the 10 areas of Brian's note: 49 records",
+  "definition_source": [
+   "D0770ET6WBW/1759264805.214409",
+   "comment_faaa792418a942cd40be046d8d217a7d"
+  ],
+  "key": "report or area",
+  "size": 49,
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 22,
+    "seeded": true,
+    "seeded_ids": [
+     "comment_b3c560833d151268202546002e7613cf",
+     "comment_9f28b3d8d66bd04e3f7fc46bc6ed1ea9",
+     "comment_5f530dc138f29bec3080eb175df98921",
+     "comment_16aff20eceb0906dc0509214c2973635"
+    ],
+    "requirement": "R4",
+    "decides": "Ticket for each report",
+    "why_no_bulk": "linear_list_issues returns no comments; the note that ties a row to a ticket needs that ticket's own linear_list_comments",
+    "short_circuit": "a row with a blank Ticket cell is only settled by reading candidate tickets; titles use other words, so one search cannot sweep the ties"
+   },
+   {
+    "service": "github",
+    "tool": "github_get_pull_request, github_get_pull_request_reviews, github_get_pull_request_comments and github_get_issue_comments",
+    "per_record_calls": 4.0,
+    "records": 4,
+    "seeded": true,
+    "seeded_ids": [
+     "harmonygames-Games/match3d#472#rc_1",
+     "harmonygames-Games/match3d#475#rc_1",
+     "harmonygames-Games/match3d#473#c_2"
+    ],
+    "requirement": "R3",
+    "decides": "Status of each report",
+    "why_no_bulk": "github_search_pull_requests returns neither reviews, inline comments nor conversation comments, and in:comments misses inline ones",
+    "short_circuit": "merged state alone does not say whether a fix is in a PR; only its own review and comment surfaces do, and each of the four PRs (#465, #472, #473, #475) needs them"
+   },
+   {
+    "service": "slack",
+    "tool": "slack_conversations_history or slack_search_public_and_private on #builds",
+    "per_record_calls": 1.0,
+    "records": 12,
+    "seeded": false,
+    "requirement": "R3",
+    "decides": "Status of each report",
+    "why_no_bulk": "the sheet names builds by number only; the branch is in each build's own post, and 146 match3d posts in the last week of September cannot be read in one call",
+    "short_circuit": "a re-test only counts on a build of the main branch, so each of the 12 distinct builds in the Re-test column and the chat needs its branch"
+   },
+   {
+    "service": "gsheets",
+    "tool": "gsheets_values_get",
+    "per_record_calls": 0.1,
+    "records": 38,
+    "seeded": true,
+    "seeded_ids": [
+     "f_cb40955893624e1acb8500"
+    ],
+    "requirement": "R1",
+    "decides": "population",
+    "why_no_bulk": "one range read returns the rows; counted at a tenth because it is a bulk read",
+    "short_circuit": "the list itself; nothing else holds the rows"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "C1",
+   "root_cause": "A24",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_cb40955893624e1acb8500",
+     "finding": "row 1: fix #465, re-test ok, chat"
+    },
+    {
+     "service": "slack",
+     "record": "D06UPGF5PQV/1758817744.353289",
+     "finding": "Calvin: #1718 already tested"
+    },
+    {
+     "service": "slack",
+     "record": "D06UPGF5PQV/1758820544.160399",
+     "finding": "Vincent: looks ok"
+    },
+    {
+     "service": "slack",
+     "record": "C05433XK267/1758817549.151639",
+     "finding": "#1718 was built from the QueueManager branch"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_6d0326fa006b136f1bbf82",
+     "finding": "only builds of the main branch count"
+    }
+   ]
+  },
+  {
+   "id": "C2",
+   "root_cause": "A11",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_cb40955893624e1acb8500",
+     "finding": "row 9: nr on #1745"
+    },
+    {
+     "service": "slack",
+     "record": "C05433XK267/1759263189.219529",
+     "finding": "Android Submission #135 built from main on 30 Sep"
+    },
+    {
+     "service": "slack",
+     "record": "C08R27X0EAH/1759267212.418339",
+     "finding": "Vincent: it came up again on Submission 135"
+    }
+   ]
+  },
+  {
+   "id": "C3",
+   "root_cause": "A25",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_cb40955893624e1acb8500",
+     "finding": "rows 13 and 38: no fix named"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#473",
+     "finding": "Addressables/sp, merged 30 Sep 15:41 UTC"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#473#c_2",
+     "finding": "Oliver: it also has both fixes"
+    }
+   ]
+  },
+  {
+   "id": "C4",
+   "root_cause": "A7",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "gsheets",
+     "record": "f_cb40955893624e1acb8500",
+     "finding": "row 11: no ticket"
+    },
+    {
+     "service": "linear",
+     "record": "ZOM-556",
+     "finding": "open base ticket under other words"
+    },
+    {
+     "service": "linear",
+     "record": "comment_b3c560833d151268202546002e7613cf",
+     "finding": "Vincent ties his row to it"
+    }
+   ]
+  },
+  {
+   "id": "C5",
+   "root_cause": "A12",
+   "ends_in": "R5",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "D0770ET6WBW/1759164072.337219",
+     "finding": "Brian: Collect & Win and Daily Gift"
+    },
+    {
+     "service": "gmail",
+     "record": "calvin.price@harmonygames.co/<calendar-019530c0-b92a-84ed-a231-b228911277e8@google.com>",
+     "finding": "first invitation: the same two areas, Friday"
+    },
+    {
+     "service": "trello",
+     "record": "68dc11dceb76ad640995fd98",
+     "finding": "changed: Collect & Win and Level-end rewards, Thursday"
+    }
+   ]
+  },
+  {
+   "id": "C6",
+   "root_cause": "A17",
+   "ends_in": "R1",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "comment_faaa792418a942cd40be046d8d217a7d",
+     "finding": "any bug told to Calvin in a DM since the 26th"
+    },
+    {
+     "service": "slack",
+     "record": "D05U73FNDDL/1759252212.611349",
+     "finding": "Marcus's icon glow report"
+    },
+    {
+     "service": "gsheets",
+     "record": "f_cb40955893624e1acb8500",
+     "finding": "no row has it"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T_BRANCH",
+   "family": "done_gap",
+   "services": [
+    "gsheets",
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_cb40955893624e1acb8500",
+    "f_6d0326fa006b136f1bbf82"
+   ],
+   "base_pointers": [
+    "D06UPGF5PQV/1758820544.160399",
+    "D06UPGF5PQV/1758817744.353289",
+    "C05433XK267/1758817549.151639"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "rows 1, 2 and 25 are Passed: the sheet says ok and Vincent wrote looks ok, boss arena as well, in the chat",
+   "resolver": "the build he looked at, Match 3D iOS Internal #1718, was cut from Calvin's QueueManager branch (the #builds post says so) and Arthur's rule counts only builds of the main branch; #465 is merged, so they wait on QA",
+   "discovery_order": "the sheet row and the chat ok are both met before anyone looks the build number up in #builds"
+  },
+  {
+   "id": "T_INLINE",
+   "family": "done_gap",
+   "services": [
+    "gsheets",
+    "github",
+    "linear"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#472#rc_1",
+    "ZOM-571",
+    "ZOM-574"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#472"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "rows 12 and 15 wait on QA: the sheet gives #472 as their fix, #472 is merged and both tickets are In Validation",
+   "resolver": "Arthur's inline review comment on #472 says the season pass icon restart and the event bar start are not in that diff; the review body is empty and the PR's own summary lists only the Collect & Win wait",
+   "discovery_order": "the merged PR and the In Validation ticket come back first; the inline comment needs github_get_pull_request_comments"
+  },
+  {
+   "id": "T_INLINE_PACK",
+   "family": "done_gap",
+   "services": [
+    "gsheets",
+    "github",
+    "linear"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#475#rc_1",
+    "ZOM-581"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#475"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "row 32 waits on QA: the sheet gives #475 as its fix, #475 is merged and the ticket is In Validation",
+   "resolver": "Arthur's inline review comment on #475 says the pack sound stop is nowhere in that PR; the review body is empty and the PR's summary does not mention sound",
+   "discovery_order": "the merged PR and the In Validation ticket come back first; the inline comment needs its own call"
+  },
+  {
+   "id": "T_REOPEN",
+   "family": "superseding",
+   "services": [
+    "gsheets",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_cb40955893624e1acb8500",
+    "C08R27X0EAH/1759267212.418339"
+   ],
+   "base_pointers": [
+    "C05433XK267/1759263189.219529"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "row 9 is Passed: nr on a main build",
+   "resolver": "Vincent's later reply under his Sep 15 submission-issues thread in #zombie-bugs says it came back on Android Submission 135, a main build made after #1745, so under Arthur's note the pass no longer stands",
+   "discovery_order": "the sheet is read first; the reply sits under a root two weeks older than the pass",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "seeded": true,
+     "at": "2025-09-30T19:30:52Z",
+     "container": "file:f_cb40955893624e1acb8500",
+     "id": "f_cb40955893624e1acb8500"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-09-30T21:20:12Z",
+     "container": "slack:C08R27X0EAH/1757939514.864549",
+     "id": "C08R27X0EAH/1759267212.418339"
+    }
+   ]
+  },
+  {
+   "id": "T_BACK",
+   "family": "superseding",
+   "services": [
+    "gsheets",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_cb40955893624e1acb8500",
+    "C08R27X0EAH/1759268652.552719"
+   ],
+   "base_pointers": [
+    "C05433XK267/1759263189.219529"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "row 29 is Passed: ok on a main build",
+   "resolver": "Robert's later reply under his Sep 10 endless thread in #zombie-bugs says the home intro played again every time on Android Submission 135, a main build made after #1750",
+   "discovery_order": "the sheet is read first; the reply sits under a root three weeks old and names no row",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "seeded": true,
+     "at": "2025-09-30T19:30:52Z",
+     "container": "file:f_cb40955893624e1acb8500",
+     "id": "f_cb40955893624e1acb8500"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-09-30T21:44:12Z",
+     "container": "slack:C08R27X0EAH/1757467270.178829",
+     "id": "C08R27X0EAH/1759268652.552719"
+    }
+   ]
+  },
+  {
+   "id": "T_ELSE",
+   "family": "completion_elsewhere",
+   "services": [
+    "gsheets",
+    "github",
+    "linear"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#473#c_2",
+    "ZOM-572",
+    "ZOM-573",
+    "ZOM-584"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#473"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "rows 13, 14, 37 and 38 wait on a fix: the sheet names no fix and their tickets are Todo",
+   "resolver": "Oliver wrote on his own PR #473, merged on 30 Sep, that it also has those four fixes",
+   "discovery_order": "the sheet's blank Fix cell and the Todo ticket are read first; #473 is named nowhere in the sheet"
+  },
+  {
+   "id": "T_BODY",
+   "family": "completion_elsewhere",
+   "services": [
+    "gsheets",
+    "github",
+    "linear"
+   ],
+   "seeded_ids": [
+    "ZOM-568"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#472"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "row 6 waits on a fix: the sheet names no fix and its ticket is Todo",
+   "resolver": "the description of Calvin's own merged PR #472 says it also holds the pre-level panel until the level-end coins have landed; it merged on 30 Sep and QA has not tried a build with it",
+   "discovery_order": "the sheet's blank Fix cell and the Todo ticket are read first; the description needs the PR itself, not the list"
+  },
+  {
+   "id": "T_REOPEN_TICKET",
+   "family": "superseding",
+   "services": [
+    "gsheets",
+    "linear",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_cb40955893624e1acb8500",
+    "comment_5f530dc138f29bec3080eb175df98921",
+    "ZOM-585"
+   ],
+   "base_pointers": [
+    "C05433XK267/1759263189.219529"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "row 17 is Passed: ok on a main build, and Vincent's own note on the ticket says ok",
+   "resolver": "Samuel's later note on ZOM-585 says it came back on Android Submission 135, a main build made after #1757, so under Arthur's note the pass no longer stands",
+   "discovery_order": "the sheet is read first; the note needs that ticket's own comments",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "seeded": true,
+     "at": "2025-09-30T19:30:52Z",
+     "container": "file:f_cb40955893624e1acb8500",
+     "id": "f_cb40955893624e1acb8500"
+    },
+    {
+     "service": "linear",
+     "seeded": true,
+     "at": "2025-09-30T21:52:18Z",
+     "container": "linear:ZOM-585",
+     "id": "comment_5f530dc138f29bec3080eb175df98921"
+    }
+   ]
+  },
+  {
+   "id": "T_BACK_TICKET",
+   "family": "superseding",
+   "services": [
+    "gsheets",
+    "linear",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_cb40955893624e1acb8500",
+    "comment_16aff20eceb0906dc0509214c2973635",
+    "ZOM-586"
+   ],
+   "base_pointers": [
+    "C05433XK267/1759263189.219529"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "row 24 is Passed: nr on a main build, and Zombie Lane is Clear",
+   "resolver": "Owen's later note on ZOM-586 says the lane bar starts from zero again on Android Submission 135, so the row is open and no area is Clear",
+   "discovery_order": "the sheet is read first; the note needs that ticket's own comments",
+   "version_records": [
+    {
+     "service": "gsheets",
+     "seeded": true,
+     "at": "2025-09-30T19:30:52Z",
+     "container": "file:f_cb40955893624e1acb8500",
+     "id": "f_cb40955893624e1acb8500"
+    },
+    {
+     "service": "linear",
+     "seeded": true,
+     "at": "2025-09-30T22:07:44Z",
+     "container": "linear:ZOM-586",
+     "id": "comment_16aff20eceb0906dc0509214c2973635"
+    }
+   ]
+  },
+  {
+   "id": "T_FILT",
+   "family": "exact_predicate",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "D05U73FNDDL/1759252212.611349"
+   ],
+   "base_pointers": [],
+   "requirement": "R1",
+   "expected_wrong_reading": "the reports are the 38 sheet rows",
+   "resolver": "Brian's note brings in any bug somebody else saw in a build and told Calvin about in a DM since the 26th; Marcus told him about the pass icon glow on 30 Sep and no ticket holds it"
+  },
+  {
+   "id": "T_ALIAS_GIFT",
+   "family": "scope_alias",
+   "services": [
+    "gsheets",
+    "linear"
+   ],
+   "seeded_ids": [
+    "comment_b3c560833d151268202546002e7613cf"
+   ],
+   "base_pointers": [
+    "ZOM-556"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "row 11 has no ticket, so it needs a new sub-issue",
+   "resolver": "base ticket ZOM-556, the daily gift skip reset ticket, already has it; Vincent's note on that ticket ties his row to it"
+  },
+  {
+   "id": "T_ALIAS_STREAK",
+   "family": "scope_alias",
+   "services": [
+    "gsheets",
+    "linear"
+   ],
+   "seeded_ids": [
+    "comment_9f28b3d8d66bd04e3f7fc46bc6ed1ea9"
+   ],
+   "base_pointers": [
+    "ZOM-560"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "row 20 has no ticket, so it needs a new sub-issue",
+   "resolver": "base ticket ZOM-560, the abandoned pack freezer ticket, already has it; Vincent's note ties his row to it"
+  },
+  {
+   "id": "T_GATE",
+   "family": "effective_date",
+   "services": [
+    "slack",
+    "trello",
+    "gmail"
+   ],
+   "seeded_ids": [
+    "D0770ET6WBW/1759164072.337219",
+    "calvin.price@harmonygames.co/<calendar-019530c0-b92a-84ed-a231-b228911277e8@google.com>",
+    "68dc11dceb76ad640995fd98",
+    "68daad83bacf52c6ea7e1593",
+    "calvin.price@harmonygames.co/<calendar-f2b39cd5-884e-2def-a4d7-d41d80d4c55b@google.com>"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "Collect & Win and Daily Gift are the areas for the review, on Friday",
+   "resolver": "Leonard's review card was changed on 30 Sep: Thursday, with Collect & Win and Level-end rewards; Daily Gift moves to next week",
+   "discovery_order": "Brian's own line in the anchor chat is read first; the card is on Trello",
+   "version_records": [
+    {
+     "service": "gmail",
+     "seeded": true,
+     "at": "2025-09-29T16:05:14Z",
+     "container": "gmail:calvin.price@harmonygames.co/<calendar-019530c0-b92a-84ed-a231-b228911277e8@google.com>",
+     "id": "calvin.price@harmonygames.co/<calendar-019530c0-b92a-84ed-a231-b228911277e8@google.com>"
+    },
+    {
+     "service": "slack",
+     "seeded": true,
+     "at": "2025-09-29T16:41:12Z",
+     "container": "slack:D0770ET6WBW/1759164072.337219",
+     "id": "D0770ET6WBW/1759164072.337219"
+    },
+    {
+     "service": "trello",
+     "seeded": true,
+     "at": "2025-09-30T17:22:36Z",
+     "container": "trello:68daad83bacf52c6ea7e1593",
+     "id": "68dc11dceb76ad640995fd98"
+    }
+   ]
+  },
+  {
+   "id": "T_PARK",
+   "family": "superseding",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "D06UPGF5PQV/1758806199.381319",
+    "D0770ET6WBW/1758808795.588519"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the input blocker after every level is a report to carry",
+   "resolver": "Brian parked it the same day in his own chat with Calvin, and his note leaves it out",
+   "version_records": [
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-09-25T13:16:39Z",
+     "container": "slack:D06UPGF5PQV/1758806199.381319",
+     "base_pointer": "D06UPGF5PQV/1758806199.381319"
+    },
+    {
+     "service": "slack",
+     "seeded": false,
+     "at": "2025-09-25T13:59:55Z",
+     "container": "slack:D0770ET6WBW/1758808795.588519",
+     "base_pointer": "D0770ET6WBW/1758808795.588519"
+    }
+   ]
+  },
+  {
+   "id": "T_SHARE",
+   "family": "authority",
+   "services": [
+    "gcal",
+    "gmail",
+    "gdrive"
+   ],
+   "seeded_ids": [
+    "evt_342a813cb7765d4a6fce8d",
+    "calvin.price@harmonygames.co/<calendar-f2b39cd5-884e-2def-a4d7-d41d80d4c55b@google.com>"
+   ],
+   "base_pointers": [],
+   "requirement": "R7",
+   "expected_wrong_reading": "the sheet is shared with Brian and Vincent, the two people in the conversation",
+   "resolver": "the hub says everyone on the review invite: Leonard, Brian, Arthur, Julia and Vincent"
+  },
+  {
+   "id": "T_FIELDS",
+   "family": "authority",
+   "services": [
+    "linear",
+    "slack"
+   ],
+   "seeded_ids": [
+    "comment_faaa792418a942cd40be046d8d217a7d"
+   ],
+   "base_pointers": [
+    "D05HYDTG5TJ/1756838837.147599"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "a new sub-issue takes the priority and assignee the report suggests",
+   "resolver": "Brian's note, citing Julia's point about Calvin's tickets, wants no priority and no assignee on the new ones"
+  },
+  {
+   "id": "T_STATE",
+   "family": "stale_summary",
+   "services": [
+    "linear",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "ZOM-571",
+    "ZOM-572",
+    "ZOM-581",
+    "ZOM-574",
+    "ZOM-573",
+    "ZOM-584",
+    "ZOM-568",
+    "ZOM-585"
+   ],
+   "base_pointers": [],
+   "requirement": "R4",
+   "expected_wrong_reading": "a ticket's own state is where the report stands",
+   "resolver": "the state follows the status worked out from the records: ZOM-571, ZOM-574 and ZOM-581 go back to Todo, ZOM-585 goes back to Todo, and ZOM-568, ZOM-572, ZOM-573 and ZOM-584 go to In Validation"
+  },
+  {
+   "id": "D_DDRULE",
+   "family": "distractor",
+   "services": [
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_ea7517885d11570b54bf13"
+   ],
+   "base_pointers": [],
+   "requirement": "R3",
+   "expected_wrong_reading": "a pass on the dev's branch build is enough",
+   "resolver": "that doc is about DD hotfixes",
+   "distractor_type": "other_title"
+  },
+  {
+   "id": "D_QMCARD",
+   "family": "distractor",
+   "services": [
+    "trello"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "68c453cd0ff184d95550bc58"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Leonard ticked the Queue Manager roadmap card on 30 Sep, so the work is done",
+   "resolver": "the card marks the feature as merged; report statuses come from the sheet and the records",
+   "distractor_type": "stale_summary"
+  },
+  {
+   "id": "D_SKIP",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C08R27X0EAH/1758903616.346579"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the tutorial skip exceptions are reports to carry",
+   "resolver": "Brian's note leaves Oliver's skip work out, and a channel post is not something told to Calvin in a DM",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "D_ICONVFX",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "D06UPGF5PQV/1758721951.996909"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Vincent's chat remark about the pass icon VFX is another report",
+   "resolver": "for Vincent the sheet is the list",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "D_CANVAS",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "CF4EDAF93359/1759236624.010909"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "items on Vincent's Bug Checklist canvas are more reports",
+   "resolver": "Brian's note leaves both canvases as they are",
+   "distractor_type": "scope_adjacent"
+  },
+  {
+   "id": "D_COINDM",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "D0770ET6WBW/1758808900.412489"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Brian's own line about the coin animation is a second report",
+   "resolver": "it is dated the 25th, before Vincent's pass, and it is row 5 already",
+   "distractor_type": "already_done"
+  },
+  {
+   "id": "D_432",
+   "family": "distractor",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "ZOM-432"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "ZOM-432 is the daily gift ticket for row 11",
+   "resolver": "ZOM-432 is about the gift artwork frame; ZOM-556 carries Vincent's tie",
+   "distractor_type": "near_duplicate_record"
+  },
+  {
+   "id": "D_OLDINVITE",
+   "family": "distractor",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [
+    "calvin.price@harmonygames.co/<calendar-019530c0-b92a-84ed-a231-b228911277e8@google.com>"
+   ],
+   "base_pointers": [],
+   "requirement": "R5",
+   "expected_wrong_reading": "the first invitation's areas still stand",
+   "resolver": "the card was changed on 30 Sep and the updated invitation says so",
+   "distractor_type": "withdrawn_ask"
+  },
+  {
+   "id": "D_OLDBUILD",
+   "family": "distractor",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "C0880U9751A/1759185627.317849"
+   ],
+   "base_pointers": [
+    "C05433XK267/1759160363.685759",
+    "C05433XK267/1759162758.968639"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "Robert saw the arena button bug after Vincent's nr, so row 27 is open again",
+   "resolver": "he saw it on Android #2006, built 40 minutes before iOS Internal #1745, and Arthur's note reopens a pass only on a build made after the one it passed on",
+   "distractor_type": "boundary_case"
+  },
+  {
+   "id": "D_DDQUEUE",
+   "family": "distractor",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "ENG-2069"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the DD queue manager tickets belong under the epic",
+   "resolver": "they are Domino Delights tickets on another team",
+   "distractor_type": "keyword_collision"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "BRANCH",
+   "mechanism": "A24",
+   "prior_family": "done_gap",
+   "prior_family_reason": "same mechanism: a done source (sheet ok, chat ok) with the missing piece in another place (the build's branch in #builds)",
+   "nodes": [
+    "T_BRANCH"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the sheet's ok is a pass",
+   "decides": [
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "V1",
+    "V2"
+   ],
+   "controls": [
+    "row 5",
+    "row 31",
+    "row 33"
+   ],
+   "over_application": "branch_over: un-passes a row whose ok was on a main build",
+   "source": "builds-channel",
+   "signature": "main branch",
+   "prior": {
+    "alpha": 3.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_7f44d83eaad625e9",
+     "hev_522f1ca2bc9062de",
+     "hev_b8f28a892a74b855",
+     "hev_8dcd719a9d6f614d",
+     "hev_fa790909c7cd5693",
+     "hev_e572a5dca937a9e7",
+     "hev_bec393d63b5410e0",
+     "hev_f9b2298b6c9739d4",
+     "hev_93d4903487dd6577",
+     "hev_fd3f273c217f2ff6"
+    ]
+   }
+  },
+  {
+   "id": "INLINE",
+   "mechanism": "A24",
+   "prior_family": "done_gap",
+   "prior_family_reason": "same mechanism: a merged PR is the done source and the missing piece sits in an inline review comment",
+   "nodes": [
+    "T_INLINE",
+    "T_INLINE_PACK"
+   ],
+   "requirement": "R3",
+   "natural_reading": "a merged PR named in the sheet has the fix",
+   "decides": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "I5",
+    "I6",
+    "I7",
+    "V2",
+    "V3"
+   ],
+   "controls": [
+    "row 18"
+   ],
+   "over_application": "inline_over: drops the PR from a row no reviewer excepted",
+   "source": "github-inline",
+   "signature": "That one isn't in this diff",
+   "prior": {
+    "alpha": 3.0,
+    "beta": 3.0,
+    "record_ids": [
+     "hev_7f44d83eaad625e9",
+     "hev_522f1ca2bc9062de",
+     "hev_b8f28a892a74b855",
+     "hev_8dcd719a9d6f614d",
+     "hev_fa790909c7cd5693",
+     "hev_e572a5dca937a9e7",
+     "hev_bec393d63b5410e0",
+     "hev_f9b2298b6c9739d4",
+     "hev_93d4903487dd6577",
+     "hev_fd3f273c217f2ff6"
+    ]
+   }
+  },
+  {
+   "id": "REOPEN",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "same mechanism: a dated correction in a thread reply under an older root, outside the window a reader pages",
+   "nodes": [
+    "T_REOPEN",
+    "T_REOPEN_TICKET"
+   ],
+   "requirement": "R3",
+   "natural_reading": "nr on a main build is a pass",
+   "decides": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "V1",
+    "V3",
+    "V4"
+   ],
+   "controls": [
+    "row 7",
+    "row 27"
+   ],
+   "over_application": "reopen_over: reopens another nr row",
+   "source": "unrelated-thread-reply",
+   "signature": "on top of the gift again",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_d3b1b9dcf4e19fcc",
+     "hev_22d4191952144533",
+     "hev_c3cc19b1927c1302",
+     "hev_8130210e56a8c375"
+    ]
+   }
+  },
+  {
+   "id": "BACK",
+   "mechanism": "A11",
+   "prior_family": "superseding",
+   "prior_family_reason": "same mechanism, other author: a reply under a three-week-old root that names no row",
+   "nodes": [
+    "T_BACK",
+    "T_BACK_TICKET"
+   ],
+   "requirement": "R3",
+   "natural_reading": "ok on a main build is a pass",
+   "decides": [
+    "K1B",
+    "K2B",
+    "K3B",
+    "K4B",
+    "K5B",
+    "K9",
+    "V1",
+    "V3",
+    "V5"
+   ],
+   "controls": [
+    "row 23",
+    "row 22"
+   ],
+   "over_application": "back_over: reopens another ok row",
+   "source": "old-thread-reply",
+   "signature": "home intro animation played again",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 5.0,
+    "record_ids": [
+     "hev_e61e07235eadbd24",
+     "hev_1ceea0e7e912f48b",
+     "hev_ebc012c844829411",
+     "hev_264798d24d59191e",
+     "hev_ae63566d7b1dc917",
+     "hev_0791c57922eeb614",
+     "hev_d3b1b9dcf4e19fcc",
+     "hev_22d4191952144533",
+     "hev_c3cc19b1927c1302",
+     "hev_8130210e56a8c375"
+    ]
+   }
+  },
+  {
+   "id": "ELSE",
+   "mechanism": "A25",
+   "prior_family": "completion_elsewhere",
+   "prior_family_reason": "same mechanism: an item that looks open while a record elsewhere shows the work done",
+   "nodes": [
+    "T_ELSE",
+    "T_BODY"
+   ],
+   "requirement": "R3",
+   "natural_reading": "a blank Fix cell means no fix",
+   "decides": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6",
+    "E7",
+    "E9",
+    "V2",
+    "V3"
+   ],
+   "controls": [
+    "row 19",
+    "row 30"
+   ],
+   "over_application": "else_over: marks a row merged that no dev named",
+   "source": "pr-comment",
+   "signature": "For the flow list",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_13d86dcf23442708",
+     "hev_638d1ef495e65d17",
+     "hev_58dcdb13d83f424d",
+     "hev_34b1b726275909e0",
+     "hev_1b7e37504971c652",
+     "hev_7c74ef96692be1e3",
+     "hev_d2253957e65e0329",
+     "hev_f38ae150551bb413",
+     "hev_36c791b1a1ae9258",
+     "hev_a6c4efca5e0bd058"
+    ]
+   }
+  },
+  {
+   "id": "FILT",
+   "mechanism": "A17",
+   "prior_family": "exact_predicate",
+   "prior_family_reason": "same mechanism: an in-scope item outside the obvious list, brought in by the scope sentence",
+   "nodes": [
+    "T_FILT"
+   ],
+   "requirement": "R1",
+   "natural_reading": "the sheet is the whole list",
+   "decides": [
+    "F1",
+    "F2",
+    "F3",
+    "V3",
+    "V7"
+   ],
+   "controls": [
+    "the 38 sheet rows"
+   ],
+   "over_application": "filt_over: adds a chat line that is not a bug seen in a build",
+   "source": "artist-chat",
+   "signature": "icon glow",
+   "prior": {
+    "alpha": 2.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_9c403cae42eb4df8",
+     "hev_c2297d21ba5cbc7b",
+     "hev_0e15eed886c6fd32",
+     "hev_0148aad4d8a4eb2d",
+     "hev_2da16037a402bf13",
+     "hev_b76760802056e969",
+     "hev_b32971165bce0c82"
+    ]
+   }
+  },
+  {
+   "id": "ALIAS",
+   "mechanism": "A7",
+   "prior_family": "scope_alias",
+   "prior_family_reason": "same mechanism: a row and an existing ticket named differently, tied by a dated note",
+   "nodes": [
+    "T_ALIAS_GIFT",
+    "T_ALIAS_STREAK"
+   ],
+   "requirement": "R4",
+   "natural_reading": "a blank Ticket cell means a new sub-issue",
+   "decides": [
+    "A1",
+    "A2",
+    "A3"
+   ],
+   "controls": [
+    "row 1",
+    "row 38"
+   ],
+   "over_application": "alias_over: reuses a ticket for a row with none",
+   "source": "ticket-note",
+   "signature": "Same thing",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_ab2508cad060b0ac",
+     "hev_ace612d2f2268cdf",
+     "hev_9cefe52f59fd5be5",
+     "hev_002ac986f9d078fc",
+     "hev_a0431add305ff5a5",
+     "hev_f9b1b37c5285c5e7"
+    ]
+   }
+  },
+  {
+   "id": "GATE",
+   "mechanism": "A12",
+   "prior_family": "authority",
+   "prior_family_reason": "same mechanism: the governing source sits in a rarely opened service and an older version is met first",
+   "nodes": [
+    "T_GATE"
+   ],
+   "requirement": "R5",
+   "natural_reading": "Brian's line in the chat names the review's areas",
+   "decides": [
+    "G1",
+    "G2",
+    "V4"
+   ],
+   "controls": [
+    "row 15",
+    "row 21"
+   ],
+   "over_application": "gate_over: none",
+   "source": "trello-card",
+   "signature": "Level-end rewards",
+   "prior": {
+    "alpha": 1.0,
+    "beta": 4.0,
+    "record_ids": [
+     "hev_d17e4abe74f0e7e0",
+     "hev_1de494f0682754d6",
+     "hev_4638d80f1d9f6311",
+     "hev_12437e8852e6e57e",
+     "hev_633340c96ebfc696",
+     "hev_6e9ca23ac4d84281",
+     "hev_5dcd699390994b27",
+     "hev_6d9112a415d24a20",
+     "hev_385f3a85f7ae3094",
+     "hev_91e425de1aebf43b"
+    ]
+   }
+  }
+ ],
+ "channels": [
+  {
+   "id": "CH-BRANCH",
+   "kind": "scale",
+   "rule": "BRANCH",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "done_gap",
+   "source": "builds-channel",
+   "members": [
+    "T_BRANCH"
+   ],
+   "description": "the sheet's ok is a pass"
+  },
+  {
+   "id": "CH-INLINE",
+   "kind": "scale",
+   "rule": "INLINE",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "done_gap",
+   "source": "github-inline",
+   "members": [
+    "T_INLINE",
+    "T_INLINE_PACK"
+   ],
+   "description": "a merged PR named in the sheet has the fix"
+  },
+  {
+   "id": "CH-REOPEN",
+   "kind": "scale",
+   "rule": "REOPEN",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "superseding",
+   "source": "unrelated-thread-reply",
+   "members": [
+    "T_REOPEN",
+    "T_REOPEN_TICKET"
+   ],
+   "description": "nr on a main build is a pass"
+  },
+  {
+   "id": "CH-BACK",
+   "kind": "scale",
+   "rule": "BACK",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "superseding",
+   "source": "old-thread-reply",
+   "members": [
+    "T_BACK",
+    "T_BACK_TICKET"
+   ],
+   "description": "ok on a main build is a pass"
+  },
+  {
+   "id": "CH-ELSE",
+   "kind": "scale",
+   "rule": "ELSE",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "completion_elsewhere",
+   "source": "pr-comment",
+   "members": [
+    "T_ELSE",
+    "T_BODY"
+   ],
+   "description": "a blank Fix cell means no fix"
+  },
+  {
+   "id": "CH-FILT",
+   "kind": "scale",
+   "rule": "FILT",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "exact_predicate",
+   "source": "artist-chat",
+   "members": [
+    "T_FILT"
+   ],
+   "description": "the sheet is the whole list"
+  },
+  {
+   "id": "CH-ALIAS",
+   "kind": "scale",
+   "rule": "ALIAS",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "scope_alias",
+   "source": "ticket-note",
+   "members": [
+    "T_ALIAS_GIFT",
+    "T_ALIAS_STREAK"
+   ],
+   "description": "a blank Ticket cell means a new sub-issue"
+  },
+  {
+   "id": "CH-GATE",
+   "kind": "scale",
+   "rule": "GATE",
+   "degrade": "ch_miss",
+   "latent": "member",
+   "family": "authority",
+   "source": "trello-card",
+   "members": [
+    "T_GATE"
+   ],
+   "description": "Brian's line in the chat names the review's areas"
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 5,
+   "reason": "Brian's DM, the QA chat, channel lookups"
+  },
+  {
+   "phase": "discovery",
+   "service": "linear",
+   "calls": 6,
+   "reason": "the epic, its comments, states, labels, team, users"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 3,
+   "reason": "the folder, the pass sheet's and the deck's location"
+  },
+  {
+   "phase": "discovery",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "the pass sheet: metadata and two range reads"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 4,
+   "reason": "the legend and Arthur's rule: search and read"
+  },
+  {
+   "phase": "rules",
+   "service": "trello",
+   "calls": 3,
+   "reason": "Leonard's review card: search, card, its actions"
+  },
+  {
+   "phase": "rules",
+   "service": "gmail",
+   "calls": 3,
+   "reason": "the review invitation: search and the two messages"
+  },
+  {
+   "phase": "rules",
+   "service": "gcal",
+   "calls": 2,
+   "reason": "the review event and its attendees"
+  },
+  {
+   "phase": "rules",
+   "service": "slack",
+   "calls": 2,
+   "reason": "Julia's note"
+  },
+  {
+   "phase": "discovery",
+   "service": "gslides",
+   "calls": 2,
+   "reason": "Calvin's deck: find and read"
+  },
+  {
+   "phase": "enumeration",
+   "service": "slack",
+   "calls": 15,
+   "reason": "what was told to Calvin in a DM since the 26th: each recent 1:1 chat; later words on passed rows in #zombie-bugs threads and #zombie-match3d"
+  },
+  {
+   "phase": "enumeration",
+   "service": "gmail",
+   "calls": 3,
+   "reason": "mail to Calvin since the 26th"
+  },
+  {
+   "phase": "enumeration",
+   "service": "linear",
+   "calls": 6,
+   "reason": "ZOM tickets since the 20th and candidate tickets for rows with no key"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 4,
+   "reason": "match3d PRs merged since the 24th"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 22,
+   "reason": "comments on the 22 tickets that hold a report"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 16,
+   "reason": "body, reviews, inline and conversation comments of the four PRs the rows rest on"
+  },
+  {
+   "phase": "per-record",
+   "service": "slack",
+   "calls": 12,
+   "reason": "the #builds post of each distinct build in the Re-test column and the chat"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 71,
+   "reason": "10 area children, 17 new sub-issues, 22 tickets moved under a child and 22 notes: each a distinct target with no batch form"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 4,
+   "reason": "stock-take sheet: create and fill two tabs"
+  },
+  {
+   "phase": "writes",
+   "service": "gdrive",
+   "calls": 6,
+   "reason": "move into the folder and share with five people"
+  },
+  {
+   "phase": "writes",
+   "service": "gslides",
+   "calls": 2,
+   "reason": "add the slide and its text"
+  },
+  {
+   "phase": "writes",
+   "service": "linear",
+   "calls": 1,
+   "reason": "the epic's own state or text"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "reply to Brian"
+  },
+  {
+   "phase": "read-back",
+   "service": "linear",
+   "calls": 3,
+   "reason": "confirm the tree"
+  },
+  {
+   "phase": "read-back",
+   "service": "gsheets",
+   "calls": 2,
+   "reason": "confirm the sheet"
+  }
+ ],
+ "writes": [
+  {
+   "service": "linear",
+   "tool": "linear_create_issue",
+   "count": 27,
+   "depends_on": [
+    "T_FILT",
+    "T_ALIAS_GIFT",
+    "T_ALIAS_STREAK",
+    "T_ELSE",
+    "T_BRANCH",
+    "T_BACK"
+   ],
+   "requirements": [
+    "R2",
+    "R4",
+    "R6"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_update_issue",
+   "count": 22,
+   "depends_on": [
+    "T_INLINE",
+    "T_INLINE_PACK",
+    "T_ELSE",
+    "T_ALIAS_GIFT"
+   ],
+   "requirements": [
+    "R4"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_comment",
+   "count": 22,
+   "depends_on": [
+    "T_INLINE",
+    "T_ELSE",
+    "T_ALIAS_GIFT",
+    "T_ALIAS_STREAK"
+   ],
+   "requirements": [
+    "R4"
+   ]
+  },
+  {
+   "service": "gsheets",
+   "tool": "gsheets_values_update",
+   "count": 3,
+   "depends_on": [
+    "T_BRANCH",
+    "T_GATE",
+    "T_FILT"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "gdrive",
+   "tool": "gdrive_share_file",
+   "count": 5,
+   "depends_on": [
+    "T_SHARE",
+    "K7"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "gslides",
+   "tool": "gslides_batch_update",
+   "count": 2,
+   "depends_on": [
+    "T_BRANCH",
+    "T_GATE",
+    "T_ELSE"
+   ],
+   "requirements": [
+    "R9"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "T_BRANCH",
+    "T_GATE",
+    "T_ELSE"
+   ],
+   "requirements": [
+    "R8"
+   ]
+  }
+ ],
+ "hazard_acknowledgements": [],
+ "denied_probes": [],
+ "gradable_surface": "01_Gradable_Surface.json"
+}

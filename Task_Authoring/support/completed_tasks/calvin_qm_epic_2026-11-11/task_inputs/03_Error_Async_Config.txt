@@ -1,0 +1,62 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+No friction is applied. The task is solved through the normal product surface;
+the baseline run and the verifier see the same service behavior as any other run.
+No error function and no async wait is configured. This is the local policy default
+(`create-error-async`: configured friction is realism only, never a difficulty or
+horizon lever).
+
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+
+## Alternate path (required for every errored function)
+
+No function is errored, so no alternate path is required.
+
+## Discovery the async wait depends on
+
+No async wait is configured, so no discovery depends on one.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- None: there is no injected failure, wait, or workaround to write into the Oracle Events.
+
+## Post-baseline checks
+
+- Forced error fired: n/a
+- Async submit → check → get appeared with the delay: n/a
+- Only 1.0 / 30 / 35 exercised: n/a
+
+## Self-review
+
+| Area | Counter-reading | Resolution |
+|---|---|---|
+| Difficulty | Friction is load-bearing for this task's difficulty. | No design note relies on it: `01_Hardness_Manifest.json` has no error or wait lever; the difficulty is the eight solver rules over the 39 reports, decided by records read one at a time (Brian's epic note `comment_faaa792418a942cd40be046d8d217a7d` on `ZOM-543`, Arthur's review comment `harmonygames-Games/match3d#472#rc_1`) and by later reports off the first-read path (Vincent's thread reply `C08R27X0EAH/1759267212.418339`). |
+| Outage framing | The scenario is about a failing system the run must wait out. | No: the ask is to turn the queue manager ticket into an epic and take stock before the flow review (Brian's DM `D0770ET6WBW/1759264805.214409`); the builds named in it (Robert's post `C0880U9751A/1759268652.552719`) are evidence about bugs, not a service outage, and no seeded text mentions a tool being down or slow. |
+
+Unresolved: none. Friction stays none on the injection SQL of rev3 at sha256 prefix 479b8441f52e (rev1, d39581558af4, and rev2, ee46405a157d, passed the platform /injection); no error or wait function is selected.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputs · 03_Error_Async_Config.txt#52b2d02d66d3 · 00_Assigments.md#a8cc00ce24ff · 01_Grounding_Dossier.md#88526f435b5f · 01_Universe_Inject.sql#479b8441f52e · __context__#7be566a0936c · __assignment__#d644f7ef43f6 · __policy__#dc4ab5df3cdd · __gate_policy__#cc68bf5564ff · __review__#15d71f843716 · blocking 0 · warnings 0 · checks 13
+[PASS] assignment.v3_context: Calvin Price / Game Engineer (Unity VFX); hard cap <70%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#479b8441f52e, 01_Hardness_Manifest.json#bffb088156a7, 01_Grounding_Dossier.md#88526f435b5f, solver/solver.py#337c6a63f446, 01c_Dispositions.json#818f309bd758, 01c_Preflight_Report.json#6bb345bafeb1, 00_Assigments.md#a8cc00ce24ff, 01_Scenario_Design.md#cd79a4e0e490, 01_Hardness_Manifest.draft.json#b79d491b46aa, 01_Gradable_Surface.json#e2392bcc269e, __context__#7be566a0936c, __assignment__#d644f7ef43f6, __policy__#dc4ab5df3cdd, __gate_policy__#5b7d4d20094d, __review__#e8f09c674b67)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 2 evidenced counter-readings (of 2 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] readiness.context: explicit task/revision and current upstream evidence verified
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
