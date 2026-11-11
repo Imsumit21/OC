@@ -242,6 +242,11 @@ RX_QUANT_N = re.compile(r"\b(?:all|both|each\s+of|every\s+one\s+of|each\s+one\s+
 RX_THE_N = re.compile(r"\bthe\s+(" + _NUM + r")\s+(?=[a-z])", re.I)
 RX_QUANT = re.compile(r"\b(every|each|all|both)\b(?!\s+(?:of\s+)?(?:it|them|its|his|her|their)\b)", re.I)
 RX_TEMPLATE = re.compile(r"\beach\b|\bone\s+(?:\w+\s+)?per\b", re.I)
+# a title that names the template a group of writes follows: "the template of Brian's note: team ZOM and no assignee"
+RX_TEMPLATE_STATED = re.compile(r"\b(?:the|one|a|same)\s+template\b", re.I)
+# a named tab or column of a sheet: "the Areas tab", "the Review list column"
+RX_NAMED_TAB = re.compile(r"\b[A-Z][\w&'’-]*(?:\s+[A-Z][\w&'’-]*){0,3}\s+tab\b")
+RX_NAMED_COLUMN = re.compile(r"\b[A-Z][\w&'’-]*(?:\s+[a-z][\w&'’-]*){0,2}\s+column\b")
 RX_TEMPLATE_NOTE = re.compile(r"\b(?:named|titled)\b|\beach\s+(?:with|in|naming|carrying|titled|named|dated|"
                               r"addressed)\b", re.I)
 RX_ORDER = re.compile(r"\b(?:only\s+)?(?:after|before|once|until|when)\b", re.I)
@@ -599,7 +604,15 @@ def lint_rubric(rubric, context=None) -> dict:
             (table_counts if table else content_counts).append(info)
             nouns = RX_TABLE.findall(info["main"])
             if table and nouns and not count["container"] and not listed:
-                by_table.setdefault(_singular(nouns[-1]), []).append(info)
+                # Counts on different named tabs or columns are different spot-check groups, each with its own volume
+                # row: the platform passed "exactly 39 reports in the Reports tab" beside "exactly 10 areas in the Areas
+                # tab" of the same sheet (calvin r3 R138, R154) and kept "Go in the Call column of exactly 2 rows" as
+                # that column's control beside the sheet's row count (samuel r2 R41). The tab and column only split
+                # a group; they never join counts the noun keeps apart (julia R5 and R6 share the Tickets tab, and the
+                # platform kept both as guards).
+                tab, column = RX_NAMED_TAB.search(info["main"]), RX_NAMED_COLUMN.search(info["main"])
+                key = (_singular(nouns[-1]), tab.group(0) if tab else "", column.group(0) if column else "")
+                by_table.setdefault(key, []).append(info)
             if listed and (info["wclass"] or table):
                 where = "" if info["wclass"] else (" It grades table cells, which fall under the table rule, but the "
                                                    "platform still scored a count joined to membership as non_atomic.")
@@ -646,7 +659,8 @@ def lint_rubric(rubric, context=None) -> dict:
                                      "template, so it reads as a count guard, not a volume row. The platform fails "
                                      "a count over separate writes even beside per-item rows; delete it (per-target "
                                      "rows carry the number), or state the one template every write follows."))
-    for noun, group in sorted(by_table.items()):
+    for (noun, tab, column), group in sorted(by_table.items()):
+        noun = column or tab or noun
         keep = max(group, key=lambda i: i["count"]["n"])
         for info in group:
             if info is not keep:
@@ -667,6 +681,16 @@ def lint_rubric(rubric, context=None) -> dict:
                                  "container, so no row grades any of its items. The table rule keeps sample rows "
                                  f"(up to {SAMPLE_CAP}: hard and edge items) beside the one volume row; add sample "
                                  "rows that name items on it."))
+    # A row with no count that covers a group of writes and names the one template they all follow is that group's
+    # volume row (rubric_flow_v2: sampling "with one volume row that states the template"). The platform passed
+    # calvin R13 and R131 ("gives the 10 child issues it creates ... the template of Brian's note: ...") this way.
+    template_rows = set()
+    for info in rows:
+        if info["id"] in flagged_ids or not RX_TEMPLATE_STATED.search(info["title"]):
+            continue
+        if _bundle_text(info) and not RX_VARYING.search(info["main"]):
+            accepted.append((info, "it states the template its writes follow"))
+            template_rows.add(info["id"])
     for info in content_counts:
         review.append({"rule": "count_bundle", "row": info["id"], "detail": "a count or total stated inside one "
                        "reply, comment or document: it stays only when the prompt or a record the task follows "
@@ -709,7 +733,7 @@ def lint_rubric(rubric, context=None) -> dict:
             any_flag.add(info["id"])
         # ---- one row per separate write: a title that covers several writes without counting them
         bundle = _bundle_text(info)
-        if bundle and info["id"] not in any_flag:
+        if bundle and info["id"] not in any_flag and info["id"] not in template_rows:
             findings.append(_finding("one-row-per-write", info, bundle, f"{info['id']} covers several separate "
                                      f"writes in one row (\"{bundle}\"). State changes, comments, messages and other "
                                      "writes get one row per target; a group may be sampled only when every write "

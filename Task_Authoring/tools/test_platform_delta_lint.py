@@ -54,6 +54,21 @@ class RubricRules(unittest.TestCase):
         self.assertClean("one-row-per-write", ["The Agent adds a comment on ENG-101 saying the fix shipped",
                                                "The Agent moves ENG-201 (Old flag) to Canceled"])
 
+    def test_group_row_that_states_its_template_is_the_volume_row(self):
+        # calvin r2/r3 R13 and R131 passed: the platform read each as the volume row of a template group of writes
+        for title in ("The Agent gives the 10 child issues it creates under ZOM-543 the template of Brian's note: team "
+                      "ZOM and no assignee (volume row for the child spot checks)",
+                      "The Agent gives the 17 report sub-issues it creates under the area children the template of "
+                      "Brian's note: no priority and no assignee (volume row for the sub-issue spot checks)"):
+            found, out = lint(title)
+            self.assertFalse(found, out["findings"])
+            self.assertIn(("count_bundle", "R1"), [(r["rule"], r["row"]) for r in out["review"]])
+
+    def test_template_word_does_not_excuse_content_that_differs_per_target(self):
+        self.assertFlags("one-row-per-write", ["The Agent adds a comment to the 12 issues in the Cleanup project with "
+                                               "the template of Ana's note, each saying which change still has to go "
+                                               "out"], "R1")
+
     # bundled_writes
     def test_bundled_writes_count_with_id_range(self):
         self.assertFlags("bundled_writes", ["The Agent moves exactly 4 tickets to Done, ENG-101 to ENG-104"], "R1")
@@ -88,6 +103,23 @@ class RubricRules(unittest.TestCase):
         titles = ["The Agent lists exactly 58 ads in its tracker", "The Agent marks exactly 14 surfaces Skip in its "
                   "tracker", "The Agent marks ART-806 Skip in its tracker"]
         self.assertFlags("count-bundle-v1", titles, "R2")
+
+    def test_count_bundle_second_count_on_the_same_named_tab_still_flags(self):
+        titles = ["The Agent lists exactly 39 reports in the Reports tab of the stock-take sheet, one row each",
+                  "The Agent lists exactly 12 open reports in the Reports tab of the stock-take sheet, one row each"]
+        self.assertFlags("count-bundle-v1", titles, "R2")
+
+    def test_count_bundle_clean_counts_on_different_named_tabs(self):
+        # calvin r3 R138 and R154 passed: one volume row per tab of the same sheet
+        self.assertClean("count-bundle-v1", [
+            "The Agent lists exactly 39 reports in the Reports tab of the stock-take sheet, one row each",
+            "The Agent lists exactly 10 areas in the Areas tab of the stock-take sheet, one row each"])
+
+    def test_count_bundle_clean_count_in_a_named_column_beside_the_row_count(self):
+        # samuel r2 R41 kept as the Call column's Go control beside the sheet's row count
+        self.assertClean("count-bundle-v1", [
+            "The Agent writes exactly 36 message rows under the header of its calls sheet, one per message",
+            "The Agent enters Go in the Call column of exactly 2 rows of its calls sheet"])
 
     def test_count_bundle_clean_volume_row_of_a_sample_group(self):
         found, out = lint(*(MOVES + ["The Agent moves exactly 9 of the 12 stale tickets to Canceled"]))
