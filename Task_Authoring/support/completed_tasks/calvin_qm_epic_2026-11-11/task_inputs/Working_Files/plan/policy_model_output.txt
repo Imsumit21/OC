@@ -1,0 +1,53 @@
+UNCALIBRATED · surface: 51 slots, total weight 171, mechanism-flippable 144 (84.2%)
+Share of weight each channel can flip: BRANCH 21.1%, REOPEN 12.3%, BACK 13.5%, INLINE 17.0%, FILT 12.3%, ALIAS 7.6%, ELSE 15.2%, GATE 8.8% · largest 21.1%
+
+Whole policies
+  100.0%  Perfect  [lands: -]
+   15.8%  Takes every 'done' and 'ok' at face value, stays in the sheet, the QA chat and the epic  [lands: ALIAS, BACK, BRANCH, ELSE, FILT, GATE, INLINE, REOPEN]
+   78.9%  Reads everything it is pointed at, never checks which build QA looked at  [lands: BRANCH]
+   83.0%  Checks builds and PR bodies, never reads inline review comments  [lands: INLINE]
+   80.1%  Thorough on the sheet's own records, never looks for later words on passed rows  [lands: BACK, REOPEN]
+   56.7%  Never reads inline comments, PR conversation or later posts; otherwise perfect  [lands: BACK, ELSE, INLINE, REOPEN]
+   71.3%  Takes Brian's chat line for the review, no reuse, no DM sweep  [lands: ALIAS, FILT, GATE]
+   92.4%  Finds every record, files a new sub-issue per item (no reuse)  [lands: ALIAS]
+
+Single misses
+  BRANCH  78.9%
+  REOPEN  87.7%
+  BACK    86.5%
+  INLINE  83.0%
+  FILT    87.7%
+  ALIAS   92.4%
+  ELSE    84.8%
+  GATE    91.2%
+
+Pairs at or above the 60 % line: 28 of 28; triples at or above it: 42 of 56
+Inline comments alone: 83.0% · inline + both later posts: 66.1%
+P(one run catches every trap) ~ 0.0016 (independence); expected landings per run 4.10
+
+One pre-check run: P(two or more causes, or one cause losing 30 % or more), independence
+  scale 1.00: 0.98
+  scale 0.70: 0.85
+  scale 0.50: 0.65
+
+Six-run Monte Carlo
+  view                 scale  rho   E[avg]  P(<60)  P(SD)  med-SD  P(<5 full)  P(pat)  P(>130)   P(all)
+  placement rates      1.00  0.20   52.0%    0.86   0.89   0.157       1.00    1.00      1.00    0.76
+  placement rates      1.00  0.35   52.1%    0.82   0.93   0.185       1.00    0.99      1.00    0.76
+  placement rates      1.00  0.60   52.6%    0.76   0.88   0.229       1.00    0.97      1.00    0.65
+  placement rates      0.80  0.35   60.9%    0.46   0.94   0.196       1.00    0.99      1.00    0.43
+  placement rates      0.70  0.35   65.3%    0.28   0.93   0.196       1.00    0.99      1.00    0.26
+  placement rates      0.60  0.35   69.8%    0.14   0.93   0.192       1.00    0.98      1.00    0.13
+  placement rates      0.50  0.35   74.4%    0.06   0.92   0.183       1.00    0.97      1.00    0.05
+  bimodal carriers     1.00  0.35   51.4%    0.77   0.48   0.097       1.00    0.53      1.00    0.25
+  bimodal carriers     0.70  0.35   62.4%    0.43   0.47   0.097       1.00    0.48      1.00    0.13
+  ledger family means  1.00  0.35   69.8%    0.13   0.94   0.189       1.00    0.97      1.00    0.13
+  ledger family means  0.70  0.35   78.3%    0.02   0.91   0.172       1.00    0.94      1.00    0.02
+
+Rubric inflation: always-pass weight /rubric may add (placement rates, rho .35)
+  + 20 weight                        1.00  0.35   57.1%    0.64   0.91   0.166       1.00    0.99      1.00    0.58
+  + 20 weight                        0.70  0.35   68.9%    0.14   0.93   0.176       1.00    0.99      1.00    0.13
+  + 40 weight                        1.00  0.35   61.2%    0.43   0.87   0.150       1.00    0.99      1.00    0.36
+  + 40 weight                        0.70  0.35   71.9%    0.05   0.90   0.159       1.00    0.99      1.00    0.05
+  + 70 weight                        1.00  0.35   66.0%    0.17   0.79   0.131       1.00    0.99      1.00    0.11
+  + 70 weight                        0.70  0.35   75.4%    0.01   0.83   0.139       1.00    0.99      1.00    0.01

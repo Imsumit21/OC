@@ -1,0 +1,1151 @@
+{
+ "schema_version": 1,
+ "stage": "prompt",
+ "task_id": "d734dc82a643e6955808ba76d9f80fdda70e486b64af9de6cdeb83a34890d699",
+ "revision": "r1",
+ "reviewer": "Claude (Fable 5.2), prompt check C1-C24 (Working_Files/04_Prompt_Check.md) on top of the injection review; REDTEAM_* unset",
+ "difficulty_mode": "hard",
+ "diversity_channels": [
+  "BRANCH",
+  "INLINE",
+  "REOPEN",
+  "BACK",
+  "ELSE",
+  "FILT"
+ ],
+ "mechanisms": {
+  "BRANCH": {
+   "initial_plausible_answer": {
+    "reason": "Rows 1, 2 and 25 read as Passed: the sheet says 'ok, chat' and Vincent wrote 'Looks ok to me' and 'Boss arena as well' in the chat.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "The #builds post for Match 3D iOS Internal #1718 names Calvin's QueueManager branch; Arthur's planned rule counts only builds of the main branch.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "C05433XK267/1758817549.151639"
+   },
+   "authority_chronology": {
+    "reason": "Arthur's rule is dated 12 Sep, the build post 25 Sep 16:25 UTC and Vincent's ok 25 Sep 17:15 UTC; Arthur merges and cuts submission builds, so his rule on which builds count governs.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "Sheet row says 'ok, chat'; the legend sends the reader to the QA chat; Calvin's line there names #1718; a search for 1718 in #builds returns the post.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "Passed",
+    "after": "Waiting on QA"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "INLINE",
+     "REOPEN",
+     "BACK",
+     "ELSE",
+     "FILT"
+    ]
+   },
+   "outcome_slots": [
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B5",
+    "V1",
+    "V2"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "slack search in C05433XK267 for the build number 1718",
+    "returned_ids": [
+     "C05433XK267/1758817549.151639",
+     "f_6d0326fa006b136f1bbf82"
+    ],
+    "assessment": "the #builds post for #1718 names the feature branch it was built from, and a Docs search for QA passes returns Arthur's ZM note beside the DD one; the two differ on the game, so the ZM note governs"
+   },
+   "outcome_pair": {
+    "reason": "The two slots are separate facts; one can be right while the other is wrong.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "slots": [
+     "B1",
+     "B3"
+    ],
+    "left_pass_right_fail": "row 1 looked up against its chat line and row 25 taken from the sheet",
+    "right_pass_left_fail": "row 25 looked up and row 1 taken from the sheet"
+   }
+  },
+  "INLINE": {
+   "initial_plausible_answer": {
+    "reason": "Rows 12 and 32 read as Waiting on QA: the sheet names #472 and #475, both merged, and their tickets are In Validation.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "Arthur's inline review comments on #472 and #475 say the fix is not in that PR.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "harmonygames-Games/match3d#472#rc_1"
+   },
+   "authority_chronology": {
+    "reason": "The tickets and the sheet are from 30 Sep after 16:40 UTC and repeat what the dev told Vincent; Arthur's comments are separate review comments right after his approvals and merges (15:53 and 16:09 UTC; the base approval mails in Calvin's mailbox carry no comment), and he merged both PRs.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "Brian's note asks whether a fix is in main; each PR's inline review comments, their GitHub mails in Calvin's inbox and the #zombie-prs copies return Arthur's line.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "Waiting on QA",
+    "after": "Waiting on a fix"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "BRANCH",
+     "REOPEN",
+     "BACK",
+     "ELSE",
+     "FILT"
+    ]
+   },
+   "outcome_slots": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "I5",
+    "V2",
+    "V3"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "github review comments of harmonygames-Games/match3d#472 and harmonygames-Games/match3d#475",
+    "returned_ids": [
+     "harmonygames-Games/match3d#472#rc_1",
+     "harmonygames-Games/match3d#475#rc_1"
+    ],
+    "assessment": "each PR has exactly one inline comment, by the reviewer who approved it, and it says in plain words that the named fix is not in that PR"
+   },
+   "outcome_pair": {
+    "reason": "The two slots are separate facts; one can be right while the other is wrong.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "slots": [
+     "I1",
+     "I4"
+    ],
+    "left_pass_right_fail": "#472's inline comments read and #475's not",
+    "right_pass_left_fail": "#475's inline comments read and #472's not"
+   }
+  },
+  "REOPEN": {
+   "initial_plausible_answer": {
+    "reason": "Row 9 reads as Passed: nr on main build #1745.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "Vincent's later reply under his Sep 15 submission-issues thread says the pass popup came up on top of the gift again on Android Submission 135.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "C08R27X0EAH/1759267212.418339"
+   },
+   "authority_chronology": {
+    "reason": "The sheet is last changed 30 Sep 19:30 UTC, Submission #135 posts at 20:13 UTC and the reply is 21:20 UTC, on a newer build than the pass.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "Arthur's note says a pass stands until somebody sees the bug again on a main build made after the one it passed on; Vincent's recent messages or a search for 'gift' return the reply.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "Passed",
+    "after": "Waiting on a fix"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "BRANCH",
+     "INLINE",
+     "BACK",
+     "ELSE",
+     "FILT"
+    ]
+   },
+   "outcome_slots": [
+    "R1",
+    "R2",
+    "R3",
+    "V1",
+    "V3"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "slack search for Submission 135, or Vincent's recent posts in C08R27X0EAH",
+    "returned_ids": [
+     "b156fdcd5fd89b8362d0e5fcf24975d1"
+    ],
+    "assessment": "the reply names the newer build and the pass popup over the gift, which only sheet row 9 describes"
+   },
+   "outcome_pair": {
+    "reason": "The two slots are separate facts; one can be right while the other is wrong.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "slots": [
+     "R1",
+     "R3"
+    ],
+    "left_pass_right_fail": "status corrected but the Why leaves the build out",
+    "right_pass_left_fail": "Why names the build while the row keeps Passed"
+   }
+  },
+  "BACK": {
+   "initial_plausible_answer": {
+    "reason": "Row 29 reads as Passed: ok on main build #1750.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "Robert's later reply under his Sep 10 endless thread in #zombie-bugs says the home intro played again every time on Android Submission 135.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "C08R27X0EAH/1759268652.552719"
+   },
+   "authority_chronology": {
+    "reason": "Row 29's ok is on a 30 Sep 01:55 UTC build; Submission #135 posts at 20:13 UTC and Robert writes at 21:44 UTC.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "The same sentence of Brian's note; a search for 'intro' or 'endless', or Robert's recent posts, return it.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "Passed",
+    "after": "Waiting on a fix"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "BRANCH",
+     "INLINE",
+     "REOPEN",
+     "ELSE",
+     "FILT"
+    ]
+   },
+   "outcome_slots": [
+    "K1B",
+    "K2B",
+    "K3B",
+    "V1",
+    "V3"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "slack search for Submission 135 or for endless, or the thread under Robert's Sep 10 endless post in C08R27X0EAH",
+    "returned_ids": [
+     "a40824773b7cad9681d141b916a5f558"
+    ],
+    "assessment": "the post names the newer build and the home intro replaying after Endless, which only sheet row 29 describes"
+   },
+   "outcome_pair": {
+    "reason": "The two slots are separate facts; one can be right while the other is wrong.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "slots": [
+     "K1B",
+     "K3B"
+    ],
+    "left_pass_right_fail": "row corrected while the area count stays at 3",
+    "right_pass_left_fail": "area count right while the row keeps Passed"
+   }
+  },
+  "ELSE": {
+   "initial_plausible_answer": {
+    "reason": "Rows 13 and 38 read as Waiting on a fix: no fix named in the sheet and ZOM-572 is Todo.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "Oliver's comment on his own PR #473 says it also has both fixes; #473 merged 30 Sep 15:41 UTC.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "harmonygames-Games/match3d#473#c_2"
+   },
+   "authority_chronology": {
+    "reason": "Oliver comments at 15:42 UTC, right after merging; he is the dev, and Brian's note asks whether a fix is in main, and the dev says on his own merged PR that it is. Vincent's sheet, later that day, does not know it.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "Brian's note gives the reason to read the PRs merged since the 24th; #473's conversation, or its GitHub-app copy in #zombie-prs, returns the comment.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "Waiting on a fix",
+    "after": "Waiting on QA"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "BRANCH",
+     "INLINE",
+     "REOPEN",
+     "BACK",
+     "FILT"
+    ]
+   },
+   "outcome_slots": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "V2",
+    "V3"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "github conversation comments of harmonygames-Games/match3d#473, or search in:comments for pass start popup",
+    "returned_ids": [
+     "harmonygames-Games/match3d#473#c_2"
+    ],
+    "assessment": "the PR's author says his merged PR has the two fixes, in words that match sheet rows 13 and 38 and no other row"
+   },
+   "outcome_pair": {
+    "reason": "The two slots are separate facts; one can be right while the other is wrong.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "slots": [
+     "E1",
+     "E2"
+    ],
+    "left_pass_right_fail": "row 13 matched to Oliver's comment and row 38 not",
+    "right_pass_left_fail": "row 38 matched and row 13 not"
+   }
+  },
+  "FILT": {
+   "initial_plausible_answer": {
+    "reason": "The report list is the 38 sheet rows.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "Marcus's line in his chat with Calvin on 30 Sep reports the pass icon glow staying on.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "D05U73FNDDL/1759252212.611349"
+   },
+   "authority_chronology": {
+    "reason": "Brian's note of 30 Sep includes any bug somebody else saw in a build and told Calvin about in a DM since the 26th; Marcus writes on 30 Sep about that day's main build.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "The scope sentence gives the reason to read Calvin's recent 1:1 chats; the newest lines of the chat with Marcus return it.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "38 reports, Season Pass with 4 open",
+    "after": "the icon glow report is in, Season Pass with 5 open"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "BRANCH",
+     "INLINE",
+     "REOPEN",
+     "BACK",
+     "ELSE"
+    ]
+   },
+   "outcome_slots": [
+    "F1",
+    "F2",
+    "F3",
+    "V3",
+    "V7"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "recent history of Calvin's DMs since 26 Sep",
+    "returned_ids": [
+     "806f4a67a847d4d47e3e5674760aa630",
+     "bb5dd8751a108f2f60ae5643ff7507f0"
+    ],
+    "assessment": "the only bug a teammate reports to Calvin in a DM in that window; no sheet row and no ticket describes a glow that stays on"
+   },
+   "outcome_pair": {
+    "reason": "The two slots are separate facts; one can be right while the other is wrong.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "slots": [
+     "F1",
+     "F2"
+    ],
+    "left_pass_right_fail": "report listed in the sheet with no sub-issue",
+    "right_pass_left_fail": "sub-issue filed and the sheet row left out"
+   }
+  },
+  "ALIAS": {
+   "initial_plausible_answer": {
+    "reason": "Rows 11 and 20 have no key in the sheet, so each needs a new sub-issue.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "Vincent's notes on base tickets ZOM-556 and ZOM-560 tie his rows to those tickets.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "comment_b3c560833d151268202546002e7613cf"
+   },
+   "authority_chronology": {
+    "reason": "Both notes are 30 Sep around 18:05 UTC, on tickets Vincent himself filed on 22 Sep.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "Brian's note says to move a ticket that already has the report; a Linear search by area returns both tickets and their comments carry the tie.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "new sub-issue",
+    "after": "note on the existing ticket"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "BRANCH",
+     "INLINE",
+     "REOPEN",
+     "BACK",
+     "ELSE",
+     "FILT"
+    ]
+   },
+   "outcome_slots": [
+    "A1",
+    "A2",
+    "A3"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "linear search for daily gift and for freezer, then the comments of ZOM-556 and ZOM-560",
+    "returned_ids": [
+     "ZOM-556",
+     "ZOM-560",
+     "comment_b3c560833d151268202546002e7613cf",
+     "comment_9f28b3d8d66bd04e3f7fc46bc6ed1ea9"
+    ],
+    "assessment": "each base ticket carries Vincent's note tying his sheet row to it; ZOM-432, the other daily gift hit, is about artwork and has no note"
+   }
+  },
+  "GATE": {
+   "initial_plausible_answer": {
+    "reason": "Collect & Win and Daily Gift are the review's areas, as Brian wrote on 29 Sep and the first invitation repeats.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/reports.py",
+      "sha256": "1c0cda38e3585f6feb6d2a99e5c6101d28a0dbaa400a56e5358e89e3ac12f048"
+     },
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "deciding_evidence": {
+    "reason": "Leonard changed his review card on 30 Sep: Collect & Win and Level-end rewards.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ],
+    "record_id": "68dc11dceb76ad640995fd98"
+   },
+   "authority_chronology": {
+    "reason": "first invitation 29 Sep 16:05 UTC, Brian's line 29 Sep 16:41 UTC, card changed 30 Sep 17:22 UTC; the updated invitation says the agenda is on the roadmap card.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     }
+    ]
+   },
+   "fair_discovery_path": {
+    "reason": "Brian's note names the agenda of Thursday's review, and the updated invitation says the agenda is on the roadmap card; a Trello search for the review returns it, and the updated invitation says the card changed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/out/reach_lb.txt",
+      "sha256": "6ac488a5186e927cd16f9427e7e5596316c103941c75f1b407d96b2de05aebf2"
+     }
+    ]
+   },
+   "changed_outcome": {
+    "reason": "The planned truth and the natural reading differ on the slots listed.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/truth_sketch.json",
+      "sha256": "378771cfe5272949bc12d9c3861455024bec2670cb8dd0cd47bdda96469ffc58"
+     }
+    ],
+    "before": "not on the review list",
+    "after": "on the review list"
+   },
+   "independent_operation": {
+    "reason": "Its deciding record is in a different container by a different author from every other channel; missing it changes only its own rows and the counts.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/seed_text.json",
+      "sha256": "83bf8da8c84794dbbb4e1d52a072f6ac00c5bac84b33add068e96aabea7dd90e"
+     },
+     {
+      "path": "Working_Files/plan/policy_model_output.txt",
+      "sha256": "8a7bc31c6c6045d45ed373c67bb753f96518523307165e3cfad2df255f50ebe5"
+     }
+    ],
+    "others_solvable_if_missed": [
+     "BRANCH",
+     "INLINE",
+     "REOPEN",
+     "BACK",
+     "ELSE",
+     "FILT"
+    ]
+   },
+   "outcome_slots": [
+    "G1",
+    "G2",
+    "V4"
+   ],
+   "channel_kind": "judgment",
+   "access": {
+    "reason": "Every deciding record is a seeded row the persona can read: check-sql PASS for scoped services, Linear, GitHub and Trello are unscoped, and the solver contract found each deciding record in the SQL.",
+    "evidence": [
+     {
+      "path": "Working_Files/plan/out/inj/checksql.txt",
+      "sha256": "b5b350e6015d1d4a9363429d6331601b83526535f9ab98767c85f2dc65d29339"
+     },
+     {
+      "path": "Working_Files/plan/out/inj/oracle_kit.txt",
+      "sha256": "5b628a61d74ac29a0488d7c25e192cc96e17577c9c561a2e881e0e21163a2500"
+     },
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     }
+    ],
+    "status": "verified"
+   },
+   "natural_retrieval": {
+    "reason": "The designed query returns the deciding record with no competing base hit that changes the reading.",
+    "evidence": [
+     {
+      "path": "01_Universe_Inject.sql",
+      "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+     },
+     {
+      "path": "Working_Files/plan/sql_ids.json",
+      "sha256": "739ef154cc8495d88c5445971c192a86da80546ff4277cbd18aea4ea7fb5fd76"
+     }
+    ],
+    "query": "trello search for flow review",
+    "returned_ids": [
+     "68daad83bacf52c6ea7e1593",
+     "68dc11dceb76ad640995fd98"
+    ],
+    "assessment": "one card matches; its current description lists the two areas and its action history shows the earlier list it replaced"
+   }
+  }
+ },
+ "dispositions": {},
+ "forecast": {
+  "ledger_id": "hev_629545c85e58f03d",
+  "note": "UNCALIBRATED"
+ },
+ "input_hashes": {
+  "manifest": "d72904980e258cd4ecd5229ad53d655684668271c169ff06a3c1a4fafbfca22a",
+  "surface": "0f80ab80cb83254ddbda092dc9f63a179359c8b4b53022e9bb3df960b0a6d23c",
+  "sql": "08bb4b5a46aba63a6fee6caf4b27a06359ebbb876ffae9baaf9abf0500515f6b",
+  "prompt": "6ad5a59dc9dd146b4696735992db2fa46b54db7b352383c190e12aba8dfc05a0"
+ },
+ "semantic_prompt_review": {
+  "leaks_solution": false,
+  "evidence": [
+   {
+    "path": "04_Prompt.txt",
+    "sha256": "edefd55c0ff5b150f9f757e2b0c123215fac99b89d8cbc1a7e319caab2a4bcc3"
+   },
+   {
+    "path": "01_Universe_Inject.sql",
+    "sha256": "479b8441f52e739e786eb1ef35043153f87b15f473bb72e683634e2dac1d02e9"
+   }
+  ],
+  "reason": "The prompt names Brian's message, the Queue Manager ticket and the outputs Brian himself lists (children and report lines in Linear, the stock-take sheet and its sharing, the slide, the numbers back in the DM). It states no status, count, area, build, PR, rule or person who corrects a first reading, and it does not mention Brian's note, Arthur's rule, Leonard's card, the moved review or any later report; each of those is reached only through the seeded records."
+ }
+}

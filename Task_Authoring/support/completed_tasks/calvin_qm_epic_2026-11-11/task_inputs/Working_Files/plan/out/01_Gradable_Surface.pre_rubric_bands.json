@@ -1,0 +1,1197 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "calvin_qm_epic",
+ "revision": "design-4",
+ "classes": [
+  "Passed",
+  "Waiting on QA",
+  "Waiting on a fix"
+ ],
+ "truth_fields": {
+  "class": "Status",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "sheet": {
+   "kind": "table",
+   "name_regex": "(?i).*(stock|queue|report|epic).*",
+   "key_column": "Report",
+   "key_regex": "(?:Report 1|Report 2|[A-Za-z][A-Za-z0-9 .,'()&/-]*)",
+   "columns": [
+    "Report",
+    "Area",
+    "Status",
+    "Ticket",
+    "Review list",
+    "Why"
+   ],
+   "class_column": "Status",
+   "reason_column": "Why",
+   "comparators": {
+    "Status": "yes_no",
+    "Ticket": "issue_key",
+    "Review list": "norm",
+    "Area": "norm"
+   },
+   "yes_no": {
+    "Passed": [
+     "Passed",
+     "Pass",
+     "Done"
+    ],
+    "Waiting on QA": [
+     "Waiting on QA",
+     "Waits on QA",
+     "In Validation",
+     "QA"
+    ],
+    "Waiting on a fix": [
+     "Waiting on a fix",
+     "Waits on a fix",
+     "Todo",
+     "Fix"
+    ]
+   }
+  },
+  "reply": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  },
+  "issues": {
+   "kind": "json_text",
+   "tool": "linear_create_issue"
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "updates": {
+   "kind": "json_text",
+   "tool": "linear_update_issue"
+  },
+  "slide": {
+   "kind": "json_text",
+   "tool": "gslides_batch_update"
+  }
+ },
+ "slots": [
+  {
+   "id": "V1",
+   "title": "Passed count in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "statuses joined across the sheet, #builds, Arthur's rule and two later posts",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b10\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BRANCH",
+    "REOPEN",
+    "BACK"
+   ],
+   "incorporating_span": "message him in our DM with the numbers he wants back"
+  },
+  {
+   "id": "V2",
+   "title": "Waiting on QA count in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "merged fixes joined with passes across GitHub, Slack and the sheet",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b9\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BRANCH",
+    "ELSE",
+    "INLINE"
+   ],
+   "incorporating_span": "message him in our DM with the numbers he wants back"
+  },
+  {
+   "id": "V3",
+   "title": "Waiting on a fix count in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "what no merged PR has, across the sheet, chats and GitHub",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b20\\b"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "REOPEN",
+    "BACK",
+    "INLINE",
+    "ELSE",
+    "FILT"
+   ],
+   "volume_for": [
+    "plain"
+   ],
+   "incorporating_span": "message him in our DM with the numbers he wants back"
+  },
+  {
+   "id": "V4",
+   "title": "Review list count in the reply",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "statuses joined with the areas on Leonard's card",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "\\b7\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GATE",
+    "REOPEN"
+   ],
+   "fact_id": "review-list-count",
+   "incorporating_span": "message him in our DM with the numbers he wants back"
+  },
+  {
+   "id": "V5",
+   "title": "Clear areas count in the reply",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "areas rolled up from report statuses",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "reply",
+    "(?i)\\b(0|zero|none|no)\\b[ -~\\u00a0-\\uffff]{0,30}(area|clear)|(area|clear)[ -~\\u00a0-\\uffff]{0,30}\\b(0|zero|none)\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ],
+   "incorporating_span": "message him in our DM with the numbers he wants back"
+  },
+  {
+   "id": "V7",
+   "title": "Season Pass area shows 5 open reports",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "area count joined across the pass sheet and a report that only came in a 1:1 chat",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sheet",
+    "(Season Pass)[ -~\\u00a0-\\uffff]{0,240}\\b5\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "B1",
+   "title": "Back to back tutorials row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "sheet ok and chat ok against the build's branch and Arthur's rule",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Back to back tutorials at level 16-17 only play the first one",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BRANCH"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "B2",
+   "title": "Card upgrade tutorial row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same join on a second row",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Card upgrade tutorial never shows after the Zombie Lane one",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BRANCH"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "B3",
+   "title": "Boss arena tutorial row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same join on a third row",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Boss arena tutorial does not play when another tutorial is queued before it",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BRANCH"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "B4",
+   "title": "Back to back tutorials sub-issue is filed In Validation",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "([Bb]ack to back tutorials)[ -~\\u00a0-\\uffff]{0,240}In Validation"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BRANCH"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "B5",
+   "title": "Boss Arena area is Open",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "area rolled up from a status that depends on the build's branch",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sheet",
+    "(Boss Arena)[ -~\\u00a0-\\uffff]{0,240}Open"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BRANCH"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "R1",
+   "title": "Pass popup over the gift row is Waiting on a fix",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "nr on a main build against a later reply in another thread",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Season pass popup comes up on top of the daily gift when both are due",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REOPEN"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "R2",
+   "title": "Its sub-issue is filed Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "(on top of the daily gift)[ -~\\u00a0-\\uffff]{0,240}Todo"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REOPEN"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "R3",
+   "title": "Its Why names Submission 135",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the build it came back on, read from the reply",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Season pass popup comes up on top of the daily gift when both are due",
+    "135"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REOPEN"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K1B",
+   "title": "Home intro replay row is Waiting on a fix",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "ok on a main build against a later post in another channel",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Coming back from Endless replays the home intro animation",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K2B",
+   "title": "Its sub-issue is filed Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "(replays the home intro)[ -~\\u00a0-\\uffff]{0,240}Todo"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "R4",
+   "title": "Event bar wait row is Waiting on a fix",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "ok on a main build against a later note on its ticket",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Reward animation waits too long before the event bar fills",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REOPEN"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "R5",
+   "title": "ZOM-585 goes back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ZOM-585)[ -~\\u00a0-\\uffff]{0,240}Todo"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REOPEN"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "R6",
+   "title": "Event bar wait row is on the review list",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a reopened pass joined with the areas on the changed card",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Reward animation waits too long before the event bar fills",
+    "Review list"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REOPEN"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K4B",
+   "title": "Lane progress bar row is Waiting on a fix",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "nr on a main build against a later note on its ticket",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Lane progress bar animates from zero every time",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K5B",
+   "title": "Zombie Lane child is not Done",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "child state follows the area",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "(Zombie Lane)[ -~\\u00a0-\\uffff]{0,240}Todo"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "K3B",
+   "title": "Endless Mode area shows 4 open reports",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "area count joined across the pass sheet and a later post",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sheet",
+    "(Endless Mode)[ -~\\u00a0-\\uffff]{0,240}\\b4\\b"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "I1",
+   "title": "Pass icon restart row is Waiting on a fix",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "merged PR in the sheet against the reviewer's inline comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Season pass icon animation restarts every time a panel closes",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "I2",
+   "title": "ZOM-571 goes back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ZOM-571)[ -~\\u00a0-\\uffff]{0,240}Todo"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "I3",
+   "title": "Its Why says #472 does not have it",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "reads the exception from the review",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Season pass icon animation restarts every time a panel closes",
+    "472"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "I4",
+   "title": "Pack sound row is Waiting on a fix",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "merged PR and In Validation ticket against the reviewer's inline comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pack opening sound keeps playing on the home screen after the pack closes",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "I5",
+   "title": "ZOM-581 goes back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ZOM-581)[ -~\\u00a0-\\uffff]{0,240}Todo"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "I6",
+   "title": "Event bar start row is Waiting on a fix",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "merged PR and In Validation ticket against the reviewer's inline comment",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Event bar starts filling while the daily gift popup is still open",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "I7",
+   "title": "ZOM-574 goes back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ZOM-574)[ -~\\u00a0-\\uffff]{0,240}Todo"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "INLINE"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "E5",
+   "title": "Pass claim animation row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "blank Fix cell and Todo ticket against the dev's comment on a merged PR",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Season pass reward claim animation plays twice when coming back from the shop",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "E6",
+   "title": "Freezer popup row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same join on a fourth row",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Win streak freezer popup opens behind the season pass popup",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "E7",
+   "title": "Pre-level panel row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "blank Fix cell and Todo ticket against the description of a merged PR",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Level-end coins fly while the pre-level panel is already open",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "E9",
+   "title": "ZOM-568 goes to In Validation",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ZOM-568)[ -~\\u00a0-\\uffff]{0,240}In Validation"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "E1",
+   "title": "Pass start popup row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "blank Fix cell and Todo ticket against the dev's comment on a merged PR",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Season pass start popup shows again after every level until it is claimed",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "E2",
+   "title": "Pass bar row is Waiting on QA",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same join on a second row",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pass progress bar fills before the tokens arrive",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "E3",
+   "title": "Its Why names #473",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the PR read from GitHub",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Season pass start popup shows again after every level until it is claimed",
+    "473"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "E4",
+   "title": "ZOM-572 goes to In Validation",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "state follows the status",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "(ZOM-572)[ -~\\u00a0-\\uffff]{0,240}In Validation"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ELSE"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "F1",
+   "title": "Marcus's icon glow report is in the sheet",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "scope sentence joined with a 1:1 chat",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pass icon glow stays on after everything is claimed",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "F2",
+   "title": "A sub-issue carries it",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "write follows the report",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "[Ii]con glow"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "F3",
+   "title": "Its area is Season Pass",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "area read from the report",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pass icon glow stays on after everything is claimed",
+    "Area"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "FILT"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "A1",
+   "title": "Day counter row uses ZOM-556",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "row tied to a base ticket under other words by a note",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Daily gift day counter keeps going after a skipped day",
+    "Ticket"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "A2",
+   "title": "Freezer row uses ZOM-560",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "row tied to a base ticket under other words by a note",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Win streak freezer from the abandoned pack never shows up on the home screen",
+    "Ticket"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "A3",
+   "title": "Note on ZOM-556",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "write on the reused ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "(ZOM-556)[ -~\\u00a0-\\uffff]{0,240}(fix|Waiting|Todo)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "ALIAS"
+   ],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "G1",
+   "title": "Gift calendar row is not on the review list",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "status joined with the areas on the changed card",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Daily gift calendar opens before the level-end coins finish",
+    "Review list"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GATE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "G2",
+   "title": "Coins over the pre-level panel row is on the review list",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "status joined with the areas on the changed card",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Level-end coins fly while the pre-level panel is already open",
+    "Review list"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "GATE"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K1",
+   "title": "Plain sample: endless banner again",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "blank cells read from the sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Endless unlock banner shows again after coming back from a level",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "plain",
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K2",
+   "title": "Plain sample: streak counter",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "blank cells read from the sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Streak counter jumps by two after a win when other panels are waiting",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "plain",
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K3",
+   "title": "Plain sample: endless chest",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "blank cells read from the sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Endless reward chest opens before the coins land",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "plain",
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K4",
+   "title": "Pack count row is Waiting on a fix",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a merged PR against a re-test on a build made after the merge",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Pack count on the home button only updates after a restart",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K14",
+   "title": "Arena button row stays Passed",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a later sighting on a build made before the one it passed on",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Arena entry button can be tapped during the reward animation",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K5",
+   "title": "Plain sample: banner over the gift",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "blank cells read from the sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Endless unlock banner overlaps the daily gift",
+    "Status"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "group": "plain",
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K6",
+   "title": "Passed on a main build: coin animation",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "ok checked against the build's branch",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Coin animation plays again after killing and reopening the app",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K7",
+   "title": "Passed on a main build: last pack cards",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "ok checked against the build's branch and the merge time",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Last pack does not show its cards before closing",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K8",
+   "title": "Waiting on QA: event panel over rewards",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "a merged PR against a re-test on a build made before the merge",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Event panel opens over the level-end rewards on first unlock",
+    "Status"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K9",
+   "title": "Zombie Lane area is Open",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "area rolled up from a pass that no longer stands",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "sheet",
+    "(Zombie Lane)[ -~\\u00a0-\\uffff]{0,240}Open"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "BACK"
+   ],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "K10",
+   "title": "Area children exist under the epic",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "names from Brian's note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "Endless Mode"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "K11",
+   "title": "A passed row with no ticket gets a Done sub-issue",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "state from Brian's note",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "issues",
+    "([Cc]oin animation)[ -~\\u00a0-\\uffff]{0,240}Done"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "K12",
+   "title": "A ticket moved under its child: ZOM-568",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "parent set from the row's area",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    "ZOM-568"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the children and report lines in Linear"
+  },
+  {
+   "id": "K13",
+   "title": "Ticket key in a sheet row",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "key copied from the pass sheet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Win streak tutorial at level 20 freezes the home screen",
+    "Ticket"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "D1",
+   "title": "Sheet in the folder",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "destination named in the DM",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_36cdb0374c4aad3b8bf741"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the stock-take sheet in my ZM queue manager folder"
+  },
+  {
+   "id": "D2",
+   "title": "Sheet shared with the review's people",
+   "weight": 3,
+   "work_kind": "comparison",
+   "work_reason": "attendees read from the review invite",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "share_reader",
+    "leonard.hayes@harmonygames.co"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "shared with everyone on the review invite"
+  },
+  {
+   "id": "D3",
+   "title": "Reply in Brian's DM",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "destination named in the prompt",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "reply"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "message him in our DM with the numbers he wants back"
+  },
+  {
+   "id": "D4",
+   "title": "Slide carries the review list count",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "number copied onto the slide",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slide",
+    "\\b7\\b"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "fact_id": "review-list-count",
+   "incorporating_span": "a slide with the numbers in my queue manager deck"
+  }
+ ]
+}
