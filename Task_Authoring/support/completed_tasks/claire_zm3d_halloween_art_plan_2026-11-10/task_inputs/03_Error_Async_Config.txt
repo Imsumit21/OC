@@ -1,0 +1,62 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+No friction is applied. The task is solved through the normal product surface;
+the baseline run and the verifier see the same service behavior as any other run.
+No error function and no async wait is configured. This is the local policy default
+(`create-error-async`: configured friction is realism only, never a difficulty or
+horizon lever).
+
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+
+## Alternate path (required for every errored function)
+
+No function is errored, so no alternate path is required.
+
+## Discovery the async wait depends on
+
+No async wait is configured, so no discovery depends on one.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- None: there is no injected failure, wait, or workaround to write into the Oracle Events.
+
+## Post-baseline checks
+
+- Forced error fired: n/a
+- Async submit → check → get appeared with the delay: n/a
+- Only 1.0 / 30 / 35 exercised: n/a
+
+## Self-review
+
+| Area | Counter-reading | Resolution |
+|---|---|---|
+| Difficulty | Friction is load-bearing for this task's difficulty or for its 180+ call volume. | No design note relies on it: `01_Hardness_Manifest.json` has no error or wait lever; the volume is the per-ticket spine (58 `linear_list_comments` reads, 58 comments, 48 assignments over ART-793 … ART-854) and the difficulty is the eleven mechanism rules, with rev3's six corrections kept off the swept path: Frederick's Android date reply `C0880U9751A/1759275738.984915`, Marcus's re-capture note `C09ATAJ220H/1758823964.738872`, Robert's test review `C08R8CHB0QL/1759248337.170599`, Martin's vacation post `C05KNDCHAAG/1759243286.478812` with Leonard's reply `C05KNDCHAAG/1759275107.322377`, Frederick's restart mail `claire.morgan@harmonygames.co/<CANf1Nx47805f8aa3d388495515d37fa274ef9@mail.gmail.com>` and his packs comment `68d6cff0c6568da5d9c8e81f` on Trello card `68768a1501ae552dbee94b8a`. Errors would add only retries, which never count toward the horizon. |
+| Outage framing | The scenario is about a failing system the run must wait out; rev3's reply says Unity is putting new Android creatives through manual review. | No: the ask is Leonard's Halloween art plan for Zombie Match 3D (`C06DJBJL798/1759269913.882683`). Unity's review is a vendor lead time that moves a due date in the story (`C0880U9751A/1759275738.984915`, Fri Oct 10 for Android US phone), not a service the run calls or waits on; nothing is down, and every deciding record is readable through ordinary reads (`01_Grounding_Dossier.md` §1.E; `persona_view.py check-sql claire_morgan` re-run on this SQL: verdict PASS, 0 load-bearing rows not visible). |
+
+Unresolved: none. Friction stays none on the injection SQL certified in `01_Grounding_Dossier.md` (sha256 0a08dedecd60, revision rev3: the six carriers above added, the three re-capture comments removed from their tickets, ART-831's "Not on the live creatives sheet yet." kept in `cmt_art831_2`, and the review `evt_d947bf7cd910549b674b1f` now noting that Leonard dials in from LA); no error or wait function is selected, so no rev3 record sits on an error or wait path.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputsN2 · 03_Error_Async_Config.txt#f93796afbb9e · 00_Assigments.md#6a3ab458705a · 01_Grounding_Dossier.md#c6af9569529d · 01_Universe_Inject.sql#0a08dedecd60 · __context__#215120f48d25 · __assignment__#fb0a0d31ccbc · __policy__#dc4ab5df3cdd · __gate_policy__#f8638415ca2c · __review__#98dc80681d27 · blocking 0 · warnings 0 · checks 12
+[PASS] assignment.v3_context: Claire Morgan / Art Lead; medium cap <85%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#0a08dedecd60, 01_Hardness_Manifest.json#a1d69c31fa21, 01_Grounding_Dossier.md#c6af9569529d, solver/solver.py#debf4347f85a, 01c_Dispositions.json#1e36d090cbb4, 01c_Preflight_Report.json#c050112218fe, 00_Assigments.md#6a3ab458705a, 01_Scenario_Design.md#220b3403cb4c, 01_Hardness_Manifest.draft.json#014850c608bc, 01_Gradable_Surface.json#054fd42a239c, __context__#215120f48d25, __assignment__#fb0a0d31ccbc, __policy__#dc4ab5df3cdd, __gate_policy__#f8638415ca2c, __review__#98dc80681d27)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 2 evidenced counter-readings (of 2 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+

@@ -1,0 +1,120 @@
+# Task Assigned Inputs — V3
+
+## Platform assignment
+
+Paste the assignment exactly as the platform displays it, including the role,
+difficulty mode and universe date. The eight assigned fields appear in seven
+groups because Role is inside Persona. Do not change any assigned value. The user
+only needs to supply this platform block; authoring setup resolves the inputs below.
+
+```text
+🏢 Business Function
+Executive
+
+🧑 Persona
+Robert
+Role: Co-founder & Creative Director
+
+🎯 Competency
+Finance
+
+🛠️ Task Skill
+Analysis and synthesis
+
+📋 Task Type
+long-horizon
+
+🎚️ Difficulty Mode
+easy
+
+📅 Universe Date
+February 14, 2026 00:00
+```
+
+## Resolved authoring inputs
+
+Authoring setup fills this mirror from the platform block and the selected persona
+roster. Keep `persona_name`, `persona_role`, `persona_key`, `email`, `department`
+and `horizon` for compatibility with existing tools. Do not ask the user to
+reformat the assignment or supply a timezone. Normalize and validate it with
+`python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputs --write`.
+Add `--require-source` before grounding task facts.
+
+```text
+spec_version:       V3
+business_function:  Executive
+persona_name:       Robert
+persona_role:       Co-founder & Creative Director
+competency:         Finance
+task_skill:         Analysis and synthesis
+task_type:          long-horizon
+horizon:            Long Horizon
+difficulty_mode:    easy
+universe_date:      February 14, 2026 00:00
+universe_date_key:  2026-02-14
+freeze_utc:         2026-02-14T00:00:00Z
+persona_key:        robert
+email:              robert@harmonygames.co
+department:         Executive
+```
+
+Resolve the assigned name and role to one persona in
+`Evals/references/persona/roster.json`; use
+`Task_Authoring/references/persona_roster_v2.json` as a cross-check. Never invent an
+email, substitute a persona or silently discard a conflicting role. If a persona
+is absent from the selected source or roster, report the source mismatch.
+
+Task ID, attempt ID, task version, environment ID, source snapshot ID,
+specializations and evaluation category are separate operational metadata. Record
+them when supplied or verified; they are not additional required assignment fields.
+Do not prefill an environment or snapshot ID from the old V2 template.
+
+## V3 authoring constraints
+
+Use `Task_Authoring/references/Docs/11_V3_Changes.md` for V3 changes; unaffected
+V2 rules still apply. This workspace-relative path remains valid when the
+template is copied into `task_inputs/`.
+
+- Freeze mapping: October 1, 2025 → `2025-10-01T00:00:00Z`; February 14, 2026 →
+  `2026-02-14T00:00:00Z`. Preserve the displayed time above. This mapping comes
+  from the course's assigned dates, not an inferred conversion of the display time.
+  The freeze is the seed bound; the eval clock is the universe's own: normal
+  2026-02-14 00:00 UTC, synth-cut 2025-10-01 00:00 PT = 07:00 UTC.
+- The date selects the universe (GEN_EXECUTION § 0a): Feb 14, 2026 → normal,
+  Oct 1, 2025 → synth-cut. Read only that universe and stop if the date is missing;
+  there is no default. Verify task evidence against the seed bound during scenario
+  and injection creation. Nothing seeded may be dated after it; future deadlines
+  are allowed. Later completed events cannot be treated as past, and earlier
+  mutable state needs dated records/history.
+- Difficulty: Easy average <90%; Medium <85%; Hard <70%. Equality fails. Use the
+  assigned mode and corrected, fairly graded results; never switch modes.
+- Horizon: Normal ≥50 tool calls; Long-Horizon ≥100. Use the golden run when one
+  exists (the lowest count when several runs score 100%), otherwise the rollout
+  average. A Normal run above 100 is a NON-FAIL; padding fails on its own. Human effort: Normal under about 8 hours; Long-Horizon about 12–24 hours.
+- The existing local horizon design is retained at the user's request:
+  Long-Horizon uses the extreme profile with at least 500 designed calls; Normal
+  uses its existing normal profile and budget limits. Assigned difficulty mode
+  still supplies its own weighted score cap.
+- The pre-check and all six baseline rollouts use Opus 5.5. Five or more full-pass
+  rollouts fails regardless of the average; unchanged error and failure-pattern
+  checks still apply.
+- The work must be plausible for the assigned role. Exercise the assigned
+  competency and task skill; their alignment is distinct from role plausibility.
+
+Eval Portal reviews and uploads are handled by the user. This file records inputs
+and constraints; it does not certify dated task evidence, completed runs or reviews.
+
+## Portal reviews and submission proof
+
+The user fills this as reviews pass (Eval Portal and L0 Review, 2026-10-26). Only the pass screen counts:
+report cards, chat messages and FAIL results are not proof. One review runs at a time per attempt.
+
+Attempt ID: [attempt id]
+
+| Review | Verdict | Verification code | Pass screen file | SQL / prompt sha256 reviewed |
+|---|---|---|---|---|
+| /injection | | EVP- | | |
+| /prompt | | EVP- | | |
+| /hardness | | EVP- | | |
+| /oe | | EVP- | | |
+| /rubric | | EVP- | | |

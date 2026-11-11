@@ -1,6 +1,6 @@
 # 06 — Human Time Estimate (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-humantime` · Writes: `task_inputs/Working_Files/05_Human_Time_Worksheet.md` · Paired eval: none. There is no QC Spec V2 row for it. It is a **required** field (the task cannot be submitted without it) and a checklist item in `10_Long Horizon Guidelines - V2.md` §10 and Common Errors & Pre-QC ("justified sub-task by sub-task and the arithmetic adds up") · Gate: **`tools/stage_gate.py humantime` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
+> Command: `/create-humantime` · Writes: `<task_dir>/Working_Files/05_Human_Time_Worksheet.md` · Paired eval: none. There is no QC Spec V2 row for it. It is a **required** field (the task cannot be submitted without it) and a checklist item in `10_Long Horizon Guidelines - V2.md` §10 and Common Errors & Pre-QC ("justified sub-task by sub-task and the arithmetic adds up") · Gate: **`tools/stage_gate.py humantime` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
 
 ## Purpose
 
@@ -34,14 +34,14 @@ precedence over the older V2 reference documents in `references/Docs/`; local au
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs
-- `task_inputs/04_Prompt.txt` (required: the estimate is for the work this prompt asks for).
-- `task_inputs/00_Assigments.md` (required: tier and persona).
+- `<task_dir>/04_Prompt.txt` (required: the estimate is for the work this prompt asks for).
+- `<task_dir>/00_Assigments.md` (required: tier and persona).
 - `01_Grounding_Dossier.md`, `01_Hardness_Manifest.json` (traps → dead ends), `04_Prompt_Writing_Brief.md`, `03_Error_Async_Config.txt`, `02_Reference_Files_Manifest.md`.
 - Refresh: `08_Oracle_Events.md`, `08_OE_Writing_Ledger.md`, then `07_Baseline_Trajectories/` and `12_Difficulty_Stats.txt` (count basis).
 - The universe, only the selected one, through `tools/hg.py search`, for volumes.
 
 Output
-- `task_inputs/Working_Files/05_Human_Time_Worksheet.md`: hours, the sub-task table, the tier check and a self-review.
+- `<task_dir>/Working_Files/05_Human_Time_Worksheet.md`: hours, the sub-task table, the tier check and a self-review.
 
 ## Hard gates
 
@@ -131,7 +131,7 @@ Sources measured: <hg.py queries / locators>
 3. **Re-verify** every volume through `hg.py`. A figure carried over from the dossier or an earlier pass is a lead, not evidence.
 4. **Recompute** the sum and the character count after any change.
 5. **Record** each check's result, each counter-reading and how it was resolved, and anything left unresolved (gate minimum: the five counter-readings above, each with evidence).
-6. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py humantime Task_Authoring/task_inputs --paste`: it re-adds the minutes against the hours, checks the 0.25 step, the 50–2,000 character line, a measured volume per row, dead-end/workaround/write lines, the sources line, and that the worksheet is newer than the prompt (and than the OEs or baseline on a refresh).
+6. **Stage gate.** `python3 Task_Authoring/tools/stage_gate.py humantime <task_dir> --paste`: it re-adds the minutes against the hours, checks the 0.25 step, the 50–2,000 character line, a measured volume per row, dead-end/workaround/write lines, the sources line, and that the worksheet is newer than the prompt (and than the OEs or baseline on a refresh).
 
 ## Deliver
 

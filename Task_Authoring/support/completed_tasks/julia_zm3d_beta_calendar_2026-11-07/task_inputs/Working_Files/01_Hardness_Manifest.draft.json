@@ -1,0 +1,1871 @@
+{
+ "assignment_context": {
+  "context_hash": "4bbc727fd48ac35a16b4afeda5430937563f2ce969970841bb4f3f97b6a38a39",
+  "assignment_hash": "e8b8269803d55217c20956dcadc93f50480bcc859ed88e5f1bbf153fa04649eb",
+  "policy_hash": "dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1",
+  "freeze_utc": "2025-10-01T00:00:00Z",
+  "difficulty_mode": "medium"
+ },
+ "persona": "julia_lawson",
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "volume_exception": {
+  "reason": "No honest design for Julia's Marketing and GTM calendar reaches the extreme 500 / 300 necessary calls. The enriched 48-member cohort (23 open live-ops issues + 25 merged PRs; the GitHub read surface is 41 in-scope PRs) makes a thorough unbatched run ≈ 255 evidence reads; the un-skippable minimal golden run (per-PR reviews certify no open change-request blocker + the 23 per-issue comments the stale Linear state forces) is ~130 calls; padding to 500 is a failing error",
+  "requester_confirmation": "Requester (session 2026-11-05, enriched task): \"we need 150+ tool call along with difficulty\"; the 48-member cohort makes a thorough run ≈ 255 calls (150+ for real runs); the honest minimal-golden-run floor is ~130; seeded rows ~55 (rows handled at injection)",
+  "call_budget_floor": 130,
+  "per_record_floor": 75,
+  "rows_floor": 70
+ },
+ "requirements": {
+  "R1": "Beat column: every ZM3D beat players can see in the four beta buy weeks (a window, a reset or a start push); Boss Arena and Axe Arena are off this calendar, and so is Zombie Lane (a permanent track with no window or reset to plan, per Frederick's follow-up under his ask); the rotating shop is not a beat",
+  "R2": "First window (UTC) column: a beat starts with the first window that opens after its server windows are live on prod (the backend release instant, read in UTC), not when its client PRs merged; Collect & Win's Mon-Tue / Wed-Thu / Fri-Sun windows open 00:00 UTC; every window closes 23:59 UTC on its last day",
+  "R3": "Status column: a beat is held only when players provably cannot enter, score or claim on prod even after a restart (an established failure holds it, an unverified one does not), or when an in-scope live-ops PR (the Aug-Sep merged cohort) carries an unresolved change-request review blocker; a hold with no dated fix runs until the fix is confirmed on prod, and a held beat keeps its usual windows and weeks on its row, marked held; a beat whose server windows are waiting on the backend release starts late, it is not held; restart-clearing faults, wrong counters, cosmetic, VFX, performance and analytics gaps do not hold it, nor does a change-request outside the cohort window (e.g. the July #303)",
+  "R4": "Weeks running column: which weeks a beat runs, All four weeks for the quest rollover and the daily gift; a one-off may take a recurring beat's slot only with Product's (Robert's) latest dated approval",
+  "R5": "Still to do column: a closed list of what each beat still needs before it runs for bought users, with its owner: its fix if it is held, and anything flagged since the brief as still needed for it (prod deploy, config or player-facing art); nothing else goes in, so not what already shipped, not analytics, not polish nobody flagged",
+  "R6": "Pushes tab: the push plan is the PNs Beta tab row by row, local notifications included, with the four rows for things that are not in the beta (Hourly Coins, Nathan's Treasure Hunt, Streak Fever, Axe Arena) left off; a push goes out only if its row is Ready and LIVE and the English copy on that row names the game as Zombie Match 3D and events by their ZM3D names (Login Calendar and Weekly Rankings are fine), and Frederick's follow-up adds that copy that names no game at all is fine (the naming rule is only about wrong names); anything else is held with which of those its row is missing",
+  "R7": "Destinations: the calendar in Julia's calendar sheet, its link on the calendar ticket, a note on the ticket of a beat that ends up held so its owner picks it up, and the recommendation with tradeoffs as a reply in Frederick's DM",
+  "R8": "Config locks: every config a beat needs lands before its lock, read in server time (UTC); a committed date that misses the lock moves to any time before it and you tell its owner in a reply on the mail where they committed to it",
+  "R9": "Span: the four buy weeks Mon Oct 6 00:00 UTC - Sun Nov 2 23:59 UTC, with anything that starts before or runs past that clipped to those two instants and windows stated in server time (UTC); Endless goes down as its weekly windows, with the daily reset noted"
+ },
+ "services": {
+  "slack": {
+   "role": "the ask and Frederick's follow-up under it, the one-off approval and its withdrawal, the prod re-test, fault threads, the reply",
+   "weight_reason": "Frederick's ask is the anchor and the reply destination (R7), and his thread reply under it settles the push rows, the copy that names no game and Zombie Lane (R1, R6); Robert's #zombie-art approval and his later message in his DM with Julia decide the Halloween week (R4); Vincent's Sep 30 re-test decides the leagues hold (R3)"
+  },
+  "gdocs": {
+   "role": "Frederick's beta brief: the calendar owner's rules",
+   "weight_reason": "the scope, deploy, hold, one-off, still-to-do, push and lock rules (R1-R6, R8) live here; only the push rows and the Zombie Lane scope are amended elsewhere (Frederick's follow-up)"
+  },
+  "gslides": {
+   "role": "Frederick's beta UA plan",
+   "weight_reason": "the four buy weeks that set the calendar's span (R9)"
+  },
+  "gmail": {
+   "role": "Brian's Season Pass November handoff",
+   "weight_reason": "Brian's Sep 22 date and his Sep 26 slip to Fri Oct 31 10:00 Istanbul time decide the November config deadline (R8); the reply to him is a required write"
+  },
+  "gcal": {
+   "role": "Douglas's backend release plan event",
+   "weight_reason": "the Wed Oct 8 release date fixes Collect & Win's first prod window (R2)"
+  },
+  "gdrive": {
+   "role": "Julia's ZM Live Ops folder",
+   "weight_reason": "holds Julia's calendar sheet, the write target (R7)"
+  },
+  "gsheets": {
+   "role": "the push sheet and Julia's calendar sheet",
+   "weight_reason": "the PNs Beta rows (Ready status, the NA / WIP / LIVE column, copy) decide every push (R6); Julia's sheet carries the column contract and receives the calendar (R7)"
+  },
+  "linear": {
+   "role": "open live-ops issues, owner notes, the calendar ticket",
+   "weight_reason": "per-issue notes decide holds and still-to-do (R3, R5; Marcus's second note on ZOM-465 carries the Collect & Win icon animation, and Samuel's closing note on the Done ticket ZOM-432 shows the daily-gift frame shipped); ZOM-78 is the calendar ticket to reuse (R7); ZOM-429 takes the hold note (R7)"
+  },
+  "github": {
+   "role": "live-ops PRs, their reviews and comments",
+   "weight_reason": "Arthur's inline note on #470 holds Collect & Win's server windows to the backend release (R2); his inline notes on #468 and #472 add the vial and premium-strip still-to-dos (R5)"
+  },
+  "trello": {
+   "role": "the open quests roadmap card and Leonard's note on it: context a run may over-read (T12, ungraded); carries no weight since revision 5"
+  },
+  "confluence": {
+   "role": "the base Season Pass spec page (nothing is injected into Confluence)",
+   "weight_reason": "page_season_pass_spec is the only source of the config-lock offset ('locked 24h before each season opens'): with the Nov 1 00:00 UTC opening it gives the Fri Oct 31 00:00 UTC lock that Brian's Oct 31 10:00 Istanbul date misses (R8); the brief only points to 'before its lock'"
+  }
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "prompt_reference": "Frederick's beta calendar ask",
+   "service": "slack",
+   "locator": "D05SD5QLG94/1759263617.418209",
+   "seeded_ids": [
+    "D05SD5QLG94/1759263617.418209"
+   ],
+   "container": "slack:D05SD5QLG94/1759263617.418209",
+   "requirement_ids": [
+    "R7"
+   ]
+  },
+  {
+   "id": "A2",
+   "prompt_reference": "my beta live-ops calendar sheet",
+   "service": "gsheets",
+   "locator": "f_e4a17c90b3d25f6a8c1d73",
+   "seeded_ids": [
+    "f_e4a17c90b3d25f6a8c1d73",
+    "d_5f2c8e1b7a94d03c6e2b58"
+   ],
+   "container": "file:f_e4a17c90b3d25f6a8c1d73",
+   "requirement_ids": [
+    "R7"
+   ]
+  }
+ ],
+ "ask_fragments": [
+  {
+   "id": "K1",
+   "service": "gdocs",
+   "container": "file:f_7c3e91a4d2b85f60e1a9c4",
+   "locator": "f_7c3e91a4d2b85f60e1a9c4",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "working rules for the calendar are in my brief",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K2",
+   "service": "gdocs",
+   "container": "file:f_7c3e91a4d2b85f60e1a9c4",
+   "locator": "f_7c3e91a4d2b85f60e1a9c4",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "working rules for the calendar are in my brief",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K3",
+   "service": "gdocs",
+   "container": "file:f_7c3e91a4d2b85f60e1a9c4",
+   "locator": "f_7c3e91a4d2b85f60e1a9c4",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "working rules for the calendar are in my brief",
+   "requirement_ids": [
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K4",
+   "service": "gdocs",
+   "container": "file:f_7c3e91a4d2b85f60e1a9c4",
+   "locator": "f_7c3e91a4d2b85f60e1a9c4",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "working rules for the calendar are in my brief",
+   "requirement_ids": [
+    "R4"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K5",
+   "service": "gdocs",
+   "container": "file:f_7c3e91a4d2b85f60e1a9c4",
+   "locator": "f_7c3e91a4d2b85f60e1a9c4",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "working rules for the calendar are in my brief",
+   "requirement_ids": [
+    "R6"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K6",
+   "service": "gdocs",
+   "container": "file:f_7c3e91a4d2b85f60e1a9c4",
+   "locator": "f_7c3e91a4d2b85f60e1a9c4",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "working rules for the calendar are in my brief",
+   "requirement_ids": [
+    "R5"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K7",
+   "service": "gdocs",
+   "container": "file:f_7c3e91a4d2b85f60e1a9c4",
+   "locator": "f_7c3e91a4d2b85f60e1a9c4",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "working rules for the calendar are in my brief",
+   "requirement_ids": [
+    "R8"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K8",
+   "service": "gslides",
+   "container": "file:f_2b9d4e7a1c63f08d5e7b21",
+   "locator": "f_2b9d4e7a1c63f08d5e7b21",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [
+    "f_2b9d4e7a1c63f08d5e7b21"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_7c3e91a4d2b85f60e1a9c4",
+   "delegation_quote": "the four buy weeks in my UA plan",
+   "requirement_ids": [
+    "R9"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K9",
+   "service": "gmail",
+   "container": "gmail:julia.lawson@harmonygames.co/1843954828968533812",
+   "locator": "julia.lawson@harmonygames.co/<CAPT--p4sBC8XnaA7qBDMtZkWqJPiXP0MT3deOQGPusOZhHF+vo@mail.gmail.com>",
+   "kind": "deadline",
+   "incorporated_via": [
+    "A1",
+    "K7"
+   ],
+   "seeded_ids": [
+    "julia.lawson@harmonygames.co/<CAPT--p4sBC8XnaA7qBDMtZkWqJPiXP0MT3deOQGPusOZhHF+vo@mail.gmail.com>",
+    "julia.lawson@harmonygames.co/1843954828968533812"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_7c3e91a4d2b85f60e1a9c4",
+   "delegation_quote": "Every config a beat needs lands before its lock",
+   "requirement_ids": [
+    "R8"
+   ],
+   "names_authorities": [
+    {
+     "id": "H2",
+     "quote": "Season Pass November config handoff"
+    }
+   ]
+  },
+  {
+   "id": "K10",
+   "service": "gcal",
+   "container": "gcal:3f8e1c6a9b2d4e7f0a5c8b1d3e6f9a2c@hg4",
+   "locator": "evt_9a4c2e7f1b3d58e06c7a2f",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K2"
+   ],
+   "seeded_ids": [
+    "evt_9a4c2e7f1b3d58e06c7a2f"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_7c3e91a4d2b85f60e1a9c4",
+   "delegation_quote": "the backend release instant read in UTC",
+   "requirement_ids": [
+    "R2"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K12",
+   "service": "linear",
+   "container": "linear:ZOM-78",
+   "locator": "cmt_zom78_1",
+   "kind": "destination",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "cmt_zom78_1"
+   ],
+   "base_pointers": [
+    "ZOM-78"
+   ],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "the calendar ticket",
+   "requirement_ids": [
+    "R7"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K13",
+   "service": "slack",
+   "container": "slack:C090N54TG79/1758517286.431379",
+   "locator": "C090N54TG79/1758517286.431379",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K3"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C090N54TG79/1758517286.431379"
+   ],
+   "delegated_by_record": "f_7c3e91a4d2b85f60e1a9c4",
+   "delegation_quote": "An established failure holds it",
+   "requirement_ids": [
+    "R3"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K14",
+   "service": "slack",
+   "container": "slack:C05KNDCHAAG/1758558164.541689",
+   "locator": "C05KNDCHAAG/1758558164.541689",
+   "kind": "exclusion",
+   "incorporated_via": [
+    "A1",
+    "K1"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "C05KNDCHAAG/1758558164.541689"
+   ],
+   "delegated_by_record": "f_7c3e91a4d2b85f60e1a9c4",
+   "delegation_quote": "Boss Arena is off this calendar until the pivot call",
+   "requirement_ids": [
+    "R1"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K15",
+   "service": "gsheets",
+   "container": "file:f_e4a17c90b3d25f6a8c1d73",
+   "locator": "f_e4a17c90b3d25f6a8c1d73",
+   "kind": "format",
+   "incorporated_via": [
+    "A2"
+   ],
+   "seeded_ids": [
+    "f_e4a17c90b3d25f6a8c1d73"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "f_e4a17c90b3d25f6a8c1d73",
+   "delegation_quote": "Still to do (owner)",
+   "requirement_ids": [
+    "R7"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K16",
+   "service": "gsheets",
+   "container": "file:f_a325dd4af80afc5994d5dc",
+   "locator": "f_a325dd4af80afc5994d5dc",
+   "kind": "requirement",
+   "incorporated_via": [
+    "A1",
+    "K5"
+   ],
+   "seeded_ids": [],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "delegated_by_record": "f_7c3e91a4d2b85f60e1a9c4",
+   "delegation_quote": "A push goes out only if its row is Ready and LIVE",
+   "requirement_ids": [
+    "R6"
+   ],
+   "names_authorities": []
+  },
+  {
+   "id": "K17",
+   "service": "slack",
+   "container": "slack:D05SD5QLG94/1759263617.418209",
+   "locator": "D05SD5QLG94/1759263878.305129",
+   "kind": "amendment",
+   "incorporated_via": [
+    "A1"
+   ],
+   "seeded_ids": [
+    "890dc27f56e8501bd7590ffdfc231057"
+   ],
+   "base_pointers": [],
+   "delegated_by_record": "D05SD5QLG94/1759263617.418209",
+   "delegation_quote": "the live-ops and push calendar for the beta buy",
+   "requirement_ids": [
+    "R1",
+    "R6"
+   ],
+   "names_authorities": []
+  }
+ ],
+ "authorities": [
+  {
+   "id": "H1",
+   "name": "Frederick's beta brief",
+   "home_service": "gdocs",
+   "decoy_service": "slack",
+   "governs": [
+    "R1",
+    "R3",
+    "R4",
+    "R6"
+   ],
+   "findable_query": "beta brief",
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "C05KNDCHAAG/1757704290.799329"
+   ]
+  },
+  {
+   "id": "H2",
+   "name": "Brian's Season Pass November handoff",
+   "home_service": "gmail",
+   "decoy_service": "gmail",
+   "governs": [
+    "R8"
+   ],
+   "findable_query": "Season Pass November",
+   "seeded_ids": [
+    "julia.lawson@harmonygames.co/<CAPT--p4a5fY9wd6vr+8JtjFXfffkxQOCEUYsuqSPy9HbQJu3Fs@mail.gmail.com>",
+    "julia.lawson@harmonygames.co/1844311412966040123"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [
+    "julia.lawson@harmonygames.co/<CAPT--p4sBC8XnaA7qBDMtZkWqJPiXP0MT3deOQGPusOZhHF+vo@mail.gmail.com>"
+   ],
+   "decoy_base_pointers": []
+  },
+  {
+   "id": "H3",
+   "name": "Douglas's backend release",
+   "home_service": "gcal",
+   "decoy_service": "slack",
+   "governs": [
+    "R2"
+   ],
+   "findable_query": "backend release",
+   "seeded_ids": [
+    "evt_9a4c2e7f1b3d58e06c7a2f"
+   ],
+   "base_pointers": [],
+   "decoy_seeded_ids": [],
+   "decoy_base_pointers": [
+    "C05KNDCHAAG/1758558302.777379"
+   ]
+  }
+ ],
+ "cohort": {
+  "definition_source": "K6",
+  "key": "live-ops work item",
+  "size": 41,
+  "members": [
+   "ZOM-78",
+   "ZOM-429",
+   "ZOM-465",
+   "ZOM-471",
+   "ZOM-504",
+   "ZOM-517",
+   "ZOM-521",
+   "ZOM-526",
+   "ZOM-534",
+   "ZOM-542",
+   "ZOM-543",
+   "ZOM-544",
+   "ZOM-546",
+   "ZOM-549",
+   "ZOM-552",
+   "ZOM-556",
+   "ZOM-565",
+   "ZOM-566",
+   "match3d#270",
+   "match3d#303",
+   "match3d#317",
+   "match3d#328",
+   "match3d#336",
+   "match3d#370",
+   "match3d#382",
+   "match3d#394",
+   "match3d#400",
+   "match3d#408",
+   "match3d#419",
+   "match3d#438",
+   "match3d#447",
+   "match3d#454",
+   "match3d#456",
+   "match3d#459",
+   "match3d#465",
+   "match3d#468",
+   "match3d#470",
+   "match3d#471",
+   "match3d#472",
+   "match3d#473",
+   "match3d#475"
+  ],
+  "rule": "open ZOM issues bearing on an in-scope beat's readiness or live-ops infrastructure (18 since revision 6: the SQL closes two of the former 21 as Done, ZOM-344 and ZOM-432; ZOM-471, ZOM-542 and ZOM-565, which revision 4 had closed, are open and are members, the first and last in their base states and ZOM-542 Todo since revision 11; the Giant Analytics Ticket is left out since revision 6 because its Todo state is not reliable - its referencing PR merged in July, the KB's L03 case; Boss Arena / Axe Arena / Win Streak / Zombie Lane out) plus the 23 merged match3d PRs (Jul 1 - Sep 30) that each carry a post-merge still-to-do / deploy / scope-gap fact for a beat in their own body, commits or files (so #370, #438, #454, #471 and #473 stay although the notes once seeded on them moved away); the GitHub read surface is the 39 in-scope PRs (23 decision-bearing + 16 required identification/certify reads); EXPAND_cohort_feasibility.md, less ZOM-442, #297 and #308, which existed only for Zombie Lane (off the calendar since revision 2). 41 members",
+  "evidence_surfaces": [
+   {
+    "service": "linear",
+    "tool": "linear_list_comments",
+    "per_record_calls": 1.0,
+    "records": 18,
+    "seeded": true,
+    "seeded_ids": [
+     "cmt_zom78_1",
+     "cmt_zom429_1",
+     "cmt_zom465_1",
+     "cmt_zom471_1",
+     "cmt_zom504_1",
+     "cmt_zom517_1",
+     "cmt_zom521_1",
+     "cmt_zom526_1",
+     "cmt_zom534_1",
+     "cmt_zom542_1",
+     "cmt_zom543_1",
+     "cmt_zom544_1",
+     "cmt_zom546_1",
+     "cmt_zom549_1",
+     "cmt_zom552_1",
+     "cmt_zom556_1",
+     "cmt_zom565_1",
+     "cmt_zom566_1",
+     "cmt_zom526_2",
+     "cmt_zom526_3",
+     "cmt_zom521_2",
+     "cmt_zom465_2",
+     "cmt_zom465_3",
+     "cmt_zom534_2",
+     "cmt_zom566_2",
+     "cmt_zom565_2"
+    ],
+    "why_no_bulk": "linear_list_issues returns state and description, never comments (Ask_Carriers §3, §6b); base Linear holds 0 comments, so only the per-issue call shows an owner's or QA's latest note",
+    "short_circuit": "no other surface carries an issue's latest prod note: the state is stale for ZOM-429 (Backlog while QA re-tested) and ZOM-556 (Todo, note says claiming works), and the later notes on ZOM-465, Marcus's and Brian's, are the only place the missing Collect & Win icon animation is said outright; a run that skips the comments cannot tell hold from known issue",
+    "requirement": "R3",
+    "decides": "Status column"
+   },
+   {
+    "service": "github",
+    "tool": "github_get_pull_request_reviews",
+    "per_record_calls": 1.0,
+    "records": 39,
+    "seeded": true,
+    "seeded_ids": [
+     "harmonygames-Games/match3d#468#rev_3"
+    ],
+    "why_no_bulk": "a PR's review STATE lives only in the per-PR review list; inline and conversation comments carry no state field (H3 census), and search/list returns no review state",
+    "short_circuit": "the hold rule certifies no in-scope cohort PR carries an unresolved change-request review blocker; that absence cannot be proven without reading each of the 22 reviews (all clear in base, so the reads confirm no beat is held for a blocker), and the review submitted_at dates each human pass against its PR's merge",
+    "requirement": "R3",
+    "decides": "Status column"
+   },
+   {
+    "service": "github",
+    "tool": "github_get_pull_request_comments",
+    "per_record_calls": 1.0,
+    "records": 39,
+    "seeded": true,
+    "seeded_ids": [
+     "harmonygames-Games/match3d#470#rc_10",
+     "harmonygames-Games/match3d#468#rc_38",
+     "harmonygames-Games/match3d#472#rc_1"
+    ],
+    "why_no_bulk": "inline review comments come back only from this per-PR call; search 'comments' counts conversation comments only (S7 §3.3); 21 of 22 PRs carry only CodeRabbit inline notes in base",
+    "short_circuit": "reviews show an empty-bodied APPROVED on #470 and #472; the server-window note on #470, the vial-model note on #468 and the premium-strip note on #472 are inline comments, so neither the review list nor the conversation shows them",
+    "requirement": "R5",
+    "decides": "Still to do column"
+   }
+  ]
+ },
+ "chains": [
+  {
+   "id": "CH1",
+   "root_cause": "A24",
+   "ends_in": "R2",
+   "hops": [
+    {
+     "service": "slack",
+     "record": "D05SD5QLG94/1759263617.418209",
+     "finding": "Frederick asks for the beta-weeks calendar by his brief"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_7c3e91a4d2b85f60e1a9c4",
+     "finding": "deploy rule: windows go live only with a prod backend release"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#468",
+     "finding": "client merged Sep 29"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#470#rc_10",
+     "finding": "server windows only on dev; prod with the next backend release"
+    },
+    {
+     "service": "gcal",
+     "record": "evt_9a4c2e7f1b3d58e06c7a2f",
+     "finding": "the next backend release is Wed Oct 8"
+    }
+   ]
+  },
+  {
+   "id": "CH2",
+   "root_cause": "A11",
+   "ends_in": "R4",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_7c3e91a4d2b85f60e1a9c4",
+     "finding": "a one-off takes a recurring slot only with Robert's latest call"
+    },
+    {
+     "service": "slack",
+     "record": "C08R8CHB0QL/1758213623.552919",
+     "finding": "Robert: Halloween one-off in Plague Race's last-October slot"
+    },
+    {
+     "service": "slack",
+     "record": "D05GU6L0XFH/1759270241.638119",
+     "finding": "Robert drops the October one-off; keep the race"
+    }
+   ]
+  },
+  {
+   "id": "CH3",
+   "root_cause": "A13",
+   "ends_in": "R8",
+   "hops": [
+    {
+     "service": "confluence",
+     "record": "page_season_pass_spec",
+     "finding": "config locks 24 h before each season opens at 00:00 UTC"
+    },
+    {
+     "service": "gdocs",
+     "record": "f_7c3e91a4d2b85f60e1a9c4",
+     "finding": "every config a beat needs lands before its lock (points to the spec; states no 24 h offset itself)"
+    },
+    {
+     "service": "gmail",
+     "record": "julia.lawson@harmonygames.co/<CAPT--p4sBC8XnaA7qBDMtZkWqJPiXP0MT3deOQGPusOZhHF+vo@mail.gmail.com>",
+     "finding": "Brian: November config Wed Oct 29"
+    },
+    {
+     "service": "gmail",
+     "record": "julia.lawson@harmonygames.co/<CAPT--p4a5fY9wd6vr+8JtjFXfffkxQOCEUYsuqSPy9HbQJu3Fs@mail.gmail.com>",
+     "finding": "Brian: Fri Oct 31 10:00 Istanbul time"
+    }
+   ]
+  },
+  {
+   "id": "CH4",
+   "root_cause": "A1",
+   "ends_in": "R3",
+   "hops": [
+    {
+     "service": "linear",
+     "record": "cmt_zom429_1",
+     "finding": "owner: a restart gets players in; not urgent"
+    },
+    {
+     "service": "slack",
+     "record": "C08R27X0EAH/1758550789.777509",
+     "finding": "Sep 22: working fine after the revert"
+    },
+    {
+     "service": "slack",
+     "record": "C0880U9751A/1759265412.481909",
+     "finding": "Sep 30 submission builds: no new week even after a restart"
+    }
+   ]
+  },
+  {
+   "id": "CH6",
+   "root_cause": "A3",
+   "ends_in": "R5",
+   "hops": [
+    {
+     "service": "gdocs",
+     "record": "f_7c3e91a4d2b85f60e1a9c4",
+     "finding": "still to do = flagged player-facing art and config, with owner"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#468#rc_38",
+     "finding": "review note before the merge: the final vial models (Claire)"
+    },
+    {
+     "service": "github",
+     "record": "harmonygames-Games/match3d#472#rc_1",
+     "finding": "inline note under his approval, before the merge: premium strip to the November range before that season opens (Oliver)"
+    }
+   ]
+  }
+ ],
+ "traps": [
+  {
+   "id": "T1",
+   "family": "done_gap",
+   "mechanism": "A24",
+   "services": [
+    "github",
+    "slack",
+    "gcal"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#470#rc_10",
+    "evt_9a4c2e7f1b3d58e06c7a2f"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#468",
+    "harmonygames-Games/match3d#470",
+    "C05KNDCHAAG/1758558302.777379"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Collect & Win's client PRs #468/#470/#472 merged before the Sep 30 cut and Julia's own Sep 22 notes say the feature is completed, so it starts with the first beta window on Mon Oct 6",
+   "resolver": "Arthur's inline review note on #470 (left with his approval, nine seconds before the merge) says the group windows exist only on the dev stack and reach prod with Douglas's next backend release; that release is Wed Oct 8 18:00 Europe/Istanbul = 2025-10-08T15:00:00Z (Julia's calendar is fixed UTC+3), after the Wed-Thu window opens 00:00 UTC, so the first window that opens after it is Fri Oct 10 00:00 UTC (Thu Oct 9 5:00 PM PDT)",
+   "discovery_order": "the merged PRs and Julia's notes are met first (PR search, #company-internal); the hard part is the composition once retrieved: the inline #470 note, the calendar event's Istanbul start converted to UTC, and the window cadence composed to land Fri Oct 10 00:00 UTC (every record is retrievable)",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "C05KNDCHAAG/1758558302.777379",
+     "seeded": false,
+     "at": "2025-09-22T16:25:02Z",
+     "container": "slack:C05KNDCHAAG/1758558302.777379"
+    },
+    {
+     "service": "gcal",
+     "id": "evt_9a4c2e7f1b3d58e06c7a2f",
+     "seeded": true,
+     "at": "2025-09-26T17:20:09Z",
+     "container": "gcal:3f8e1c6a9b2d4e7f0a5c8b1d3e6f9a2c@hg4"
+    },
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d#468",
+     "seeded": false,
+     "at": "2025-09-26T20:16:25Z",
+     "container": "github:harmonygames-Games/match3d#468"
+    },
+    {
+     "service": "github",
+     "id": "harmonygames-Games/match3d#470#rc_10",
+     "seeded": true,
+     "at": "2025-09-30T15:51:06Z",
+     "container": "github:harmonygames-Games/match3d#470#rev_9"
+    }
+   ]
+  },
+  {
+   "id": "T2",
+   "family": "superseding",
+   "mechanism": "A11",
+   "services": [
+    "slack"
+   ],
+   "seeded_ids": [
+    "933cee9f6464a80e4b1f05259b595b20",
+    "669d15f685f158633e56302160957f1e"
+   ],
+   "base_pointers": [
+    "C08R8CHB0QL/1758121809.236839"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "Robert, the Product owner, approved Martin's Halloween one-off in Plague Race's last-October slot, so week 4 runs the one-off and Plague Race stops that week",
+   "resolver": "Robert's later message in his DM with Julia takes the approval back: it names the themed prop set he okayed in Martin's thread (the words of his approval), he pulls his ok, the one-off comes off the beta calendar (no art time on a theme that may not ship), and his later word is the one that counts, as the brief's one-off rule says; the race keeps that week",
+   "discovery_order": "the approval is a reply in Martin's #zombie-art thread and is met with it; the withdrawal is a top-level message in another container, Robert's DM with Julia, twelve days later. It has been top-level since revision 4 (it was a thread reply under an unrelated DM parent), and since revision 9 it says 'the themed prop set I okayed in Martin's thread', not 'Halloween one-off': a 'Halloween' or 'one-off' search returns the approval and not the withdrawal. A run reaches it through Robert's DM history, a search on his messages or a 'beta calendar' search, and ties it to the approval by the phrase 'themed prop set'",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "933cee9f6464a80e4b1f05259b595b20",
+     "seeded": true,
+     "at": "2025-09-18T16:40:23Z",
+     "container": "slack:C08R8CHB0QL/1758121809.236839"
+    },
+    {
+     "service": "slack",
+     "id": "669d15f685f158633e56302160957f1e",
+     "seeded": true,
+     "at": "2025-09-30T22:10:41Z",
+     "container": "slack:D05GU6L0XFH/1759270241.638119"
+    }
+   ]
+  },
+  {
+   "id": "T3",
+   "family": "exact_predicate",
+   "mechanism": "A17",
+   "services": [
+    "gdocs",
+    "gsheets",
+    "slack"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc",
+    "C05KNDCHAAG/1757704290.799329"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the beats are the events everyone lists (Leonard's beta pipeline, the live-ops icons): Plague Race, Collect & Win, Season Pass, Endless and leagues, with the quests rollover and the daily gift left out",
+   "resolver": "the brief's scope (every window, reset or start push) brings in the quests rollover and the daily gift (Login Calendar on the push sheet, same beat), each with its push row: seven beats in all"
+  },
+  {
+   "id": "T4",
+   "family": "authority",
+   "mechanism": "A15",
+   "services": [
+    "gsheets",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "pushes marked Ready in the push sheet go out as written",
+   "resolver": "the 1-day lapse and D0-1 FTUE rows still call the game 'Puzzles vs Zombies'; under the brief's copy rule they are held for the copy owner"
+  },
+  {
+   "id": "T5",
+   "family": "authority",
+   "mechanism": "A15",
+   "services": [
+    "gsheets",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "the Plague Race start push is Ready, so it goes out with each race",
+   "resolver": "the brief sends a push only when its row is Ready and LIVE; the sheet's second status column 'Status (NA, WIP, LIVE)' reads WIP, not LIVE, on the Plague Race and Weekly Leaderboard reset rows, so both pushes are held",
+   "discovery_order": "the first Status column (Ready / Not Ready) is the one every reader uses; the 'Status (NA, WIP, LIVE)' column sits seven columns to the right"
+  },
+  {
+   "id": "T6",
+   "family": "reuse_exclusion",
+   "services": [
+    "linear",
+    "slack"
+   ],
+   "seeded_ids": [
+    "cmt_zom78_1",
+    "bca784379e7dbca9e64e79a64dfefbba"
+   ],
+   "base_pointers": [
+    "ZOM-78"
+   ],
+   "requirement": "R7",
+   "expected_wrong_reading": "file a new ticket for the beta calendar",
+   "resolver": "ZOM-78 'Event Calendar For Zombie Match 3D' already exists (Backlog) and Frederick's comment asks for the link there"
+  },
+  {
+   "id": "T7",
+   "family": "superseding",
+   "mechanism": "A1",
+   "services": [
+    "linear",
+    "slack"
+   ],
+   "seeded_ids": [
+    "cmt_zom429_1",
+    "b5f2955c2e154efc6835946ecfe1758e"
+   ],
+   "base_pointers": [
+    "ZOM-429",
+    "C08R27X0EAH/1758546048.524829",
+    "C08R27X0EAH/1758546119.789009"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "ZOM-429's owner note says a restart gets players into the new week and the Sep 22 thread ends 'working fine right now', so leagues run (a known issue at worst)",
+   "resolver": "Vincent's Sep 30 prod re-test on the 0.3.49 submission build, a root post in #zombie-match3d, says the new week does not start even after killing the app; the later dated prod check by the same reporter supersedes the Sep 22 recovery, so under the hold rule leagues are held",
+   "discovery_order": "every record is retrievable; the difficulty is reconciliation, not concealment: the Linear note and the Sep 22 #zombie-bugs recovery are met first, and the Sep 30 #zombie-match3d prod re-test (another channel, later date) must be ordered against them under the hold rule",
+   "version_records": [
+    {
+     "service": "linear",
+     "id": "cmt_zom429_1",
+     "seeded": true,
+     "at": "2025-09-16T18:12:04Z",
+     "container": "linear:ZOM-429"
+    },
+    {
+     "service": "slack",
+     "id": "C08R27X0EAH/1758550789.777509",
+     "seeded": false,
+     "at": "2025-09-22T14:19:49Z",
+     "container": "slack:C08R27X0EAH/1758546119.789009"
+    },
+    {
+     "service": "slack",
+     "id": "b5f2955c2e154efc6835946ecfe1758e",
+     "seeded": true,
+     "at": "2025-09-30T20:50:12Z",
+     "container": "slack:C0880U9751A/1759265412.481909"
+    }
+   ]
+  },
+  {
+   "id": "T8",
+   "family": "superseding",
+   "mechanism": "A14",
+   "services": [
+    "gmail"
+   ],
+   "seeded_ids": [
+    "julia.lawson@harmonygames.co/<CAPT--p4sBC8XnaA7qBDMtZkWqJPiXP0MT3deOQGPusOZhHF+vo@mail.gmail.com>",
+    "julia.lawson@harmonygames.co/<CAPT--p4a5fY9wd6vr+8JtjFXfffkxQOCEUYsuqSPy9HbQJu3Fs@mail.gmail.com>"
+   ],
+   "requirement": "R8",
+   "expected_wrong_reading": "Brian's Season Pass handoff commits the November config for Wed Oct 29, well before the lock",
+   "resolver": "Brian's later mail moves it to Fri Oct 31 10:00 Istanbul time; since revision 4 it is a mail of its own (subject 'ZM3D Season Pass November config handoff: new date', no reply header, its own thread)",
+   "discovery_order": "the Sep 22 handoff mail is met first; the correction is a separate mail four days later in its own thread, which reading the handoff thread does not return and a 'last few days' mail sweep does not reach",
+   "version_records": [
+    {
+     "service": "gmail",
+     "id": "julia.lawson@harmonygames.co/<CAPT--p4sBC8XnaA7qBDMtZkWqJPiXP0MT3deOQGPusOZhHF+vo@mail.gmail.com>",
+     "seeded": true,
+     "at": "2025-09-22T09:12:41Z",
+     "container": "gmail:julia.lawson@harmonygames.co/1843954828968533812"
+    },
+    {
+     "service": "gmail",
+     "id": "julia.lawson@harmonygames.co/<CAPT--p4a5fY9wd6vr+8JtjFXfffkxQOCEUYsuqSPy9HbQJu3Fs@mail.gmail.com>",
+     "seeded": true,
+     "at": "2025-09-26T07:40:26Z",
+     "container": "gmail:julia.lawson@harmonygames.co/1844311412966040123"
+    }
+   ]
+  },
+  {
+   "id": "T9",
+   "family": "unit_or_timezone",
+   "mechanism": "A19",
+   "services": [
+    "gdocs",
+    "gmail",
+    "confluence"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4",
+    "julia.lawson@harmonygames.co/<CAPT--p4a5fY9wd6vr+8JtjFXfffkxQOCEUYsuqSPy9HbQJu3Fs@mail.gmail.com>"
+   ],
+   "base_pointers": [
+    "page_season_pass_spec"
+   ],
+   "requirement": "R8",
+   "expected_wrong_reading": "Fri Oct 31 10:00 is before the Nov 1 season opening, so the config is on time",
+   "resolver": "the base page_season_pass_spec locks config 24 h before each season opens, so with Nov 1 00:00 UTC the lock is Fri Oct 31 00:00 UTC (Thu Oct 30 5:00 PM PDT); the brief only points to it ('every config lands before its lock'); 10:00 Istanbul (UTC+3) is 07:00 UTC, seven hours late, so the deadline moves before the lock"
+  },
+  {
+   "id": "T10",
+   "family": "completion_elsewhere",
+   "mechanism": "A25",
+   "services": [
+    "linear"
+   ],
+   "seeded_ids": [
+    "cmt_zom432_1",
+    "cmt_zom432_2"
+   ],
+   "base_pointers": [
+    "ZOM-432",
+    "harmonygames-Games/match3d#471",
+    "C05433XK267/1759263189.219529",
+    "C05433XK267/1759259749.259909"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "Calvin's Sep 24 note on ZOM-432 'Daily gift artwork needs to have the frame' says the frame is the last piece still needed, so the daily login beat still needs the frame (Calvin)",
+   "resolver": "ZOM-432 is Done: Samuel closed it on Sep 30 21:07:26Z with a note on the ticket itself that the frame went out with PR #471 and is in both submission builds from that day, iOS 50 and Android 135. The base PR #471 (merged Sep 30) and the #builds Android Submission #135 change list ('Fixing UI Elements on Daily Gift') agree with it but are not needed. Nothing is left for the daily login beat",
+   "discovery_order": "a trap in name only since revision 5, and said plainly: the completion is recorded on the frame ticket itself, so one read of ZOM-432 (state Done, two notes in date order) settles it, and a run that lists open issues never meets the ticket and has the empty still-to-do for free. The wrong reading is left to a run that reads Calvin's note and ignores both the ticket's state and its last note. Nothing is recorded 'elsewhere' any more: the family and mechanism id are kept only so the rule and slot ids stay stable, chain CH5 is retired, and the node counts for nothing in the difficulty picture"
+  },
+  {
+   "id": "T11",
+   "family": "tool_surface",
+   "mechanism": "A3",
+   "services": [
+    "github",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "harmonygames-Games/match3d#468#rc_38",
+    "harmonygames-Games/match3d#472#rc_1"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#468",
+    "harmonygames-Games/match3d#472"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "merged live-ops PRs with an APPROVED review or only CodeRabbit notes leave nothing to do",
+   "resolver": "two human notes among the bot traffic add still-to-do items: Arthur's inline review note on #468, left before its merge (the vials still need their final models before the event runs, Claire; no blocker for that PR), and his inline note under his empty-bodied approval of #472, six seconds before its merge (the Season Pass premium strip art still shows the October range and needs the November range before that season opens, Oliver). Weaker since revision 8: both notes are inline, so one per-PR call type returns them, where through revision 7 the strip needed a second one. Through revision 3 these sat on #370 and #438; the Collect & Win icon animation left this trap for Marcus's note on ZOM-465 (T14)"
+  },
+  {
+   "id": "T12",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "trello",
+    "gsheets"
+   ],
+   "seeded_ids": [
+    "68dac8204f1e9a3b7c2d5e61"
+   ],
+   "base_pointers": [
+    "68c452a03006277f55d9dc96",
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "the open quests card on the roadmap ('Add more quests and balance quest rewards') and the push row's 'Revisit once new quests roll out' mean the quests beat is waiting for a new quest set, so Quests gets a still-to-do (or starts in week 2)",
+   "resolver": "Leonard's note on that card says more quests and the reward balance go in with the Mon Oct 13 rollover if they are ready and that the weekly rollover does not wait on them, the current quests keep running either way: nothing has to land before the beat runs, so under the brief's still-to-do rule nothing is put down for Quests. Ungraded: no slot reads the Quests still-to-do cell"
+  },
+  {
+   "id": "T13",
+   "family": "superseding",
+   "mechanism": "A1",
+   "services": [
+    "slack",
+    "gdocs"
+   ],
+   "seeded_ids": [
+    "f_7c3e91a4d2b85f60e1a9c4"
+   ],
+   "base_pointers": [
+    "C05KNDCHAAG/1757704290.799329"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Leonard's beta pipeline lists Infinite HP Boss Mode, so Boss Arena is on the beta calendar",
+   "resolver": "Frederick's brief keeps Boss Arena off this calendar until the pivot call",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "C05KNDCHAAG/1757704290.799329",
+     "seeded": false,
+     "at": "2025-09-12T19:11:30Z",
+     "container": "slack:C05KNDCHAAG/1757704290.799329"
+    },
+    {
+     "service": "gdocs",
+     "id": "f_7c3e91a4d2b85f60e1a9c4",
+     "seeded": true,
+     "at": "2025-09-24T17:40:52Z",
+     "container": "file:f_7c3e91a4d2b85f60e1a9c4"
+    }
+   ]
+  },
+  {
+   "id": "D1",
+   "family": "distractor",
+   "distractor_type": "stale_summary",
+   "services": [
+    "slack"
+   ],
+   "base_pointers": [
+    "C05KNDCHAAG/1758558302.777379"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "'feature completed Win and Collect' means Collect & Win is ready for players",
+   "resolver": "a dev-side status; the server windows are not on prod (T1)"
+  },
+  {
+   "id": "D2",
+   "family": "distractor",
+   "distractor_type": "partial_listing",
+   "services": [
+    "slack"
+   ],
+   "base_pointers": [
+    "C05KNDCHAAG/1757704290.799329"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the beta pipeline's named features are the whole calendar",
+   "resolver": "the brief's scope adds the rollovers (T3)"
+  },
+  {
+   "id": "D3",
+   "family": "distractor",
+   "distractor_type": "keyword_collision",
+   "services": [
+    "slack"
+   ],
+   "base_pointers": [
+    "C08R8CHB0QL/1758121809.236839"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Martin's 'Halloween theme for an app icon' is a live-ops beat",
+   "resolver": "an app icon is not a window, reset or push; only the one-off event matters, and it is dropped (T2)"
+  },
+  {
+   "id": "D4",
+   "family": "distractor",
+   "distractor_type": "other_title",
+   "services": [
+    "gsheets"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "the PN BETA Translated tab's rows (Domino Adventures, River Rush, Tiledozer) are ZM3D beta pushes",
+   "resolver": "the brief says beta pushes are English-only from PNs Beta; the translated tab is the old Domino set"
+  },
+  {
+   "id": "D5",
+   "family": "distractor",
+   "distractor_type": "lookalike_entity",
+   "services": [
+    "gsheets",
+    "trello"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc",
+    "6851a7abf7876721472dba99"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "'Win & Collect' (the Domino Delights name on the push row and the roadmap card) is fine copy for ZM3D",
+   "resolver": "the ZM3D event is Collect & Win; under the copy rule the row would be held even once Ready"
+  },
+  {
+   "id": "D6",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "slack"
+   ],
+   "base_pointers": [
+    "C08R6BF4ENN/1756747348.667629",
+    "C05KNDCHAAG/1758558164.541689"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Boss Arena's endpoints are ready and Axe Arena is on the roadmap, so both get beta slots",
+   "resolver": "Boss Arena is off until the pivot call (brief) and Axe Arena is postponed for the beta (Brian, Sep 22)"
+  },
+  {
+   "id": "D7",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "slack"
+   ],
+   "base_pointers": [
+    "C08R27X0EAH/1759249488.495439"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the Sep 30 Season Pass shader fault thread holds Season Pass or puts a shader fix on its still-to-do",
+   "resolver": "a shader defect is cosmetic; players still enter, score and claim, so Season Pass runs; since revision 10 Vincent, who raised it, says in the thread that Oliver pushed the fix, that it only changes how the box looks and that nothing has to land for the beta, so it is no still-to-do either"
+  },
+  {
+   "id": "D8",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "slack"
+   ],
+   "base_pointers": [
+    "C08R27X0EAH/1758145553.265559"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the unexplained Endless heating fault thread holds Endless",
+   "resolver": "a performance/heating issue does not stop players entering, scoring or claiming; Endless runs"
+  },
+  {
+   "id": "D9",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "slack"
+   ],
+   "base_pointers": [
+    "C08R27X0EAH/1758903616.346579"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the #zombie-bugs Zombie Lane thread (a fix sent and tested on Android, an iOS build asked for) shows Zombie Lane is live work for the beta, so it gets a calendar row",
+   "resolver": "Frederick's follow-up under his ask keeps Zombie Lane off the calendar (a permanent track with no window or reset to plan); the thread decides no row"
+  },
+  {
+   "id": "T14",
+   "family": "exact_predicate",
+   "mechanism": "A17",
+   "services": [
+    "linear",
+    "github"
+   ],
+   "seeded_ids": [
+    "cmt_zom465_1",
+    "cmt_zom465_2",
+    "cmt_zom465_3"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#454",
+    "harmonygames-Games/match3d#456",
+    "harmonygames-Games/match3d#475",
+    "ZOM-465"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "ZOM-465's master ticket struck 'Idle Icon Animation for all event icons' as done and Marcus's Sep 26 note says every event icon animates, so every event icon is animated",
+   "resolver": "Marcus's later note on the same ticket (Sep 30) says Collect & Win came in after his first note and its event icon animation is still to do on his side, Brian, who wrote the master VFX list (ZOM-521), says there that it has to land before the event runs (since revision 11), and the three animation PRs (#454/#456/#475) agree: they enumerate Quest/Season Pass/Zombie Lane/Plague Race/Endless/Infinite Boss and a card pack, and Collect & Win is in none",
+   "discovery_order": "weaker since revision 4: both notes sit on ZOM-465 and one per-issue comment call returns them in order, so the wrong reading is left to a run that stops at the struck line in the description or at the first note"
+  },
+  {
+   "id": "D10",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "linear",
+    "github"
+   ],
+   "base_pointers": [
+    "ZOM-543",
+    "harmonygames-Games/match3d#459",
+    "harmonygames-Games/match3d#472"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the queue manager (ZOM-543 In Progress; #459 orders only level_end/daily_gift/season_pass/tutorial, #472 adds Collect & Win) leaves the Plague Race / Endless / Quests panels un-ordered, so those beats are held or carry a wiring still-to-do",
+   "resolver": "the queue manager orders panel animations additively ('we'll add its order'); an un-queued panel is engineering wiring, not player-facing work flagged as still needed, and players still enter, score and claim - the beats run"
+  },
+  {
+   "id": "D11",
+   "family": "distractor",
+   "distractor_type": "scope_adjacent",
+   "services": [
+    "github",
+    "slack"
+   ],
+   "base_pointers": [
+    "harmonygames-Games/match3d#473",
+    "slack:C08R27X0EAH/1758905363"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "#473 migrated Season Pass to Addressables (Arthur asked for every live-ops feature), so the un-migrated beats are held or carry an addressables still-to-do",
+   "resolver": "Addressables is a load-time optimization, not an enter/score/claim blocker and not player-facing art flagged as still needed; no ZOM issue exists for it; no beat is held and it is not a calendar still-to-do"
+  },
+  {
+   "id": "T15",
+   "family": "superseding",
+   "mechanism": "A14",
+   "services": [
+    "slack",
+    "gdocs",
+    "gsheets",
+    "confluence"
+   ],
+   "seeded_ids": [
+    "890dc27f56e8501bd7590ffdfc231057"
+   ],
+   "base_pointers": [
+    "f_a325dd4af80afc5994d5dc",
+    "page_liveops_calendar"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "the brief's push rule is applied as written to every row of the tab and Zombie Lane is listed with the other live-ops",
+   "resolver": "Frederick's thread reply under his own ask: plan the PNs Beta tab as it stands, one line per row, local notifications included; leave off the four rows for things that are not in the beta (Hourly Coins, Nathan's Treasure Hunt, Streak Fever, Axe Arena); copy that does not name the game at all is fine to go out (the naming rule is only about wrong names); keep Zombie Lane off the calendar, a permanent track with no window or reset to plan",
+   "discovery_order": "the ask (the DM's parent message) and the brief it names are read first and read as complete; the amendment is a reply in the ask's own thread, which DM history (parents only) does not return - only the parent's reply count points at it",
+   "version_records": [
+    {
+     "service": "gdocs",
+     "id": "f_7c3e91a4d2b85f60e1a9c4",
+     "seeded": true,
+     "at": "2025-09-24T17:40:52Z",
+     "container": "file:f_7c3e91a4d2b85f60e1a9c4"
+    },
+    {
+     "service": "slack",
+     "id": "890dc27f56e8501bd7590ffdfc231057",
+     "seeded": true,
+     "at": "2025-09-30T20:24:38Z",
+     "container": "slack:D05SD5QLG94/1759263617.418209"
+    }
+   ]
+  }
+ ],
+ "call_budget": [
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 1,
+   "reason": "read Frederick's ask in his DM with Julia (anchor A1: scope of the work, destinations)"
+  },
+  {
+   "phase": "discovery",
+   "service": "slack",
+   "calls": 1,
+   "reason": "open the thread under Frederick's ask: his follow-up settles the push rows, the copy that names no game and Zombie Lane (R1, R6)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdrive",
+   "calls": 1,
+   "reason": "find the brief the ask names and Julia's calendar sheet (no links are posted)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gdocs",
+   "calls": 1,
+   "reason": "read Frederick's beta brief: every rule the calendar applies (R1-R6, R8)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gslides",
+   "calls": 2,
+   "reason": "find and read the UA plan the brief names for the buy weeks (R9)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gmail",
+   "calls": 2,
+   "reason": "search Brian's Season Pass handoff and read the thread (R8)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gcal",
+   "calls": 2,
+   "reason": "list Julia's events in the span and read the backend release event (R2)"
+  },
+  {
+   "phase": "discovery",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "push sheet metadata and the PNs Beta tab (R6); Julia's calendar sheet header (R7)"
+  },
+  {
+   "phase": "discovery",
+   "service": "linear",
+   "calls": 1,
+   "reason": "find the calendar ticket the ask names (ZOM-78, R7)"
+  },
+  {
+   "phase": "discovery",
+   "service": "confluence",
+   "calls": 1,
+   "reason": "find the Season Pass spec page and read its config-lock rule ('locked 24h before each season opens'): the offset the brief's 'before its lock' points to and states nowhere itself (R8). On the required path all along; first counted in revision 5"
+  },
+  {
+   "phase": "enumeration",
+   "service": "linear",
+   "calls": 3,
+   "reason": "list open ZOM issues (96 open since revision 9, whose SQL closes ZOM-344, ZOM-432 and ZOM-563; 99 in base: 2 pages) and search the beat terms the titles use"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 4,
+   "reason": "list the live-ops PRs merged Jul 1 - Sep 30 (search + pages); 210 merged, 39 in-scope"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 5,
+   "reason": "list the match3d-backend cross-repo PRs and read #16/#19/#26/#34: leagues / endless server state (#10 is Zombie Lane only, off the calendar: not read)"
+  },
+  {
+   "phase": "enumeration",
+   "service": "slack",
+   "calls": 9,
+   "reason": "#zombie-bugs Sep 15-30 (3 pages), #zombie-design (2), #zombie-match3d (2), #company-internal (1), #builds Sep 30 submission posts (1): each beat's faults and status"
+  },
+  {
+   "phase": "per-record",
+   "service": "linear",
+   "calls": 18,
+   "reason": "linear_list_comments on each of the 18 open live-ops issues (cohort surface 1; base Linear holds 0 comments; ZOM-484 dropped as out-of-scope Axe Arena, ZOM-442 as Zombie Lane only; ZOM-344 and ZOM-432, which the SQL closes Done, are not open and are not read; the Giant Analytics Ticket left the cohort in revision 6 and is not read)"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 39,
+   "reason": "github_get_pull_request_reviews on each of the 39 in-scope PRs (surface 2; certify no open change-request blocker per PR)"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 39,
+   "reason": "github_get_pull_request_comments on each of the 39 PRs (surface 3, inline review notes)"
+  },
+  {
+   "phase": "per-record",
+   "service": "github",
+   "calls": 7,
+   "reason": "commit-list reads on the body-empty PRs (#296/#317/#400/#408/#419/#471/#475): the decision lives in commit titles"
+  },
+  {
+   "phase": "authorities",
+   "service": "slack",
+   "calls": 2,
+   "reason": "#zombie-art Halloween thread replies (1); Robert's DM history, where the retraction is a top-level message since revision 4 (1; the thread-open call is gone) - the Sep 22 report and Oliver's recovery are distractors, not on the sufficient path (ZOM-429 note + the Sep 30 root settle the hold)"
+  },
+  {
+   "phase": "reconciliation",
+   "service": "slack",
+   "calls": 6,
+   "reason": "open the 6 open live-ops fault threads whose deciding last reply carries no beat keyword (H2: quests-anim, endless heating, season-pass shader, endless #1643, two submission bundles) to certify each beat under R3; the zombie-lane thread is not needed (off the calendar); the #zombie-match3d leagues re-test root is read in enumeration, not here"
+  },
+  {
+   "phase": "writes",
+   "service": "gsheets",
+   "calls": 3,
+   "reason": "write the Calendar and Pushes tabs, then read the sheet back"
+  },
+  {
+   "phase": "writes",
+   "service": "slack",
+   "calls": 1,
+   "reason": "reply to Frederick in his DM with the recommendation (R7)"
+  },
+  {
+   "phase": "writes",
+   "service": "linear",
+   "calls": 2,
+   "reason": "link the calendar on ZOM-78; note the leagues hold on ZOM-429 (R7)"
+  },
+  {
+   "phase": "writes",
+   "service": "gmail",
+   "calls": 1,
+   "reason": "reply to Brian, on the mail where he committed to the date, that the November config must land before the lock (R8)"
+  },
+  {
+   "phase": "enumeration",
+   "service": "github",
+   "calls": 10,
+   "reason": "files of the 10 shared-title PRs (icons, queue manager) to tie a flag to a beat",
+   "conditional_on": "a review or comment on that PR flags a beat (none does in base; the design seeds none on a shared-title PR)"
+  }
+ ],
+ "writes": [
+  {
+   "service": "gsheets",
+   "tool": "gsheets_values_update",
+   "count": 2,
+   "depends_on": [
+    "R_DONE_DEPLOY",
+    "R_WITHDRAWN",
+    "R_SCOPE_BEATS",
+    "R_COPY_CURRENT",
+    "R_WIRED",
+    "R_TECH_HOLD",
+    "R_HOLD_SCOPE",
+    "R_HANDOFF_SLIP",
+    "R_LOCK_BOUNDARY",
+    "R_DONE_ELSEWHERE",
+    "R_REVIEW_FLAGS",
+    "R_ASK_FOLLOWUP",
+    "K1",
+    "K15",
+    "K17"
+   ],
+   "requirements": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R8",
+    "R9"
+   ]
+  },
+  {
+   "service": "slack",
+   "tool": "slack_send_message",
+   "count": 1,
+   "depends_on": [
+    "R_DONE_DEPLOY",
+    "R_WITHDRAWN",
+    "R_TECH_HOLD",
+    "R_LOCK_BOUNDARY",
+    "A1"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "linear",
+   "tool": "linear_create_comment",
+   "count": 2,
+   "depends_on": [
+    "R_TECH_HOLD",
+    "K12",
+    "K3"
+   ],
+   "requirements": [
+    "R7"
+   ]
+  },
+  {
+   "service": "gmail",
+   "tool": "gmail_reply_to_message",
+   "count": 1,
+   "depends_on": [
+    "R_HANDOFF_SLIP",
+    "R_LOCK_BOUNDARY",
+    "K9"
+   ],
+   "requirements": [
+    "R8"
+   ]
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "R_DONE_DEPLOY",
+   "mechanism": "A24",
+   "nodes": [
+    "T1",
+    "CH1"
+   ],
+   "requirement": "R2",
+   "natural_reading": "merged client PRs + 'feature completed' = starts with the first beta window",
+   "prior_family": "A24",
+   "prior_family_reason": "same mechanism id; Opus 5.5 records hev_629850249f55e2d3 / hev_da8f703d3115e8e0 (vincent_zm3d_gate rev1, LEAKED: the deciding record was a swept DM); here it is an inline review note, the carrier Vincent's report §8 measured at 5/6-6/6 misses",
+   "controls": [
+    "Plague Race",
+    "Endless"
+   ],
+   "over_application": "over:every-beat-waits-for-a-release",
+   "source": "inline-470",
+   "signature": "merged-not-deployed",
+   "decides": [
+    "Collect & Win first window",
+    "Collect & Win still to do"
+   ]
+  },
+  {
+   "id": "R_WITHDRAWN",
+   "mechanism": "A11",
+   "nodes": [
+    "T2",
+    "CH2"
+   ],
+   "requirement": "R4",
+   "natural_reading": "the Product owner's approval in the art thread stands",
+   "prior_family": "A11",
+   "prior_family_reason": "same mechanism id (approval withdrawn later, in another container); no Opus 5.5 ledger record (Beta(1,1), UNCALIBRATED)",
+   "controls": [
+    "Endless",
+    "Season Pass"
+   ],
+   "over_application": "over:every-one-off-dropped",
+   "source": "robert-dm-thread",
+   "signature": "approval-taken-back",
+   "decides": [
+    "Plague Race weeks running",
+    "Halloween one-off in the reply"
+   ]
+  },
+  {
+   "id": "R_SCOPE_BEATS",
+   "mechanism": "A17",
+   "nodes": [
+    "T3"
+   ],
+   "requirement": "R1",
+   "natural_reading": "the beats are the events everyone lists",
+   "prior_family": "A17",
+   "prior_family_reason": "same mechanism id (cohort boundary; hev_971c5e5fdb2d2c1a, hev_95fae459cc9d282a, both LEAKED when the rule was read first)",
+   "controls": [
+    "Plague Race",
+    "Endless"
+   ],
+   "over_application": "over:every-push-row-is-a-beat",
+   "source": "brief-scope",
+   "signature": "resets-are-beats",
+   "decides": [
+    "Quests row",
+    "Login calendar row"
+   ]
+  },
+  {
+   "id": "R_COPY_CURRENT",
+   "mechanism": "A15",
+   "nodes": [
+    "T4"
+   ],
+   "requirement": "R6",
+   "natural_reading": "Ready in the push sheet = sendable",
+   "prior_family": "A15",
+   "prior_family_reason": "same mechanism id (house rule over the natural reading; hev_d62067eb715ef8fe LEAKED, hev_8f613c1258c209c0 FALSE)",
+   "controls": [
+    "7-day lapse",
+    "Lives recharged"
+   ],
+   "over_application": "over:every-zombie-copy-held",
+   "source": "brief-copy",
+   "signature": "old-title-held",
+   "decides": [
+    "1-day lapse push",
+    "D0-1 FTUE push"
+   ]
+  },
+  {
+   "id": "R_WIRED",
+   "mechanism": "A15",
+   "nodes": [
+    "T5"
+   ],
+   "requirement": "R6",
+   "natural_reading": "Ready = LIVE",
+   "prior_family": "A15",
+   "prior_family_reason": "same mechanism id (a second house rule on the same sheet: the 'Status (NA, WIP, LIVE)' column)",
+   "controls": [
+    "7-day lapse",
+    "Lives recharged"
+   ],
+   "over_application": "over:every-push-held",
+   "source": "brief-ready-and-live",
+   "signature": "ready-but-wip",
+   "decides": [
+    "Plague Race start push",
+    "Weekly Leaderboard reset push"
+   ]
+  },
+  {
+   "id": "R_ASK_FOLLOWUP",
+   "mechanism": "A14",
+   "nodes": [
+    "T15"
+   ],
+   "requirement": "R6",
+   "natural_reading": "the brief is the whole rulebook: its naming sentence is read strictly and every row of the tab is listed",
+   "prior_family": "A14",
+   "prior_family_reason": "same mechanism id and carrier class as the ledger's A14 record (hev_ee2fa6cd86df8050 FALSE on robert-vendor-schedule: a later record the run does not open); here the later record is an amendment in the ask's own thread. Honest caveat: the completed julia_zm_difficulty_baseline task saw 3 of 6 Opus 5.5 runs miss DM thread replies (its 01a_Hardening_Report: thread-reply nodes LANDED 3/6, between 1/6 and 5/6 in its other rounds), but tools/hardness_v2_check.py treats a reply in an anchor's thread as first_read (SAME_PLACE flag on T15), so this node can leak whenever a run opens the ask thread",
+   "controls": [
+    "1-day lapse",
+    "D0-1 FTUE"
+   ],
+   "over_application": null,
+   "source": "ask-thread-reply",
+   "signature": "amendment-in-the-ask-thread",
+   "decides": [
+    "Lives recharged push",
+    "7-day lapse push"
+   ]
+  },
+  {
+   "id": "R_TECH_HOLD",
+   "mechanism": "A1",
+   "nodes": [
+    "T7",
+    "CH4"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the owner note and the Sep 22 fix settle it: a restart gets players in",
+   "prior_family": "wrong summary + thread past its conclusion (A1)",
+   "prior_family_reason": "closest library family with Opus 5.5 records: a claim met first and overturned by a later record (hev_fcae4e267ad7d452 LEAKED via a swept DM; hev_6b560d035cdf9211 FALSE); here the re-test is a reply under a standalone root",
+   "controls": [
+    "Quests",
+    "Daily login"
+   ],
+   "over_application": "over:every-restart-fault-held",
+   "source": "retest-reply",
+   "signature": "fails-after-restart",
+   "decides": [
+    "Weekly leagues status",
+    "ZOM-429 hold note"
+   ]
+  },
+  {
+   "id": "R_HANDOFF_SLIP",
+   "mechanism": "A14",
+   "nodes": [
+    "T8",
+    "CH3"
+   ],
+   "requirement": "R8",
+   "natural_reading": "the handoff thread's date is the date",
+   "prior_family": "A14",
+   "prior_family_reason": "same mechanism id (a later record the run does not open; hev_ee2fa6cd86df8050 FALSE on robert-vendor-schedule)",
+   "controls": [
+    "Endless",
+    "Quests"
+   ],
+   "over_application": null,
+   "source": "brian-slip-mail",
+   "signature": "date-moved-in-other-thread",
+   "decides": [
+    "Season Pass November config deadline",
+    "reply to Brian"
+   ]
+  },
+  {
+   "id": "R_LOCK_BOUNDARY",
+   "mechanism": "A19",
+   "nodes": [
+    "T9"
+   ],
+   "requirement": "R8",
+   "natural_reading": "a delivery on the lock day is on time",
+   "prior_family": "A19",
+   "prior_family_reason": "same mechanism id (retrieved but never computed: the UTC lock instant against a local-time commitment); no Opus 5.5 ledger record",
+   "controls": [
+    "Collect & Win"
+   ],
+   "over_application": null,
+   "source": "lock-instant",
+   "signature": "lock-day-late",
+   "decides": [
+    "Season Pass November config deadline",
+    "reply to Brian"
+   ]
+  },
+  {
+   "id": "R_DONE_ELSEWHERE",
+   "mechanism": "A25",
+   "nodes": [
+    "T10"
+   ],
+   "requirement": "R5",
+   "natural_reading": "the frame ticket's own Sep 24 note is the last word: the daily-gift frame is still needed",
+   "prior_family": "A25",
+   "prior_family_reason": "the mechanism id is kept for id stability only (A25, completion recorded away from the request; hev_9f21d34afc03eb11 LEAKED via a swept DM). Since revision 5 the completion is recorded ON the request: the frame ticket ZOM-432 is Done and its own last note (Samuel, Sep 30 21:07:26Z) says the frame went out with PR #471 and is in both submission builds, so one read of the ticket settles it and a run that lists open issues never meets it. The A25 ledger prior does not describe this node; it is no difficulty carrier and its slot S07 is a weight-1 lookup. Control ZOM-344 became ZOM-534 in revision 4 (ZOM-344 is Done)",
+   "controls": [
+    "ZOM-534",
+    "ZOM-556"
+   ],
+   "over_application": "over:every-open-ticket-done",
+   "source": "frame-ticket-closing-note",
+   "signature": "older-note-on-closed-ticket",
+   "decides": [
+    "Daily login still to do"
+   ]
+  },
+  {
+   "id": "R_REVIEW_FLAGS",
+   "mechanism": "A3",
+   "nodes": [
+    "T11",
+    "CH6"
+   ],
+   "requirement": "R5",
+   "natural_reading": "approved or bot-only PRs leave nothing to do",
+   "prior_family": "A3",
+   "prior_family_reason": "same mechanism id (tool-surface blind spot: inline review notes come only from the per-PR call; on #468 and, since revision 8, #472, so one call type reaches both where two did through revision 7); no Opus 5.5 ledger record",
+   "controls": [
+    "harmonygames-Games/match3d#420",
+    "harmonygames-Games/match3d#364"
+   ],
+   "over_application": "over:every-pr-adds-a-task",
+   "source": "inline-review-notes",
+   "signature": "flag-in-inline-note",
+   "decides": [
+    "Collect & Win still to do",
+    "Season Pass still to do"
+   ]
+  },
+  {
+   "id": "R_HOLD_SCOPE",
+   "mechanism": "A17",
+   "nodes": [
+    "D7",
+    "D8"
+   ],
+   "requirement": "R3",
+   "natural_reading": "an open or diagnosed fault thread means the beat is held",
+   "prior_family": "A17",
+   "prior_family_reason": "ledger-grounded A17 (Beta(1,3) mean 0.25; hev_971c5e5fdb2d2c1a / hev_95fae459cc9d282a LEAKED): the hold predicate applied too broadly to cosmetic / performance / analytics faults - the over-application twin of R_TECH_HOLD",
+   "controls": [
+    "Plague Race",
+    "Daily Login"
+   ],
+   "over_application": "over:every-open-fault-holds-the-beat",
+   "source": "fault-threads",
+   "signature": "cosmetic-fault-not-a-hold",
+   "decides": [
+    "Endless runs",
+    "Season Pass runs"
+   ]
+  },
+  {
+   "id": "R_ICON_SCOPE",
+   "mechanism": "A17",
+   "nodes": [
+    "T14"
+   ],
+   "requirement": "R5",
+   "natural_reading": "the master VFX ticket struck 'all event icons' as done, so every icon is animated",
+   "prior_family": "A17",
+   "prior_family_reason": "same mechanism id (a completion claim broader than the shipped set; hev_971c5e5fdb2d2c1a / hev_95fae459cc9d282a LEAKED when the predicate was read first): the idle-icon master ticket (ZOM-465) is struck done but the three animation PRs enumerate a subset that omits Collect & Win - a scope gap found only by reading #454/#456/#475 or, since revision 4, Marcus's later note on the same ticket (one per-issue comment call returns both notes, so this node is weaker than it was)",
+   "controls": [
+    "Season Pass",
+    "Plague Race"
+   ],
+   "over_application": "over:all-event-icons-done",
+   "source": "icon-master-vs-prs",
+   "signature": "cw-icon-absent",
+   "decides": [
+    "Collect & Win still to do (icon)"
+   ]
+  },
+  {
+   "id": "R_INFRA_SCOPE",
+   "mechanism": "A17",
+   "nodes": [
+    "D10"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the in-progress queue manager, whose flow list does not yet order the Plague Race panel, holds Plague Race",
+   "prior_family": "A17",
+   "prior_family_reason": "ledger-grounded A17 (Beta(1,3) mean 0.25; hev_971c5e5fdb2d2c1a / hev_95fae459cc9d282a LEAKED): the readiness rule over-applied to ONE live-ops INFRASTRUCTURE gap rather than a fault thread - the infra-gap over-hold twin of the fault-thread R_HOLD_SCOPE, over a DISJOINT beat (it flips Plague Race only, which R_HOLD_SCOPE never touches); a run reads the queue manager (ZOM-543 In Progress; #459 orders level_end/daily_gift/season_pass/tutorial, #472 adds Collect & Win) as leaving the Plague Race panel un-ordered and therefore held, when the queue orders panel animations additively and Plague Race still enters, scores and claims. The addressables gap (#473, D11) is a standalone distractor, not graded - C&W over-hold via addressables is a separate, weaker mistake and is left as retrieval context",
+   "controls": [
+    "Endless"
+   ],
+   "over_application": "over:an-unqueued-panel-holds-the-beat",
+   "source": "queue-manager",
+   "signature": "unqueued-panel-not-a-hold",
+   "decides": [
+    "Plague Race runs"
+   ]
+  }
+ ],
+ "gradable_surface": {
+  "path": "01_Gradable_Surface.json"
+ }
+}

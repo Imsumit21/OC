@@ -9,6 +9,9 @@
   "census":    {"<claim id>": {"file": "census/<name>.json", "sha256": "<64 hex>"}},       optional
   "records":  [{"key", "kind", "role"?, "manifest"?, "note"?, "fields": {"<field>": <value>}}]
 }
+A snapshot pin names the one export file of a one-document service (Linear: data.json) or, for a many-file service
+(Slack), its source_manifest.json (core/base.py). A record of a haystack kind (services/haystack.py) also has "rows"
+and is expanded into ordinary records <key>.001, <key>.002, ... before anything below runs.
 
 Unknown keys, duplicate JSON keys, unknown kinds or fields, missing required fields and bare (provenance-less) values are
 refused. JSON numbers with a fraction are read as decimal.Decimal, never float.
@@ -133,9 +136,11 @@ def load_spec(spec_dir: Path, root: Path | None = None) -> Spec:
 
     if not isinstance(doc["records"], list) or not doc["records"]:
         raise SpecError("records", "must be a non-empty list")
-    records, seen = [], set()
+    raw_records = []                            # a haystack record stands for one record per row
     for n, rec in enumerate(doc["records"]):
-        where = f"records[{n}]"
+        raw_records += [(f"records[{n}]", item) for item in registry.expand_record(f"records[{n}]", rec)]
+    records, seen = [], set()
+    for where, rec in raw_records:
         _keys(where, rec, RECORD_KEYS, {"key", "kind", "fields"})
         key = rec["key"]
         if not isinstance(key, str) or not KEY.match(key):

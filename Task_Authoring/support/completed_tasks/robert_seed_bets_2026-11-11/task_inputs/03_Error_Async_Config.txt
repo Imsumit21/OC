@@ -1,0 +1,53 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Robert · the seed, bet by bet · normal universe, clock 2026-02-14T00:00:00Z (Fri Feb 13, 4:00 PM PT) · injection rev6 (SQL sha256 ad50f039b5c2). The requester chose to skip this stage on 2026-11-08, so no friction is configured; this file only records that.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+Reason: nothing in the scenario is about a tool outage or a slow search. The task's difficulty and horizon come from the seeded records (see `Working_Files/01_Grounding_Dossier.md`), never from friction (playbook 03, hard gate 1).
+
+## Post-baseline checks
+
+- Forced error fired (failed calls visible in the trajectories): n/a (Friction: none)
+- Async submit → check → get appeared, with the delay: n/a (Friction: none)
+- Only 1.0 / 30 / 35 have been exercised before; any other value confirmed in the first trajectory: n/a (Friction: none)
+
+## Self-review
+
+| Area | Counter-reading (strongest argument it fails) | Evidence that resolves it | Verdict |
+|---|---|---|---|
+| Is the scenario about an outage | The Feb 11 wind-down might read as an outage worth simulating, with accounts closing. | The task asks for a per-bet cost and revenue account from Leonard's ask C0ADGSZKR3R/1770945821.640039 and the method doc f_6feda53b2382c63bf47b25; no record makes a tool failure part of the work. | Not an outage task; friction none. |
+| Horizon and difficulty | Friction could add calls toward the 100-call target. | Playbook 03, hard gate 1: friction is never a horizon or hardness lever, and retries never count. The horizon comes from 22 payee issues in linear:project/0742c172-85de-47ed-a111-316e5c8cb187, called for by the second ask C0ADGSZKR3R/1770945859.212469, and their deciding records. | No lever needed. |
+
+Unresolved: none. The config is not supplied to `/prompt` (no friction).
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputsS2 · 03_Error_Async_Config.txt#b51534f72800 · 00_Assigments.md#1555ee0dca48 · 01_Grounding_Dossier.md#7973cba43933 · 01_Universe_Inject.sql#40f90385e31e · __context__#f24f2cf97f30 · __assignment__#a525bbe797a2 · __policy__#dc4ab5df3cdd · __gate_policy__#cc68bf5564ff · __review__#0a90407fb37a · blocking 0 · warnings 0 · checks 13
+[PASS] assignment.v3_context: Robert / Co-founder & Creative Director; easy cap <90%; freeze 2026-02-14T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe normal; KB bound; clock Clock: 2026-02-14 00:00 UTC, Feb 14, 2026 (normal)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#40f90385e31e, 01_Hardness_Manifest.json#5fc94e51431e, 01_Grounding_Dossier.md#7973cba43933, solver/solver.py#4c9f139f4940, 01c_Dispositions.json#b1277995c8e8, 01c_Preflight_Report.json#3cb202c824eb, 00_Assigments.md#1555ee0dca48, 01_Scenario_Design.md#c8d2df78fd47, 01_Hardness_Manifest.draft.json#6f37313201ce, 01_Gradable_Surface.json#32bb28690128, __context__#f24f2cf97f30, __assignment__#a525bbe797a2, __policy__#dc4ab5df3cdd, __gate_policy__#5b7d4d20094d, __review__#0a90407fb37a)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 2 evidenced counter-readings (of 2 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] readiness.context: explicit task/revision and current upstream evidence verified
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+
+
+

@@ -16,6 +16,24 @@ numbers refer to `references/Taxonomy_V2_Step_Map.md`.
 > per-tool deltas from the P1 hardening, the stage-by-stage impact, and the exact steps to
 > re-certify an existing task (the gate-policy hash moved, so every pasted PASS is stale).
 
+## First-pass checks (2026-11-11)
+
+The plan in `Audit_2026-11-10_First_Pass_Root_Cause/PLAN.md` adds checks so a task reaches the baseline once and passes
+each platform eval in one or two rounds. They run inside the stage gates and print `WARN` until the owner sets a check
+to `block` in `references/first_pass_policy.json` (`python3 -B Task_Authoring/tools/first_pass_controls.py modes`).
+Treat a WARN from them as a defect to fix.
+
+| Stage | What is new | Tool |
+|---|---|---|
+| `/create-goal` | Fit census: reach per service, thin services, base cohorts, verdict `FIT` / `FIT WITH LIMITS` / `NO NATURAL COHORT` (then the scenario is built by injection; a task is never skipped and its persona never changed) | `assignment_fit.py census --write` |
+| `/create-scenario` | Difficulty budget: two anchors carrying the mode's loss, four or more independent coin-flip units, simulated against the baseline gates | `difficulty_budget.py check` |
+| `/create-injection` | Path exposure of every deciding record; coherence sweep with two cold reviewers (forks settled in data, closed rule and census for every open set, siblings, whole-base consistency); rubric shape before the pre-check; generator-rendered SQL for an injection-built scenario | `path_exposure.py`, `coherence_sweep.py`, `rubric_skeleton.py`, `generators/render.py` |
+| Pre-check intake | Was each unit's deciding record opened: GO / NO-GO before any hand review; one relocation per revision; stop after two NO-GO on one design | `budget_outcome.py`, `revision_scope.py` |
+| Prompt, OE, rubric checks | Fork sweep instead of the unconditional fair-outcomes pass; C4 fit; every Expected qualifier against its record; the eval's rubric lint and the platform-only rubric rules; the budget on the final rubric rows | `coherence_sweep.py`, `oe_qualifier_check.py`, `platform_delta_lint.py`, `rubric_skeleton.py drift` |
+| Any platform report | Intake (task id check, filing, new release or rule), then the repair protocol of `setup/GEN_EXECUTION.md` § 8 | `report_intake.py intake` |
+| Local rehearsal | Blind reviewer briefs replicating the platform's passes, and the cold-solver brief; never a platform verdict | `blind_review.py plan` |
+| Every task | Its own named folder (`task.folder`); counters against the targets (≤ 2 SQL revisions, 1 pre-check, 1 baseline, ≤ 2 rounds per eval) | `task_metrics.py summary` |
+
 ## The shape of a V3 task
 
 Four stages (`references/Docs/2_Overall Task Flow - V2.md`): **Build** the universe and
@@ -32,13 +50,15 @@ cohort spine, hidden authorities, delegation lattice, chains, traps, call budget
 
 ```mermaid
 flowchart TD
-  A["00 · Exact assignment paste<br/>8 fields · normalize context<br/>universe by date · assigned freeze"] --> S["/create-scenario<br/>01 design + manifest + gradable surface<br/>gate --design · Red team · prior forecast"]
+  A["00 · Exact assignment paste<br/>8 fields · normalize context<br/>universe by date · assigned freeze"] --> G["/create-goal<br/>session goal · fit census"]
+  G --> S["/create-scenario<br/>01 design + manifest + gradable surface<br/>difficulty budget · gate --design · Red team"]
   S -->|gate FAIL / leaks| S
-  S --> I["/create-injection<br/>01 SQL + dossier + manifest + solver<br/>sql_lint + hardness_gate · preflight"]
+  S --> I["/create-injection<br/>01 SQL + dossier + manifest + solver<br/>preflight · path exposure · coherence sweep · rubric shape"]
   I -->|gate FAIL| I
   I --> EI{{"/injection"}}
   EI -->|FAIL| I
-  EI --> F["/create-error-async · /create-reference-files<br/>(optional)"]
+  EI --> PB
+  EI -.->|only when the owner asks| F["/create-error-async · /create-reference-files<br/>(skipped by default)"]
   F --> PB["/create-prompt-writing → 04 writing brief (facts only)"]
   PB --> HP(["Model draft or human writes 04_Prompt.txt"])
   HP --> PC["/create-prompt-writing check"]
@@ -48,9 +68,9 @@ flowchart TD
   EP -->|universe-rooted| I
   EP --> HT["/create-humantime → 06<br/>human types the estimate"]
   HT --> PRE["PLATFORM · re-inject · 1 Opus 5.5 run"]
-  PRE --> PI["/create-hardening MODE B · pre-check intake<br/>node verdicts · posterior forecast"]
+  PRE --> PI["/create-hardening MODE B · pre-check intake<br/>budget outcome first · node verdicts"]
   PI --> Q{"Opus struggled<br/>on substance?<br/>go / no-go (advisory)"}
-  Q -->|"no — too easy"| SR["/create-scenario --revise<br/>S0r: disposition the verdicts"]
+  Q -->|"no — too easy"| SR["/create-scenario --revise<br/>one relocation · two NO-GO on one design = redesign"]
   SR --> I
   Q -->|yes| EH{{"/hardness<br/>(trajectory uploaded as a file)"}}
   EH -->|"score 1–2 HOLD"| SR
@@ -122,8 +142,8 @@ assigned Easy/Medium/Hard changes the measured score cap, not the profile.
 | 0.5r | Revision intake | `/create-scenario --revise` after `/create-hardening` MODE B | Every proposed node verdict kept, purged or rebuilt; CONFOUNDED candidates confirmed or rejected; every export bound to its revision; `stage_gate.py scenario` PASS | `/create-hardening` for missing forensics |
 | 1 | Universe | `/create-injection` | Dossier cited; `sql_lint.py` clean; `base_check.py`, `base_claims.py`, `fact_check.py`, `persona_view.py check-sql`, `hardness_gate.py` PASS; findability proven; solver contract PASS; a written disposition for every mutation result; geometry U > 1 − cap; preflight report current; `stage_gate.py injection` PASS | Step 0.5 if the design cannot be implemented |
 | 1e | Universe check | `/injection` (skip if nothing seeded) | PASS | Step 1 |
-| 2 | Friction *(opt.)* | `/create-error-async` | Alternate path proven; async needs real discovery; `stage_gate.py error-async` PASS | Drop the friction |
-| 3 | Files *(opt.)* | `/create-reference-files` | Grounded, not pre-solving, every fair outcome accepted; `stage_gate.py reference-files` PASS | Step 1 or drop the files |
+| 2 | Friction *(skipped by default; only when the owner asks)* | `/create-error-async` | Alternate path proven; async needs real discovery; `stage_gate.py error-async` PASS | Drop the friction |
+| 3 | Files *(skipped by default; only when the owner asks)* | `/create-reference-files` | Grounded, not pre-solving, every fair outcome accepted; `stage_gate.py reference-files` PASS | Step 1 or drop the files |
 | 4 | Prompt writing (prep) | `/create-prompt-writing` | §4b outcome table accepts every fair reading; source path/findability verified; outcome review evidence supplied; `stage_gate.py prompt-writing` PASS | Step 1 for universe defects |
 | 5 | **Prompt** | `/create-prompt-writing draft` or the human writes `04_Prompt.txt` | — | — |
 | 5c | Prompt check | `/create-prompt-writing check` | Assigned role plausible; clean ordinary request; no hints/riddles; fair outcomes reviewed; local tier profile certified; `stage_gate.py prompt-check` PASS | Step 5; step 1 for universe/profile failure |

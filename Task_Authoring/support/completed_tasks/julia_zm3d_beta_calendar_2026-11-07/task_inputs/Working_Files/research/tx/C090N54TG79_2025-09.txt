@@ -1,0 +1,830 @@
+1756730298.517369 09-01 12:38Z Vincent Parker: About the card progression and effect unlock, I ve triggered a build for you to test. iOS 1513, android 1766. The zombie lane rewards until lvl 150 is done and I m still adding rewards for later stages. For now, after lvl150, it repeats until lvl 290. The changes are • Drop rate is reduced for epic and legendary carda for premium pack. • Added a placeholder legendary pack for better drop rates jus
+1756748874.912829 09-01 17:47Z Robert [thread 2 replies]: <@EMPLOYEE_0012_SLACK_ID> did you see i f the VFX were appearing behind the monsters instead of over them? Or was that just me?
+1756748966.836219 09-01 17:49Z Marcus Bennett [reply to 1756748874.912829]: the new material has 3001 rendering que. i fixed that with some other stuff that im working on for [PERSON_NAME_0120] branch. I put 3000 render que and it will render ok
+1756748968.703449 09-01 17:49Z Vincent Parker: Not in the builds
+1756748980.623539 09-01 17:49Z Robert [reply to 1756748874.912829]: OK thanks
+1756748985.377349 09-01 17:49Z Robert: Ok
+1756751110.305629 09-01 18:25Z Leonard Hayes: [USERNAME_21011] the build in production has some issues
+1756751169.213249 09-01 18:26Z Leonard Hayes: in lawson40 level2 is fucked - I think <@EMPLOYEE_0025_SLACK_ID> accidentally merged some zombie balance changes to MF 40 which fucked the balance. We need to submit a fix ASAP
+1756751189.128659 09-01 18:26Z Leonard Hayes: 
+1756751203.655369 09-01 18:26Z Leonard Hayes: this happened to me too on the prod (what people download today)
+1756751276.912539 09-01 18:27Z Leonard Hayes: Also, I thought we agreed on not doing zombie poison in very early levels because of the stutter issues but I have seen a few instances where Zombies were alive during kill cam action and it takes some time for them to die which feels very buggy
+1756751302.038959 09-01 18:28Z Leonard Hayes: <@EMPLOYEE_0016_SLACK_ID> you said you are working and making levels right now - can you please prioritize this right now?
+1756751305.466159 09-01 18:28Z Robert: I think Level 2 needs to be remade because we've taken the poison out
+1756751316.921059 09-01 18:28Z Robert: let me look
+1756751319.139349 09-01 18:28Z Leonard Hayes: ok, we gotta fix it ASAP
+1756751323.797679 09-01 18:28Z Leonard Hayes: and resubmit
+1756751332.578819 09-01 18:28Z Leonard Hayes: every investor will hit that level
+1756751355.503329 09-01 18:29Z Leonard Hayes: it’s in really bad shape and we SHOULD HAVE NOT merged it
+1756751373.593569 09-01 18:29Z Leonard Hayes: and Blake (or I) shouldn’t have released it without QA check - I think what happened was we just thought we were doing some basic hot fix but other things got in as well.
+1756753216.592999 09-01 19:00Z Robert [thread 39 replies]: I fixed it like this for now:
+1756753330.834719 09-01 19:02Z Julia Lawson [reply to 1756753216.592999]: That's not okay, it needs to be a small orange item. We can put orange in instead if the carrot is broken
+1756753434.723599 09-01 19:03Z Vincent Parker [reply to 1756753216.592999]: The problem is poison item along with low count of objects. And the changes should be done in a branch where <@EMPLOYEE_0025_SLACK_ID> suggested to update the live builds because it cannot be merged from the poolresizing branch 
+1756753524.353179 09-01 19:05Z Julia Lawson [reply to 1756753216.592999]: I didn't PR for main
+1756753579.508979 09-01 19:06Z Julia Lawson [reply to 1756753216.592999]: <@EMPLOYEE_0016_SLACK_ID> Are you taking a look or do I need to do something as well?
+1756753765.311669 09-01 19:09Z Robert [reply to 1756753216.592999]: I thought bat was the closest I can find to a "stick" shaped orange ish item
+1756753768.715209 09-01 19:09Z Robert [reply to 1756753216.592999]: that's not poison
+1756753782.992079 09-01 19:09Z Robert [reply to 1756753216.592999]: Feel free to replace it with something else! I'll discard my changes
+1756753796.109749 09-01 19:09Z Robert [reply to 1756753216.592999]: [USERNAME_45358] is the other one that's "orange" ish
+1756753811.610909 09-01 19:10Z Robert [reply to 1756753216.592999]: they are more like brown, I know
+1756753824.644169 09-01 19:10Z Julia Lawson [reply to 1756753216.592999]: So it needs to be a non poison item right?
+1756753840.827159 09-01 19:10Z Robert [reply to 1756753216.592999]: Ideally yes, since we aren't introducing them until.. forgot what you put down, wine bottle
+1756753856.851189 09-01 19:10Z Robert [reply to 1756753216.592999]: and also less chance for the buggy looking game finish that Leonard is describing
+1756753873.205609 09-01 19:11Z Robert [reply to 1756753216.592999]: The other option is disable poison on carrot altogether at level 0
+1756753926.565659 09-01 19:12Z Julia Lawson [reply to 1756753216.592999]: Can we do that if its not a problem for the card progression? That level is working well
+1756753934.887979 09-01 19:12Z Julia Lawson [reply to 1756753216.592999]: I mean in the funnel data
+1756753972.455369 09-01 19:12Z Vincent Parker [reply to 1756753216.592999]: But more objects should be inserted or less zombies 
+1756754026.791539 09-01 19:13Z Julia Lawson [reply to 1756753216.592999]: Let's chop off 2 zombies then. It's already a big increase in the item pool for level 2
+1756754548.259429 09-01 19:22Z Robert [reply to 1756753216.592999]: OK, [PERSON_NAME_0050] cacn you disable carrot poison at level 0 then? And [PERSON_NAME_0019] make the level changes with zombie quantity and item quanitty?
+1756754594.855669 09-01 19:23Z Robert: <@EMPLOYEE_0012_SLACK_ID> In your item progression, can we use an item like trumpet in an earlier level? is your progression just a gate for cards that can be obtained, but they can still appear in levels? Or can they not appear in levels either?
+1756754616.169659 09-01 19:23Z Robert: I'm assuming it's the former because you only release like 12 cards early on and it's impossible to make that many levels with so little items
+1756754644.757479 09-01 19:24Z Julia Lawson [reply to 1756753216.592999]: Yup, which branch?
+1756754708.934369 09-01 19:25Z Robert [reply to 1756753216.592999]: it's all in pool resizing still
+1756754753.781049 09-01 19:25Z Julia Lawson [reply to 1756753216.592999]: Did we merge that to main?
+1756754955.796139 09-01 19:29Z Vincent Parker: Yes only as cards, board objects are fine
+1756754970.420909 09-01 19:29Z Vincent Parker [reply to 1756753216.592999]: Nope we cant
+1756754997.586589 09-01 19:29Z Vincent Parker [reply to 1756753216.592999]: Because of that <https://harmonygamesgroup.Slack.com/archives/C090N54TG79/p1756730298517369|https://harmonygamesgroup.Slack.com/archives/C090N54TG79/p1756730298517369>
+1756755036.797659 09-01 19:30Z Vincent Parker [reply to 1756753216.592999]: &gt; OK, [PERSON_NAME_0050] cacn you disable carrot poison at level 0 then? And [PERSON_NAME_0019] make the level changes with zombie quantity and item quanitty? I cannot because im afk
+1756755079.847089 09-01 19:31Z Julia Lawson [reply to 1756753216.592999]: I cut off the zombie heads
+1756755213.565219 09-01 19:33Z Julia Lawson [reply to 1756753216.592999]: I can do it if you guys tell me the prefab that has the data
+1756755254.544659 09-01 19:34Z Julia Lawson [reply to 1756753216.592999]: I can't see a level0 setting in the card data or in the object data
+1756755285.099679 09-01 19:34Z Vincent Parker [reply to 1756753216.592999]: Carddata has it the scriptable
+1756755338.435859 09-01 19:35Z Julia Lawson [reply to 1756753216.592999]: 
+1756755345.743149 09-01 19:35Z Julia Lawson [reply to 1756753216.592999]: [PERSON_NAME_57565], what do I change here?
+1756755380.120069 09-01 19:36Z Vincent Parker [reply to 1756753216.592999]: Click on [USERNAME_45359] sorry
+1756755392.305909 09-01 19:36Z Vincent Parker [reply to 1756753216.592999]: Then you will see poison damage below
+1756755415.325799 09-01 19:36Z Julia Lawson [reply to 1756753216.592999]: 
+1756755459.728259 09-01 19:37Z Vincent Parker [reply to 1756753216.592999]: Below you ll see poision/damage percentage 
+1756755466.876679 09-01 19:37Z Vincent Parker [reply to 1756753216.592999]: Make the very first one 0
+1756755527.235449 09-01 19:38Z Julia Lawson [reply to 1756753216.592999]: All good?
+1756755554.807009 09-01 19:39Z Vincent Parker [reply to 1756753216.592999]: Yes, seems like so. Thx
+1756755561.935599 09-01 19:39Z Julia Lawson [reply to 1756753216.592999]: [PERSON_NAME_57565] pushing
+1756755647.563319 09-01 19:40Z Julia Lawson [reply to 1756753216.592999]: <@EMPLOYEE_0016_SLACK_ID> I made the changes
+1756758956.709269 09-01 20:35Z Robert [thread 3 replies]: <@EMPLOYEE_0012_SLACK_ID> I just realized we gotta start on the item balance thing soon, because as I'm making the levels, I'm using old item powers to create them, the levels are gonna be messed up most likely
+1756759784.921589 09-01 20:49Z Robert [reply to 1756758956.709269]: I'm looking for the sheet where you reassigned item rarity
+1756760274.943289 09-01 20:57Z Vincent Parker [reply to 1756758956.709269]: <https://docs.google.com/spreadsheets/d/1qSsmWYIljpxZaqB7XfyKHglD5BYT2tHkXOriFKfBjrg/edit?usp=drivesdk|https://docs.google.com/spreadsheets/d/1qSsmWYIljpxZaqB7XfyKHglD5BYT2tHkXOriFKfBjrg/edit?usp=drivesdk>
+1756760285.072209 09-01 20:58Z Robert [reply to 1756758956.709269]: [USERNAME_19716]
+1756762375.070229 09-01 21:32Z Robert [thread 5 replies]: CPM target for level 101+ I'm starting at 85, is that OK <@EMPLOYEE_0005_SLACK_ID>
+1756762414.491149 09-01 21:33Z Robert: playing time ~90 seconds
+1756772897.827709 09-02 00:28Z Robert [thread 3 replies]: I added some new items for us to play with: bowling ball/pins, canned food, boxing gloves, I'm adding more as we speak, I think we'll need it to Push it to level 200+
+1756790033.712779 09-02 05:13Z Robert [reply to 1756772897.827709]: Added rest of the stuff we have, ping pong paddle, baseball, shuttlecock, saber, golf club
+1756795571.165079 09-02 06:46Z Julia Lawson [reply to 1756762375.070229]: Do you think 80 or 85 is better?
+1756814146.129329 09-02 11:55Z Vincent Parker [reply to 1756772897.827709]: thanks, do those items have color variants?
+1756823537.103669 09-02 14:32Z Robert [reply to 1756762375.070229]: Actually probably 80
+1756823543.455429 09-02 14:32Z Robert [reply to 1756762375.070229]: Im rushing it again with 85
+1756823554.480639 09-02 14:32Z Robert [reply to 1756772897.827709]: Yes
+1756826269.968319 09-02 15:17Z Julia Lawson [reply to 1756762375.070229]: Yeah let's do 80. We can always increase the difficulty
+1756826278.543769 09-02 15:17Z Julia Lawson [reply to 1756762375.070229]: A gentler curve will be better I think
+1756829985.398369 09-02 16:19Z Julia Lawson: Level 33 prewarm was set at 10 seconds and no monsters before so that was the issue. I'll send the fix now
+1756830054.561669 09-02 16:20Z Julia Lawson: [PERSON_NAME_0050] please take a look at level 5 and 33, I sent the fixes
+1756830078.707459 09-02 16:21Z Julia Lawson [thread 3 replies]: And the nuke problem is still between level 20-30?
+1756830209.438949 09-02 16:23Z Vincent Parker [reply to 1756830078.707459]: 20-40 but fixing them before power update might cause refix
+1756830211.079239 09-02 16:23Z Robert [reply to 1756830078.707459]: I think it was throughout first 30 ish levels
+1756830216.436639 09-02 16:23Z Robert [reply to 1756830078.707459]: ok 40
+1756831305.100179 09-02 16:41Z Leonard Hayes: <https://www.linkedin.com/posts/nextbiggames_idle-puzzle-rpgs-and-runners-market-radar-activity-7362755075594731520-jGho?utm_source=share&amp;utm_medium=member_desktop&amp;rcm=ACoAAAJh-KABiEYRx6CSQG-T5CsCMIE5rn-YkEs|https://www.linkedin.com/posts/nextbiggames_idle-puzzle-rpgs-and-runners-market-radar[…]m=member_desktop&amp;rcm=ACoAAAJh-KABiEYRx6CSQG-T5CsCMIE5rn-YkEs>
+1756838780.659279 09-02 18:46Z Julia Lawson: Hey, guys. We just finished talking with [PERSON_NAME_0029]. And basically: • Don't use Domino Delights documents for Zombie Match features, please. The system can be the same but There are nuances that create edge cases. For example, with daily login, because we don't have a queue manager yet, he had to do something else with the animations and that was one of the issues in the last week's meetin
+1756846085.656109 09-02 20:48Z Robert: <@EMPLOYEE_0005_SLACK_ID> <@EMPLOYEE_0012_SLACK_ID> DOT disabled for level 0 items. Burn/poison/shock only. Critical, _some_ splash and bounce remains.
+1756855608.173529 09-02 23:26Z Robert [thread 1 replies]: <@EMPLOYEE_0012_SLACK_ID> <@EMPLOYEE_0005_SLACK_ID> Now that we're changing the rarity on a lot of the cards.. I think the monsters balance might need another pass yet again =/ There are going to be rare cards left and right
+1756855630.998329 09-02 23:27Z Robert [reply to 1756855608.173529]: But mostly just HP increase, everything can stay the way it is
+1756916415.831859 09-03 16:20Z Leonard Hayes: I’m testing 0.3.29 on testflight
+1756916425.153339 09-03 16:20Z Leonard Hayes: I got stuck at level 5 - [USERNAME_30707] didn’t show up
+1756916443.998289 09-03 16:20Z Leonard Hayes: 
+1756916467.256339 09-03 16:21Z Leonard Hayes: I thought you guys had fixed this - can you please fix it <!here> asap?
+1756916485.210649 09-03 16:21Z Leonard Hayes: Also what’s causing the nuke not to show up guaranteed?
+1756916550.445809 09-03 16:22Z Leonard Hayes: <@EMPLOYEE_0025_SLACK_ID> feel free to chime in
+1756916557.955409 09-03 16:22Z Leonard Hayes: he says he took the updated level 5 in
+1756916731.499639 09-03 16:25Z Arthur Blake: I think I missed that commit.
+1756916734.924559 09-03 16:25Z Arthur Blake: Adding back in
+1756935314.555529 09-03 21:35Z Robert: <@EMPLOYEE_0012_SLACK_ID> <@EMPLOYEE_0005_SLACK_ID> Item rarity change/power change completed now. I hope we don't have to do any more drastic overhauls in the future
+1756990809.900749 09-04 13:00Z Julia Lawson [thread 9 replies]: Guys, when the first wave is like this, meaning There can and cannot be a monster before the prewarm, the level will "sometimes" end prematurely. Let's avoid this situation. I think that's the cause of "I entered a level again and it ended prematurely" bug.
+1756990863.902869 09-04 13:01Z Vincent Parker [reply to 1756990809.900749]: I got an auto win problem in level 23 btw.
+1756990976.290069 09-04 13:02Z Julia Lawson [reply to 1756990809.900749]: [PERSON_NAME_37557], I was just at that level lol
+1756990987.192519 09-04 13:03Z Julia Lawson [reply to 1756990809.900749]: Like this screenshot was from level 23 :[USERNAME_1653]:
+1756991008.168969 09-04 13:03Z Vincent Parker [reply to 1756990809.900749]: [USERNAME_16860]
+1756998135.910459 09-04 15:02Z Julia Lawson: I started going over the levels again after the power change. Most levels are out of whack, especially after 10. But it's a relatively quick process and I'm adjusting the monster tracks again as well as placing the correct item introduction levels and reinserting the levels that we took out to place intro levels in <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0012_SLACK_ID>
+1756999698.545429 09-04 15:28Z Julia Lawson: I'm also noticing whenever we have a different start and end count it can throw the balance off more than before. I think moving forward we should be more specific with zombies. With the same bot speed, I can get both leftovers and I can get the nuke.
+1756999820.156019 09-04 15:30Z Vincent Parker: yes definitely, but for that, the damage and target calculation algo should be improved imo because if you are matching fast enough, some items are gonna target an already dead zombie. and yes those levels with volatile zombie spawns are problematic in general
+1756999871.022199 09-04 15:31Z Julia Lawson: Until such time, let's micromanage the shit out of them :[USERNAME_1653]:
+1757001097.983639 09-04 15:51Z Vincent Parker: [PERSON_NAME_0120] made the fix for the removing deck items if they are not used anymore. So our branch is good to merge it into main. The only thing is I removed bones pack and put legendary pack just to test. I can revert those changes before making PR but since we're not giving bones yet, I think it can stay There.
+1757001203.257169 09-04 15:53Z Julia Lawson: I'd rather finish the first 120 level balance before making a PR if that's okay. But if you guys want to merge I can send cherry picks too.
+1757006744.946909 09-04 17:25Z Julia Lawson: Shared this canvas: F09A1MFB7UY
+1757006759.987879 09-04 17:25Z Julia Lawson: 
+1757006790.235309 09-04 17:26Z Julia Lawson: I'm inserting the level guideline canvas here as well <@EMPLOYEE_0016_SLACK_ID>
+1757007028.678719 09-04 17:30Z PERSON_6089_SLACK_ID: 
+1757008320.320389 09-04 17:52Z Julia Lawson [thread 4 replies]: <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0012_SLACK_ID> Guys I'm also noticing some monsters that are not varC tagged in the monster tracks. Please be careful with those and let's delete the unused monsters after tomorrows build. They can end levels prematurely too since they are not boss tagged.
+1757008594.880469 09-04 17:56Z Robert [reply to 1756990809.900749]: Yup, this is why all my levels I have monster tracks that are "pre-warm" monsters vs. after
+1757008614.886109 09-04 17:56Z Robert [reply to 1756990809.900749]: So if my prewarm is set at 30 seconds, all my monsters are either xx - 30 seconds tracks and then 31-yyy seconds
+1757008630.432019 09-04 17:57Z Robert [reply to 1756990809.900749]: So that way I know what shows up in pre-warm or not, otherwise the premature ending will still happen
+1757008656.304219 09-04 17:57Z Robert [reply to 1756990809.900749]: for example if prewarm is 30 seconds You have a monster track 15-45 seconds, AVERAGE SPAWN INTERVAL. If you get unlucky, you can actually spawn 0 monsters from 15-30 seconds in that track, ending the level
+1757008704.274459 09-04 17:58Z Robert [reply to 1756990809.900749]: setting it at "fixed" interval will solve that, but with airstrike it can still get dicey. In the old airstrike when it instant kills the monster, the level can also end prematurely
+1757008765.803899 09-04 17:59Z Robert [reply to 1757008320.320389]: Oh shit, I need to use a monster exporter tool to double check
+1757008770.013779 09-04 17:59Z Robert [reply to 1757008320.320389]: Which we already have
+1757009127.014699 09-04 18:05Z Vincent Parker [reply to 1757008320.320389]: I haven’t touched levels for a while
+1757009202.467639 09-04 18:06Z Julia Lawson [reply to 1757008320.320389]: I'm just putting it out There as a general reminder. The one I noticed was one of my levels
+1757021625.725649 09-04 21:33Z Robert [thread 1 replies]: <@EMPLOYEE_0005_SLACK_ID> I noticed that some items might not have the right damage assigned to them, so far I've only caught one. When you are balancing and the items seems too weak or too strong that it doesn't pass the smell test, check here and see if the damage done is dealt accordingly <https://docs.google.com/spreadsheets/d/1nrqOaZalL0XMJZ3o1Hj-Nl1TSUxSmkiHE4Sg9qkFn20/edit?pli=1&amp;gid=208
+1757021641.776089 09-04 21:34Z Robert [reply to 1757021625.725649]: The damage in Unity is (ItemName)effectsdata scriptable object
+1757053197.193219 09-05 06:19Z Robert: <@EMPLOYEE_0005_SLACK_ID> I finished my levels up to level 120. Here are some thoughts: 1. Most levels can be finished between 70-75 CPM. 70 85%+ of the time, 75 if you want to finish it consistently. And in _some cases_ 65 CPM is also do-able if you splash correctly and you got clustered spawn. 2. My levels has usually 40+ items. 40-45 is general norm, some 50 for certain exceptions. Unique count
+1757053208.090109 09-05 06:20Z Robert: <@EMPLOYEE_0012_SLACK_ID> please feel free to test
+1757104019.578149 09-05 20:26Z Julia Lawson: We're all done with the new levels, guys. Need to control off-balance between 50 and 100 and we'll be done
+1757104901.003829 09-05 20:41Z Brian Foster: I spoke with [PERSON_NAME_0022], and he mentioned that he’s still working on Pass. In my last test, I encountered 1–2 major bugs, and since the development environment hasn’t been updated, I wasn’t able to test some scenarios. It’s already quite late for me, and with [PERSON_NAME_0050] being off today, we won’t be able to run proper testing for Season Pass. Considering that today’s release will be
+1757206568.833409 09-07 00:56Z Leonard Hayes: Level 70
+1757206597.535879 09-07 00:56Z Leonard Hayes: progression is much better than what it used to be 
+1757206606.848549 09-07 00:56Z Leonard Hayes: This is a screenshot from level 70
+1757337659.125719 09-08 13:20Z Vincent Parker: Hey, here is the levels I got nukes. I'm sharing it over here as a single data point. I didn't use bot, upgraded cards as it is supposed to be. <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0005_SLACK_ID> Levels I got nuke • level 6 • Level 19 • Level 28 • Level 30 • Level 34 • Level 37 • Level 49 • Level 51 • Level 52 • Level 57 • Level 68 • Level 72 • Level 75 • Level 78 Also, Level 47 should have round 
+1757337725.306089 09-08 13:22Z Vincent Parker: and also, can you share the new ruleset for item replacement? I couldn't understand how it works and I think it doesn't make the levels easier if not harder imo.
+1757338946.865689 09-08 13:42Z Julia Lawson: Thanks for the list [PERSON_NAME_0050], I'll check these out. This is super helpful :[USERNAME_26053]:
+1757338977.703459 09-08 13:42Z Julia Lawson [thread 32 replies]: New rule is that, whatever you equipped comes extra onto your pile
+1757341084.220519 09-08 14:18Z Robert [reply to 1757338977.703459]: Is this all the time?
+1757341443.097519 09-08 14:24Z Julia Lawson [reply to 1757338977.703459]: That's what I asked for
+1757341657.022079 09-08 14:27Z Robert [reply to 1757338977.703459]: OK
+1757345544.655699 09-08 15:32Z Leonard Hayes [reply to 1757338977.703459]: one extra pair of an equipped items doesn’t do much
+1757345584.956819 09-08 15:33Z Leonard Hayes [reply to 1757338977.703459]: it’s distracting - I think There needs to be at least a few match sets if we are introducing equipped items
+1757345691.316079 09-08 15:34Z Leonard Hayes [reply to 1757338977.703459]: probably at least 2 pairs of something if you have single equipped items, if you have 2 slots equipped maybe total of 4 pairs, if you have 3 equipped a total of 6 pairs, if you have all 4 slots equipped a total of 8 pairs
+1757345732.494829 09-08 15:35Z Leonard Hayes [reply to 1757338977.703459]: when I’m getting a single pair of let’s say an epic gift that works 50% of the time, I’m annoyed the fuck about the game
+1757345745.501499 09-08 15:35Z Leonard Hayes [reply to 1757338977.703459]: or if I have a small item that’s buried that I can never use
+1757346390.903479 09-08 15:46Z Robert [reply to 1757338977.703459]: it's not one set per equipped
+1757346406.818729 09-08 15:46Z Robert [reply to 1757338977.703459]: that will actually make the game much harder
+1757346442.510459 09-08 15:47Z Robert [reply to 1757338977.703459]: I'd be surprised that's what [PERSON_NAME_0040] ended up doing, but it's at least 3-5 sets per equipped
+1757346465.690079 09-08 15:47Z Robert [reply to 1757338977.703459]: I'm more worried about over crowding as a result, because I've tested this way back before everyone was paying attention to this
+1757346511.886249 09-08 15:48Z Robert [reply to 1757338977.703459]: Iteration 1 was what we have now, it goes on top of what's already in the level Iteration 2 was split, half equipped are new and half equipped replaces existing Iteration 3 (last) was replace only And now we're full circle back to iteration 1
+1757346525.567499 09-08 15:48Z Robert [reply to 1757338977.703459]: :[USERNAME_46305]:
+1757346584.480749 09-08 15:49Z Julia Lawson [reply to 1757338977.703459]: I asked [PERSON_NAME_5466] how to play with the insertion amounts. I'll balance it today. I think 2-3 pairs from each slot will do nicely. And if the experience is good we can base it on the rarity later
+1757346590.193219 09-08 15:49Z Robert [reply to 1757338977.703459]: And in iteration 1, we randomed between 3-5 per
+1757346618.277919 09-08 15:50Z Robert [reply to 1757338977.703459]: And then dialed it down
+1757346634.754199 09-08 15:50Z Robert [reply to 1757338977.703459]: iteration 1.1 became 2-4 I think
+1757346646.758739 09-08 15:50Z Julia Lawson [reply to 1757338977.703459]: I never specified how many pairs should be insterted so maybe when [PERSON_NAME_5466] stopped the replacements the system defaulted to a single pair. I'll find out and fix today
+1757346810.480019 09-08 15:53Z Robert [reply to 1757338977.703459]: Probably should just tell him
+1757346818.445209 09-08 15:53Z Robert [reply to 1757338977.703459]: Save yourself some time for another iteration
+1757346830.237929 09-08 15:53Z Robert [reply to 1757338977.703459]: Single pair 100% won't work, that I do know, tried it and it sucked
+1757346843.737539 09-08 15:54Z Julia Lawson [reply to 1757338977.703459]: Yeah, I contacted him already
+1757346846.246169 09-08 15:54Z Robert [reply to 1757338977.703459]: No impact, and if you click on it, you'll just get stuck with stuff on the match bar
+1757346860.592889 09-08 15:54Z Robert [reply to 1757338977.703459]: That's what I noticed with anything less than 2 sets
+1757346873.388589 09-08 15:54Z Robert [reply to 1757338977.703459]: Bunch of loose orphaned damn items
+1757346929.147309 09-08 15:55Z Robert [reply to 1757338977.703459]: Also if the items do add on top of existing, you'll get a lot of the experience Leonard didn't like which was "Lots of items are left when I finish the level"
+1757346964.661209 09-08 15:56Z Robert [reply to 1757338977.703459]: You'll encounter the scenario where 3 sets of shuriken demolishes an entire horde, leaving like 15 sets+ on the board when the level ends
+1757346970.284819 09-08 15:56Z Julia Lawson [reply to 1757338977.703459]: Well we did keep the items in the level to minimum spesifically for that reason
+1757347013.316629 09-08 15:56Z Robert [reply to 1757338977.703459]: Yeah but if you leave too little, players won't have enough to kill the monsters with, or if its waaay too little then it just triggers nuke spawning, then in that case it's better to not have anything equipped and clear the already empty board
+1757347024.545149 09-08 15:57Z Robert [reply to 1757338977.703459]: And beat the level naked unequipped
+1757347137.685039 09-08 15:58Z Julia Lawson [reply to 1757338977.703459]: Yes, we have too many mechanics
+1757351422.189569 09-08 17:10Z PERSON_6089_SLACK_ID: 
+1757353775.240479 09-08 17:49Z Vincent Parker [thread 1 replies]: It seems like its not that problematic to old users. Clicking on infographic button throws exceptions but other seems ok to them as well. 
+1757354329.914689 09-08 17:58Z Leonard Hayes [reply to 1757353775.240479]: let’s go then
+1757355103.109279 09-08 18:11Z Vincent Parker: I'm gonna jump off for a while to have a walk. • I dialed down the coins and gems in Zombie lane • I made a PR containing ◦ tooltip fixes ◦ letter items were in the whistle category ◦ unlock quest after level 16 ◦ and remove bypass item from algo levels • What we still need are ◦ jiggly items PR to be merged (it needs <@EMPLOYEE_0025_SLACK_ID>’s input because it's basically reverting what he's cha
+1757362253.971639 09-08 20:10Z Julia Lawson [thread 1 replies]: <@EMPLOYEE_0012_SLACK_ID> I'm simulating your reported levels at 150 CPM to get the nuke. Exactly at what speed are you playtesting these damned levels :[USERNAME_25002]:
+1757362455.298529 09-08 20:14Z Vincent Parker [reply to 1757362253.971639]: Haha don’t know but usually I played around 120 and after 3 unique objects left, the sky is the limit
+1757367863.578979 09-08 21:44Z Julia Lawson: Hey, guys. I tested everything at 150 CPM and went over the levels [PERSON_NAME_0050] reported. I think they'll be fine now. Also [PERSON_NAME_0092] mentioned we have the bike kid at level 17 before his introduction so I fixed that too. (thanks for catching that). And level 79 won't be an immediate bike kid death now.
+1757367874.407039 09-08 21:44Z Julia Lawson: All pushed to the new design branch we made
+1757369011.168619 09-08 22:03Z Robert [thread 2 replies]: <@EMPLOYEE_0005_SLACK_ID> What happens to your item insertion if the equipped item is already in the level?
+1757369016.474419 09-08 22:03Z Robert: <@EMPLOYEE_0025_SLACK_ID> probably needs to know
+1757370392.970479 09-08 22:26Z Robert: I reduced items from level 101-120
+1757371346.566499 09-08 22:42Z Robert: <@EMPLOYEE_0025_SLACK_ID> Waiting on Blake to change item insertion code to force items into the level
+1757373874.709619 09-08 23:24Z Julia Lawson [reply to 1757369011.168619]: It can add to the pile as normal, I think that's okay for now
+1757373887.104909 09-08 23:24Z Julia Lawson [reply to 1757369011.168619]: But f you have a different idea
+1757394475.801429 09-09 05:07Z Robert [thread 4 replies]: New items: flip flops, pineapple mug, scooper, toy truck, toy airplane, toy car, toy boat, new maracas, wardrobe, bed, soda, packpack
+1757395503.283039 09-09 05:25Z Robert [reply to 1757394475.801429]: 
+1757397456.396079 09-09 05:57Z Robert [reply to 1757394475.801429]: <@EMPLOYEE_0012_SLACK_ID> I put them all under collection 11 for now
+1757397464.679759 09-09 05:57Z Robert [reply to 1757394475.801429]: And they are usually clones of existing items, like soda can = canned food
+1757397477.968089 09-09 05:57Z Robert [reply to 1757394475.801429]: bed/wardrobe are just couch clones. None of these are activated in the pool
+1757445676.961159 09-09 19:21Z Vincent Parker: Hey, about the submission list, • [PERSON_NAME_0022] made the fix for the exception. :white_check_mark: • the static image should be updated :hourglass: • insertion amount should be fixed, :hourglass: • and the new level changes should be merged (if necessary) :hourglass: 
+1757445704.658289 09-09 19:21Z Leonard Hayes: so all blockers are resolved?
+1757445745.537379 09-09 19:22Z Vincent Parker: only the zombie lane exception
+1757445749.939919 09-09 19:22Z Leonard Hayes: ok
+1757445756.527439 09-09 19:22Z Vincent Parker: but not sure about the insertion stuff for now
+1757445760.273739 09-09 19:22Z Leonard Hayes: I thought <@EMPLOYEE_0005_SLACK_ID> said insertion is fixed
+1757445768.754519 09-09 19:22Z Leonard Hayes: who is on the other 2?
+1757445900.258479 09-09 19:25Z Vincent Parker [thread 12 replies]: [PERSON_NAME_0022] is about to Push static images for effects, the new level changes are up to <@EMPLOYEE_0005_SLACK_ID> <@EMPLOYEE_0016_SLACK_ID>
+1757445909.834989 09-09 19:25Z Leonard Hayes: ok
+1757445916.828069 09-09 19:25Z Vincent Parker [reply to 1757445900.258479]: but lvl 11 should be fixed definitely.
+1757445936.202869 09-09 19:25Z Leonard Hayes [reply to 1757445900.258479]: ok
+1757446782.189049 09-09 19:39Z Robert: insertion sounds fixed in the other thread
+1757447265.501889 09-09 19:47Z Julia Lawson [reply to 1757445900.258479]: I'm sending a fix for level 11 now
+1757447268.932829 09-09 19:47Z Julia Lawson [reply to 1757445900.258479]: Other stuff we balanced yesterday
+1757447528.223459 09-09 19:52Z Julia Lawson [reply to 1757445900.258479]: <@EMPLOYEE_0012_SLACK_ID> Okay, done
+1757447742.666159 09-09 19:55Z Brian Foster [thread 2 replies]: My updates: I tested the VFX implementation and the Season Pass. I updated the canvas with issues and improvements. I'm still waiting for a Collect&amp;Win test build
+1757447945.074439 09-09 19:59Z Leonard Hayes [reply to 1757447742.666159]: how far are we to finish off?
+1757448471.265489 09-09 20:07Z Robert [reply to 1757445900.258479]: 79 done or do I need to do something?
+1757448632.756159 09-09 20:10Z Vincent Parker [reply to 1757445900.258479]: Whatever you do should be pr’ed I don’t know the details
+1757448801.998719 09-09 20:13Z Julia Lawson [reply to 1757445900.258479]: I balanced it yesterday
+1757448827.192789 09-09 20:13Z Julia Lawson [reply to 1757445900.258479]: <@EMPLOYEE_0016_SLACK_ID> if you're done with your stuff we can make the PR
+1757448857.967499 09-09 20:14Z Robert [reply to 1757445900.258479]: Yeah I didn't touch anything in the last hour or so
+1757448865.936429 09-09 20:14Z Robert [reply to 1757445900.258479]: So we are good
+1757449187.308109 09-09 20:19Z Brian Foster [reply to 1757447742.666159]: For both features, I think if they focus only on these features, they can finish them within 1 day. However, since some bugs get fixed in one build while breaking in another, my 1-day estimate may vary. As these will be investor-faced features, I’m also including UX improvements in the process <@EMPLOYEE_0038_SLACK_ID>
+1757449267.705579 09-09 20:21Z Julia Lawson [reply to 1757445900.258479]: [PERSON_NAME_57565] made the PR
+1757463859.620729 09-10 00:24Z Robert [thread 2 replies]: <@EMPLOYEE_0005_SLACK_ID> I just noticed the garlic on level 6 has multishot, we'll have to disable it. It's OK for now. It won't impact the balance since There is an abundance of items in that level
+1757464143.367039 09-10 00:29Z Robert: I heard There was a fix for Level 11, is that to have nuke not to have nuke? I got the nuke
+1757464517.784799 09-10 00:35Z Robert [thread 1 replies]: I'm going to increase the ice cream bar size, it's too small in the level introducing it
+1757468174.976609 09-10 01:36Z Robert [thread 1 replies]: Level 32 - has flip flops that has multi shot at level 0, it was fun to play. Should we: 1. leave as is 2. disable level 0 multishot because it's used as multishot intro item 3. remove it from the levels before the intro? Please let me know <@EMPLOYEE_0005_SLACK_ID>
+1757477950.880459 09-10 04:19Z Leonard Hayes: My progression at level 105. I used all my excess coins for opening basic packs 
+1757477961.391249 09-10 04:19Z Leonard Hayes: It’s pretty good 
+1757478303.224579 09-10 04:25Z Leonard Hayes: I first died and I won lol. Need to figure out what we want to for such edge cases 
+1757478958.104989 09-10 04:35Z Leonard Hayes [thread 2 replies]: Plague race is too generous and doubles the coins basically. Can we please cut it it in half by tomorrow? Like the last stage gives 250 instead of 500 etc. 
+1757478982.747769 09-10 04:36Z Leonard Hayes: I think the cost of upgrade needs to go higher too. 
+1757478990.664569 09-10 04:36Z Leonard Hayes: Especially for later stars 
+1757479643.204289 09-10 04:47Z Leonard Hayes: Some musical items and bowling related items are super bouncy. Please fix 
+1757479666.633819 09-10 04:47Z Leonard Hayes: Any level that has those bouncy items are annoying and feel out of place 
+1757480331.667899 09-10 04:58Z Leonard Hayes: Made it to level 125 - still pretty good. At this point I wish There were some more challenging levels that let me fail but that’s probably something we control with dynamic difficulty 
+1757480365.415169 09-10 04:59Z Leonard Hayes: Overall the levels are solid. Now we know what we are doing we just need 200 more asap for d7 ret lol 
+1757480544.414889 09-10 05:02Z Leonard Hayes [thread 3 replies]: We also need harder zombies. I think we need zombies to level up or at least change colors for stronger versions 
+1757481118.648269 09-10 05:11Z Leonard Hayes: Made it to level 134 - can’t play anymore lol 
+1757481135.445769 09-10 05:12Z Leonard Hayes: Very good job design team :[USERNAME_45055]: :tada: :clap: 
+1757482643.668359 09-10 05:37Z Leonard Hayes: Levels after level 137 are much easier than previous 100+ levels. 
+1757482649.538089 09-10 05:37Z Leonard Hayes: We can make them a bit harder imo 
+1757482913.028609 09-10 05:41Z Leonard Hayes: Yup all levels are a bit easier than previous ones 
+1757483290.502629 09-10 05:48Z Leonard Hayes: Finished all 150 
+1757483515.418369 09-10 05:51Z Leonard Hayes: Algo level 151 was very hard damn 
+1757483740.934389 09-10 05:55Z Leonard Hayes [thread 1 replies]: Algo 152 was also too hard. We need find a way to ease them further - <@EMPLOYEE_0012_SLACK_ID> can you take a crack at it one more time? 
+1757483752.089979 09-10 05:55Z Leonard Hayes: Maybe make them 30% easier? 
+1757484319.437139 09-10 06:05Z Leonard Hayes: Reached to level 158 - if we figure out a way to make algo levels a bit easier I think we are in good shape overall. 
+1757484327.635629 09-10 06:05Z Leonard Hayes: Sorry for many many messages
+1757484334.728409 09-10 06:05Z Leonard Hayes: I should have threaded :[USERNAME_6067]: 
+1757484340.864589 09-10 06:05Z Leonard Hayes: Good night! 
+1757486891.196939 09-10 06:48Z Julia Lawson [reply to 1757463859.620729]: You shouldn't have got the nuke, I'll need to check that level again. It should only have 4 monsters now
+1757486907.060689 09-10 06:48Z Julia Lawson [reply to 1757464517.784799]: That's be good I think
+1757486959.759649 09-10 06:49Z Julia Lawson [reply to 1757468174.976609]: I'd say leave as is, if the level is fun they won't notice a multishot in level 32. Multishot gets introduced much later anyway
+1757487035.104699 09-10 06:50Z Julia Lawson [reply to 1757480544.414889]: We can spread them out a little more for the time being but if we have budget we can generate and send them to that outsource team asap, my AI generation funnel is pretty solid.
+1757488355.886209 09-10 07:12Z Leonard Hayes [reply to 1757480544.414889]: I don’t think we can afford to add new zombies right now. Let’s be creative and figure out how we can reuse the same zombies but strongers versions of them 
+1757490534.841139 09-10 07:48Z Vincent Parker [reply to 1757483740.934389]: Sure, they were easier but new changes on insertion and items might be backfired. Will fix it
+1757490903.394599 09-10 07:55Z Julia Lawson [reply to 1757480544.414889]: I'll talk with Marcus about the cost of color change and adding some accesories that don't require more bones, he should come online in a few hours. And we can talk about the cost in the art meeting today, if that sounds good to you.
+1757496724.329169 09-10 09:32Z Vincent Parker [thread 1 replies]: Lvl 151 &amp;152 are not algo levels, lnstead they are levels called c_201 c_202
+1757512607.846959 09-10 13:56Z Brian Foster [thread 1 replies]: In the latest build, I noticed too many hard and very hard levels between levels 10 and 20. It felt a bit too much for me
+1757513008.579639 09-10 14:03Z Robert [reply to 1757496724.329169]: Doh, they are supposed to be disabled. That's the old level 101 and 102
+1757514490.173449 09-10 14:28Z Brian Foster [reply to 1757512607.846959]: level 32 - ultra hard level 33 - very hard Level 34- hard level 35 - super hard
+1757518841.304789 09-10 15:40Z Julia Lawson: I noticed that too during my playtest 1-10 even has too much. I'll fix those
+1757519586.231229 09-10 15:53Z Vincent Parker [reply to 1757478958.104989]: okay I'm asking Douglas to change them as 60, 120, 250?
+1757523462.737009 09-10 16:57Z Robert [reply to 1757463859.620729]: I didn't get the nuke, more than enough items
+1757524860.067099 09-10 17:21Z Leonard Hayes [reply to 1757478958.104989]: sounds good
+1757534327.502209 09-10 19:58Z Brian Foster: I tested [PERSON_NAME_0029]'s latest branch, and the VFX integration is in decent shape now. However, we need to run a proper test with [PERSON_NAME_0050]. Because of that, I suggested that we merge it into main after the submission build. Adding this feature directly into the submission build could be risky
+1757539474.366249 09-10 21:24Z Vincent Parker: Heyy guys, I gotta jump off. Those are fixed, and • <https://linear.app/harmonygames-games/issue/ZOM-475/consecutive-glass-impact-sfxvfx-causes-crash-on-android|Hard crash> bug on Android after consecutive glass VFX/SFX :large_red_square: :warning: <@EMPLOYEE_0016_SLACK_ID> ◦ it's still happens for samsung devices, that's why I couldn't repro. • ~Zombie lane infographics should be implemented.~ :l
+1757539495.229289 09-10 21:24Z Robert: level 200+ disabled
+1757555503.873679 09-11 01:51Z Leonard Hayes: they are all easy to medium difficulty consistently [6:48 PM] I think what helped the most is the reduction of items and addition of equipped items rather than replacing [6:48 PM] because I recognize what I need to do I can match things much quicker and finish the levels easily [6:49 PM] I am actually craving for harder levels at this point with stronger zombies that I need to pick up the right eq
+1757555515.995329 09-11 01:51Z Leonard Hayes: I said in the exec channel sharing here as well for [USERNAME_1168]
+1757555525.843069 09-11 01:52Z Leonard Hayes: economy fixes are in as well
+1757555529.117299 09-11 01:52Z Leonard Hayes: great job team!
+1757555584.845899 09-11 01:53Z Leonard Hayes: I’m looking forward to buying users for this build - <@EMPLOYEE_0016_SLACK_ID> I think this build is also a good candidate for Playtestcloud but maybe we wait for the next release
+1757608321.547839 09-11 16:32Z Julia Lawson: *Visual Level Guide* <https://docs.google.com/presentation/d/18GdSRwiLy0y23hT5sOjYTMox85Qk1vunQ2XE7gplz1U/edit?slide=id.p#slide=id.p>
+1757609918.649949 09-11 16:58Z Leonard Hayes: 2 asks from the meeting 1- Figure out how to scale difficulty up / down using a few simple parameters that are remote configurable and assign players into difficulty buckets using some simple algo that takes into account both their history (CPM of last 10 attempts etc.) and recency (did you lose this level already and how many times) 2- Designers to use gen ai level generator and make it actually 
+1757609960.089169 09-11 16:59Z Leonard Hayes: hopefully simulation don’t take overnight but within a few hours lol
+1757610123.816419 09-11 17:02Z Vincent Parker [thread 27 replies]: <@EMPLOYEE_0016_SLACK_ID> also I saw that the milestones for infinite boss mode was 500, 1000, and 2000 but i think it's too easy given the circumstances. so I made them 500 1500 3000 instead. And refill should happen faster or the single click meter should be filled with a slower rate because objects can be removed pretty easily from the board.
+1757610131.672669 09-11 17:02Z Julia Lawson: Since we based the funnel on simple levels with card portfolio building, I prefer the difficulty increase to come from monsters primarily. So that the core meta remains "improve your pool of items --> beat zombie with it". The levels already pose a challenge in and of itself, we shouldn't mess more There.
+1757610163.214279 09-11 17:02Z Julia Lawson: But I need to look at the dynamic difficulty document again, I'm pretty sure what I'm saying is very far off from what we currently have.
+1757611354.128839 09-11 17:22Z Robert [reply to 1757610123.816419]: I was going to shorten the rapid fire max duration to maybe 3 seconds
+1757612339.950629 09-11 17:38Z Vincent Parker [reply to 1757610123.816419]: yeah it also makes sense but the refill also should be slower
+1757612613.847149 09-11 17:43Z Marcus Bennett: <@EMPLOYEE_0002_SLACK_ID> has left the channel
+1757612621.967839 09-11 17:43Z Arthur Blake: <@EMPLOYEE_0025_SLACK_ID> has left the channel
+1757612639.935649 09-11 17:43Z Leonard Hayes: I kicked out Marcus and [PERSON_NAME_23645]
+1757612648.292579 09-11 17:44Z Leonard Hayes: please don’t add people to this channel
+1757612685.736369 09-11 17:44Z Leonard Hayes: we should be able to talk to each other with no worrying about what other team would say/think
+1757612885.518649 09-11 17:48Z Robert: They need like a "temp" add feature with time expiration
+1757612895.581629 09-11 17:48Z Robert: sometimes you just want them to chime in, stick their head in a room, give their opinion, and gtfo
+1757612907.168319 09-11 17:48Z Robert: because it involves some engineering/tech stuff
+1757612916.788359 09-11 17:48Z Leonard Hayes: then go and talk in another channel lol
+1757612952.408699 09-11 17:49Z Leonard Hayes: I’m gonna talk to [PERSON_NAME_0092] about adding some pop-up offers btw, now the economy is tight, we need offers to monetize the game
+1757612996.103319 09-11 17:49Z Robert [reply to 1757610123.816419]: Yeah, I feel like 30 seconds is a bit on the fast side, 60 seconds sounds slow, so maybe 45 seconds
+1757613000.433219 09-11 17:50Z Robert [reply to 1757610123.816419]: I need to make some levels and see
+1757613004.807479 09-11 17:50Z Robert [reply to 1757610123.816419]: and the VFX is still quite lacking
+1757613204.220699 09-11 17:53Z Vincent Parker [reply to 1757610123.816419]: Yeah even in editor object respawning is heavy
+1757613248.752349 09-11 17:54Z Robert [reply to 1757610123.816419]: Hmm?
+1757613273.624839 09-11 17:54Z Vincent Parker [reply to 1757610123.816419]: Maybe smaller chunks in 20 sec?
+1757613317.194569 09-11 17:55Z Robert [reply to 1757610123.816419]: Too disruptive
+1757613326.560519 09-11 17:55Z Robert [reply to 1757610123.816419]: I stress already when I hear count down timer
+1757613335.155989 09-11 17:55Z Robert [reply to 1757610123.816419]: I focus harder and try to squeeze out more matches
+1757613379.335489 09-11 17:56Z Robert [reply to 1757610123.816419]: it's going to cover your visuals no matter what
+1757613387.812439 09-11 17:56Z Robert [reply to 1757610123.816419]: and more chance to get in the way of you just about to click something
+1757613393.276909 09-11 17:56Z Robert [reply to 1757610123.816419]: and screw you over
+1757613412.388669 09-11 17:56Z Robert [reply to 1757610123.816419]: I'm already kinda glad at least There is a pattern, meaning they mostly come from middle
+1757613418.124459 09-11 17:56Z Robert [reply to 1757610123.816419]: so I find myself working on the edges when refills are about to happen
+1757613420.088729 09-11 17:57Z Robert [reply to 1757610123.816419]: avoiding a misclick
+1757613527.445949 09-11 17:58Z Vincent Parker [reply to 1757610123.816419]: Then maybe objects should be selected carefully. Since it has only 1 enemy we should make it the least stuttering as possible 
+1757613571.437419 09-11 17:59Z Vincent Parker [reply to 1757610123.816419]: Goodlooking low poly objects might be better
+1757613595.472489 09-11 17:59Z Robert [reply to 1757610123.816419]: [USERNAME_46252]
+1757613604.477089 09-11 18:00Z Robert [reply to 1757610123.816419]: I did just that, cloned [USERNAME_28416] and converted to Infinite_01 lol
+1757613610.577669 09-11 18:00Z Robert [reply to 1757610123.816419]: because it's the sports one
+1757613615.805449 09-11 18:00Z Robert [reply to 1757610123.816419]: and it has the best visual IMO for now
+1757613632.033029 09-11 18:00Z Robert [reply to 1757610123.816419]: and pool size is roughly correct so item rotations are reasonable
+1757614643.167439 09-11 18:17Z Robert: [USERNAME_33459] is not bad
+1757614742.423719 09-11 18:19Z Robert: at this point in time I prefer this over endless mode, simply because the rapid fire is new to me and super fun... lol
+1757615302.795549 09-11 18:28Z Robert [reply to 1757610123.816419]: [PERSON_NAME_0050] I do want players to be able to clear the board and launch the nuke
+1757615305.291219 09-11 18:28Z Robert [reply to 1757610123.816419]: But just not that easily
+1757615317.492109 09-11 18:28Z Robert [reply to 1757610123.816419]: A good player should be able to launch 1-3 nukes per play
+1757615418.334229 09-11 18:30Z Brian Foster: I think we need to adjust the Endless Mode tutorial. Right now it feels more complicated than our other live-ops, and I’ve seen some user drop-off during these steps. Instead, we can simplify it: • Automatically open the main event panel and the info panel. • When users tap the screen, they’ll directly see the main event screen and can start playing the mode.
+1757616930.232279 09-11 18:55Z Brian Foster: <@EMPLOYEE_0038_SLACK_ID> <@EMPLOYEE_0016_SLACK_ID> The current work plans for the developers are as follows: • After the VFX issues, [PERSON_NAME_0029] doesn’t have a specific task. He’ll only integrate animations as Marcus finishes his tasks. • [PERSON_NAME_0022] will move on to Axe Arena after the Season Pass. Its UI is ready, and [PERSON_NAME_0050] is the owner for Live Ops. • After Win &amp; 
+1757617067.727959 09-11 18:57Z Vincent Parker: He has a minor task of implementing red dots to items and shop, [PERSON_NAME_0029] i mean
+1757617126.604069 09-11 18:58Z Brian Foster: These will take some time, but I still think we should define a small task in the meantime <@EMPLOYEE_0012_SLACK_ID>
+1757617127.228699 09-11 18:58Z Leonard Hayes [thread 8 replies]: Let’s be super clear on who owns what and the product owner is responsible to deliver end-to-end. IF you can’t own something give it to someone else but please be explicit. <@EMPLOYEE_0012_SLACK_ID> for instance put an extra effort to get static images into to zombie lane, images were not ready, [PERSON_NAME_0022] integrated the wrong ones etc. - it wasn’t clear who the owner was (I think it was <
+1757617165.357629 09-11 18:59Z Leonard Hayes: but he did it without getting told so that we can get the frigging build out
+1757617186.873019 09-11 18:59Z Leonard Hayes: I know everyone is busy - let’s overcommunicate and tell people if your plate is full
+1757617277.266179 09-11 19:01Z Leonard Hayes [thread 1 replies]: [PERSON_NAME_0029] can take google/Apple login
+1757617301.724079 09-11 19:01Z Leonard Hayes: we also need to make pop-up offers work - did we bring them over from DD?
+1757617356.525679 09-11 19:02Z Leonard Hayes: We probably need a short spec for ads in the game - pretty much capybara style placements
+1757617383.019599 09-11 19:03Z Leonard Hayes [thread 1 replies]: <@EMPLOYEE_0026_SLACK_ID> is that something you can own? [PERSON_NAME_0054] and I can assist
+1757617414.468669 09-11 19:03Z Leonard Hayes: I think what would be really good is if we can develop a pvp game mode
+1757617428.471069 09-11 19:03Z Brian Foster [reply to 1757617277.266179]: [PERSON_NAME_0550] had worked on this task in DD, but it still took quite a long time and There were still some errors. I think this is quite a big task, so I think it would be better if a senior developer do it
+1757617453.761279 09-11 19:04Z Leonard Hayes: ok, maybe [PERSON_NAME_0120] can take Apple/google login then?
+1757617494.803969 09-11 19:04Z Leonard Hayes: between PvP mode and google/Apple login I personally prefer pvp game mode
+1757617505.374709 09-11 19:05Z Leonard Hayes: maybe [PERSON_NAME_0067] can take it
+1757617548.877479 09-11 19:05Z Leonard Hayes [thread 1 replies]: if the game is streamable and 2 people are really competing async or real-time (we don’t have liqudity though) that would be incredible
+1757617578.175919 09-11 19:06Z Brian Foster [reply to 1757617383.019599]: Yes sure, My plate is ready for a new task. In general, I’m working on tests for the features I own
+1757618525.209819 09-11 19:22Z Julia Lawson [reply to 1757617127.228699]: *Julia Lawson* <https://harmonygamesgroup.Slack.com/archives/C08R6BF4ENN/p1752255518429929|Jul 11th at 8:38 PM> [PERSON_NAME_0022] [PERSON_NAME_47022] Hey, guys. Because I'm very busy these days supporting the art team and because trophy road is now very interwined with the FTUE, I asked <@EMPLOYEE_0026_SLACK_ID> to take ownership of the feature. I will support you guys with artwork that's needed 
+1757618597.984089 09-11 19:23Z Julia Lawson [reply to 1757617127.228699]: But I can be definitely more mindful since I asked for trophy road to include items and zombies in accordance with the new funnel.
+1757619089.336659 09-11 19:31Z Brian Foster [reply to 1757617127.228699]: Yes, I was the owner of the implementation process and it had already been completed. Unfortunately, I was on vacation when the last changes were made, and by the time I returned, the process was already underway, so I couldn’t fully follow it. I’ll be more careful from now on <@EMPLOYEE_0005_SLACK_ID> <@EMPLOYEE_0038_SLACK_ID>
+1757619302.815069 09-11 19:35Z Julia Lawson [reply to 1757617127.228699]: It's totally okay. My fault for not delegating when you were away :confused:
+1757619795.057609 09-11 19:43Z Leonard Hayes [reply to 1757617127.228699]: Thank you for the healthy convo here
+1757619826.782729 09-11 19:43Z Leonard Hayes [reply to 1757617127.228699]: you could ask <@EMPLOYEE_0012_SLACK_ID> <@EMPLOYEE_0026_SLACK_ID> on what he needs help with rather than let it dangle lol
+1757619935.657239 09-11 19:45Z Brian Foster [reply to 1757617127.228699]: I remember we discussed this change on Friday evening before my vacation, so I wasn’t able to clearly communicate what exactly needed to be done, sorry about that
+1757620176.179419 09-11 19:49Z Julia Lawson [reply to 1757617127.228699]: Just to make sure this won't happen again, as we talked in the pod meeting I'm under the impression that <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0026_SLACK_ID> are dealing with the trophy road funnel changes. If you guys need more input from me, I can just take the ownership of iteration again.
+1757620653.034859 09-11 19:57Z Brian Foster [reply to 1757617548.877479]: When I think of our game as PvP, this game immediately comes to mind XD <https://www.twoplayergames.org/game/cat>
+1757690990.489479 09-12 15:29Z Leonard Hayes:  <https://apps.Apple.com/us/app/blasting-heroes/id6747880330>
+1757705332.808999 09-12 19:28Z Leonard Hayes: I posted the notes in the company channel
+1757705346.424419 09-12 19:29Z Leonard Hayes: Also I updated the dashboard for 0.3.36
+1757705356.431809 09-12 19:29Z Leonard Hayes: 
+1757705360.848489 09-12 19:29Z Leonard Hayes: looks like level 4 is too hard
+1757705387.506739 09-12 19:29Z Leonard Hayes: and we are losing players There - on Monday let’s reduce difficulty please if it continues like this
+1757713103.824679 09-12 21:38Z Leonard Hayes: level 4 really fucked up the curve
+1757713149.344929 09-12 21:39Z Leonard Hayes [thread 6 replies]: 
+1757713175.441999 09-12 21:39Z Leonard Hayes: that’s why we need to be able to do this remote config
+1757713193.398699 09-12 21:39Z Leonard Hayes: even if we want to fix it it will take us 3 days and approvals from app stores to fix it
+1757713198.630449 09-12 21:39Z Leonard Hayes: its’ really not ok
+1757713225.482519 09-12 21:40Z Leonard Hayes [thread 14 replies]: did we change level 4?
+1757713566.114309 09-12 21:46Z Robert: I played it earlier, looks the same to me..
+1757713703.714559 09-12 21:48Z Robert: 
+1757713766.751109 09-12 21:49Z Robert [reply to 1757713149.344929]: Unless the left 4 events in this table are from losses, this isn't a drop off from level 4. They finished 4 and they didn't start 5.
+1757713801.997419 09-12 21:50Z Robert [reply to 1757713149.344929]: I just hope it's not some tech issue
+1757714543.942759 09-12 22:02Z Leonard Hayes: I think you should try to replay with 2-3 enrages
+1757714553.396929 09-12 22:02Z Leonard Hayes: I’m pretty sure that’s what’s happening and why people are losing
+1757714589.705049 09-12 22:03Z Leonard Hayes: it’s so easy to mix up Apple with oranges and grapes with pears, and then we also have small lemons you accidentally pick
+1757714600.720319 09-12 22:03Z Leonard Hayes: I think this is a great level 10 rather than level 4
+1757715341.993069 09-12 22:15Z Leonard Hayes [reply to 1757713149.344929]: these are uniques
+1757715348.495059 09-12 22:15Z Leonard Hayes [reply to 1757713149.344929]: it could be a win or loss
+1757715354.079229 09-12 22:15Z Leonard Hayes [reply to 1757713149.344929]: some loss would just not continue
+1757715374.854829 09-12 22:16Z Leonard Hayes [reply to 1757713149.344929]: it’s true [USERNAME_38770] can do the same but less likely
+1757715994.201779 09-12 22:26Z Robert: changing the pre-warm to 10 seconds down from 30 helps a lot, gives players 20 more seconds
+1757716035.274649 09-12 22:27Z Robert: I don't know if [PERSON_NAME_0019] made changes to this or not
+1757726374.792569 09-13 01:19Z Leonard Hayes: [USERNAME_49455] has performance issues 
+1757726396.383519 09-13 01:19Z Leonard Hayes: I went up to 530 zombie kills and I had a lot of lag and performance issues 
+1757726420.557689 09-13 01:20Z Leonard Hayes: Also that’s way too many coins for a 4-5 mins effort 
+1757726465.239759 09-13 01:21Z Leonard Hayes: I think we shouldn’t double the coins or we need to increase difficulty faster. But if we increase difficulty faster that will hurt play time so first step is to cut coins back to half 
+1757726478.326099 09-13 01:21Z Leonard Hayes: I don’t want people to get 3000 coins for 15 mins of gameplay 
+1757726498.585759 09-13 01:21Z Leonard Hayes: For good players who would likely monetize the coin award breaks the economy 
+1757730960.237699 09-13 02:36Z Robert: Wow, you made it that far huh? I need to swap out the monsters to higher HP ones and less of them
+1757730982.697629 09-13 02:36Z Robert: So I can use monsters that's twice as strong HP wise, halves it, and also halves the pay
+1757731033.382899 09-13 02:37Z Robert: but you actually made it to 5 min, amazing
+1757732302.933959 09-13 02:58Z Leonard Hayes: It wasn’t that hard 
+1757732315.785349 09-13 02:58Z Leonard Hayes: I think some balance changes you guys made made it easier 
+1757732339.266519 09-13 02:58Z Leonard Hayes: Let’s add this swap to your to do list on Trello 
+1757938974.559979 09-15 12:22Z Julia Lawson [reply to 1757713225.482519]: Yes we had a churn on it so I simplified it for this funnel from the first image to the second. I don't know why the easier version caused a bigger churn though
+1757947959.103519 09-15 14:52Z Leonard Hayes [reply to 1757713225.482519]: Can we simplify it even further? There are too many kinds of things too similar to each other 
+1757948020.978869 09-15 14:53Z Leonard Hayes [reply to 1757713225.482519]: Replace oranges with more tomatoes and we will be good to go 
+1757948091.373219 09-15 14:54Z Leonard Hayes [reply to 1757713225.482519]: Or keep the composition as is but give players a lot more time and let them afford for the enraged zombies. 
+1757948101.399269 09-15 14:55Z Leonard Hayes [reply to 1757713225.482519]: Everyone triggers enrage right now 
+1757948120.358159 09-15 14:55Z Julia Lawson [reply to 1757713225.482519]: That level is supposed to teach two item can be different colors so I want to keep the Apple orange thing. Here is the Match Factory version of it. So I can make a red item that stands out more and give less of it to really highlight. And give more time.
+1757948154.703219 09-15 14:55Z Julia Lawson [reply to 1757713225.482519]: Okay, I'll simplify the level more as well as the monster track :[USERNAME_26053]:
+1757948639.916089 09-15 15:03Z Leonard Hayes [reply to 1757713225.482519]: maybe level simplification is OK
+1757948659.889789 09-15 15:04Z Leonard Hayes [reply to 1757713225.482519]: but monster track at least should be easier I think
+1757948677.738729 09-15 15:04Z Leonard Hayes [reply to 1757713225.482519]: probably ok to let them learn about the enrage mechanic
+1757948731.733709 09-15 15:05Z Leonard Hayes [reply to 1757713225.482519]: yeah, I think in therei case There are 2 distinct shapes in each color
+1757948762.881669 09-15 15:06Z Leonard Hayes [reply to 1757713225.482519]: in ours, orange and tomatoes are the same color but shapes are not distinct
+1757948784.084239 09-15 15:06Z Leonard Hayes [reply to 1757713225.482519]: maybe replace oranges with another distinct red thing?
+1757949251.650129 09-15 15:14Z Julia Lawson [reply to 1757713225.482519]: Yes, that's what I'm leaning towards. I'll make a version with tomato and bell peppers instead of round shape.
+1757949785.655269 09-15 15:23Z Robert [thread 19 replies]: After playing Capybara Go! For 2 weeks... I finally learned something, and maybe this is something we can potentially adopt. I figured out how they balanced probably a game with probably the most systems I have ever seen. It even greatly exceeds hardcore RPGs like Diablo 4 and mobile RPGs like Raid and F2P monetizers like Lost Ark
+1757949821.108449 09-15 15:23Z Robert [reply to 1757949785.655269]: 
+1757949858.928839 09-15 15:24Z Robert [reply to 1757949785.655269]: 
+1757950002.884919 09-15 15:26Z Robert [reply to 1757949785.655269]: They have so many systems: artifacts pets mounts equipment character gems collectibles insignias talents Each of these system has complex effects as you can see here. Things like "For every X, then Y". For every 10 upgrades made to pet, pet dmg reductio +1% Or unique gem abilities like "When the hero's HP is lower than monster, life Steal rate +6%" They even have things like every X round, does Y.
+1757950079.350129 09-15 15:27Z Robert [reply to 1757949785.655269]: And it seems like anything can have any effects in any dimension. Meaning any of these systems can touch damage, HP, defense, special effects. It's free for all. It's almost if every product team for each of these mechanics have a competition on who can come up with the most ridiculous skills and effects
+1757950115.562879 09-15 15:28Z Robert [reply to 1757949785.655269]: I figured out how they balance all of this
+1757950137.997159 09-15 15:28Z Robert [reply to 1757949785.655269]: When There are 30+ inputs easily that goes into calculating a simple output such as a basic attack
+1757950325.276649 09-15 15:32Z Robert [reply to 1757949785.655269]: They market themselves as a "casual RPG" and I'm not even joking, it's in their ads
+1757950401.125489 09-15 15:33Z Robert [reply to 1757949785.655269]: What I do like about it is that on the surface the game can be simple, just be stronger than the monsters by chasing red ! and hit upgrade where ever the game tells you, and just keep progressing.
+1757950418.676569 09-15 15:33Z Robert [reply to 1757949785.655269]: Similar to how our refill system and item insertion can be complex but the users don't really have to know about it, just get stronger items
+1757950483.867809 09-15 15:34Z Robert [reply to 1757949785.655269]: How the players feel about all the equipment and what not is very similar to how I want our players to feel about our equipment as well. Don't really have to worry about what it does other than it just needs a big number. But if you do want to fuss over the detail and optimize somewhat, you can.
+1757950517.118639 09-15 15:35Z Robert [reply to 1757949785.655269]: And the trick to balancing all this? They don't.
+1757950535.848979 09-15 15:35Z Robert [reply to 1757949785.655269]: It's impossible.
+1757950554.552689 09-15 15:35Z Robert [reply to 1757949785.655269]: Instead they have infinite scaling to their levels and their difficulty
+1757950587.975629 09-15 15:36Z Robert [reply to 1757949785.655269]: So doesn't matter how upgraded you are, you'll eventually confront your ceiling and be pushing against it by trying to upgrade past it constantly
+1757950740.042329 09-15 15:39Z Robert [reply to 1757949785.655269]: So even if you find some unexpected _near_ infinite damage glitch (I found something close), it doesn't matter because at best you'll punch 10x above your weight, you'll suddenly clear 10 chapters worth of dungeons, but the difficulty ceiling will still come down on you
+1757950822.021349 09-15 15:40Z Robert [reply to 1757949785.655269]: And at that point you'll have to upgrade again. So while you're punching 10x above your weight, it only means you're just 10 levels ahead in progression on avg compared to someone that has similar attack power, but you're still at your ceiling
+1757950887.141939 09-15 15:41Z Robert [reply to 1757949785.655269]: The only thing the devs have to balance is one thing. Prevent exploits or unintended effect stacking that actually leads to infinity something (defense/attack)
+1757950921.485949 09-15 15:42Z Robert [reply to 1757949785.655269]: But they have mechanisms and safe guards that prevents that from happening. They limit the number of rounds (# of swings you can take at the enemy), if you don't kill them in a specific number of rounds, you lose the level
+1757951755.976749 09-15 15:55Z Brian Foster [thread 1 replies]: Will we include the Effects Panels in today’s release? <https://linear.app/harmonygames-games/issue/ZOM-530/objects-effects-tutorial-screens-implementation>
+1757951958.746669 09-15 15:59Z Robert [reply to 1757951755.976749]: Let's ask [PERSON_NAME_0022] at prod
+1757956540.898769 09-15 17:15Z Leonard Hayes: 
+1757956558.598929 09-15 17:15Z Leonard Hayes: retention of players and playtime d0 are very similar for those who have played at least 5 levels on d0. I think this points to a clear tech or marketing source quality problem because users behave similarly if they pass level 5 indeed
+1757956598.108939 09-15 17:16Z Leonard Hayes: We don’t see any major tick in crashes
+1757956612.746709 09-15 17:16Z Leonard Hayes: levels are pretty much the same
+1757956621.836879 09-15 17:17Z Leonard Hayes: if anything There is less stutter
+1757956957.236759 09-15 17:22Z Julia Lawson [reply to 1757949785.655269]: Thanks for the overview, it was very beneficial to read :[USERNAME_26053]:
+1757956998.003739 09-15 17:23Z Leonard Hayes: on level 4 blunder distribution: <https://harmonygames.metabaseapp.com/question#eyJuYW1lIjoiVW5pcXVlIGFuZCBUb3RhbCBBdHRlbXB0cyBQZXIgTGV2ZWwiLCJkZXNjcmlwdGlvbiI6bnVsbCwiZGF0YXNldF9xdWVyeSI6eyJkYXRhYmFzZSI6MiwidHlwZSI6InF1ZXJ5IiwicXVlcnkiOnsiYWdncmVnYXRpb24iOltbImRpc3RpbmN0IixbImZpZWxkIiw2NTc2LHsiYmFzZS10eXBlIjoidHlwZS9UZXh0In1dXSxbImNvdW50Il0sWyJhZ2dyZWdhdGlvbi1vcHRpb25zIixbIi8iLFsiY291bnQiXSxbImRp
+1757957073.643969 09-15 17:24Z Leonard Hayes [thread 19 replies]: so 58 out of 196 blunders (1/4th)
+1757957084.312719 09-15 17:24Z Julia Lawson: Level 4 zombies are too many and too close. I think that's the main issue
+1757957184.029949 09-15 17:26Z Julia Lawson: With blunders and enrage it's virtually impossible
+1757957220.810129 09-15 17:27Z Leonard Hayes: what’s interesting is 28/196 blunder more than 3 times, meaning that they are rushing and trying to play pretty fast I’d think
+1757957236.882079 09-15 17:27Z Julia Lawson: Yeah the zombies are so close they would panic for sure :smile:
+1757957242.612449 09-15 17:27Z Leonard Hayes: unsurprisingly their attempt/level goes up because they fail lol
+1757957493.712239 09-15 17:31Z Robert [reply to 1757957073.643969]: Yeah, so this doesn't explain why 195 people got tutorial stop step
+1757957501.514569 09-15 17:31Z Robert [reply to 1757957073.643969]: :[USERNAME_41057]:
+1757957607.676129 09-15 17:33Z Julia Lawson: Now with enrage in the beginning and slow match, it will still hold up.
+1757957993.781099 09-15 17:39Z Leonard Hayes: I still think you need to replace orange with something else
+1757957997.890389 09-15 17:39Z Leonard Hayes: they look super similar to apples - I can’t distinguish
+1757958022.010829 09-15 17:40Z Leonard Hayes: and people enrage more than once
+1757958033.196399 09-15 17:40Z Leonard Hayes: 80% enrage more than once if they enrage
+1757958047.215619 09-15 17:40Z Leonard Hayes [thread 2 replies]: make sure the level can be beaten if you enrage 3 times in a row please
+1757958085.359679 09-15 17:41Z Leonard Hayes [reply to 1757957073.643969]: I don’t know what that step is
+1757958113.258669 09-15 17:41Z Leonard Hayes [reply to 1757957073.643969]: [USERNAME_15558]
+1757958140.516359 09-15 17:42Z Leonard Hayes [reply to 1757957073.643969]: I think these steps are ordered by # of distinct players
+1757958157.966229 09-15 17:42Z Leonard Hayes [reply to 1757957073.643969]: they can trigger enrage at any point, in level 3 can they enrage?
+1757958175.188409 09-15 17:42Z Leonard Hayes [reply to 1757957073.643969]: Level 3, level 4, level 5, level n etc.
+1757958190.208559 09-15 17:43Z Leonard Hayes [reply to 1757957073.643969]: this is the total number of distinc players that triggered enrage at any point
+1757958206.993789 09-15 17:43Z Leonard Hayes [reply to 1757957073.643969]: so if they can trigger enrage earlier than level 4
+1757958211.663079 09-15 17:43Z Leonard Hayes [reply to 1757957073.643969]: then this makes sense
+1757958243.911279 09-15 17:44Z Leonard Hayes [reply to 1757957073.643969]: <https://harmonygames.metabaseapp.com/question#eyJuYW1lIjoiVW5pcXVlIGFuZCBUb3RhbCBBdHRlbXB0cyBQZXIgTGV2ZWwiLCJkZXNjcmlwdGlvbiI6bnVsbCwiZGF0YXNldF9xdWVyeSI6eyJkYXRhYmFzZSI6MiwidHlwZSI6InF1ZXJ5IiwicXVlcnkiOnsiYWdncmVnYXRpb24iOltbImRpc3RpbmN0IixbImZpZWxkIiw2NTc2LHsiYmFzZS10eXBlIjoidHlwZS9UZXh0In1dXSxbImNvdW50Il0sWyJhZ2dyZWdhdGlvbi1vcHRpb25zIixbIi8iLFsiY291bnQiXSxbImRpc3RpbmN0IixbImZpZWxkIiw2NTc2LHsiY
+1757958249.503969 09-15 17:44Z Leonard Hayes [reply to 1757957073.643969]: they enrage in level 3 as well
+1757958276.942089 09-15 17:44Z Leonard Hayes [reply to 1757957073.643969]: no one enrages in level 1 or level 2 by design
+1757958301.128239 09-15 17:45Z Leonard Hayes [reply to 1757957073.643969]: at some point everyone enrages across level 3+ basically
+1757958304.365729 09-15 17:45Z Leonard Hayes [reply to 1757957073.643969]: that’s what that number is
+1757958325.929549 09-15 17:45Z Leonard Hayes [reply to 1757957073.643969]: it just lands coincidentally at 195
+1757958343.028539 09-15 17:45Z Leonard Hayes [reply to 1757957073.643969]: that probably includes existing users from previous builds as well
+1757958358.641039 09-15 17:45Z Leonard Hayes [reply to 1757957073.643969]: when they enrage in this build for the first time, they will show up
+1757959167.948899 09-15 17:59Z Julia Lawson [reply to 1757958047.215619]: That's overdoing it. If I adjust the monsters in such a manner pepople who play normally won't experience the level at all
+1757959175.695419 09-15 17:59Z Julia Lawson [reply to 1757958047.215619]: It's the wrong kind of safety valve
+1757959383.428889 09-15 18:03Z Julia Lawson: <@EMPLOYEE_0038_SLACK_ID> <@EMPLOYEE_0016_SLACK_ID> I made level4 like this.
+1757959419.960019 09-15 18:03Z Julia Lawson: But with this we're bound to get another churn the level following. This is way too simple.
+1757959462.125359 09-15 18:04Z Leonard Hayes: we don’t have cheeries or any other red item?
+1757959473.392209 09-15 18:04Z Leonard Hayes: tomato is missing its partner now
+1757959482.385239 09-15 18:04Z Leonard Hayes: agreed that it’s now oversimplified
+1757959520.347449 09-15 18:05Z Julia Lawson: The point of this level is to have 2 colors of the same item. So bell peppers are good for that. They are not red and orange so they distunguish better.
+1757959550.965969 09-15 18:05Z Julia Lawson: I can put some strawberries I guess, one second
+1757959552.886589 09-15 18:05Z Leonard Hayes: the match factory example you shared has 2 distinct shapes in each color
+1757959562.156679 09-15 18:06Z Leonard Hayes: I thought that’s the goal
+1757959588.782559 09-15 18:06Z Leonard Hayes: yeah, please add in strawberries, then I think the level will work
+1757959677.095859 09-15 18:07Z Julia Lawson: I think it looks good now
+1757959702.204739 09-15 18:08Z Julia Lawson: Bellpeppers still get the job done and enough texture from grape and strawberry to avoid blunder
+1757959992.127429 09-15 18:13Z Julia Lawson: [PERSON_NAME_57565], I made a PR :[USERNAME_26053]:
+1757961186.102639 09-15 18:33Z Robert [reply to 1757957073.643969]: [USERNAME_22161]
+1757965299.265779 09-15 19:41Z Robert: I also updated the endless mode so There are lots of monsters for performance reasons, but difficulty should be about the same, maybe slightly more difficult since monsters are generally a bit faster in the updated version
+1757965312.138659 09-15 19:41Z Robert: but getting to 5 minutes is still do-able, not easy but not suuuper hard
+1757965327.801519 09-15 19:42Z Robert: Changed all flight time of objects to be much quicker, hopefully reduces more weird strange issues
+1757989167.752919 09-16 02:19Z Robert: Here is the near infinite dmg exploit. But thankfully it terminates, sometimes it can go over 100 hits easily, im sure someone on YouTube probably have multiple hundreds
+1757998419.856959 09-16 04:53Z Leonard Hayes: I think we should do an a/b test and do freeze etc before we teach boosters. 
+1758042005.925479 09-16 17:00Z Leonard Hayes: <https://docs.google.com/spreadsheets/d/1B5qyJ2wq_q_LejqCk0ew3B9QlEXtfxD0R6o8J86xSR4/edit?gid=190302233#gid=190302233>
+1758061623.003929 09-16 22:27Z Robert: Crazy, at chapter 51 [USERNAME_4107] introduces another whole new mechanic, basically a skill tree, along with pve coop "hard mode" like you see with other rpgs
+1758063803.640359 09-16 23:03Z Robert [thread 2 replies]: I added some items to the pool: surfboards (4 kinds), music notes (2 types), clef symbol. None of them works right now and I'm waiting for Blake to fix the objects not getting converted to box colliders. <@EMPLOYEE_0012_SLACK_ID> the surfboards are cloned off couch, the symbols and music notes are cloned off whistle.
+1758063859.325879 09-16 23:04Z Robert [reply to 1758063803.640359]: And per usual, I put them under collection 11 for the time being. I think we should sync up at some point and name things properly and sweep over the entire list of items real quick
+1758080959.705059 09-17 03:49Z Leonard Hayes: I have an idea on how to make stars relevant
+1758080985.843619 09-17 03:49Z Leonard Hayes: I watched [PERSON_NAME_35161] playing for 50 levels and she was asking me what the stars do and how boring it’s to always get 3 stars
+1758081055.893029 09-17 03:50Z Leonard Hayes [thread 1 replies]: since we don’t really communicate the relationship between stars and time and it’s kinda random I suggest we take one star away for every enrage you trigger win with 0 enrage = 3 stars win with 1 enrage = 2 stars win with 2+ enrage = 1 star
+1758081941.614359 09-17 04:05Z Leonard Hayes: she likes the new level content
+1758081958.128639 09-17 04:05Z Leonard Hayes: she didn’t click any of the liveops icons once lol
+1758082051.562129 09-17 04:07Z Leonard Hayes [thread 3 replies]: she hated the endless mode and thought it was super stressful - she didn’t even complain her first attempt, tried to quit, couldn’t find how to do it and then let zombies kill her by stopping matching. It’s interesting to observe that she got such a negative reaction as a female match factory player
+1758082091.102849 09-17 04:08Z Leonard Hayes [thread 2 replies]: her biggest concern was still There, why am I winning, why am I losing, and what’s the relationship between zombies/items/winning and she kept complaining about not to be able to strategize - I know we are addressing this mid-term so I’m less worried
+1758082581.592989 09-17 04:16Z Robert [reply to 1758082051.562129]: We are going to remove the force play <@EMPLOYEE_0026_SLACK_ID>
+1758082585.949329 09-17 04:16Z Robert [reply to 1758082051.562129]: That's the plan
+1758082607.808789 09-17 04:16Z Robert [reply to 1758081055.893029]: Yeah we can definitely do this.
+1758082654.143129 09-17 04:17Z Robert [reply to 1758082091.102849]: The strategy is to git gud
+1758082658.871459 09-17 04:17Z Robert [reply to 1758082091.102849]: j/k
+1758083197.069619 09-17 04:26Z Leonard Hayes [reply to 1758082051.562129]: let’s do this by the next relesae
+1758098379.992559 09-17 08:39Z Vincent Parker [reply to 1758063803.640359]: sure, we can do it.
+1758123985.139489 09-17 15:46Z Leonard Hayes: Boss arena feedback - now I understand how the event actually works I filled my rapid fire up to 3 secs and used it. I suggest we change the rules on what happens after you match everything • Because I was playing on ipad it was very easy to match every item on the board quickly with 2 finger gameplay. • After the items were matched, I got the regular_level nuke. I waited for the nuke but this nuk
+1758147587.952549 09-17 22:19Z Leonard Hayes: can we do an a/b test about FTUE?
+1758147599.275829 09-17 22:19Z Leonard Hayes: I want to change the order of what we show early
+1758147660.077929 09-17 22:21Z Leonard Hayes: the big idea There is swapping zombie effect tutorials with boosters tutorials- I think boosters are not that important from “selling the game” standpoint so if we do them let’s say at level 20+ they will be fine
+1758147731.194789 09-17 22:22Z Leonard Hayes: I also think we should give item intro another chance and don’t wait until level 15 - I think we can try something like level 7-10
+1758148557.438169 09-17 22:35Z Robert: Just worried about the item intro, very much like forced players to play endless mode once, There might be a big drop
+1758148616.606399 09-17 22:36Z Robert: Also trying to think how we can A/B test properly because the items are given out via trophy path. So if we want to intro items at 10 for example, we need trophy path to give that item at 10
+1758148630.259359 09-17 22:37Z Robert: Not sure if we have the ability to have 2 different versions of trophy path
+1758148659.719279 09-17 22:37Z Robert: <@EMPLOYEE_0025_SLACK_ID> Can you weigh in on A/B testing where There are 2 different versions of trophy path (AKA Zombie Lane) Where the item release schedule is different?
+1758148782.438299 09-17 22:39Z Leonard Hayes: he is not in this channel and please don’t add him here
+1758148791.481559 09-17 22:39Z Robert: Yeah I forwarded
+1758148797.412749 09-17 22:39Z Leonard Hayes: thx! :slightly_smiling_face:
+1758180431.930239 09-18 07:27Z Vincent Parker: If the only unlock level is changed for the first card, we can use the earlier method for the baseline. We can put the card reward to lvl10 in Zombie lane and unlock the event at17 
+1758191261.940859 09-18 10:27Z Brian Foster: If what we really want to test is bringing the effects forward, I think we can solve it by swapping the levels and tutorials. If we don’t use <@EMPLOYEE_0012_SLACK_ID>’s suggested method, our cost will be much higher, because the Card tutorial and the Trophy Path tutorial work in connection with each other. In addition to changing the rewards of the zombie lane, we might also need to edit the tuto
+1758191312.370309 09-18 10:28Z Brian Foster: That’s why I think the most cost-effective method is to use the approach we applied in the past. Even if we place the effect at level 10, the Card tutorial would still start at level 17. But players will see the effect tutorial panels inside the level. I think just this panel alone will be quite sufficient. The only drawback of this method is that players might not be able to easily establish the 
+1758203788.854539 09-18 13:56Z Leonard Hayes: Let’s use the past method then 
+1758207220.027239 09-18 14:53Z Robert: OK so if we want to bring effects forward, for example ice at level 12, poison at 15, etc. then we're gonna have to involve <@EMPLOYEE_0005_SLACK_ID> because we have to reshuffle the levels, and put them in a different variant like Variant C v2
+1758207259.584079 09-18 14:54Z Robert: But the actual FTUE leading them to collecting their first item and equipping it will remain unchanged right? (Level 18 I believe)
+1758207348.326809 09-18 14:55Z Leonard Hayes: yes, I do think level 18 is too late for item unlock but we can try to move that earlier in another experiment maybe
+1758207623.333509 09-18 15:00Z Vincent Parker: I think we can change the order and placement of card unlock, zombie lane unlock, and the first item effect(freeze) pretty easily but changing the frequency or the order effect unlocks isn’t easy in both level-wise and in zombie lane rewards
+1758209516.994269 09-18 15:31Z Julia Lawson: The main issue is that we have it tied up with the card tutorial. Introducing effects earlier can be tested (which I think anything earlier than 17 will just confuse the players because it's before they learn the core game), but I don't think it will perform very good. Because it's not just the effect, it's the whole card system too.
+1758209585.672149 09-18 15:33Z Julia Lawson: I mean we had that churn in level 4 which is so simple if you know the core game, but people clearly struggle and panic into enraging. Do we really want to add a card system around those times of the learning curve?
+1758212776.916759 09-18 16:26Z Robert: I'm not a fan of it either, but Leonard wants a test
+1758212783.628289 09-18 16:26Z Robert: I just know they freaked the F out when we made them play endless
+1758212788.596499 09-18 16:26Z Robert: and that's at level 20+
+1758292083.627299 09-19 14:28Z Brian Foster: <@EMPLOYEE_0038_SLACK_ID> <@EMPLOYEE_0016_SLACK_ID> We tested Collect &amp; Win with <@EMPLOYEE_0012_SLACK_ID> using the latest commit build. Our view is that with the improvements that can be made within today, we’ll only be able to resolve the blockers. Since we also place extra importance on user experience in the upcoming builds, we don’t think it will reach a shippable level by the end of tod
+1758292221.963019 09-19 14:30Z Leonard Hayes: OK. Let’s see in [PERSON_NAME_7273] can Push over the weekend such that we get into a shippable state on Monday. In that case let’s do new levels and analytics for today’s release. 
+1758292394.787039 09-19 14:33Z Vincent Parker: what about manual refill logic for boss arena? <@EMPLOYEE_0016_SLACK_ID> It's for fixing the time gaps for waiting the board to refill. When it's empty, it refills the board without waiting along with a nuke. That implementation is still in PR
+1758292430.797379 09-19 14:33Z Leonard Hayes: If it’s in good shape we can ship it for sure 
+1758292546.437569 09-19 14:35Z Leonard Hayes: BTW I’m trying to break the game on iOS and it’s not breaking at level 3 or 4. Homing in and out doesn’t break the game. One thing that we can do is to highlight play button or show people where the play button is after they finish level 2. 
+1758292602.947799 09-19 14:36Z Leonard Hayes: Zombie hand pointing to the play button after 3 secs of inactivity for level 3
+1758292607.948969 09-19 14:36Z Vincent Parker: yeah the same. I looked for the data as well and couldn't find a plausible reason to attribute. I will ask Douglas about some of those users. Maybe he can see some pattern
+1758293805.588109 09-19 14:56Z Robert: btw, I notice iPad 6 tends to have the problem
+1758293811.540879 09-19 14:56Z Robert: Anecdotal, so old iPads
+1758293838.807139 09-19 14:57Z Robert: basically a 2017 model
+1758293856.539659 09-19 14:57Z Leonard Hayes: I think older devices, we need to change their settings to medium on IOS
+1758293861.162489 09-19 14:57Z Leonard Hayes: see if that helps
+1758293909.793749 09-19 14:58Z Robert: but it seems like iphone isn't immune, so as I said, anecdotal
+1758293924.062989 09-19 14:58Z Robert: I can walk you guys quickly through the data later in the huddle. I think it will be good to have engineers thinking on all angles
+1758293927.809629 09-19 14:58Z Robert: like what happens at level 4, etc..
+1758293934.925309 09-19 14:58Z Robert: when Push notification prompt is shown
+1758293941.688329 09-19 14:59Z Robert: and how does the handshake happen afterwards
+1758293961.625749 09-19 14:59Z Robert: i'm like 99.5% sure it's crashing though, if you just look at the log between normal users and problematic ones...
+1758293964.305839 09-19 14:59Z Robert: night/day
+1758302465.958889 09-19 17:21Z Julia Lawson: <@EMPLOYEE_0016_SLACK_ID> Do you want me to go through your 200-230 or wrap up to 250?
+1758302543.832289 09-19 17:22Z Julia Lawson: Also should I revert the level 4 then?
+1758302606.767419 09-19 17:23Z Robert: Revert level 4?
+1758302624.559049 09-19 17:23Z Robert: I would say polish up to 230 is probably more important
+1758302682.866369 09-19 17:24Z Julia Lawson: I simplified level 4 because we thought it might be a difficulty issue. I can revert it to my first difficulty iteration.
+1758302752.063689 09-19 17:25Z Julia Lawson: [PERSON_NAME_57565], I'll go over your levels until they fix the issue then. I also made up to 235 so let's see where we end up. I'll try to do both, the night is young
+1758487506.451859 09-21 20:45Z Leonard Hayes: I ordered Playtestcloud - 2 tests, 1 for Android, 1 for iOS 5 players each (3 men 2 women), *Target audience* Players from United States, Canada, and United Kingdom 18 years and older playing Mobile RPG games or 3D Match Games - 3 men (60%), 2 women (40%)
+1758492993.193559 09-21 22:16Z Leonard Hayes: links: <[URL_7404]> <[URL_7403]>
+1758503081.411529 09-22 01:04Z Leonard Hayes: Some vídeos are ready I think 
+1758517286.431379 09-22 05:01Z Leonard Hayes: Team, Player feedback remains weak (3-3.5 stars on Playtestcloud across iOS and Android). The core matching feels good, but There are elements of the game that are not resonating with our audience. [PERSON_NAME_0054] and I had a long convo. Here is what we believe we should do. *Priorities:* • Fix tech issues first. Axe Arena is descoped (<@EMPLOYEE_0026_SLACK_ID> please let [PERSON_NAME_0022] kno
+1758564051.199019 09-22 18:00Z Vincent Parker: I think we have problems specific to Samsung devices. Just like glass vfx issues, I haven’t experienced the airstrike freeze, notification muting the game. 
+1758564414.759259 09-22 18:06Z Vincent Parker [thread 4 replies]: And also the muting problem when the game is in background. I couldn’t repro it as well
+1758564435.076799 09-22 18:07Z Vincent Parker [reply to 1758564414.759259]: Like how many minutes should ı be off for that <@EMPLOYEE_0016_SLACK_ID> 
+1758564828.024939 09-22 18:13Z Robert [reply to 1758564414.759259]: It's just permanently off
+1758564830.848329 09-22 18:13Z Robert [reply to 1758564414.759259]: Until reset of the app
+1758564855.603169 09-22 18:14Z Vincent Parker [reply to 1758564414.759259]: Like how many minutes the app should be in background roughly
+1758565650.854439 09-22 18:27Z Leonard Hayes: Hey do you guys know what [USERNAME_52152] is up to? 
+1758565670.549459 09-22 18:27Z Leonard Hayes: They raised $10M last year and then they disappeared 
+1758565793.214969 09-22 18:29Z Brian Foster: :[USERNAME_42656]:classic
+1758565802.426629 09-22 18:30Z Julia Lawson: No, but we can ask around. There's gotta be a mutual acquaintance somewhere
+1758565825.846159 09-22 18:30Z Brian Foster: Let me ask my friends, They work There as artists
+1758565844.892959 09-22 18:30Z Julia Lawson: See? Found the acquaintance :laughing:
+1758566033.727209 09-22 18:33Z Brian Foster: The only thing I know about [PERSON_NAME_87370] is that their boss is really smooth talker :)) After the investment, they believed that a good game can only be made with good art, so they started trying to attract artists in the market with titles + high salaries. As far as I know, they’ve hired quite a few artists from Dream Games and such
+1758566196.508769 09-22 18:36Z Vincent Parker: Yes they attract talents especially the artists. I have a friend that I can ask but not so close
+1758566397.335909 09-22 18:39Z Vincent Parker: This one looks like match3 with monoploy [USERNAME_19377]
+1758566578.126569 09-22 18:42Z Brian Foster [thread 4 replies]: <https://www.YouTube.com/watch?v=UjWypkoyGaE>
+1758566842.207789 09-22 18:47Z Brian Foster: Classic Royal match Style Match3 (all levels are almost same with Royal match too) + Dice Dream (dice, build, Steal and attack mechanic)
+1758567162.468179 09-22 18:52Z Leonard Hayes: I heard their metrics were pretty good 
+1758567175.164179 09-22 18:52Z Leonard Hayes: But that was last year 
+1758567201.262949 09-22 18:53Z Brian Foster [thread 26 replies]: <@EMPLOYEE_0038_SLACK_ID> <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0005_SLACK_ID> Are you okay with this version for the playable ad scenario? Do you think the item type works, or would you suggest something different? For example, could you point out something like “let’s use these items and those zombies”? I’ll start gathering the assets based on the final decision
+1758567231.993159 09-22 18:53Z Robert [reply to 1758567201.262949]: I am OK with it because it attracts more hardcore users
+1758568261.546739 09-22 19:11Z Julia Lawson [reply to 1758567201.262949]: It attracts more hardcore users to a currently casual funnel. What is the benefit in that?
+1758568698.895379 09-22 19:18Z Brian Foster [reply to 1758567201.262949]: We can request replaceable versions of items and zombies from the Playable team. But I’m not sure if they can also add different item properties
+1758568735.563539 09-22 19:18Z Brian Foster [reply to 1758567201.262949]: <@EMPLOYEE_0005_SLACK_ID> Based on the final decision, could you prepare a test level as a reference for both the Playable team and myself? That way, I can directly use the item and zombie files from There
+1758568988.777449 09-22 19:23Z Julia Lawson [reply to 1758567201.262949]: Yep, I'll make your level ASAP when the guys make their decision. What exactly do you need?
+1758569286.302989 09-22 19:28Z Robert [reply to 1758567201.262949]: Will it retain better or worse?
+1758569291.638359 09-22 19:28Z Robert [reply to 1758567201.262949]: Or we dont know?
+1758569313.660759 09-22 19:28Z Brian Foster [reply to 1758567201.262949]: I need a classic level. Items and zombies. I can directly share the zombie visuals and items There with the playable team
+1758569323.919359 09-22 19:28Z Brian Foster [reply to 1758567201.262949]: If you’d like, we can create 2 different levels for hardcore and casual players. Some items would be shared, while the zombies could be similar or the same. We would also ask the team to upload all the objects. That way, we can create level variations as we want on their platform
+1758569491.223089 09-22 19:31Z Julia Lawson [reply to 1758567201.262949]: <@EMPLOYEE_0016_SLACK_ID> Techically, we'll get better d1-d3 from casuals and better long term from hardcores. I'm just worried, since we simplified the funnel with VariantC hardcores won't retain early and won't give us d7 either. But people are likely to stick out 17 levels to see the cards and the liveops so we can go either way you want. That's my best guess
+1758569536.352949 09-22 19:32Z Robert [reply to 1758567201.262949]: That's not answering the question
+1758569544.121429 09-22 19:32Z Robert [reply to 1758567201.262949]: That's saying, some we will, some we won't
+1758569629.722849 09-22 19:33Z Julia Lawson [reply to 1758567201.262949]: We won't get a reliable hardcore audience test with the current levels we have. So going generic in the playable will perform better in terms of retention.
+1758569655.409719 09-22 19:34Z Robert [reply to 1758567201.262949]: But the idea is to test the current form and audience fit, not what the game can tailored to become
+1758569694.595289 09-22 19:34Z Robert [reply to 1758567201.262949]: If the spectrum is 1-10 (1 being casual, 10 being hardcore), are we closer to 10? or 1? or right in the middle of a 5? In the current form?
+1758569707.508219 09-22 19:35Z Julia Lawson [reply to 1758567201.262949]: Oh.. Yeah in that case, let's do a more hardcore friendly playable and see how they do with the funnel. I get it now, sorry for the confusion
+1758569737.713799 09-22 19:35Z Robert [reply to 1758567201.262949]: correction, middle at 5.5 for a 1-10 scale..
+1758569824.148029 09-22 19:37Z Julia Lawson [reply to 1758567201.262949]: Do you want to try a cute level with lots of grenades and shruiken then? Total guy focus
+1758569872.578829 09-22 19:37Z Robert [reply to 1758567201.262949]: Doesn't really matter
+1758569885.985319 09-22 19:38Z Robert [reply to 1758567201.262949]: I think we should remain as is
+1758569900.856619 09-22 19:38Z Robert [reply to 1758567201.262949]: Because it sounded like based on what you said earlier about the user testing video, we're neither hardcore nor casual
+1758569905.331999 09-22 19:38Z Robert [reply to 1758567201.262949]: both end spectrums complain
+1758569921.995059 09-22 19:38Z Robert [reply to 1758567201.262949]: So the answer is to shift one way or another
+1758569995.343159 09-22 19:39Z Robert [reply to 1758567201.262949]: But which way? In order to arrive at that decision, we have to answer some questions: 1. where is the game between 1-10 hardcoreness scale? 2. time we have left 3. degree of difficulty of swinging one way or another 4. marketing audience affinity
+1758570038.885309 09-22 19:40Z Robert [reply to 1758567201.262949]: If we were to quickly make changes to tailor "hardcore audience" better, and have another casual version out There to entertain the casual audience, then we won't be able to answer #1 and #4 very well
+1758570117.998139 09-22 19:41Z Julia Lawson [reply to 1758567201.262949]: I think the game is at least a solid 6 in terms of complexity. Multiple objectives in the core game and card layer. That's pretty hardcore for casuals.
+1758570425.654109 09-22 19:47Z Brian Foster [reply to 1758566578.126569]: <@EMPLOYEE_0038_SLACK_ID> I spoke with an artist friend from Cypher Games. He said the game is the same as in this video. He mentioned they would only make huge update at UI and Art. Since the core mechanic will remain the same, according to what he said
+1758571334.397769 09-22 20:02Z Leonard Hayes [reply to 1758566578.126569]: so their metrics are probably still very good and they think to win in the UA battle, they need to stand out
+1758571344.170709 09-22 20:02Z Leonard Hayes [reply to 1758566578.126569]: does your friend know their metrics or no?
+1758572290.284229 09-22 20:18Z Brian Foster [reply to 1758566578.126569]: Probably no, he is a artist
+1758581163.345609 09-22 22:46Z Robert: Dude, I watched 3 and half videos so far, and I gotta say, the AI fucking sucks at summarizing, partly because the nature of our game.
+1758581190.915979 09-22 22:46Z Robert: So far I saw 0 confusion about game mechanics or how the game works. All the "usability" tags and "Frustration" tags are literally people saying things like "Omg I can't tell the items apart" or "items are buried and hidden"
+1758581195.871999 09-22 22:46Z Robert: And AI would think that's a user complaint.
+1758581234.991559 09-22 22:47Z Robert: And sure every now and then they would ask "hmm does glue and ice effect stack?" And they proceed to test it out and go "yep" and answered their own question.
+1758581285.782889 09-22 22:48Z Robert: 
+1758581286.916739 09-22 22:48Z Julia Lawson: It sucks as FTUE summary too. Summary says poor instructions but players always figure things out
+1758581305.572329 09-22 22:48Z Robert: Yeah, literally There is no confusion thus far... the only thing that they might have question for was how the "stars are calculated"
+1758581311.290239 09-22 22:48Z Robert: And to be fair, we didn't explain that at all
+1758581315.533899 09-22 22:48Z Robert: And it didn't matter, they forgot about it
+1758581347.975559 09-22 22:49Z Julia Lawson: It's okay if they confused by the color. That's the point of the game kind of, lol
+1758581360.717179 09-22 22:49Z Robert: Yeah, but the AI think it's usability issue
+1758581371.163929 09-22 22:49Z Julia Lawson: Yeah AI summary sucks but they still gave poor star rating etc
+1758581372.817689 09-22 22:49Z Robert: And often tags it with #frustration and #usability when that's the whole point
+1758581410.318509 09-22 22:50Z Julia Lawson: It's just the core game consolidation. Whatever complaint they have boils down to that for the most cases
+1758581429.716279 09-22 22:50Z Robert: Yes but when it comes to star rating, what's the average?
+1758581445.852719 09-22 22:50Z Robert: I mean if you ask me to play 10 games randomly, chances are I'd only continue to play half of them, and that's me as a gamer, most people would play maybe 2?
+1758581459.649529 09-22 22:50Z Robert: I wouldn't play any 4x game
+1758581464.002309 09-22 22:51Z Robert: I wouldn't play hidden object game
+1758581467.980569 09-22 22:51Z Robert: I'm also done with classic match 3
+1758581471.083759 09-22 22:51Z Julia Lawson: I'm getting "cute idea but doesn't really make me addicted" vibes.
+1758581488.969679 09-22 22:51Z Robert: But that's the thing, I need an average score from player test cloud
+1758581500.127129 09-22 22:51Z Robert: Just think about music
+1758581503.835519 09-22 22:51Z Robert: I play 10 songs, you might like 1
+1758581508.719749 09-22 22:51Z Robert: And maybe even 0 if they aren't your genre
+1758581525.000559 09-22 22:52Z Julia Lawson: I think when we make this Play loud videos it's always watching how they play more then what they say
+1758581540.192499 09-22 22:52Z Robert: yeah, and so far I'm happy with how they are progressing
+1758581544.176999 09-22 22:52Z Robert: There is no "confusion"
+1758581549.100339 09-22 22:52Z Robert: "don't know how the game works"
+1758581554.892239 09-22 22:52Z Robert: they literally figured it out in 30 seconds
+1758581560.579679 09-22 22:52Z Julia Lawson: I mostly look at their inputs and behaviors. It was like this in the first Playlist cloud too.
+1758581568.481849 09-22 22:52Z Robert: One girl was like "Oh do I need to match the ABC alphabet in order?"
+1758581573.995469 09-22 22:52Z Robert: 5 seconds later "Oh I guess not"
+1758581597.133819 09-22 22:53Z Julia Lawson: They probably tell them to comment on things or think out loud as a part of the guidelines
+1758581600.518779 09-22 22:53Z Robert: yes
+1758581603.849979 09-22 22:53Z Robert: "Asking out loud"
+1758581615.412109 09-22 22:53Z Robert: But they are literally asking the most obvious questions, and they often get answered within the next 10 seconds
+1758581621.349939 09-22 22:53Z Robert: which means we did our job
+1758581630.062439 09-22 22:53Z Robert: because they are thinking it, and we are thinking that they will be thinking it
+1758581651.167799 09-22 22:54Z Julia Lawson [thread 15 replies]: We should focus on figuring out why it doesn't give them a kick of joy to figure things out. So far, i haven't the clue
+1758581659.733259 09-22 22:54Z Julia Lawson: But I keep watching :laughing:
+1758581663.431239 09-22 22:54Z Robert: I wish the AI would capture a bit more of the "Oh I see" moments
+1758581668.894339 09-22 22:54Z Robert: and mark it as #questionAnswered
+1758581696.775649 09-22 22:54Z Robert [reply to 1758581651.167799]: You give match factory to 10 players, I guarantee you only 50% at best will like it
+1758581711.110499 09-22 22:55Z Robert [reply to 1758581651.167799]: and I think that's still kinda stretching it
+1758581718.451179 09-22 22:55Z Robert [reply to 1758581651.167799]: If you think about D1 retention, 40%
+1758581730.156389 09-22 22:55Z Robert [reply to 1758581651.167799]: that's less than half of players that would "play this game" basically
+1758581755.059779 09-22 22:55Z Robert [reply to 1758581651.167799]: In order to get a 4-5 stars, you are basically saying 70%+ of the players will play your game or would recommend
+1758581765.318589 09-22 22:56Z Robert [reply to 1758581651.167799]: That would imply at least a 50%+ D1 retention, maybe more
+1758581817.541299 09-22 22:56Z Julia Lawson [reply to 1758581651.167799]: Well so far they didn't give me a halelujah this is a great hook for the game. I'm just happy the game is self explanatory enough
+1758581832.871979 09-22 22:57Z Julia Lawson [reply to 1758581651.167799]: We had that issue with DD, so we did better this time it seems
+1758581920.241419 09-22 22:58Z Robert [reply to 1758581651.167799]: Yeah, but based on what I'm watching, I seriously doubt if I put MF in their hands, they will some how rate that 4-5 stars
+1758581955.514319 09-22 22:59Z Robert [reply to 1758581651.167799]: Reading how the star system works, I think for a game to get an average of 4 stars under "would play again" is probably nearly impossible
+1758581963.016479 09-22 22:59Z Robert [reply to 1758581651.167799]: Unless they went for genre specific testers
+1758581973.579669 09-22 22:59Z Robert [reply to 1758581651.167799]: Giving them an RPG game to RPG PLAYERS ONLY
+1758581985.853909 09-22 22:59Z Robert [reply to 1758581651.167799]: and with a good well designed RPG game, I can see a 4+ star
+1758582006.577499 09-22 23:00Z Robert [reply to 1758581651.167799]: otherwise any genre at random to a random "mobile gamer" is unlikely to yield an average score of 8/10 for would play, that game would have D1 retention of 75%
+1758582083.678989 09-22 23:01Z Julia Lawson [reply to 1758581651.167799]: It's still useful to watch their behavior. It's not too different from making a loved one play it. They are playing to please us and wouldn't touch it otherwise. And they react with how irritable they are in the moment :laughing:
+1758582089.915879 09-22 23:01Z Robert: Finally if you were to go through the transcript summary, if you were to rate "positive" vs. "negative" sentiments, I think positive:negative sentiment ratio is like 10:1
+1758582126.210789 09-22 23:02Z Julia Lawson: Well the platform is for figuring out what's wrong for your game so, that's fair, I guess.
+1758582131.313459 09-22 23:02Z Robert: In fact I haven't seen any egregious AHA! Negative sentiments
+1758582162.055749 09-22 23:02Z Robert: The app froze hard for a user at end of level 21
+1758582178.692239 09-22 23:02Z Robert: Requiring a hard restart. It might be related to the sound getting disabled bug on Samsung devices.
+1758582200.575879 09-22 23:03Z Robert: And There were numerous compliments on the sound
+1758582345.254079 09-22 23:05Z Robert: 
+1758582703.744009 09-22 23:11Z Robert [thread 2 replies]: Bad AI transcript:
+1758582710.757669 09-22 23:11Z Robert [reply to 1758582703.744009]: He said "two different TEA kettles"
+1758582776.335459 09-22 23:12Z Robert: 
+1758582858.132029 09-22 23:14Z Robert: AI completely made this up, he said no such thing:
+1758583050.535509 09-22 23:17Z Leonard Hayes: can you thread please?
+1758583063.198579 09-22 23:17Z Leonard Hayes: otherwise we’ll have 100s of messages lol
+1758583082.660489 09-22 23:18Z Leonard Hayes [reply to 1758582703.744009]: [USERNAME_18759]
+1758583289.163759 09-22 23:21Z Robert: They are all different topics
+1758583438.427779 09-22 23:23Z Robert: • Hard crash x1 • Phone heat up had to stop playing x1 • Audio glitch x1 (Part of hard crash?) • Things are straight forward and easy no understand, no confusion whatsoever, unless it's something we just didn't explain at all (How stars calculated, air strike in endless mode) • No confusion with how the modes worked (Plague race, trophy path, endless) • Some wish list stuff that we already know ab
+1758646127.950749 09-23 16:48Z Robert: <@EMPLOYEE_0012_SLACK_ID> Leonard's friend *[IDENTIFIER_2104]*
+1758667286.925349 09-23 22:41Z Robert [thread 11 replies]: <@EMPLOYEE_0012_SLACK_ID> My thoughts: 1. We start increasing monster HP by 2% per 10 levels starting around level 50. We can consider damage and speed increases later, if any. (I doubt we'll do speed, but damage might make sense) 2. This means that by around level ~1050, monsters are 3x buffer. This should still fall well within the power gain of a average player after looking at the item power c
+1758667328.709829 09-23 22:42Z Robert: <@EMPLOYEE_0005_SLACK_ID> We should make a decision on this soon since we're building levels and we should account for this, this is a foundational piece
+1758667484.394299 09-23 22:44Z Robert [reply to 1758667286.925349]: I don't think move speed increase is necessary. However when it comes to damage, I do want to increase that, but only after we build in player level (as discussed with [PERSON_NAME_0050]) This way we can have items that increase cannon HP, and have cannon abilities like reflect damage, bounce back monsters, auto match cannon, all sorts of cool "fortress" abilities that can come from items or other
+1758667555.311889 09-23 22:45Z Robert [reply to 1758667286.925349]: "Cannon can absorb a nearby monster and launch it at other monsters"
+1758667570.892289 09-23 22:46Z Robert [reply to 1758667286.925349]: And we can have VFX of the monster cartwheeling through the air.... hitting other monsters
+1758667669.909829 09-23 22:47Z Robert [reply to 1758667286.925349]: This is our monster table today. I feel like even 2x or 3x mayor boss HP to 500 or 750 for example, isn't all that much
+1758667671.761829 09-23 22:47Z Robert [reply to 1758667286.925349]: 
+1758667708.954609 09-23 22:48Z Robert [reply to 1758667286.925349]: considering how a level 5 bowling ball rare item deals 152 damage
+1758667717.189149 09-23 22:48Z Robert [reply to 1758667286.925349]: and a level 3 bowling ball deals 80 damage
+1758668039.541069 09-23 22:53Z Robert [reply to 1758667286.925349]: Level 5 uncommon iron deals 100 damage, and it's safe to say that by level 500, one should have a handful of level 5 uncommons right? At least based on the item progression that you scoped out
+1758668108.282519 09-23 22:55Z Robert [reply to 1758667286.925349]: But keep in mind that it's the damage output of all the items that needs to be 2x'ed on average. So this includes all the items and not just the items on the board. And we still have to manage to boost the power of non card items, we can probably also tie that to the monster HP increase, so like 2% per 10 levels
+1758689839.300009 09-24 04:57Z Julia Lawson: Agreed, I will stop level making at 300 which I'm close to. But I want to have more content for September 30 release just in case :[USERNAME_26053]:
+1758690035.923739 09-24 05:00Z Julia Lawson: I personally wouldn't sweat zombie scaling right now. The bigger issues are item size, and damage. Players seem to want a correlation between them. Can we squeeze the bigger HP bar thing in and see how that feels?
+1758691397.679889 09-24 05:23Z Robert [thread 2 replies]: <@EMPLOYEE_0038_SLACK_ID> what's the audience you requested for play test cloud?
+1758691528.127789 09-24 05:25Z Robert [reply to 1758691397.679889]: Audience can vary results quite a bit:
+1758695485.439749 09-24 06:31Z Vincent Parker [reply to 1758667286.925349]: Yes only damage makes sense. While working on algo level, around level 300 players usually have <tel:700-1000|700-1000> more damage than the default level. 
+1758695671.265169 09-24 06:34Z Vincent Parker [reply to 1758667286.925349]: And yeah especially mayor type monsters would need 500+ hp. For the object scaling Im still a little bit hesitant about it. If we also scale them the challenge level might not increase 
+1758729342.721289 09-24 15:55Z Leonard Hayes [reply to 1758691397.679889]: Players from United States, Canada, and United Kingdom 18 years and older playing Mobile RPG games or 3D Match Games - 3 men (60%), 2 women (40%)
+1758757016.553559 09-24 23:36Z Robert [thread 13 replies]: New Item Thread, in ( ) is the item cloned from
+1758757026.873959 09-24 23:37Z Robert [reply to 1758757016.553559]: Protractor (Pencil) and Blackboard (wooden bench):
+1758757641.634929 09-24 23:47Z Robert [reply to 1758757016.553559]: Abacus (wooden tower), DNA Helix (Badge), Atomic Molecule (Badge), this one is.. ehh.. noisy:
+1758757881.264889 09-24 23:51Z Robert [reply to 1758757016.553559]: Handsaw (scissor)
+1758758037.503059 09-24 23:53Z Robert [reply to 1758757016.553559]: Ice Cream Cone (Soft serve), this one is pretty good:
+1758758503.319859 09-25 00:01Z Robert [reply to 1758757016.553559]: Various lollipops (Kiwi):
+1758758672.742539 09-25 00:04Z Robert [reply to 1758757016.553559]: [USERNAME_36211] is pretty great ([USERNAME_36210])
+1758758695.130369 09-25 00:04Z Robert [reply to 1758757016.553559]: <@EMPLOYEE_0002_SLACK_ID> Maybe we could use a impact VFX that's organic splash but without the liquid, so in this case we have the chocolate pieces but not water droplets
+1758759314.143939 09-25 00:15Z Robert [reply to 1758757016.553559]: Corndog (hotdog), Sandwich (hamburger), sushi (garlic)
+1758759686.056119 09-25 00:21Z Robert [reply to 1758757016.553559]: Book (desk lamp - lightning), coffee table (bench):
+1758759698.849929 09-25 00:21Z Robert [reply to 1758757016.553559]: <@EMPLOYEE_0009_SLACK_ID> I think the table from the underside is really hard to tell what color it is.. we might need a creative solution for this
+1758759845.447389 09-25 00:24Z Robert [reply to 1758757016.553559]: <@EMPLOYEE_0012_SLACK_ID> I think we might have the right items to do a "classroom" collection
+1758759858.109419 09-25 00:24Z Robert [reply to 1758757016.553559]: protractors/pencil/ruler/blackboard/atomic molecule/book/abacus
+1758760095.485329 09-25 00:28Z Robert [reply to 1758757016.553559]: Chopstick (spatula) I might add a blind for this item because it pokes zombies in the eye:
+1758796774.595819 09-25 10:39Z Vincent Parker: This isn’t what you wanted when you say increase thickness right? 
+1758796815.758229 09-25 10:40Z Vincent Parker [thread 9 replies]: 
+1758797078.772659 09-25 10:44Z Vincent Parker: Nvm, it’s the expected visuals. 
+1758809221.864789 09-25 14:07Z Julia Lawson [reply to 1758796815.758229]: It looks good, we just need to adjust the numbers
+1758822289.405049 09-25 17:44Z Robert [reply to 1758796815.758229]: Too thick? I asked for 2x, do you think that's too much?
+1758822298.993429 09-25 17:44Z Robert [reply to 1758796815.758229]: I feel like +50% to +75% might be more ideal, but I'll let you decide
+1758822305.162149 09-25 17:45Z Robert [reply to 1758796815.758229]: That bar is as thick as the bike kid's head lol
+1758822405.499859 09-25 17:46Z Vincent Parker [reply to 1758796815.758229]: Nope Im ok with thickness, better for readability but when you say thickness ı assume it was the length mot the height 
+1758822619.851629 09-25 17:50Z Robert [reply to 1758796815.758229]: OK if you guys are happy with the look, go for it
+1758822624.462889 09-25 17:50Z Robert [reply to 1758796815.758229]: very subjective taste anyways
+1758822627.839059 09-25 17:50Z Robert [reply to 1758796815.758229]: usability first
+1758825258.755199 09-25 18:34Z Julia Lawson [reply to 1758796815.758229]: I like it
+1758828254.482849 09-25 19:24Z Robert: <@EMPLOYEE_0038_SLACK_ID> Legacy mechanic in Capy Go. It replaces the talents after you finish upgrading it 100% (Talents is the gold spend to increase +def +hp +atk)
+1758828324.765489 09-25 19:25Z Robert: It is basically equipping a "faction" and each faction has its perks. The way it comes into play is that during a normal level, any damage you take or deal, charges yet another bar (think their rage mechanic, except even more triggers to charge it)
+1758828482.673739 09-25 19:28Z Robert: And once charged, the faction mascot comes out and does some stuff that's basically just some damage plus some effects. However you can upgrade this faction like a skill tree, adding more effects or basic stats like HP and damage. But researching these skills has a timer, and of course you can buy speed ups for them... researching also cost a lot of gold, and this is because the talent upgrades wa
+1758829370.861359 09-25 19:42Z Leonard Hayes: yeah these are pretty standard features in RPGs
+1758829650.692149 09-25 19:47Z Robert: kind of, but just so you know There is another whole set of skill tree elsewhere called "specialization"
+1758829734.759129 09-25 19:48Z Leonard Hayes: I’m not surprised, these games have many permanent progression systems that are intertwined
+1758829768.153129 09-25 19:49Z Leonard Hayes: As long as the core game is something that people enjoy, those systems we can build over time
+1758829797.873049 09-25 19:49Z Leonard Hayes: the challenge is we don’t have them yet and they won’t be super easy to build/balance. We should literally copy one of the existing games ruthlessly
+1758829814.098939 09-25 19:50Z Leonard Hayes [thread 3 replies]: like [USERNAME_28684] balance + zombie match gameplay etc.
+1758829860.473499 09-25 19:51Z Leonard Hayes: I still think Zombie Match’s monetization vector with 5 upgrades per item and you bringing many items to the battle is gonna be very shallow
+1758829934.070709 09-25 19:52Z Leonard Hayes: we are scratching the surface of monetization power that RPG games have. At minimum we should have game modes where certain items matter in different game modes with the current setup imo, else There is no reason to get any IAPs
+1758829985.124259 09-25 19:53Z Leonard Hayes: Even if we make the game hard we’d still have these monetization depth and relevance of items to progerssion issues I believe
+1758830052.329669 09-25 19:54Z Leonard Hayes: at least the pacing and rhytm of upgrades feel 10x better thx to you and <@EMPLOYEE_0012_SLACK_ID>
+1758831672.050789 09-25 20:21Z Robert [reply to 1758829814.098939]: That was basically the proposal last week
+1758831677.971379 09-25 20:21Z Robert [reply to 1758829814.098939]: Couple things to make that happen
+1758831910.021919 09-25 20:25Z Robert [reply to 1758829814.098939]: 1. we templatize level making. Capy Go has 10 levels only, they just scale it with a math formula, giving monsters more HP and damage. 2. their items also scale following a formula, along with all their other systems that increases power of any kind, for us, thankfully we only have items right now to worry about. 3. we will need to implement a "player level" of some sort (think Archero's player le
+1758911910.876289 09-26 18:38Z Brian Foster: I’ve been playing Archero 2 and <http://Survivor.io|Survivor.io> for a while, and I’ve developed some theories about how levels and monsters work in these games • In Archero 2, the Arena usually uses a fixed set of monster types. These monsters are presented to the player in different sequences, creating variation across levels. I believe the game also adjusts level design based on the player’s cu
+1759005518.264259 09-27 20:38Z Leonard Hayes: <https://www.linkedin.com/pulse/1-hour-analysis-triple-match-3d-boombox-games-ltd-sungsu-kim-2hxkc?utm_source=share&amp;utm_medium=member_ios&amp;utm_campaign=share_via|https://www.linkedin.com/pulse/1-hour-analysis-triple-match-3d-boombox-games-ltd-sungsu-kim-2hxkc?utm_source=share&amp;utm_medium=member_ios&amp;utm_campaign=share_via>
+1759005528.544339 09-27 20:38Z Leonard Hayes: Triple match analysis 
+1759114097.776589 09-29 02:48Z Leonard Hayes: For the playable - should we pause the effort if they haven’t started yet? 
+1759114127.213749 09-29 02:48Z Leonard Hayes [thread 3 replies]: I’m worried that we pivot the core game and then playable dev money will be wasted. It’s not nothing 
+1759141833.339099 09-29 10:30Z Brian Foster [reply to 1759114127.213749]: Makes sense, I sent them the assets, but as far as I know, they haven’t started yet
+1759141909.436389 09-29 10:31Z Brian Foster [reply to 1759114127.213749]: But if we are going to stop the process, we should say it asap
+1759141916.767179 09-29 10:31Z Brian Foster [reply to 1759114127.213749]: because today they asked me another question about rigging related to the animations
+1759165414.829399 09-29 17:03Z Vincent Parker: Those are retention for earlier versions based on creative
+1759171957.791499 09-29 18:52Z Robert: <@EMPLOYEE_0005_SLACK_ID> we decided to YOLO and move up card introduction earlier. <@EMPLOYEE_0026_SLACK_ID> will make the changes in the tutorial, but we have to align on the level design itself since we need to shuffle the levels for the effects to the right place. So the ice cream bar level will have to move up as well, and maybe adjusted if we think it's too difficult.
+1759172119.133819 09-29 18:55Z Julia Lawson [thread 9 replies]: Okay, I'll simplify it and make a level from just 2 ice-creams. What level did you decide to put it? By the way, I'll just throw my two cents for the record. In a funnel where we're questioning people's simplest blunders, throwing that mechanic will not do anything for the funnel and most likely affect it very negatively.
+1759172138.271249 09-29 18:55Z Robert: Yeah, but we want to just appeal to the more hardcore players
+1759172149.541719 09-29 18:55Z Robert: And [PERSON_NAME_0092] said equipment system is usually introduced within 3 minutes
+1759172166.547199 09-29 18:56Z Robert: So we were thinking just replace the broom tutorial with the first freeze item that was originally at level 17. So 17 -&gt; level 5
+1759172172.623159 09-29 18:56Z Julia Lawson: That's for games that don't have multiple layers in the core.
+1759172172.666169 09-29 18:56Z Robert: And then everything else just moves up
+1759172197.310709 09-29 18:56Z Julia Lawson: oki doki, I'll make the Push now
+1759172198.547719 09-29 18:56Z Leonard Hayes: For me the differentiating factor of this game comes in too late
+1759172223.583429 09-29 18:57Z Leonard Hayes: we are kinda wasting time teaching the boosters early on
+1759172239.701249 09-29 18:57Z Robert: Yeah I said just drop the broom tutorial, it's such a useless item that no one is gonna shed a tear
+1759172254.244829 09-29 18:57Z Robert: And go "oh man There was this broom?? Where were you all this time???"
+1759172268.458099 09-29 18:57Z Leonard Hayes: changing the order will surely hurt the funnel for casual players but I think the overall outcome would be for those who continue to play, they would like sticking around longer
+1759172271.010919 09-29 18:57Z Robert: Because blunder != instant loss, [USERNAME_3114] loses the value anyways
+1759172306.627309 09-29 18:58Z Robert [reply to 1759172119.133819]: I think we're like 85% if not 90% confident that those aren't legitimate players
+1759172311.633339 09-29 18:58Z Robert [reply to 1759172119.133819]: Bots, etc..
+1759172330.550859 09-29 18:58Z Robert [reply to 1759172119.133819]: We were comparing blunder between versions. The levels got easier and blunder rate went from 10% -&gt; 25%, and 25% -&gt; 50%
+1759172359.402799 09-29 18:59Z Robert [reply to 1759172119.133819]: And I think what was most striking is the insane amount of people quitting via settings
+1759172367.979939 09-29 18:59Z Julia Lawson: The main differentiating factor for this game is the zombies. This is a massive design mistake but I'll love to be Proven wrong
+1759172370.216319 09-29 18:59Z Robert [reply to 1759172119.133819]: We had very little of that, and suddenly in the most recent build, lots more
+1759172384.098259 09-29 18:59Z Robert [reply to 1759172119.133819]: And these blunders, are from people clicking like 40 times a minute, sometimes less
+1759172390.622309 09-29 18:59Z Robert [reply to 1759172119.133819]: And yet they're repeatedly blundering?
+1759172399.773149 09-29 18:59Z Robert [reply to 1759172119.133819]: If they were rapid clicking with no care, then I can see that
+1759172434.532439 09-29 19:00Z Robert [reply to 1759172119.133819]: Hence we thought the behavior was more akin to a bot, or one person managing multiple devices and they're doing the whole "playing" to generate some app activity to try to legitimize the install
+1759172472.495209 09-29 19:01Z Robert: How does introducing the items earlier affect the zombies?
+1759172516.511459 09-29 19:01Z Julia Lawson: My comment is about Leonard's statement that "differentiating factor of this game comes in too late"
+1759172539.717089 09-29 19:02Z Leonard Hayes: I mean we introduce Zombies anyhow, that’s not changing
+1759172542.795779 09-29 19:02Z Leonard Hayes: that’s literally level 1
+1759172570.993449 09-29 19:02Z Leonard Hayes: I am saying boosters add no value as a differentiator
+1759172591.384769 09-29 19:03Z Leonard Hayes: the next big idea in the game is different items hit zombie differently and you can upgrade them
+1759172603.417709 09-29 19:03Z Julia Lawson: We can't simultenuosly make levels easier because people don't understand the blunder and make the game more appealing for hardcore players.
+1759172695.000449 09-29 19:04Z Leonard Hayes: the order I think should be 1-kill zombies with items 2 - different items hit zombie differently 3- items are upgradable 4- Booster 5- Liveops
+1759172755.184109 09-29 19:05Z Leonard Hayes: I think blunder design is a separate problem because it’s unclear to users how it works
+1759172801.164409 09-29 19:06Z Leonard Hayes: we can simplify it and make blunder = death -&gt; it will slow them down but at least they would understand the relationship between losing and blunders
+1759172841.088119 09-29 19:07Z Leonard Hayes: enrage mechanic is too complex for the average user - that’s what I think the data is telling us today
+1759172892.935369 09-29 19:08Z Julia Lawson: Again, if enrage is too complex for the average user, are we iterating for the average user or the hardcore user?
+1759172937.229039 09-29 19:08Z Julia Lawson [thread 4 replies]: I turned the level into this. This is just enough icecream to kill the chef. The level doesn't have the white icecream, I put it There to show how it look when the card is equipped and level is entered.
+1759172950.703589 09-29 19:09Z Julia Lawson: I'll Push if this is good
+1759172959.624479 09-29 19:09Z Leonard Hayes: I think enrage is problematic for hardcore users as well. You can’t tell the risk vs benefit by [USERNAME_3115]
+1759172978.566499 09-29 19:09Z Leonard Hayes: even if you understand what it does vaguely, it lacks precision in decision making
+1759173014.200169 09-29 19:10Z Leonard Hayes: that’s why I said it may make sense to decouple enrage from other ideas - I think our execution is not the best tbh
+1759173062.702099 09-29 19:11Z Leonard Hayes: if you really want hardcore enrage, we should show what multiplier boosts the zombies get (25% more HP 25% more speed etc.) and the enrage level as well to be displayed
+1759173085.757379 09-29 19:11Z Julia Lawson [reply to 1759172937.229039]: <@EMPLOYEE_0016_SLACK_ID> Is this okay?
+1759173105.948699 09-29 19:11Z Robert [reply to 1759172937.229039]: Yeah I think that's fine?
+1759173115.631829 09-29 19:11Z Julia Lawson [reply to 1759172937.229039]: Yep me too.
+1759173139.940419 09-29 19:12Z Julia Lawson [reply to 1759172937.229039]: Okay sending it the level design branch
+1759173180.192809 09-29 19:13Z Julia Lawson: <@EMPLOYEE_0026_SLACK_ID> You can work on the tutorial level is There `[PERSON_NAME_0019]/sep30levels`
+1759173183.428879 09-29 19:13Z Brian Foster: I also think that the most important factor here is which type of user we’re going to target
+1759173195.753429 09-29 19:13Z Brian Foster: If we’re making a game for hardcore players, then we should highlight the card mechanic, but in that case we may lose casual users. However, the live-ops we use in the game generally appeal to casual players (except for the game modes)
+1759173247.603649 09-29 19:14Z Julia Lawson: Also, you need to make the level ordering again. Before I did it manually but now we probably need some sort of script for it.
+1759173269.820649 09-29 19:14Z Leonard Hayes: Do we think the hardcore players will be turned off by the casual liveops structures? I’m thinking they will choose not to be engaged much with those features but I don’t think they will rage quit the game because There is a win streak liveops
+1759173270.565169 09-29 19:14Z Brian Foster: In the past, when making decisions on this, we chose a more casual approach since we were going to showcase our 'live-ops engine' for fundraising
+1759173386.589489 09-29 19:16Z Julia Lawson: Yeah, I agree with [PERSON_NAME_0092]. We decided on a casual approach because liveops engine was going to be the backbone of the fundraising. I'm fine with iterating, obviously but but I don't understand why we're doing it for the hardcore players.
+1759173389.051889 09-29 19:16Z Vincent Parker: The only casual live ops implemented is plague race [USERNAME_44360]. Quests can be more all around. The level progression and the boosts are also casual
+1759173454.898559 09-29 19:17Z Brian Foster: That’s why I think we need a clear direction on this. Either we make a game for hardcore players and design the whole game accordingly, or we follow the casual path. Of course, I don’t think they’ll rage quit because of the live-ops
+1759173457.020249 09-29 19:17Z Robert: yeah, [USERNAME_15751] is not a casual/hardcore live ops, and we have boss arena/endless mode/leaderboards/quests, those are all standard..
+1759173459.621579 09-29 19:17Z Leonard Hayes: I thought you guys all wanted to lean into hardcore - maybe I’m misreading what we wanted to do - now you guys are confusing me :smile:
+1759173472.928899 09-29 19:17Z Robert: yeah, I thought we're leaning into hardcore too
+1759173499.498579 09-29 19:18Z Robert: D0 minutes at the expense of possibly an uglier funnel
+1759173509.076179 09-29 19:18Z Julia Lawson: We never had a preference between casual or midcore, it was upto you guys. We're just reminding that we're doing multiple things for multiple targets.
+1759173560.112239 09-29 19:19Z Leonard Hayes: how much additional work is it to A/B test the hardcore funnel if we don’t want to yolo?
+1759173561.454829 09-29 19:19Z Julia Lawson [thread 4 replies]: Needless to mention, I have 300 casual levels and nothing geared to midcore play
+1759173632.306909 09-29 19:20Z Julia Lawson: If you're confident we should yolo, it's just one test and one level swap, cheaper then A/B
+1759173637.851689 09-29 19:20Z Leonard Hayes [thread 3 replies]: I think levels have not much to do with item progression and effects after they are introduced earlier in the funnel. I don’t even know what a hardcore level looks like
+1759173645.080429 09-29 19:20Z Robert [reply to 1759173561.454829]: I'm midcore/hardcore, and I think for most people we just want to match fast af
+1759173651.442509 09-29 19:20Z Robert [reply to 1759173561.454829]: Your levels allow that one way or another
+1759173657.736939 09-29 19:20Z Robert [reply to 1759173561.454829]: And I like the eye puzzle challenge
+1759173667.219099 09-29 19:21Z Robert [reply to 1759173561.454829]: I actually think that's pretty hardcore
+1759173667.736069 09-29 19:21Z Leonard Hayes: to me your levels are perfectly fine <@EMPLOYEE_0005_SLACK_ID> :slightly_smiling_face:
+1759173684.934029 09-29 19:21Z Brian Foster: Personally, I’ve never supported a hardcore match-3D game. With the current gameplay, I just can’t picture a hardcore game in my mind, but it's just me
+1759173685.758329 09-29 19:21Z Robert [reply to 1759173637.851689]: I think for her leaning hardcore/RPG means more selective about items
+1759173693.774649 09-29 19:21Z Brian Foster: But given the current situation, since we’re not getting good performance from a casual game, I assume we’re considering shifting towards a more hardcore game as an alternative
+1759173697.534529 09-29 19:21Z Robert [reply to 1759173637.851689]: so something where you're hunting a grenade, or something that counter the monster
+1759173698.236239 09-29 19:21Z Julia Lawson [thread 2 replies]: For one thing we'd make the levels so that they would have deck building blocks and not put the baseline at CPM and win streak free win.
+1759173703.509829 09-29 19:21Z Vincent Parker: If we can go with zombie scaling then I agree wth levels being mid core or not casual
+1759173723.898269 09-29 19:22Z Leonard Hayes [reply to 1759173637.851689]: I see yeah, then we don’t have it today yes
+1759173778.362129 09-29 19:22Z Julia Lawson [thread 1 replies]: Very well, in that case, from now on if someone complains a level is "too hard" I'll just ignore them :smile:
+1759173784.127059 09-29 19:23Z Leonard Hayes [reply to 1759173698.236239]: ok, I see what you mean now
+1759173795.560059 09-29 19:23Z Leonard Hayes [reply to 1759173698.236239]: yes, levels are casual in that sense - thank you for helpin me understand
+1759173807.722729 09-29 19:23Z Robert [reply to 1759173778.362129]: dynamic difficulty will still kick in
+1759176983.189479 09-29 20:16Z Robert [thread 1 replies]: I think we should think about what 0.3.22 had and what we're keeping. • Blunder was fine the way it is, but it got skewed because of these recent weird bot like behavior. • Win rate still has more impact on funnel, blunder seems to be OK as long as people win. • We are leaning more hardcore because casual doesn't cut it, or so we think • We support this hardcore transition with level templates and
+1759178344.878219 09-29 20:39Z Leonard Hayes [reply to 1759176983.189479]: That’s a pretty good summary and pov. I agree with you 
+1759189466.554739 09-29 23:44Z Robert: <@EMPLOYEE_0005_SLACK_ID> Got new colored version of cactus, chainsaw and cones that can probably come in handy:
+1759207989.371869 09-30 04:53Z Robert [thread 8 replies]: I looked more at the user logs... I'm 99% certain that we have quite significant number of bots.
+1759210228.486879 09-30 05:30Z Robert [reply to 1759207989.371869]: Out of 28 that I observed that started level 1, but did not have a left level 5 event (basically all those who didn't make it past level 5) AT LEAST EIGHT are bots. These are the ones that I'm 99% sure. There are still a lot of heavily questionable ones but I wanted to be lenient and not just blame bots. For example if a user loads the app, loads level 1, did not click on a single item, quits. I d
+1759210589.579679 09-30 05:36Z Robert [reply to 1759207989.371869]: I had to spot check just to see if bots go deeper into the funnel, so I extended this to level 6, so begin 1 but did not left 6. It increases the count by 3, and I checked all 3 logs, all bots...
+1759210612.509939 09-30 05:36Z Robert [reply to 1759207989.371869]: so for all the people that didn't leave level 6, at least 11 are bots
+1759210655.855749 09-30 05:37Z Robert [reply to 1759207989.371869]: 
+1759210834.849979 09-30 05:40Z Robert [reply to 1759207989.371869]: I just checked some folks that left level 6 but didn't start level 7, and you get these strange behavior that i'm 100% sure it's just bot.
+1759210928.504799 09-30 05:42Z Robert [reply to 1759207989.371869]: Basically if the log shows SLOW clicking, like ~40 CPM or less (1 click per 1.5 second) and yet they're CONSTANTLY blundering, it's pretty much a bot. If they leave settings, pretty much a bot. If they are adding a bunch of stuff from shop into cart randomly, pretty much a bot. And if they sit There for a whole minute doing nothing, and zombies kill them, and they do this many many times over, it'
+1759210956.491749 09-30 05:42Z Robert [reply to 1759207989.371869]: (see above)
+1759211070.054509 09-30 05:44Z Robert [reply to 1759207989.371869]: And this one is not suspicious at all. The device model literally switches half way. It's like they're using some kind of device emulation software:
+1759255127.258329 09-30 17:58Z Vincent Parker: <@EMPLOYEE_0038_SLACK_ID> unfortunately the build debug option cant help to play algo levels. It’s upto 200 levels. It needs engineering help
+1759255823.026689 09-30 18:10Z Leonard Hayes: <@EMPLOYEE_0025_SLACK_ID>
+1759256665.045159 09-30 18:24Z Leonard Hayes: did you guys ping him already?
+1759256685.126149 09-30 18:24Z Vincent Parker: Nope but ı can now
+1759260860.092889 09-30 19:34Z Robert: 
+1759260880.650039 09-30 19:34Z Robert: Area between yellow line and teal line = "fun", but too much of it becomes not fun, too little is also not fun.
+1759260933.283799 09-30 19:35Z Robert: A noob player will have their entire yellow curve shifted downward, a pro player will shift the entire yellow curve upward. Dynamic difficulty shifts the monster curve left and right to meet the player power curve

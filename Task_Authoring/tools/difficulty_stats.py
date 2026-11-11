@@ -88,6 +88,7 @@ look like "not found" and are not detected — check them by hand.
 """
 from __future__ import annotations
 
+import html
 import itertools
 import json
 import re
@@ -450,7 +451,10 @@ def _gates(completed: list[dict], errored: list[str], total_runs: int, rubrics: 
         return 0.1 - EPS <= x <= 0.3 + EPS
 
     sd_verdict = ("PASS" if in_band(sd)
-                  else "FAIL (Spread Too Low — deterministic; add friction)" if sd < 0.1
+                  # Configured friction (forced errors, async waits) is realism only and never a spread lever
+                  # (playbooks/03_Error_Async_Config.md); spread comes from independent coin-flip units.
+                  else "FAIL (Spread Too Low — the runs fail the same rows; the design needs more independent "
+                       "coin-flip units, not configured friction)" if sd < 0.1
                   else "FAIL (Spread Too High — check rubric ambiguity)")
     alt = [x for x in (sd_sample, sd_unweighted) if in_band(x) != in_band(sd)]
     if alt:
@@ -639,6 +643,11 @@ _DECISIONS = {"pass": True, "passed": True, "fail": False, "failed": False}
 
 def norm_title(text: str) -> str:
     text = _LINK.sub(r"\1", text.replace('\\"', '"'))
+    # The platform's verifier copy escapes square brackets in titles (\[PERSON_NAME_0001\]); the rubric JSON does not.
+    text = text.replace("\\[", "[").replace("\\]", "]")
+    # It can also render HTML entities (&gt;) and wrap a title in markdown bold. Applied to both sides, so a title
+    # that really contains these still matches itself (archived tasks: 786 + 18 verifier rows bound only this way).
+    text = re.sub(r"\*\*(.+?)\*\*", r"\1", html.unescape(text))
     text = text.translate(str.maketrans({"“": '"', "”": '"', "‘": "'", "’": "'", " ": " "}))
     return re.sub(r"\s+", " ", text).strip()
 

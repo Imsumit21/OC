@@ -62,9 +62,9 @@ platform pre-check.
    expected model's own landings and pre-registered channel failures; a control-explained error is never a slip or a
    landing. Any `mechanism?` must be dispositioned (`features.disposed_by`) before a ledger append. The ledger keeps
    control/channel records outside the priors.
-4. **`/create-reference-files`** — unchanged mechanically, but every number in an attachment must match the injection
+4. **`/create-reference-files`** (skipped by default; only when the owner asks) — unchanged mechanically, but every number in an attachment must match the injection
    at the freeze, and an attachment must not pre-solve. A reference file is part of the assessed universe.
-5. **`/create-error-async`** — unchanged gates; the alternate path must be proven, async twins accounted for, and the
+5. **`/create-error-async`** (skipped by default; only when the owner asks) — unchanged gates; the alternate path must be proven, async twins accounted for, and the
    configured friction is realism only (never a difficulty lever).
 6. **`/create-prompt-writing`** — the prompt must ask for the deliverable in a shape the decoder reads: tracker text
    with group lists/tables, a table/CSV-shaped register, a `json_text` write (tickets/summary/mail), or a Slack/Trello

@@ -1,0 +1,248 @@
+{
+ "_note": "PRE-SCENARIO SKETCH for 00_Pre_Scenario_Analysis.md only: storyline B1 (ZM3D Halloween art plan) trap geometry, so tools/hardness_v2_check.py can answer the Hardness v2 Part 7 checks before /create-scenario. Not the draft manifest. Ids marked planned: are illustrative; /create-scenario S2 mints and collision-checks them. Base ids are cited from the census (research notes in the analysis, section 4). Rev2: C4 and C5 re-homed to stay clear of Julia's task_inputsS design (in-game Halloween one-off, PNs Beta rows). Rev3 (red-team fixes): C7 art-currency rule added; A3 aggregate tied to C3 only; ART-790/792 and the stale Trello UA/BD cards kept off the path.",
+ "persona": "claire_morgan",
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "requirements": {
+  "R1": "tracker: each in-scope ZM3D asset's Halloween call (seasonal version / keep / not before Oct 31 / dropped)",
+  "R2": "tracker: how each seasonal asset ships and the date it can be live (store listing edit, network upload or a store build)",
+  "R3": "tracker and plan: what is already made is reused, not re-requested",
+  "R4": "tracker and plan: which ad networks get Halloween cuts, as finally decided",
+  "R5": "tracker scope: every player-facing ZM3D marketing surface in use, wherever it is recorded (in-game events and push rows are out of scope)",
+  "R6": "plan: seasonal source art comes from what the studio already owns before anything is bought",
+  "R7": "tracker: owner and art due date for every piece of new seasonal art (due by the applicable cutoff, separate from the live-by date)",
+  "R8": "tracker and plan: which creatives may take Halloween dressing as they are and which need their art refreshed first (Robert's seasonal direction)"
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "prompt_reference": "the Halloween ask",
+   "service": "slack",
+   "locator": "planned:slack:C06DJBJL798/halloween-ask-0930",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R7"
+   ]
+  },
+  {
+   "id": "A2",
+   "prompt_reference": "the store and ad assets",
+   "service": "slack",
+   "locator": "slack:C06DJBJL798",
+   "requirement_ids": [
+    "R5"
+   ]
+  }
+ ],
+ "ask_fragments": [],
+ "traps": [
+  {
+   "id": "T_C1",
+   "family": "authority",
+   "services": [
+    "slack",
+    "linear",
+    "github"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "the Halloween icon is a store-page upload that can go live any day before Oct 31",
+   "resolver": "an icon change only reaches players inside a store build (no alternate-icon support in match3d ProjectSettings), and the last build that clears review before Oct 31 is cut on a date recorded away from the ask",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "planned:Halloween ask icon swap line",
+     "seeded": true,
+     "at": "2025-09-30T17:05:00Z",
+     "container": "slack:C06DJBJL798/planned-halloween-ask"
+    },
+    {
+     "service": "linear",
+     "id": "planned:ZOM-427 comment on icon changes riding the build",
+     "seeded": true,
+     "at": "2025-09-30T19:10:00Z",
+     "container": "linear:ZOM-427"
+    }
+   ]
+  },
+  {
+   "id": "T_C2",
+   "family": "done_gap",
+   "services": [
+    "slack",
+    "gdrive",
+    "linear"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "Martin's 'Halloween store screens exported' post means both stores' screen sets are ready",
+   "resolver": "the export holds the phone sets only; the iPad 12.9-inch set the store spec requires is absent from the delivery folder"
+  },
+  {
+   "id": "T_C3",
+   "family": "completion_elsewhere",
+   "services": [
+    "slack",
+    "linear"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "the Halloween UA video is still to be requested from Marcus",
+   "resolver": "Marcus already delivered a no-music Halloween cut; the note sits in a comment on the marketing-videos Linear ticket, not in the marketing channel",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "planned:Halloween ask lists a new UA video",
+     "seeded": true,
+     "at": "2025-09-30T17:05:00Z",
+     "container": "slack:C06DJBJL798/planned-halloween-ask"
+    },
+    {
+     "service": "linear",
+     "id": "planned:ZOM-467 comment: Halloween cut delivered",
+     "seeded": true,
+     "at": "2025-09-30T20:40:00Z",
+     "container": "linear:ZOM-467"
+    }
+   ]
+  },
+  {
+   "id": "T_C4",
+   "family": "superseding",
+   "services": [
+    "slack",
+    "gmail"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "the ask's 'Halloween cuts for both networks' stands, so AppLovin variants are planned",
+   "resolver": "a later email from Frederick (UA owner) to Claire and Marcus pauses AppLovin for October; Halloween cuts go to Unity only",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "planned:Halloween ask: cuts for both networks",
+     "seeded": true,
+     "at": "2025-09-30T17:05:00Z",
+     "container": "slack:C06DJBJL798/planned-halloween-ask"
+    },
+    {
+     "service": "gmail",
+     "id": "planned:Frederick mail pausing AppLovin for October",
+     "seeded": true,
+     "at": "2025-09-30T22:10:00Z",
+     "container": "gmail:claire.morgan@harmonygames.co/planned-thread-applovin"
+    }
+   ]
+  },
+  {
+   "id": "T_C5",
+   "family": "exact_predicate",
+   "services": [
+    "trello",
+    "github"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "scope = the assets named in the ask and posted in #zombie_marketing",
+   "resolver": "the scope rule is every player-facing surface serving players on Sep 30 PT; two in-use surfaces sit outside the ask's list and the marketing channel (candidates: the live website's hero banner in the website repo; the end card if the rotation tab lists it apart from its video). Pinned at /create-scenario"
+  },
+  {
+   "id": "T_C6",
+   "family": "scope_alias",
+   "services": [
+    "gmail",
+    "github",
+    "slack"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "buy the vendor's Halloween asset pack quoted by mail",
+   "resolver": "the quoted pack is the same KayKit Halloween Bits set already in the match3d repo that Robert calls 'the Halloween pack'"
+  },
+  {
+   "id": "T_C7",
+   "family": "authority",
+   "services": [
+    "gslides",
+    "slack"
+   ],
+   "requirement": "R8",
+   "expected_wrong_reading": "every UA cut in rotation can take a Halloween overlay",
+   "resolver": "Robert's seasonal art direction (Slides deck) allows seasonal dressing only on creatives that already show the current art; a cut captured before the summer art refresh (its origin post's date) is refreshed first"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "R_BUILD_ROUTE",
+   "mechanism": "A15",
+   "nodes": [
+    "T_C1"
+   ],
+   "requirement": "R2",
+   "natural_reading": "an icon is a store-page asset; any day before Oct 31 works",
+   "prior_family": "A15",
+   "prior_family_reason": "house rule overriding the natural reading (Opus 5.5 Beta(1,2), one trial)"
+  },
+  {
+   "id": "R_DONE_EXPORT",
+   "mechanism": "A24",
+   "nodes": [
+    "T_C2"
+   ],
+   "requirement": "R1",
+   "natural_reading": "'exported' means every store set is ready",
+   "prior_family": "A24",
+   "prior_family_reason": "same mechanism id (no Opus 5.5 records yet: Beta(1,1))"
+  },
+  {
+   "id": "R_ALREADY_CUT",
+   "mechanism": "A25",
+   "nodes": [
+    "T_C3"
+   ],
+   "requirement": "R3",
+   "natural_reading": "the ask lists it, so request it",
+   "prior_family": "A25",
+   "prior_family_reason": "same mechanism id (no Opus 5.5 records yet)"
+  },
+  {
+   "id": "R_NETWORK_PAUSED",
+   "mechanism": "A11",
+   "nodes": [
+    "T_C4"
+   ],
+   "requirement": "R4",
+   "natural_reading": "the ask's network list stands",
+   "prior_family": "A11",
+   "prior_family_reason": "v2 trap 2 (correction elsewhere); a retraction after the ask is closest"
+  },
+  {
+   "id": "R_SCOPE_IN_USE",
+   "mechanism": "A17",
+   "nodes": [
+    "T_C5"
+   ],
+   "requirement": "R5",
+   "natural_reading": "the ask's list and the marketing channel define the set",
+   "prior_family": "A17",
+   "prior_family_reason": "same mechanism id (cohort boundary; Beta(1,2), one trial)"
+  },
+  {
+   "id": "R_PACK_ALIAS",
+   "mechanism": "A7",
+   "nodes": [
+    "T_C6"
+   ],
+   "requirement": "R6",
+   "natural_reading": "a differently named vendor pack is a new purchase",
+   "prior_family": "A7",
+   "prior_family_reason": "scope / alias boundary surviving full retrieval (Beta(1,2), one trial)"
+  },
+  {
+   "id": "R_ART_CURRENT",
+   "mechanism": "A15",
+   "nodes": [
+    "T_C7"
+   ],
+   "requirement": "R8",
+   "natural_reading": "any cut in rotation takes an overlay",
+   "prior_family": "A15",
+   "prior_family_reason": "house rule overriding the natural reading, applied per record (Beta(1,2), one trial)"
+  }
+ ]
+}

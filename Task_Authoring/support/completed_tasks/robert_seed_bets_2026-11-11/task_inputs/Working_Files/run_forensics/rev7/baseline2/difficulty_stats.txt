@@ -1,0 +1,30 @@
+V3 difficulty mode: easy · verdict view: platform
+Denominators: 6 rollout slots; 6 completed score(s); 0 errored excluded from averages (never zero-scored).
+Assignment context: assignment_hash=a525bbe797a2d9c867b417b20f10e359ec6dbeec6a4388c7c206b9be0ae08f3b · policy_hash=dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1 · context_hash=f24f2cf97f30361aa820f7705e8a7e432d6bc356b3e09aae89b24cebcc950f23 · freeze_utc=2026-02-14T00:00:00Z
+
+| Rollout | Counted tool calls | Raw / harness / blocked / repeats | Weighted pass (platform) | Failed rubrics (platform) |
+|---|---|---|---|---|
+| run-1 | 125 | 167 / 41 / 1 / 0 | 87.3% | R7, R25, R32, R58, R68 |
+| run-2 | 125 | 163 / 29 / 9 / 0 | 80.6% | R7, R8, R25, R32, R33, R58, R68, R69 |
+| run-3 | 123 | 138 / 13 / 1 / 1 | 87.3% | R8, R25, R33, R58, R69 |
+| run-4 | 116 | 142 / 24 / 2 / 0 | 87.3% | R8, R25, R33, R58, R69 |
+| run-5 | 132 | 147 / 14 / 1 / 0 | 84.2% | R8, R12, R25, R33, R58, R69 |
+| run-6 | 140 | 196 / 52 / 4 / 0 | 87.3% | R8, R25, R33, R58, R69 |
+
+| Gate | Value | Rule | Verdict |
+|---|---|---|---|
+| errored_runs | 0 errored, 6 completed of 6 | <= 2 errored and >= 4 completed (3+ errored = Fail) | PASS |
+| pass_at_1 | 0/6 full passes; 0/6 completed = 0% | V3 operational pass@k: fewer than 5 full passes out of 6 slots (5+ fails) | PASS |
+| avg_weighted_pass_rate | 85.7% (6 completed; 0 errored excluded) | V3 easy: strictly < 90%; equality fails | PASS |
+| per_rollout_sd | 0.025 (sample 0.028; unweighted 0.015) | 0.1-0.3 (population SD of per-rollout weighted pass rates) | FAIL (Spread Too Low — deterministic; add friction) |
+| failure_patterns | 3 pattern(s); largest 67% of 6 failing (pairwise reading 67%) | >= 2 patterns (differ on >= 2 rubrics); largest <= 50% | FAIL (Signature Over-Concentrated) |
+| horizon | average of completed rollouts: 127 | long-horizon tier 100-500+ | PASS |
+| baseline_models | all 6 rollout slots have claude-opus-5-5 provenance | claude-opus-5-5 for all 6 baseline rollouts; missing model evidence and fallback/mixed provenance block | PASS |
+
+Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):
+- Pattern 1: run-3, run-4, run-5, run-6
+- Pattern 2: run-1
+- Pattern 3: run-2
+- Pairwise reading (largest set all within 1 rubric of each other): run-3, run-4, run-5, run-6
+All-fail rubrics (completed rollouts, platform view): R25, R58
+Blocking gates: per_rollout_sd, failure_patterns

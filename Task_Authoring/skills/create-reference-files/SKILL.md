@@ -1,14 +1,23 @@
 ---
 name: create-reference-files
-description: "Author reference files for a HarmonyGames task when the scenario needs an attachment. Build native export/download shapes in a flat folder, grounded in facts valid at the assigned freeze, readable, not pre-solving, with fair outcomes and incorporation recorded. Use after /create-error-async. Writes Task_Authoring/task_inputs/02_Reference_Files/ and its manifest; never writes to Evals/, claude/ or HarmonyGames_*."
+description: "Author reference files for a HarmonyGames task. Skipped by default: the pipeline goes from /create-injection straight to /create-prompt-writing, so run /create-reference-files only when the owner asks for it. Build native export/download shapes in a flat folder, grounded in facts valid at the assigned freeze, readable, not pre-solving, with fair outcomes and incorporation recorded. Writes <task_dir>/02_Reference_Files/ and its manifest; never writes to Evals/, claude/ or HarmonyGames_*."
 ---
 
-# Reference files (02, optional)
+# Reference files (02, skipped by default)
+
+**Task folder (required).** `<task_dir>` in this skill and its playbook is the task folder given as this command's
+argument, for example `/create-reference-files Task_Authoring/task_inputsRobert`. If no folder is given and
+`TASK_AUTHORING_TASK_DIR` is unset, stop and ask which folder; never guess and never fall back to a default. Pass
+the same folder as `--task-dir` to every tool. A new task has its own named folder
+(`Task_Authoring/task_inputs<Label>`), not a bare `Task_Authoring/task_inputs`, so two tasks never share one.
+
+This step is skipped by default. The pipeline goes from `/create-injection` straight to `/create-prompt-writing`,
+and a task without `02_Reference_Files/` has no attachments. Run it only when the owner asks for it.
 
 Resolve this file through any symlink to locate `<bundle>/skills/<name>/SKILL.md`.
 The bundle's parent is the workspace. Read `<bundle>/setup/GEN_EXECUTION.md` first, then follow the playbook
 `Task_Authoring/playbooks/02_Reference_Files.md` in full. Its gates are hard gates. Write only under
-`Task_Authoring/task_inputs/`. Never write to `Evals/`, `claude/` or `HarmonyGames_*`, and
+`<task_dir>/`. Never write to `Evals/`, `claude/` or `HarmonyGames_*`, and
 never execute SQL.
 
 ## Inputs
@@ -19,7 +28,7 @@ registered shared data source and assigned freeze). The assigned universe date s
 
 Every file fact must be true in the selected universe and dated at or before its seed bound; a Drive file the agent must read needs body text or real bytes at `content_path` `<owner_email>/<path>`, and no deciding fact may live only in a Gmail or Slack attachment (A-26, A-08/B-07, B-19).
 
-Required in `Task_Authoring/task_inputs/`: `00_Assigments.md`, `01_Grounding_Dossier.md` and
+Required in `<task_dir>/`: `00_Assigments.md`, `01_Grounding_Dossier.md` and
 `01_Universe_Inject.sql`. If one is missing, stop and name it.
 
 Also read, when present: `01_Hardness_Manifest.json` and `03_Error_Async_Config.txt` (the files must
@@ -29,11 +38,11 @@ Use `references/Native_Artifact_Anatomy.md`, §M plus the source service's secti
 through `Task_Authoring/tools/hg.py search`, and apply the persona ACL yourself.
 
 ## Output
-- `task_inputs/02_Reference_Files/`: flat, task files only, the template README deleted. Leave it empty when there are none.
-- `task_inputs/Working_Files/02_Reference_Files_Manifest.md`: outside the folder, including the **Self-review** (playbook, GEN_EXECUTION §6a).
+- `<task_dir>/02_Reference_Files/`: flat, task files only, the template README deleted. Leave it empty when there are none.
+- `<task_dir>/Working_Files/02_Reference_Files_Manifest.md`: outside the folder, including the **Self-review** (playbook, GEN_EXECUTION §6a).
 
 ## Stage gate (blocking)
-Run `python3 Task_Authoring/tools/stage_gate.py reference-files Task_Authoring/task_inputs --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
+Run `python3 Task_Authoring/tools/stage_gate.py reference-files <task_dir> --paste`. Handoff is blocked until it prints `STAGE GATE <stage>: PASS`; `--paste` writes that output into the Self-review, and the next stage's gate refuses an upstream artifact without a current PASS block. It checks structure and freshness, evidence pointers, pasted tool outputs (re-run and compared), persona reach, universe-KB use and the self-review's counter-readings. Fix the artifact; never edit the gate's output.
 
 ## Deliver
 Report:

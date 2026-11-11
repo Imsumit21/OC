@@ -1,0 +1,70 @@
+{
+  "schema": "competency-collections-v1",
+  "about": "Which base collections belong to each assigned competency. Read by tools/assignment_fit.py. A collection belongs when its kind is in all_of_kind, when it is named, or when its kind is in keyword_kinds and its name holds one of the keywords as whole words (a keyword ending in * matches a word prefix). The focus lines are the taxonomy's; the keyword lists are a person's reading of them and are heuristics: a missing keyword hides a candidate, a loose one adds one. Review them when a census looks wrong.",
+  "sources": [
+    "Task_Authoring/references/Taxonomy_V2_Step_Map.md (Focus lines per competency)",
+    "Evals/1_Prompt_Eval.md, Competency alignment (expected outputs per competency)"
+  ],
+  "kinds": {
+    "linear_team": "issues in a Linear team (closed rule, reads not scoped)",
+    "linear_project": "issues in a Linear project (closed rule, reads not scoped)",
+    "github_repo": "pull requests in a repository (closed rule, reads not scoped)",
+    "trello_board": "cards on a Trello board (closed rule, reads not scoped)",
+    "slack_channel": "threads with replies in a channel the persona is a member of (open rule)",
+    "sheet_tab": "rows of a tab in a sheet the persona owns or is shared on (closed rule)"
+  },
+  "competencies": {
+    "Engineering Ops": {
+      "aliases": ["Engineering Operations", "Eng Ops"],
+      "focus": "Epic and task management, tooling support; expected outputs: tickets, PRs, release ops",
+      "all_of_kind": ["linear_team", "linear_project", "github_repo"],
+      "keyword_kinds": ["trello_board", "slack_channel", "sheet_tab"],
+      "keywords": ["bug*", "build*", "release*", "incident*", "engineering", "devops", "qa", "crash*", "hotfix*",
+                   "deploy*", "backend", "infra*", "sprint*", "epic*", "ticket*", "tooling", "regression*",
+                   "checklist*", "version tracker", "prs", "pull request*", "submission*", "pipeline*", "sdk*"]
+    },
+    "Product Management": {
+      "aliases": ["Product Mgmt", "PM"],
+      "focus": "Product strategy, design and XFN communications; expected outputs: PRDs, roadmap work",
+      "all_of_kind": ["linear_project"],
+      "named": {"linear_team": ["DES", "EPI"]},
+      "keyword_kinds": ["trello_board", "slack_channel", "sheet_tab"],
+      "keywords": ["product", "roadmap*", "design", "gdd", "prd*", "spec", "specs", "feature*", "playtest*",
+                   "feedback", "ftue", "tutorial*", "economy", "progression", "balanc*", "difficulty",
+                   "live ops", "liveops", "quest*", "season pass", "experiment*", "a b test*", "okr*", "backlog",
+                   "priorit*", "research", "competitor*", "benchmark*", "survey*", "requirement*", "planning"]
+    },
+    "Marketing and GTM": {
+      "aliases": ["Marketing & GTM", "Marketing-GTM", "Marketing GTM", "Marketing"],
+      "focus": "Demand and retention, GTM, communications; expected outputs: campaigns, GTM",
+      "all_of_kind": [],
+      "keyword_kinds": ["linear_team", "linear_project", "github_repo", "trello_board", "slack_channel", "sheet_tab"],
+      "keywords": ["marketing", "ua", "user acquisition", "acquisition", "campaign*", "creative*", "aso", "ads",
+                   "ad spend", "playable*", "applovin", "adjoe", "influencer*", "gtm", "go to market", "launch*",
+                   "press", "community", "social", "newsletter*", "push notification*", "pns", "branding",
+                   "trailer*", "store listing*", "screenshot*", "publisher*", "publishing", "website", "seo",
+                   "cpi", "roas", "promo*", "retention campaign*"]
+    },
+    "Corporate Ops": {
+      "aliases": ["Corporate Operations", "Corp Ops"],
+      "focus": "Fundraising, board, legal/contracts, vendor, HR; expected outputs: board, legal, HR, vendor work",
+      "all_of_kind": [],
+      "keyword_kinds": ["linear_team", "linear_project", "trello_board", "slack_channel", "sheet_tab"],
+      "keywords": ["founder*", "board", "investor*", "fundrais*", "legal", "contract*", "vendor*", "hr", "hiring",
+                   "recruit*", "candidate*", "offboarding", "payroll", "admin", "company",
+                   "executive*", "exec", "policy", "policies", "insurance", "equity", "cap table", "compliance",
+                   "wind down", "winddown", "shutdown", "dissolution", "holiday*", "benefits", "headcount",
+                   "contractor*", "agreement*", "nda*"]
+    },
+    "Finance": {
+      "aliases": [],
+      "focus": "Budget, forecast, cap table, fundraising; expected outputs: models, budgets, forecasts",
+      "all_of_kind": [],
+      "keyword_kinds": ["linear_team", "linear_project", "trello_board", "slack_channel", "sheet_tab"],
+      "keywords": ["finance", "financial*", "budget*", "forecast*", "cap table", "captable", "fundrais*",
+                   "investor*", "p l", "pnl", "burn", "runway", "expense*", "invoice*", "revenue*", "payroll",
+                   "cash", "bank*", "cost", "costs", "spend", "ledger", "tax*", "audit*", "payment*", "billing",
+                   "salary", "salaries", "compensation", "valuation", "equity", "stock*", "unit economics"]
+    }
+  }
+}

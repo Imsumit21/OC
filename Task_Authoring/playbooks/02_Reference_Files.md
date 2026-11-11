@@ -1,8 +1,12 @@
 # 02 — Reference Files (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-reference-files` (optional step) · Writes: `task_inputs/02_Reference_Files/` + `task_inputs/Working_Files/02_Reference_Files_Manifest.md` · Paired eval: none of its own. `/prompt`, `/hardness`, `/oe` and `/rubric` all take the files the prompt uses (`Evals/WORKFLOW.md` "Reference files used by the prompt") · Gate: **`tools/stage_gate.py reference-files` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
+> Command: `/create-reference-files` (skipped by default; run only when the owner asks) · Writes: `<task_dir>/02_Reference_Files/` + `<task_dir>/Working_Files/02_Reference_Files_Manifest.md` · Paired eval: none of its own. `/prompt`, `/hardness`, `/oe` and `/rubric` all take the files the prompt uses (`Evals/WORKFLOW.md` "Reference files used by the prompt") · Gate: **`tools/stage_gate.py reference-files` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
 
 ## Purpose
+
+**This step is skipped by default.** The pipeline goes from `/create-injection` straight to
+`/create-prompt-writing`; a task without `02_Reference_Files/` has no attachments, and both upload screens are
+skipped. Run this playbook only when the owner asks for it.
 
 Author the files the persona "attaches" to the request. Use them only when the scenario
 needs an attachment the agent has to read (`2_Overall Task Flow - V2.md` §4). If the universe
@@ -48,8 +52,8 @@ Inputs
 - The universe, through `tools/hg.py search`. Every fact in a file is grounded and cited.
 
 Output
-- `task_inputs/02_Reference_Files/`: the flat upload folder, with the template `README.md` **deleted**.
-- `task_inputs/Working_Files/02_Reference_Files_Manifest.md`: kept **outside** the folder, never uploaded. It includes a Self-review section.
+- `<task_dir>/02_Reference_Files/`: the flat upload folder, with the template `README.md` **deleted**.
+- `<task_dir>/Working_Files/02_Reference_Files_Manifest.md`: kept **outside** the folder, never uploaded. It includes a Self-review section.
 
 ## Hard gates
 
@@ -106,7 +110,7 @@ Footer:
 
 ## Deliver
 
-Run `python3 Task_Authoring/tools/stage_gate.py reference-files Task_Authoring/task_inputs --paste`; handoff is blocked until it prints `STAGE GATE reference-files: PASS`, and `--paste` writes that output into the Self-review of `02_Reference_Files_Manifest.md` (the next stage's gate refuses an upstream artifact without a current PASS block). The gate checks the flat folder (no README, subfolder or zip), that every file is described, every per-file field, and that each `Grounded in:` line cites a record.
+Run `python3 Task_Authoring/tools/stage_gate.py reference-files <task_dir> --paste`; handoff is blocked until it prints `STAGE GATE reference-files: PASS`, and `--paste` writes that output into the Self-review of `02_Reference_Files_Manifest.md` (the next stage's gate refuses an upstream artifact without a current PASS block). The gate checks the flat folder (no README, subfolder or zip), that every file is described, every per-file field, and that each `Grounded in:` line cites a record.
 
 Report the file list (format, role, incorporated or not), the deliberate inaccuracies and what
 overturns each, the prompt constraints for the brief, and the upload reminders:

@@ -4,7 +4,13 @@ Locators (used by `after` and `cites`):
   base:<service>:<collection>/<record id>/<field>      a field of a record in the pinned base export
   spec:<record key>/<field>                            another spec record's field
 A `ref` names another spec record's field as "<record key>/<field>" ("<record key>" alone means its id). A reference
-may only point at an authored value: a base value is cited from the base, never laundered through another record.
+may only point at an authored value: a base value is cited from the base, never laundered through another record. Where
+an emitter computes a record's id (Slack and Gmail ids follow from the record's other fields), "<record key>" names
+that derived id, and "<record key>/<name>" any other value the emitter registered with Resolver.derive.
+
+Instants compared by `after`: an ISO-8601 UTC instant or date, or a Slack ts ("1759167608.326578", epoch seconds).
+A Gmail record holds a slash in its id; its locators are base:gmail:messages/<mailbox>/<RFC Message-ID>/<field> and
+base:gmail:threads/<mailbox>/<number>/<field> (a base message's time is /date_parsed, ISO-8601 with its offset).
 """
 from __future__ import annotations
 
@@ -16,14 +22,21 @@ from decimal import Decimal
 from .values import SpecError, read_text
 
 _BASE_LOC = re.compile(r"^base:([a-z]+):([a-z_]+)/([^/]+)/(.+)$")
+# Gmail records hold a slash: base:gmail:messages/<mailbox>/<RFC Message-ID>/<field>, base:gmail:threads/<mailbox>/<n>/<f>
+_GMAIL_LOC = re.compile(r"^base:(gmail):(messages)/([^/]+/<[^<>]+>)/(.+)$|^base:(gmail):(threads)/([^/]+/[0-9]+)/(.+)$")
 _SPEC_LOC = re.compile(r"^spec:([^/]+)/(.+)$")
 _INSTANT = re.compile(r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2}))?$", re.ASCII)
+_EPOCH = re.compile(r"^(\d{10})\.(\d{6})$", re.ASCII)          # a Slack ts: epoch seconds with six decimals
+_EPOCH_START = dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
 SCALARS = (type(None), bool, int, Decimal, str)
 
 
 def parse_instant(value, where: str) -> dt.datetime:
+    epoch = _EPOCH.match(value) if isinstance(value, str) else None
+    if epoch:
+        return _EPOCH_START + dt.timedelta(seconds=int(epoch.group(1)), microseconds=int(epoch.group(2)))
     if not isinstance(value, str) or not _INSTANT.match(value):
-        raise SpecError(where, f"{value!r} is not an ISO-8601 UTC instant or date")
+        raise SpecError(where, f"{value!r} is not an ISO-8601 UTC instant or date (or a Slack ts)")
     if len(value) == 10:
         return dt.datetime.fromisoformat(value).replace(tzinfo=dt.timezone.utc)
     return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(dt.timezone.utc)
@@ -56,6 +69,7 @@ class Resolver:
         self.spec, self.base, self.transforms = spec, base, transforms
         self.records = {r["key"]: r for r in spec.records}
         self.cache: dict[tuple, tuple] = {}
+        self.derived: dict[tuple, tuple] = {}       # (record key, name) -> (value, provenance) an emitter computed
         self.stack: list[tuple] = []
         self.after_checks: list[dict] = []
         self.cite_checks: list[dict] = []
@@ -78,11 +92,21 @@ class Resolver:
             raise SpecError(where, f"{fn} is computed by the emitter; inputs, after, cites and claims do not apply")
         return v.provenance()
 
+    def derive(self, rec: dict, name: str, value, prov: dict) -> None:
+        """Register a value the emitter computed for a record (its id, a Slack ts), so that other records' `ref`
+        and `after`/`cites` locators can name it. A name the spec authors as a field cannot also be derived."""
+        key = rec["key"]
+        if name in rec["fields"]:
+            raise SpecError(f"{key}.{name}", "the emitter derives this value; it cannot also be a spec field")
+        _check_type(f"{key}.{name}", value)
+        self.derived[(key, name)] = (value, prov)
+
     def locate(self, where: str, loc: str):
         """Value of a locator, and its own provenance."""
-        m = _BASE_LOC.match(loc)
+        g = _GMAIL_LOC.match(loc)
+        m = g or _BASE_LOC.match(loc)
         if m:
-            service, collection, record, field = m.groups()
+            service, collection, record, field = [x for x in m.groups() if x is not None] if g else m.groups()
             pointer = "/" + field
             value = self.base.lookup(where, (service, collection, record, pointer))
             return value, {"origin": "base", "construction": "reference",
@@ -90,6 +114,8 @@ class Resolver:
         m = _SPEC_LOC.match(loc)
         if m:
             key, field = m.groups()
+            if key in self.records and field not in self.records[key]["fields"] and (key, field) in self.derived:
+                return self.derived[(key, field)]
             if key not in self.records or field not in self.records[key]["fields"]:
                 raise SpecError(where, f"locator {loc} names no spec field")
             return self.resolve(key, field)
@@ -146,6 +172,10 @@ class Resolver:
             key, _, field = v.ref.partition("/")
             field = field or "id"
             target = self.records.get(key)
+            if target is not None and field not in target["fields"] and (key, field) in self.derived:
+                value, target_prov = self.derived[(key, field)]
+                prov["target"] = target_prov
+                return copy.deepcopy(value), prov
             if target is None or field not in target["fields"]:
                 raise SpecError(where, f"ref {v.ref!r} names no spec field")
             tv = target["fields"][field]

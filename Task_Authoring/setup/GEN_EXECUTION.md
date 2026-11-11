@@ -40,8 +40,8 @@ function, persona, role, competency, task skill, task type, difficulty mode and
 universe date. Then run:
 
 ```sh
-python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputs --write
-python3 Task_Authoring/tools/task_context.py --task-dir Task_Authoring/task_inputs --write --require-source
+python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write
+python3 Task_Authoring/tools/task_context.py --task-dir <task_dir> --write --require-source
 ```
 
 The first command normalizes the paste into
@@ -69,9 +69,12 @@ content. Assignment/context changes invalidate downstream certificates and requi
 the affected stages to be repeated. Source manifests and service folders must stay
 within this workspace because the bounded helpers use workspace-relative locators.
 
-Role plausibility is a failing requirement, independent of competency. Business
-function, competency and task-skill mismatches lower quality but do not fail a task
-on their own. Authoring still calls for an authored artifact. Record the role
+Role plausibility is a failing requirement, independent of competency. A clear
+competency mismatch, or an assigned task skill that is not a real part of the work,
+also fails: `/prompt` applies a hard FAIL to both (`Evals/1_Prompt_Eval.md`, Competency
+alignment and Task skill), and a Business Function score of 3 blocks a 5. A defensible
+non-obvious match passes. The V3 course text that says these mismatches cannot fail a
+task on their own is overridden by the eval. Authoring still calls for an authored artifact. Record the role
 review and rubric evidence in `Working_Files/00_V3_Authoring_Evidence.json`
 (§ 6b); its structured attestations support review, not semantic proof.
 
@@ -191,7 +194,7 @@ Never fall back to the old root
   **Never run `git` inside them** either: git freshens pack-file timestamps even on
   commands that look read-only. Read commits and PRs from `github/data.json` or `tools/hg.py`.
   Never execute SQL. Never modify the base exports.
-- All work happens inside `Task_Authoring/` — normally `Task_Authoring/task_inputs/`;
+- All work happens inside `Task_Authoring/` — normally in the task's own folder `Task_Authoring/task_inputs<Label>/`;
   new folders and files inside `Task_Authoring/` are fine (e.g. `support/examples/`).
 - The one shared file the `/create-*` commands write outside `task_inputs/` is the cross-task evidence ledger
   `support/hardness_ledger/ledger.jsonl`, and only through its tools: `tools/hardness_ledger.py` (append, seed,
@@ -473,6 +476,10 @@ resolves names in both places.
 **Stage gates per slot** (`tools/stage_gate.py <stage> <task_dir>`, § 6b). The primary artifact (bold) carries
 the pasted PASS block; the next stage's gate checks that block is current.
 
+**Default path (owner decision, 2026-11-10):** `scenario` → `injection` → `prompt-writing`. The `reference-files`
+and `error-async` stages are skipped by default and run only when the owner asks for one. The `prompt-writing`
+gate already treats both as optional inputs, so no gate changes with this default.
+
 | Stage | Gates the slot(s) | Upstream PASS it requires |
 |---|---|---|
 | `scenario` | **`01_Scenario_Design.md`**, `01_Hardness_Manifest.draft.json`, `01_Gradable_Surface.json` | — |
@@ -696,3 +703,42 @@ the first Opus run (scores 1–2 = HOLD: return to `/create-hardening`); `/oe` o
 Oracle Events exist; `/rubric` once the criteria exist. The user runs the five
 reviews in Eval Portal. A `/hardness` pass permits continuation; final difficulty
 still uses corrected six-rollout results against the assigned mode's cap.
+
+## 8 · When a platform report comes back (intake, then repair)
+
+Owner decision of 2026-11-10 (`Audit_2026-11-10_First_Pass_Root_Cause/PLAN.md`, WS5 item 4 and WS7 item 7). The aim
+is one or two rounds per platform eval. Most extra rounds in the completed tasks came from repairs that rewrote text
+the reviewer had already passed, or that fixed one record of a family and left its siblings.
+
+**Intake (every report, before anything else).**
+
+```sh
+python3 Task_Authoring/tools/report_intake.py intake <report.md> --task-dir <task_dir>
+```
+
+It refuses a report whose platform task id belongs to another folder, files the report under `<task_dir>/eval_reports/`,
+records the round in `Working_Files/task_metrics.json`, and scans the report for a new platform release, a changed
+spec hash or a rule id the register (`references/platform_rule_delta.json`) has not seen. Anything it prints as new is
+read before the next round of that eval. Before each submission, keep the local check that predicted it:
+`python3 Task_Authoring/tools/report_intake.py snapshot --task-dir <task_dir> --stage prompt-check|oe-check|rubric-check`.
+
+**Repair protocol (prompt, Oracle Events, rubric, injection).**
+
+1. **Copy the Fix List.** Where the report gives replacement text ("Fix: …", a rewritten row, a corrected Expected
+   line), paste that text unchanged. Do not improve it. A row the reviewer wrote passes its own check; a rewrite is a
+   new row that has never been checked.
+2. **Never touch a passing row.** Change only the rows, events or sentences the report names. No renumbering, no
+   re-wording for consistency, no merging. If a fix forces a change elsewhere, list that row as touched.
+3. **Re-check only what was touched.** Run the local check on the touched rows and their direct dependants. Do not
+   re-open a row whose bytes did not change.
+4. **Sweep the siblings before resubmitting.** A defect found in one record, row or event is looked for in every
+   other member of the same family (same template, same author, same thread, same write kind) and fixed in the same
+   round. One finding per round on the same family is the pattern that produced 10 to 14 rounds.
+5. **A finding about the universe is fixed in the universe.** A fork or a cross-service contradiction goes back to
+   `/create-injection` as a data change, not into the prompt as a sentence, and the changed records are re-swept
+   (`tools/coherence_sweep.py`, scope `revision`).
+6. **If the Fix List is wrong.** Some platform fixes were wrong (plan section 7). Do not apply a fix that contradicts
+   a record; note it, with the record id, in the round's notes and tell the owner.
+
+A verdict that changes on unchanged bytes is not a repair task: check the intake output for a release or spec-hash
+change first.

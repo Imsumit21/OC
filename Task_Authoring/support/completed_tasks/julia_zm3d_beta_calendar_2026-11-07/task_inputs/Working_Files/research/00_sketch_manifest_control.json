@@ -1,0 +1,270 @@
+{
+ "_note": "POSITIVE CONTROL: T_C2 withdrawal moved into the approval thread; SAME_PLACE must FLAG. Rev b: T_C8 re-homed (red team R1 #4). Rev c (red team R2): no Confluence or Snowflake record on the required path. Rev d (red team R3): C1's deciding record moved to a conversation comment on the merged client PR match3d#472 (no seeded backend PR: match3d-backend has no PR after #35 and no branch for it in base git); no Plague Race window dates (base code schedule vs warehouse windows disagree).",
+ "persona": "julia_lawson",
+ "horizon": "Long Horizon",
+ "effective_profile": "extreme",
+ "requirements": {
+  "R1": "calendar scope: every ZM3D beat players can see in the four buy weeks (a window, a reset or a start push), not only the events everyone lists",
+  "R2": "readiness: a beat starts with the first window that opens after its server windows are live on prod, not when its client PRs merged",
+  "R3": "tech-stable hold: a beat is held only if players cannot enter, score or claim on prod even after a restart",
+  "R4": "one-offs: may overlap recurring slots; displacing one needs a standing Product approval; the approver's latest dated call stands",
+  "R5": "rewards and setup: each beat's reward settings are the ones in force; no setup task for work already done",
+  "R6": "start pushes: a push goes out only with copy that names the current game and the right event",
+  "R7": "the calendar is linked from the existing calendar ticket, not a new one"
+ },
+ "anchors": [
+  {
+   "id": "A1",
+   "prompt_reference": "Frederick's beta calendar ask",
+   "service": "slack",
+   "locator": "planned:D05SD5QLG94/0930-ask",
+   "container": "slack:D05SD5QLG94/planned-root-0930",
+   "requirement_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R6",
+    "R7"
+   ]
+  }
+ ],
+ "ask_fragments": [],
+ "traps": [
+  {
+   "id": "T_C1",
+   "family": "done_gap",
+   "mechanism": "A24",
+   "services": [
+    "github",
+    "slack",
+    "linear"
+   ],
+   "requirement": "R2",
+   "expected_wrong_reading": "Collect & Win's client PRs #468/#470/#472 merged into main before the Sep 30 cut and Julia's own Sep 22 notes say the feature is completed, so it starts with the first beta window",
+   "resolver": "Owen Baker's dated conversation comment on his own merged PR match3d#470 (Sep 30, after merge) says the Collect & Win server windows are on the dev stack and reach prod with Douglas's backend release on a named later date; the brief's deploy rule decides the first prod window",
+   "version_records": [
+    {
+     "service": "github",
+     "id": "github:harmonygames-Games/match3d#468",
+     "seeded": false,
+     "at": "2025-09-29T16:13:50Z",
+     "container": "github:harmonygames-Games/match3d#468"
+    },
+    {
+     "service": "slack",
+     "id": "slack:C05KNDCHAAG/1758558302.777379",
+     "seeded": false,
+     "at": "2025-09-22T16:25:02Z",
+     "container": "slack:C05KNDCHAAG/1758558302.777379"
+    },
+    {
+     "service": "github",
+     "id": "planned:match3d#470 conversation comment (Owen, server windows on dev only) + its #zombie-prs INT-01 mirror",
+     "seeded": true,
+     "at": "2025-09-30T21:30:00Z",
+     "container": "github:harmonygames-Games/match3d#470"
+    }
+   ],
+   "_rev": "rev f: Douglas has no base comment or review on any match3d PR (98 reviews, all on backend/liveops/Dominoes repos); Owen authored #468/#470 and coordinated the server half with Douglas"
+  },
+  {
+   "id": "T_C2",
+   "family": "superseding",
+   "mechanism": "A11",
+   "services": [
+    "slack",
+    "gdocs"
+   ],
+   "requirement": "R4",
+   "expected_wrong_reading": "Robert's reply in Martin's Halloween thread approves a Halloween one-off that displaces Plague Race in the Halloween week, so the one-off runs and Plague Race stops that week",
+   "resolver": "Robert later withdraws the Halloween event in his DM with Julia (no event art before the pivot call); with no standing approval Plague Race keeps running through the Halloween week",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "planned:C08R8CHB0QL reply to 1758121809.236839 (Robert approval)",
+     "seeded": true,
+     "at": "2025-09-18T16:40:00Z",
+     "container": "slack:C08R8CHB0QL/1758121809.236839"
+    },
+    {
+     "service": "slack",
+     "id": "planned:C08R8CHB0QL second reply in the same thread (control)",
+     "seeded": true,
+     "at": "2025-09-30T22:10:00Z",
+     "container": "slack:C08R8CHB0QL/1758121809.236839"
+    }
+   ]
+  },
+  {
+   "id": "T_C4",
+   "family": "exact_predicate",
+   "mechanism": "A17",
+   "services": [
+    "gdocs",
+    "gsheets",
+    "slack"
+   ],
+   "requirement": "R1",
+   "expected_wrong_reading": "the beats are the events everyone lists (Leonard's beta pipeline, the animated live-ops icons)",
+   "resolver": "Frederick's beta brief brings in every reset with a start push: the quests rollover (push row 'New Quests Await!', Not Ready) and the login calendar (push row 'Login Calendar update', Not Ready); membership and push status are graded, not reset dates"
+  },
+  {
+   "id": "T_C5",
+   "family": "completion_elsewhere",
+   "mechanism": "A25",
+   "services": [
+    "slack",
+    "linear"
+   ],
+   "requirement": "R5",
+   "expected_wrong_reading": "Leonard's Sep 10 thread asks to halve Plague Race rewards, so the plan lists it as setup still to do",
+   "resolver": "a dated Douglas note in #zombie-ops records the 60/120/250 stage rewards live on prod (agrees with the hidden base 'plague stage rewards are fixed' and, per an S7 lead to confirm, the backend plague_race.ex stage table), so no setup task is needed",
+   "version_records": [
+    {
+     "service": "slack",
+     "id": "slack:C090N54TG79/1757478958.104989",
+     "seeded": false,
+     "at": "2025-09-10T04:35:58Z",
+     "container": "slack:C090N54TG79/1757478958.104989"
+    },
+    {
+     "service": "linear",
+     "id": "planned:ZOM Plague Race rewards comment (completion)",
+     "seeded": true,
+     "at": "2025-09-11T18:20:00Z",
+     "container": "linear:planned-ZOM-plague-rewards"
+    }
+   ],
+   "_status": "provisional: the backend stage table may already read 60/120/250 at the repo's last commit (S7 lead, read outside hg.py); verify through the agent's GitHub tool at /create-scenario S1, else drop"
+  },
+  {
+   "id": "T_C6",
+   "family": "authority",
+   "mechanism": "A15",
+   "services": [
+    "gsheets",
+    "gdocs",
+    "slack"
+   ],
+   "requirement": "R6",
+   "expected_wrong_reading": "pushes marked Ready in the push sheet go out as written",
+   "resolver": "two Ready rows still name 'Puzzles vs Zombies'; the brief's copy rule (name 'Zombie Match 3D') backed by the base rename (Aug 'Rename product' commit listed in #zombie-bugs) holds them for the copy owner"
+  },
+  {
+   "id": "T_C7",
+   "family": "distractor",
+   "services": [
+    "linear",
+    "slack"
+   ],
+   "requirement": "R7",
+   "expected_wrong_reading": "file a new calendar ticket",
+   "resolver": "ZOM-78 'Event Calendar For Zombie Match 3D' already exists (Backlog); the calendar is linked there",
+   "_disposition": "DECISION_FLIP flag (rev a): a reuse write is lookup-band work (weight 3); removed from the mechanism portfolio instead of raising a weight; kept as an ordinary write check"
+  },
+  {
+   "id": "T_C8",
+   "family": "superseding",
+   "mechanism": "A11",
+   "services": [
+    "linear",
+    "slack"
+   ],
+   "requirement": "R3",
+   "expected_wrong_reading": "Douglas's owner note on ZOM-429 (Sep 23) calls the weekly-session fault client-side with a restart workaround, and the base Sep 22 #zombie-bugs thread ends 'after a moment, I am now in the weekly leaderboard', so the leagues beat runs",
+   "resolver": "Vincent's Sep 30 prod check of 0.3.49, a root post in #zombie-match3d (another channel and service from both), says the weekly session does not start even after killing the app; under the brief's hold rule the leagues beat is held",
+   "version_records": [
+    {
+     "service": "linear",
+     "id": "planned:ZOM-429 owner note (Douglas, restart workaround)",
+     "seeded": true,
+     "at": "2025-09-23T10:00:00Z",
+     "container": "linear:ZOM-429"
+    },
+    {
+     "service": "slack",
+     "id": "slack:C08R27X0EAH/1758546048.524829",
+     "seeded": false,
+     "at": "2025-09-22T13:00:48Z",
+     "container": "slack:C08R27X0EAH/1758546048.524829"
+    },
+    {
+     "service": "slack",
+     "id": "planned:C0880U9751A root (Vincent, prod 0.3.49 check)",
+     "seeded": true,
+     "at": "2025-09-30T18:30:00Z",
+     "container": "slack:C0880U9751A/planned-root-0930"
+    }
+   ],
+   "_rev": "rev e: Part 7 asks 'same channel or thread'; the deciding post leaves #zombie-bugs for #zombie-match3d"
+  }
+ ],
+ "mechanism_portfolio": [
+  {
+   "id": "R_DONE_DEPLOY",
+   "mechanism": "A24",
+   "nodes": [
+    "T_C1"
+   ],
+   "requirement": "R2",
+   "natural_reading": "merged into main = starts with the beta",
+   "prior_family": "A24",
+   "prior_family_reason": "same mechanism id (no Opus 5.5 records: Beta(1,1))"
+  },
+  {
+   "id": "R_WITHDRAWN",
+   "mechanism": "A11",
+   "nodes": [
+    "T_C2"
+   ],
+   "requirement": "R4",
+   "natural_reading": "the approval in the thread stands",
+   "prior_family": "A11",
+   "prior_family_reason": "v2 trap 2; a withdrawal after approval is A11"
+  },
+  {
+   "id": "R_SCOPE_BEATS",
+   "mechanism": "A17",
+   "nodes": [
+    "T_C4"
+   ],
+   "requirement": "R1",
+   "natural_reading": "the events everyone lists (Leonard's beta pipeline, the live-ops icons) are the scope",
+   "prior_family": "A17",
+   "prior_family_reason": "cohort boundary (Opus 5.5 ledger Beta(1,2), one trial)"
+  },
+  {
+   "id": "R_DONE_ELSEWHERE",
+   "mechanism": "A25",
+   "nodes": [
+    "T_C5"
+   ],
+   "requirement": "R5",
+   "natural_reading": "an ask with no visible completion is still to do",
+   "prior_family": "A25",
+   "prior_family_reason": "same mechanism id (no Opus 5.5 records)"
+  },
+  {
+   "id": "R_COPY_CURRENT",
+   "mechanism": "A15",
+   "nodes": [
+    "T_C6"
+   ],
+   "requirement": "R6",
+   "natural_reading": "Ready in the sheet = sendable",
+   "prior_family": "A15",
+   "prior_family_reason": "house rule overriding the natural reading (Beta(1,2), one trial)"
+  },
+  {
+   "id": "R_TECH_HOLD",
+   "mechanism": "A11",
+   "nodes": [
+    "T_C8"
+   ],
+   "requirement": "R3",
+   "natural_reading": "an open leaderboard issue with a restart workaround is a known annoyance; the list view shows nothing newer",
+   "prior_family": "A11",
+   "prior_family_reason": "a later record in another container overturns a resolution (v2 trap 2 shape, second instance); the restart clause decides"
+  }
+ ]
+}

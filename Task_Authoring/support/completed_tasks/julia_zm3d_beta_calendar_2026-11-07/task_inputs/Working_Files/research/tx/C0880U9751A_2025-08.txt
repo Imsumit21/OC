@@ -1,0 +1,435 @@
+1754045554.697419 08-01 10:52Z SLACK_BOT_0007_SLACK_ID [reply to 1750724624.203279]: 
+1754060255.581409 08-01 14:57Z Arthur Blake [thread 1 replies]: <@EMPLOYEE_0032_SLACK_ID> <@EMPLOYEE_0003_SLACK_ID> Can you guys take a peek at how we use ObjectRenderer.cs? [PERSON_NAME_0050] is seeing wild artifacts on a mid and low end android device when it's enabled. Mesh triangle explosions and other craziness. We confirmed its related to ObjectRenderer today by having the RenderOnce function just return a static texture instead of rendering out an icon.
+1754066466.409079 08-01 16:41Z Vincent Parker [reply to 1754060255.581409]: <https://linear.app/harmonygames-games/issue/ZOM-449/some-items-are-acting-weird-in-low-end-android-device> here is the ticket if that helps. There are different variations of the issue as videos
+1754239405.921549 08-03 16:43Z Robert [thread 2 replies]: <@EMPLOYEE_0032_SLACK_ID> how are the color variants chosen in endless mode for equipped items? I keep getting the same color of equipped item over and over again
+1754241205.337699 08-03 17:13Z Robert: <@EMPLOYEE_0032_SLACK_ID> Can you change the airstrike power accumulation rate in endless mode from attack power of item / 10 to attack power of item / 12 ? Can you also change the minimum power needed of launching airstrike to 100+ atk power?
+1754253059.955139 08-03 20:30Z Robert [thread 1 replies]: <@EMPLOYEE_0003_SLACK_ID> <@EMPLOYEE_0026_SLACK_ID> I'm trying to find out if There is more we can look into this particular step. Is the drop off simply because of the FTUE content turning players off? Or could There be technical issues behind it? I can't really tell from just these 2 steps:
+1754253587.918809 08-03 20:39Z Oliver Brooks [thread 1 replies]: did we find any bugs at the cards tutorial? I worked on the input bug with <@EMPLOYEE_0012_SLACK_ID>
+1754254641.850569 08-03 20:57Z Robert: Not sure
+1754254655.304019 08-03 20:57Z Robert: I probably need to test again on my phone
+1754255699.864969 08-03 21:14Z Brian Foster: In #1456, I tried to break the Tutorial. If I press the buttons quickly, a problem occurs just like in the video. I have to kill the game to continue <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0003_SLACK_ID>
+1754255929.813279 08-03 21:18Z Oliver Brooks: I'll check now thanks
+1754259587.066689 08-03 22:19Z Oliver Brooks: <@EMPLOYEE_0026_SLACK_ID> I added a new blockinput action before the second highlight
+1754259623.475649 08-03 22:20Z Oliver Brooks [thread 2 replies]: Can you test? I can't repro now
+1754286903.240279 08-04 05:55Z Brian Foster [reply to 1754259623.475649]: I'll test it today
+1754294333.453939 08-04 07:58Z Vincent Parker [reply to 1754253587.918809]: this is before your fixes in.
+1754294349.512419 08-04 07:59Z Vincent Parker [reply to 1754253059.955139]: this is before [PERSON_NAME_0022]'s fix
+1754294367.836889 08-04 07:59Z Vincent Parker [reply to 1753980350.195429]: the same
+1754294371.060519 08-04 07:59Z Vincent Parker [reply to 1753980350.195429]: build
+1754301267.447699 08-04 09:54Z EMPLOYEE_0032_SLACK_ID [reply to 1754239405.921549]: it's selected randomly. on the level start algo selects pool of deck cards (goes through equipped cards, for each of it selects all objects w this card id, selects random one). this pool used till the game end
+1754301698.017399 08-04 10:01Z EMPLOYEE_0032_SLACK_ID [reply to 1754239405.921549]: each endless start knife spawned in different color
+1754316473.926929 08-04 14:07Z Brian Foster [reply to 1754259623.475649]: I tested 3 times, it works great! Thank you
+1754343403.209119 08-04 21:36Z Robert [thread 5 replies]: <@EMPLOYEE_0032_SLACK_ID> We need to update the mini map icons: <https://www.Figma.com/design/TvRw8na5iGd3NynbSRUGFy?node-id=0-1#1368068726> Bosses will have unique heads. Minions will use generic
+1754343576.312709 08-04 21:39Z None [reply to 1754343403.209119]: [PERSON_NAME_0055] created a high priority issue ZOM-454 Update mini map icons for bosses and minions
+1754343622.133209 08-04 21:40Z Robert [thread 4 replies]: <@EMPLOYEE_0032_SLACK_ID> When you have bandwidth, we also need to implement our last boss "bike kid". It's a boss that just rushes towards you at a fast speed, and does 1 suicide attack and explodes, killing you instantly. I don't think we have the monster logic for this.
+1754343662.871999 08-04 21:41Z None [reply to 1754343622.133209]: [PERSON_NAME_0055] created a high priority issue ZOM-455 Implement Bike Kid Monster Logic (Suicide monster)
+1754343691.507429 08-04 21:41Z Robert [reply to 1754343622.133209]: The monster prefab is in main, and it's named "BikeKid"
+1754344196.217459 08-04 21:49Z Robert [reply to 1754343403.209119]: 
+1754344296.670269 08-04 21:51Z Robert [reply to 1754343622.133209]: Here is the video Marcus made of this
+1754408941.636589 08-05 15:49Z Robert [thread 2 replies]: Here is some summary on the intra/inter level drop offs: • I compared the most recent build vs. last build and last last build • Our intra level drop off and inter level drop off is significantly higher across the board, is this just data delay? Unlike that this is it. • Examining up to level 20, we're losing more players at every step of the way, a lot more, you can see the % of people quitting i
+1754409029.682149 08-05 15:50Z Robert [reply to 1754408941.636589]: Interlevel drop off comparison between the last 3 builds. Interlevel meaning leaving level 2 --&gt; does not begin 3, etc.
+1754409099.192399 08-05 15:51Z Robert [reply to 1754408941.636589]: intra level is significantly worse
+1754417563.590479 08-05 18:12Z Robert: I'm not sure why but on main branch, at end of level 4 I still get the item mechanic tutorial
+1754417572.516079 08-05 18:12Z Robert: but it's glitchy and I don't seem to get an actual card to equip
+1754417585.099739 08-05 18:13Z Vincent Parker: Yes I experienced it today
+1754417595.503689 08-05 18:13Z Vincent Parker: and the problem is baseball bat doesn't have a display object
+1754417647.283649 08-05 18:14Z Vincent Parker: and that's what I am saying, the tutorial funnel is different from the release build because it was dedicated only testing the shifted FTUE along with mf levels. so it's not changing the tutorial order in the main
+1754417760.240739 08-05 18:16Z Robert: OK, we'll test the main branch, but just gotta be cleaned up before we make a release branch
+1754417766.352209 08-05 18:16Z Robert: I'll just tell Leonard to ignore to faulty FTUE steps
+1754418054.184319 08-05 18:20Z Vincent Parker: [USERNAME_38009] pushed the fix for item page
+1754418487.356069 08-05 18:28Z Arthur Blake: For the algo levels, it was using MonsterBase. Had to exclude it in code to make it work.
+1754418542.834769 08-05 18:29Z Vincent Parker [thread 3 replies]: <@EMPLOYEE_0016_SLACK_ID> can you take a look at the preferred zombies? There might be some test zombies that we shouldn't use as well
+1754419279.325089 08-05 18:41Z Arthur Blake [thread 14 replies]: <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0038_SLACK_ID> <@EMPLOYEE_0012_SLACK_ID> I think we should make a quick change here on the algo levels for this build: ```Prewarm Time is Random(30-45) var spawnCount = Random.Range(1, 5); var startTime = Random.Range(5, 50); var endTime = startTime + Random.Range(5, 25);``` This can put monsters *behind* the cannon since they are so pre-warmed.
+1754419452.296689 08-05 18:44Z Robert [reply to 1754418542.834769]: preferred zombies?
+1754419479.578489 08-05 18:44Z Robert [thread 2 replies]: <@EMPLOYEE_0038_SLACK_ID> iOS Build #1335 when done
+1754419502.395729 08-05 18:45Z Robert [reply to 1754419479.578489]: There might be some FTUE in wrong places and glitches, but the input blocker timing has been significantly reduced
+1754419516.463129 08-05 18:45Z Vincent Parker [reply to 1754418542.834769]: not all of the zombie variants shold be used in algo levels I imagine.
+1754419546.116229 08-05 18:45Z Robert [reply to 1754419479.578489]: Android is build #1536
+1754419591.128659 08-05 18:46Z Vincent Parker [reply to 1754419279.325089]: var startTime = Random.Range(5, 50); seems like too much?
+1754419604.701409 08-05 18:46Z Vincent Parker [reply to 1754419279.325089]: what is the start time and end time for
+1754419779.028659 08-05 18:49Z Leonard Hayes [reply to 1754419279.325089]: Go for it 
+1754419881.870299 08-05 18:51Z Arthur Blake [reply to 1754419279.325089]: If the random chooses 5 seconds for start time, and the pre warm time is 45 seconds, then a few monsters have walked past the cannon and is in your face already
+1754419887.476589 08-05 18:51Z Vincent Parker [reply to 1754419279.325089]: ```Prewarm Time is Random(25-40) var spawnCount = Random.Range(1, 5); var startTime = Random.Range(10, 40); var endTime = startTime + Random.Range(5, 45);``` wdyt about that? <@EMPLOYEE_0025_SLACK_ID>
+1754419935.512979 08-05 18:52Z Vincent Parker [reply to 1754419279.325089]: And I think we should remove some bosses from that list of "spawnable mosnters". After level 100, I have enough item to kill 180 HP boss with 2 matches.
+1754420054.457169 08-05 18:54Z Leonard Hayes [reply to 1754419279.325089]: <@EMPLOYEE_0012_SLACK_ID> Blake added all algo level parameters to debug menu. I was gonna tackle it but ran out of time. Do you mind tackling it and give Blake a new set of tighter parameters with relatively easier levels that players can beat along with other considerations you have?
+1754420074.413919 08-05 18:54Z Leonard Hayes [reply to 1754419279.325089]: Some levels are too hard and people get stuck 
+1754420088.193159 08-05 18:54Z Leonard Hayes [reply to 1754419279.325089]: I can send you the algo as well if it helps. 
+1754420131.476649 08-05 18:55Z Vincent Parker [reply to 1754419279.325089]: yep, I can help with that
+1754420143.413539 08-05 18:55Z Vincent Parker [reply to 1754419279.325089]: would be great, thanks
+1754420307.554819 08-05 18:58Z Vincent Parker [reply to 1754419279.325089]: <@EMPLOYEE_0025_SLACK_ID> can you also expose the item and monster pool? some shouldn't make it
+1754420716.770799 08-05 19:05Z Arthur Blake [reply to 1754419279.325089]: Yes. just look at the Monster prefabs and the ObjectDatas. If they are marked as ‘Production’ they will be included in the pool, <@EMPLOYEE_0012_SLACK_ID>
+1754420774.275509 08-05 19:06Z Arthur Blake [reply to 1754419279.325089]: The one exception is MonsterBase. For some reason that needs to be marked as Production otherwise the game freezes on startup. Haven’t had time to figure out why. We also exclude items in code like this: ```if (monster.name.Contains("Test") || monster.name.Contains("FTUE") || monster.name.Contains("MonsterBase") || monster.IsBoss || !monster.IsProductionMonster)``` ```if (item.singleClickAction !=
+1754421272.717789 08-05 19:14Z Robert [reply to 1754418542.834769]: As long it's not a prop or test monsters
+1754421457.909339 08-05 19:17Z Robert [thread 1 replies]: <@EMPLOYEE_0025_SLACK_ID> Hey, <@EMPLOYEE_0005_SLACK_ID> is going to create another variant C to test. She is going to create her own map pack. I Noticed that all we had to do is create a folder within the level objects folder and we get our map pack. So she will be making 100 levels and we plan to finish by this week
+1754421471.733009 08-05 19:17Z Robert [reply to 1754421457.909339]: <@EMPLOYEE_0026_SLACK_ID> Is going to work on the tutorial to support that 100 levels
+1754423041.918549 08-05 19:44Z Frederick Stone: Unity Editor question. I am playing ZM in Unity Editor via DevBoot Scene to record videos for marketing purposes. After completing level 25, the Daily Gift screen pops and I don't see any way to close it. Does anyone know how to get around this so I can access some of the game features beyond level 25 (mainly card packs and plague race)?
+1754423102.962929 08-05 19:45Z Frederick Stone: <@EMPLOYEE_0016_SLACK_ID> ^ you might have experienced this.
+1754426916.684099 08-05 20:48Z Robert: I was able to close mine
+1754426933.384919 08-05 20:48Z Robert [thread 3 replies]: If you restart the game what happens?
+1754427457.559849 08-05 20:57Z Robert: <@EMPLOYEE_0025_SLACK_ID> so the bug fix release: • Add min/max and avg FPS on left level event • App exception fixes • Endless Mode MVP • Shorter input blocker duration throughout • Anything else?
+1754428911.420589 08-05 21:21Z Leonard Hayes: social? 
+1754429359.264529 08-05 21:29Z Robert [thread 2 replies]: I did not test that at all
+1754429498.486449 08-05 21:31Z Frederick Stone [reply to 1754426933.384919]: I go back to this scene and restart the game at level 1
+1754429816.164649 08-05 21:36Z Arthur Blake: Fixes on algo levels not showing bottom bar Fix on quest button overlapping Improved algo levels
+1754429829.974379 08-05 21:37Z Robert: [USERNAME_47105]
+1754429838.161859 08-05 21:37Z Robert: does that include the setting button and claim quest button overlap?
+1754429842.180449 08-05 21:37Z Robert: That's the one right?
+1754430071.389609 08-05 21:41Z Arthur Blake: Yes
+1754430598.608999 08-05 21:49Z Frederick Stone [reply to 1754426933.384919]: [Unity] DailyLoginReward data loading error: Server_Data_Format_Error Likely Root Cause: This appears to be a *server response parsing failure* in the *DailyLoginReward* system — likely caused by: • Corrupted, missing, or misformatted server response (JSON/XML) • Unexpected/null values for a key reward field (e.g., type, duration, quantity) • A bad entry in the live test environment’s reward confi
+1754430684.911489 08-05 21:51Z Frederick Stone [reply to 1754426933.384919]: Here's my experience. For you, clicking Claim drops you back into the homescreen so you can continue playing?
+1754431570.360829 08-05 22:06Z Leonard Hayes [reply to 1754429359.264529]: Feel free to test it. It’s been tested by me and [PERSON_NAME_0050] multiple times last week 
+1754431595.283389 08-05 22:06Z Leonard Hayes [reply to 1754429359.264529]: [PERSON_NAME_0067] fixed all major bugs. Its in shippable state 
+1754438218.572779 08-05 23:56Z Robert: <@EMPLOYEE_0025_SLACK_ID> is the test build out? How are we looking progress wise? Can I merge some extra polishes in?
+1754438539.014709 08-06 00:02Z Arthur Blake: Yes, do it soon please!
+1754438542.881099 08-06 00:02Z Arthur Blake: about to make builds
+1754438585.968039 08-06 00:03Z Robert: [USERNAME_5001]
+1754438598.406779 08-06 00:03Z Robert: For endless level, do I have to check "production" ?
+1754438606.370109 08-06 00:03Z Robert: How do I make sure it's in the proper rotation?
+1754438685.463869 08-06 00:04Z Robert [thread 7 replies]: The three levels that should be rotated daily is Endless_01, Endless_02, Endless_03
+1754438825.495349 08-06 00:07Z Arthur Blake [thread 1 replies]: Hmm let me see how that works
+1754438935.374539 08-06 00:08Z Robert [thread 15 replies]: And would you be able to find somewhere in the code for the endless level where the timer counts down from 5, 4, 3, 2, 1? I want to play this audio beep
+1754438948.859609 08-06 00:09Z Robert [reply to 1754438935.374539]: 
+1754438955.499939 08-06 00:09Z Robert [reply to 1754438935.374539]: <@EMPLOYEE_0032_SLACK_ID> CC'ing [PERSON_NAME_0120] for visibility
+1754439076.996359 08-06 00:11Z Robert [reply to 1754438825.495349]: I merged the files, except the audio beeping file
+1754439087.100999 08-06 00:11Z Robert: And that's all my changes
+1754439151.263459 08-06 00:12Z Arthur Blake [reply to 1754438935.374539]: [USERNAME_18759]
+1754439157.855979 08-06 00:12Z Arthur Blake [reply to 1754438935.374539]: thats not an 8p request
+1754439163.852379 08-06 00:12Z Robert [reply to 1754438935.374539]: ok no worries then
+1754439299.129889 08-06 00:14Z Robert [reply to 1754438935.374539]: I'll make sure to request that at 7P next time
+1754439427.062659 08-06 00:17Z Leonard Hayes [thread 1 replies]: is the fix for algo levels not counting towards plague race is in or not <@EMPLOYEE_0025_SLACK_ID>?
+1754439438.170589 08-06 00:17Z Leonard Hayes: asking because it was a request from one of the players
+1754440280.728669 08-06 00:31Z Arthur Blake [reply to 1754438935.374539]: [USERNAME_16860]
+1754440284.576549 08-06 00:31Z Arthur Blake: No. let me see if that is easy
+1754441822.184469 08-06 00:57Z Robert [reply to 1754438935.374539]: Hey I chatgpt'ed this thing
+1754441824.847269 08-06 00:57Z Robert [reply to 1754438935.374539]: It's got audio now
+1754442064.622829 08-06 01:01Z Robert [reply to 1754438935.374539]: 
+1754442162.396789 08-06 01:02Z Robert [reply to 1754438935.374539]: seems like it works.. and nothign is broken?? :[USERNAME_43216]:
+1754442211.535359 08-06 01:03Z Robert [reply to 1754438935.374539]: i guess I'll just have to merge and beg for forgiveness later
+1754442218.922389 08-06 01:03Z Robert [reply to 1754438935.374539]: [PERSON_NAME_0120] go easy on me
+1754443276.248599 08-06 01:21Z Arthur Blake [reply to 1754438935.374539]: :face_palm::skin-tone-6:
+1754443379.778649 08-06 01:22Z Robert [reply to 1754438935.374539]: :[USERNAME_7156]:
+1754446739.241859 08-06 02:18Z Arthur Blake [reply to 1754439427.062659]: I was not able to repro this. Algo levels count towards plague race for me.
+1754448433.581809 08-06 02:47Z Leonard Hayes [thread 1 replies]: Is There a release candidate build we should test?
+1754471093.832009 08-06 09:04Z Vincent Parker: I couldn't follow what the new build will be about. If we continue to AB test and update both version with the release, we should bring back the modification on `release/MF` branch about making all tutorial steps same for both variations. If we aim to just release a version without AB, then we should configure the AB parameters on Firebase so that it won't be contingent to next releases.
+1754480468.592919 08-06 11:41Z Arthur Blake: I think we are supposed to end the AB test for now until we resolve the tech issues.
+1754480562.980559 08-06 11:42Z EMPLOYEE_0032_SLACK_ID [reply to 1754438685.463869]: u need to put these levels into live ops manager prefab
+1754480572.452799 08-06 11:42Z EMPLOYEE_0032_SLACK_ID [reply to 1754438685.463869]: i will do it, just for future levels
+1754480602.946509 08-06 11:43Z EMPLOYEE_0032_SLACK_ID [reply to 1754438685.463869]: it will cycle according to server level number. it sends me like 1 2 3 4 5 6, which means 1 2 3 1 2 3 locally etc
+1754480627.988559 08-06 11:43Z EMPLOYEE_0032_SLACK_ID [reply to 1754438685.463869]: as soon as u add new level it will cycle all of them like 1 2 3 4 1 2 etc
+1754480705.978899 08-06 11:45Z EMPLOYEE_0032_SLACK_ID [reply to 1754438685.463869]: btw some levels have corrupted files, maybe this could cause issues after level 120
+1754481722.185849 08-06 12:02Z Arthur Blake [reply to 1754448433.581809]: <@EMPLOYEE_0038_SLACK_ID> <@EMPLOYEE_0016_SLACK_ID> iOS 1351 Android 1553
+1754484499.958089 08-06 12:48Z Vincent Parker: might be good to add them as well <@EMPLOYEE_0025_SLACK_ID>
+1754487516.588079 08-06 13:38Z Arthur Blake: ok
+1754491146.260519 08-06 14:39Z Robert: So is this version A or B then?
+1754491180.054449 08-06 14:39Z Vincent Parker: version a
+1754491191.062809 08-06 14:39Z Arthur Blake: Yeah went back to baseline for now.
+1754491407.558779 08-06 14:43Z Robert [reply to 1754438685.463869]: Thanks
+1754491425.687999 08-06 14:43Z Robert [reply to 1754438685.463869]: [PERSON_NAME_75193], got it
+1754492307.405719 08-06 14:58Z SLACK_BOT_0007_SLACK_ID [reply to 1752945064.935789]: 
+1754493202.986139 08-06 15:13Z Vincent Parker [thread 3 replies]: Here is the action items for the release as well as status report. 1. If we're going with variant A, we should unlock shop earlier, now it's in level 35. 2. AB is already killed by <@EMPLOYEE_0025_SLACK_ID> I assume. 3. The weekly bots for endless mode is too op for prod configuration. a. It needs to be updated with the params in the thread when <@EMPLOYEE_0031_SLACK_ID>returns. 4. Lastly, the tea
+1754493271.370749 08-06 15:14Z Vincent Parker [reply to 1754493202.986139]: The weekly bots for endless mode is too op for prod configuration. • It needs to be updated with the params in the thread when <@EMPLOYEE_0031_SLACK_ID>returns. Updated parameters ```param | min | max ------------------------------ score | 6 | 65 score_interval | 10 | 20 time_interval | 120 | 250 freeze_time | 300 | 800```
+1754493294.577269 08-06 15:14Z Vincent Parker [reply to 1754493202.986139]: Lastly, the team features' responses are not fast enough in prod servers as well for Turkey.
+1754493494.257949 08-06 15:18Z Arthur Blake [thread 26 replies]: Builds were submitted.
+1754493557.728549 08-06 15:19Z Vincent Parker [reply to 1754493494.257949]: with [USERNAME_15321] :((
+1754494158.666869 08-06 15:29Z Arthur Blake [reply to 1754493494.257949]: <@EMPLOYEE_0012_SLACK_ID> you want it with or without your commit?
+1754494304.931499 08-06 15:31Z Vincent Parker [reply to 1754493494.257949]: would be good to add that commit as well. because There was an OP zombie but it should be stated as boss. so it won't spawn that often
+1754494332.176769 08-06 15:32Z Arthur Blake [reply to 1754493494.257949]: I’m rebuilding with your commit. <@EMPLOYEE_0038_SLACK_ID> can handle submitting on iOS and maybe can handle submitting on Android as well. 1. Download aab from jenkins for Match Android Submission once build is complete 2. Upload it as a new release on google play internal test. 3. Promote release to production 4. Submit to publish review
+1754494344.816069 08-06 15:32Z Vincent Parker [reply to 1754493494.257949]: thanks
+1754494356.744869 08-06 15:32Z Arthur Blake [reply to 1754493494.257949]: I’m mostly AFK today
+1754494423.751799 08-06 15:33Z Vincent Parker [reply to 1754493494.257949]: Me too
+1754496007.203929 08-06 16:00Z Robert [reply to 1754493494.257949]: What's the build # now?
+1754496039.332349 08-06 16:00Z Leonard Hayes [reply to 1754493494.257949]: I can handle Android
+1754496047.341689 08-06 16:00Z Leonard Hayes [reply to 1754493494.257949]: I need a build for ios as well
+1754496087.573349 08-06 16:01Z Leonard Hayes [reply to 1754493494.257949]: where is the submission build .ipa file for ios?
+1754497182.330999 08-06 16:19Z Douglas [reply to 1754493202.986139]: I’m back, checking the bots’ configuration right now
+1754505250.464889 08-06 18:34Z Leonard Hayes [reply to 1754493494.257949]: 
+1754505257.423099 08-06 18:34Z Leonard Hayes [reply to 1754493494.257949]: I updated the screenshots on IOS as well
+1754505268.752229 08-06 18:34Z Leonard Hayes [reply to 1754493494.257949]: last time we were in hurry so forgot to update
+1754505273.700939 08-06 18:34Z Leonard Hayes [reply to 1754493494.257949]: I’m gonna do Android next
+1754506531.920979 08-06 18:55Z Leonard Hayes [reply to 1754493494.257949]: 
+1754506539.614399 08-06 18:55Z Leonard Hayes [reply to 1754493494.257949]: ok this one is in review as well
+1754506579.079969 08-06 18:56Z Leonard Hayes [reply to 1754493494.257949]: <@EMPLOYEE_0016_SLACK_ID> can you test 0.3.99 before we release?
+1754506595.010929 08-06 18:56Z Leonard Hayes [reply to 1754493494.257949]: it should be available already in the internal release group
+1754506599.996369 08-06 18:56Z Leonard Hayes [reply to 1754493494.257949]: I’ll test ios
+1754508285.604699 08-06 19:24Z Robert [reply to 1754493494.257949]: OK
+1754508357.326629 08-06 19:25Z Robert [reply to 1754493494.257949]: 
+1754508358.615929 08-06 19:25Z Robert [reply to 1754493494.257949]: Internal beta right?
+1754509231.656889 08-06 19:40Z Leonard Hayes [reply to 1754493494.257949]: yeah
+1754509387.122519 08-06 19:43Z Robert [reply to 1754493494.257949]: Didn't give me the right build, I got old art
+1754509399.510209 08-06 19:43Z Robert [reply to 1754493494.257949]: let me check the console to see what got placed on the "beta" internal testing track
+1754579095.700479 08-07 15:04Z SLACK_BOT_0007_SLACK_ID [reply to 1754343403.209119]: 
+1754579133.973819 08-07 15:05Z Robert [reply to 1754343403.209119]: I think he did it in a way where it's minions specific, but im OK with that! Looks great IMO
+1754581324.640389 08-07 15:42Z EMPLOYEE_0032_SLACK_ID [reply to 1754343403.209119]: yes random was used only as fallback if [USERNAME_7481] doesn’t have specific icon
+1754583249.978539 08-07 16:14Z Robert: <@EMPLOYEE_0038_SLACK_ID> my stuttering was pretty bad yesterday, IMO I wouldn't want to release any build with this stutter
+1754583267.834989 08-07 16:14Z Robert: Especially we know somewhat what is causing it
+1754583285.497469 08-07 16:14Z Robert: If it's bad on my phone, I can only imagine for others
+1754583941.818029 08-07 16:25Z Leonard Hayes: Yeah, we mentioned it to <@EMPLOYEE_0025_SLACK_ID> - he is gonna look into it
+1754583951.419249 08-07 16:25Z Leonard Hayes: I mean we already released it to Android
+1754583964.152139 08-07 16:26Z Leonard Hayes: and that’s where the stutter is, I don’t see any issue releasing it to IOS
+1754584372.707529 08-07 16:32Z Arthur Blake: [USERNAME_15817]
+1754584405.631159 08-07 16:33Z Leonard Hayes: We do have 3 other major backend-related bugs - <@EMPLOYEE_0031_SLACK_ID> is looking into them <@EMPLOYEE_0016_SLACK_ID> • plague-race on prod gets stuck at level 2 and doesn’t progress • endless mode gets stuck on day 2 and you can’t pass the claim button and restart • social messages don’t show up when you switch tabs Quick Summary of what else people are working on: • <@EMPLOYEE_0032_SLACK_ID> 
+1754615791.696679 08-08 01:16Z Robert [thread 12 replies]: <@EMPLOYEE_0006_SLACK_ID> Can you find me a soundtrack for in-game that match our game and it doesn't over power our sound effects? So it's a subtle ambient soundtrack, our current one is too strong
+1754616312.066439 08-08 01:25Z Leonard Hayes [reply to 1754615791.696679]: to keep the file size small, let’s aim for a 1 min soundtrack with a repeatable loop like we did in DD
+1754616336.671899 08-08 01:25Z Leonard Hayes [reply to 1754615791.696679]: I think we should also stay away from haloween music in general
+1754616372.208799 08-08 01:26Z Leonard Hayes [reply to 1754615791.696679]: should we try high octane music as well or do you want to stick with subtle ambient soundtrack?
+1754616399.315839 08-08 01:26Z Robert [reply to 1754615791.696679]: I think subtle is better, high octane is good but doesnt last
+1754616568.936979 08-08 01:29Z Calvin Price [reply to 1754615791.696679]: Okay sure.. we can use the same track and try to extend it or can try a new one as well. Let me do some test
+1754616584.502089 08-08 01:29Z Robert [reply to 1754615791.696679]: Need something more subtle
+1754632671.128919 08-08 05:57Z Marcus Bennett [reply to 1754615791.696679]: I need a Soundly pro account. I wasted a lot of time when I did the vfx to try to combine some sfx cuz I couldn't get the pro ones.
+1754633160.681069 08-08 06:06Z Calvin Price [reply to 1754615791.696679]: There're 2 proposal I currently have.. not sure if that's the current mood, but let me know.. I'm creating 2 builds for them in game
+1754634393.514969 08-08 06:26Z Leonard Hayes [reply to 1754615791.696679]: I like the short one better 
+1754635520.290929 08-08 06:45Z Calvin Price [reply to 1754615791.696679]: You can test soundtrack#1 &amp; soundtrack#2 in game on the following builds: Match3D Android - #1574 Match3D Android - #1576 Match 3D iOS Internal - #1365 Match 3D iOS Internal - #1367
+1754635562.126829 08-08 06:46Z Calvin Price [reply to 1754615791.696679]: I also tried lowering a little bit the VFX in game on those builds.. it sounded too loud
+1754644309.764169 08-08 09:11Z Marcus Bennett [thread 1 replies]: <@EMPLOYEE_0025_SLACK_ID> we have text animator plugin that we used in DD, can we have it in this project also? : <https://assetstore.Unity.com/packages/package/254677>
+1754650804.086889 08-08 11:00Z Arthur Blake [thread 32 replies]: <@EMPLOYEE_0002_SLACK_ID> yes. What was the other plug-in you said is using CPU instead of GPU that we need to fix?
+1754650917.449309 08-08 11:01Z Marcus Bennett [reply to 1754650804.086889]: its the zombies material, we need a material thats got Tint in it and works with deformable sprites that is supported by gpu. <@EMPLOYEE_0032_SLACK_ID> [PERSON_NAME_59866] he is looking into it, also i belive <@EMPLOYEE_0003_SLACK_ID> could help us as he got experience with Unity Shaders.
+1754650967.542659 08-08 11:02Z Marcus Bennett [reply to 1754650804.086889]: basically when we moved to Unity 6 , the default sprite material doesnt have Tint color in it no more. and we need that to do things like poison etc. to color the sprites. The sprite color we need to use that for zombie variation so we cant use that one
+1754653327.057569 08-08 11:42Z Oliver Brooks [reply to 1754650804.086889]: Im pretty sure it does, are you looking at the correct material?
+1754654437.602779 08-08 12:00Z Marcus Bennett [reply to 1754650804.086889]: În Unity 6 5he default one doesn't have no more. The other one I use and has tint, it falls back to cpu
+1754654541.614269 08-08 12:02Z Oliver Brooks [reply to 1754650804.086889]: can you tell me what shader is it?
+1754654551.227309 08-08 12:02Z Oliver Brooks [reply to 1754650804.086889]: the name
+1754654652.458689 08-08 12:04Z EMPLOYEE_0032_SLACK_ID [reply to 1754650804.086889]: i think he used URP/Sprite_Unlit_Default before
+1754654665.455019 08-08 12:04Z EMPLOYEE_0032_SLACK_ID [reply to 1754650804.086889]: now he switched to Sprites/Default
+1754655828.242399 08-08 12:23Z Arthur Blake [reply to 1754650804.086889]: Ok [PERSON_NAME_0050] did some profiling and and when each monster spawns There is a lot of CPU work done during the instantiation and during awake.
+1754658292.023829 08-08 13:04Z Oliver Brooks [reply to 1754650804.086889]: what is this urp/sprite_unlit_default?
+1754658320.736629 08-08 13:05Z Oliver Brooks [reply to 1754650804.086889]: 
+1754658331.278759 08-08 13:05Z Oliver Brooks [reply to 1754650804.086889]: i dont see this in the urp options
+1754658355.573019 08-08 13:05Z EMPLOYEE_0032_SLACK_ID [reply to 1754650804.086889]: 2d/…
+1754661810.385029 08-08 14:03Z Marcus Bennett [reply to 1754650804.086889]: So this shader use to have Tint, and now if i use it There is no tint in it and i need it to do the vfx
+1754661821.538119 08-08 14:03Z Marcus Bennett [reply to 1754650804.086889]: now the one that i've used i used a shader that has tint in it
+1754661835.753039 08-08 14:03Z Marcus Bennett [reply to 1754650804.086889]: it supports defromabile sprites
+1754661877.014239 08-08 14:04Z Oliver Brooks [reply to 1754650804.086889]: you can probably use universal render pipeline/unlit
+1754661916.603669 08-08 14:05Z Oliver Brooks [reply to 1754650804.086889]: it has tint
+1754661969.363769 08-08 14:06Z Marcus Bennett [reply to 1754650804.086889]: 
+1754662057.665909 08-08 14:07Z Marcus Bennett [reply to 1754650804.086889]: im using the sprites default unlit from URP
+1754662060.514899 08-08 14:07Z Marcus Bennett [reply to 1754650804.086889]: 
+1754662064.277819 08-08 14:07Z Marcus Bennett [reply to 1754650804.086889]: but it gives me that error u see There
+1754662076.881749 08-08 14:07Z Marcus Bennett [reply to 1754650804.086889]: its a shader that doesnt have GPU deformation support
+1754662289.105679 08-08 14:11Z Marcus Bennett [reply to 1754650804.086889]: <@EMPLOYEE_0003_SLACK_ID> i've tried the urp/unlit also set to transparent and as you can see it still gives me GPU problem
+1754662366.626459 08-08 14:12Z Marcus Bennett [reply to 1754650804.086889]: we need to make sure that the shader it got Tint property and its for sprites that are deformabile
+1754662450.467319 08-08 14:14Z Oliver Brooks [reply to 1754650804.086889]: i can help you with this monday
+1754662468.106969 08-08 14:14Z Oliver Brooks [reply to 1754650804.086889]: the fix is easy
+1754662491.234109 08-08 14:14Z Oliver Brooks [reply to 1754650804.086889]: 
+1754662900.062229 08-08 14:21Z Marcus Bennett [reply to 1754650804.086889]: thats the thing, i work with shadergraph and dono shader languege, basically i want a clone of the default one and just add a Tint property :slightly_smiling_face:
+1754664318.519999 08-08 14:45Z Oliver Brooks [reply to 1754650804.086889]: yeah its easy
+1754664322.252759 08-08 14:45Z Oliver Brooks [reply to 1754650804.086889]: i can do it monday
+1754664536.800339 08-08 14:48Z Marcus Bennett [reply to 1754650804.086889]: 
+1754666756.657329 08-08 15:25Z Calvin Price [reply to 1754615791.696679]: This is another test, replacing the soundtrack on main game and in game.
+1754671940.103899 08-08 16:52Z Arthur Blake [reply to 1754644309.764169]: <@EMPLOYEE_0002_SLACK_ID> text animator pushed.
+1754859322.491279 08-10 20:55Z Robert: <!here> can we make a Push and release our next test on Monday? Really would like to get a read on metrics, assuming tech issues resolved
+1754859335.899469 08-10 20:55Z Robert: lawson40 and MF35v2 variants
+1754859401.605029 08-10 20:56Z Robert: What else other than stuttering during a level we think that can cause drops intralevel?
+1754859422.274039 08-10 20:57Z Robert: Someone starts a level but disappears and does not finish.
+1754859439.461259 08-10 20:57Z Robert: We got 2x of those in the most recent build
+1754932247.964059 08-11 17:10Z Marcus Bennett [thread 16 replies]: Some Vfx issues that i need help and i requested help thread <@EMPLOYEE_0016_SLACK_ID> <@EMPLOYEE_0038_SLACK_ID> <@EMPLOYEE_0025_SLACK_ID>
+1754932255.707219 08-11 17:10Z Marcus Bennett [reply to 1754932247.964059]: <https://linear.app/harmonygames-games/issue/ZOM-239/infinite-lifes-animation-implementation>
+1754932261.326659 08-11 17:11Z Marcus Bennett [reply to 1754932247.964059]: this was done like two months ago
+1754932321.964159 08-11 17:12Z Marcus Bennett [reply to 1754932247.964059]: and this one like week ago, this was set to high on my end and i thought was high enough, i just needed help with implementation thats why i've let it on my branch and not Push to main : <https://linear.app/harmonygames-games/issue/ZOM-463/endless-horde-rewards-screen-vfx-implementation>
+1754932521.528719 08-11 17:15Z Marcus Bennett [reply to 1754932247.964059]: Another issue that appeared with the new zombies is that now the zombies they dont use a bool for walking etc and also have running animation, and the old code needs to be updated, <@EMPLOYEE_0032_SLACK_ID> had an idea but didnt had the time and i think <@EMPLOYEE_0006_SLACK_ID> can take a look at how we animate the zombies. Basically whatwe want is that if the zombie walking speed its going to 0 
+1754933381.419519 08-11 17:29Z Calvin Price [reply to 1754932247.964059]: Thank you <@EMPLOYEE_0002_SLACK_ID>, I hope it won't be that hard to fix. :saluting_face:
+1754940510.477659 08-11 19:28Z Oliver Brooks [reply to 1754932247.964059]: I'm on it
+1754940536.973989 08-11 19:28Z Oliver Brooks [reply to 1754932247.964059]: I catched this issue while investigating another script
+1754940539.290079 08-11 19:28Z Oliver Brooks [reply to 1754932247.964059]: Im applying a fix
+1754940719.069529 08-11 19:31Z Oliver Brooks [reply to 1754932247.964059]: just to be clear
+1754940751.224889 08-11 19:32Z Oliver Brooks [reply to 1754932247.964059]: as the animators dont have a `walking` parameter anymore, looks like a lot of calls to set this parameters are done
+1754940755.139719 08-11 19:32Z Oliver Brooks [reply to 1754932247.964059]: Im just removing them
+1754940767.600959 08-11 19:32Z Oliver Brooks [reply to 1754932247.964059]: as they only cause warnings and do nothing
+1754940818.466969 08-11 19:33Z Oliver Brooks [reply to 1754932247.964059]: <@EMPLOYEE_0006_SLACK_ID> if There is something else to fix, you can go for it
+1754940822.504759 08-11 19:33Z Oliver Brooks [reply to 1754932247.964059]: Ill Push my fix in a sec
+1754941542.984189 08-11 19:45Z Oliver Brooks [reply to 1754932247.964059]: pushed
+1754942098.428219 08-11 19:54Z Calvin Price [reply to 1754932247.964059]: Awesome, thank you!
+1754965687.405839 08-12 02:28Z Robert: <@EMPLOYEE_0003_SLACK_ID> Any updates on fixes? <@EMPLOYEE_0025_SLACK_ID>
+1754966844.461229 08-12 02:47Z Oliver Brooks: I optimized some classes related to monsters spawn and the input handler class, now I'm working on that shader fix
+1754967823.759449 08-12 03:03Z Robert: That's the GPU/CPU issue we had right?
+1754971273.785789 08-12 04:01Z Robert: 
+1755020527.050679 08-12 17:42Z Oliver Brooks: the gpu/cpu deformation issue was fixed
+1755023545.054849 08-12 18:32Z Oliver Brooks: is There something pending for the build?
+1755024233.007759 08-12 18:43Z Vincent Parker [thread 6 replies]: Android 1608, the situation is worse. • Zombies have material issues. • The level scene is flickering • Last boss doesn't die visually, the animation is not triggered 
+1755024352.768559 08-12 18:45Z Marcus Bennett [reply to 1755024233.007759]: <@EMPLOYEE_0003_SLACK_ID> oups i can see that it has the alpha map but the color map /main tex its having that pink missing map issue
+1755024450.580529 08-12 18:47Z Oliver Brooks [reply to 1755024233.007759]: let me dig into that
+1755025170.397499 08-12 18:59Z Arthur Blake [reply to 1755024233.007759]: I think this is the last thing we need if it fixes the stuttering.
+1755025216.208899 08-12 19:00Z Vincent Parker [reply to 1755024233.007759]: I still couldn't test the latest version thoroughly because the builds were failing and still in a meeting
+1755025219.079419 08-12 19:00Z Oliver Brooks [reply to 1755024233.007759]: I pushed a fix
+1755025302.456059 08-12 19:01Z Oliver Brooks [reply to 1755024233.007759]: android #1610
+1755026083.999979 08-12 19:14Z Oliver Brooks: I'll fix the last boss issue
+1755027257.609299 08-12 19:34Z Oliver Brooks: fixed
+1755027333.890629 08-12 19:35Z Oliver Brooks: <@EMPLOYEE_0012_SLACK_ID> could you confirm everything is fixed on android 1612?
+1755027340.503699 08-12 19:35Z Oliver Brooks: its being generated atm
+1755028971.529109 08-12 20:02Z Oliver Brooks: its generated
+1755028978.690619 08-12 20:02Z Oliver Brooks: I tested locally and it seems to be fixed
+1755028986.463249 08-12 20:03Z Oliver Brooks: couldnt repro the flickering level scene
+1755029093.307239 08-12 20:04Z Vincent Parker: what's your device?
+1755029206.829629 08-12 20:06Z Oliver Brooks: galaxy note 20 5g
+1755029227.361499 08-12 20:07Z Oliver Brooks: tested #1612 and worked fine
+1755029475.167919 08-12 20:11Z Vincent Parker: oppo reno 5 lite, it still flickers on 1612
+1755029660.339779 08-12 20:14Z Oliver Brooks [thread 1 replies]: do you know the latest build that doesnt flicker?
+1755030456.379889 08-12 20:27Z Vincent Parker [reply to 1755029660.339779]: I don't know if it is the latest but works in 1589
+1755031151.440159 08-12 20:39Z Julia Lawson: <@EMPLOYEE_0025_SLACK_ID> I made the PR for the VariantC branch. We're waiting to test whenever you're ready for us :[USERNAME_26053]:
+1755031291.329209 08-12 20:41Z Julia Lawson [thread 1 replies]: <@EMPLOYEE_0025_SLACK_ID> <@EMPLOYEE_0003_SLACK_ID> Guys, [PERSON_NAME_0022]'s latest commit to my branch and to the main removed VariantC from A/B test lists. Should I just remove my pull request or?
+1755031719.656039 08-12 20:48Z Oliver Brooks [reply to 1755031291.329209]: I'm checking rn
+1755038030.741759 08-12 22:33Z Oliver Brooks: a couple fixes for the flickering issues were pushed
+1755038040.269549 08-12 22:34Z Oliver Brooks: hopefully they will get rid of the bug
+1755051202.676639 08-13 02:13Z Robert: Anything to test?
+1755051588.747429 08-13 02:19Z Arthur Blake: Google Internal Test should be equivalent to Android 1619 testflight equivalent to iOS 1396
+1755058039.719589 08-13 04:07Z Robert [thread 1 replies]: <@EMPLOYEE_0012_SLACK_ID> earlier you mentioned some android specific bug?
+1755058050.110409 08-13 04:07Z Robert: And said we shouldn't do UA on Android?
+1755064104.920769 08-13 05:48Z Robert: I got past level 50, some hard crashes, but no stuttering for me
+1755064115.368339 08-13 05:48Z Robert: And can't advance past level 55
+1755068510.738269 08-13 07:01Z Vincent Parker [reply to 1755058039.719589]: Yeah, issues are couple messages above
+1755081795.389329 08-13 10:43Z Marcus Bennett [thread 1 replies]: <@EMPLOYEE_0016_SLACK_ID> let's create SFX channel, also Unity Asset Store has some nice packs: <https://assetstore.Unity.com/packages/audio/sound-fx/ui-item-sound-effects-2-130792>
+1755107847.815099 08-13 17:57Z Robert [reply to 1755081795.389329]: I did create SFX channel, [PERSON_NAME_0029] is helping me find something
+1755107922.240269 08-13 17:58Z Robert [thread 5 replies]: <@EMPLOYEE_0004_SLACK_ID> Update Endless Mode UI and Homescreen Buttons to look exact
+1755107928.213679 08-13 17:58Z Robert [reply to 1755107922.240269]: <https://www.Figma.com/design/TvRw8na5iGd3NynbSRUGFy?node-id=13-7#1381762244>
+1755107956.928759 08-13 17:59Z Robert [reply to 1755107922.240269]: 
+1755107979.705279 08-13 17:59Z Robert [reply to 1755107922.240269]: 
+1755108021.138239 08-13 18:00Z None [reply to 1755107922.240269]: [PERSON_NAME_0055] created a high priority issue ZOM-470 Update and fix UI for Endless Mode and Homescreen
+1755108052.016359 08-13 18:00Z Robert [thread 12 replies]: <@EMPLOYEE_0004_SLACK_ID> When player not In a Plague Race, the Icon should have red dot on it.
+1755108077.288629 08-13 18:01Z None [reply to 1755108052.016359]: [PERSON_NAME_0055] created a high priority issue ZOM-471 Add red dot icon for players not in Plague Race
+1755109202.002129 08-13 18:20Z Vincent Parker [reply to 1755108052.016359]: i think it's annoying, it already has start button
+1755109968.285949 08-13 18:32Z Leonard Hayes [reply to 1755108052.016359]: yeah, we don’t need it! cancel the ticket <@EMPLOYEE_0016_SLACK_ID> lol
+1755110009.744629 08-13 18:33Z Leonard Hayes [reply to 1755108052.016359]: If you want an additional layer maybe <@EMPLOYEE_0002_SLACK_ID> can add a little wiggle to the start button
+1755110017.566569 08-13 18:33Z Leonard Hayes [reply to 1755108052.016359]: we want animated icons anyhow
+1755111260.908089 08-13 18:54Z Robert [reply to 1755108052.016359]: MF harassed you for it
+1755111265.143999 08-13 18:54Z Robert [reply to 1755108052.016359]: And i just join
+1755113160.233349 08-13 19:26Z Robert [reply to 1755108052.016359]: 
+1755113175.580629 08-13 19:26Z Robert [reply to 1755108052.016359]: I was playing our game and was on a red dot clearing streak, and i skipped over that
+1755113199.403749 08-13 19:26Z Robert [reply to 1755108052.016359]: So annoyance does get people to join
+1755116903.525369 08-13 20:28Z Leonard Hayes [reply to 1755108052.016359]: I don’t think we should do it
+1755116944.999449 08-13 20:29Z Leonard Hayes [reply to 1755108052.016359]: But I think we should do animated “play/participate” buttons
+1755120722.169799 08-13 21:32Z Oliver Brooks: has anyone else other than [PERSON_NAME_0050] been able to reproduce the flickering bug?
+1755120760.545029 08-13 21:32Z Oliver Brooks: I made another build (android #1636) with a potential fix but I cant reproduce in my device
+1755123561.695869 08-13 22:19Z Arthur Blake: I have not been able to repro
+1755124048.563969 08-13 22:27Z Arthur Blake: <@EMPLOYEE_0003_SLACK_ID> if There is no downside to your fix, let's just submit the build with your potential fix and [PERSON_NAME_0050] can confirm tomorrow.
+1755124082.214009 08-13 22:28Z Oliver Brooks: ok Ill merge
+1755124083.847789 08-13 22:28Z Oliver Brooks: one sec
+1755124149.449839 08-13 22:29Z Oliver Brooks: done
+1755142680.272679 08-14 03:38Z Robert [thread 3 replies]: <@EMPLOYEE_0032_SLACK_ID> I redid the endless wave algo so the levels stack slower, and easier on the phone performance:
+1755142692.166289 08-14 03:38Z Robert [reply to 1755142680.272679]: Doc is here: <https://docs.google.com/document/d/1AbwbcstoKYqjAdRUcooeLNjRzoe7VeU5G-Qz6ibrdiI/edit?tab=t.0>
+1755150223.648559 08-14 05:43Z Robert [thread 16 replies]: <@EMPLOYEE_0033_SLACK_ID> The Infinite HP Boss Mode GDD rough draft is done <https://docs.google.com/document/d/1-2cxUcHy9MvkqjC-YRt2EUH-d-S9wQ0zNHxFL8M2j_Q/edit?tab=t.0|HERE>. Basically everything is _identical_ to Endless mode in terms of the UI flow and what not. The only difference is that in this game mode, instead of charging damage for air strike, you are charging a timer, but the maxed cha
+1755150254.935289 08-14 05:44Z Robert [reply to 1755150223.648559]: I have some mock ups in the gdd, and I would mind if we have thoughts on the combo meter design. Or just general UI design for these 2 modes.
+1755150353.901549 08-14 05:45Z Robert [reply to 1755150223.648559]: <@EMPLOYEE_0032_SLACK_ID> Everything is basically identical to Endless mode in every other aspect, even the refill algo that you worked so hard on perfecting! The only new thing is that items can temporarily become single click (like using a catapult, or what we made pre-alpha 6 months ago) So I feel like this entire thing should be a much quicker turnaround compare to endless mode :[USERNAME_4321
+1755150374.001029 08-14 05:46Z Robert [reply to 1755150223.648559]: <@EMPLOYEE_0026_SLACK_ID> <@EMPLOYEE_0012_SLACK_ID> <@EMPLOYEE_0005_SLACK_ID> Feel free to read and provide feedback, it's pretty damn straight forward.
+1755186135.175559 08-14 15:42Z Robert [reply to 1755150223.648559]: <@EMPLOYEE_0033_SLACK_ID>
+1755187217.442559 08-14 16:00Z Martin Walsh [reply to 1755150223.648559]: Yes I started to do something...
+1755189362.233489 08-14 16:36Z Martin Walsh [reply to 1755150223.648559]: I was thinking abut the theme and how to reflect to all of the screens... What do you think for this direction? Of course the artwork is a draft and If we like the direction I need to improve it in terms of 1st - ai and 2nd - overpainting etc. Also the Ui part of the gameplay I'm not so sure about the representing of the secоnds and how they reflect on the combo... I think it's a bit complicated. 
+1755189890.333039 08-14 16:44Z Robert [reply to 1755150223.648559]: Haha I like the absolute literal interpretation of "boss arena"
+1755189894.726479 08-14 16:44Z Robert [reply to 1755150223.648559]: that's hilarious
+1755189917.499239 08-14 16:45Z Robert [reply to 1755150223.648559]: It sort of plays into throwing things at zombies right?
+1755189928.099059 08-14 16:45Z Robert [reply to 1755150223.648559]: It's like you attend a soccer game, fans get mad and they start throwing things at people on the field
+1755189972.773679 08-14 16:46Z Vincent Parker [reply to 1755150223.648559]: King Kong [USERNAME_49874]
+1755190024.266239 08-14 16:47Z Robert [reply to 1755150223.648559]: It's great as an icon on homescreen too, because it's visible with one large guy
+1755190670.896249 08-14 16:57Z Robert [reply to 1755150223.648559]: I almost want to make it so that as the boss is treking across the map, There are these humans just standing There doing their thing, and the boss just smacks them and sends them flying off screen
+1755190697.236519 08-14 16:58Z Robert [reply to 1755150223.648559]: they can be used as milestones on the battlefield, telling you how close it is getting to your cannon lol
+1755200558.570069 08-14 19:42Z Leonard Hayes: I just released IOS - <@EMPLOYEE_0008_SLACK_ID> can you check back in an hour to see if it got propagated to the app store? If so please Push retention campaigns on IOS UK Unity
+1755204202.481409 08-14 20:43Z Frederick Stone [thread 3 replies]: UK iOS retention campaigns are live.
+1755205843.216859 08-14 21:10Z Leonard Hayes [reply to 1755204202.481409]: new videos look good - thank you
+1755205857.038929 08-14 21:10Z Leonard Hayes [reply to 1755204202.481409]: I guess you are keeping some of the old ones for comparison
+1755207116.093239 08-14 21:31Z Frederick Stone [reply to 1755204202.481409]: For sure. Not going to just trust the new ones out perform without A/B testing them. :[USERNAME_25002]:
+1755216110.657459 08-15 00:01Z SLACK_BOT_0007_SLACK_ID [reply to 1754343622.133209]: 
+1755216119.769939 08-15 00:01Z SLACK_BOT_0007_SLACK_ID [reply to 1752700321.807199]: 
+1755216181.824519 08-15 00:03Z SLACK_BOT_0007_SLACK_ID [reply to 1752691462.159129]: 
+1755216256.843019 08-15 00:04Z None [reply to 1755142680.272679]: [PERSON_NAME_0055] created a high priority issue ZOM-485 Update endless wave algorithm beyond designer waves
+1755216377.228839 08-15 00:06Z None [reply to 1755150223.648559]: [PERSON_NAME_0055] created a new issue ZOM-487 Infinite HP Boss Arena
+1755296237.658959 08-15 22:17Z Oliver Brooks [thread 2 replies]: <@EMPLOYEE_0012_SLACK_ID> <@EMPLOYEE_0016_SLACK_ID> can you test on the last build if the scroll velocity on Zombie lane is better now?
+1755298731.246659 08-15 22:58Z Robert [reply to 1755296237.658959]: Better, but still a bit slow
+1755299526.119819 08-15 23:12Z Oliver Brooks [reply to 1755296237.658959]: increased a bit more
+1755305027.228279 08-16 00:43Z Calvin Price: Profile display progress from leaderboard. Thanks a lot <@EMPLOYEE_0031_SLACK_ID>!
+1755551322.323229 08-18 21:08Z Robert [thread 3 replies]: <@EMPLOYEE_0032_SLACK_ID> I built your branch and tested it on my phone. I think the stutter has improved when the items spawn during a refill. However There is still some stutter but I think it might be from the physics of the collision. So let's pair this with <@EMPLOYEE_0025_SLACK_ID>’s collider changes and see if that resolves the refill lag. However with that said, it's pretty much just down 
+1755555309.171479 08-18 22:15Z Robert [thread 2 replies]: <@EMPLOYEE_0032_SLACK_ID> Please implement this SFX for the combo multiplier. Starting from 1x to 15x... Once at 15x it just repeats the 15x sound until the multiplier resets
+1755555334.987249 08-18 22:15Z None [reply to 1755555309.171479]: [PERSON_NAME_0055] created a high priority issue ZOM-492 Implement SFX for combo multiplier from 1x to 15x
+1755556150.961999 08-18 22:29Z Robert [reply to 1755551322.323229]: Actually I think I found an enrage bug... After like 6-7 minutes, when item refill happens (new waves), existing monsters gets enrage removed:
+1755556165.179489 08-18 22:29Z Robert [reply to 1755551322.323229]: Also it seems like game still runs in the background on end game screen, I hear timer still happening and spawn still happening, slowing the game down
+1755592269.600129 08-19 08:31Z EMPLOYEE_0032_SLACK_ID [reply to 1755551322.323229]: thanks for the video, will continue checking cases w lots of monaters
+1755623329.318069 08-19 17:08Z Marcus Bennett: Trash bin bodyparts sprites updated to the new zombies. I did a PR just now so <@EMPLOYEE_0006_SLACK_ID> you dont need to worry about that no more :slightly_smiling_face:
+1755626810.462789 08-19 18:06Z Robert [thread 42 replies]: <@EMPLOYEE_0032_SLACK_ID> Fixed something with the monster, and the monster stuttering is gone I think, this is a game changing fix. Checkout my endless mode video where I lasted 12 minutes. In the past I would die to the lag and not to the monsters... Now I die to the monsters, because they all ran at me like Sonic the Hedgehog. There is still the bug with monsters being de-enraged though.
+1755626940.086789 08-19 18:09Z Vincent Parker [reply to 1755626810.462789]: it happens when the first 6 minutes completed and happens in [CREDIT_CARD_NUMBER_0233] etc
+1755626985.124829 08-19 18:09Z Vincent Parker [reply to 1755626810.462789]: 
+1755627155.478659 08-19 18:12Z Robert [reply to 1755626810.462789]: The de-enrage right?
+1755627173.640329 08-19 18:12Z Robert [reply to 1755626810.462789]: I think it's almost like every wave some new monsters are enraged, and the existing one has enraged removed
+1755627214.651869 08-19 18:13Z Robert [reply to 1755626810.462789]: At least the whole joke of "If the monsters don't kill you, the lag will" is a thing of the past
+1755627350.056659 08-19 18:15Z Arthur Blake [reply to 1755626810.462789]: <@EMPLOYEE_0016_SLACK_ID> should I pack up a build and ship?
+1755627712.988399 08-19 18:21Z Robert [reply to 1755626810.462789]: I think the monster fix + collider stuff
+1755627716.647909 08-19 18:21Z Robert [reply to 1755626810.462789]: would be huge
+1755627733.334259 08-19 18:22Z Robert [reply to 1755626810.462789]: I didn't see any other bugs, but I only played this one endless mode, didn't try the main game
+1755627736.800199 08-19 18:22Z Robert [reply to 1755626810.462789]: I think getting a test build out would be nice
+1755627740.663129 08-19 18:22Z Robert [reply to 1755626810.462789]: with [PERSON_NAME_0120] fix and everyone's fix
+1755628695.061649 08-19 18:38Z Arthur Blake [reply to 1755626810.462789]: Ok that build you just played had both monster fix + collider stuff
+1755628702.608859 08-19 18:38Z Arthur Blake [reply to 1755626810.462789]: are There other fixes you are thinking of?
+1755628727.331059 08-19 18:38Z Robert [reply to 1755626810.462789]: the item refill still causes a bit of lag
+1755628732.190839 08-19 18:38Z Robert [reply to 1755626810.462789]: But it's as good as we can do for now?
+1755628746.409889 08-19 18:39Z Arthur Blake [reply to 1755626810.462789]: yeah probably not a quick thing
+1755628784.891339 08-19 18:39Z Vincent Parker [reply to 1755626810.462789]: Maybe [PERSON_NAME_0022]’s fix on cpu gpu deformation?
+1755629067.267049 08-19 18:44Z Arthur Blake [reply to 1755626810.462789]: <@EMPLOYEE_0003_SLACK_ID> is that fix on the way?
+1755629173.428769 08-19 18:46Z Robert [reply to 1755626810.462789]: :+1:
+1755629439.079149 08-19 18:50Z Oliver Brooks [reply to 1755626810.462789]: its done in fact
+1755629442.276669 08-19 18:50Z Oliver Brooks [reply to 1755626810.462789]: let me merge it to main
+1755629494.604299 08-19 18:51Z Arthur Blake [reply to 1755626810.462789]: [USERNAME_4732]
+1755629533.846909 08-19 18:52Z Oliver Brooks [reply to 1755626810.462789]: merged
+1755629541.003539 08-19 18:52Z Oliver Brooks [reply to 1755626810.462789]: please let's have it tested before submitting
+1755629548.262059 08-19 18:52Z Oliver Brooks [reply to 1755626810.462789]: let me see build number
+1755629574.814919 08-19 18:52Z Oliver Brooks [reply to 1755626810.462789]: <http://blake.tplinkdns.com:9009/job/Match3D%20Android/1694/|#1694>
+1755629584.668129 08-19 18:53Z Oliver Brooks [reply to 1755626810.462789]: <@EMPLOYEE_0012_SLACK_ID> could you try to repro the flicker bug one last time?
+1755629587.037879 08-19 18:53Z Vincent Parker [reply to 1755626810.462789]: I cannot test it today, working on other stuff
+1755629613.949889 08-19 18:53Z Vincent Parker [reply to 1755626810.462789]: yeah I can check for the flickering but not as whole test I mean
+1755629629.296489 08-19 18:53Z Oliver Brooks [reply to 1755626810.462789]: and if I say please?
+1755629632.284969 08-19 18:53Z Oliver Brooks [reply to 1755626810.462789]: 
+1755629646.390079 08-19 18:54Z Arthur Blake [reply to 1755626810.462789]: haha. [PERSON_NAME_0050] will test flicker. The rest of us can do full test of app.
+1755629661.618349 08-19 18:54Z Oliver Brooks [reply to 1755626810.462789]: yeah just the flickering
+1755630734.287399 08-19 19:12Z Vincent Parker [reply to 1755626810.462789]: it doesn't flick
+1755630749.940019 08-19 19:12Z Oliver Brooks [reply to 1755626810.462789]: :expressionless: :pray:
+1755630760.793099 08-19 19:12Z Oliver Brooks [reply to 1755626810.462789]: thanks!
+1755630913.501449 08-19 19:15Z Arthur Blake [reply to 1755626810.462789]: yahoo
+1755631518.976179 08-19 19:25Z Vincent Parker [reply to 1755626810.462789]: but my shitty phone is still dead in algo levels
+1755631646.182019 08-19 19:27Z Oliver Brooks [reply to 1755626810.462789]: looks like too much ram use
+1755631679.686049 08-19 19:27Z Oliver Brooks [reply to 1755626810.462789]: even the rec is lagged so looks like memory running out
+1755635720.130209 08-19 20:35Z Robert [reply to 1755626810.462789]: Not sure why algo level in particular is laggy
+1755635937.317679 08-19 20:38Z Arthur Blake [reply to 1755626810.462789]: it looks like it is spawning a million zombies simultaneously
+1755668525.660029 08-20 05:42Z Robert [thread 3 replies]: <@EMPLOYEE_0032_SLACK_ID> Please change the display for splash damage in item profile to the actual numerical value like 1.2, 1.3, 2.2, etc. Let's not do the whole small+, small, large, large+, it just doesn't scale well
+1755668550.642879 08-20 05:42Z None [reply to 1755668525.660029]: [PERSON_NAME_0055] created a new issue ZOM-494 Change splash damage display to numerical values in item profile
+1755669273.523609 08-20 05:54Z Robert [thread 8 replies]: <@EMPLOYEE_0025_SLACK_ID> The design team agrees that if we can simulate behind the scenes or fast simulate a level using the bot without actually having to watch it play, we can make levels 2x as fast.
+1755669306.985239 08-20 05:55Z None [reply to 1755669273.523609]: [PERSON_NAME_0055] created a high priority issue ZOM-495 Simulate levels faster using bot without watching gameplay (Background)
+1755669315.327579 08-20 05:55Z Robert [reply to 1755669273.523609]: This will be a complete game changer
+1755669431.580059 08-20 05:57Z Robert [reply to 1755669273.523609]: Output data needed are just the basics like: Win/Lose HP left Monsters killed Total damage dealt by player Total damage dealt by monsters DURATION OF LEVEL If we are simulating this numerous time, we can display the average instead. We probably need to fix the issue of how the bot will get stuck and stop clicking on things with certain objects (Bow is a good example I believe)
+1755669545.147849 08-20 05:59Z Robert [reply to 1755669273.523609]: [PERSON_NAME_23219] wrecks the click bot :[USERNAME_25002]:
+1755670110.330209 08-20 06:08Z Robert [thread 18 replies]: <@EMPLOYEE_0032_SLACK_ID> There is one item that only deals ANY damage 50% of the time (Gift box) We need to update the item profile to support this
+1755670141.399789 08-20 06:09Z Robert [reply to 1755670110.330209]: 
+1755670161.260509 08-20 06:09Z Robert [reply to 1755670110.330209]: Tool tip language here:
+1755670191.635309 08-20 06:09Z None [reply to 1755670110.330209]: [PERSON_NAME_0055] created a high priority issue ZOM-496 Update item profile for Gift box (or other similar items) to reflect 50% damage chance
+1755670202.913459 08-20 06:10Z Robert [reply to 1755670110.330209]: If an item has this property, it should ALWAYS be the first stat displayed and in bold red
+1755689919.832249 08-20 11:38Z EMPLOYEE_0032_SLACK_ID [reply to 1755670110.330209]: <@EMPLOYEE_0016_SLACK_ID> by ANY damage u mean impact damage? what stat u mean?
+1755689999.041009 08-20 11:39Z EMPLOYEE_0032_SLACK_ID [reply to 1755670110.330209]: or u mean if this item has impact damage, poison, splash damage and other types of damage stats, they should be all connected to this property? if this, we do not support it out of the box for our effects
+1755690028.982949 08-20 11:40Z EMPLOYEE_0032_SLACK_ID [reply to 1755668525.660029]: fixed
+1755705108.228279 08-20 15:51Z Robert [reply to 1755670110.330209]: Yes, chance to activate impact damage
+1755705136.160709 08-20 15:52Z Robert [reply to 1755670110.330209]: Are you saying it's possible to do a critical damage if this impact damage isnt activated?
+1755705149.796859 08-20 15:52Z Robert [reply to 1755670110.330209]: I can remove thr DOTS (There is none for gift)
+1755705183.296219 08-20 15:53Z EMPLOYEE_0032_SLACK_ID [reply to 1755670110.330209]: i need to check one sec
+1755705293.759879 08-20 15:54Z EMPLOYEE_0032_SLACK_ID [reply to 1755670110.330209]: should be okay, critical won't activate if damage is 0
+1755705370.323819 08-20 15:56Z Robert [reply to 1755670110.330209]: Yeah I figured
+1755706997.011589 08-20 16:23Z EMPLOYEE_0032_SLACK_ID [reply to 1755670110.330209]: like that?
+1755712283.429929 08-20 17:51Z Robert [reply to 1755669273.523609]: <@EMPLOYEE_0025_SLACK_ID> The design team said can we have the option like a slider that changes the simulation speed from 1x -&gt; 10x? Sometimes we want it fast, sometimes we want it slow, you know.. depends on how the mood strikes...
+1755712310.637989 08-20 17:51Z None [reply to 1755669273.523609]: [PERSON_NAME_0055] created a high priority issue ZOM-497 Add slider option to change simulation speed from 1x to 10x
+1755712371.230599 08-20 17:52Z Robert [reply to 1755670110.330209]: Yes
+1755712390.781519 08-20 17:53Z Robert [reply to 1755670110.330209]: weird how the "50%" is smaller font than everything else in the tooltip
+1755712908.256599 08-20 18:01Z Arthur Blake [reply to 1755669273.523609]: Ok. Right now we have 1x or 10x button. But I can add a slider too, <@EMPLOYEE_0016_SLACK_ID>
+1755783883.410369 08-21 13:44Z EMPLOYEE_0032_SLACK_ID [reply to 1755670110.330209]: numbers are smaller in the font asset itself. in Figma we use different font sizes in one label (so numbers like 50 size, text is 40) so it looks good but it’s a mockup, in Unity we generate these labels in runtime and don’t have ability to make different sizes
+1755783910.882409 08-21 13:45Z EMPLOYEE_0032_SLACK_ID [reply to 1755670110.330209]: the way to fix it is to find a font where numbers and letters have unigorm sizes
+1755827714.908899 08-22 01:55Z Robert [thread 6 replies]: <@EMPLOYEE_0032_SLACK_ID> Can you do me a favor and check the branch [PERSON_NAME_0050]/pool-resizing ? I manage to chatgpt code a bunch of stuff in monster.cs where when the monster die it no longer relies on the animator to perform a death animation, but instead just shuts it off. And now we assign a VFX prefab to the monster prefab on death, with some collision anchors to provide reference to t
+1755827803.185859 08-22 01:56Z Robert [reply to 1755827714.908899]: So death should be clean now. When <@EMPLOYEE_0002_SLACK_ID> gets back he can polish these VFX and maybe port over the one he made for the bike kid so we can assign a special explosion one for him instead of the generic zombie goo which I found in our project. Can you [PERSON_NAME_0120] please test this with the pooling fix you had and see if this solves the other problem you saw when you fixed th
+1755828055.696839 08-22 02:00Z Robert [reply to 1755827714.908899]: Oh and when you test, the only monsters that I have set proper VFX offset anchor is the ones with "[USERNAME_45780]" in the monster prefab name. The rest will have the death VFX play way lower than they should.
+1755828078.292789 08-22 02:01Z Robert [reply to 1755827714.908899]: If this fixes our problem, I'll rollout the anchors for all the monsters.
+1755853096.122499 08-22 08:58Z EMPLOYEE_0032_SLACK_ID [reply to 1755827714.908899]: hey thanx, i will check (i made this yesterday and monsters doesn't reset some of their animations except death (like electicity), i wanna check what is going on here)
+1755856604.902979 08-22 09:56Z EMPLOYEE_0032_SLACK_ID [reply to 1755827714.908899]: no man sorry but this chat made some weird stuff
+1755856612.912579 08-22 09:56Z EMPLOYEE_0032_SLACK_ID [reply to 1755827714.908899]: i won't Push it
+1755857983.699359 08-22 10:19Z SLACK_BOT_0007_SLACK_ID [reply to 1755555309.171479]: 
+1755860380.806869 08-22 10:59Z SLACK_BOT_0007_SLACK_ID [reply to 1755668525.660029]: 
+1756123384.730399 08-25 12:03Z SLACK_BOT_0007_SLACK_ID [reply to 1755107922.240269]: 
+1756161484.791409 08-25 22:38Z Owen Baker [thread 1 replies]: <@EMPLOYEE_0031_SLACK_ID> I created a doc for the endpoints I'm going to need for CollectAndWin event, please give it a look when you have a chance:
+1756161491.600019 08-25 22:38Z Owen Baker [reply to 1756161484.791409]: <https://docs.google.com/document/d/1ZCd1HTJmzlZ4KzXUydN9PB7u6yaXxXN1eqXGAlo4u3A/edit?tab=t.0|Collect &amp; Win Endpoints - Google Docs>
+1756230502.647429 08-26 17:48Z Robert [thread 3 replies]: <@EMPLOYEE_0012_SLACK_ID> for some strange reason, NONE of the items for me are clickable....
+1756230737.454929 08-26 17:52Z Robert [thread 1 replies]: I'm getting these error, how do I fix this? I think it's making my items unclickable
+1756230880.522969 08-26 17:54Z Vincent Parker [reply to 1756230502.647429]: which branch
+1756230924.248959 08-26 17:55Z Robert [reply to 1756230737.454929]: <@EMPLOYEE_0003_SLACK_ID> How do I do this switch over to GPU deformation support?
+1756231057.175749 08-26 17:57Z Vincent Parker [reply to 1756230502.647429]: try clearing player prefs
+1756231133.590739 08-26 17:58Z Vincent Parker [reply to 1756230502.647429]: probably items you selected before are not the part of the available card objects anymore
+1756400115.920179 08-28 16:55Z Robert: <@EMPLOYEE_0003_SLACK_ID> <https://linear.app/harmonygames-games/issue/ZOM-509/ability-to-create-trophy-path-container-with-specific-headlines-and>
+1756486292.865929 08-29 16:51Z Julia Lawson: <https://docs.google.com/document/d/1vwujscZTr_uahqBKffkiFTnecYq2CtdAQdptnEyGxik/edit?tab=t.0> <@EMPLOYEE_0006_SLACK_ID> [PERSON_NAME_0092] said he explained more in the channel. If you still have questions, let us know

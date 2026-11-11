@@ -1,6 +1,6 @@
 # 01 — Scenario Design (Playbook) — HarmonyGames · Spec V2 · effective profile (extreme by default)
 
-> Command: `/create-scenario` (`--revise` after a `/create-hardening` MODE B report) · Writes: `task_inputs/Working_Files/01_Scenario_Design.md` + the draft manifest `task_inputs/Working_Files/01_Hardness_Manifest.draft.json` + the gradable surface `task_inputs/Working_Files/01_Gradable_Surface.json` · Checks: `tools/hardness_gate.py --design`, `tools/gradable_surface.py validate`, `tools/redteam_review.py --mode redteam --dual`, **`tools/stage_gate.py scenario` (blocking)**; advisory (UNCALIBRATED): `tools/trap_liveness.py --design`, `tools/hardness_forecast.py forecast --design --preregister` · Next: `/create-injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §4.4
+> Command: `/create-scenario` (`--revise` after a `/create-hardening` MODE B report) · Writes: `<task_dir>/Working_Files/01_Scenario_Design.md` + the draft manifest `<task_dir>/Working_Files/01_Hardness_Manifest.draft.json` + the gradable surface `<task_dir>/Working_Files/01_Gradable_Surface.json` · Checks: `tools/hardness_gate.py --design`, `tools/gradable_surface.py validate`, `tools/redteam_review.py --mode redteam --dual`, **`tools/stage_gate.py scenario` (blocking)**; advisory (UNCALIBRATED): `tools/trap_liveness.py --design`, `tools/hardness_forecast.py forecast --design --preregister` · Next: `/create-injection` · Read first: `setup/GEN_EXECUTION.md`, `references/Hardness_Mastery.md`, `plans/Fold_Hardening_Into_Scenario_And_Injection.md` §4.4
 
 **Profile.** S0 resolves the task's `effective_profile` once and writes it into the draft manifest
 (Long Horizon → `extreme`; Normal Horizon → `normal`, or `extreme` only with a recorded
@@ -37,7 +37,7 @@ precedence over the older V2 reference documents in `references/Docs/`; local au
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Inputs
-- `task_inputs/00_Assigments.md` — persona, business function, competency, task skill, horizon.
+- `<task_dir>/00_Assigments.md` — persona, business function, competency, task skill, horizon.
 - `references/Hardness_Mastery.md` (techniques + evidence), `references/Scenario_Atlas.md`
   (verified storylines with per-service anchors), `references/Ask_Carriers.md` (where asks and
   facts can live; per-item call costs; bulk shortcuts), `references/Universe_Brief.md`,
@@ -45,12 +45,12 @@ Inputs
 - The universe through `Task_Authoring/tools/hg.py search` / `tools/hg.py records` (GEN_EXECUTION §4).
 
 Output
-- `task_inputs/Working_Files/01_Scenario_Design.md` — the design dossier (template at the end).
-- `task_inputs/Working_Files/01_Hardness_Manifest.draft.json` — the draft manifest (`references/Hardness_Manifest_Spec.md`),
+- `<task_dir>/Working_Files/01_Scenario_Design.md` — the design dossier (template at the end).
+- `<task_dir>/Working_Files/01_Hardness_Manifest.draft.json` — the draft manifest (`references/Hardness_Manifest_Spec.md`),
   with ids minted in S2 (no placeholders: the stage gate rejects template slots). `/create-injection` writes
   the final `01_Hardness_Manifest.json`, keeping every draft id or recording the change in `design_delta`.
   It carries `mechanism_portfolio[]` (S5a): one entry per solver rule.
-- `task_inputs/Working_Files/01_Gradable_Surface.json` — the fact slots the deliverables make gradable (S6b). This
+- `<task_dir>/Working_Files/01_Gradable_Surface.json` — the fact slots the deliverables make gradable (S6b). This
   stage owns the file; `/create-injection` never rewrites it (it records expected values and `flipped_by` in its
   preflight report instead, so this stage's certificate stays current).
 
@@ -92,6 +92,17 @@ Output
 Advisory and UNCALIBRATED (each liveness flag still needs a written disposition): liveness flags (S5b) and the prior
 forecast (S9b). They inform the design; they never block it.
 
+14. **Fit census read** (`fit.census`): `Working_Files/00_Assignment_Fit.json` exists for this assignment and its
+    verdict chose the route (S0). A task is never skipped and its persona never changed; `NO NATURAL COHORT` means the
+    scenario is built by injection (S2x).
+15. **Difficulty budget holds** (`budget.design`, `tools/difficulty_budget.py check`): two anchors from two causes
+    carrying the mode's loss, at least four independent coin-flip units, and the average, full-pass count and
+    failure-signature gate passing at both ends of the find-rate ranges (S5c).
+
+Gates 14 and 15 are first-pass checks (`tools/first_pass_controls.py modes`). Each prints WARN while its mode in
+`references/first_pass_policy.json` is `warn`, and blocks once the owner sets it to `block`. Treat a WARN from them as
+a defect to fix before `/create-injection`.
+
 ## Procedure
 
 ### S0r — Revision intake (`--revise`; only when a `/create-hardening` MODE B report exists for this task)
@@ -127,6 +138,23 @@ This step consumes that output and owns the decisions:
 - [ ] **Theme screen.** No bio-adjacent theme (zombies, infection, outbreaks, contamination) in the storyline or the
       seeded text. A safety false positive switched the model in 8 of 12 Season Pass runs, and under V3 any non-Opus-5.5
       run is invalid (`Hardness_Mastery.md` §12).
+- [ ] **Fit census first.** Read `Working_Files/00_Assignment_Fit.json` (`/create-goal` writes it; if it is
+      missing run `python3 Task_Authoring/tools/assignment_fit.py census --task-dir <task_dir> --write`). Record its
+      verdict in section 0 and follow it:
+      - `FIT`: design on the base cohort it names.
+      - `FIT WITH LIMITS`: each limit is a design constraint. A service flagged THIN for this persona holds no anchor
+        and no coin-flip unit (a search there returns so few results that every run reads them all).
+      - `NO NATURAL COHORT`: base holds no source-defined set of the cohort size for this persona and competency.
+        Do not spend design time looking for one, and do not ask for another persona or task: build the scenario by
+        injection (S2x).
+      - An `open_population` flag means the natural question has no closed membership rule in base. Write the closed
+        rule and list the full population (the census) before designing anything on it (injection playbook, coherence
+        sweep); an open set cannot be patched item by item later.
+- [ ] **Persona card and base surface.** Read `references/persona_cards/<universe>/<persona_key>.json`: the cohorts
+      and storylines earlier tasks for this persona used (pick a different one; a repeat scores as the same scenario
+      on the platform's similarity check) and the base issues they met. Pick carriers from
+      `references/base_surface_map.json`: base Linear has no comments and base PR conversation comments are bots, so
+      a read of those returns nothing and is left out of the call budget; Snowflake and Confluence cannot be injected.
 - [ ] Persona reach census: `python3 Task_Authoring/tools/persona_view.py reach <persona> --top 10`. Paste the
       output verbatim in section 0; the gate re-runs it and compares the channel and thread counts. Add the
       Linear/GitHub/Trello identities from `python3 Task_Authoring/tools/entity.py resolve <persona name>`
@@ -240,6 +268,39 @@ This step consumes that output and owns the decisions:
 - [ ] **Mint ids now** (collision-checked with `tools/hg.py search lookup`), not placeholders, so
       the final manifest keeps every draft id; an id that must change later goes into the final
       manifest's `design_delta` with its reason.
+
+### S2x — Injection-built scenario (only when the fit census says `NO NATURAL COHORT`)
+The task is completed for its assigned persona. The injected data alone must produce the failure the assigned mode
+requires, and must be large enough and consistent with base.
+- [ ] **Design backwards from the budget.** Start from S5c: two anchors carrying the mode's loss from two causes, and
+      four or more coin-flip units. Then design the cohort and the containers that keep those units off the read
+      path. Size the injection by what the budget and the tool-call floor need, not by a row count.
+- [ ] **A cohort the sources define.** The injected cohort is a real working set for this persona and competency (a
+      campaign calendar, a vendor list, a release checklist). One injected record defines its membership with a closed
+      rule, and every member has its own records to read. `/prompt` accepts repeated calls that "answer distinct
+      required questions over a source-defined cohort" (`Evals/1_Prompt_Eval.md`, anti-inflation); a record added only
+      to raise the call count fails that check and stays out.
+- [ ] **Extend reach into base, then hide there.** A few injected rows give the persona access to dense base
+      containers: a channel join, a share of a base Drive file, a calendar invite. Deciding records then sit under
+      unrelated base parents in those containers. Rejoining a channel the persona had left passed `/injection` and
+      `/prompt` (Owen task); a first-time join has no stored precedent, so confirm it in the first pre-check. Linear
+      and GitHub need no extension: their reads are not scoped to the persona.
+- [ ] **A haystack around every unit.** Each anchor and coin-flip unit needs enough similar records around it that
+      the plain search does not surface it (`tools/path_exposure.py`, reason `thin_search`). Where base does not
+      supply them, the injection does: routine traffic from the same senders in the same containers, dated across the
+      window, each with a reason to exist in the storyline.
+- [ ] **Aligned with base by construction.** Write the cohort as a spec and render it with the `generators/` library
+      (`python3 Task_Authoring/generators/render.py validate|render --task-dir <task_dir>`), not as hand-typed rows.
+      The library takes values by reference from base, enforces date order and cited values, and checks per-service
+      rules on the rendered bytes. `generators/README.md` lists the services it emits.
+- [ ] **Limits.** Snowflake and Confluence cannot be injected. Injected Linear comments and PR conversation comments
+      stand alone, because base has none written by people. Every injected record is surface for a coherence finding,
+      which fails on any inconsistency whoever introduced it, so the fork sweep and the sibling sweep run on the whole
+      injection. Record the injection's size and its review rounds in the task README: no size limit is known yet.
+- [ ] **Proof before the platform.** `difficulty_budget.py check` and `path_exposure.py check` on the injected
+      universe, then a cold-solver rehearsal (a subagent given only the prompt and local search over base plus the
+      injected rows, in a per-task scratch copy; never recorded as a platform verdict), because all of this task's
+      difficulty is authored.
 
 ### S3 — Hidden authorities (A12)
 - [ ] 2–4 authorities: cohort rule · classification rule · destination/format rule ·
@@ -390,16 +451,62 @@ This step consumes that output and owns the decisions:
       `source`, `signature`. `/create-injection` S4b writes the solver itself (`tools/oracle_kit.py` contract).
 
 ### S5b — Design liveness flags (advisory, UNCALIBRATED)
-- [ ] `python3 Task_Authoring/tools/trap_liveness.py --design --task-dir Task_Authoring/task_inputs` (plan §7.3):
+- [ ] `python3 Task_Authoring/tools/trap_liveness.py --design --task-dir <task_dir>` (plan §7.3):
       breadcrumb collision, self-advertising decoy, order (the correction sits in the hub thread), rule placement. No
       SQL exists yet, so only the manifest-structure flags can fire; injection S5c re-runs it on the SQL.
 - [ ] Write a disposition for every flag in section 5. Lexical warnings, not proof: redesign the difficulty, never
       remove a fairness link.
-- [ ] `python3 -B Task_Authoring/tools/hardness_v2_check.py --design --task-dir Task_Authoring/task_inputs` (Hardness
+- [ ] `python3 -B Task_Authoring/tools/hardness_v2_check.py --design --task-dir <task_dir>` (Hardness
       v2 Part 7 self-checks: SAME_PLACE, DONE_CHECK, TWO_DECISIONS, DECISION_FLIP, INPUT_CHECK, FILTER_CHECK,
       RULE_IN_PROMPT). Without SQL, records that only the overlay can place report UNRESOLVED; injection re-runs it on
       the SQL. Write a disposition for every FLAG and UNRESOLVED in section 5; a FLAG is answered by moving evidence or
       changing the work, never by raising a weight (`09_Rubric_Writing.md` gate 8).
+
+### S5c — Difficulty budget (`Working_Files/01_Difficulty_Budget.json`; gate `budget.design`)
+The S5 counts and the S5a arithmetic do not decide whether a baseline passes. In 14 completed tasks the model lost
+points only on records it never opened, and judgement traps were resisted in every run. The budget states which
+records those are and checks that they can pass all the baseline gates together. Where S5a and this step differ, this
+step wins.
+- [ ] **One unit per planned miss.** For each: `role`, the `carrier` (where the deciding record sits), the `decider`
+      (its record id, service and container), the retrieval `habit` that would surface it (service + read action), a
+      `find_rate` range, and the surface `rows` it flips with their weights. Field definitions and the carrier names
+      are in the tool's help and in `references/first_pass_policy.json`.
+      - **Anchors** (records the model almost never opens): at least two, from two different causes, together
+        carrying the mode's loss plus two points (Easy 10 %, Medium 15 %, Hard 30 % — the Hard figure is not stated in
+        any platform report), each under 30 % of the weight. They make the single `/hardness` run fail without a
+        narrow miss.
+      - **Coin-flip units** (records about half the runs open; find rate inside 0.35–0.65): at least **four**, each
+        behind a different retrieval habit. Two units behind one habit are one coin flip. Four independent units
+        pass the failure-signature gate (largest signature at most 50 % of failing runs — the gate the client checks
+        most) about 98 times in 100, and still pass when one run errors; two units fail it one time in four.
+      - Each anchor and coin-flip unit flips at least two rows, one of weight 5.
+      - **Realism units**: judgement traps stay allowed for realism and carry no budget weight.
+- [ ] **Carriers.** Pick each deciding record's carrier from the measured table:
+      `python3 Task_Authoring/tools/carrier_backfill.py show` (opened / runs per carrier over the archived tasks;
+      `references/carrier_find_rates.json`). Take each unit's find-rate range from it and name the basis.
+      - **Anchors** (opened in about a fifth of runs or fewer): a record in a service the task never otherwise
+        touches (2 of 27), a DM with someone other than the rule owner (6 of 46), a ticket that does not look like
+        part of the set (6 of 33), a de-named root record (4 of 21), an old base record nothing points to (0 of 14).
+      - **Coin-flip units** (opened in roughly 35–65 % of runs): an alias such as a vendor mail under the game's old
+        name, a named reply under an unrelated parent post, an inline PR review comment, an item outside the obvious
+        filter, a root post in a channel nothing names.
+      - **Not a miss:** a reply under an unrelated parent is opened about as often as not when it names the item (16 of
+        26); de-name it to make it an anchor (0 of 7). A de-named correction reply was opened in 8 of 26 runs. A record
+        that names the item is found by one search (22 of 24), and a comment on the item itself every time (7 of 7).
+      - Decoys, same-container supersession, stale summaries, second tabs, checklists, volume and arithmetic with a
+        tie-out have no hidden deciding record and carry no budget weight. The carrier lists the check accepts are in
+        `references/first_pass_policy.json` (`budget.carriers_that_miss`, `budget.carriers_without_loss`).
+- [ ] `python3 Task_Authoring/tools/difficulty_budget.py template --task-dir <task_dir>` prints a starter file from
+      the draft manifest and the surface. Fill it, save it as `Working_Files/01_Difficulty_Budget.json`, then
+      `python3 Task_Authoring/tools/difficulty_budget.py check --task-dir <task_dir>` → PASS. It simulates six runs
+      at both ends of the find-rate ranges and requires the average, the full-pass count and the signature gate to
+      pass at both, with the signature gate holding when one run errors.
+- [ ] **Spread second.** The check prints the chance that the six-run SD lands in 0.1–0.3 and warns below 0.7. Put as
+      much weight on coin-flip units as the rubric can honestly carry (about 60 % reaches 0.8), then record the
+      printed chance in section 6. A spread miss on a baseline that passes every other gate is reported to the owner;
+      it is not by itself a reason for a universe revision.
+- [ ] Paste `python3 Task_Authoring/tools/difficulty_budget.py table --task-dir <task_dir>` into section 6. Set
+      `design_id` (`D1`); change it only when the scenario is redesigned here, never on a one-record revision.
 
 ### S6 — Deliverables and writes
 - [ ] One register/record (exact totals, checked-absence states) + 3–6 dependent writes over
@@ -414,7 +521,7 @@ This step consumes that output and owns the decisions:
       a `work_reason`, class (direct · aggregate · write_content · delivery), role (sample · exception · volume ·
       core) and the mechanisms that can flip it.
 - [ ] Validate it against the V3 rubric rules:
-      `python3 Task_Authoring/tools/gradable_surface.py validate --task-dir Task_Authoring/task_inputs` → PASS
+      `python3 Task_Authoring/tools/gradable_surface.py validate --task-dir <task_dir>` → PASS
       (work-kind weights; ≤ 5 samples per group plus a volume slot; exception slots only for members an incorporated
       authority singles out — `singled_out_by`; no fact in ≥ 3 slots). The mechanism share is reported, never gated.
 - [ ] Geometry needs room: the slots the designed mechanisms can flip must carry more than 1 − cap of the weight
@@ -498,7 +605,7 @@ This step consumes that output and owns the decisions:
       say what is seeded, or `<service>: none` with the reason.
 
 ### S9 — Self-test and red team
-- [ ] `python3 Task_Authoring/tools/hardness_gate.py Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.draft.json --design`
+- [ ] `python3 Task_Authoring/tools/hardness_gate.py <task_dir>/Working_Files/01_Hardness_Manifest.draft.json --design`
       → PASS (the profile comes from the manifest's `effective_profile`).
 - [ ] **Lazy-solver pass**: walk the design as an agent that issues one broad search per
       service, reads first hits, never opens threads/replies, stops at the first conclusion,
@@ -524,7 +631,7 @@ This step consumes that output and owns the decisions:
          a brief is a lead, not evidence).
       5. Paste `hardness_gate.py --design` output verbatim; record anything unresolved by name.
 - [ ] **Dual red team (required):**
-      `python3 Task_Authoring/tools/redteam_review.py --mode redteam --dual --in Task_Authoring/task_inputs/Working_Files/01_Scenario_Design.md --in Task_Authoring/task_inputs/Working_Files/01_Hardness_Manifest.draft.json --out Task_Authoring/task_inputs/Working_Files/01b_Redteam_Review.md`
+      `python3 Task_Authoring/tools/redteam_review.py --mode redteam --dual --in <task_dir>/Working_Files/01_Scenario_Design.md --in <task_dir>/Working_Files/01_Hardness_Manifest.draft.json --out <task_dir>/Working_Files/01b_Redteam_Review.md`
       (two independent reviewers → `01b_Redteam_Review.md` and `01b_Redteam_Review.second.md`). Address every finding of both
       (fix, or rebut with a record pointer) in section 13. `REDTEAM_*` is a precondition: a reviews file that only holds
       the tool's error (`set REDTEAM_MODEL or pass --model`, an HTTP error) is not a review. If the proxy cannot run,
@@ -532,10 +639,10 @@ This step consumes that output and owns the decisions:
       `RED TEAM FALLBACK: <who reviewed the design instead, how, and why>`, in section 13. Without one of the two the
       gate blocks (`tool.redteam_dual`): no silent skip.
 - [ ] **S9b Prior forecast (advisory, UNCALIBRATED, pre-registered):**
-      `python3 Task_Authoring/tools/hardness_forecast.py forecast --design --task-dir Task_Authoring/task_inputs --model <baseline model> --mechanisms <portfolio ids> --preregister`
+      `python3 Task_Authoring/tools/hardness_forecast.py forecast --design --task-dir <task_dir> --model <baseline model> --mechanisms <portfolio ids> --preregister`
       (the surface's declared `mechanisms` stand in for the solver). Paste the ledger id (`hev_…`) and the reported
       P(all gates) range in section 12. It informs S5a; it never blocks.
-- [ ] **Stage gate (blocking):** `python3 Task_Authoring/tools/stage_gate.py scenario Task_Authoring/task_inputs --paste`.
+- [ ] **Stage gate (blocking):** `python3 Task_Authoring/tools/stage_gate.py scenario <task_dir> --paste`.
       Handoff is blocked until it prints `STAGE GATE scenario: PASS`; `--paste` writes that output into the
       Self-review, where `/create-injection`'s gate looks for it (its digests go stale on any later edit).
 
@@ -555,7 +662,7 @@ record id or pointer):
 ## 3 Hidden authorities   (name, home, decoy, governs, findability proof)
 ## 4 Delegation lattice   (anchors + anchor-name table, hub, fragments, amendments, distractors, incorporation table with verbatim delegation quotes)
 ## 5 Chains and trap register   (family, records, requirement, wrong reading, resolver, discovery order)
-## 6 Failure-diversity plan
+## 6 Failure-diversity plan   (+ the difficulty budget table from `difficulty_budget.py table`, the check's verdict and the printed spread chance)
 ## 7 Deliverables and dependent writes
 ## 8 Service role map   (13 rows: role, load-bearing fact/write, carrier ●/○)
 ## 9 Call budget   (phase × service)
@@ -576,7 +683,7 @@ verbatim; an `Unresolved:` line. Under `--revise` the minimum rises to (LANDED +
 
 ## Deliver
 
-Run `python3 Task_Authoring/tools/stage_gate.py scenario Task_Authoring/task_inputs --paste`; handoff is blocked
+Run `python3 Task_Authoring/tools/stage_gate.py scenario <task_dir> --paste`; handoff is blocked
 until it prints PASS, and its output sits in the Self-review. Report the storyline, services (natural vs
 injected), cohort × surfaces, authorities, chains, the mechanism portfolio with each prior's record ids, the
 gradable surface's mechanism share (reported, not gated), budget total, the `hardness_gate` and `stage_gate` verdicts

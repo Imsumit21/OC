@@ -2,7 +2,7 @@ import unittest
 
 from generators.core import sqlvalue
 from generators.core.values import SpecError
-from generators.services import linear, registry
+from generators.services import gmail, linear, registry, slack
 
 
 class ConventionsTest(unittest.TestCase):
@@ -48,12 +48,50 @@ class ConventionsTest(unittest.TestCase):
         with self.assertRaisesRegex(SpecError, "installed emitter"):
             registry.emitter("linear", "linear/0.9")
         with self.assertRaisesRegex(SpecError, "no emitter"):
-            registry.emitter("gmail", "gmail/1.0")
+            registry.emitter("gcal", "gcal/1.0")
 
     def test_slack_thread_parent_convention_recorded(self):
         entry = self.conv["slack.thread_parent_id"]
         self.assertEqual(entry["status"], "platform-verified")
         self.assertEqual(entry["value"], "row id")
+
+    def test_slack_constants_equal_documented_values(self):
+        c = self.conv
+        self.assertEqual(c["slack.message.ts"]["value"], slack.TS_LAST_DIGIT)
+        self.assertEqual(c["slack.message.shape"]["value"], slack.MESSAGE_TYPE)
+        self.assertEqual(c["slack.membership.event"]["value"], slack.JOIN_TEXT)
+        self.assertEqual(c["slack.thread.counters"]["value"], ", ".join(slack.PARENT_UPDATE_COLUMNS))
+        self.assertIn(str(slack.ID_LENGTH), c["slack.message.id"]["value"])
+        self.assertEqual(c["slack.membership.first_join"]["status"], "unverified")
+        for cid in slack.CONVENTIONS:
+            self.assertIn(c[cid]["service"], ("slack", "*"), cid)
+
+    def test_slack_first_join_needs_override(self):
+        with self.assertRaisesRegex(SpecError, "unverified convention"):
+            registry.conventions_used({"slack.channel_first_join"}, self.conv, {})
+        used = registry.conventions_used({"slack.message", "slack.channel_join"}, self.conv, {})
+        self.assertNotIn("slack.membership.first_join", [u["id"] for u in used])
+        self.assertIn("slack.membership.event", [u["id"] for u in used])
+
+    def test_gmail_constants_equal_documented_values(self):
+        c = self.conv
+        self.assertEqual(c["gmail.snippet"]["value"], str(gmail.SNIPPET_CHARS))
+        self.assertEqual(c["gmail.headers"]["value"], ", ".join(gmail.HEADER_ORDER))
+        self.assertEqual(c["gmail.date"]["value"], gmail.DEFAULT_OFFSET)
+        self.assertEqual(c["gmail.message.shape"]["value"], f"{len(gmail.MESSAGE_COLUMNS)} columns")
+        self.assertEqual(c["gmail.body.crlf"]["value"], "\r\n")
+        self.assertEqual(c["gmail.labels"]["value"],
+                         " | ".join(", ".join(gmail.DEFAULT_LABELS[r]) for r in ("sender", "recipient", "self")))
+        for cid in gmail.CONVENTIONS:
+            self.assertIn(c[cid]["service"], ("gmail", "*"), cid)
+            self.assertNotEqual(c[cid]["status"], "unverified", cid)       # a Gmail render needs no override
+
+    def test_haystack_kinds(self):
+        self.assertEqual(registry.haystack_kinds()["slack.haystack"], slack)
+        self.assertEqual(registry.haystack_kinds()["gmail.haystack"], gmail)
+        plain = {"key": "A", "kind": "linear.comment", "fields": {}}
+        self.assertEqual(registry.expand_record("records[0]", plain), [plain])
+        self.assertEqual(registry.expand_record("records[0]", "not an object"), ["not an object"])
 
 
 if __name__ == "__main__":

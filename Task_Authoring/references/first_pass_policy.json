@@ -1,0 +1,88 @@
+{
+  "schema": "first-pass-policy-v1",
+  "plan": "Task_Authoring/Audit_2026-11-10_First_Pass_Root_Cause/PLAN.md",
+  "about": "Thresholds and gate modes for the first-pass checks. A check in mode 'warn' prints a WARN line and never blocks; 'block' fails the stage; 'off' is not run. A check moves from warn to block only after its backtest on the archived tasks passes and one task has run with it in warn mode (plan section 5). The mode is one word here; no tool edit is needed to change it.",
+  "modes": {
+    "task.folder": "warn",
+    "fit.census": "warn",
+    "budget.design": "warn",
+    "budget.injection": "warn",
+    "budget.rubric": "warn",
+    "exposure.units": "warn",
+    "sweep.forks": "warn",
+    "skeleton.present": "warn",
+    "rubric.eval_lint": "warn",
+    "rubric.delta_lint": "warn",
+    "oe.qualifiers": "warn",
+    "prompt.assignment_fit": "warn",
+    "precheck.stop_rule": "warn",
+    "precheck.budget_outcome": "warn"
+  },
+  "budget": {
+    "mode_loss": {
+      "easy": 0.1,
+      "medium": 0.15,
+      "hard": 0.3
+    },
+    "mode_loss_basis": "easy and medium: the /hardness failed-share lines in platform reports since 2026-11-03; hard: no platform report states it, so 1 - cap is used and marked unverified",
+    "anchor_margin": 0.02,
+    "anchor_max_share": 0.3,
+    "anchor_min_causes": 2,
+    "anchor_find_rate_max": 0.2,
+    "variance_min_units": 4,
+    "variance_find_rate": [
+      0.35,
+      0.65
+    ],
+    "unit_min_rows": 2,
+    "unit_needs_weight5": true,
+    "pass_probability": 0.9,
+    "spread_band": [
+      0.1,
+      0.3
+    ],
+    "spread_warn_below": 0.7,
+    "baseline_runs": 6,
+    "runs_with_one_error": 5,
+    "trials": 20000,
+    "seed": 20261110,
+    "carriers_that_miss": [
+      "de_named_correction_reply",
+      "dm_with_non_owner",
+      "non_set_ticket",
+      "off_service_record",
+      "reply_under_unrelated_parent",
+      "email_reply_via_get_thread",
+      "alias",
+      "second_carrier_by_rule_owner",
+      "de_named_root_record",
+      "unpointed_old_base_record",
+      "named_inbox_mail",
+      "reply_under_related_root",
+      "inline_pr_review_comment",
+      "outside_obvious_filter",
+      "dm_with_rule_owner",
+      "root_post_in_unnamed_channel",
+      "reply_inside_date_window"
+    ],
+    "carriers_without_loss": [
+      "decoy",
+      "same_container_supersession",
+      "stale_summary",
+      "second_tab",
+      "checklist",
+      "volume",
+      "arithmetic_tie_out",
+      "comment_on_item_itself",
+      "named_record_search_hit"
+    ],
+    "carrier_basis": "references/carrier_find_rates.json (tools/carrier_backfill.py show): 104 units, 409 unit-runs over 11 archived tasks, built 2026-11-11. carriers_that_miss = a deciding record some runs never opened; take each unit's find-rate range from that table, not from the list. Opened/runs: off_service_record 2/27, dm_with_non_owner 6/46, non_set_ticket 6/33, de_named_correction_reply 8/26, unpointed_old_base_record 0/14, named_inbox_mail 0/12 (one task), de_named_root_record 4/21, reply_under_related_root 5/20, dm_with_rule_owner 5/13, inline_pr_review_comment 21/51 (0/26 when the PR is not linked from the item, 12/13 when it is), reply_under_unrelated_parent 16/33 (0/7 when the reply does not name the item, 16/26 when it does), alias 15/28, outside_obvious_filter 12/21, root_post_in_unnamed_channel 8/13, reply_inside_date_window 9/14, second_carrier_by_rule_owner 3/6 (one unit). email_reply_via_get_thread has no measured unit. carriers_without_loss = no hidden deciding record (decoy ... arithmetic_tie_out: no unit could be measured) or found in at least 90% of runs (comment_on_item_itself 7/7, named_record_search_hit 22/24). Until 2026-11-11 alias and second_carrier_by_rule_owner were listed as producing no loss; the measured runs contradicted that."
+  },
+  "path_exposure": {
+    "thin_search_min_results": 10,
+    "thin_search_basis": "Julia ZM difficulty task: a sender search in her mailbox returned two or three messages and every run found the reply"
+  },
+  "precheck": {
+    "stop_after_no_go": 2
+  }
+}

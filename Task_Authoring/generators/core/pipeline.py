@@ -24,6 +24,8 @@ from .. import LIBRARY_VERSION, changed_since_load as library_changed, ensure_cu
 from ..services import registry
 from ..spec.load import load_spec
 from ..validate import agreement, coltypes, compare, grammar, invariants, overlay, parse_back
+from ..validate import gmail as gmail_checks
+from ..validate import slack as slack_checks
 from . import context, emitter, output
 from .base import BaseSnapshot
 from .context import TOOL_ROOTS, tool_closure  # noqa: F401 - re-exported: the tools/ closure the record pins
@@ -307,6 +309,42 @@ def _shown(items: list[str]) -> dict:
     return {"count": len(items), "first": items[:SHOW]}
 
 
+def _check_linear(res: Result, ops: list) -> tuple[list, list]:
+    """(overlay errors, invariant findings) for the Linear statements parsed back from the text."""
+    pin = res.spec.snapshot["linear"]
+    data = context.service_paths(res.ctx)["linear"] / pin["file"]
+    rows = overlay.load_linear_base(data, pin["sha256"])
+    ov = overlay.apply(rows, ops)
+    return list(ov.errors), invariants.check_linear(ov, rows, freeze_utc=res.ctx["freeze_utc"])
+
+
+def _check_slack(res: Result, ops: list) -> tuple[list, list]:
+    """The same for Slack: the channels the statements name are loaded whole from the pinned export."""
+    pin = res.spec.snapshot["slack"]
+    try:
+        rows = slack_checks.load_base(context.service_paths(res.ctx)["slack"], pin["sha256"],
+                                      slack_checks.channels_of(ops))
+    except (slack_checks.SlackBaseError, OSError, ValueError, KeyError) as exc:
+        return [f"slack: the pinned base could not be loaded: {exc}"], []
+    ov = overlay.apply(rows, ops)
+    return list(ov.errors), slack_checks.check_slack(ov, rows, freeze_utc=res.ctx["freeze_utc"])
+
+
+def _check_gmail(res: Result, ops: list) -> tuple[list, list]:
+    """The same for Gmail: the threads the statements touch are loaded whole from the pinned export, after one pass
+    over every thread file for ids and address forms (validate/gmail.py)."""
+    pin = res.spec.snapshot["gmail"]
+    try:
+        rows, facts = gmail_checks.load_base(context.service_paths(res.ctx)["gmail"], pin["sha256"], ops)
+    except (gmail_checks.GmailBaseError, OSError, ValueError, KeyError) as exc:
+        return [f"gmail: the pinned base could not be loaded: {exc}"], []
+    ov = overlay.apply(rows, ops)
+    return list(ov.errors), gmail_checks.check_gmail(ov, rows, facts, freeze_utc=res.ctx["freeze_utc"])
+
+
+_SERVICE_CHECKS = {"linear": _check_linear, "slack": _check_slack, "gmail": _check_gmail}
+
+
 def validate(res: Result, text: str | None = None, *, foreign: bool = False) -> dict:
     """Independent checks on the rendered text (default: this build's parts), never on the emitter's own data.
 
@@ -329,18 +367,21 @@ def validate(res: Result, text: str | None = None, *, foreign: bool = False) -> 
             parsed = [op for op in parsed if op.table.split(".")[0] in res.parts or op.table in mine]
         out["types"] = coltypes.check_ops(parsed, SCHEMA_LIVE)
         out["compare"] = [d.message for d in compare.compare_ops(res.ops, parsed)]
-        if "linear" in res.parts:
-            pin = res.spec.snapshot["linear"]
-            data = context.service_paths(res.ctx)["linear"] / pin["file"]
-            rows = overlay.load_linear_base(data, pin["sha256"])
-            ov = overlay.apply(rows, [op for op in parsed if op.table.startswith("linear.")])
-            out["overlay"] = list(ov.errors)
-            findings = invariants.check_linear(ov, rows, freeze_utc=res.ctx["freeze_utc"])
-            for sev in ("FAIL", "WARN"):
-                per = {}
-                for f in findings:
-                    if f.severity == sev:
-                        per.setdefault(f.rule, []).append(f"{f.table} {list(f.key)}: {f.message}")
+        findings = []
+        for service in sorted(res.parts):
+            check = _SERVICE_CHECKS.get(service)
+            if check is None:
+                out["overlay"].append(f"{service}: no independent overlay and invariants for this service")
+                continue
+            errors, found = check(res, [op for op in parsed if op.table.startswith(service + ".")])
+            out["overlay"] += errors
+            findings += found
+        for sev in ("FAIL", "WARN"):
+            per = {}
+            for f in findings:
+                if f.severity == sev:
+                    per.setdefault(f.rule, []).append(f"{f.table} {list(f.key)}: {f.message}")
+            if per or res.parts:
                 out["invariants"][sev] = {rule: _shown(msgs) for rule, msgs in sorted(per.items())}
     lint = _lint(res.task_dir, text)
     out["sql_lint"] = {"errors": _shown([f"line {e['line']}: {e['msg']}" for e in lint["errors"]]),

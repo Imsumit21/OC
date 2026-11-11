@@ -143,7 +143,280 @@
     "Task_Authoring/task_inputs/06_PreCheck_Trajectory/trajectory.json (mcp__hg__slack_read_thread(C0ADGSZKR3R, 1771006327.461681) returned the injected reply 1771006841.098192, whose row uses the parent's row id 0cbcebf08f183b2cfb72fcc63fa996f8)",
     "OC-old/Task_Authoring-2/task_inputs/01_Universe_Inject.sql:11,13 with OC-old/Evals/task_inputs/reports/6acefd97f0ce49ad0751fb6a_0_injection.md (FINAL VERDICT PASS)"
    ],
-   "used_by": ["(Phase 3 Slack emitter)"]
+   "used_by": ["services/slack.py: _row (reply)", "validate/slack.py: S4"]
+  },
+  "slack.message.id": {
+   "service": "slack",
+   "rule": "A message's id is sha256('<channel_id>|<ts>')[:32].",
+   "value": "sha256(channel_id + '|' + ts)[:32]",
+   "status": "base-verified",
+   "evidence": [
+    "base: 529,418/529,418 synth-cut and 585,555/585,555 normal message rows that carry an id (the 81,036 / 101,657 raw API rows carry none; 14 / 18 short rows are the known exceptions of references/universe_kb/conventions.json slack.ids)",
+    "accepted SQL: 162/162 slack_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql",
+    "Task_Authoring/tools/base_check.py:506 (id contract checked as a Check A failure)"
+   ],
+   "used_by": ["services/slack.py: message_id", "validate/slack.py: S1"]
+  },
+  "slack.message.ts": {
+   "service": "slack",
+   "rule": "ts is '<10-digit epoch seconds>.<6 decimals>', unique per channel (live UNIQUE (channel_id, ts)). The spec gives the second (`at`); the emitter fixes the decimals as the first five from sha256('<channel>|<epoch>|<user>') and a final 9.",
+   "value": "9",
+   "status": "base-verified",
+   "evidence": [
+    "base: 6 decimals on 529,418/529,418 synth-cut and 585,555/585,555 normal rows; the last decimal is 9 on 529,409 and 585,546 of them (the rest end in 0); 0 duplicate (channel, ts)",
+    "Task_Authoring/references/universe_constraints_live.json (uq_slack_messages_channel_ts)",
+    "accepted SQL: 162/162 inserts use 6 decimals; 77 end in 9, the others in any digit, so the platform does not test the decimals"
+   ],
+   "used_by": ["services/slack.py: ts_for", "validate/slack.py: S1, S3"]
+  },
+  "slack.message.created_at": {
+   "service": "slack",
+   "rule": "created_at is the ts instant written YYYY-MM-DDTHH:MM:SS.ffffffZ with the ts decimals. The export has no created_at; accepted SQL also passed with the seconds-only form (60 rows) and with .000000 (14 rows), so the independent check only requires created_at within one second of ts.",
+   "value": "%Y-%m-%dT%H:%M:%S.<ts decimals>Z",
+   "status": "platform-verified",
+   "evidence": [
+    "accepted SQL: 88 inserts in 10 archived tasks write exactly this form (e.g. Task_Authoring/support/completed_tasks/samuel_zm_beta_messages_2026-11-09/task_inputs/01_Universe_Inject.sql, julia_zm_difficulty_baseline_2026-11-01, claire_zm3d_halloween_art_plan_2026-11-10)",
+    "Task_Authoring/support/completed_tasks/owen_dd_bug_carryover_2026-11-09/eval_reports/0_injection_FAIL_r3.md:59 (the reviewer recomputes ts against created_at on every Slack insert)",
+    "Task_Authoring/tools/base_check.py:528-530 (created_at more than 1 s from ts is a Check C failure)"
+   ],
+   "used_by": ["services/slack.py: created_at_for", "validate/slack.py: S1"]
+  },
+  "slack.message.shape": {
+   "service": "slack",
+   "rule": "A new message writes exactly id, ts, channel_id, type 'message', user_id, text, thread_parent_id, thread_ts_legacy, reply_count, reply_users_count, latest_reply, is_activity_message false, subtype, reactions_json '[]', files_json '[]', attachments_json ('[]' unless authored), created_at, metadata_json '{}'. edited_ts, edited_user, bot_id, client_msg_id and permalink are left NULL and the generated text_fts is never written.",
+   "value": "message",
+   "status": "platform-verified",
+   "evidence": [
+    "accepted SQL: 162/162 inserts of the 15 archived tasks write exactly these 18 columns with type 'message', is_activity_message false, reactions_json '[]', files_json '[]', metadata_json '{}' (141 with attachments_json '[]')",
+    "base: type 'message' and is_activity_message false on every normalized row of both universes",
+    "Evals/0_Injection_Quality_Eval.md:184-188 (text_fts is generated; writing it is a Check B FAIL)"
+   ],
+   "used_by": ["services/slack.py: MESSAGE_COLUMNS, _row", "validate/slack.py: S1"]
+  },
+  "slack.thread.counters": {
+   "service": "slack",
+   "rule": "A thread's first post carries thread_ts_legacy = its own ts, reply_count = its replies, reply_users_count = their distinct users, latest_reply = the newest reply's ts; a post without replies carries NULL, 0, 0, NULL; a reply carries 0, 0, NULL. A reply added under a base post is paired with UPDATE ... SET thread_ts_legacy, reply_count (base count + new), reply_users_count, latest_reply (newest of base and new) WHERE id = the parent.",
+   "value": "thread_ts_legacy, reply_count, reply_users_count, latest_reply",
+   "status": "platform-verified",
+   "evidence": [
+    "base: all 13,637 synth-cut and 14,826 normal first posts with reply rows carry thread_ts = their own ts; reply_count equals the reply rows on every one once the raw API rows are counted (2 exceptions on normal); 0 replies carry counters; 0 replies to a reply",
+    "accepted SQL: 13 new first posts with replies and 49 base-parent UPDATEs in the archived tasks (38 set all four columns in this order, e.g. Task_Authoring/support/completed_tasks/owen_dd_bug_carryover_2026-11-09/task_inputs/01_Universe_Inject.sql)",
+    "Task_Authoring/tools/base_check.py:742-778 (counters checked against base count + new replies and the newest reply)"
+   ],
+   "used_by": ["services/slack.py: _row, expand (base-parent updates)", "validate/slack.py: S4, S5"]
+  },
+  "slack.membership.event": {
+   "service": "slack",
+   "rule": "A join or leave is a message row with subtype channel_join / channel_leave by the user it names, text '<@user> has joined the channel' ('... the conversation' in a group DM) or '<@user> has left the channel', outside any thread. A user's rows in a channel alternate: a join needs the user not to be a member (an earlier leave), a leave needs a member. Not written in DMs or canvas-comment (FC:) channels.",
+   "value": "<@{user}> has joined the {place}",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/support/completed_tasks/owen_dd_bug_carryover_2026-11-09/eval_reports/0_injection_PASS_r7.md:63-64 (4 channel_leave and 6 channel_join rows PASS; a rejoin after a leave is coherent)",
+    "Task_Authoring/support/completed_tasks/owen_dd_bug_carryover_2026-11-09/eval_reports/0_injection_FAIL_r3.md:112-125 (C1 FAIL: a join in a channel the user never left)",
+    "base: 1,246 of 1,251 synth-cut and 1,361 of 1,368 normal channel_join rows read '<@user> has joined the channel', the other 5 / 7 '... the conversation', all in group DMs; all 22 / 62 channel_leave rows read '<@user> has left the channel'; every row names its own user; no row in a DM or FC: channel",
+    "base and accepted SQL differ on FC: channels: the base has no membership row there, the accepted Owen SQL wrote two (reviewer advisory 5, 0_injection_PASS_r7.md:107), so the emitter refuses them"
+   ],
+   "used_by": ["services/slack.py: JOIN_TEXT, LEAVE_TEXT, expand (membership rows)", "validate/slack.py: S6, S7"]
+  },
+  "slack.membership.first_join": {
+   "service": "slack",
+   "rule": "A first-time join (a user who was never in the channel) writes the channel_join row and UPDATE slack_channels SET num_members, members_json with the user appended. No accepted injection has a first-time join or any slack_channels statement; whether the run reads access from members_json is not observed.",
+   "value": "members_json + [user]",
+   "status": "unverified",
+   "evidence": [
+    "base: every user with a channel_join row is in the channel's members (1,251/1,251 synth-cut, 1,368/1,368 normal); num_members = len(members) on every channel",
+    "Task_Authoring/Audit_2026-11-10_First_Pass_Root_Cause/PLAN.md WS9 item 3c (a first-time join has no stored precedent and is confirmed in the first pre-check)"
+   ],
+   "used_by": ["services/slack.py: expand (first joins)", "validate/slack.py: S7, S11"]
+  },
+  "gmail.message.id": {
+   "service": "gmail",
+   "rule": "A message row's id is '<mailbox>/<RFC Message-ID>' (the Message-ID with its angle brackets); one row per mailbox copy, all copies sharing the Message-ID.",
+   "value": "<mailbox>/<RFC Message-ID>",
+   "status": "base-verified",
+   "evidence": [
+    "base: 104,476/104,480 normal and 95,160/95,164 synth-cut message ids (the 4 without are empty export rows); the Message-ID header equals the id's second part on 55,706/55,706 normal rows that carry one",
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql (270/270)",
+    "Task_Authoring/tools/sql_lint.py:552-555 (the id scheme is a lint error)"
+   ],
+   "used_by": [
+    "services/gmail.py: _row",
+    "validate/gmail.py: G1, G3"
+   ]
+  },
+  "gmail.message.rfc_id": {
+   "service": "gmail",
+   "rule": "A new message's Message-ID is Gmail-shaped: '<CA' + 49 characters + '@mail.gmail.com>', fixed by (sender address, second); an author may give message_id instead.",
+   "value": "<CA + 49 urlsafe-base64 characters of sha512('<sender>|<epoch>')@mail.gmail.com>",
+   "status": "base-verified",
+   "evidence": [
+    "base: all 4,911 normal and 4,337 synth-cut internal-sender Message-IDs at mail.gmail.com have a 51-character local part starting 'CA' (e.g. <CAPBs_a5Oh2+6Xp_2c4q_e2FvZOCHsW17nFf+J+yRdEH4foVx1w@mail.gmail.com>)",
+    "accepted SQL: Task_Authoring/support/completed_tasks/robert_seed_bets_2026-11-11/task_inputs/01_Universe_Inject.sql uses the same shape (<CAOOpSqA2MTKGlKETvkoKqFfq1MaIktcGcH9cj21BJMAMN4Ok00@mail.gmail.com>)"
+   ],
+   "used_by": [
+    "services/gmail.py: rfc_id_for"
+   ]
+  },
+  "gmail.thread.id": {
+   "service": "gmail",
+   "rule": "A thread id is '<mailbox>/<19-digit number>', each mailbox numbering its own copy of a conversation. A new thread's number is (its first message's internal_date in ms << 20) | 20 low bits (sha256 of mailbox and Message-ID).",
+   "value": "(internal_date_ms << 20) | 20 bits",
+   "status": "base-verified",
+   "evidence": [
+    "base: 104,480/104,480 normal and 95,164/95,164 synth-cut rows carry a 19-digit thread number; X-GM-THRID equals it on every row with the header; the 3,335 normal / 2,837 synth-cut Message-IDs held in several mailboxes have a different number in each",
+    "base: number >> 20 lies within an hour of the thread's earliest message on 88,027 of 88,726 normal threads (31,776 within a second; the rest is receipt delay)",
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql: 183 new threads exact, 25 within an hour, 6 base threads",
+    "Task_Authoring/support/completed_tasks/frederick_bridge_pipeline_2026-11-03/eval_reports/0_injection_PASS_r7.md:38 (thread id >> 20 = first message internal_date on all 28)"
+   ],
+   "used_by": [
+    "services/gmail.py: thread_number",
+    "validate/gmail.py: G1, G7"
+   ]
+  },
+  "gmail.copies": {
+   "service": "gmail",
+   "rule": "Every participant (from, to, cc) whose address is a mailbox in users.json gets one copy: the sender's labelled SENT, each recipient's INBOX; copies agree on every column but id, thread_id, user_email, label_ids_json and headers_json. Addresses without a mailbox get none.",
+   "value": "one copy per participant mailbox",
+   "status": "platform-verified",
+   "evidence": [
+    "Task_Authoring/support/completed_tasks/frederick_q4_commitments_2026-11-05/eval_reports/0_injection_PASS_r1.md:64 (sender copies are SENT and recipient copies INBOX; all copies of a message are identical)",
+    "Task_Authoring/support/completed_tasks/frederick_bridge_pipeline_2026-11-03/eval_reports/0_injection_PASS_r7.md:38 (copies of the same Message-ID agree on subject, body, date, sender, recipients and snippet)",
+    "Task_Authoring/tools/sql_lint.py:566-572 (an own copy not SENT, or a copy in a mailbox that is neither sender nor recipient, is a lint error)",
+    "base does not hold it: only 2,909 of 9,723 normal (2,621 of 8,835 synth-cut) internal messages have a copy in every participant mailbox; the export is partial per mailbox. The rule is the brief's (WS9 3e) and the reviewer's, for injected mail"
+   ],
+   "used_by": [
+    "services/gmail.py: expand (copies)",
+    "validate/gmail.py: G4, G5"
+   ]
+  },
+  "gmail.labels": {
+   "service": "gmail",
+   "rule": "Default labels: the sender's copy ['SENT'], a recipient's ['INBOX', 'CATEGORY_PERSONAL'], a sender who is also a recipient ['SENT', 'INBOX', 'IMPORTANT']; a spec may set any copy's labels (ids from labels.json; SENT only on the sender's copy; a received copy in INBOX or ARCHIVED).",
+   "value": "SENT | INBOX, CATEGORY_PERSONAL | SENT, INBOX, IMPORTANT",
+   "status": "base-verified",
+   "evidence": [
+    "base, internal senders, system labels only: own copies ('SENT',) 1,812 of 2,481 normal and 1,608 of 2,202 synth-cut; ('SENT','INBOX','IMPORTANT') 80 / 78; received copies ('INBOX','IMPORTANT','CATEGORY_PERSONAL') 2,931, ('INBOX','CATEGORY_PERSONAL','UNREAD') 1,685, ('INBOX','CATEGORY_PERSONAL') 1,453 of 9,799 normal",
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql: ['INBOX', 'CATEGORY_PERSONAL'] 123, ['INBOX', 'IMPORTANT', 'CATEGORY_PERSONAL'] 60, ['SENT'] 38"
+   ],
+   "used_by": [
+    "services/gmail.py: DEFAULT_LABELS, _check_labels",
+    "validate/gmail.py: G2, G5"
+   ]
+  },
+  "gmail.date": {
+   "service": "gmail",
+   "rule": "date is the send time 'YYYY-MM-DDTHH:MM:SSZ'; internal_date is the same instant in epoch milliseconds; the Date header is RFC 2822 with the spec's offset (default +0000).",
+   "value": "+0000",
+   "status": "base-verified",
+   "evidence": [
+    "base: internal_date_ms is the date's second on 79,736/79,766 normal and 72,493/72,516 synth-cut rows; the Date header is the date's instant on 12,280/12,280 normal internal messages; +0000 is the most common Date offset for 27 of 39 internal senders (robert 2,678 of 2,882)",
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql (internal_date = date on every row, checked by tools/sql_lint.py:563-564)",
+    "Task_Authoring/support/completed_tasks/frederick_q4_commitments_2026-11-05/eval_reports/0_injection_PASS_r1.md:64"
+   ],
+   "used_by": [
+    "services/gmail.py: epoch_of, date_header, _row",
+    "validate/gmail.py: G1, G7, G10"
+   ]
+  },
+  "gmail.snippet": {
+   "service": "gmail",
+   "rule": "A message's snippet is its body with runs of white space made one space, cut to 140 characters. A thread's snippet is its newest message's; a reply that becomes the newest message of a base thread comes with UPDATE gmail_threads SET snippet. The export holds no snippet, so a base thread whose newest message stays a base message is left alone.",
+   "value": "140",
+   "status": "platform-verified",
+   "evidence": [
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql: 270/270 snippets are a prefix of the white-space-collapsed body (195 of them 140-149 characters); 55 base-thread snippet UPDATEs",
+    "Task_Authoring/support/completed_tasks/frederick_bridge_pipeline_2026-11-03/eval_reports/0_injection_PASS_r7.md:38 (snippet = body prefix; all 28 thread snippets equal their latest message's, including the 8 UPDATEs)",
+    "Task_Authoring/support/completed_tasks/julia_zm3d_beta_calendar_2026-11-07/eval_reports/0_injection_FAIL_r1.md:102 (advisory A3: a snippet that is not the body start)"
+   ],
+   "used_by": [
+    "services/gmail.py: snippet_of, expand (thread rows)",
+    "validate/gmail.py: G8, G9"
+   ]
+  },
+  "gmail.address.form": {
+   "service": "gmail",
+   "rule": "From/To/Cc entries are 'name <address>' or a bare address, and an address base knows is written with a display name base uses for it (e.g. 'leonard hayes', never 'Leonard Hayes'); from_email / from_name split the From entry; a harmonygames.co address base never shows is refused.",
+   "value": "base display names per address",
+   "status": "base-verified",
+   "evidence": [
+    "base: harmonygames.co senders write From as 'name <addr>' 8,631, '\"name\" <addr>' 3,145, bare 504 (normal); display names per address are stable (leonard.hayes: 'leonard hayes' or bare on every from/to/cc entry, 29,573 entries)",
+    "accepted SQL differs: 39 rows name Leonard 'Leonard Hayes', 25 'Arthur Blake', 7 'Frederick Stone' (forms base never uses) and passed, so the platform does not test the display name; the emitter follows base and validate/gmail.py G11 only warns"
+   ],
+   "used_by": [
+    "services/gmail.py: _entry",
+    "core/gmail_index.py: address_form",
+    "validate/gmail.py: G11"
+   ]
+  },
+  "gmail.reply": {
+   "service": "gmail",
+   "rule": "A reply carries in_reply_to = the parent's Message-ID, references = the parent's references + its Message-ID, subject 'Re: ' + the parent's subject unless authored, a later date; in each mailbox that holds the parent it joins the parent's thread, elsewhere it opens a thread. A message that is not a reply has in_reply_to and references ''.",
+   "value": "parent's thread where held",
+   "status": "base-verified",
+   "evidence": [
+    "base, internal replies: in the parent's thread where the mailbox holds the parent 3,869 / 3,434 (other thread 30 / 27; parent not in the mailbox 546 / 502, normal / synth-cut); later than the parent 3,899/3,899; references = parent references + parent id 2,625/3,899; subject 'Re: ' + parent subject 3,428/3,899",
+    "Task_Authoring/support/completed_tasks/frederick_q4_commitments_2026-11-05/eval_reports/0_injection_PASS_r1.md:64 (every reply's parent is in the same thread and earlier, with a 'Re:' subject)",
+    "Task_Authoring/support/completed_tasks/julia_zm3d_beta_calendar_2026-11-07/eval_reports/0_injection_FAIL_r1.md:101 (advisory A2: a reply in another thread than its original)"
+   ],
+   "used_by": [
+    "services/gmail.py: _parent, reply_subject, expand (threads)",
+    "validate/gmail.py: G6"
+   ]
+  },
+  "gmail.headers": {
+   "service": "gmail",
+   "rule": "headers_json lists, in this order and when set: X-GM-THRID, X-Gmail-Labels (label names, CATEGORY_X as 'Category <name>'), Delivered-To (recipient copies), MIME-Version 1.0, Date, References, In-Reply-To, Message-ID, Subject, From, To, Cc, Content-Type text/plain; charset=\"UTF-8\". Transport headers (Received, ARC-*, DKIM-Signature, X-Received) are not written.",
+   "value": "X-GM-THRID, X-Gmail-Labels, Delivered-To, MIME-Version, Date, References, In-Reply-To, Message-ID, Subject, From, To, Cc, Content-Type",
+   "status": "platform-verified",
+   "evidence": [
+    "base own copies (internal senders): this order without Delivered-To on 2,275 of 2,481 normal; received copies start X-GM-THRID, X-Gmail-Labels, Delivered-To on 9,595 of 9,799; X-Gmail-Labels word per label id agrees with labels.json on every base row (CATEGORY_PERSONAL 'Category Personal' 21,219)",
+    "base and accepted SQL differ on received copies: base carries transport headers on 9,799/9,799 (DKIM signatures, relay IPs); no accepted task writes them (15/15 tasks, 6 header layouts, all PASS). The emitter writes none; reported, not resolved",
+    "Task_Authoring/support/completed_tasks/frederick_q4_commitments_2026-11-05/eval_reports/0_injection_PASS_r1.md:64 (Date, Subject, Message-ID, From, To, Cc, In-Reply-To and References headers match the columns)"
+   ],
+   "used_by": [
+    "services/gmail.py: HEADER_ORDER, label_token, _row",
+    "validate/gmail.py: G10"
+   ]
+  },
+  "gmail.size_estimate": {
+   "service": "gmail",
+   "rule": "size_estimate is the UTF-8 byte length of the header block ('Name: value' CRLF lines), a blank line and the body. The export has no size; the platform does not test it.",
+   "value": "len(headers + CRLF + body)",
+   "status": "platform-verified",
+   "evidence": [
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql: 270/270 carry a size_estimate with no common formula (e.g. 4,099 for a 299-byte body in claire_zm3d_halloween_art_plan, 1,196 for a 278-byte body in robert_seed_bets) and passed"
+   ],
+   "used_by": [
+    "services/gmail.py: _row"
+   ]
+  },
+  "gmail.body.crlf": {
+   "service": "gmail",
+   "rule": "body_text line breaks are CRLF.",
+   "value": "\r\n",
+   "status": "base-verified",
+   "evidence": [
+    "base: 92,955 of 104,480 normal and 85,397 of 95,164 synth-cut bodies contain CRLF (the rest are mostly one line); references/universe_kb/conventions.json gmail.line_endings ('bodies use \\r\\n')",
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql: 211 CRLF, 46 bare LF, 13 one line"
+   ],
+   "used_by": [
+    "services/gmail.py: crlf",
+    "validate/gmail.py: G12"
+   ]
+  },
+  "gmail.message.shape": {
+   "service": "gmail",
+   "rule": "A new message writes id, thread_id, user_email, label_ids_json, snippet, internal_date, date, size_estimate, subject, from_email, from_name, to_json, cc_json ('[]' when none), bcc_json '[]', reply_to_json '[]', body_text, body_html NULL, headers_json, in_reply_to, references, mbox_from NULL, attachments_meta_json '[]'; history_id, payload_json, date_parsed_source and trash_removed_labels_json are not written, and the generated body_text_fts never. A thread row writes id, user_email, snippet, history_id NULL.",
+   "value": "22 columns",
+   "status": "platform-verified",
+   "evidence": [
+    "accepted SQL: the 270 gmail_messages inserts of the 15 archived tasks under Task_Authoring/support/completed_tasks/*/task_inputs/01_Universe_Inject.sql: 243 of 270 inserts write exactly these 22 columns (the rest add history_id, payload_json, date_parsed_source); body_html NULL 270/270, bcc_json '[]' 270/270, history_id NULL 270/270; 207 gmail_threads inserts write id, user_email, snippet, history_id",
+    "Evals/0_Injection_Quality_Eval.md:171 (history_id is NULL or a decimal string), :184-188 (body_text_fts is generated)"
+   ],
+   "used_by": [
+    "services/gmail.py: MESSAGE_COLUMNS, THREAD_COLUMNS, _row",
+    "validate/gmail.py: G1"
+   ]
   }
  }
 }

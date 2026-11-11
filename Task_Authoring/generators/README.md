@@ -1,6 +1,7 @@
-# generators — shared injection emitters (Phase 1: Linear)
+# generators — shared injection emitters (Linear, Slack, Gmail)
 
-Plan: `Task_Authoring/plans/Generators_Reuse_Plan.md`. A task writes a **spec** (what to seed, with the origin of every
+Plan: `Task_Authoring/plans/Generators_Reuse_Plan.md` (not in this workspace on 2026-11-11; the Slack and Gmail
+emitters follow `Audit_2026-11-10_First_Pass_Root_Cause/PLAN.md` WS9 item 3). A task writes a **spec** (what to seed, with the origin of every
 value); the library expands it into SQL operations, writes them in a restricted grammar, checks the result
 independently and publishes only files whose bytes changed. It lives outside `tools/` so it never changes
 `__gate_policy__`: the stage gates stay authoritative and certify the artifacts, not this library.
@@ -27,6 +28,9 @@ run unchanged. SQL is never executed.
 Every leaf value is an object with `origin` (`base` | `authored`) and `construction` (`literal` | `reference` |
 `transform`); bare values are refused.
 
+Snapshot pins: Linear pins its one export file (`{"file": "data.json", "sha256": …}`); Slack and Gmail pin their
+`source_manifest.json`, and every export file a build reads is checked against its manifest entry (`core/base.py`).
+
 | Form | Example |
 |---|---|
 | base reference | `{"origin":"base","construction":"reference","base":{"service":"linear","collection":"issues","record":"ENG-2366","field":"/priority"}}` |
@@ -41,8 +45,22 @@ occur verbatim in the text), `claims` (need a `census` entry: `census/<name>.jso
 incl. `context_hash`), `library.emitters` (pinned versions), `snapshot` (each export file pinned by sha256 and checked
 against its `source_manifest.json`), `overrides` (required for an `unverified` convention), `census`, `records`.
 
-Linear kinds, fields and derived columns: docstring of `services/linear.py`. Conventions and their evidence:
-`conventions/conventions.json` (`base-verified`, `platform-verified`, `unverified`).
+Kinds, fields and derived columns: the docstrings of `services/linear.py`, `services/slack.py` and
+`services/gmail.py`. Conventions and their evidence: `conventions/conventions.json` (`base-verified`,
+`platform-verified`, `unverified`; an unverified one needs a spec `overrides` entry with `reason` and
+`platform_follow_up`). Unverified today: `linear.team.issue_counter` and `slack.membership.first_join` (a first-time
+channel join: no accepted injection has one, confirm it in the first pre-check).
+
+| Service | Kinds | What one record becomes |
+|---|---|---|
+| Linear | `linear.project`, `.issue`, `.comment`, `.issue_update`, `.team_update` | rows plus derived companions (see the docstring) |
+| Slack | `slack.message` (post, thread reply, reply under a base post, DM, group DM), `slack.channel_join` (rejoin after a leave), `slack.channel_leave`, `slack.channel_first_join` (unverified), `slack.haystack` | one `slack_messages` row; a reply under a base post adds the parent's counter UPDATE; a first join adds a `slack_channels` UPDATE |
+| Gmail | `gmail.message` (new thread, reply in a spec thread, reply under a base message), `gmail.haystack` | one `gmail_messages` row per participant mailbox (sender's SENT copy, each recipient's INBOX copy), `gmail_threads` INSERTs for new threads, a snippet UPDATE for each base thread whose newest message becomes injected |
+
+A haystack record (`services/haystack.py`) lists routine traffic compactly (shared fields once, one short row per
+message with a pinned text file) and is expanded into ordinary records `<key>.001`, `<key>.002`, … before anything
+else runs, so every rule applies to each row. Gmail records' ids hold a slash: a locator is
+`base:gmail:messages/<mailbox>/<RFC Message-ID>/<field>` (a base message's time is `/date_parsed`).
 
 A claim's census file (`census/<name>.json`, format `hg-gen-census/1`) needs the claim id, the scope (entity and
 aliases), every service searched with its query, query/result sha256, pages and `complete: true`, the hits classified
@@ -57,9 +75,15 @@ does).
 On the rendered bytes, never on the emitter's data: restricted grammar; parse-back with the eval's tokenizer
 (`Evals/tools/hg_injection_lint.py`, sha-pinned, wrapped to fail closed; identifiers matched exactly as PostgreSQL
 resolves them); column types, integer ranges and varchar lengths against the live schema (`coltypes.py`); ordered,
-typed comparison with the intended operations; overlay on the pinned base export; Linear invariants L1–L12 (FAIL blocks
-publication, WARN is recorded — L7 "closed with later activity" and the cross-team parent of L12 are warnings because
-the base has them; L1 wants real calendar dates and times); an INSERT must write every NOT NULL column without a
+typed comparison with the intended operations; overlay on the pinned base export; per-service invariants (FAIL blocks
+publication, WARN is recorded): Linear L1–L12 (`validate/invariants.py`; L7 "closed with later activity" and the
+cross-team parent of L12 are warnings because the base has them; L1 wants real calendar dates and times), Slack S1–S11
+(`validate/slack.py`: row shape and id/ts contract, channel and user exist, unique (channel, ts), a reply's parent in
+the same channel and earlier, thread counters, the author a member at that time, membership rows, nothing at or after
+the freeze, mentions resolve, channel member lists) and Gmail G1–G12 (`validate/gmail.py`: id and thread schemes,
+internal_date = date, mailbox/thread/labels exist, ids new, every participant mailbox holds a copy and copies agree,
+SENT/INBOX labels, a reply's parent earlier and in the same thread where the mailbox holds it, nothing at or after the
+freeze, thread snippets, headers agree with the columns, address forms as base writes them, CRLF bodies); an INSERT must write every NOT NULL column without a
 default and nothing may write a generated column; `tools/sql_lint.py` run in its own process in the task's context (a
 run that cannot start, takes longer than 900 s — it is then stopped — or does not finish with a report is a blocking
 error, shown next to the other findings); and a parser-agreement report listing values the local tools
@@ -160,6 +184,29 @@ since the last build — the library, conventions, the schema and constraint fil
 file is pinned as absent), the eval parser, the `tools/` closure above, emitter versions — `render` refuses without
 `--accept-upgrade` and `check` fails. Not a bundle transaction: a crash between two replaces leaves a mixed state that
 `check` reports.
+
+## Checked against accepted SQL
+
+The Slack and Gmail rules were replayed on the rows of all 15 archived tasks (`support/completed_tasks/*/task_inputs/
+01_Universe_Inject.sql`, parsed back with the eval tokenizer, each in its own universe; `tests/test_slack_invariants.py`
+and `tests/test_gmail_invariants.py` AcceptedSqlTest). Slack: no FAIL in any task (warnings: owen's two membership rows
+in a canvas channel, julia_zm3d's post into an archived channel, julia_zm_difficulty's three first posts without their
+own thread_ts). Gmail: no FAIL except `samuel_zm_beta_messages` G4 — one message names oliver.brooks and owen.baker,
+whose mailboxes exist, without giving them a copy. Every-participant-gets-a-copy is the brief's rule (WS9 3e); the
+platform passed that SQL and base itself lacks a copy for some participant in 6,814 of 9,723 internal messages, so G4
+is stricter than both. Rules the platform passed in accepted SQL are warnings (G7 thread-number timing, G8 snippets,
+G10 Cc/In-Reply-To/References, G11 display names, G12 line breaks); see the `validate/gmail.py` docstring.
+
+Gmail base and accepted SQL disagree on one convention, left as found: received copies in base carry transport
+headers (Received, ARC-*, DKIM-Signature: 9,799/9,799), no accepted task writes them; the emitter writes none
+(`gmail.headers`).
+
+## Cost
+
+A Gmail build reads every `threads/*.json` file once to index thread ids, Message-IDs and address forms (about 10 s for
+81,404 synth-cut / 88,726 normal files), and validation makes its own independent pass (about 10 s more). A process
+that builds the same export again reuses each pass when the manifest and every file's stat are unchanged
+(`core/gmail_index.py`, `validate/gmail.py`); the build record is the same either way.
 
 ## Tests
 

@@ -1,6 +1,6 @@
 # 04 — Prompt Writing: brief (prep) + prompt check (Playbook) — HarmonyGames · Spec V2
 
-> Command: `/create-prompt-writing` (brief) · `/create-prompt-writing draft` (draft) · `/create-prompt-writing check` (check) · Writes: `task_inputs/Working_Files/04_Prompt_Writing_Brief.md` / `task_inputs/Working_Files/04_Prompt_Check.md` · Paired eval: `/prompt` (`Evals/1_Prompt_Eval.md`, release `task-quality-v1`) · Gates: **`tools/stage_gate.py prompt-writing` / `prompt-check` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
+> Command: `/create-prompt-writing` (brief) · `/create-prompt-writing draft` (draft) · `/create-prompt-writing check` (check) · Writes: `<task_dir>/Working_Files/04_Prompt_Writing_Brief.md` / `<task_dir>/Working_Files/04_Prompt_Check.md` · Paired eval: `/prompt` (`Evals/1_Prompt_Eval.md`, release `task-quality-v1`) · Gates: **`tools/stage_gate.py prompt-writing` / `prompt-check` (blocking)** · Read first: `setup/GEN_EXECUTION.md`
 
 > **Claude, Codex or the human writes the prompt.** This stage prepares the facts, drafts the prompt on request, and checks whatever was written — GEN_EXECUTION §2.
 
@@ -23,8 +23,9 @@ The universe carries the rules, the detail and the difficulty; the prompt is a s
 trigger that names the problem, not the method. State the requested work and a destination the sender knows; accept every fair reading rather than adding answer-key clauses.
 Leave the rules and evidence in the universe; record fair alternatives in acceptance.
 
-Run order: after `/create-injection` (and `/create-error-async`, `/create-reference-files`
-if used); before `/create-humantime` and the `/injection` + `/prompt` pair.
+Run order: directly after `/create-injection`; before `/create-humantime` and the `/injection` + `/prompt` pair.
+`/create-error-async` and `/create-reference-files` are skipped by default; run one only when the owner asks for it. When the owner asked for one, it runs before this
+stage and its output is read here.
 
 **Doc names.** Under `references/Docs/`: Prompt Writing = `6_Prompt Writing Guidelines - V2.md`;
 Common Errors = `9_Common Errors & Pre-QC - V2.md`; Long Horizon = `10_Long Horizon Guidelines - V2.md`;
@@ -37,7 +38,7 @@ V3 changed-topic rules govern over conflicting Docs/Evals; unchanged local check
 
 - The brief describes requirements as facts, noun phrases and record locators; it may also carry draft wording.
 - A drafted prompt follows the assigned person's plausible role and register: ordinary colleague request, clean spelling, no spec-sheet layout, no trap hints, riddles or answer-key clauses. Name a destination the sender would know.
-- Rules stay in the records (Hardness v2 Part 5 rule 5, Part 8): the prompt points at a natural starting place and never states a trap's resolver, exception or correction. One v2 task went from failing to 100 % once its rules were written into the prompt. `python3 -B Task_Authoring/tools/hardness_v2_check.py --task-dir Task_Authoring/task_inputs` flags RULE_IN_PROMPT when eight consecutive resolver words appear in `04_Prompt.txt`.
+- Rules stay in the records (Hardness v2 Part 5 rule 5, Part 8): the prompt points at a natural starting place and never states a trap's resolver, exception or correction. One v2 task went from failing to 100 % once its rules were written into the prompt. `python3 -B Task_Authoring/tools/hardness_v2_check.py --task-dir <task_dir>` flags RULE_IN_PROMPT when eight consecutive resolver words appear in `04_Prompt.txt`.
 - Check mode may propose replacement wording under the preserved local authorship exception. Clean spelling, normal capitals and punctuation pass; planted mistakes, broken spacing and invented emoji codes fail (Eval 1 §1.2 AI-Text, §2.7).
 - No line may point at the trap or hedge the prompt's own facts: a riddle or hint fails, naming the symptom is fine, and "if my date or channel is off, use the message that is actually there" is a hint and fails. Audit/compliance-form wording and long if / but-not / then-also chains fail on their own; a per-case rule belongs in a seeded record, not the prompt (Eval 1 §2.7, A-13/A-15/B-14).
 
@@ -55,9 +56,9 @@ precedence over the older V2 reference documents in `references/Docs/`; local au
 exceptions remain as recorded in GEN_EXECUTION § 2 and § 3a.
 
 Brief-mode inputs (stop and name any missing required slot)
-- `task_inputs/00_Assigments.md` and `Working_Files/00_Task_Context.json` (required): all eight V3 assignment fields, supported source, assigned role, freeze and mode.
-- `task_inputs/Working_Files/01_Grounding_Dossier.md` (including its "Facts for the human") + `01_Universe_Inject.sql`: required if anything was seeded. If nothing was seeded, say so and ground on the base universe.
-- `task_inputs/03_Error_Async_Config.txt`, `02_Reference_Files_Manifest.md`, `01a_Hardening_Report.md` if present. Carry over every "must not appear in the prompt" constraint, every alternate-path fact and each file's "how the persona would refer to it" description.
+- `<task_dir>/00_Assigments.md` and `Working_Files/00_Task_Context.json` (required): all eight V3 assignment fields, supported source, assigned role, freeze and mode.
+- `<task_dir>/Working_Files/01_Grounding_Dossier.md` (including its "Facts for the human") + `01_Universe_Inject.sql`: required if anything was seeded. If nothing was seeded, say so and ground on the base universe.
+- `<task_dir>/03_Error_Async_Config.txt`, `02_Reference_Files_Manifest.md`, `01a_Hardening_Report.md` if present. Carry over every "must not appear in the prompt" constraint, every alternate-path fact and each file's "how the persona would refer to it" description.
 - `Evals/references/persona/roster.json` (17 personas — the `/prompt` identity gate; `references/persona_roster_v2.json` adds the platform's `thomas`/`tim_steudler`, which fail that gate), Persona ACL, `Evals/references/persona/acl.md`.
 - `01_Scenario_Design.md` (anchors, hidden authorities, delegation lattice, deliverables), `01_Hardness_Manifest.json` and the dossier's anchor-name table (§7 Constraints for the prompt brief).
 - `Evals/references/tools/catalog.json` (298 tools): write capability and the forbidden-name list.
@@ -66,8 +67,8 @@ Brief-mode inputs (stop and name any missing required slot)
 - The universe, only through `Task_Authoring/tools/hg.py search` (GEN_EXECUTION §4).
 
 Check-mode inputs
-- `task_inputs/04_Prompt.txt` (required), human-written and exactly as it will be submitted.
-- `task_inputs/Working_Files/04_Prompt_Writing_Brief.md` (required).
+- `<task_dir>/04_Prompt.txt` (required), human-written and exactly as it will be submitted.
+- `<task_dir>/Working_Files/04_Prompt_Writing_Brief.md` (required).
 - The brief-mode inputs, for verification; `Evals/1_Prompt_Eval.md`, `Evals/references/rules/scoring.json` (Prompt and Universe groups), `prompt_qc_examples.md`, `Evals/references/rules/prompt_qc_cases.json` (the 15 `calibration_cases`), `long_horizon.md`.
 
 Output: brief mode writes only `04_Prompt_Writing_Brief.md`, draft mode writes `04_Prompt.txt`, and check mode writes only
@@ -86,12 +87,12 @@ Output: brief mode writes only `04_Prompt_Writing_Brief.md`, draft mode writes `
    `persona_view.py check-sql <persona> 01_Universe_Inject.sql --load-bearing <ids>` (seeded records); the gate re-runs
    it on every scoped id in §5 and §5a.
 4. **Assigned clock.** Recompute relative dates against the shared context's `freeze_utc`, the seed bound: seeded record timestamps and completed events must not be after it, only plan fields (due date, scheduled start/end, deadline) may be later, and the eval clock `universe.clock_utc` is recorded beside it for each report's `Clock:` line. Human-facing dates use Pacific, with UTC beside them when calendar days differ; "today" and "yesterday" come from `universe.persona_today` (Sat Feb 14, 2026 / Wed Oct 1, 2025); do not prescribe an exact time for a date-only request. Ignore the QC form row 128 / spec Audit Workflow "today is February 28, 2026" — the task clock wins (A-30). **State premises** (Eval 1 §2.3, A-26/B-16): every actor is active at the clock and every object exists by then. On Feb 14, business as usual after the Feb 11, 2026 shutdown announcement is a false premise; on either date a departed person acting (Victor, gone since April 2025) is false; on Oct 1 anything first appearing after 2025-09-30 23:59:59 PT is false. A single loose factual slip is a Fail.
-5. **Every fair outcome.** Brief §4b is the common acceptance table for 04, 08 and 09. List requested deliverables, destinations and recipients, fixed values or closed sets of accepted fair values, delegated choices (quote the span), allowed variants and material/representational fields. Multiple defensible outcomes are allowed when all pass the rubric. Never add answer-key clauses just to eliminate alternatives. The structure remains a canonical outcome table, but the old one-acceptance-class requirement is superseded. Supply `outcome_reviews` for prompt-writing and prompt-check in `Working_Files/00_V3_Authoring_Evidence.json` (Guide schema).
+5. **Every fair outcome.** Brief §4b is the common acceptance table for 04, 08 and 09. List requested deliverables, destinations and recipients, fixed values or closed sets of accepted fair values, delegated choices (quote the span), allowed variants and material/representational fields. Multiple defensible outcomes are allowed when all pass the rubric, but only as representational variants, delegated choices and both-fair figures: an unresolved material fork fails `/prompt` (fair-reading procedure, step 5). Never add answer-key clauses just to eliminate alternatives. The structure remains a canonical outcome table, but the old one-acceptance-class requirement is superseded. Supply `outcome_reviews` for prompt-writing and prompt-check in `Working_Files/00_V3_Authoring_Evidence.json` (Guide schema).
 6. **Symptom, not cause.** The root cause appears only in the discovery map, flagged "never in the prompt". The situation section says what is visibly wrong, never why.
 7. **Check findings.** Every finding gives a verbatim span of `04_Prompt.txt` (verified as an exact substring), the rule and its source, the severity and the defect, and may add suggested wording.
 8. **Stage gate.** `tools/stage_gate.py prompt-writing` (brief) and `tools/stage_gate.py prompt-check` (check) PASS;
    handoff is blocked until they pass.
-9. **Write boundary** (GEN_EXECUTION §1): write only under `Task_Authoring/task_inputs/`, execute no SQL, and write nothing under `Evals/`, `claude/` or `HarmonyGames_*`.
+9. **Write boundary** (GEN_EXECUTION §1): write only under `<task_dir>/`, execute no SQL, and write nothing under `Evals/`, `claude/` or `HarmonyGames_*`.
 
 ## Procedure — brief mode (checklist)
 
@@ -200,9 +201,9 @@ Severity words: **Fail** (scores 1–2 at `/prompt`), **Non-fail** (3–4), **Ad
 | C1 | Field: 20–4,000 words | Field limit · Fail (the field rejects it) |
 | C2 | Assignment bound: all eight V3 fields in the shared context; persona resolves; source supports freeze | Intake BLOCKED until complete and supported; never change assigned fields |
 | C3 | Persona (§1.1) and voice (§1.2): role plausibility, voice judged against the role only — the persona's own Slack/mail style is not a standard (A-27); would they know this situation, is it inside their remit (prepare / review / approve) | Persona · Fail (implausible) / Non-fail (fits another persona better). A better-fitting colleague alone is not a Fail |
-| C4 | Competency, task skill, business function: assess the actual work independently from role; Authoring calls for an authored artifact | Mismatch alone is Non-fail / quality reduction under V3; role implausibility is C3 Fail |
+| C4 | Competency, task skill, business function: assess the actual work independently from role; Authoring calls for an authored artifact | Assigned Competency / Assigned Task Skill · **Fail** on a clear competency mismatch or an assigned skill that is not a real part of the work (Eval 1 hard FAIL; a defensible non-obvious match passes); Business Function mismatch is Non-fail and blocks a 5; role implausibility is C3 Fail |
 | C5 | Complexity and seeding (§1.5): ≥ 1 of Ambiguity / Dynamic Change / Multi-Source is load-bearing (brief §8, cite where it lives); the prompt does not restate operating details that live, or should live, in records | Complexity Dimensions and Data Seeding · **Fail** (No Load-Bearing Complexity / Prompt Carries the Recipe) |
-| C6 | Fair outcomes: test the strongest alternative for every deliverable against §4b and sidecar outcome reviews | Rejecting a fair reading fails; multiple valid answers alone does not |
+| C6 | Fair outcomes: test the strongest alternative for every deliverable against §4b and sidecar outcome reviews | Rejecting a fair reading fails; multiple valid answers alone does not; an unresolved **material** fork fails (`ugt-fork-v1`, step 5 of the fair-reading procedure) |
 | C7 | Clarity (§2.6): enumerate the concrete writes under each reasonable reading; scan "I'll / I need to / I want to / I'm going to [verb]" beside agent imperatives — "I'll [verb]" assigns the act to the persona unless the prompt also asks the agent for it; separate staging from approval, informing from waiting for permission, internal edits from external sends. A vague verb ("make sure", "clean up", "straighten out", "do whatever needs doing") with no competing concrete write is Minor — "make sure" / "check" defaults to verify and report; delegated discretion ("don't wait on me, go with your read") is authorized when records hold the rule. Report every deliverable whose channel, time or form is left open (email vs Slack to the same person, which free day, reminder vs event) — it is a Minor finding, not clean, when brief §4b lists that field as delegated or representational; an open **material** field is a C6 Fail (two acceptance classes) | Clarity · **Fail** (Action Decision Ambiguity — two named, incompatible writes are both supported: write now vs after approval, cover A vs cover B; or Major — intent unrecoverable and not settled by a documented convention) / Non-fail (Minor) |
 | C8 | Incorporation (`prompt-incorporation-v1`): every record the prompt tells the agent to follow is (a) available — persona-readable or an uploaded file; (b) identified unambiguously or leads to one source; (c) actually states what is attributed to it; (d) supplies instructions, not a precomputed answer. A brief §6 requirement with no incorporating trigger is unauthorized | (a) Feasibility Fail · (b) UGT/Clarity Fail · (c) Truthfulness (C17 bands) · (d) Investigation Fail · untriggered requirement: Advisory (an unauthorized criterion later) |
 | C9 | Pre-solved (§1.3.3): no root cause, conclusion, finding entity (the record or person the agent must identify) or presupposed answer count | Investigation · **Fail** (Pre-solved) |
@@ -227,6 +228,11 @@ Severity words: **Fail** (scores 1–2 at `/prompt`), **Non-fail** (3–4), **Ad
 2. Settle each material difference only by: a newer source on the same issue and scope (before the clock); an incorporated source's authority over the decisions it governs; source identity (whose words or which record the prompt names); scope (a partial update leaves the rest standing); or the same material result (decision, writes, destinations and contents all the same — the same destination alone is not enough).
 3. If both readings remain fair, include both in §4b and the sidecar `accepted_outcomes`; record why each is defensible. Multiple results, rounding, anonymized source tokens and Pacific/UTC date variants do not fail solely for differing. An unsupported premise or impossible write is still a truthfulness/feasibility defect. Test the cheapest valid reading for a shortcut; if it makes the task too easy, change the universe/design rather than excluding that reading in the rubric.
 4. Record both readings, resolving or accepting evidence, and the current outcome-review artifact hash in the sidecar. In prompt-check also supply the assigned-role review with source IDs and an explicit remit rationale. The Guide defines the schema.
+5. **Material forks are settled in data (platform rule; overrides step 3 where they differ).** The platform fails any unresolved material fork (`ugt-fork-v1`, `ugt-boundary-v1` in `references/platform_rule_delta.json`: 27 reports since 2026-11-05, and 20 of 30 archived `/prompt` FAILs).
+   - "Accept either" in §4b, the Oracle Events or the rubric does not fix a material fork. Every in-scope item and every boundary item needs a record that settles it.
+   - Settle it in the universe: a dated record the persona can see, added or changed through `/create-injection`. Do not settle it with a prompt sentence aimed at the fork; those sentences have leaked answers and opened new forks.
+   - The both-fair exception covers figures only (two totals that differ by rounding, a Pacific or UTC date). A category, state or membership with two fair values is a fork.
+   - The fork sweep records every fork and how it was settled: `python3 Task_Authoring/tools/coherence_sweep.py check --task-dir <task_dir>` (playbook `01_Universe_Injection.md`, coherence sweep). The prompt-writing and prompt-check gates read that record (`structure.accepted_outcomes`, `sweep.forks`).
 
 **`BOTH_FAIR_FIGURE`** (Eval 1 §2.1, A-24/B-15) is the only PASS for a single reported figure that no source settles, and only when all five hold: the decision, writes, destinations and recipients are identical and only that figure differs; each value sits on a persona-visible record other than the prompt; no newer source, authority check, source identity or scope check settles it; each reading completes every ask; the figure does not change the next action. Record it with both quotes, leading reading first (`kind` AMOUNT / COUNT / RATE / DATE), so the report prints "Rubric must accept: X or Y". Never add a "go with the most recent" line (it settles the fork), a file-now-versus-defer fork is not a figure, and a newer source still settles (#49).
 
@@ -285,8 +291,8 @@ Every mode ends with this loop and records it under `## Self-review` in its outp
    look thorough. Gate minimum: brief — one evidenced counter-reading per area of the table above (UGT,
    Clarity, Incorporation, Truthfulness, Feasibility/ACL, Contrived);
    check — one evidenced counter-reading row per C-check (C1–C24, named by id).
-7. **Stage gate.** Brief: `python3 Task_Authoring/tools/stage_gate.py prompt-writing Task_Authoring/task_inputs --paste`.
-   Check: `python3 Task_Authoring/tools/stage_gate.py prompt-check Task_Authoring/task_inputs --paste` (it recomputes the
+7. **Stage gate.** Brief: `python3 Task_Authoring/tools/stage_gate.py prompt-writing <task_dir> --paste`.
+   Check: `python3 Task_Authoring/tools/stage_gate.py prompt-check <task_dir> --paste` (it recomputes the
    word count and sha256 of `04_Prompt.txt`, verifies every quoted span as an exact substring, and certifies the tier: manifest present,
    `hardness_gate` PASS for the tier's profile pasted in the dossier and current — `tier.hardness`). Brief mode also
    requires the §4b outcome table and current sidecar fair-reading review. The checks

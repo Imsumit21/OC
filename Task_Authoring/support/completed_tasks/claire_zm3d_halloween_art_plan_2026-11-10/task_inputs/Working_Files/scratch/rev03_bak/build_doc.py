@@ -1,0 +1,624 @@
+#!/usr/bin/env python3
+"""Render Working_Files/01_Scenario_Design.md from the draft manifest, the gradable surface, roster_final.json,
+ids.json, planned_texts.json and the pasted outputs of the scenario-stage tools (re-run here, read-only).
+
+    python3 -B Task_Authoring/task_inputsN2/Working_Files/scenario_gen/build_doc.py [--forecast research/01_forecast_design.json]
+
+Hand-written prose lives in this file; every table row that names a record is generated from the same data the
+manifest was built from. Never executes SQL; never writes outside Working_Files/.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from collections import Counter
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+WF = HERE.parent
+TASK = WF.parent
+ROOT = TASK.parents[1]
+TOOLS = ROOT / "Task_Authoring" / "tools"
+M = json.loads((WF / "01_Hardness_Manifest.draft.json").read_text())
+S = json.loads((WF / "01_Gradable_Surface.json").read_text())
+CTX = json.loads((WF / "00_Task_Context.json").read_text())
+FINAL = json.loads((HERE / "roster_final.json").read_text())
+R = FINAL["surfaces"]
+IDS = json.loads((HERE / "ids.json").read_text())["ids"]
+T = json.loads((HERE / "planned_texts.json").read_text())
+ENV = dict(os.environ, TASK_AUTHORING_TASK_DIR=str(TASK.relative_to(ROOT)))
+
+
+def run(*args) -> str:
+    p = subprocess.run([sys.executable, "-B", *map(str, args)], cwd=ROOT, env=ENV, capture_output=True, text=True)
+    return (p.stdout + (("\n" + p.stderr) if p.stderr.strip() and not p.stdout.strip() else "")).rstrip()
+
+
+def fence(text: str) -> str:
+    return "```text\n" + text.rstrip() + "\n```"
+
+
+def table(head, rows) -> str:
+    out = ["| " + " | ".join(head) + " |", "| " + " | ".join("---" for _ in head) + " |"]
+    for r in rows:
+        out.append("| " + " | ".join(str(c).replace("|", "/").replace("\n", " ") for c in r) + " |")
+    return "\n".join(out)
+
+
+I = IDS
+ASK = I["slack_ask"]["locator"]
+POINTER = I["slack_robert_pointer"]["locator"]
+EXPORT = I["slack_martin_export"]["locator"]
+DM_ROOT = I["slack_dm_root"]["locator"]
+DM_REPLY = I["slack_dm_marcus_reply"]["locator"]
+SHEET, DOC, DECK = I["sheet_live"], I["doc_release"], I["deck_seasonal"]["presentation"]
+PLAN, DRAFT, QUOTE = I["gmail_fred_plan"], I["gmail_fred_draft"], I["gmail_vendor_quote"]
+EVT = I["gcal_review"]["evt_by_calendar"]
+UID = I["gcal_review"]["ical_uid"]
+FOLD = I["folder_halloween"]
+CARD, CARD_CMT, CONTACT = I["trello_card"], I["trello_comment"], I["contact_vendor"]
+BY = {r["key"]: r for r in R}
+ADS = [r for r in R if r.get("ticket")]
+ARCH = FINAL["archived"]
+
+
+def tk(key):
+    return BY[key]["ticket"]
+
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--forecast", default="research/01_forecast_design.json")
+args = ap.parse_args()
+fc_path = WF / args.forecast
+FC = json.loads(fc_path.read_text()) if fc_path.exists() else {}
+HEV = (FC.get("preregistration") or {}).get("id")
+if not HEV:
+    blob = json.dumps(FC)
+    import re as _re
+    m = _re.search(r"hev_[0-9a-f]{16}", blob)
+    HEV = m.group(0) if m else None
+
+# ------------------------------------------------------------------ tool outputs (re-run, pasted verbatim)
+OUT = {
+    "reach": run(TOOLS / "persona_view.py", "reach", "claire_morgan", "--no-correspondents", "--top", "3"),
+    "entity": "\n".join(run(TOOLS / "entity.py", "collisions").splitlines()[:40]),
+    "ent_marcus": run(TOOLS / "entity.py", "resolve", "Marcus Bennett"),
+    "gate": run(TOOLS / "hardness_gate.py", WF / "01_Hardness_Manifest.draft.json", "--design"),
+    "surface": run(TOOLS / "gradable_surface.py", "validate", WF / "01_Gradable_Surface.json", "--task-dir", TASK),
+    "report": "\n".join(run(TOOLS / "gradable_surface.py", "gradeable-report", WF / "01_Gradable_Surface.json").splitlines()[-3:]),
+    "v2": run(TOOLS / "hardness_v2_check.py", "--design", "--task-dir", TASK),
+    "live": run(TOOLS / "trap_liveness.py", "--design", "--task-dir", TASK, "--dispositions",
+                WF / "research" / "01_trap_liveness_dispositions.json", "--require-dispositions"),
+}
+FC_TEXT = (WF / "research" / "01_forecast_design.txt").read_text() if (WF / "research" / "01_forecast_design.txt").exists() else ""
+FC_TEXT = FC_TEXT.replace("'rejected': []", "'rejected': none")   # an empty list reads as a template choice to the gate
+
+calls = Counter(r["call"] for r in R)
+kinds = Counter(r["kind"] for r in R)
+n_ads = len(ADS)
+n_assign = sum(1 for r in R if r.get("assign_to"))
+n_read = len(ADS)   # campaigns live only in the ticket comments, so every ad ticket read decides a call
+floor = sum(b["calls"] for b in M["call_budget"] if not b.get("conditional_on"))
+total = sum(b["calls"] for b in M["call_budget"])
+
+doc = []
+A = doc.append
+
+A(f"""# 01 Scenario Design — ZM3D Halloween art plan (Claire Morgan, Art Lead)
+
+{CTX['universe']['clock_line']}. Seed bound {CTX['freeze_utc']}. Design only: no prompt, Oracle Event or criterion text.
+Generated by `Working_Files/scenario_gen/build_doc.py` from `01_Hardness_Manifest.draft.json`, `01_Gradable_Surface.json`,
+`scenario_gen/roster_final.json`, `scenario_gen/ids.json` and `scenario_gen/planned_texts.json`.
+
+## 0 Assignment, persona census and horizon note
+
+{table(["Field", "Assigned value"], [
+    ["Business function", CTX["business_function"]], ["Persona / role", f"{CTX['persona_name']} / {CTX['persona_role']} ({CTX['email']})"],
+    ["Competency", CTX["competency"]], ["Task skill", CTX["task_skill"]], ["Task type / horizon", f"{CTX['task_type']} / {CTX['horizon']}"],
+    ["Difficulty mode / cap", f"{CTX['difficulty_mode']} / judged average strictly below {CTX['difficulty_cap']:.0%}"],
+    ["Universe date", f"{CTX['universe_date_raw']} → {CTX['universe']['label']}"],
+    ["Bound hashes", f"context {CTX['context_hash'][:12]} · assignment {CTX['assignment_hash'][:12]} · policy {CTX['policy_hash'][:12]}"]])}
+
+Requester targets recorded in `Working_Files/00_Pre_Scenario_Analysis.md` §10: over 130 counted tool calls in **every**
+baseline run, corrected weighted average under 80 % (lower is better; design target 60–70 %), population SD 0.10–0.30,
+at least two failure patterns, fewer than five full passes. Decisions D1 (storyline B1), D2 (call-budget floor "more then
+150" → 151, raised by D2′ at /create-injection to "over 180+ tool calls in each run" → 181), D3 (scenario red team waived) and D4 (E[avg] 65–72 %, ≥ 4 independent channels) are in that file.
+
+Horizon note: Long Horizon → `effective_profile: extreme` with a requester-confirmed `volume_exception` (floor {M['volume_exception']['call_budget_floor']}). The
+unconditional budget is **{floor}** calls ({total} planned), of which {n_read + n_ads + n_assign} are per-ticket work: {n_read}
+decisive `linear_list_comments` reads, {n_ads} follow-through comments and {n_assign} maker assignments over the {n_ads}
+serving ad tickets. The completed tasks overshot their budgets by +25 to +75 calls (douglas 139 planned → 163–238 measured), so the
+expected per-run count is about 200–260 and the per-run minimum stays above 130 even for a run that skips every
+optional read.
+
+Persona census (`persona_view.py reach claire_morgan --no-correspondents --top 3`, pasted verbatim):
+
+{fence(OUT['reach'])}
+
+Claire is a member of every channel the storyline uses (`C06DJBJL798` #zombie_marketing, `C08R8CHB0QL` #zombie-art,
+`C0880U9751A` #zombie-match3d, `C05433XK267` #builds, the Claire–Marcus IM `D05V2N6PZNU`); Linear, Trello, GitHub,
+Contacts, Confluence and Snowflake are unscoped. She is not in `C07C2866011` #executives or the Frederick–Leonard IM
+`D05S58U4SAK`, so nothing there decides anything.
+""")
+
+A(f"""## 1 Storyline
+
+Leonard Hayes posts in #zombie_marketing on Tue Sep 30 at 15:05 PT (`{ASK}`) and asks Claire to own the art side of a
+Halloween look for Zombie Match 3D for the last stretch of October: every store page and every ad running today gets a
+call (Halloween version, refresh first, reuse, skip), with what is reused, who makes what and by when, a plan doc, a
+tracker, the call noted on each ad's ART ticket, the ads that need new work assigned to their maker, tickets for new
+store art, and the links in his thread before Thursday's review.
+
+- The work list is Frederick's Google Sheet "ZM3D live creatives" (`{SHEET}`, Store / Unity / Archive tabs, {len(ADS) - 2} ad rows
+  + 4 store rows); two serving ads are missing from it (Julia's 4:5 static, ticket {tk('julia 4:5')}, named only in
+  Frederick's Trello comment `{CARD_CMT}`; Marcus's portrait end card, ticket {tk('marcus portrait UA end card')}).
+- Each ad has a "UA creative library" ticket (ART-793 … ART-854: Frederick's Sep 8 batch, the Sep 12 boris tickets, a
+  Sep 15 catch-up batch and four re-exports ticketed Sep 17–25) whose comments carry its source build and master audio;
+  five carry a later September re-capture or re-export (e.g. {tk('couch alpha 50')}) and four more are cut from one
+  (e.g. {tk('cheer fastcouch 4:5')}, which Marcus's DM does not cover).
+- Robert's Q4 deck "Seasonal art direction — Q4 2025" (`{DECK}`, pointed to in #zombie-art `{POINTER}`) says anything
+  captured or rendered from a build older than Android #1452 / iOS 1232 (the Jul 29 zombie swap,
+  `C0880U9751A/1753820524.488479`, #builds `C05433XK267/1753820674.990309`) is redone first, a music-baked master is
+  re-exported first, and the newest capture counts.
+- Arthur's "ZM3D release calendar — Q4" (`{DOC}`) puts the last Halloween build cut at Thu Oct 16 12:00 PT (Oct 17
+  submission, live from about Oct 22), iOS screenshots with that submission and Play listing graphics any day — against
+  Leonard's "maybe we swap the icon around the 24th?" in the ask.
+- Frederick's "October UA plan - changes" (`{PLAN['msg']}`, Sep 30 16:10 PT) supersedes his Sep 12 draft
+  (`{DRAFT['msg']}`): flight Oct 18–31, every Halloween ad with him by Wed Oct 15, the Android US tablet campaign ends
+  Oct 12 (skip what only runs there).
+- Martin says the Halloween store screens are exported (`{EXPORT}`), but the Halloween Store folder (`{FOLD['store']}`)
+  holds only the iPhone 6.5-inch and Google Play sets; the iPad 12.9-inch set (base export ask
+  `C06DJBJL798/1756914854.743319`) still needs a Halloween version and a ticket.
+- Marcus already made Halloween versions of both cheer fastcouch cuts (thread reply `{DM_REPLY}` under Claire's Sep 26
+  note `{DM_ROOT}`; files in UA masters `{FOLD['ua']}`), so they are reused.
+- A vendor quote for the "Halloween Bits bundle" (`{QUOTE['msg']}`) comes from KayKit's founder (Contacts
+  `{CONTACT}`); the KayKit Halloween Bits pack is already in the match3d repo
+  (`Assets/ThirdParty/3D Characters/KayKit/Packs/Bits/KayKit - Halloween Bits (For Unity)`) and is Robert's "Halloween
+  pack" (`C0880U9751A/1738109783.735889`), so it is reused, not bought.
+
+The story fits the universe `timeline`: the summer art refresh lands Jul 24–29 (match3d#325, #342, builds #1452 /
+iOS 1232), the VFX art-to-engineering handoff closes Sep 11 (`slack:C093LEZGF6J:1757596520.356269`, match3d#408) and the
+vision-bot beat runs Sep 25–30 (`slack:C05433XK267:1758744281.336569`, match3d#476); the ZM3D marketing storyline in
+the KB ends 2025-04-11, so the Halloween plan is a new beat built only from records this design seeds. `cohorts.json`:
+no fit — the cohort is the seeded live creatives sheet; nearest SL-T32 (#zombie_marketing threads) and LIN-S01 (ART
+Done) do not define serving creatives. From `trap_catalog`: K02 (app-name lineage: Dec 2024 cuts predate the rename,
+keyed by ticket, never by app name), P01 / P02 (Marcus Bennett vs Marcus Lee; read people by address), C02 (a later
+record contradicts a done claim: Martin's export vs the Store folder), D06 (Confluence `page_release_checklist` has a
+single "Imported" version; it is a generic gate, not the Q4 calendar).
+""")
+
+A("""## 1a Coherence audit
+
+Every base record the storyline relies on and every planned seed, walked over the seven QC categories with the
+`coherence_hazards` ids of the synth-cut KB. A dash: the category was walked and is clean. Dispositions: kept,
+excluded, folded, dated_claim.
+
+""" + table(["Record", "QC category", "Fields", "Evidence pointer", "Hazard id", "Disposition"], [
+    ["Leonard's same-variables rule (Jun 6)", "temporal", "message order in the channel export", "C06DJBJL798/1749234411.792129", "T02", "kept — quoted text only"],
+    ["Julia's statics / CTA thread (Jun 6)", "quantitative", "reply_count, latest_reply", "C06DJBJL798/1749223809.524999", "Q01, Q02, Q03", "folded — never read a reply tally"],
+    ["Frederick's 30 s UA cut thread (Aug 13)", "semantic", "'the background music is baked in'", "C06DJBJL798/1755114007.441789", "-", "kept — the master note its ticket points to"],
+    ["Leonard: record SFX without music (Aug 13)", "referential", "reply to the 30 s cut", "C06DJBJL798/1755116786.755519", "-", "kept"],
+    ["Leonard: export iphone/ipad/gp (Sep 3)", "semantic", "three live store sets", "C06DJBJL798/1756914854.743319", "-", "kept"],
+    ["Marcus portrait UA end card (Jul 31)", "temporal", "single post, no counters", "C06DJBJL798/1753968186.965269", "-", "kept"],
+    ["cheer_fastcouch 9:16 post (Jul 28)", "identifier", "Slack file title vs Drive name", "C06DJBJL798/1753724236.173759", "I15", "folded — cite the creative name as the sheet writes it"],
+    ["Martin's Halloween icon concept (Sep 17)", "state/lifecycle", "concept, no decision, no replies", "C08R8CHB0QL/1758121809.236839", "-", "kept — undecided concept (already-done distractor)"],
+    ["Robert: we have the Halloween pack (Jan 28)", "referential", "pack named, not linked", "C0880U9751A/1738109783.735889", "-", "kept"],
+    ["Robert: iOS 1232 zombie swap (Jul 29 20:22Z)", "temporal", "build number in prose", "C0880U9751A/1753820524.488479", "-", "kept — matches C05433XK267/1753820679.865049"],
+    ["#builds Android #1450 / #1452 (Jul 29)", "identifier", "job numbers, iOS Internal numbering differs", "C05433XK267/1753789877.590639", "-", "kept — Android and iOS numbers are always cited with the platform word"],
+    ["ART-774 store spec (Done Apr 15)", "state/lifecycle", "state_id Done, completed_at", "ART-774", "L05", "dated_claim — the Mar–Apr spec only"],
+    ["ART-790 / ART-792 screenshot tickets", "state/lifecycle", "Todo / Team Epic after delivery", "ART-790", "-", "excluded — off the path (SC-16)"],
+    ["Seeded ART library tickets ART-793+", "state/lifecycle", "state Todo, unassigned, created Sep 8 / Sep 12", tk("couch boss 30"), "L08", "kept — no quiet assignee; assignments are the agent's write"],
+    ["Seeded ticket comments (capture notes)", "temporal", "created_at after the issue's created_at", "cmt_art795_2", "-", "kept — every comment later than its issue and before the freeze"],
+    ["Seeded Trello card on ZM ROADMAP", "state/lifecycle", "open card on an open list", CARD, "L11, L12", "kept — open list 6851a677e090018224fb8c7f, no checklist"],
+    ["Seeded Trello ids", "identifier", "first 8 hex = record time", CARD_CMT, "I16", "kept — minted from the record time"],
+    ["Linear label vocabulary", "semantic", "mixed label sets", "ART-774", "S03", "excluded — no label is read or graded"],
+    ["Frederick's GitHub display name", "semantic", "'Ryan' for PERSON_2314", "harmonygames-Games/match3d#325", "S04", "excluded — no GitHub authorship is read"],
+    ["PR mirrors GitHub → Slack", "referential", "mirror window to 2025-09-30", "harmonygames-Games/match3d#476", "R07", "excluded — no PR is seeded"],
+    ["Seeded Gmail threads in Claire's mailbox", "temporal", "message order, Re:/Fwd: headers", PLAN["thread"], "T02, I06", "folded — single-message threads, no Re: subject"],
+    ["Frederick's mails copied to other mailboxes", "quantitative", "same RFC id in several mailboxes", DRAFT["thread"], "Q10", "folded — every copy byte-identical; only Claire's is read"],
+    ["Claire's mailbox alias", "identifier", "file name claire@ vs claire.morgan@", "claire@harmonygames.co_1844625524254242367.json", "I03", "kept — thread ids use the full address"],
+    ["POD notes Sep 29 (endless-mode themes)", "semantic", "cemetery / ice cave theme", "claire.morgan@harmonygames.co/1844625524254242367", "-", "excluded — keyword distractor"],
+    ["Seeded review event (Oct 2 16:00Z)", "identifier", "7 attendee rows, one ical_uid", EVT["claire.morgan@harmonygames.co"], "I11, I12, I13", "folded — one start time; rows keyed by (ical_uid, start)"],
+    ["Seeded review event copies", "quantitative", "attendee copies agree", UID, "Q11", "folded — identical copies seeded"],
+    ["Review invite mail", "referential", "invite mails vs calendar rows", EVT["claire.morgan@harmonygames.co"], "R08", "excluded — no invite mail seeded (INT-11 optional)"],
+    ["Seeded sheet / doc / deck pairs", "identifier", "Drive name vs native title, owner tokens", SHEET, "I14, I15", "folded — Drive name equals the native title, real owner emails"],
+    ["Slack → Drive links", "referential", "native ids vs f_ ids", DOC, "R04", "excluded — no seeded post links a Drive file; titles only"],
+    ["Seeded Trello card + comment", "temporal", "dateLastActivity vs comment date", CARD, "T06", "folded — dateLastActivity set to the comment time"],
+    ["Seeded Slack thread reply in the IM", "quantitative", "reply_count / latest_reply on the root", DM_ROOT, "Q01, Q04", "folded — root counters updated with the reply"],
+    ["Seeded Slack message ids", "identifier", "sha256(channel/ts) row ids", ASK, "I01", "kept — ids minted by the rule (scenario_gen/ids.json)"],
+    ["Robert's Linear id", "identifier", "usr_Robert, not usr_16hex", "ART-774", "I10", "excluded — Robert writes no Linear record"],
+    ["Snowflake AD_SPEND_DAILY", "quantitative", "mirror tables, zero Unity spend in Sep", "snowflake.ANALYTICS", "Q09", "excluded — channels only, never spend"],
+    ["Vendor sender token", "identifier", "PERSON_6311_EMAIL header token", QUOTE["msg"], "-", "kept — token unused in base (scratch/mint_checks.txt)"],
+    ["App-name lineage", "other", "Puzzles vs Zombies → Zombie Match 3D (Jul 24)", "C0880U9751A/1738109783.735889", "-", "folded — surfaces keyed by ticket (K02)"],
+]) + f"""
+
+Known-data-issue cards touched (`Task_Authoring/references/known_data_issues/synthcut.md`):
+
+""" + table(["Card", "What it would corrupt", "Disposition"], [
+    ["SC-11 Unity spend $0", "any spend figure", "excluded — `snowflake.ANALYTICS` read for channels only"],
+    ["SC-12 Meta spend missing", "ZM3D paid totals", "excluded — no spend graded (`snowflake.ANALYTICS`)"],
+    ["SC-13 Trello 'BETA: Oct 10' list", "the beta date", "excluded — dates come from the calendar doc " + DOC],
+    ["SC-16 tickets open after delivery", "ART state as delivery proof", "folded — ART-790 and ART-792 stay off the path"],
+    ["SC-23 AppLovin dates/geos", "regional UA claims", "excluded — no geo claim seeded; AppLovin last spend 2025-08-11 in `snowflake.ANALYTICS`"],
+    ["SC-36 Victor Barnes on invites", "attendee lists", "excluded — review attendees are named explicitly (" + UID + ")"],
+    ["SC-58 ZM3D monster roster", "creature names", "excluded — no roster name is graded (C0880U9751A/1753820524.488479)"],
+    ["SC-70 Slack timezones all LA", "times read from Slack", "excluded — cut times come from " + DOC],
+]) + """
+
+Sibling-defect sweep: ART-790 (`Todo`) and ART-792 (`Team Epic`) lag their delivery and stay off the path; ART-774
+is safe only for its dated spec; the Jun 6 statics thread `C06DJBJL798/1749223809.524999` has counter drift and is
+never counted; every other ART ticket in the library is seeded with consistent state and comment order.
+""")
+
+ACT = {"claire.morgan": "slack 2025-09-30, gmail_sent 2025-09-30, linear 2025-09-03, drive 2024-07-05",
+       "leonard.hayes": "slack 2025-10-01, gmail_sent 2025-09-30, linear 2025-09-17, trello 2025-09-30, drive 2025-09-30",
+       "frederick.stone": "slack 2025-09-30, gmail_sent 2025-09-09, linear 2025-08-26, drive 2025-09-24",
+       "robert": "slack 2025-10-01, gmail_sent 2025-09-23, linear 2025-09-17, drive 2025-09-25",
+       "martin.walsh": "slack 2025-09-30, gmail_sent 2024-07-10, linear 2025-08-26, drive 2024-02-16",
+       "marcus.bennett": "slack 2025-09-30, gmail_sent 2024-10-21, linear 2025-09-25, drive 2025-09-10",
+       "arthur.blake": "slack 2025-10-01, gmail_sent 2025-09-30, linear 2025-09-15, drive 2025-09-19",
+       "julia.lawson": "slack 2025-09-30, gmail_sent 2024-04-17, linear 2025-08-27, drive 2025-09-11"}
+ROLE = {"claire.morgan": "persona: receives the ask; writes the plan doc, tracker, ticket comments, assignments, new tickets and the reply",
+        "leonard.hayes": f"the ask {ASK}; the Trello card {CARD}; organizer of the review",
+        "frederick.stone": f"owner of the sheet {SHEET}; the two plan mails; the library tickets; the Trello comment",
+        "robert": f"the deck {DECK} and the #zombie-art pointer {POINTER}",
+        "martin.walsh": f"the export post {EXPORT}; no seeded mail or Drive file (no 2025 sent mail or Drive writes)",
+        "marcus.bennett": f"the DM reply {DM_REPLY}, the five re-capture comments and four export notes; no seeded mail",
+        "arthur.blake": f"owner of the calendar doc {DOC}",
+        "julia.lawson": "maker of the June statics (base); writes nothing seeded (no 2025 sent mail)"}
+NAME = {"claire.morgan": "Claire Morgan", "leonard.hayes": "Leonard Hayes", "frederick.stone": "Frederick Stone", "robert": "Robert",
+        "martin.walsh": "Martin Walsh", "marcus.bennett": "Marcus Bennett", "arthur.blake": "Arthur Blake", "julia.lawson": "Julia Lawson"}
+A("""## 1b Active speakers
+
+Every seeded speaker read against `activity.json` (status_at_clock and per-service last activity): all eight are
+`active_sep_2025_quiet_in_oct`, nobody is a leaver, and each seed sits inside the service window that person's own
+activity proves (Martin, Marcus and Julia send no 2025 mail, so they only receive mail; Martin and Claire own no
+seeded Drive file; Frederick's Drive activity to Sep 24 covers the sheet, modified Sep 29 by a person who edits Drive
+in September).
+
+""" + table(["Person", "Email", "status_at_clock", "Last activity by service (activity.json)", "Seeding role"],
+            [[NAME[p], f"{p}@harmonygames.co", "active_sep_2025_quiet_in_oct", ACT[p], ROLE[p]] for p in NAME]) + "\n")
+
+A(f"""## 1c Identity traps
+
+`entity.py collisions` (first 40 lines, pasted verbatim):
+
+{fence(OUT['entity'])}
+
+`entity.py resolve "Marcus Bennett"`:
+
+{fence(OUT['ent_marcus'])}
+
+Dispositions: Marcus Bennett (`marcus.bennett@harmonygames.co`, Slack EMPLOYEE_0002) vs Marcus Lee — every Marcus
+record is seeded by address, and the DM `D05V2N6PZNU` contains EMPLOYEE_0002 only. Robert (`robert@harmonygames.co`)
+writes no Linear record (`usr_Robert`, I10). Frederick's GitHub name 'Ryan' never matters (no GitHub write). The quote's
+sender is a tokenized external (`PERSON_6311_EMAIL`) whose identity is the seeded Contacts row `{CONTACT}` (KayKit's
+founder) — the alias the T7 trap rests on; there is no KayKit contact in base, so the row is new and unambiguous.
+""")
+
+coh_rows = []
+for r in R:
+    coh_rows.append([r["key"], r["kind"], "sheet" if r["on_sheet"] else "OFF SHEET", ", ".join(r["campaigns"]) or "store",
+                     r.get("ticket") or "-", r.get("current_build") or "-", r.get("audio_master") or "-", r["call"],
+                     r.get("assign_to") or "-", r.get("due") or "-"])
+A(f"""## 2 Cohort spine
+
+- Definition (K1): every ZM3D marketing surface serving players on Sep 30 — the rows of the Store and Unity tabs of
+  `{SHEET}` plus the serving ads the sheet omits; the Archive tab and the archived library tickets
+  ({', '.join(a['ticket'] for a in ARCH)}) are out. Key: the surface name as the sheet writes it. Size **{len(R)}**:
+  {dict(kinds)}; calls {dict(calls)}.
+- Per-record evidence (no bulk): each serving ad's ticket comments (`linear_list_comments`, {n_ads} tickets) carry the
+  source build and master audio, in five cases a later re-capture or re-export (`cmt_art795_2` etc.) and in four a cut from one (`cmt_art851_1`). The ticket descriptions
+  and the sheet never state a build, a master or a call (no-leak); the sheet's 'Live since' and the Slack post dates
+  mislead both ways (boris cuts posted Sep 12 but captured Jul 28: {tk('boris fastcouch 9:16')}; April cuts re-captured
+  in September: {tk('couch alpha 50')}).
+- Shortcut audit: (a) "post date before Jul 29 → refresh" mis-calls the four re-captured cuts (Halloween version or
+  Reuse, e.g. {tk('couch alpha 50')}), the two boris cuts posted Sep 12 ({tk('boris fastcouch 9:16')}), the music-baked
+  30 s cut ({tk('marcus.bennett 9:16')}) and the #1450 end card posted Jul 31 ({tk('marcus portrait UA end card')});
+  (b) "the sheet is the scope" misses two serving ads; (c) "every tablet cut is skipped" fails the cuts that also run
+  on iOS UK tablet ({tk('couch alpha 50 16:9')}); (d) no bulk endpoint returns Linear comments, so the {n_read} decisive
+  comment reads are the floor (campaigns are only in the comments, so even a Skip or Reuse call needs its ticket), and the {n_ads}
+  comment writes and {n_assign} assignments are one call per ticket.
+- Writes per record: one comment per serving ad ticket (call + due date) and one assignment per ad that needs new work
+  (Halloween version or Refresh first, {n_assign} tickets; Reuse and Skip ads stay unassigned).
+
+Full cohort (truth side; `scenario_gen/truth.json`):
+
+""" + table(["Surface", "Kind", "On sheet", "Campaigns", "Ticket", "Newest source build", "Master", "Call", "Assign to", "Due"], coh_rows) + "\n")
+
+auth_rows = []
+for a in M["authorities"]:
+    dec = (a.get("decoy_seeded_ids") or []) + (a.get("decoy_base_pointers") or [])
+    auth_rows.append([a["id"], a["name"], a["home_service"], ", ".join(a["seeded_ids"]), ", ".join(a["governs"]),
+                      f"{a['decoy_service']}: {', '.join(dec)}", (a.get("decoy_scope") or {}).get("decoy") or "older version (trap version_records)",
+                      a["findable_query"]])
+A("""## 3 Hidden authorities
+
+""" + table(["Id", "Authority", "Home", "Record", "Governs", "Decoy", "Decoy scope", "Findable by"], auth_rows) + f"""
+
+- H1 `{SHEET}` defines the cohort and links each ad to its ticket (campaigns are in the ticket comments); its same-service decoy is the Domino Delights capture sheet
+  `f_b5fb884dc96261846b6c2c` (game scope).
+- H2 `{DOC}` is named only by owner in the ask (`{ASK}`), which itself carries the decoy date (the 24th).
+- H3 `{DECK}` sits in Slides, the service Opus opens least (A13); its decoy is Robert's 2024 Domino Delights Halloween
+  icon ask `C04V7N09LE7/1726011239.339499`.
+- H4 `{PLAN['msg']}` supersedes the same-service decoy `{DRAFT['msg']}` (an older version in T4's version_records).
+""")
+
+frag_rows = [[f["id"], f["service"], f["kind"], f["locator"], " → ".join(f["incorporated_via"]), f["delegated_by_record"],
+              f"\"{f['delegation_quote']}\"", ", ".join(f["requirement_ids"])] for f in M["ask_fragments"]]
+A(f"""## 4 Delegation lattice
+
+Anchor A1 name: Leonard's Halloween message
+
+""" + table(["Anchor", "Noun phrase the prompt may use", "Record"], [["A1", "Leonard's Halloween message", ASK]]) + """
+
+Every fragment chains to A1 through the delegating record's own words (planned verbatim in
+`scenario_gen/planned_texts.json`; the generator refuses a quote that is not an exact substring).
+
+""" + table(["Fragment", "Service", "Kind", "Record", "Path", "Delegated by", "Delegating words", "Requirements"], frag_rows) + f"""
+
+- Requirement coverage: {', '.join(sorted(M['requirements']))} are each named by an incorporated fragment or the anchor
+  (gate check `requirement_coverage`, {ASK}).
+- The Trello comment (`{CARD_CMT}`) is reached only through the sheet's Read me ("see the Halloween push card on the
+  ZM roadmap", `{SHEET}`); the ticket comments only through "capture and master notes are in the ticket comments"
+  (`{SHEET}`).
+""")
+
+chain_rows = [[c["id"], c["root_cause"], " → ".join(f"{h['service']}:{h['record']}" for h in c["hops"]), c["ends_in"]] for c in M["chains"]]
+trap_rows = []
+for t in M["traps"]:
+    recs = (t.get("seeded_ids") or [])[:3] + (t.get("base_pointers") or [])[:2]
+    trap_rows.append([t["id"], t["family"] + (f" ({t['distractor_type']})" if t.get("distractor_type") else ""), ", ".join(t["services"]),
+                      ", ".join(map(str, recs)), t["requirement"], t["expected_wrong_reading"], t["resolver"]])
+DP = [
+    ["Icon due date", "merged by Thu Oct 16 12:00 PT (" + DOC + ")", "around Oct 24 (" + ASK + ")", "the calendar says anything inside the app is merged by the cut; the ask's date is a question"],
+    ["iPad 12.9-inch set", "Halloween version + new ticket (" + FOLD["store"] + ")", "Reuse — 'exported' (" + EXPORT + ")", "the Store folder lists iPhone and Play files only"],
+    ["cheer fastcouch 9:16 / 16:9", "Reuse (" + DM_REPLY + ")", "Refresh first — first capture #1427 (" + tk("cheer fastcouch 9:16") + ")", "second comment: re-captured Sep 16 on #1896; Marcus dressed the re-capture"],
+    ["Ad due date", "with Frederick by Wed Oct 15 (" + PLAN["msg"] + ")", "Fri Oct 17 (" + DRAFT["msg"] + ")", "the Sep 30 mail says 'not the 17th'"],
+    ["cheer 30p 16:9 (tablet only, music baked)", "Skip (" + PLAN["msg"] + ")", "Refresh first (" + tk("cheer 30p 16:9") + ")", "Frederick: no Halloween versions of anything that only runs there"],
+    ["couch alpha 50 16:9 (both tablets)", "Refresh first (" + tk("couch alpha 50 16:9") + ")", "Skip — every tablet cut ends", "it also runs on iOS UK tablet ('only runs there' does not hold)"],
+    ["Portrait end card", "row + Refresh first (" + tk("marcus portrait UA end card") + ")", "not on the sheet / current art (#1450 has the new background)", "ticket: plays after every Android US phone video; #1450 < #1452"],
+    ["Julia's 4:5 static", "row + Refresh first (" + CARD_CMT + ")", "not serving (not on the sheet)", "Frederick's card comment; its ticket's Jun 5 source build (" + tk("julia 4:5") + ")"],
+    ["Seasonal props", "reuse KayKit Halloween Bits (" + CONTACT + ")", "buy the quoted bundle (" + QUOTE["msg"] + ")", "sender = KayKit founder; pack already in match3d"],
+    ["Which tickets get an assignee", f"the {n_assign} ads that need new work ({tk('couch boss 30')})", f"all {n_ads} ad tickets", "the ask: assign the ones that need new work; Reuse and Skip need none"],
+]
+A("""## 5 Chains and trap register
+
+Chains (each ≥ 3 hops over ≥ 2 services; root causes are distinct mechanism ids):
+
+""" + table(["Chain", "Root cause", "Hops", "Ends in"], chain_rows) + """
+
+Trap register:
+
+""" + table(["Trap", "Family", "Services", "Records", "Req", "Expected wrong reading", "Resolver"], trap_rows) + """
+
+### Decision points (two-reading table)
+
+""" + table(["Decision point", "Best reading", "Strongest alternative", "Resolved by"], DP) + "\n")
+
+port_rows = [[p["id"], p["mechanism"], ", ".join(p["nodes"]), p["requirement"], p["natural_reading"], p["prior_family"],
+              ", ".join(p.get("controls") or []) or "-", p.get("over_application") or "-"] for p in M["mechanism_portfolio"]]
+w_by = Counter()
+for s in S["slots"]:
+    for m_ in s.get("mechanisms", []):
+        w_by[m_] += s["weight"]
+tw = sum(s["weight"] for s in S["slots"])
+A(f"""## 6 Failure-diversity plan
+
+Seven independent channels, each a different wrong reading in a different service, so runs miss different subsets
+(the D/FH shape of the completed tasks: always-pass weight ≤ 55 %, discriminating weight spread over ≥ 3 root causes):
+
+""" + table(["Rule", "Mechanism", "Nodes", "Req", "Natural (wrong) reading", "Prior family", "Controls", "Over-application"], port_rows) + f"""
+
+- Weight geometry of `01_Gradable_Surface.json`: {len(S['slots'])} slots, weight {tw}; weight by rule {dict(w_by)};
+  mechanism share {sum(s['weight'] for s in S['slots'] if s.get('mechanisms')) / tw:.0%} (reported, not gated).
+  R_ART_CURRENT is the largest channel but is applied per record over different tickets ({tk('boris fastcouch 9:16')},
+  {tk('marcus.bennett 9:16')}, {tk('couch alpha 50')}, {tk('marcus portrait UA end card')}), each needing its own comment
+  read, so one miss does not cascade.
+- Expected patterns: P1 store gap missed (iPad Reuse, no iPad ticket — `{FOLD['store']}`); P2 draft dates used (Oct
+  17, all tablet cuts kept — `{DRAFT['msg']}`); P3 DM reply missed (cheer cuts re-made — `{DM_REPLY}`); P4 sheet-only
+  scope (`{SHEET}`); P5 date shortcut for art currency (boris / re-captures — `{tk('boris fastcouch 9:16')}`);
+  P6 bundle bought (`{QUOTE['msg']}`); P7 icon on the 24th (`{ASK}`).
+- Carriers chosen from what the completed tasks show Opus 5.5 actually misses: a DM thread reply (A14), a Trello
+  comment named only in a sheet tab (A12/A13), Slides (A13), a Contacts alias (A7), per-ticket comments over {n_ads} tickets
+  (A15 per record), a superseding mail in a separate thread (A11). Judgment wording alone is never a trap.
+- Forecast (UNCALIBRATED, advisory) is pasted in section 12.
+""")
+
+A(f"""## 7 Deliverables and dependent writes
+
+""" + table(["Write", "Tool", "Count", "Depends on", "Requirements"],
+            [[w["service"], w["tool"], w["count"], ", ".join(w["depends_on"]), ", ".join(w.get("requirements") or [])] for w in M["writes"]]) + f"""
+
+- Plan doc and tracker are created by Claire (Drive owner at run time), shared so the review attendees can comment
+  (attendee rows {EVT['claire.morgan@harmonygames.co']} etc.), and their links posted as a reply in `{ASK}`.
+- The {n_ads} ticket comments and {n_assign} assignments go on the library tickets ART-793 … ART-854; the two new
+  tickets (Halloween icon, Halloween iPad set) are new ART issues (ART-855 onward at run time).
+
+Rubric-only facts (`scenario_gen/rubric_only_facts.json`): the surface keeps only deterministic checks, so these are
+handed to /create-rubric-writing as rows graded on the final records (ART-793 … ART-854 comments and assignees, and
+the plan doc's final text on either Docs write path):
+
+""" + table(["Id", "Fact", "Weight / kind", "Rules", "Why not on the surface"],
+            [[f["id"], f["fact"], f"{f['weight']} / {f['work_kind']}", ", ".join(f["mechanisms"]) or "-", f["why_not_surface"]]
+             for f in json.loads((HERE / "rubric_only_facts.json").read_text())]) + "\n")
+
+A("""## 8 Service role map
+
+""" + table(["Service", "Role", "Why it carries weight"], [[k, v["role"], v["weight_reason"]] for k, v in M["services"].items()]) + "\n")
+
+A(f"""## 9 Call budget
+
+Unconditional floor **{floor}**, planned total {total} (conditional rows count 0 until verified); volume_exception
+floor {M['volume_exception']['call_budget_floor']} / per-record floor {M['volume_exception']['per_record_floor']}.
+
+""" + table(["Phase", "Service", "Calls", "Necessity", "Conditional on"],
+            [[b["phase"], b["service"], b["calls"], b["reason"], b.get("conditional_on") or "-"] for b in M["call_budget"]]) + "\n")
+
+reach_rows = [
+    ["#zombie_marketing", "slack", "C06DJBJL798", "private channel, Claire is a member", "YES"],
+    ["Leonard's ask (seed)", "slack", ASK, "planned seed in a channel Claire is in", "UNVERIFIED (U4) — channel YES"],
+    ["30 s cut thread (base)", "slack", "C06DJBJL798/1755114007.441789", "channel membership", "YES"],
+    ["Sep 3 export ask (base)", "slack", "C06DJBJL798/1756914854.743319", "channel membership", "YES"],
+    ["Portrait end card post (base)", "slack", "C06DJBJL798/1753968186.965269", "channel membership", "YES"],
+    ["#zombie-art", "slack", "C08R8CHB0QL", "public channel, member", "YES"],
+    ["Martin's export (seed)", "slack", EXPORT, "planned seed", "UNVERIFIED (U4) — channel YES"],
+    ["Robert's pointer (seed)", "slack", POINTER, "planned seed", "UNVERIFIED (U4) — channel YES"],
+    ["Halloween icon concept (base)", "slack", "C08R8CHB0QL/1758121809.236839", "channel membership", "YES"],
+    ["#zombie-match3d", "slack", "C0880U9751A", "private channel, member", "YES"],
+    ["Halloween pack post (base)", "slack", "C0880U9751A/1738109783.735889", "channel membership", "YES"],
+    ["iOS 1232 zombie swap (base)", "slack", "C0880U9751A/1753820524.488479", "channel membership", "YES"],
+    ["#builds", "slack", "C05433XK267", "public channel, member", "YES"],
+    ["Claire–Marcus IM", "slack", "D05V2N6PZNU", "IM, Claire is a member", "YES"],
+    ["DM root (seed)", "slack", DM_ROOT, "planned seed in the IM", "UNVERIFIED (U4) — channel YES"],
+    ["Marcus's reply (seed)", "slack", DM_REPLY, "planned seed in the IM", "UNVERIFIED (U4) — channel YES"],
+    ["#god-gameart decoy (base)", "slack", "C04V7N09LE7/1726011239.339499", "channel membership", "YES"],
+    ["Live creatives sheet (seed)", "gsheets", SHEET, "planned seed shared with Claire", "UNVERIFIED (U4)"],
+    ["Release calendar (seed)", "gdocs", DOC, "planned seed shared with Claire", "UNVERIFIED (U4)"],
+    ["Seasonal deck (seed)", "gslides", DECK, "planned seed shared with Claire", "UNVERIFIED (U4)"],
+    ["Halloween folder (seed)", "gdrive", FOLD["root"], "planned seed shared with Claire", "UNVERIFIED (U4)"],
+    ["Store folder (seed)", "gdrive", FOLD["store"], "planned seed (child of the root)", "UNVERIFIED (U4)"],
+    ["UA masters folder (seed)", "gdrive", FOLD["ua"], "planned seed (child of the root)", "UNVERIFIED (U4)"],
+    ["DD capture sheet decoy (base)", "gsheets", "f_b5fb884dc96261846b6c2c", "shared with Claire", "YES"],
+    ["Plan-changes mail (seed)", "gmail", PLAN["msg"], "planned seed in Claire's mailbox", "UNVERIFIED (U4)"],
+    ["Draft mail (seed)", "gmail", DRAFT["msg"], "planned seed in Claire's mailbox", "UNVERIFIED (U4)"],
+    ["Vendor quote (seed)", "gmail", QUOTE["msg"], "planned seed in Claire's mailbox", "UNVERIFIED (U4)"],
+    ["POD notes Sep 29 (base)", "gmail", "claire.morgan@harmonygames.co/1844625524254242367", "own mailbox", "YES"],
+    ["Review event (seed)", "gcal", EVT["claire.morgan@harmonygames.co"], "planned seed on Claire's calendar", "UNVERIFIED (U4)"],
+    ["Library tickets + comments (seed)", "linear", "ART-793", "Linear is unscoped", "unscoped"],
+    ["Trello card + comment (seed)", "trello", CARD, "Trello is unscoped", "unscoped"],
+    ["Vendor contact (seed)", "contacts", CONTACT, "Contacts is unscoped", "unscoped"],
+    ["KayKit pack + icon settings (base)", "github", "harmonygames-Games/match3d#325", "GitHub is unscoped", "unscoped"],
+    ["Release checklist (base)", "confluence", "page_release_checklist", "Confluence is unscoped", "unscoped"],
+]
+A(f"""## 10 QC Rails
+
+- Seed bound: every seeded event timestamp is ≤ 2025-10-01T00:00:00Z; only plan fields are later (review start
+  Oct 2 16:00Z `{EVT['claire.morgan@harmonygames.co']}`; the dates inside the calendar doc and the mails).
+- No-leak: no seeded record states a call, a source build next to a call, or the plan; the sheet and ticket
+  descriptions carry no build or master (`{SHEET}`, ART-793).
+- Fairness: every deciding fact is in a record Claire can reach (reach table below); no deciding fact sits in
+  `C07C2866011` or `D05S58U4SAK`.
+- Unique ground truth: the decision points in section 5 each have a record that settles them; the precedence
+  Skip > Reuse > Refresh first > Halloween version follows from the mail ("don't make Halloween versions of anything
+  that only runs there", `{PLAN['msg']}`), the deck ("Reuse: it already has a seasonal version", `{DECK}`) and the DM
+  reply (`{DM_REPLY}`).
+- Coherence with base: build numbers, dates and channel membership are base facts (`C05433XK267/1753820674.990309`,
+  `C05433XK267/1758037790.659569`); the art-refresh timeline is base (match3d#325, #342).
+
+### Reach table (load-bearing records)
+
+`persona_view.py can-see claire_morgan SERVICE ID` per row; planned seeds answer UNVERIFIED with a U4 reason
+(not in base) and are re-proved with `check-sql` at injection.
+
+""" + table(["Record", "Service", "Id", "Visibility path", "persona_view result"], reach_rows) + f"""
+
+### Integrations and companions
+
+""" + table(["Service", "INT id", "Companion", "Decision"], [
+    ["slack", "INT-04", "Linear Slack app posts", "none needed — no Linear status change is seeded; comments only"],
+    ["slack", "INT-13", "Drive app share DMs", "none — the seeded files are shared without a share DM"],
+    ["slack", "INT-06", "Jenkins #builds results", "none — no build is seeded; base jobs are cited"],
+    ["gmail", "INT-11", "calendar invite mails", "none — the review event needs no invite mail (optional companion)"],
+    ["gcal", "INT-11", "invite / RSVP mails", "none — seven attendee rows seeded, no invite mail"],
+    ["gdrive", "INT-13", "Drive share DMs", "none — optional companion omitted"],
+    ["gdocs", "-", "no integration", "none — no companion exists"],
+    ["gsheets", "-", "no integration", "none — no companion exists"],
+    ["gslides", "-", "no integration", "none — no companion exists"],
+    ["linear", "INT-05", "Linear digest mails", "none — seeded comments need no mail"],
+    ["linear", "INT-03", "linear[bot] PR comments", "none — no PR is seeded"],
+    ["github", "INT-01", "GitHub → #zombie-prs mirror", "none — nothing is seeded in GitHub"],
+    ["trello", "INT-21", "Trello → Slack", "none — the integration does not exist"],
+    ["contacts", "-", "no integration", "none — participant identity only"],
+    ["confluence", "-", "no integration", "none — read only"],
+    ["snowflake", "-", "no integration", "none — read only, not injectable"],
+]) + "\n")
+
+rp = [
+    ["slack", ASK, "Leonard, Sep 30 22:05:13Z", "the ask (planned_texts.json slack_ask)"],
+    ["slack", POINTER, "Robert, Sep 25 16:30:22Z", "pointer to the deck"],
+    ["slack", EXPORT, "Martin, Sep 30 15:20:41Z", "'halloween store screens are exported'"],
+    ["slack", DM_ROOT, "Claire, Sep 26 07:40:09Z", "DM root (reply_count 1)"],
+    ["slack", DM_REPLY, "Marcus, Sep 29 17:20:37Z", "thread reply: cheer fastcouch Halloween cuts done"],
+    ["gsheets", SHEET, "Frederick, modified Sep 29 18:00Z", "Read me / Store / Unity / Archive tabs (roster_final.json)"],
+    ["gdocs", DOC, "Arthur, modified Sep 30 22:40Z", "Q4 release calendar"],
+    ["gslides", DECK, "Robert, modified Sep 25 16:10Z", "4 slides " + ", ".join(I["deck_seasonal"]["slides"])],
+    ["gmail", DRAFT["msg"], "Frederick → 4, Sep 12 17:40Z", "October UA plan (draft); copies in recipients' mailboxes"],
+    ["gmail", PLAN["msg"], "Frederick → 4, Sep 30 23:10Z", "October UA plan - changes"],
+    ["gmail", QUOTE["msg"], "PERSON_6311_EMAIL → Claire, Sep 24 14:00Z", "Halloween props quote"],
+    ["contacts", CONTACT, "-", "Kay, founder, KayKit (email PERSON_6311_EMAIL)"],
+    ["gcal", EVT["claire.morgan@harmonygames.co"], "Leonard, updated Sep 30 22:10Z", f"ZM3D Halloween review Oct 2 16:00–16:30Z, ical_uid {UID}, 7 rows"],
+    ["gdrive", FOLD["root"], "Leonard, Sep 29 09:15Z", "ZM3D Halloween 2025 / Store / UA masters"],
+    ["gdrive", ", ".join(I["files_store"][:2]) + " …", "Martin's export, Sep 30 15:12Z (owner Leonard's folder)", "11 Halloween store files (iPhone 6.5 ×5, Play ×6)"],
+    ["gdrive", ", ".join(I["files_ua"]), "Marcus, Sep 29 17:05Z", "cheer fastcouch Halloween 9:16 and 16:9"],
+    ["linear", "ART-793 … ART-854", "Frederick, Sep 8 16:00Z / Sep 12 16:20Z / Sep 15 16:00Z / Sep 17–25", f"{n_ads} serving + {len(ARCH)} archived library tickets, unassigned, Todo"],
+    ["linear", "cmt_art793_1 … cmt_art842_1", "Frederick, Sep 8–12", "capture notes (roster_final.json comment_1)"],
+    ["linear", "cmt_art795_2, cmt_art805_2, cmt_art797_2, cmt_art808_2, cmt_art816_2", "Marcus, Sep 16–24", "re-capture notes"],
+    ["trello", CARD, "Leonard, Sep 30 22:00Z", "Halloween push card on ZM ROADMAP 6851a6569f3bf818760632ab"],
+    ["trello", CARD_CMT, "Frederick, Sep 30 23:20Z", "Julia's 4:5 static still running on iOS UK"],
+]
+A("""## 11 Record plan for /create-injection
+
+""" + table(["Service", "Id", "Author / time", "Content"], rp) + f"""
+
+- Verbatim texts: `scenario_gen/planned_texts.json`; per-surface sheet rows, ticket titles, descriptions and comment
+  texts: `scenario_gen/roster_final.json` (e.g. {tk('boris fastcouch 9:16')}: "{BY['boris fastcouch 9:16']['comment_1']}").
+- Ids are minted in `scenario_gen/ids.json` and collision-checked against the full base collections
+  (`Working_Files/scratch/mint_checks.txt`: gdrive 53,631 / gslides 132 / gcal 10,395 / linear 3,687 / trello
+  803 cards + 5,252 actions / contacts 170 — scan_complete, 0 hits, positive controls hit).
+- Companion updates: the DM root's reply_count / latest_reply (`{DM_ROOT}`); the Trello card's dateLastActivity
+  (`{CARD}`); one Gmail copy of each Frederick mail per recipient mailbox, byte-identical (`{PLAN['thread']}`).
+""")
+
+A(f"""## 12 Self-test results
+
+`hardness_gate.py 01_Hardness_Manifest.draft.json --design`:
+
+{fence(OUT['gate'])}
+
+`gradable_surface.py validate` and `gradeable-report`:
+
+{fence(OUT['surface'] + chr(10) + OUT['report'])}
+
+`hardness_v2_check.py --design` (advisory):
+
+{fence(OUT['v2'])}
+
+Disposition of the DECISION_FLIP flag on R_BUILD_CUT: the build cut decides due dates and the ship route, which the
+surface cannot decode deterministically (a due window accepts any date up to the Thu Oct 16 12:00 PT cut, and
+reason_matches has no solver value); it flips the weight-5 rubric-only facts RO9 and RO8 (`{DOC}` against the ask's
+"around the 24th" in `{ASK}`). No weight was raised to clear the flag.
+
+Disposition of the DECISION_FLIP flag on R_PACK_ALIAS: the alias decides plan text (rubric-only facts RO4, RO5;
+RO4 is weight 5 by kind of work: the quote `{QUOTE['msg']}`, the contact `{CONTACT}`, the repo path and Robert's
+`C0880U9751A/1738109783.735889` must be matched); the surface cannot read plan text on both Docs write paths, so the
+rule flips a rubric row rather than a surface slot. No weight was raised to clear the flag.
+
+Disposition of the SAME_PLACE flag on T9: the re-capture is a per-record supersession inside one ticket's comment
+list by design — it is a control that stops the "April post → refresh" shortcut, not a load-bearing hidden
+correction; its difficulty is reading every comment on each of the {n_ads} tickets, of which {sum(1 for r in ADS if r.get('comment_2'))} carry a second one ({tk('couch alpha 50')}).
+
+`trap_liveness.py --design --dispositions research/01_trap_liveness_dispositions.json` (advisory):
+
+{fence(OUT['live'])}
+
+`hardness_forecast.py forecast --design --model claude-opus-5-5 --mechanisms` with the seven rule ids `--preregister` (UNCALIBRATED):
+
+{fence(FC_TEXT or 'forecast not yet preregistered')}
+
+Preregistered forecast id: {HEV or 'none'}.
+""")
+
+A("""## 13 Red team
+
+RED TEAM FALLBACK: requester waived the scenario red team on 2026-11-04 (D3 'waive'; REDTEAM_* not set, so redteam_review.py --dual cannot run); an independent GPT-6.1 Sol redteam subagent reviewed the design instead and its findings are dispositioned below.
+
+""" + (HERE / "redteam_dispositions.md").read_text() if (HERE / "redteam_dispositions.md").exists() else "")
+
+A((HERE / "self_review.md").read_text() if (HERE / "self_review.md").exists() else "## Self-review\n")
+
+(WF / "01_Scenario_Design.md").write_text("\n".join(doc).rstrip() + "\n")
+print("wrote", WF / "01_Scenario_Design.md", "· hev", HEV)
