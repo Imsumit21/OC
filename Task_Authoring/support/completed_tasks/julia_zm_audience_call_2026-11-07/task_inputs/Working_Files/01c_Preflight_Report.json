@@ -1,0 +1,1412 @@
+{
+ "kind": "PREFLIGHT_REPORT",
+ "version": 1,
+ "tool": "preflight_report/1",
+ "label": "probabilistic parts UNCALIBRATED · advisory",
+ "revision": "rev7",
+ "verdict": "PASS",
+ "blocking": {
+  "solver_contract": true,
+  "surface_validation": true,
+  "mutation_dispositions": true,
+  "geometry_upper_bound": true
+ },
+ "advisory": {
+  "geometry_margin": {
+   "V3": "UNSUPPORTED"
+  },
+  "geometry_bound_verdict": {
+   "V3": "PASS"
+  },
+  "liveness_dispositions_missing": [],
+  "forecast": "recorded"
+ },
+ "bound_to": {
+  "sql": {
+   "path": "01_Universe_Inject.sql",
+   "sha256": "3a98aa36aaddb72cfe833311ca57760c002aef26929d3a82ccba309ed247b52d"
+  },
+  "solver": {
+   "path": "Working_Files\\solver\\solver.py",
+   "sha256": "c5cb9c1fd1f2c9adc03422d11a718d89ce00ef28a36e44b22f69386954472267"
+  },
+  "surface": {
+   "path": "Working_Files\\01_Gradable_Surface.json",
+   "sha256": "d1ce8485d03c51e045a93508553207648681cfad27683dcc306ee0f7b6c7bb9b"
+  },
+  "manifest": {
+   "path": "Working_Files\\01_Hardness_Manifest.json",
+   "sha256": "ccaf326dbd28006d01342bd350735221abd0c346e3bcd9d889c255f9fb7b3699"
+  },
+  "dispositions": {
+   "path": "Working_Files\\01c_Dispositions.json",
+   "sha256": "a93e896d5a199e5a78e9737151fc4ecfbc647c719b5144223fffb944615c8bfb"
+  }
+ },
+ "solver_contract": {
+  "verdict": "PASS",
+  "checks": [
+   {
+    "check": "contract.interface",
+    "status": "PASS",
+    "detail": "9 rules, each with mechanism, requirement and natural_reading; optional: ['touched', 'deciding', 'DEGRADES']"
+   },
+   {
+    "check": "contract.deterministic",
+    "status": "PASS",
+    "detail": "two fresh solves (forward and reverse key order) give identical output (84 keys, sha c24718c3ea25), and so do fresh processes with PYTHONHASHSEED 1 and 2"
+   },
+   {
+    "check": "contract.regression",
+    "status": "PASS",
+    "detail": "no previous revision supplied (first revision)"
+   },
+   {
+    "check": "contract.rules_nodes",
+    "status": "PASS",
+    "detail": "9 rules vs 9 portfolio entries: one-to-one"
+   },
+   {
+    "check": "contract.slots",
+    "status": "PASS",
+    "detail": "10 direct/aggregate slots read a solver value; 16 write-content/delivery slots are graded from the writes, not the solver"
+   },
+   {
+    "check": "contract.controls",
+    "status": "PASS",
+    "detail": "R_K1: 3 control(s); over:K1_all_sessions_that_day moves ['ZOM-605', 'ZOM-621', 'ZOM-625']; R_K3: 3 control(s); over:K3_all_android moves ['ZOM-589', 'ZOM-625', 'ZOM-643']; R_K4: 2 control(s); over:K4_any_group_nickname moves ['ZOM-626', 'ZOM-627']; R_K5: 3 control(s); over:K5_all_android moves ['ZOM-597', 'ZOM-623', 'ZOM-643']; R_G: 2 control(s); over:G_any_tech_job moves ['ZOM-590', 'ZOM-633']; R_F: 2 control(s); over:F_rerun_all_notcounted moves ['ZOM-568', 'ZOM-569']; channel scale:verdict (scale): slip:verdict moves 82 of 82 member(s); channel tool_surface:state_writes (tool_surface): fails surface slots ['S-ST1', 'S-ST2']; channel delegation:handling (delegation): fails surface slots ['S-F1']; channel chain:decision (chain): fails surface slots ['S-DEC', 'S-BRIAN']; channel synthesis:context (synthesis): fails surface slots ['S-D1', 'S-E1']"
+   },
+   {
+    "check": "contract.golden",
+    "status": "PASS",
+    "detail": "63 golden values checked against their deciding records (9 sampled keys x 7 fields): 49 identifier values found, 14 short tokens found, 0 presence-type (1 through tools/hg.py records); 0 unverified",
+    "unverified": []
+   },
+   {
+    "check": "contract.digest",
+    "status": "PASS",
+    "detail": "manifest solver Working_Files/solver/solver.py digest c5cb9c1fd1f2 vs file c5cb9c1fd1f2"
+   }
+  ],
+  "solver_sha256": "c5cb9c1fd1f2c9adc03422d11a718d89ce00ef28a36e44b22f69386954472267",
+  "sql_sha256": "ffec30c85dd7b5a27d4e6dc3adbb5bfcae85d34ca8a34e4d8a6ef64975d30443",
+  "truth_sha256": "c24718c3ea250c31fe0a126402b05f4a9a269e793314653e1224f5cc220b60f3",
+  "rules": [
+   "R_K1",
+   "R_K3",
+   "R_K4",
+   "R_K5",
+   "R_G",
+   "R_T",
+   "R_F",
+   "R_D",
+   "R_E"
+  ]
+ },
+ "surface": {
+  "validation": {
+   "verdict": "PASS",
+   "findings": [],
+   "report": {
+    "slots": 26,
+    "total_weight": 98,
+    "weight_by_class": {
+     "direct": 41,
+     "write_content": 50,
+     "aggregate": 5,
+     "delivery": 2
+    },
+    "mechanism_weight": 90,
+    "mechanism_share": 0.9184,
+    "always_pass_share_if_no_mechanism_lands": 0.0816,
+    "ungraded_slots": [],
+    "groups": {
+     "register:verdict": 2
+    },
+    "note": "geometry (mechanism share, always-pass share) is reported, never gated (plan §4.6)"
+   }
+  },
+  "expected": {
+   "S-K1a": "notcounted",
+   "S-K1b": "graded from the writes",
+   "S-K3a": "counted",
+   "S-K3b": "counted",
+   "S-K4a": "notcounted",
+   "S-K4b": "graded from the writes",
+   "S-K5a": "notcounted",
+   "S-K5b": "graded from the writes",
+   "S-Ga": "notcounted",
+   "S-Gb": "notcounted",
+   "S-Ta": "graded from the writes",
+   "S-Tb": "graded from the writes",
+   "S-H1": "graded from the writes",
+   "S-G1": 45,
+   "S-G2": "graded from the writes",
+   "S-DEC": "graded from the writes",
+   "S-BRIAN": "graded from the writes",
+   "S-ST1": "graded from the writes",
+   "S-ST2": "graded from the writes",
+   "S-F1": "graded from the writes",
+   "S-D1": "graded from the writes",
+   "S-E1": "graded from the writes",
+   "S-O1": "counted",
+   "S-O2": "counted",
+   "S-M1": "graded from the writes",
+   "S-L1": "graded from the writes"
+  },
+  "flipped_by": {
+   "S-K1a": [
+    "rule:R_K1",
+    "degrade:slip:verdict"
+   ],
+   "S-G1": [
+    "rule:R_K1",
+    "rule:R_K3",
+    "rule:R_K4",
+    "rule:R_K5",
+    "rule:R_G",
+    "rule:R_T",
+    "degrade:over:K1_all_sessions_that_day",
+    "degrade:over:K3_all_android",
+    "degrade:over:K4_any_group_nickname",
+    "degrade:over:K5_all_android",
+    "degrade:over:G_any_tech_job",
+    "degrade:slip:verdict"
+   ],
+   "S-K3a": [
+    "rule:R_K3",
+    "degrade:over:K3_all_android",
+    "degrade:over:K5_all_android",
+    "degrade:slip:verdict"
+   ],
+   "S-K3b": [
+    "rule:R_K3",
+    "degrade:over:K3_all_android",
+    "degrade:over:K5_all_android",
+    "degrade:slip:verdict"
+   ],
+   "S-K4a": [
+    "rule:R_K4",
+    "degrade:slip:verdict"
+   ],
+   "S-K5a": [
+    "rule:R_K5",
+    "degrade:slip:verdict"
+   ],
+   "S-Ga": [
+    "rule:R_G",
+    "degrade:slip:verdict"
+   ],
+   "S-Gb": [
+    "rule:R_G",
+    "degrade:slip:verdict"
+   ],
+   "S-O2": [
+    "degrade:over:K1_all_sessions_that_day",
+    "degrade:slip:verdict"
+   ],
+   "S-O1": [
+    "degrade:over:K3_all_android",
+    "degrade:over:K5_all_android",
+    "degrade:slip:verdict"
+   ]
+  }
+ },
+ "mutation": {
+  "key_locality": {
+   "configs": 40,
+   "checked": 40,
+   "skipped_unsupported": 0,
+   "mismatches": [],
+   "key_local": true,
+   "weak": false,
+   "rule": "composed per-record outputs equal a full solve's on every checked configuration (each element alone, then seeded random mixes); a configuration touching a record past --max-k is skipped, never counted as agreement; evidence bookkeeping is not compared"
+  },
+  "mutants": [
+   {
+    "id": "rule:R_K1",
+    "rule": "R_K1",
+    "mechanism": "A13",
+    "part_of": null,
+    "touched": 13,
+    "diagnostic": "KILLED",
+    "changed_outputs": 39,
+    "changed_records": 13,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-K1a",
+     "S-G1"
+    ],
+    "flipped_weight": 10,
+    "why": "flips direct slot(s) of weight >= 3: ['S-K1a']"
+   },
+   {
+    "id": "rule:R_K3",
+    "rule": "R_K3",
+    "mechanism": "A24",
+    "part_of": null,
+    "touched": 13,
+    "diagnostic": "KILLED",
+    "changed_outputs": 52,
+    "changed_records": 13,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "rerun",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-K3a",
+     "S-K3b",
+     "S-G1"
+    ],
+    "flipped_weight": 15,
+    "why": "flips direct slot(s) of weight >= 3: ['S-K3a', 'S-K3b']"
+   },
+   {
+    "id": "rule:R_K4",
+    "rule": "R_K4",
+    "mechanism": "A18",
+    "part_of": null,
+    "touched": 9,
+    "diagnostic": "KILLED",
+    "changed_outputs": 27,
+    "changed_records": 9,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-K4a",
+     "S-G1"
+    ],
+    "flipped_weight": 10,
+    "why": "flips direct slot(s) of weight >= 3: ['S-K4a']"
+   },
+   {
+    "id": "rule:R_K5",
+    "rule": "R_K5",
+    "mechanism": "A17",
+    "part_of": null,
+    "touched": 13,
+    "diagnostic": "KILLED",
+    "changed_outputs": 52,
+    "changed_records": 13,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "rerun",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-K5a",
+     "S-G1"
+    ],
+    "flipped_weight": 10,
+    "why": "flips direct slot(s) of weight >= 3: ['S-K5a']"
+   },
+   {
+    "id": "rule:R_G",
+    "rule": "R_G",
+    "mechanism": "A13",
+    "part_of": null,
+    "touched": 2,
+    "diagnostic": "KILLED",
+    "changed_outputs": 6,
+    "changed_records": 2,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-Ga",
+     "S-Gb",
+     "S-G1"
+    ],
+    "flipped_weight": 15,
+    "why": "flips direct slot(s) of weight >= 3: ['S-Ga', 'S-Gb']"
+   },
+   {
+    "id": "rule:R_T",
+    "rule": "R_T",
+    "mechanism": "A17",
+    "part_of": null,
+    "touched": 2,
+    "diagnostic": "WEAK",
+    "changed_outputs": 4,
+    "changed_records": 2,
+    "changed_fields": [
+     "needs_ticket",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-G1"
+    ],
+    "flipped_weight": 5,
+    "why": "flips only aggregate or weight-1 slots: ['S-G1']"
+   },
+   {
+    "id": "rule:R_F",
+    "rule": "R_F",
+    "mechanism": "A14",
+    "part_of": null,
+    "touched": 13,
+    "diagnostic": "SURVIVED",
+    "changed_outputs": 13,
+    "changed_records": 13,
+    "changed_fields": [
+     "rerun"
+    ],
+    "flipped_slots": [],
+    "flipped_weight": 0,
+    "why": "changes outputs that no slot reads"
+   },
+   {
+    "id": "rule:R_D",
+    "rule": "R_D",
+    "mechanism": "A19",
+    "part_of": null,
+    "touched": 1,
+    "diagnostic": "SURVIVED",
+    "changed_outputs": 2,
+    "changed_records": 1,
+    "changed_fields": [
+     "panel_mean",
+     "panel_n"
+    ],
+    "flipped_slots": [],
+    "flipped_weight": 0,
+    "why": "changes outputs that no slot reads"
+   },
+   {
+    "id": "rule:R_E",
+    "rule": "R_E",
+    "mechanism": "A15",
+    "part_of": null,
+    "touched": 1,
+    "diagnostic": "SURVIVED",
+    "changed_outputs": 4,
+    "changed_records": 1,
+    "changed_fields": [
+     "retention_cutoff",
+     "retention_d7",
+     "retention_installs",
+     "retention_rows"
+    ],
+    "flipped_slots": [],
+    "flipped_weight": 0,
+    "why": "changes outputs that no slot reads"
+   },
+   {
+    "id": "degrade:over:K1_all_sessions_that_day",
+    "degrade": "over:K1_all_sessions_that_day",
+    "touched": 7,
+    "diagnostic": "KILLED",
+    "changed_outputs": 21,
+    "changed_records": 7,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-G1",
+     "S-O2"
+    ],
+    "flipped_weight": 8,
+    "why": "flips direct slot(s) of weight >= 3: ['S-O2']"
+   },
+   {
+    "id": "degrade:over:K3_all_android",
+    "degrade": "over:K3_all_android",
+    "touched": 24,
+    "diagnostic": "KILLED",
+    "changed_outputs": 96,
+    "changed_records": 24,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "rerun",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-K3a",
+     "S-K3b",
+     "S-G1",
+     "S-O1"
+    ],
+    "flipped_weight": 18,
+    "why": "flips direct slot(s) of weight >= 3: ['S-K3a', 'S-K3b', 'S-O1']"
+   },
+   {
+    "id": "degrade:over:K4_any_group_nickname",
+    "degrade": "over:K4_any_group_nickname",
+    "touched": 2,
+    "diagnostic": "WEAK",
+    "changed_outputs": 6,
+    "changed_records": 2,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-G1"
+    ],
+    "flipped_weight": 5,
+    "why": "flips only aggregate or weight-1 slots: ['S-G1']"
+   },
+   {
+    "id": "degrade:over:K5_all_android",
+    "degrade": "over:K5_all_android",
+    "touched": 24,
+    "diagnostic": "KILLED",
+    "changed_outputs": 96,
+    "changed_records": 24,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "rerun",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-K3a",
+     "S-K3b",
+     "S-G1",
+     "S-O1"
+    ],
+    "flipped_weight": 18,
+    "why": "flips direct slot(s) of weight >= 3: ['S-K3a', 'S-K3b', 'S-O1']"
+   },
+   {
+    "id": "degrade:over:G_any_tech_job",
+    "degrade": "over:G_any_tech_job",
+    "touched": 2,
+    "diagnostic": "WEAK",
+    "changed_outputs": 6,
+    "changed_records": 2,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-G1"
+    ],
+    "flipped_weight": 5,
+    "why": "flips only aggregate or weight-1 slots: ['S-G1']"
+   },
+   {
+    "id": "degrade:over:F_rerun_all_notcounted",
+    "degrade": "over:F_rerun_all_notcounted",
+    "touched": 24,
+    "diagnostic": "SURVIVED",
+    "changed_outputs": 24,
+    "changed_records": 24,
+    "changed_fields": [
+     "rerun"
+    ],
+    "flipped_slots": [],
+    "flipped_weight": 0,
+    "why": "changes outputs that no slot reads"
+   },
+   {
+    "id": "degrade:slip:verdict",
+    "degrade": "slip:verdict",
+    "touched": 82,
+    "diagnostic": "KILLED",
+    "changed_outputs": 259,
+    "changed_records": 82,
+    "changed_fields": [
+     "groups",
+     "reason",
+     "rerun",
+     "verdict"
+    ],
+    "flipped_slots": [
+     "S-K1a",
+     "S-K3a",
+     "S-K3b",
+     "S-K4a",
+     "S-K5a",
+     "S-Ga",
+     "S-Gb",
+     "S-G1",
+     "S-O1",
+     "S-O2"
+    ],
+    "flipped_weight": 46,
+    "why": "flips direct slot(s) of weight >= 3: ['S-K1a', 'S-K3a', 'S-K3b', 'S-K4a', 'S-K5a', 'S-Ga', 'S-Gb', 'S-O1']"
+   }
+  ],
+  "shards": {
+   "count": 21,
+   "source": "consecutive slices of 14 records",
+   "diagnostics": {
+    "KILLED": 7,
+    "WEAK": 8,
+    "SURVIVED": 6,
+    "EQUIVALENT": 0
+   }
+  },
+  "interventions": [
+   {
+    "id": "intervention:rule:R_K1",
+    "key": "ZOM-607",
+    "removed_records": [
+     "julia.lawson@harmonygames.co/<CA627c4f3eb036ebf28f00ed982586b0cba3e5@mail.gmail.com>"
+    ],
+    "removed_lines": [
+     507,
+     508
+    ],
+    "closure": [
+     "ZOM-607",
+     "ZOM-608",
+     "ZOM-609",
+     "ZOM-610",
+     "ZOM-611",
+     "ZOM-612",
+     "ZOM-613",
+     "ZOM-614",
+     "ZOM-615",
+     "ZOM-616",
+     "ZOM-617",
+     "ZOM-618",
+     "ZOM-619"
+    ],
+    "changed_records": [
+     "ZOM-607",
+     "ZOM-608",
+     "ZOM-609",
+     "ZOM-610",
+     "ZOM-611",
+     "ZOM-612",
+     "ZOM-613",
+     "ZOM-614",
+     "ZOM-615",
+     "ZOM-616",
+     "ZOM-617",
+     "ZOM-618",
+     "ZOM-619"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [
+     "S-K1a",
+     "S-G1"
+    ],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:rule:R_K3",
+    "key": "ZOM-587",
+    "removed_records": [
+     "f_748d26e760e54651eaa0d8",
+     "f_cadae9f611d82d56ac02c3",
+     "3d8e451a198d5d59b39e60064b590305",
+     "3dd0b6d6c52c21cd5bbfcd6d6f5345cd"
+    ],
+    "removed_lines": [
+     3,
+     4,
+     173,
+     174,
+     896,
+     897,
+     898,
+     899,
+     900,
+     901,
+     902,
+     903,
+     904,
+     905
+    ],
+    "closure": [
+     "ZOM-587",
+     "ZOM-588",
+     "ZOM-590",
+     "ZOM-591",
+     "ZOM-593",
+     "ZOM-594",
+     "ZOM-596",
+     "ZOM-601",
+     "ZOM-603",
+     "ZOM-606",
+     "ZOM-620",
+     "ZOM-631",
+     "ZOM-641"
+    ],
+    "changed_records": [
+     "ZOM-577",
+     "ZOM-578",
+     "ZOM-579",
+     "ZOM-580",
+     "ZOM-581",
+     "ZOM-582",
+     "ZOM-583",
+     "ZOM-584",
+     "ZOM-585",
+     "ZOM-586",
+     "ZOM-632",
+     "ZOM-637",
+     "ZOM-645"
+    ],
+    "escaped_records": [
+     "ZOM-577",
+     "ZOM-578",
+     "ZOM-579",
+     "ZOM-580",
+     "ZOM-581",
+     "ZOM-582",
+     "ZOM-583",
+     "ZOM-584",
+     "ZOM-585",
+     "ZOM-586",
+     "ZOM-632",
+     "ZOM-637",
+     "ZOM-645"
+    ],
+    "flipped_slots": [
+     "S-K5a",
+     "S-G1"
+    ],
+    "status": "escaped",
+    "expected": "load-bearing",
+    "finding": "a record outside the node's closure changed: undeclared coupling"
+   },
+   {
+    "id": "intervention:rule:R_K4",
+    "key": "ZOM-568",
+    "removed_records": [
+     "246d6f4a90620e5dafbb06068f450e46",
+     "e72083b249987542a134098010edd305"
+    ],
+    "removed_lines": [
+     870,
+     871,
+     876,
+     877
+    ],
+    "closure": [
+     "ZOM-568",
+     "ZOM-569",
+     "ZOM-570",
+     "ZOM-571",
+     "ZOM-572",
+     "ZOM-573",
+     "ZOM-574",
+     "ZOM-575",
+     "ZOM-576",
+     "ZOM-598",
+     "ZOM-622"
+    ],
+    "changed_records": [
+     "ZOM-568",
+     "ZOM-569",
+     "ZOM-570",
+     "ZOM-571",
+     "ZOM-572",
+     "ZOM-573",
+     "ZOM-574",
+     "ZOM-575",
+     "ZOM-576",
+     "ZOM-598",
+     "ZOM-622"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [
+     "S-K4a",
+     "S-Ga",
+     "S-Gb",
+     "S-G1"
+    ],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:rule:R_K5",
+    "key": "ZOM-577",
+    "removed_records": [
+     "d7122186e361aa99778c65cb1502759d"
+    ],
+    "removed_lines": [
+     882,
+     883
+    ],
+    "closure": [
+     "ZOM-577",
+     "ZOM-578",
+     "ZOM-579",
+     "ZOM-580",
+     "ZOM-581",
+     "ZOM-582",
+     "ZOM-583",
+     "ZOM-584",
+     "ZOM-585",
+     "ZOM-586",
+     "ZOM-632",
+     "ZOM-637",
+     "ZOM-645"
+    ],
+    "changed_records": [
+     "ZOM-577",
+     "ZOM-578",
+     "ZOM-579",
+     "ZOM-580",
+     "ZOM-581",
+     "ZOM-582",
+     "ZOM-583",
+     "ZOM-584",
+     "ZOM-585",
+     "ZOM-586",
+     "ZOM-632",
+     "ZOM-637",
+     "ZOM-645"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [
+     "S-K5a",
+     "S-G1"
+    ],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:rule:R_G",
+    "key": "ZOM-598",
+    "removed_records": [
+     "e72083b249987542a134098010edd305"
+    ],
+    "removed_lines": [
+     876,
+     877
+    ],
+    "closure": [
+     "ZOM-568",
+     "ZOM-569",
+     "ZOM-570",
+     "ZOM-571",
+     "ZOM-572",
+     "ZOM-573",
+     "ZOM-574",
+     "ZOM-575",
+     "ZOM-576",
+     "ZOM-598",
+     "ZOM-622"
+    ],
+    "changed_records": [
+     "ZOM-568",
+     "ZOM-569",
+     "ZOM-570",
+     "ZOM-571",
+     "ZOM-572",
+     "ZOM-573",
+     "ZOM-574",
+     "ZOM-575",
+     "ZOM-576",
+     "ZOM-598",
+     "ZOM-622"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [
+     "S-K4a",
+     "S-Ga",
+     "S-Gb",
+     "S-G1"
+    ],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:rule:R_T",
+    "key": "T1",
+    "removed_records": [
+     "julia.lawson@harmonygames.co/<CAab474c9390349b2f96626bafff9ff2c5f9cd@mail.gmail.com>"
+    ],
+    "removed_lines": [
+     433,
+     434
+    ],
+    "closure": [
+     "T1",
+     "T2"
+    ],
+    "changed_records": [
+     "T1",
+     "T2"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [
+     "S-G1"
+    ],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:rule:R_F",
+    "key": "ZOM-577",
+    "removed_records": [
+     "167dc58affb9902420038f71d0f5af28"
+    ],
+    "removed_lines": [
+     884,
+     885
+    ],
+    "closure": [
+     "ZOM-577",
+     "ZOM-578",
+     "ZOM-579",
+     "ZOM-580",
+     "ZOM-581",
+     "ZOM-582",
+     "ZOM-583",
+     "ZOM-584",
+     "ZOM-585",
+     "ZOM-586",
+     "ZOM-632",
+     "ZOM-637",
+     "ZOM-645"
+    ],
+    "changed_records": [
+     "ZOM-577",
+     "ZOM-578",
+     "ZOM-579",
+     "ZOM-580",
+     "ZOM-581",
+     "ZOM-582",
+     "ZOM-583",
+     "ZOM-584",
+     "ZOM-585",
+     "ZOM-586",
+     "ZOM-632",
+     "ZOM-637",
+     "ZOM-645"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:rule:R_D",
+    "key": "panel",
+    "removed_records": [
+     "julia.lawson@harmonygames.co/<CA9cfc392aa3b0ae856cc7f3b86c0d50e6f144@mail.gmail.com>"
+    ],
+    "removed_lines": [
+     367,
+     368
+    ],
+    "closure": [
+     "panel"
+    ],
+    "changed_records": [
+     "panel"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:rule:R_E",
+    "key": "retention",
+    "removed_records": [
+     "2ca968ace3e14d1a34c535f8a5c0cd6e",
+     "f_4e21b203a62910bdae0353"
+    ],
+    "removed_lines": [
+     11,
+     12,
+     343,
+     344,
+     345,
+     346,
+     886,
+     887
+    ],
+    "closure": [
+     "retention"
+    ],
+    "changed_records": [
+     "retention"
+    ],
+    "escaped_records": [],
+    "flipped_slots": [],
+    "status": "load-bearing",
+    "expected": "load-bearing",
+    "finding": null
+   },
+   {
+    "id": "intervention:degrade:over:K1_all_sessions_that_day",
+    "key": null,
+    "status": "no-injected-records",
+    "why": "none of the deciding records is an injected row on its own SQL line"
+   },
+   {
+    "id": "intervention:degrade:over:K3_all_android",
+    "key": null,
+    "status": "no-injected-records",
+    "why": "none of the deciding records is an injected row on its own SQL line"
+   },
+   {
+    "id": "intervention:degrade:over:K4_any_group_nickname",
+    "key": null,
+    "status": "no-injected-records",
+    "why": "none of the deciding records is an injected row on its own SQL line"
+   },
+   {
+    "id": "intervention:degrade:over:K5_all_android",
+    "key": null,
+    "status": "no-injected-records",
+    "why": "none of the deciding records is an injected row on its own SQL line"
+   },
+   {
+    "id": "intervention:degrade:over:G_any_tech_job",
+    "key": null,
+    "status": "no-injected-records",
+    "why": "none of the deciding records is an injected row on its own SQL line"
+   },
+   {
+    "id": "intervention:degrade:over:F_rerun_all_notcounted",
+    "key": null,
+    "status": "no-injected-records",
+    "why": "none of the deciding records is an injected row on its own SQL line"
+   },
+   {
+    "id": "intervention:degrade:slip:verdict",
+    "key": null,
+    "status": "no-injected-records",
+    "why": "none of the deciding records is an injected row on its own SQL line"
+   }
+  ],
+  "dispositions": {
+   "required": [
+    "rule:R_K1",
+    "rule:R_K3",
+    "rule:R_K4",
+    "rule:R_K5",
+    "rule:R_G",
+    "rule:R_T",
+    "rule:R_F",
+    "rule:R_D",
+    "rule:R_E",
+    "degrade:over:K1_all_sessions_that_day",
+    "degrade:over:K3_all_android",
+    "degrade:over:K4_any_group_nickname",
+    "degrade:over:K5_all_android",
+    "degrade:over:G_any_tech_job",
+    "degrade:over:F_rerun_all_notcounted",
+    "degrade:slip:verdict",
+    "intervention:rule:R_K1",
+    "intervention:rule:R_K3",
+    "intervention:rule:R_K4",
+    "intervention:rule:R_K5",
+    "intervention:rule:R_G",
+    "intervention:rule:R_T",
+    "intervention:rule:R_F",
+    "intervention:rule:R_D",
+    "intervention:rule:R_E",
+    "intervention:degrade:over:K1_all_sessions_that_day",
+    "intervention:degrade:over:K3_all_android",
+    "intervention:degrade:over:K4_any_group_nickname",
+    "intervention:degrade:over:K5_all_android",
+    "intervention:degrade:over:G_any_tech_job",
+    "intervention:degrade:over:F_rerun_all_notcounted",
+    "intervention:degrade:slip:verdict"
+   ],
+   "recorded": {
+    "rule:R_K1": {
+     "disposition": "live",
+     "reason": "ablation flips the 13 sessions of Claire's gathering back to counted (S-K1a on the solver view, S-G1); the text slots it also moves (S-K1b, S-H1, S-G2, S-DEC, S-BRIAN, S-ST1, S-ST2) are not read by the tool."
+    },
+    "rule:R_K3": {
+     "disposition": "live",
+     "reason": "ablation drops the 13 Samsung sessions (S-K3a, S-K3b, S-G1); two-sided in rev7: the natural reading now excludes, the matrix includes."
+    },
+    "rule:R_K4": {
+     "disposition": "live",
+     "reason": "ablation flips Brian's 9 sessions back to counted (S-K4a, S-G1)."
+    },
+    "rule:R_K5": {
+     "disposition": "live",
+     "reason": "ablation flips the 13 build-1943 sessions back to counted (S-K5a, S-G1)."
+    },
+    "rule:R_G": {
+     "disposition": "live",
+     "reason": "ablation flips ZOM-598 and ZOM-622 back to counted (S-Ga, S-Gb, S-G1)."
+    },
+    "rule:R_T": {
+     "disposition": "weak-accepted",
+     "reason": "WEAK on the solver view: the two late sessions have no ticket key the register can be keyed on in advance, so the tool sees only S-G1; their declared slots S-Ta and S-Tb (weight 5 each, text on linear_create_issue) are write-content slots the tool does not read."
+    },
+    "rule:R_F": {
+     "disposition": "weak-accepted",
+     "reason": "SURVIVED: moves the rerun field on 13 sessions and no solver-read slot; its only effect is the declared 3-weight text slot S-F1. Side channel, weight not raised."
+    },
+    "rule:R_D": {
+     "disposition": "weak-accepted",
+     "reason": "SURVIVED: moves panel_mean 3.33 to 3.1; only the 3-weight text slot S-D1 reads it. Context value by design."
+    },
+    "rule:R_E": {
+     "disposition": "weak-accepted",
+     "reason": "SURVIVED: moves retention_d7 10.47 to 9.09; only the 3-weight text slot S-E1 reads it. Context value by design."
+    },
+    "degrade:over:K1_all_sessions_that_day": {
+     "disposition": "live",
+     "reason": "over-application to the other Sep 26 sessions; flips the control S-O2 and S-G1."
+    },
+    "degrade:over:K3_all_android": {
+     "disposition": "live",
+     "reason": "over-application of the device gate to every non-iPhone session; flips S-O1 (ZOM-643, Pixel 8a) and S-G1; in rev7 it also flips S-K3a/S-K3b."
+    },
+    "degrade:over:K4_any_group_nickname": {
+     "disposition": "weak-accepted",
+     "reason": "WEAK: moves ZOM-626/627 and only S-G1 reads them (at most 5 samples per group); the count still catches it."
+    },
+    "degrade:over:K5_all_android": {
+     "disposition": "live",
+     "reason": "over-application of the store-builds clause to every Android build; flips S-O1, S-K3a, S-K3b and S-G1."
+    },
+    "degrade:over:G_any_tech_job": {
+     "disposition": "weak-accepted",
+     "reason": "WEAK: moves ZOM-590 and ZOM-633 (non-games technical-sounding jobs) and only S-G1 reads them; the count catches it."
+    },
+    "degrade:over:F_rerun_all_notcounted": {
+     "disposition": "weak-accepted",
+     "reason": "SURVIVED: re-run notes on every not-counted ticket; only the presence slot S-F1 reads the notes, by design."
+    },
+    "degrade:slip:verdict": {
+     "disposition": "live",
+     "reason": "the scale channel: one wrong row moves direct verdict slots and S-G1."
+    },
+    "intervention:rule:R_K1": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:rule:R_K3": {
+     "disposition": "live",
+     "reason": "escaped, declared coupling: the deciding set includes the gate Doc f_748d26e760e54651eaa0d8, which also carries the store-builds clause (H-GATE governs R2 and R3 in the manifest), so removing it moves the build-1943 sessions too; the matrix records alone stay in R_K3's closure."
+    },
+    "intervention:rule:R_K4": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:rule:R_K5": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:rule:R_G": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:rule:R_T": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:rule:R_F": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:rule:R_D": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:rule:R_E": {
+     "disposition": "live",
+     "reason": "load-bearing: removing the rule's deciding records changes only keys in its own closure."
+    },
+    "intervention:degrade:over:K1_all_sessions_that_day": {
+     "disposition": "live",
+     "reason": "no-injected-records is expected: a degrade is a reading error, not a record; inert by design."
+    },
+    "intervention:degrade:over:K3_all_android": {
+     "disposition": "live",
+     "reason": "no-injected-records is expected: a degrade is a reading error, not a record; inert by design."
+    },
+    "intervention:degrade:over:K4_any_group_nickname": {
+     "disposition": "live",
+     "reason": "no-injected-records is expected: a degrade is a reading error, not a record; inert by design."
+    },
+    "intervention:degrade:over:K5_all_android": {
+     "disposition": "live",
+     "reason": "no-injected-records is expected: a degrade is a reading error, not a record; inert by design."
+    },
+    "intervention:degrade:over:G_any_tech_job": {
+     "disposition": "live",
+     "reason": "no-injected-records is expected: a degrade is a reading error, not a record; inert by design."
+    },
+    "intervention:degrade:over:F_rerun_all_notcounted": {
+     "disposition": "live",
+     "reason": "no-injected-records is expected: a degrade is a reading error, not a record; inert by design."
+    },
+    "intervention:degrade:slip:verdict": {
+     "disposition": "live",
+     "reason": "no-injected-records is expected: a degrade is a reading error, not a record; inert by design."
+    }
+   },
+   "missing": [],
+   "unknown": [],
+   "rule": "every rule, degrade and intervention result needs a written disposition (blocking)"
+  }
+ },
+ "geometry": {
+  "U": 0.9795918367346939,
+  "U_exact": "48/49",
+  "flippable_weight": 96,
+  "total_weight": 98,
+  "flippable_slots": [
+   "S-K1a",
+   "S-K1b",
+   "S-K3a",
+   "S-K3b",
+   "S-K4a",
+   "S-K4b",
+   "S-K5a",
+   "S-K5b",
+   "S-Ga",
+   "S-Gb",
+   "S-Ta",
+   "S-Tb",
+   "S-H1",
+   "S-G1",
+   "S-G2",
+   "S-DEC",
+   "S-BRIAN",
+   "S-ST1",
+   "S-ST2",
+   "S-F1",
+   "S-D1",
+   "S-E1",
+   "S-O1",
+   "S-O2"
+  ],
+  "not_flippable": [
+   "S-M1",
+   "S-L1"
+  ],
+  "flippable_by_class": {
+   "direct": 9,
+   "write_content": 14,
+   "aggregate": 1
+  },
+  "unsupported_records": [],
+  "flippable_only_by_combinations": [],
+  "key_local": true,
+  "composable": true,
+  "elements": [
+   "rule:R_K1",
+   "rule:R_K3",
+   "rule:R_K4",
+   "rule:R_K5",
+   "rule:R_G",
+   "rule:R_T",
+   "rule:R_F",
+   "rule:R_D",
+   "rule:R_E",
+   "degrade:over:K1_all_sessions_that_day",
+   "degrade:over:K3_all_android",
+   "degrade:over:K4_any_group_nickname",
+   "degrade:over:K5_all_android",
+   "degrade:over:G_any_tech_job",
+   "degrade:over:F_rerun_all_notcounted",
+   "degrade:slip:verdict"
+  ],
+  "inert_elements": [],
+  "assumptions": [],
+  "L_max": {
+   "value": null,
+   "status": "UNSUPPORTED",
+   "why": "9 mechanisms > 8: exact combinations only (plan §5); no approximation"
+  },
+  "views": {
+   "V3": {
+    "cap": 0.85,
+    "mode": "medium",
+    "needs_loss_above": 0.15,
+    "U": {
+     "verdict": "PASS",
+     "bound_verdict": "PASS",
+     "rule": "U must exceed 1 - cap: otherwise no combination of the designed mechanisms can bring the average strictly below the cap"
+    },
+    "L_max": {
+     "verdict": "UNSUPPORTED"
+    }
+   }
+  },
+  "dispositions": {
+   "required": [],
+   "recorded": {},
+   "missing": [],
+   "rule": "an UNVERIFIED U (the solver is not composable) needs a written disposition, never a BLOCK"
+  }
+ },
+ "liveness": {
+  "label": "ADVISORY · UNCALIBRATED · lexical warnings, not proof",
+  "summary": {
+   "breadcrumb": [
+    "T-K3",
+    "T-K4",
+    "T-F",
+    "T-AUD",
+    "T-G"
+   ],
+   "self-advertising": [],
+   "order": [],
+   "rule placement": []
+  },
+  "nodes": [
+   {
+    "id": "T-K3",
+    "flagged": [
+     "breadcrumb"
+    ]
+   },
+   {
+    "id": "T-K1",
+    "flagged": []
+   },
+   {
+    "id": "T-K4",
+    "flagged": [
+     "breadcrumb"
+    ]
+   },
+   {
+    "id": "T-K5",
+    "flagged": []
+   },
+   {
+    "id": "T-F",
+    "flagged": [
+     "breadcrumb"
+    ]
+   },
+   {
+    "id": "T-PANEL",
+    "flagged": []
+   },
+   {
+    "id": "T-AUD",
+    "flagged": [
+     "breadcrumb"
+    ]
+   },
+   {
+    "id": "T-RET",
+    "flagged": []
+   },
+   {
+    "id": "T-559",
+    "flagged": []
+   },
+   {
+    "id": "T-LEAN",
+    "flagged": []
+   },
+   {
+    "id": "T-466",
+    "flagged": []
+   },
+   {
+    "id": "T-DUP",
+    "flagged": []
+   },
+   {
+    "id": "T-FTUE",
+    "flagged": []
+   },
+   {
+    "id": "T-S23",
+    "flagged": []
+   },
+   {
+    "id": "T-G",
+    "flagged": [
+     "breadcrumb"
+    ]
+   },
+   {
+    "id": "T-T",
+    "flagged": []
+   }
+  ],
+  "dispositions": {
+   "required": [
+    "T-K3:breadcrumb",
+    "T-K4:breadcrumb",
+    "T-F:breadcrumb",
+    "T-AUD:breadcrumb",
+    "T-G:breadcrumb"
+   ],
+   "recorded": {
+    "T-K3:breadcrumb": {
+     "disposition": "keep",
+     "reason": "the flagged link is the gate Doc's 'A pass is a clean test run of the build players get' (F-QA delegation); it names no channel, post or sheet. The matrix 3dd0b6d6c52c21cd5bbfcd6d6f5345cd sits in #zombie-bugs, which no ask or rule names."
+    },
+    "T-K4:breadcrumb": {
+     "disposition": "keep",
+     "reason": "the flagged link is the industry rule e72083b249987542a134098010edd305, not the DM line 246d6f4a90620e5dafbb06068f450e46."
+    },
+    "T-F:breadcrumb": {
+     "disposition": "keep",
+     "reason": "Robert's DM is reached through the note's friend sessions, not a pointer in the ask (purged in rev7). Side channel, weight 3."
+    },
+    "T-AUD:breadcrumb": {
+     "disposition": "keep",
+     "reason": "true and accepted: the ask names the lead outcomes and the deck governs them; delegated breadth."
+    },
+    "T-G:breadcrumb": {
+     "disposition": "keep",
+     "reason": "the log note's 'Players are in my contacts so I can send the gift codes' points at the service, not at a job or a player; which players work in games is only in the contact rows (fair incorporation link, never removed)."
+    }
+   },
+   "missing": [],
+   "rule": "every flag needs a written disposition; redesign the difficulty, never remove a fairness link"
+  }
+ },
+ "forecast": {
+  "status": "recorded",
+  "file": "Working_Files\\01c_Forecast.json",
+  "sha256": "0188b471104fa40dfd80bb48594011904781ee53d1632ba8f9aac566944106bf",
+  "label": "UNCALIBRATED · advisory",
+  "preregistration": null,
+  "summary": {
+   "V3": {
+    "P_all_min": 0.0053,
+    "P_all_max": 0.5447,
+    "E_average_range": [
+     0.7504,
+     0.8398
+    ],
+    "voi": [
+     "rule:R_K3",
+     "rule:R_G",
+     "rule:R_K5",
+     "rule:R_T",
+     "rule:R_K1",
+     "rule:R_K4",
+     "rule:R_F",
+     "rule:R_E"
+    ]
+   }
+  }
+ },
+ "max_k": 8,
+ "max_k_override": null
+}

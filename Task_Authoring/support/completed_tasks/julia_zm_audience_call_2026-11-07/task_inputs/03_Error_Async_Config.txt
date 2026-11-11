@@ -1,0 +1,67 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Leave every field empty to apply nothing. Applies to the baseline run and the
+verifier, not to Universe Explorer.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+On screen 16, leave every field empty. Reason: the task is an audience read over records that already exist (the friend-session log, the session tickets, the Docs and the KPI sheet); no source describes an outage or a slow system, so friction would add no realism. Configured friction is realism only and is not used as a difficulty or horizon lever.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No forced errors and no async waits, so the Oracle Events need no recovery or wait steps, and no criterion grades a retry, a workaround or a wait.
+- Brief constraint carried forward anyway: the prompt never announces friction or an outage (Prompt Writing Guidelines V2 §4.2).
+- The config is not supplied to `/prompt`, because nothing is configured.
+
+## Post-baseline checks
+
+- Forced error fired: n/a (none configured)
+- Async submit → check → get appeared: n/a (none configured)
+- Non-default values confirmed: n/a (none configured)
+- Natural friction (dropped connections, query errors, unprompted `*_submit_*` calls) in the pre-check or baseline is recorded as natural in /create-hardening; it is never read as configured friction: pending (pre-baseline)
+
+## Self-review
+
+Checks walked: `Evals/1_Prompt_Eval.md` §2.2 (Feasibility A/B, persona ACL gate, configuration aligned with the path) and `Evals/2_Oracle_Events_Eval.md` §3.5. With no friction every read stays on its normal path: the ask C090N54TG79/1759266627.418203, the friend-session log and register f_43bc35baf77fd59f4e57b8, Robert's re-run rule D05GU6L0XFH/1758913471.205816 (rev4: its thread_parent_id now resolves to the real root by channel and ts), Vincent's ticket comment cmt_38b3cc50dceda37f40f5, Brian's Doc f_524278b67bfa30dde78699 and Arthur's PR note harmonygames-Games/match3d#476#rc_27. There is no alternate path to prove and no async twin to account for. The verifier reads the same unfrictioned tools, so the writes in 01_Hardness_Manifest.json (gsheets_values_update, gdocs_create_document, slack_send_message, linear_update_issue, linear_create_comment, linear_create_issue) stay visible to it. Re-verification of those records through hg.py and persona_view check-sql is in 01_Grounding_Dossier.md (injection rev4).
+
+| Counter-reading | Resolution (evidence) |
+|---|---|
+| Counter: the scenario is about an outage or a slow system the prompt mentions, so friction is realistic | No. It is not an outage scenario: Leonard asks for an audience read (C090N54TG79/1759266627.418203), and the inputs are existing records (log f_43bc35baf77fd59f4e57b8, the ZOM session tickets, the KPI rows). No seeded or base record cited in the dossier reports a tool or service outage. Friction: none stands |
+| Counter: the task needs friction to reach the long-horizon volume or the medium cap below 85% | No. V3 sets difficulty through the universe (references/Hardness_Mastery.md §0, §9: every run routed around forced errors). The rev7 manifest call_budget sums to 438 calls across 30 rows (358 firm plus one conditional per-ticket row of 80) from per-session Docs, ticket comments, Contacts, Gmail and Slack threads; no design note relies on friction, and blocked calls would not count toward the horizon (Evals/references/rules/long_horizon.md) |
+| Counter: a forced error on a Slack or Drive read would mimic an ACL denial the task should reason about | Gate 7 forbids it. Julia's scoped reads (D05GU6L0XFH/1758913471.205816, f_524278b67bfa30dde78699) are where reach matters; an error there is indistinguishable from a denial and could remove the only route to Robert's re-run rule |
+| Counter: an async wait on Linear or Slack search would add realism | No. The session tickets are reached by a team list and the key threads by channel history (cmt_38b3cc50dceda37f40f5 rides on linear_list_comments); a wait adds no fact, and an unconfigured *_submit_* twin would stay live, so the wait would cost time only |
+
+Re-checked on SQL rev5 (sha 5b6e01119505, 2026-11-08): only four relative-time wordings changed (C090N54TG79/1758553214.330914, D076RBM29JS/1758658884.207315, C090N54TG79/1759266627.418203, Claire's mail julia.lawson@harmonygames.co/<CA627c4f3eb036ebf28f00ed982586b0cba3e5@mail.gmail.com>); no read path, service or record this config relies on changed, so Friction: none stands.
+
+Re-checked on SQL rev7 (sha 3acbfad93f4a, 2026-11-09): rev7 adds Contacts (players' jobs, 038b5eb5a30326895cb54756, 0810fb8287e489c125fe2cd9), Vincent's QA matrix f_cadae9f611d82d56ac02c3 and its #zombie-bugs post C08R27X0EAH/1759158757.418562, Owen's late mail julia.lawson@harmonygames.co/<CAab474c9390349b2f96626bafff9ff2c5f9cd@mail.gmail.com>, the KPI tab cut-off note on f_4e21b203a62910bdae0353 and 20 more session tickets (ZOM-628 to ZOM-647). All are ordinary reads on existing records; none describes an outage or a slow system, and persona_view check-sql on the rev7 SQL is PASS (0 load-bearing rows not visible), so no forced error could stand in for a denial and Friction: none stands.
+
+Unresolved: none.
+
+```
+STAGE GATE error-async: PASS — Task_Authoring\task_inputs · 03_Error_Async_Config.txt#7174fb324883 · 00_Assigments.md#638de5aac707 · 01_Grounding_Dossier.md#854cbb11bc06 · 01_Universe_Inject.sql#3acbfad93f4a · __context__#50e89bdae5e1 · __assignment__#7709f2a35b0e · __policy__#dc4ab5df3cdd · __gate_policy__#6bbf415e008b · __review__#cb4fae31202a · blocking 0 · warnings 0 · checks 13
+[PASS] assignment.v3_context: Julia Lawson / Product Manager; medium cap <85%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#3acbfad93f4a, 01_Hardness_Manifest.json#ccaf326dbd28, 01_Grounding_Dossier.md#854cbb11bc06, solver/solver.py#c5cb9c1fd1f2, 01c_Dispositions.json#a93e896d5a19, 01c_Preflight_Report.json#eb3e617a6933, 00_Assigments.md#638de5aac707, 01_Scenario_Design.md#e8967f83db15, 01_Hardness_Manifest.draft.json#814b8577398a, 01_Gradable_Surface.json#d1ce8485d03c, __context__#50e89bdae5e1, __assignment__#7709f2a35b0e, __policy__#dc4ab5df3cdd, __gate_policy__#ce51ca16c6f8, __review__#cb4fae31202a)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 4 evidenced counter-readings (of 4 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] readiness.context: explicit task/revision and current upstream evidence verified
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```
+
+

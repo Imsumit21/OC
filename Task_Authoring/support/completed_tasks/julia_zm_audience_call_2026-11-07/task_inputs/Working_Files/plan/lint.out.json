@@ -1,0 +1,168 @@
+{
+  "tool": "hg_injection_lint",
+  "version": "injection-lint-v1",
+  "sql": "C:\\Users\\shukl\\Desktop\\OC\\Task_Authoring\\task_inputs\\01_Universe_Inject.sql",
+  "sha256": "1485546c40b9f00da741e26791ed212d7433dce8ab17dd33bfa87782e8a9aaf3",
+  "universe": "synthcut",
+  "clock": "2025-10-01T07:00:00Z",
+  "checks": [
+    "future_date",
+    "id_contract",
+    "drive_unreadable",
+    "identities",
+    "grader_language",
+    "padding_comment",
+    "generated_column",
+    "text_time_format",
+    "missing_required",
+    "read_only_service",
+    "unknown_column"
+  ],
+  "statements": {
+    "total": 359,
+    "by_kind": {
+      "begin": 1,
+      "insert": 352,
+      "update": 5,
+      "commit": 1
+    }
+  },
+  "rows": {
+    "gdrive.drive_files": {
+      "insert": 65
+    },
+    "gdocs.docs_documents": {
+      "insert": 62
+    },
+    "gsheets.sheets_spreadsheets": {
+      "insert": 2
+    },
+    "gsheets.sheets_sheets": {
+      "insert": 3
+    },
+    "gslides.slides_presentations": {
+      "insert": 1
+    },
+    "gslides.slides_pages": {
+      "insert": 3
+    },
+    "gslides.slides_page_elements": {
+      "insert": 3
+    },
+    "gcal.gcal_events": {
+      "insert": 2
+    },
+    "gmail.gmail_threads": {
+      "insert": 36
+    },
+    "gmail.gmail_messages": {
+      "insert": 36
+    },
+    "linear.linear_issues": {
+      "insert": 61
+    },
+    "linear.linear_comments": {
+      "insert": 61
+    },
+    "github.github_reviews": {
+      "insert": 1
+    },
+    "github.github_review_comments": {
+      "insert": 1
+    },
+    "github.github_pull_requests": {
+      "update": 1
+    },
+    "trello.trello_cards": {
+      "insert": 1
+    },
+    "trello.trello_actions": {
+      "insert": 1
+    },
+    "slack.slack_messages": {
+      "insert": 13,
+      "update": 4
+    }
+  },
+  "base": {
+    "used": true,
+    "loaded": [
+      "gmail/users.json",
+      "linear/data.json",
+      "github/data.json",
+      "trello/data.json",
+      "slack/users.json",
+      "contacts/contacts.json",
+      "confluence/confluence_working.json"
+    ]
+  },
+  "counts": {
+    "FAIL": 0,
+    "CHECK": 1,
+    "INFO": 5,
+    "by_check": {
+      "unknown_column": 1
+    }
+  },
+  "flags": [
+    {
+      "check": "unknown_column",
+      "severity": "CHECK",
+      "line": 687,
+      "table": "github.github_review_comments",
+      "op": "insert",
+      "record": "harmonygames-Games/match3d#476#rc_27",
+      "column": "seq",
+      "value": null,
+      "message": "github.github_review_comments.seq is not in the injection schema snapshot. If the live table lacks it, the whole transaction fails. Drop it unless a version-matched schema confirms it."
+    }
+  ],
+  "info": [
+    {
+      "check": "unparsed",
+      "severity": "INFO",
+      "line": 277,
+      "table": "gslides.slides_pages",
+      "record": "f_a087f049d271e9aa9f567f",
+      "column": "notes",
+      "message": "gslides.slides_pages.notes is not in the bundled snapshot but is confirmed live (nullable in the 2026-10-04 platform export: optional). The portal lists it as an advisory only."
+    },
+    {
+      "check": "unparsed",
+      "severity": "INFO",
+      "line": 279,
+      "table": "gslides.slides_page_elements",
+      "record": "f_a087f049d271e9aa9f567f",
+      "column": "table_json",
+      "message": "gslides.slides_page_elements.table_json is not in the bundled snapshot but is confirmed live (nullable in the 2026-10-04 platform export: optional). The portal lists it as an advisory only."
+    },
+    {
+      "check": "unparsed",
+      "severity": "INFO",
+      "line": 279,
+      "table": "gslides.slides_page_elements",
+      "record": "f_a087f049d271e9aa9f567f",
+      "column": "ordinal",
+      "message": "gslides.slides_page_elements.ordinal is not in the bundled snapshot but is confirmed live (nullable in the 2026-10-04 platform export: optional). The portal lists it as an advisory only."
+    },
+    {
+      "check": "unparsed",
+      "severity": "INFO",
+      "line": 562,
+      "table": "linear.linear_comments",
+      "record": "cmt_38b3cc50dceda37f40f5",
+      "column": "sequence",
+      "message": "linear.linear_comments.sequence is not in the bundled snapshot but is confirmed live (nullable in the 2026-10-04 platform export: optional). The portal lists it as an advisory only."
+    },
+    {
+      "check": "unparsed",
+      "severity": "INFO",
+      "line": 685,
+      "table": "github.github_reviews",
+      "record": "harmonygames-Games/match3d#476#rev_3",
+      "column": "seq",
+      "message": "github.github_reviews.seq is not in the bundled snapshot but is confirmed live (NOT NULL, no default in the 2026-10-04 platform export: keep it). The portal lists it as an advisory only."
+    }
+  ],
+  "note": "Flags are leads, not verdicts. Resolve every FAIL and CHECK in the report; checks A-C still apply."
+}

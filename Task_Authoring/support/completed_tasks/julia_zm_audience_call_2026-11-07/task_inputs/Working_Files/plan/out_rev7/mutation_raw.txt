@@ -1,0 +1,38 @@
+MUTATION · rev7 · sql 3acbfad93f4a · deterministic design diagnostics from the solver; on the Season Pass backtests these are development fixtures, not validation
+  key-locality: PASS on 40 of 40 configurations checked
+  rule:R_K1                          KILLED     flipped  10 flips direct slot(s) of weight >= 3: ['S-K1a']
+  rule:R_K3                          KILLED     flipped  15 flips direct slot(s) of weight >= 3: ['S-K3a', 'S-K3b']
+  rule:R_K4                          KILLED     flipped  10 flips direct slot(s) of weight >= 3: ['S-K4a']
+  rule:R_K5                          KILLED     flipped  10 flips direct slot(s) of weight >= 3: ['S-K5a']
+  rule:R_G                           KILLED     flipped  15 flips direct slot(s) of weight >= 3: ['S-Ga', 'S-Gb']
+  rule:R_T                           WEAK       flipped   5 flips only aggregate or weight-1 slots: ['S-G1']
+  rule:R_F                           SURVIVED   flipped   0 changes outputs that no slot reads
+  rule:R_D                           SURVIVED   flipped   0 changes outputs that no slot reads
+  rule:R_E                           SURVIVED   flipped   0 changes outputs that no slot reads
+  degrade:over:K1_all_sessions_that_day KILLED     flipped   8 flips direct slot(s) of weight >= 3: ['S-O2']
+  degrade:over:K3_all_android        KILLED     flipped  18 flips direct slot(s) of weight >= 3: ['S-K3a', 'S-K3b', 'S-O1']
+  degrade:over:K4_any_group_nickname WEAK       flipped   5 flips only aggregate or weight-1 slots: ['S-G1']
+  degrade:over:K5_all_android        KILLED     flipped  18 flips direct slot(s) of weight >= 3: ['S-K3a', 'S-K3b', 'S-O1']
+  degrade:over:G_any_tech_job        WEAK       flipped   5 flips only aggregate or weight-1 slots: ['S-G1']
+  degrade:over:F_rerun_all_notcounted SURVIVED   flipped   0 changes outputs that no slot reads
+  degrade:slip:verdict               KILLED     flipped  46 flips direct slot(s) of weight >= 3: ['S-K1a', 'S-K3a', 'S-K3b', 'S-K4
+  shards (consecutive slices of 14 records, 6 batches): 21 mutants {'KILLED': 7, 'WEAK': 8, 'SURVIVED': 6}
+  intervention:rule:R_K1             load-bearing    
+  intervention:rule:R_K3             escaped          FINDING: a record outside the node's closure changed: undeclared coupling
+  intervention:rule:R_K4             load-bearing    
+  intervention:rule:R_K5             load-bearing    
+  intervention:rule:R_G              load-bearing    
+  intervention:rule:R_T              load-bearing    
+  intervention:rule:R_F              load-bearing    
+  intervention:rule:R_D              load-bearing    
+  intervention:rule:R_E              load-bearing    
+  intervention:degrade:over:K1_all_sessions_that_day no-injected-records
+  intervention:degrade:over:K3_all_android no-injected-records
+  intervention:degrade:over:K4_any_group_nickname no-injected-records
+  intervention:degrade:over:K5_all_android no-injected-records
+  intervention:degrade:over:G_any_tech_job no-injected-records
+  intervention:degrade:over:F_rerun_all_notcounted no-injected-records
+  intervention:degrade:slip:verdict  no-injected-records
+  geometry: U = 0.9796 (96/98) · L_max = UNSUPPORTED
+    V3 cap 0.85: U PASS (needs > 0.15) · L_max UNSUPPORTED
+  dispositions: 0/32 recorded; missing ['rule:R_K1', 'rule:R_K3', 'rule:R_K4', 'rule:R_K5', 'rule:R_G', 'rule:R_T', 'rule:R_F', 'rule:R_D'] ...

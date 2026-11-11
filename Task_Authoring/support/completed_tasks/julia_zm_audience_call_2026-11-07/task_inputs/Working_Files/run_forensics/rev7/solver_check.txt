@@ -1,0 +1,49 @@
+== (a) solve(rev7_merged.sql) vs s/rev7_numbers_v2.json
+truth.json sha256 6d35f13b53c87fdc == fresh solve: True
+PASS 82 session rows (solver 82, v2 82)
+PASS per-session verdict/reason/observer/date/audience/stars/phone/build/age/relation match v2 for all 82 incl. T1/T2; mismatches=[]
+PASS casual 27/103.5/3.833  RPG 18/63.0/3.5  gap 0.333  (v2 27/103.5/3.8333, 18/63.0/3.5, 0.3333)
+PASS call HOLD (casual lead); v2 HOLD (casual lead)
+classes {'notcounted': 37, 'counted': 45} | groups {'game_industry': 11, 'build': 13, 'coached': 13} | new tickets ['T1', 'T2']
+PASS re-run notes = the 13 dev-build-1943 drops only (no Samsung): ['ZOM-577', 'ZOM-578', 'ZOM-579', 'ZOM-580', 'ZOM-581', 'ZOM-582', 'ZOM-583', 'ZOM-584', 'ZOM-585', 'ZOM-586', 'ZOM-632', 'ZOM-637', 'ZOM-645']
+PASS 13 Samsung sessions counted, no re-run: ['ZOM-587', 'ZOM-588', 'ZOM-590', 'ZOM-591', 'ZOM-593', 'ZOM-594', 'ZOM-596', 'ZOM-601', 'ZOM-603', 'ZOM-606', 'ZOM-620', 'ZOM-631', 'ZOM-641']
+R_G exclusions: [('ZOM-598', 'Alper Koçak', 'QA tester, console games publisher'), ('ZOM-622', 'Arda Keskin', 'Live ops producer, mobile games studio')]
+PASS retention D7 10.47 (16 rows, 2607 installs, cut-off 2025-07-24)
+panel 3.33 n 9
+
+== (b) single-rule ablations vs v2 single_miss (v2 label -> solver rule id: K1=Brian DM->R_K4, K5=Claire->R_K1, K4=dev build 1943->R_K5, K3->R_K3, G->R_G, T->R_T)
+PASS miss K1 (R_K4): casual 27/103.5 RPG 27/106.0 gap 0.093 KEEP (no clear lead); v2 (27, 103.5, 27, 106.0, 'KEEP') gap -0.0926
+PASS miss K5 (R_K1): casual 27/103.5 RPG 31/123.5 gap 0.151 KEEP (no clear lead); v2 (27, 103.5, 31, 123.5, 'KEEP') gap -0.1505
+PASS miss K4 (R_K5): casual 40/135.0 RPG 18/63.0 gap 0.125 KEEP (no clear lead); v2 (40, 135.0, 18, 63.0, 'KEEP') gap -0.125
+PASS miss K3 (R_K3): casual 18/66.0 RPG 14/50.5 gap 0.06 KEEP (no clear lead); v2 (18, 66.0, 14, 50.5, 'KEEP') gap 0.0595
+PASS miss G (R_G): casual 28/105.5 RPG 19/68.0 gap 0.189 KEEP (no clear lead); v2 (28, 105.5, 19, 68.0, 'KEEP') gap 0.1889
+PASS miss T (R_T): casual 26/98.5 RPG 17/61.5 gap 0.171 KEEP (no clear lead); v2 (26, 98.5, 17, 61.5, 'KEEP') gap 0.1708
+  R_K3 off: Samsung dropped as device: 13 / re-run notes: 13
+  R_T off: T1/T2 verdict absent absent needs_ticket False False
+PASS miss R_E: retention 9.09 (47 rows)
+PASS miss R_F: no re-run notes
+  miss R_D: panel 3.1
+touched sizes: {'R_K1': 13, 'R_K3': 13, 'R_K4': 9, 'R_K5': 13, 'R_G': 2, 'R_T': 2, 'R_F': 13, 'R_D': 1, 'R_E': 1}
+deciding samples: {'R_K3': ['f_748d26e760e54651eaa0d8', 'f_cadae9f611d82d56ac02c3', '3d8e451a198d5d59b39e60064b590305', '3dd0b6d6c52c21cd5bbfcd6d6f5345cd'], 'R_G': ['0810fb8287e489c125fe2cd9', 'e72083b249987542a134098010edd305'], 'R_T': ['julia.lawson@harmonygames.co/<CAab474c9390349b2f96626bafff9ff2c5f9cd@mail.gmail.com>'], 'R_E': ['2ca968ace3e14d1a34c535f8a5c0cd6e', 'f_4e21b203a62910bdae0353'], 'R_K4': ['246d6f4a90620e5dafbb06068f450e46', 'e72083b249987542a134098010edd305']}
+degrade over:K1_all_sessions_that_day moves 7 rows
+degrade over:K3_all_android moves 24 rows
+degrade over:K4_any_group_nickname moves 2 rows
+degrade over:K5_all_android moves 24 rows
+degrade over:G_any_tech_job moves 2 rows
+degrade over:F_rerun_all_notcounted moves 24 rows
+degrade slip:verdict moves 82 rows
+
+== (c) rev6 SQL (task_inputs/01_Universe_Inject.sql)
+PASS new solver == old solver on rev6 SQL, byte for byte
+PASS every old ablation and degrade identical on rev6 SQL; new R_G/R_T inert there: True
+PASS rev6: {'notcounted': 43, 'counted': 17} means {'casual': 3.833, 'rpg': 3.375} HOLD
+stored Working_Files/solver/truth.json vs solve(rev6 SQL): 4 field diffs [('ZOM-582', 'age', 45, 44), ('ZOM-600', 'age', 25, 26), ('ZOM-610', 'age', 45, 44), ('ZOM-626', 'age', 45, 44)]; verdict/reason/rerun/groups identical: True
+  stored truth.json byte-identical to solve( rev1 SQL): False
+  stored truth.json byte-identical to solve( rev2 SQL): True
+  stored truth.json byte-identical to solve( rev3 SQL): True
+  stored truth.json byte-identical to solve( rev4 SQL): True
+  stored truth.json byte-identical to solve( rev5 SQL): True
+  stored truth.json byte-identical to solve( rev6 SQL): False
+  stored truth.json byte-identical to solve( rev7 SQL): False
+
+OVERALL PASS 

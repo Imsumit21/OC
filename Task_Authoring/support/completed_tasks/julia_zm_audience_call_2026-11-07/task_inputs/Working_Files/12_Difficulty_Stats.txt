@@ -1,0 +1,87 @@
+# 12 Baseline Difficulty & Failure Patterns — Julia Lawson ZM audience read (SQL rev9)
+
+Task type: long-horizon   Difficulty mode: assigned medium   Completed: 6/6   Errored: none   Invalid rubrics: none   Judge corrections: none
+Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+Seed bound: 2025-10-01T00:00:00Z
+
+Build command (matrix of record, Working_Files/12_difficulty_input.json):
+python Task_Authoring/tools/difficulty_stats.py --build --verifier Task_Authoring/task_inputs/10_Baseline_Verifier_Results.md --rubrics Task_Authoring/task_inputs/09_Rubrics.json --trajectories Task_Authoring/task_inputs/07_Baseline_Trajectories --task-dir Task_Authoring/task_inputs --revision rev9 --task-type "Long Horizon" --binding-receipt Task_Authoring/task_inputs/Working_Files/Verifier_Export_Binding.json --out Task_Authoring/task_inputs/Working_Files/12_difficulty_input.json
+Verifier binding: BOUND (reviewed receipt Working_Files/Verifier_Export_Binding.json, kind VERIFIER_EXPORT_BINDING, reviewer "Claude (agent) for Arpit Shukla"; 11's hand-off: --invalid none --judge-correction none, so the platform view is the corrected fair view).
+
+Trajectory → verifier Run binding (content, not filename). Each verifier Run #N names the memo Google Doc it graded in Julia's Drive folder d_8140f09bf9f1b94cb8ee2d; that id is the documentId returned by the memo create call in exactly one export and in no other Run block:
+
+| Verifier run | Memo doc id (verifier row and export tool result) | Export | Export sha256 (prefix) | Session id |
+|---|---|---|---|---|
+| Run #1 | 06fcdd9b990fb95a151a672c | trajectory-run-1.json | 135526acfb56 | 0b29dc3f-f05a-4a3d-970f-edecfcbf6cf8 |
+| Run #2 | 400f93bd0958852b74bedd2d | trajectory-run-2.json | f46ea659acf1 | c5130eda-36ff-45cd-bb2b-d6e46f0db1b7 |
+| Run #3 | aad1cb35c9890275e658b5e9 | trajectory-run-3.json | 15113246836c | 7f460687-cde1-4ec8-8eb2-b75c65e8ca4e |
+| Run #4 | 16cd9339e9679746 | trajectory-run-4.json | 07c94f15f973 | de41fc71-b466-42d0-8451-31fc15e6bdf6 |
+| Run #5 | d013e43c473ed9d8e1b6496e | trajectory-run-5.json | 83187b61d612 | e8d15ae7-11da-44cd-b582-970c63fb0598 |
+| Run #6 | 436572f25ff25f7a0329bc90 | trajectory-run-6.json | 604d7beeeaf6 | ec704141-9288-41db-b1b6-32d979eb93c3 |
+
+Revision binding (trajectory_ledger.py, --sql rev9 = 01_Universe_Inject.sql sha256 3a98aa36…, plus every stored revision rev8 … rev1 from Working_Files/run_forensics/rev8 … rev1/01_Universe_Inject.sql, --source platform-baseline):
+- run-1, run-2, run-3, run-6: BOUND ['rev9'] on discriminating content (2 text windows of slack.slack_messages:9c4e7a1d03b85f26e1a4d70c5b2f9e38, the rev9-only coaching clarification; rev8 and rev7 discriminating hits 0).
+- run-4, run-5: INSUFFICIENT (discriminating 0; shared 380 and 455 needles common to rev7/rev8/rev9). These runs never read message 9c4e7a1d…, so content alone cannot tell rev9 from rev8. Not re-labelled: the tool's verdict stands as INSUFFICIENT. Corroboration only (not a binding): all six exports are one concurrent batch (agent timestamps 2026-11-11T06:04:21Z to 06:18:37Z; run-4 starts 06:04:38Z, 17 s after run-6, which is BOUND rev9), the verifier graded all six in one copy, and rev9 is a strict superset of rev8 (one added Slack message), so nothing run-4/run-5 read differs between the two. The difficulty gate does not consume revision binding; /create-hardening would mark these exports per its own rule if it re-uses them.
+
+V3 difficulty mode: medium · verdict view: platform
+Denominators: 6 rollout slots; 6 completed score(s); 0 errored excluded from averages (never zero-scored).
+Assignment context: assignment_hash=7709f2a35b0eb488b14fcbfa6ed3f0122a4b181c143b8f1d3a16bb76363ed5b5 · policy_hash=dc4ab5df3cdd1411a20a5d96c264e0a424ecbb33de8e8fafdf59b0da859d6ff1 · context_hash=50e89bdae5e1ffc2561d078f66cb718ff1e4c8fa2e497596d3d299e2933b5dd1 · freeze_utc=2025-10-01T00:00:00Z
+
+| Rollout | Counted tool calls | Raw / harness / blocked / repeats | Weighted pass (platform) | Failed rubrics (platform) |
+|---|---|---|---|---|
+| run-1 | 338 | 350 / 10 / 2 / 0 | 99.0% | R21 |
+| run-2 | 360 | 402 / 9 / 1 / 32 | 99.0% | R21 |
+| run-3 | 350 | 360 / 8 / 2 / 0 | 78.8% | R2, R3, R17, R19, R20, R23, R24, R64, R65, R66, R67, R68, R69, R70, R71, R72, R73, R74, R75, R76, R106, R108 |
+| run-4 | 310 | 319 / 8 / 1 / 0 | 50.0% | R2, R3, R4, R7, R8, R9, R17, R18, R19, R21, R22, R23, R24, R25, R26, R27, R28, R29, R30, R31, R32, R33, R44, R45, R47, R48, R50, R51, R53, R55, R58, R60, R63, R64, R65, R66, R67, R68, R69, R70, R71, R72, R73, R74, R75, R76, R77, R79, R88, R98, R106, R108 |
+| run-5 | 311 | 320 / 9 / 0 / 0 | 63.5% | R2, R3, R4, R8, R9, R17, R18, R19, R21, R22, R23, R24, R25, R26, R27, R28, R29, R30, R31, R32, R33, R55, R64, R65, R66, R67, R68, R69, R70, R71, R72, R73, R74, R75, R76, R79, R106, R108 |
+| run-6 | 347 | 357 / 7 / 3 / 0 | 78.8% | R2, R3, R17, R19, R21, R23, R24, R64, R65, R66, R67, R68, R69, R70, R71, R72, R73, R74, R75, R76, R106, R108 |
+
+| Gate | Value | Rule | Verdict |
+|---|---|---|---|
+| errored_runs | 0 errored, 6 completed of 6 | <= 2 errored and >= 4 completed (3+ errored = Fail) | PASS |
+| pass_at_1 | 0/6 full passes; 0/6 completed = 0% | V3 operational pass@k: fewer than 5 full passes out of 6 slots (5+ fails) | PASS |
+| avg_weighted_pass_rate | 78.2% (6 completed; 0 errored excluded) | V3 medium: strictly < 85%; equality fails | PASS |
+| per_rollout_sd | 0.177 (sample 0.194; unweighted 0.171) | 0.1-0.3 (population SD of per-rollout weighted pass rates) | PASS |
+| failure_patterns | 5 pattern(s); largest 33% of 6 failing (pairwise reading 33%) | >= 2 patterns (differ on >= 2 rubrics); largest <= 50% | PASS |
+| horizon | average of completed rollouts: 336 | long-horizon tier 100-500+ | PASS |
+| baseline_models | all 6 rollout slots have claude-opus-5-5 provenance | claude-opus-5-5 for all 6 baseline rollouts; missing model evidence and fallback/mixed provenance block | PASS |
+
+Failure patterns (single-linkage, same pattern if they differ on <= 1 rubric):
+- Pattern 1: run-1, run-2
+- Pattern 2: run-3
+- Pattern 3: run-4
+- Pattern 4: run-5
+- Pattern 5: run-6
+- Pairwise reading (largest set all within 1 rubric of each other): run-1, run-2
+All-fail rubrics (completed rollouts, platform view): none
+Blocking gates: none
+
+Readings: no golden run (best runs 99.0%: run-1 and run-2 fail only R21). pass@1 0/6 full passes. Pattern grouping: single-linkage and pairwise readings agree (largest pattern run-1 + run-2, 2 of 6 failing = 33%). run-3 and run-6 differ on exactly two rubrics (run-3 fails R20 and passes R21, run-6 the reverse), so they are separate patterns at the "differ on ≥ 2" edge; merged they would still be 2 of 6 = 33%. SD 0.177 population (sample 0.194, unweighted 0.171), all three inside 0.1–0.3. Corrected fair view = platform view (no invalid rubrics, no judge corrections).
+Failure patterns (what each run missed): P1 run-1, run-2 (99.0%): only the D7 cut-off (R21: 9.1% over 47 cohorts, Jul 24 cut-off not applied). P2 run-3 (78.8%): passed R21 (10.47%) but missed R20 (panel figure) plus the shared run 3–6 block (R2, R3, R17, R19, R23, R24, R64–R76, R106, R108). P3 run-6 (78.8%): the same block plus R21, R20 passed. P4 run-5 (63.5%): that block plus R4, R8, R9, R18, R21, R22, R25–R33, R55, R79. P5 run-4 (50.0%): P4's rows plus R7, R44, R45, R47, R48, R50, R51, R53, R58, R60, R63, R77, R88, R98.
+Tool-call notes: counted (raw / harness / blocked / exact repeats) run-1 338 (350/10/2/0), run-2 360 (402/9/1/32), run-3 350 (360/8/2/0), run-4 310 (319/8/1/0), run-5 311 (320/9/0/0), run-6 347 (357/7/3/0); lowest 310, highest 360, mean 336; 0 of 6 runs under the long-horizon floor of 100. set_acting_user calls: 0 in every run. run-2's 32 exact repeats come from two subagent briefs with 5 context-compaction continuations (trajectory_ledger flags), not task filler, and are already subtracted. ACL-denied reads: at most 2 short "not found" tool results per run (hand scan), so even subtracting all of them leaves every run above 300. No padding from the task: the 82-row register (ZOM-568 … ZOM-649) and per-session reads are the incorporated cohort, not filler.
+Friction check: not configured (03_Error_Async_Config.txt "Friction: none"). Confirmed in the exports: 0 *_submit_* calls in all six runs; the 0–4 is_error results per run are natural tool errors (counted as blocked), not configured friction.
+Screen 60 comparison: not supplied (no platform screen-60 numbers were pasted; the human compares before confirming screen 61).
+Diagnosis: no failing gate in either view. V3 cap/full-pass gates: average 78.2% < 85% (medium), 0/6 full passes < 5. Retained local checks: errored 0/6, SD 0.177, 5 patterns largest 33%, horizon 336 (long-horizon), provenance claude-opus-5-5 on all six. Advisory shape reading: 50 of 103 weight-5 rows (55 of 108 rows) pass 6/6 (the v2 Part 8 signal that those rows are easy for Opus 5.5); not a gate failure, and no row is added or re-weighted for it. The 6.8-point margin under the cap rests mostly on the run 3–6 block (cards-earlier/coaching rows) and R21; run-1 and run-2 at 99.0% show a near-golden path exists.
+Screen 61: every gate passes in the corrected fair view (= platform view; no corrected rows to re-grade), so screen 61 can be confirmed once the human has compared screen 60.
+
+Forecast (pre-registered hev_77fb3671f5c81c0b, Working_Files/01c_Forecast.json sha256 0188b471…, registered on SQL rev7 3acbfad93f4a; scored on the rev9 baseline; advisory, UNCALIBRATED; control:R_F UNPARAMETERIZED): 15 predictions "the baseline fails a V3 difficulty gate", confidence 1 − P_all per scenario (0.46 correlated/whole to 0.99 slip). Outcome: no gate failed, so all 15 resolved False. Brier 0.845 over 15 (constant 0.5 scores 0.25). The forecast's E[average] range 0.750–0.840 does contain the observed 0.782; the miss is the SD gate (forecast P(SD in band) 0.01–0.57, observed 0.177 in band). Scored with hardness_forecast.py score --append (Working_Files/12_Forecast_Predictions.json → 12_Forecast_Score.json; ledger: 30 records present).
+
+## Self-review
+
+1. Re-read as the eval: V3 caps and the five-of-six rule in references/Docs/11_V3_Changes.md, then the QC rows Error Rate, pass@1, Average Weighted Rubric Pass Rate, Failure Signature Concentration and Task Type & Horizon (references/Docs/QC_Spec_Doc_Latest.csv), Evals/references/rules/scoring.json "Agent Failure Rate" / "Error Rate" / "Complexity Threshold Layers", and Evals/references/rules/long_horizon.md, gate by gate against the table above.
+2. Recomputed independently (a separate parser over the raw 10_Baseline_Verifier_Results.md and the weights in 09_Rubrics.json, no difficulty_stats import): headers 107/108, 107/108, 86/108, 56/108, 70/108, 86/108 match their rows; total weight 520 (103 rows × 5 + 5 rows × 1); failed weight per run 5, 5, 110, 260, 190, 110 → 99.04%, 99.04%, 78.85%, 50.00%, 63.46%, 78.85%; mean 78.21%; population SD 0.1771, sample SD 0.1940; full passes 0/6; all-fail set empty (R21 fails 5/6). Differing-rubric counts (run 1..6 × 1..6): run-1 [0,0,23,51,37,21], run-2 [0,0,23,51,37,21], run-3 [23,23,0,32,18,2], run-4 [51,51,32,0,14,30], run-5 [37,37,18,14,0,16], run-6 [21,21,2,30,16,0] → only run-1/run-2 are within one rubric: 5 patterns, largest 2 of 6 = 33%. Horizon basis: no 100% run, so the completed-run mean (338+360+350+310+311+347)/6 = 336. All equal the calculator.
+3. Spot-checked counted calls by hand for run-4 and run-1 (tool_use events in trajectory-run-4.json: 319 total, 311 MCP, 0 set_acting_user, 1 is_error, 0 exact repeats → 310; run-1: 350, 340, 0, 2, 0 → 338), matching difficulty_stats.count_tool_calls.
+4. Inputs re-verified: 11_AF_Justification.md hand-off "--invalid none --judge-correction none" = no "valid": false rubric in 12_difficulty_input.json; rubric version 09_Rubrics.json (stage digest 7cef263232d2) is the one the verifier graded (all 108 titles bind per run); assignment medium / long-horizon / Julia Lawson; context_hash 50e89bdae5e1…, assignment_hash 7709f2a35b0e…, policy_hash dc4ab5df3cdd… recorded in the matrix; model metadata claude-opus-5-5 (and the claude-opus-5-5[1m] label, bracketed suffix stripped by the tool) in all six exports, plus one "synthetic" (model label) harness message in run-2.
+
+| Gate | Counter-reading | Resolution (evidence) |
+|---|---|---|
+| errored runs | Counter: a run should count as errored (truncated export), shrinking the denominator | No. All six exports end with a success result event (difficulty_stats.read_trajectory, 12_difficulty_input.json: 6 completed); session ids differ per export (0b29dc3f…, c5130eda…, 7f460687…, de41fc71…, e8d15ae7…, ec704141…) |
+| pass@1 | Counter: run-1 and run-2 are really full passes because R21 is unfair, giving 2/6 | Still passes (2 < 5). And R21 is fair: run-3 reached 10.47% (trajectory-run-3.json "install-weighted D7 is 10.47% ... over 16 mature cohort rows"), verifier Run #3 row Pass |
+| average | Counter: judge leniency on R21 in run-3, or invalid rows inflating difficulty, would move the corrected mean | Flipping R21 in run-3 to Fail gives 77.4%; marking every 5/6 row invalid cannot push the mean to 85% (the run 3–6 block alone is 22 rows). 11_AF_Justification.md found no invalid row; corrected view = platform view, 78.2% < 85% |
+| SD | Counter: sample SD or unweighted SD would read outside 0.1–0.3 | Sample 0.194 and unweighted 0.171 are both inside the band; no band-edge note printed by difficulty_stats.py |
+| patterns | Counter: run-3 and run-6 differ on only two rubrics (R20, R21), and a stricter "same pattern" reading merges them | Merged, the pattern is 2 of 6 = 33% ≤ 50% and there are 4 patterns; the gate holds either way (differing-rubric table in item 2) |
+| horizon | Counter: raw counts include harness calls or ACL-denied "not found" reads, inflating the horizon | Counted calls already exclude harness (7–10 per run), blocked and repeats; hand scan finds ≤ 2 short not-found results per run (run-4: 310 − 2 = 308), far above the 100 floor |
+| model provenance | Counter: run-2 has a "synthetic" (model label) message and subagents, so it may be mixed-model | trajectory_ledger: run-2 models {'claude-opus-5-5': 2} in both briefs, mixed=False, v3_valid=True; "synthetic" (model label) is a harness message, not a model; the gate row reads all 6 slots claude-opus-5-5 |
+| binding | Counter: run-4 and run-5 could be a rev8 batch, so the matrix mixes revisions | They are INSUFFICIENT by content (left as is). The exports were produced concurrently with BOUND-rev9 runs (2026-11-11T06:04–06:18Z) and graded in one verifier copy; rev9 adds only Slack message 9c4e7a1d…, which those runs never read, so their reads are identical under rev8 and rev9 |
+
+Unresolved: (1) run-4 and run-5 revision binding stays INSUFFICIENT by the tool's rule (corroborated as the same batch, not certified). (2) Screen 60 numbers not supplied; compare before screen 61. (3) The stage gate's readiness and chain checks need upstream stage certificates that do not exist in this task folder (see the gate output); these are not difficulty findings and are reported, not worked around.
