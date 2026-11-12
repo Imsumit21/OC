@@ -1,0 +1,61 @@
+{
+ "banner": "LOCAL REHEARSAL — not a platform verdict",
+ "binding": {
+  "artifact_sha256": "5155af883d65cf9568446cb74e76a00e7c68ce494d63528695df28b2f7742106",
+  "brief_sha256": "e22161162872684af4c65b45380cc139e9b78af466e2914cbce7265b3f169c96",
+  "manifest_sha256": "eeee5739b258f03f048ab05e5fe45e321ae4fea9ad7549b4594c6d732b06bd55",
+  "pass": "O2",
+  "reply_sha256": "a2bcd733a6e39f333dfcead2cbd38183b1f0c8d5438441a0ad8d53e192a12822",
+  "round": 1,
+  "stage": "oe"
+ },
+ "output": {
+  "artifact_sha256": "5155af883d65cf9568446cb74e76a00e7c68ce494d63528695df28b2f7742106",
+  "checked": "144: 3 prompt sentences (S1-S3) and 141 events (OE 1-141: 19 reads, 5 derivations, 117 writes). No missing step, missing write, uncovered dependency, vague step or final-response event found; friction is none, so no recovery or wait is owed. The 96 pack lines split 8 Delivered + 36 Ready + 52 Owed with each line once, and each of the 52 Owed tickets has one move event and one comment event (OE 36-139).",
+  "findings": [
+   {
+    "event": "OE 12",
+    "evidence": "Evals/references/rules/deep_recheck.md O2: \"A non-action or final-response event is NON-FAIL 3, not a missing step.\" OE 12 names no service, tool, record or parameter; the other 136 events each name a service. It only combines what two reads already return: OE 10 (injection SQL slack_messages da6776f77288224ec67847a799bbde5a, C090N54TG79 ts 1758823946.262829, \"...Gift Box, Cactus Plant and Dynamite.\") and OE 11 (1d55b38831d7517fe403e4f2a906a897, C08R8CHB0QL ts 1758922879.243189, \"Let's have it in the 8 in place of the last one on my list\"). Coverage is intact. The pass text does not define non-action further; this rests on reading it as an event with no tool action.",
+    "fix": "Remove OE 12 as a separate event and state the resulting eight (Grenade, Couch, Plushie Chick, Shuriken, Cute Axe, Gift Box, Cactus Plant, Bow, with Dynamite an extra) in the Expected of OE 11, where the deciding reply is read; point OE 25 and OE 27 at OE 11.",
+    "issue_type": "non_action_event",
+    "quote": "Work out the eight on the board from Robert's list and his reply (OE 10, OE 11)",
+    "severity": "Minor"
+   },
+   {
+    "event": "OE 21",
+    "evidence": "Same rule sentence (deep_recheck.md O2). No service or tool is named. It restates facts already read: OE 4 (injection SQL linear_issues DES-314, DES-315, DES-322, DES-333, DES-334, DES-398, DES-399, DES-400 state_id 'Done'), OE 5 (their notes, 'In the first zip, 24 Sep.' and the three variants) and OE 7 (base slack messages/C08H78VJG80/2025-09.json /23, ts 1759140968.965099, \"We have reviewed the assets.\"). Coverage is intact.",
+    "fix": "Remove OE 21 as a separate event and carry the eight Delivered lines in the Expected of OE 7 (the last read that settles them) or only in the Expected of OE 27, which writes them.",
+    "issue_type": "non_action_event",
+    "quote": "Work out the Delivered lines by Frederick's rule (OE 2) from the tickets, the notes and the hand-over thread (OE 4, OE 5, OE 7)",
+    "severity": "Minor"
+   },
+   {
+    "event": "OE 22",
+    "evidence": "Same rule sentence (deep_recheck.md O2). No service or tool is named. Each of its five groups is already obtained by a read: OE 13 (injection slack a5ee6e90923eeab380e6730f674240d2, C0880U9751A ts 1758906517.912099, \"the models you saved out of unity on thursday are the text kind\"), OE 6 (base C08H78VJG80 ts 1758022459.227279, Binary format, not ASCII), OE 14 (6642a2d59e2a85bf5b2c15c41ba73761, D05HMBQUC8Z ts 1759148152.833779), OE 10 (base C090N54TG79 ts 1759189466.554739, \"Got new colored version of cactus, chainsaw and cones\"), OE 15 (gdocs f_faf4d7c167d14a1127dcc3, Tue 30 Sep entry) and OE 16 (gsheets f_b2387e31d46d3a7b3fa2a9 Sources rows Rocket sound and Explosion sound). I recounted the list: 12 + 12 + 3 + 8 + 2 = 37. Coverage is intact.",
+    "fix": "Remove OE 22 as a separate event and put each group's lines, what is owed and who has it in the Expected of the read that decides it (OE 13, OE 14, OE 10, OE 15, OE 16); OE 27 and OE 36-131 then cite those reads.",
+    "issue_type": "non_action_event",
+    "quote": "Work out which exported lines are Owed because of what was said after Brian's note, by Frederick's rules (OE 2), and who has each",
+    "severity": "Minor"
+   },
+   {
+    "event": "OE 23",
+    "evidence": "Same rule sentence (deep_recheck.md O2). No service or tool is named. It regroups 15 notes OE 5 already returns (injection SQL linear_comments: \"Not exported yet. Waiting on the FBX from Claire.\" on DES-321, DES-331, DES-347, DES-360, DES-388, DES-396; \"Not exported yet. Mine to do, didn't get to it on Friday.\" on DES-332, DES-346, DES-377, DES-378, DES-397; the notes on DES-406, DES-407, DES-408, DES-409). Coverage is intact.",
+    "fix": "Remove OE 23 as a separate event and state these 15 Owed lines with what is owed and who has it in the Expected of OE 5; OE 27 and the ticket events for these lines then cite OE 5.",
+    "issue_type": "non_action_event",
+    "quote": "Work out the lines Brian's own note leaves Owed, and who has each (OE 2, OE 5)",
+    "severity": "Minor"
+   },
+   {
+    "event": "OE 24",
+    "evidence": "Same rule sentence (deep_recheck.md O2). No service or tool is named; it is arithmetic over OE 21-23 and the notes of OE 5. I recounted it against the injected Pack tab (gsheets f_956e60ec7f2f7977d98934, 96 rows): 36 Ready names, 8 + 36 + 52 = 96, every line once, and Owed by person 27 + 21 + 3 + 1 = 52. Coverage is intact.",
+    "fix": "Remove OE 24 as a separate event and carry the 36 Ready lines and the counts Delivered 8, Ready 36, Owed 52 in the Expected of the writes that use them (OE 27 and OE 140).",
+    "issue_type": "non_action_event",
+    "quote": "Work out the Ready lines and the count for each state (OE 21, OE 22, OE 23)",
+    "severity": "Minor"
+   }
+  ],
+  "pass": "O2",
+  "verdict": "NON-FAIL"
+ },
+ "schema": "blind-review-output-v1"
+}

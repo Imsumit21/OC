@@ -1,0 +1,1249 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "julia_zm3d_playable_brief",
+ "revision": "D2-design",
+ "truth_keys": [
+  "Couch",
+  "Couch and Pillow",
+  "Alarm Clock",
+  "Record Player",
+  "Retro TV",
+  "Desk Lamp",
+  "Small Lamp",
+  "Fly Zapper",
+  "Grenade",
+  "Chainsaw",
+  "Cute Axe",
+  "Cute Hammer",
+  "Dynamite",
+  "Shuriken",
+  "Saber",
+  "Safe",
+  "Flashlight",
+  "Fire Extinguisher",
+  "Propane Tank",
+  "Plushie Bunny",
+  "Plushie Chick",
+  "Bow",
+  "Cone",
+  "Dice",
+  "Gift Box",
+  "Plushie Dog",
+  "Plushie Whale",
+  "Whistle",
+  "Wooden Tower",
+  "Toy Car",
+  "Toy Boat",
+  "Toy Airplane",
+  "Toy Train",
+  "Beach Ball",
+  "Bathroom Scale",
+  "Bathtub",
+  "Cabinet Sink",
+  "Flip Flops",
+  "Iron",
+  "Ironing Board",
+  "Plunger",
+  "Slippers",
+  "Toilet",
+  "Toilet Paper",
+  "Wash Basin",
+  "Washing Machine",
+  "Rubber Ducky",
+  "Coffee Machine",
+  "Cooler",
+  "Ice Cream Machine",
+  "Kitchen Mixer",
+  "Microwave",
+  "Oven",
+  "Refrigerator",
+  "Stove",
+  "Toaster",
+  "Dutch Oven",
+  "Rolling Pin",
+  "Round Kettle",
+  "Round Pan",
+  "Spatula",
+  "Whisk",
+  "Ladle",
+  "Small Kettle",
+  "Tall Kettle",
+  "Acoustic Guitar",
+  "Cello",
+  "Cymbals",
+  "Electric Guitar",
+  "Harp",
+  "Tambourine",
+  "Trumpet",
+  "Xylophone",
+  "Music Keyboard",
+  "Grand Piano",
+  "Cactus Plant",
+  "Barrel",
+  "Bench",
+  "Flower Pot",
+  "Garden Shears",
+  "Watering Can",
+  "Wooden Bucket",
+  "Wheelbarrow",
+  "Wooden Crate",
+  "Cannon",
+  "Background",
+  "Zombie characters",
+  "Matching sound",
+  "Rocket sound",
+  "Explosion sound",
+  "Success sound",
+  "Failure sound",
+  "Background music",
+  "Item visuals",
+  "UI elements",
+  "Fonts"
+ ],
+ "classes": [
+  "Delivered",
+  "Ready",
+  "Owed"
+ ],
+ "truth_fields": {
+  "class": "State",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "handoff": {
+   "kind": "table",
+   "name_regex": "(?!.*brief).*(?:hand.?off|list|sheet|status|tracker|register|pack|asset|owed|deliverable)",
+   "key_column": "Line",
+   "key_regex": "ZZ\\d|Couch|Couch\\ and\\ Pillow|Alarm\\ Clock|Record\\ Player|Retro\\ TV|Desk\\ Lamp|Small\\ Lamp|Fly\\ Zapper|Grenade|Chainsaw|Cute\\ Axe|Cute\\ Hammer|Dynamite|Shuriken|Saber|Safe|Flashlight|Fire\\ Extinguisher|Propane\\ Tank|Plushie\\ Bunny|Plushie\\ Chick|Bow|Cone|Dice|Gift\\ Box|Plushie\\ Dog|Plushie\\ Whale|Whistle|Wooden\\ Tower|Toy\\ Car|Toy\\ Boat|Toy\\ Airplane|Toy\\ Train|Beach\\ Ball|Bathroom\\ Scale|Bathtub|Cabinet\\ Sink|Flip\\ Flops|Iron|Ironing\\ Board|Plunger|Slippers|Toilet|Toilet\\ Paper|Wash\\ Basin|Washing\\ Machine|Rubber\\ Ducky|Coffee\\ Machine|Cooler|Ice\\ Cream\\ Machine|Kitchen\\ Mixer|Microwave|Oven|Refrigerator|Stove|Toaster|Dutch\\ Oven|Rolling\\ Pin|Round\\ Kettle|Round\\ Pan|Spatula|Whisk|Ladle|Small\\ Kettle|Tall\\ Kettle|Acoustic\\ Guitar|Cello|Cymbals|Electric\\ Guitar|Harp|Tambourine|Trumpet|Xylophone|Music\\ Keyboard|Grand\\ Piano|Cactus\\ Plant|Barrel|Bench|Flower\\ Pot|Garden\\ Shears|Watering\\ Can|Wooden\\ Bucket|Wheelbarrow|Wooden\\ Crate|Cannon|Background|Zombie\\ characters|Matching\\ sound|Rocket\\ sound|Explosion\\ sound|Success\\ sound|Failure\\ sound|Background\\ music|Item\\ visuals|UI\\ elements|Fonts",
+   "columns": [
+    "Line",
+    "Category",
+    "Board set",
+    "State",
+    "What's owed",
+    "Who has it",
+    "Ticket",
+    "Kind",
+    "Went out",
+    "Notes",
+    "Extra 1",
+    "Extra 2"
+   ],
+   "class_column": "State",
+   "reason_column": "What's owed",
+   "comparators": {
+    "State": "norm",
+    "Board set": "norm",
+    "Category": "norm",
+    "Who has it": "issue_key",
+    "Ticket": "issue_key"
+   }
+  },
+  "ticket": {
+   "kind": "text",
+   "tool": "linear_update_issue",
+   "issue": "DES-367",
+   "key_regex": "DES-\\d{3}"
+  },
+  "brief": {
+   "kind": "json_text",
+   "tool": "gdocs_create_document"
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "shares": {
+   "kind": "json_text",
+   "tool": "gdrive_share_file"
+  }
+ },
+ "slots": [
+  {
+   "id": "X1",
+   "title": "Refrigerator state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "its ticket says FBX saved out of the project, opens, looks right; Marcus's post says those files are the text kind; the vendor takes binary only",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Refrigerator",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state"
+  },
+  {
+   "id": "X2",
+   "title": "Bathtub state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "its ticket says FBX from Claire on Friday, looks right; Claire's later message to Julia says she is redoing the bathroom UVs and Friday's files are the old state",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Bathtub",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state"
+  },
+  {
+   "id": "X3",
+   "title": "Cactus Plant state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "its ticket says FBX from Claire first thing on 25 Sep; match3d#462 changed the model later that day and Robert shows the new colour versions on 29 Sep",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Cactus Plant",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state"
+  },
+  {
+   "id": "X4",
+   "title": "Cello state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "its ticket says zipped with the other instruments, in the outgoing folder; Brian's own log of that folder says the zip will not unpack",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Cello",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ZIP"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state"
+  },
+  {
+   "id": "X5",
+   "title": "Rocket sound state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "its ticket says exported .wav, plays; Calvin's sources sheet says it is from a library seat; the notes hand over only what is ours",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Rocket sound",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state"
+  },
+  {
+   "id": "X1b",
+   "title": "Retro TV state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a Living Room line saved out of the project the same day as the kitchen appliances: the join is the ticket note, not the category",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Retro TV",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state_join"
+  },
+  {
+   "id": "X2b",
+   "title": "Iron state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the game files the iron under Bathroom, so Claire's message covers it: the join is the pack list's category",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Iron",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state_join"
+  },
+  {
+   "id": "X3b",
+   "title": "Cone state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a second line of the 25 Sep change, named in the pull request's comment by its model file",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Cone",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state_join"
+  },
+  {
+   "id": "X4b",
+   "title": "Trumpet state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a second instrument of Friday's zip: the join is the ticket note (zipped with the other instruments)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Trumpet",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ZIP"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state_join"
+  },
+  {
+   "id": "X5b",
+   "title": "Explosion sound state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the second cue Calvin's sheet marks as not ours to pass on",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Explosion sound",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state_join"
+  },
+  {
+   "id": "C1",
+   "title": "Rolling Pin state",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "control: a kitchen line that came from Claire as FBX and that no later record touches stays Ready",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Rolling Pin",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state_ctl"
+  },
+  {
+   "id": "C2",
+   "title": "Fly Zapper state",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "its own ticket note says it is not exported yet",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Fly Zapper",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "group": "state_ctl"
+  },
+  {
+   "id": "X6",
+   "title": "Refrigerator what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Marcus's post joined to the vendor's binary-only rule",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Refrigerator",
+    "ascii|binary|text (?:kind|file)|format"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owed"
+  },
+  {
+   "id": "X7",
+   "title": "Bathtub what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Claire's message, joined to the pack list's category",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Bathtub",
+    "UV|unwrap|redo|redone|redoing|rework"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owed"
+  },
+  {
+   "id": "X8",
+   "title": "Cactus Plant what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from the 25 Sep change, joined to the time on the ticket note",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Cactus Plant",
+    "chang|revis|current|new(?:er)? version|colou?r|again|re-?send"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owed"
+  },
+  {
+   "id": "X9",
+   "title": "Cello what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Brian's log of the outgoing folder, joined to the ticket note",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Cello",
+    "zip|unpack|cut off|corrupt|truncat"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ZIP"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owed"
+  },
+  {
+   "id": "X10",
+   "title": "Rocket sound what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Calvin's sheet, joined to the notes' sound rule",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Rocket sound",
+    "librar|licen|own version|Soundly|not ours|replace"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owed"
+  },
+  {
+   "id": "X16",
+   "title": "Refrigerator who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Marcus's post is addressed to Brian, who made the export",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Refrigerator",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owner"
+  },
+  {
+   "id": "X11",
+   "title": "Bathtub who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Claire says she is redoing the art herself",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Bathtub",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owner"
+  },
+  {
+   "id": "X11b",
+   "title": "Iron who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the same message, through the pack list's category",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Iron",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owner"
+  },
+  {
+   "id": "X12",
+   "title": "Rocket sound who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Calvin's sheet names him for our own version",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Rocket sound",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owner"
+  },
+  {
+   "id": "X17",
+   "title": "Cello who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Brian's log says he will put the files back",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Cello",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ZIP"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "owner"
+  },
+  {
+   "id": "X13",
+   "title": "Bow board set",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Robert's 25 Sep eight as changed by his 26 Sep reply under Julia's bow post",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Bow",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "set"
+  },
+  {
+   "id": "X14",
+   "title": "Dynamite board set",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the last item of Robert's 25 Sep eight, which the bow replaced, becomes an extra",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Dynamite",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "set"
+  },
+  {
+   "id": "C4",
+   "title": "Grenade board set",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "control: a pick Robert did not change",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Grenade",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "group": "set"
+  },
+  {
+   "id": "C5",
+   "title": "Rolling Pin board set",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "control: a board item outside the eight is an extra",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Rolling Pin",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "group": "set"
+  },
+  {
+   "id": "V1",
+   "title": "hand-off list lines",
+   "weight": 3,
+   "work_kind": "limited_reconciliation",
+   "work_reason": "one row for each of the 96 lines of Brian's list, spelled as he spells them",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "line_set",
+   "volume_for": [
+    "state",
+    "state_join",
+    "state_ctl",
+    "owed",
+    "owner",
+    "set",
+    "comment"
+   ],
+   "expected_keys": [
+    "Couch",
+    "Couch and Pillow",
+    "Alarm Clock",
+    "Record Player",
+    "Retro TV",
+    "Desk Lamp",
+    "Small Lamp",
+    "Fly Zapper",
+    "Grenade",
+    "Chainsaw",
+    "Cute Axe",
+    "Cute Hammer",
+    "Dynamite",
+    "Shuriken",
+    "Saber",
+    "Safe",
+    "Flashlight",
+    "Fire Extinguisher",
+    "Propane Tank",
+    "Plushie Bunny",
+    "Plushie Chick",
+    "Bow",
+    "Cone",
+    "Dice",
+    "Gift Box",
+    "Plushie Dog",
+    "Plushie Whale",
+    "Whistle",
+    "Wooden Tower",
+    "Toy Car",
+    "Toy Boat",
+    "Toy Airplane",
+    "Toy Train",
+    "Beach Ball",
+    "Bathroom Scale",
+    "Bathtub",
+    "Cabinet Sink",
+    "Flip Flops",
+    "Iron",
+    "Ironing Board",
+    "Plunger",
+    "Slippers",
+    "Toilet",
+    "Toilet Paper",
+    "Wash Basin",
+    "Washing Machine",
+    "Rubber Ducky",
+    "Coffee Machine",
+    "Cooler",
+    "Ice Cream Machine",
+    "Kitchen Mixer",
+    "Microwave",
+    "Oven",
+    "Refrigerator",
+    "Stove",
+    "Toaster",
+    "Dutch Oven",
+    "Rolling Pin",
+    "Round Kettle",
+    "Round Pan",
+    "Spatula",
+    "Whisk",
+    "Ladle",
+    "Small Kettle",
+    "Tall Kettle",
+    "Acoustic Guitar",
+    "Cello",
+    "Cymbals",
+    "Electric Guitar",
+    "Harp",
+    "Tambourine",
+    "Trumpet",
+    "Xylophone",
+    "Music Keyboard",
+    "Grand Piano",
+    "Cactus Plant",
+    "Barrel",
+    "Bench",
+    "Flower Pot",
+    "Garden Shears",
+    "Watering Can",
+    "Wooden Bucket",
+    "Wheelbarrow",
+    "Wooden Crate",
+    "Cannon",
+    "Background",
+    "Zombie characters",
+    "Matching sound",
+    "Rocket sound",
+    "Explosion sound",
+    "Success sound",
+    "Failure sound",
+    "Background music",
+    "Item visuals",
+    "UI elements",
+    "Fonts"
+   ]
+  },
+  {
+   "id": "A1",
+   "title": "owed count on the list",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "every line's state has to be right for the count (52)",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "REVISED",
+    "ZIP",
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "count_owed"
+  },
+  {
+   "id": "A2",
+   "title": "ready count on the list",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the count of lines that can go as they are (36)",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Ready"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "REVISED",
+    "ZIP",
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "count_ready"
+  },
+  {
+   "id": "A3",
+   "title": "delivered count on the list",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the count of lines PlayableX holds (8)",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Delivered"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "count_delivered"
+  },
+  {
+   "id": "W1",
+   "title": "reply gives the owed count",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the same count carried into the reply",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slack",
+    "owed[ A-Za-z:=*_()|>~\\n\\t\\-–—]{0,20}52\\b|\\b52 (?:lines |line |items |are |is |still )*owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "REVISED",
+    "ZIP",
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "count_owed_msg"
+  },
+  {
+   "id": "W2",
+   "title": "reply gives the ready count",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the same count carried into the reply",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slack",
+    "ready[ A-Za-z:=*_()|>~\\n\\t\\-–—]{0,20}36\\b|\\b36 (?:lines |line |items |are |is |still )*ready"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "REVISED",
+    "ZIP",
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "count_ready_msg"
+  },
+  {
+   "id": "W3",
+   "title": "reply gives the delivered count",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the same count carried into the reply",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "slack",
+    "delivered[ A-Za-z:=*_()|>~\\n\\t\\-–—]{0,20}8\\b|\\b8 (?:lines |line |items |are |is |still )*delivered"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "count_delivered_msg"
+  },
+  {
+   "id": "W4",
+   "title": "DES-367 (Refrigerator) to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "applies that line's Owed call to its own ticket",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "tracker_state",
+    "Todo$"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "todo_refrigerator"
+  },
+  {
+   "id": "K1",
+   "title": "ticket comment: export lines",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a comment carries what is owed for the lines saved out of the project",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "ascii|binary|text (?:kind|format|file)"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "comment"
+  },
+  {
+   "id": "K2",
+   "title": "ticket comment: arthold lines",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a comment carries what is owed for the bathroom lines",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "UV|unwrap"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "comment"
+  },
+  {
+   "id": "K3",
+   "title": "ticket comment: revised lines",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a comment carries what is owed for the three changed lines",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "new colou?r|recolou?r|colou?r version|current file|model changed"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "comment"
+  },
+  {
+   "id": "K4",
+   "title": "ticket comment: zip lines",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a comment carries what is owed for the instruments in Friday's zip",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "unpack|zip (?:it |them |the files )?again|re-?zip|cut off|corrupt"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ZIP"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "comment"
+  },
+  {
+   "id": "K5",
+   "title": "ticket comment: audio lines",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "a comment carries what is owed for the two cues",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    "own version|librar|licen|Soundly"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "group": "comment"
+  },
+  {
+   "id": "B1",
+   "title": "brief: the eight on the board",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Robert's 25 Sep eight as changed by his 26 Sep reply (the bow in, the last item out)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "Shuriken.{0,160}Bow|Bow.{0,160}Shuriken"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "default_eight"
+  },
+  {
+   "id": "B2",
+   "title": "brief: the scenario",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Frederick chose Scenario 1 on 15 Sep in the PlayableX channel",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "Scenario 1"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "scenario"
+  },
+  {
+   "id": "B2b",
+   "title": "brief: what the scenario is for",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Frederick's 12 Sep reasoning: filter for players who will like the game, true to the core game play",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "filter|retention|core game ?play|core mechanic"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "scenario_purpose"
+  },
+  {
+   "id": "B3",
+   "title": "brief: four zombies and the animation",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Robert's 29 Sep answer to PlayableX's question: walk; Party Girl, Plumber, Magician, Football Player",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "Plumber.{0,200}walk|walk.{0,200}Plumber"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "zombies_anim"
+  },
+  {
+   "id": "B4",
+   "title": "brief: tray size",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the design page says a 7-slot tray; the 6-slot proposal in its comments was not adopted",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "(?:7|seven)[ -]?(?:slot|item|space)|tray.{0,40}(?:7|seven)"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "tray"
+  },
+  {
+   "id": "B4b",
+   "title": "brief: how a level is lost",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the design page and Brian's 24 Sep note to PlayableX: lost when the zombies take our health to zero",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "HP|health"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "lose_rule"
+  },
+  {
+   "id": "B5",
+   "title": "brief: start date",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the hub names 3 November",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "3 Nov|Nov(?:ember)? 3|3rd of November|2025-11-03"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "start_date"
+  },
+  {
+   "id": "B6",
+   "title": "brief: what they can use for sound",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the notes' rule applied to Calvin's sheet: the rocket and explosion cues are held back",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "(?:rocket|explosion).{0,160}(?:own version|not ours|librar|licen|held back|stays? (?:here|with us)|replac)"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "sound_section"
+  },
+  {
+   "id": "B7",
+   "title": "brief: music after the first click",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "what PlayableX told us about sound on the first playable (14 Apr)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    "first (?:click|tap|touch|interaction)"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message",
+   "fact_id": "first_click"
+  },
+  {
+   "id": "D1",
+   "title": "reply in Frederick's DM",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "reply where he asked",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_channel_post",
+    "D05SD5QLG94",
+    ""
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "Frederick's playable message"
+  },
+  {
+   "id": "D2",
+   "title": "post in the PlayableX channel",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the channel the ask names",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_channel_post",
+    "C08H78VJG80",
+    ""
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the PlayableX channel"
+  },
+  {
+   "id": "D4",
+   "title": "hand-off list shared for viewing",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the notes: both files, view only",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "share_reader"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "my Drive"
+  },
+  {
+   "id": "D5",
+   "title": "both files shared with PlayableX's intake address",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the notes name the address in Contacts",
+   "class": "delivery",
+   "selector": [
+    "text",
+    "shares",
+    "intake@playablex\\.ai.*intake@playablex\\.ai"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "my Drive",
+   "fact_id": "intake_share"
+  },
+  {
+   "id": "D6",
+   "title": "the list's link posted",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "both links go in the PlayableX channel",
+   "class": "delivery",
+   "selector": [
+    "link",
+    "slack"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the PlayableX channel",
+   "fact_id": "link_posted"
+  }
+ ]
+}

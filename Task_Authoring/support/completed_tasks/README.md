@@ -48,6 +48,7 @@ The two 2026-11-02 folders keep the slot at their own root (numbered files plus
 | `robert_seed_bets_2026-11-11` | Robert · Long · easy | Feb 14, 2026 | 85.5% |
 | `calvin_qm_epic_2026-11-11` | Calvin Price · Long · hard | Oct 1, 2025 | 64.4% |
 | `julia_zm_audience_call_2026-11-07` ⚠ | Julia Lawson · Long · medium (designed to the hard target) | Oct 1, 2025 | 78.2% |
+| `julia_zm3d_playable_brief_2026-11-13` | Julia Lawson · Long · hard | Oct 1, 2025 | 40.5% (spread 0.095, under the 0.1 band) |
 
 ⚠ = archived unfinished: `/rubric` never passed (Arthur: FAIL 2 on the reviewed 43-row set; Julia DD close-out: FAIL 1
 on one evidence line, fixed locally and never re-sent; Samuel: FAIL 1 twice on attempt `6aeed825`, the round-2 Fix List

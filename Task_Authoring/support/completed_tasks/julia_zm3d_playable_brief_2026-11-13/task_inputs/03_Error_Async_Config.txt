@@ -1,0 +1,60 @@
+# Error Injection & Async Wait (screen 16) — optional
+
+Decision for julia_zm3d_playable_brief (injection rev2, SQL sha256 7d1f2aaeb29c): no forced errors and no async waits.
+Reason: the scenario is a hand-off brief and the standing of an asset pack, not an outage story, and friction is never a
+hardness or horizon lever (playbooks/03_Error_Async_Config.md hard gate 1). Applies to the baseline run and the verifier;
+nothing is configured, so this file is not supplied to /prompt.
+
+```
+Friction:          none
+
+error_functions:
+error_mode:
+error_rate:
+
+wait_functions:
+wait_min_seconds:
+wait_max_seconds:
+```
+
+On screen 16, leave every field empty.
+
+## Facts for the human (feeds `/create-oe-writing`)
+
+- No forced errors and no async waits, so the Oracle Events need no recovery or wait steps.
+
+## Post-baseline checks
+
+- Forced error fired: n/a (none configured)
+- Async submit, check, get appeared: n/a (none configured)
+- Non-default values confirmed: n/a
+
+## Self-review
+
+Checked against playbook 03 gates 1 to 4 and GEN_EXECUTION §6a.
+
+| Area | Counter-reading (strongest argument against Friction: none) | Evidence that resolves it | Verdict |
+|---|---|---|---|
+| Is the scenario about an outage? | A zip that was cut off on upload and will not unpack (Brian's log f_faf4d7c167d14a1127dcc3) reads like a failure a forced error could mirror | That is a fact about one archive in the task's records, not an outage of any tool Julia uses; no seeded or base record in the task's window says a service was down | none stands |
+| Horizon and difficulty | Waits on the per-ticket reads would lengthen every run past the call floor | Waits and retries are not counted toward the horizon and are not a lever (playbook gate 1); the call budget comes from one note read per line of the pack (DES-314 to DES-409) and the ticket follow-through (01_Hardness_Manifest.json call_budget) | none stands |
+| Verifier and Oracle Events | A configured error would change what /oe and /rubric can require | With nothing configured every step uses the plain read path, e.g. the note on DES-367 and Marcus's post C0880U9751A/1758906517.912099 | none stands |
+
+Unresolved: none. Every deciding record is persona-readable (dossier 1.E, check-sql PASS on the SQL above).
+
+```
+STAGE GATE error-async: PASS — Task_Authoring/task_inputs · 03_Error_Async_Config.txt#9aac307a32ee · 00_Assigments.md#82494197a841 · 01_Grounding_Dossier.md#796862c5b768 · 01_Universe_Inject.sql#7d1f2aaeb29c · __context__#3246c54345b9 · __assignment__#70579cebc8fc · __policy__#dc4ab5df3cdd · __gate_policy__#1747d7aa5ab8 · __review__#b62863bc4291 · blocking 0 · warnings 1 · checks 14
+[PASS] assignment.v3_context: Julia Lawson / Product Manager; hard cap <70%; freeze 2025-10-01T00:00:00Z; selected universe available; record dates and freeze-state evidence checked separately
+[PASS] assignment.source_mode: source mode 'universe' for universe synthcut; KB bound; clock Clock: 2025-10-01 00:00 PT (2025-10-01 07:00 UTC), Oct 1, 2025 (synth-cut)
+[PASS] structure.outputs: 1 output(s) present: 03_Error_Async_Config.txt
+[PASS] structure.inputs: 3 input(s) present: 00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql
+[PASS] structure.fresh: every output newer than its inputs (00_Assigments.md, 01_Grounding_Dossier.md, 01_Universe_Inject.sql)
+[PASS] chain.injection: upstream 'injection' PASS pasted and current (01_Universe_Inject.sql#7d1f2aaeb29c, 01_Hardness_Manifest.json#4a6b7a0f7097, 01_Grounding_Dossier.md#796862c5b768, solver/solver.py#3fb11113479e, 01c_Dispositions.json#d5e961bdb57b, 01c_Preflight_Report.json#7c44e825726b, 00_Assigments.md#82494197a841, 01_Scenario_Design.md#75b70f53c84a, 01_Hardness_Manifest.draft.json#eeb7fafe905a, 01_Gradable_Surface.json#bfc0af31ecfd, __context__#3246c54345b9, __assignment__#70579cebc8fc, __policy__#dc4ab5df3cdd, __gate_policy__#1f62b72f1b1d, __review__#b62863bc4291)
+[PASS] structure.placeholders: no placeholders in 03_Error_Async_Config.txt
+[PASS] structure.fields: Friction: none with every field empty
+[PASS] review.counter_readings: 3 evidenced counter-readings (of 3 found; need ≥ 2) in 03_Error_Async_Config.txt
+[PASS] review.coverage: self-review addresses all 1 required items
+[PASS] review.unresolved: unresolved items listed (or 'none')
+[PASS] readiness.context: explicit task/revision and current upstream evidence verified
+[WARN] task.folder: the task folder is the bare default `task_inputs`: give each task its own folder (`Task_Authoring/task_inputs<Label>`) and pass it to every command, so two tasks never share one [first-pass check in warn mode: reported, not blocking]
+[PASS] handoff.pasted: pasted into the Self-review by --paste
+```

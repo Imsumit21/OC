@@ -1,0 +1,65 @@
+{
+  "_note": "PRE-SCENARIO SKETCH for hardness_v2_check.py only (storyline A: ZM3D playable content brief, Julia Lawson). Not the /create-scenario draft manifest. Ids without NEW- are real synth-cut base records read in this session through tools/hg.py; NEW- ids are planned seeds that do not exist yet and will be re-derived at S1-S5. The file only shows that the shape clears the guide's Part 7 checks before any SQL exists.",
+  "effective_profile": "extreme",
+  "horizon": "Long Horizon",
+  "anchors": [
+    {"id": "AN1", "locator": "slack:NEW-dm-julia-frederick/NEW-ask-root", "prompt_reference": "Frederick's playable message"},
+    {"id": "AN2", "locator": "slack:C08H78VJG80", "prompt_reference": "the PlayableX channel"},
+    {"id": "AN3", "locator": "gdrive:d_8140f09bf9f1b94cb8ee2d", "prompt_reference": "my Drive"}
+  ],
+  "ask_fragments": [
+    {"id": "F1", "seeded_ids": ["NEW-ask-root"], "delegated_by_record": "NEW-ask-root", "requirement_ids": ["R1", "R2", "R3", "R4", "R5", "R6", "R7"]},
+    {"id": "F2", "seeded_ids": ["NEW-shortlist-sheet"], "delegated_by_record": "NEW-ask-root", "requirement_ids": ["R1", "R2", "R5"]},
+    {"id": "F3", "seeded_ids": ["C08H78VJG80/1758283671.878269"], "delegated_by_record": "NEW-ask-root", "requirement_ids": ["R5", "R6"]},
+    {"id": "F4", "seeded_ids": ["page_zm3d_gdd"], "delegated_by_record": "NEW-ask-root", "requirement_ids": ["R4", "R6"]},
+    {"id": "F5", "seeded_ids": ["NEW-pool-scope-post"], "delegated_by_record": "NEW-ask-root", "requirement_ids": ["R2"]}
+  ],
+  "traps": [
+    {"id": "T_BUILD", "family": "done_gap", "mechanism": "A24", "services": ["gsheets", "linear"], "requirement": "R2",
+     "expected_wrong_reading": "NEW: the shortlist tab marks the item in the beta build and its item ticket is Done, so it goes into the editable pool and its assets are handed off",
+     "resolver": "NEW: a comment on the beta memory ticket (a ticket outside the item set, written by the engineer who owns the build, dated after the shortlist) lists the item models taken out of the beta build"},
+    {"id": "T_ARTFIX", "family": "superseding", "mechanism": "A11", "services": ["linear", "slack"], "requirement": "R5",
+     "expected_wrong_reading": "NEW: the item's art ticket reads final and the tracker says its files were sent",
+     "resolver": "NEW: a later direct message from the art lead to the persona withdraws sign-off for that item family while it is remodelled",
+     "version_records": [
+       {"service": "linear", "id": "NEW-art-ticket-family", "container": "linear:NEW-art-ticket-family", "seeded": true, "at": "2025-09-19T15:00:00Z"},
+       {"service": "slack", "id": "NEW-art-lead-dm", "container": "slack:NEW-dm-julia-claire/NEW-dm-root", "seeded": true, "at": "2025-09-26T16:00:00Z"}
+     ]},
+    {"id": "T_ABIL", "family": "stale_summary", "mechanism": "A1", "services": ["linear", "github"], "requirement": "R4",
+     "expected_wrong_reading": "NEW: the item ticket's description gives the item's effect on enemies, and the linked pull request is merged",
+     "resolver": "NEW: an inline review comment on that pull request records the effect as it actually shipped in the beta build",
+     "version_records": [
+       {"service": "linear", "id": "NEW-item-ticket-effect", "container": "linear:NEW-item-ticket-effect", "seeded": true, "at": "2025-09-10T14:00:00Z"},
+       {"service": "github", "id": "NEW-match3d-pr-review-comment", "container": "github:match3d#NEW-pr", "seeded": true, "at": "2025-09-23T18:00:00Z"}
+     ]},
+    {"id": "T_ALIAS", "family": "scope_alias", "mechanism": "A7", "services": ["slack", "gsheets", "contacts"], "requirement": "R5",
+     "expected_wrong_reading": "NEW: the tracker shows the item's files as sent, and a search for the item's name in the vendor channel finds no objection",
+     "resolver": "NEW: the vendor's acceptance note names items by the vendor's own labels (base precedent: 'the duck asset' for the plushie, C08H78VJG80/1758723504.085039); a label column on a second record maps each label to its roster item"},
+    {"id": "T_SWAP", "family": "superseding", "mechanism": "A14", "services": ["slack"], "requirement": "R1",
+     "expected_wrong_reading": "NEW: the default set of board items as listed in the design-channel decision",
+     "resolver": "NEW: a later reply by the product owner under another post in the art channel replaces one item of the default set",
+     "version_records": [
+       {"service": "slack", "id": "NEW-default-set-decision", "container": "slack:C090N54TG79/NEW-decision-root", "seeded": true, "at": "2025-09-23T17:00:00Z"},
+       {"service": "slack", "id": "NEW-art-channel-reply", "container": "slack:C08R8CHB0QL/NEW-unrelated-root", "seeded": true, "at": "2025-09-26T19:00:00Z"}
+     ]},
+    {"id": "T_LATE", "family": "exact_predicate", "mechanism": "A17", "services": ["gsheets", "linear"], "requirement": "R2",
+     "expected_wrong_reading": "NEW: the shortlist tab is the full list of candidate items",
+     "resolver": "NEW: the pool rule covers every item a new player meets by a stated level; the level list places a few items there that the shortlist tab does not carry"},
+    {"id": "T_AUDIO", "family": "authority", "mechanism": "A13", "services": ["slack", "gsheets"], "requirement": "R3",
+     "expected_wrong_reading": "NEW: the tracker lists the sound cues as ready, and the March 2025 round shows sounds being zipped and sent as they were (base: C08H78VJG80/1744059855.381899)",
+     "resolver": "NEW: a root post in the sound channel (C09A7PDFYCV, a channel nothing in the ask names) says which cues are cleared to leave the studio and which are stand-ins"},
+    {"id": "T_FMT", "family": "effective_date", "mechanism": "A15", "services": ["slack"], "requirement": "R6",
+     "expected_wrong_reading": "base: the September asset list (C08H78VJG80/1758283671.878269) names asset groups and no format, and the brief may show as many mechanics as the game has",
+     "resolver": "base: the vendor's rules from the March 2025 round in the same channel, older page: 3D assets as FBX with animations embedded (C08H78VJG80/1742892985.601399, 1742899453.589669) and at most one extra mechanic (C08H78VJG80/1741705164.913899)"}
+  ],
+  "mechanism_portfolio": [
+    {"id": "BUILD", "mechanism": "A24", "nodes": ["T_BUILD"], "requirement": "R2", "natural_reading": "in build on the shortlist and Done on the ticket means in the pool"},
+    {"id": "ARTFIX", "mechanism": "A11", "nodes": ["T_ARTFIX"], "requirement": "R5", "natural_reading": "final on the art ticket and sent on the tracker means nothing is owed"},
+    {"id": "ABIL", "mechanism": "A1", "nodes": ["T_ABIL"], "requirement": "R4", "natural_reading": "the ticket description is the item's effect"},
+    {"id": "ALIAS", "mechanism": "A7", "nodes": ["T_ALIAS"], "requirement": "R5", "natural_reading": "sent on the tracker means accepted"},
+    {"id": "SWAP", "mechanism": "A14", "nodes": ["T_SWAP"], "requirement": "R1", "natural_reading": "the default set is the one in the design-channel decision"},
+    {"id": "LATE", "mechanism": "A17", "nodes": ["T_LATE"], "requirement": "R2", "natural_reading": "the shortlist tab is the candidate list"},
+    {"id": "AUDIO", "mechanism": "A13", "nodes": ["T_AUDIO"], "requirement": "R3", "natural_reading": "every sound cue the tracker lists as ready goes in the pack"},
+    {"id": "FMT", "mechanism": "A15", "nodes": ["T_FMT"], "requirement": "R6", "natural_reading": "the September asset list is the whole of the vendor's requirements"}
+  ]
+}

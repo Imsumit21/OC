@@ -1,0 +1,130 @@
+{
+ "gdd": {
+  "file": "confluence_working.json",
+  "pointer": "/pages/16",
+  "record": {
+   "id": "page_zm3d_gdd",
+   "space_id": "space_PROD",
+   "parent_id": "page_prod_home",
+   "title": "Zombie Match 3D — Game Design Document",
+   "body": "<p>This is the living Game Design Document for <strong>Zombie Match 3D</strong> (shipped on the store as <strong>Puzzles vs Zombies</strong> under Calm Play LLC until the transfer to Harmony Games and the rename on 24 July 2025). It is the source of truth for the core loop, the RPG combat layer, and monetization. For the coin/life economy see <ac:link><ri:page ri:content-title=\"Economy Design — Coins, Lives &amp; Boosters\"/><ac:link-body>Economy Design - Coins, Lives &amp; Boosters</ac:link-body></ac:link>, and for the paid track see <ac:link><ri:page ri:content-title=\"ZM3D Season Pass — Spec\"/><ac:link-body>ZM3D Season Pass - Spec</ac:link-body></ac:link>. This document ladders up to <ac:link><ri:page ri:content-title=\"Product OKRs — 2025 H1\"/><ac:link-body>Product OKRs - 2025 H1</ac:link-body></ac:link>.</p><ac:structured-macro ac:name=\"info\"><ac:rich-text-body><p>ZM3D has not had a global launch. It first became publicly downloadable in the US on Google Play on <strong>April 12, 2025</strong> and on the App Store on <strong>April 18, 2025</strong>; <strong>May 15, 2025</strong> is the day iOS build 1.0.5 went live. This GDD reflects that build plus the Season Pass update.</p></ac:rich-text-body></ac:structured-macro><h2>Core mechanic</h2><p>The matcher is a Match-3D collector benchmarked on <em>Match Factory</em>. Objects sit in a physics pile; the player drags items into a <strong>7-slot tray</strong>. Collect any 3 matching objects and they clear from the tray. If all 7 slots fill without a match it counts as a blunder: the tray clears and surviving monsters enrage, but play continues. It is a tempo penalty, not a fail state - the loss screen only appears at zero health. Tray pressure is the primary difficulty dial.</p><ul><li><strong>Pile physics</strong> - objects settle and occlude each other; digging exposes buried matches.</li><li><strong>7-slot tray</strong> - the primary tempo penalty, not the fail state; tuning slot count changes felt difficulty more than object count.</li><li><strong>Object families</strong> - cosmetic skins that map to elemental ammo in the RPG layer.</li></ul><h2>Zombie RPG layer</h2><p>Levels wrap the matcher in combat. Each cleared triple fires the matching element at the current monster. Monsters carry an elemental weakness; hitting the weakness deals bonus damage and can apply a status.</p><h3>Monster / element table</h3><p>The roster is an everyday-people theme rather than classic undead. Minion families scale in tiers; bosses come in standard, Fast and Turbo variants.</p><table><tbody><tr><th>Family</th><th>Type</th><th>Tiers</th></tr><tr><td>Punk</td><td>Minion</td><td>1-5</td></tr><tr><td>Biker</td><td>Minion</td><td>1-4</td></tr><tr><td>Karen</td><td>Minion</td><td>1-4</td></tr><tr><td>Afro</td><td>Minion</td><td>1-3</td></tr><tr><td>Riot Police, Chef, Scientist, Fire Fighter, Magician, Librarian, Tech Bro, Gym Bro, Baseball Player, Cheerleader</td><td>Minion</td><td>in development</td></tr><tr><td>VarC-Mayor1 250 / VarC-Mayor2 225 / VarC-Chef 175 (base HP, scaled at runtime; the older 180/300/500 prefabs are retired)</td><td>Boss</td><td>standard, Fast, Turbo</td></tr></tbody></table><p>Elemental weaknesses used by boosters and abilities: shock, poison, burn, freeze, splash, stun, blind. Glue is a booster, not an element.</p><h3>Modes</h3><ul><li><strong>Campaign</strong> - authored levels, escalating monster mixes.</li><li><strong>Endless</strong> - survival board with an item refill every 30s to keep the pile stocked.</li><li><strong>Infinite-HP Boss</strong> - a damage-race against a boss whose HP does not deplete to zero; the score is total damage dealt before the tray fills.</li></ul><h2>Monetization</h2><p>The headline product is the <strong>Season Pass</strong> at <strong>$6.99</strong>, reached production in the week of September 22-29, 2025. It runs a free and a premium reward track over a fixed season window; progression is earned through campaign and Endless play. Coin, life, and booster sinks live in the linked Economy doc - do not duplicate values here.</p><ac:structured-macro ac:name=\"note\"><ac:rich-text-body><p><strong>Known launch issues (tracked, historical):</strong></p><ul><li>Hard crash from consecutive glass-impact SFX/VFX on Android, mostly Samsung (Aug-Sep 2025, ZOM-475), fixed by removing the glass SFX and VFX. The separate addressables splash-hang belongs to Domino Delights.</li><li>The font-download freeze that stalls the splash screen at ~22% on slow connections is also Domino Delights (ENG-2346, May 2025); the ZM3D client has no remote font download.</li></ul></ac:rich-text-body></ac:structured-macro><h3>Boss mode reward config</h3><ac:structured-macro ac:name=\"code\"><ac:plain-text-body><![CDATA[boss_mode:\n  hp_model: infinite      # score = total damage before tray fill\n  score_to_pass_points:\n    tier_1: 1.0           # Season Pass points per 1000 damage\n    tier_2: 1.5\n  endless_refill_seconds: 30]]></ac:plain-text-body></ac:structured-macro><p>Owner: Robert (Product). Design: Julia Lawson. Changes to tray count or refill cadence must be reviewed against the OKR dashboard before shipping.</p>",
+   "body_format": "storage",
+   "status": "current",
+   "version": 2,
+   "author_id": "user_EMPLOYEE_0016",
+   "created_at": "2025-01-20T09:00:52Z",
+   "updated_at": "2025-09-30T17:00:00Z"
+  }
+ },
+ "gdd_c1": {
+  "file": "confluence_working.json",
+  "pointer": "/comments/10",
+  "record": {
+   "id": "comment_zm3d_gdd_c1",
+   "page_id": "page_zm3d_gdd",
+   "author_id": "user_EMPLOYEE_0005",
+   "parent_id": null,
+   "body": "Robert - I pulled the 7-slot tray down to 6 in a soft-test branch and D1 retention held while frustration churn dropped. The pile physics already gives us enough dig pressure. Worth a proper A/B before we lock it into the GDD?",
+   "created_at": "2025-07-22T10:14:00Z",
+   "updated_at": "2025-07-22T10:14:00Z"
+  }
+ },
+ "gdd_c2": {
+  "file": "confluence_working.json",
+  "pointer": "/comments/11",
+  "record": {
+   "id": "comment_zm3d_gdd_c2",
+   "page_id": "page_zm3d_gdd",
+   "author_id": "user_EMPLOYEE_0016",
+   "parent_id": "comment_zm3d_gdd_c1",
+   "body": "Julia Lawson - agreed on the A/B, but let's not touch tray count during the Season Pass window. It swings the difficulty curve too hard and skews pass-progression pacing right when we're reading purchase intent. Let's queue the 6-slot test for after the season ends and keep the GDD at 7 for now.",
+   "created_at": "2025-07-22T15:47:00Z",
+   "updated_at": "2025-07-22T15:47:00Z"
+  }
+ },
+ "pr462": {
+  "file": "data.json",
+  "pointer": "/pull_requests/2366",
+  "record": {
+   "id": "harmonygames-Games/match3d#462",
+   "repo_id": "harmonygames-Games/match3d",
+   "number": 462,
+   "title": "Objects Revisions and Changes",
+   "state": "closed",
+   "merged": true,
+   "draft": false,
+   "locked": false,
+   "author_login": "EMPLOYEE_0009_GITHUB_USERNAME",
+   "merged_by_login": "EMPLOYEE_0016_GITHUB_USERNAME",
+   "body": "",
+   "base_ref": "main",
+   "base_sha": "0ff577550e44578ebe472a5b4a64a05275968b7f",
+   "head_ref": "claire.morgan_ObjectRevisions_08",
+   "head_sha": "af09539094fe12c290bf5600603a2982cb6e59ad",
+   "additions": 77,
+   "deletions": 18,
+   "changed_files": 13,
+   "labels": [],
+   "assignee_logins": [],
+   "requested_reviewer_logins": [
+    "EMPLOYEE_0016_GITHUB_USERNAME",
+    "EMPLOYEE_0032_GITHUB_USERNAME"
+   ],
+   "created_at": "2025-09-25T11:43:06Z",
+   "updated_at": "2025-09-25T23:15:41Z",
+   "merged_at": "2025-09-25T23:15:41Z",
+   "closed_at": "2025-09-25T23:15:41Z",
+   "html_url": null
+  }
+ },
+ "julia_root": {
+  "file": "data.json",
+  "pointer": "/drive_files/11673",
+  "record": {
+   "id": "d_8140f09bf9f1b94cb8ee2d",
+   "name": "julia.lawson@harmonygames.co",
+   "mime_type": "application/vnd.google-apps.folder",
+   "parents": [],
+   "owner_email": "julia.lawson@harmonygames.co",
+   "shared_with_emails": [],
+   "visibility": "private",
+   "owners": [
+    "julia.lawson@harmonygames.co"
+   ],
+   "modified_time": null,
+   "created_time": null,
+   "size": null,
+   "trashed": false,
+   "starred": false,
+   "content_path": null,
+   "web_view_link": null,
+   "icon_link": null,
+   "description": null
+  }
+ },
+ "team_DES": {
+  "file": "data.json",
+  "pointer": "/teams/1",
+  "record": {
+   "id": "team_DES",
+   "name": "Design",
+   "key": "DES",
+   "description": null,
+   "is_archived": false,
+   "created_at": "2023-08-02T01:09:41Z",
+   "updated_at": "2025-10-01T06:59:59Z"
+  }
+ },
+ "pr462_comment:/pull_request_comments/644": {
+  "file": "data.json",
+  "pointer": "/pull_request_comments/644",
+  "record": {
+   "id": "harmonygames-Games/match3d#462#c_1",
+   "pr_id": "harmonygames-Games/match3d#462",
+   "author_login": "PERSON_6026_GITHUB_USERNAME",
+   "body": "<!-- This is an auto-generated comment: summarize by coderabbit.ai -->\n<!-- walkthrough_start -->\n\n## Walkthrough\nMaterial import mode updated from 0 to 2 in two Unity FBX .meta files, and rigImportErrors/rigImportWarnings fields were removed from their animations sections.\n\n## Changes\n| Cohort / File(s) | Summary |\n|---|---|\n| **Unity FBX meta import settings**<br>`Assets/MyAssets/3dModels/SmoothedModels/Garden/ChainSaw_smooth.fbx.meta`, `Assets/MyAssets/3dModels/SmoothedModels/Garden/cactus_medium_B_smooth.fbx.meta` | Set ModelImporter.materials.materialImportMode to 2 (from 0). Removed ModelImporter.animations.rigImportErrors and rigImportWarnings entries. |\n\n## Sequence Diagram(s)\n```mermaid\nsequenceDiagram\n  autonumber\n  actor Dev as Unity Editor\n  participant MI as ModelImporter\n  participant FBX as FBX Asset\n  participant Materials as Materials DB\n\n  Dev->>MI: Import FBX (.fbx)\n  MI->>FBX: Read mesh/rig/animation data\n  note over MI: materialImportMode = 2\n  MI->>Materials: Resolve materials per mode 2\n  Materials-->>MI: Material references\n  MI-->>Dev: Imported asset (no rigImportErrors/Warnings fields)\n```\n\n## Estimated code review effort\n🎯 2 (Simple) | ⏱️ ~10 minutes\n\n## Poem\n> I thump my paws—config anew,  \n> Two FBX seeds the garden grew.  \n> Materials mapped, alerts now few,  \n> A tidy burrow for imports true.  \n> Hop-hop! The chainsaw and cactus too—  \n> Smooth as clover in morning dew. 🌿🐇\n\n<!-- walkthrough_end -->\n\n\n\n---\n\n<details>\n<summary>📜 Recent review details</summary>\n\n**Configuration used**: CodeRabbit UI\n\n**Review profile**: CHILL\n\n**Plan**: Free\n\n<details>\n<summary>📥 Commits</summary>\n\nReviewing files that changed from the base of the PR and between 4eb036e0127aff6582994c52d336166fc9a798a1 and af09539094fe12c290bf5600603a2982cb6e59ad.\n\n</details>\n\n<details>\n<summary>⛔ Files ignored due to path filters (10)</summary>\n\n* `Assets/MyAssets/3dModels/SmoothedModels/Food/Candy_1.fbx` is excluded by `!**/*.fbx`\n* `Assets/MyAssets/3dModels/SmoothedModels/Garden/ChainSaw_smooth.fbx` is excluded by `!**/*.fbx`\n* `Assets/MyAssets/3dModels/SmoothedModels/Garden/cactus_medium_B_smooth.fbx` is excluded by `!**/*.fbx`\n* `Assets/MyAssets/3dModels/SmoothedModels/Outdoor/Room_8_Cone_1_Smoothed.fbx` is excluded by `!**/*.fbx`\n* `Assets/MyAssets/3dModels/SmoothedModels/Toys/dart.fbx` is excluded by `!**/*.fbx`\n* `Assets/Prefabs/Objects/Garden/Cactus Plant Medium Orange2.prefab` is excluded by `!**/*.prefab`\n* `Assets/Prefabs/Objects/Sports/Kettlebell Medium Blue3.prefab` is excluded by `!**/*.prefab`\n* `Assets/Prefabs/Objects/Tools/Chainsaw Medium Orange2.prefab` is excluded by `!**/*.prefab`\n* `Assets/Prefabs/Objects/Toys/Cone Medium Orange2.prefab` is excluded by `!**/*.prefab`\n* `Assets/Prefabs/Objects/Toys/Dart Board Medium Blue2.prefab` is excluded by `!**/*.prefab`\n\n</details>\n\n<details>\n<summary>📒 Files selected for processing (2)</summary>\n\n* `Assets/MyAssets/3dModels/SmoothedModels/Garden/ChainSaw_smooth.fbx.meta` (1 hunks)\n* `Assets/MyAssets/3dModels/SmoothedModels/Garden/cactus_medium_B_smooth.fbx.meta` (1 hunks)\n\n</details>\n\n</details>\n\n<!-- announcements_start -->\n\n> [!TIP]\n> <details>\n> <summary>👮 Agentic pre-merge checks are now available in preview!</summary>\n> \n> Pro plan users can now enable pre-merge checks in their settings to enforce checklists before merging PRs.\n> \n> \t- Built-in checks – Quickly apply ready-made checks to enforce title conventions, require pull request descriptions that follow templates, validate linked issues for compliance, and more.\n> \t- Custom agentic checks – Define your own rules using CodeRabbit’s advanced agentic capabilities to enforce organization-specific policies and workflows. For example, you can instruct CodeRabbit’s agent to verify that API documentation is updated whenever API schema files are modified in a PR. Note: Upto 5 custom checks are currently allowed during the preview period. Pricing for this feature will be announced in a few weeks.\n> \n> Please see the [documentation](https://docs.coderabbit.ai/pr-reviews/pre-merge-checks) for more information.\n> \n> Example:\n> \n> ```yaml\n> reviews:\n>   pre_merge_checks:\n>     custom_checks:\n>       - name: \"Undocumented Breaking Changes\"\n>         mode: \"warning\"\n>         instructions: |\n>           Pass/fail criteria: All breaking changes to public APIs, CLI flags, environment variables, configuration keys, database schemas, or HTTP/GraphQL endpoints must be documented in the \"Breaking Change\" section of the PR description and in CHANGELOG.md. Exclude purely internal or private changes (e.g., code not exported from package entry points or explicitly marked as internal).\n> ```\n> \n> Please share your feedback with us on this [Discord post](https://discord.com/channels/1134356397673414807/1414771631775158383).\n> \n> </details>\n\n<!-- announcements_end -->\n\n<!-- tips_start -->\n\n---\n\n> [!NOTE]\n> <details>\n> <summary>🎁 Summarized by CodeRabbit Free</summary>\n> \n> Your organization has reached its limit of developer seats under the Pro Plan. For new users, CodeRabbit will generate a high-level summary and a walkthrough for each pull request. For a comprehensive line-by-line review, please add seats to your subscription by visiting <https://app.coderabbit.ai/login>.If you believe this is a mistake and have available seats, please assign one to the pull request author through the subscription management page using the link above.\n> \n> </details>\n\n<sub>Comment `@PERSON_6026_GITHUB_USERNAME help` to get the list of available commands and usage tips.</sub>\n\n<!-- tips_end -->\n\n<!-- internal state start -->\n\n\n<!-- DwQgtGAEAqAWCWBnSTIEMB26CuAXA9mAOYCmGJATmriQCaQDG+Ats2bgFyRUDuki2VmgoBPSACMxTWpTTjx8XADo08SBAB8AKB2gIOgIKJEJXIgD0AWRFGTZ8wGZal/DIA2FgMrN8+XLDoXdwsAcWEZDHMAYVhVDE80HgB9RB8/WCUAM3EADyU2XDQOLQAiMq0AYgrIAwBJYjJZGnoBIVFIfEzGWIxSRB0oZmpKeDQ3WuYAB3wKXCCSbsxSekyKFkgABkgCSAAmSGwMGQpIefGpmZoKcyGr0Y8AGnQ3O97IWHw+W5Gx5GEF+AXWZ0JRaKAUeBECbTWYAUQoawofyO3Eh0MuAHVhBh4L1kOwISRkIdjqdXCRzjCruZMIDqPB8BhkDxKAsKCQfAA3OhPdm0bAMXFESC0UZEDD4RC4eAMCxjShmbgU4b0HYQ4WAqki7AQt6024MrCay6gyrVAaQAByjJIOiqNReTUNyB2/gWMgYbmE9MZyE6kBIOSpdA6J0m2HEbhlAYw0ulRIt1vIOlhUrpzUY5KVnPgJD4JEymUuXEsdHgglK5TB+i0tlMFmsdfsTjOXjSbuc5I85jCFAi5gYaAYuGwiCSbFFgiSACEUu2Mtk8gUipWSmaavVSOQqBnWkN2v6GD0+haYksQ27IN8IWMUEDcFes6t1lsdvsSZQye50cCKPlhjeHgoFgg7DqO45llOs6pL4/hZLk+SmGgoJQAAShy+DcqqPD4JAmS5m4tCILyaL3vCiLIvQ6o/rgWIUDieJPM+zBfhSNGUCoOIGr6wHbAE/BoGwV5IXh8BuCQpoWqW/iuOgtAyLQXASsmUDSR8LSQhg1A6gs2CTLQKpKTaYKQAAasIoyRmyZCCXQRnJloqbSt89DSNZOZ5gGhbFqckHMKuAxgNoWh6FAZD0P6aB4IQW5NCGTCsOwXC8Pwgj7mIkiZsccgKMoqjqEFIXgFACXMIoSTwERSTsh5LK0EkqwkCQKSFLMBXBaF6CZBsACcACsDg9b1AAsmQkAAjLsDC7EN4iZH1ABsGwbEtDhoDNAAcU3iAtJB9T1aD0JoujFZmrDlZVY41bmdUNeyzXhe1QA=== -->\n\n<!-- internal state end -->",
+   "created_at": "2025-09-25T11:43:14Z",
+   "updated_at": null
+  }
+ }
+}

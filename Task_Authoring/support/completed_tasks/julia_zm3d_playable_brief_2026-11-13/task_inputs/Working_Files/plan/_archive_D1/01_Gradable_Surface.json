@@ -1,0 +1,1149 @@
+{
+ "kind": "GRADABLE_SURFACE",
+ "version": 1,
+ "task": "julia_zm3d_playable_brief",
+ "revision": "D1-design",
+ "truth_keys": [
+  "Grenade",
+  "Couch",
+  "Iron",
+  "Shuriken",
+  "Bow",
+  "Cute Axe",
+  "Cute Hammer",
+  "Gift Box",
+  "Plushie Chick",
+  "Cactus Plant",
+  "Chainsaw",
+  "Traffic Cone",
+  "Washing Machine",
+  "Oven",
+  "Refrigerator",
+  "Toaster",
+  "Coffee Machine",
+  "Microwave",
+  "Stove",
+  "Kitchen Mixer",
+  "Ice Cream Machine",
+  "Safe",
+  "Ironing Board",
+  "Square Table",
+  "Bathroom Scale",
+  "Bathtub",
+  "Hair Dryer",
+  "Wash Basin",
+  "Wash Basin Cabinet",
+  "Toilet",
+  "Toilet Paper",
+  "Plunger",
+  "Wooden Hairbrush",
+  "Electric Hair Trimmer",
+  "Slippers",
+  "Paper Towel",
+  "Acoustic Guitar",
+  "Electric Guitar",
+  "Cello",
+  "Harp",
+  "Trumpet",
+  "Tambourine",
+  "Cymbals",
+  "Xylophone",
+  "Dartboard",
+  "Candy",
+  "Wooden Crate",
+  "Wooden Bucket",
+  "Large Barrel",
+  "GrandPiano",
+  "Wheelbarrow",
+  "Rolling Pin",
+  "Patterned Teapot",
+  "Dutch Oven",
+  "Round Pan",
+  "Square Pan",
+  "Spatula",
+  "Whisk",
+  "Round Kettle",
+  "Small Kettle",
+  "Tall Kettle",
+  "Cup",
+  "Mug",
+  "Plate",
+  "Fancy Plate",
+  "Wine Bottle",
+  "Milk Carton",
+  "Armchair",
+  "RetroTV",
+  "Small Lamp",
+  "Desk Lamp",
+  "Alarm Clock",
+  "Record Player",
+  "Flower Pot",
+  "Watering Can",
+  "Dynamite",
+  "Garden Shears",
+  "Dice",
+  "Zombie Chef",
+  "Zombie Bike Kid",
+  "Zombie Boxer",
+  "Zombie Mayor",
+  "Cannon",
+  "Cannon shot",
+  "Tray",
+  "Monster HP bar",
+  "Item frame",
+  "Win and lose panels",
+  "Buttons",
+  "Board background",
+  "Match scale",
+  "Explosion",
+  "Cannon sound",
+  "Win stinger",
+  "Lose stinger",
+  "Music",
+  "Fonts",
+  "Soccer Ball",
+  "Basketball",
+  "Toy Drum",
+  "Scooter",
+  "Bicycle",
+  "Toy Hammer"
+ ],
+ "classes": [
+  "Delivered",
+  "Ready",
+  "Owed"
+ ],
+ "truth_fields": {
+  "class": "State",
+  "groups": "groups"
+ },
+ "deliverables": {
+  "handoff": {
+   "kind": "table",
+   "name_regex": "(?i).*(hand-?off|pack|playable).*",
+   "key_column": "Line",
+   "key_regex": "[A-Z][A-Za-z ]*[0-9][A-Za-z0-9 ]*|[A-Z][A-Za-z ]+",
+   "columns": [
+    "Line",
+    "Kind",
+    "Board set",
+    "State",
+    "What's owed",
+    "Who has it",
+    "Ticket"
+   ],
+   "class_column": "State",
+   "reason_column": "What's owed",
+   "comparators": {
+    "State": "norm",
+    "Board set": "norm",
+    "Who has it": "norm",
+    "Ticket": "issue_key"
+   }
+  },
+  "brief": {
+   "kind": "json_text",
+   "tool": "gdocs_batch_update"
+  },
+  "comments": {
+   "kind": "json_text",
+   "tool": "linear_create_comment"
+  },
+  "updates": {
+   "kind": "json_text",
+   "tool": "linear_update_issue"
+  },
+  "creates": {
+   "kind": "json_text",
+   "tool": "linear_create_issue"
+  },
+  "replies": {
+   "kind": "json_text",
+   "tool": "slack_send_message"
+  },
+  "share": {
+   "kind": "calls",
+   "tool": "gdrive_share_file"
+  }
+ },
+ "slots": [
+  {
+   "id": "X1",
+   "title": "Washing Machine state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "pack list and ticket say the model file is in the outgoing folder; Arthur's #zombie-bugs post says a multi-select export writes an empty shell",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Washing Machine",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "state"
+  },
+  {
+   "id": "X2",
+   "title": "Bathtub state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "ticket says the art is fine and the file is exported; Claire's DM says she is redoing the UVs on the bathroom ones",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Bathtub",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "state"
+  },
+  {
+   "id": "X3",
+   "title": "Cactus Plant state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "pack list says it went in the 24 Sep zip; base #zombie-art and match3d#462 show the art changed on 25 Sep",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Cactus Plant",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "state"
+  },
+  {
+   "id": "X4",
+   "title": "Cello state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "its ticket says exported 26 Sep; Brian's later comment on the pack ticket says the music set comes in without textures",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Cello",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PARENT"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "state"
+  },
+  {
+   "id": "X5",
+   "title": "Match scale state",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "its ticket says exported .wav; Calvin's source sheet says it is cut from a bought pack; the notes let only owned sound leave",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Match scale",
+    "State"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "state"
+  },
+  {
+   "id": "X6",
+   "title": "Washing Machine what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Arthur's post, joined to the ticket's export note",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Washing Machine",
+    ".*([Rr]e-?export|[Ee]mpty|[Ss]hell|one (at a time|by one)).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owed"
+  },
+  {
+   "id": "X7",
+   "title": "Bathtub what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Claire's DM, joined to the pack list's set",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Bathtub",
+    ".*(UV|[Uu]nwrap|[Rr]edo|[Rr]edone|[Rr]edoing|[Aa]rt).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owed"
+  },
+  {
+   "id": "X8",
+   "title": "Cactus Plant what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from the 25 Sep revision, joined to the 24 Sep delivery",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Cactus Plant",
+    ".*([Cc]hanged|[Rr]evis|[Cc]urrent|[Nn]ew(er)? version|[Rr]e-?send|[Cc]olou?r).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owed"
+  },
+  {
+   "id": "X9",
+   "title": "Cello what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Brian's pack-ticket comment, joined to the pack list's set",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Cello",
+    ".*([Tt]exture|[Gg]r[ae]y|[Rr]e-?export|another pass).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PARENT"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owed"
+  },
+  {
+   "id": "X10",
+   "title": "Match scale what is owed",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the reason comes from Calvin's source sheet, joined to the notes' sound rule",
+   "class": "write_content",
+   "selector": [
+    "reason_matches",
+    "Match scale",
+    ".*([Ll]icen[cs]|[Bb]ought|[Pp]ack|[Oo]wn|[Rr]eplace).*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owed"
+  },
+  {
+   "id": "X11",
+   "title": "Bathtub who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the owner follows from Claire's DM (she is redoing the art)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Bathtub",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owner"
+  },
+  {
+   "id": "X12",
+   "title": "Match scale who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the owner follows from Calvin's source sheet (he keeps the cues)",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Match scale",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owner"
+  },
+  {
+   "id": "C1",
+   "title": "Fonts who has it",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the line's own ticket says no font files have come from Martin",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Fonts",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owner"
+  },
+  {
+   "id": "C2",
+   "title": "Music who has it",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the line's own ticket says the track choice is with Frederick",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Music",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owner"
+  },
+  {
+   "id": "X16",
+   "title": "Washing Machine who has it",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the owner follows from Arthur's post (redo by hand what was pushed out) joined to the ticket's export note",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Washing Machine",
+    "Who has it"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "owner"
+  },
+  {
+   "id": "X13",
+   "title": "Bow board set",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Robert's 23 Sep picks list the iron; his 26 Sep reply under another post puts the bow on the board instead",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Bow",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "set"
+  },
+  {
+   "id": "X14",
+   "title": "Iron board set",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "same two records: the iron leaves the default eight",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Iron",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "set"
+  },
+  {
+   "id": "X15",
+   "title": "Soccer Ball board set",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "not on Brian's list; Robert's 26 Sep reply adds it to what goes over",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Soccer Ball",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "set"
+  },
+  {
+   "id": "C4",
+   "title": "Grenade board set",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "on Robert's 23 Sep picks and unchanged",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Grenade",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "set"
+  },
+  {
+   "id": "C5",
+   "title": "Rolling Pin board set",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "on the pack list, not on Robert's picks: an extra",
+   "class": "direct",
+   "selector": [
+    "field",
+    "Rolling Pin",
+    "Board set"
+   ],
+   "role": "sample",
+   "mechanisms": [],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "group": "set"
+  },
+  {
+   "id": "V1",
+   "title": "hand-off list lines",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "97 lines on Brian's list plus the six Robert added in a reply elsewhere",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_keys_exact"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "fact_id": "line_set",
+   "volume_for": [
+    "state",
+    "owed",
+    "owner",
+    "set"
+   ],
+   "expected_keys": [
+    "Grenade",
+    "Couch",
+    "Iron",
+    "Shuriken",
+    "Bow",
+    "Cute Axe",
+    "Cute Hammer",
+    "Gift Box",
+    "Plushie Chick",
+    "Cactus Plant",
+    "Chainsaw",
+    "Traffic Cone",
+    "Washing Machine",
+    "Oven",
+    "Refrigerator",
+    "Toaster",
+    "Coffee Machine",
+    "Microwave",
+    "Stove",
+    "Kitchen Mixer",
+    "Ice Cream Machine",
+    "Safe",
+    "Ironing Board",
+    "Square Table",
+    "Bathroom Scale",
+    "Bathtub",
+    "Hair Dryer",
+    "Wash Basin",
+    "Wash Basin Cabinet",
+    "Toilet",
+    "Toilet Paper",
+    "Plunger",
+    "Wooden Hairbrush",
+    "Electric Hair Trimmer",
+    "Slippers",
+    "Paper Towel",
+    "Acoustic Guitar",
+    "Electric Guitar",
+    "Cello",
+    "Harp",
+    "Trumpet",
+    "Tambourine",
+    "Cymbals",
+    "Xylophone",
+    "Dartboard",
+    "Candy",
+    "Wooden Crate",
+    "Wooden Bucket",
+    "Large Barrel",
+    "GrandPiano",
+    "Wheelbarrow",
+    "Rolling Pin",
+    "Patterned Teapot",
+    "Dutch Oven",
+    "Round Pan",
+    "Square Pan",
+    "Spatula",
+    "Whisk",
+    "Round Kettle",
+    "Small Kettle",
+    "Tall Kettle",
+    "Cup",
+    "Mug",
+    "Plate",
+    "Fancy Plate",
+    "Wine Bottle",
+    "Milk Carton",
+    "Armchair",
+    "RetroTV",
+    "Small Lamp",
+    "Desk Lamp",
+    "Alarm Clock",
+    "Record Player",
+    "Flower Pot",
+    "Watering Can",
+    "Dynamite",
+    "Garden Shears",
+    "Dice",
+    "Zombie Chef",
+    "Zombie Bike Kid",
+    "Zombie Boxer",
+    "Zombie Mayor",
+    "Cannon",
+    "Cannon shot",
+    "Tray",
+    "Monster HP bar",
+    "Item frame",
+    "Win and lose panels",
+    "Buttons",
+    "Board background",
+    "Match scale",
+    "Explosion",
+    "Cannon sound",
+    "Win stinger",
+    "Lose stinger",
+    "Music",
+    "Fonts",
+    "Soccer Ball",
+    "Basketball",
+    "Toy Drum",
+    "Scooter",
+    "Bicycle",
+    "Toy Hammer"
+   ]
+  },
+  {
+   "id": "A1",
+   "title": "owed count on the list",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the count of Owed lines after every deciding record is applied (54)",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Owed"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "REVISED",
+    "PARENT",
+    "AUDIO",
+    "PICKS"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "fact_id": "count_owed"
+  },
+  {
+   "id": "A2",
+   "title": "ready count on the list",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the count of Ready lines (30)",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Ready"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "PARENT",
+    "AUDIO",
+    "REVISED"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "fact_id": "count_ready"
+  },
+  {
+   "id": "A3",
+   "title": "delivered count on the list",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "the count of lines PlayableX holds and can use (19)",
+   "class": "aggregate",
+   "selector": [
+    "total",
+    "Delivered"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "the hand-off list goes in my Drive",
+   "fact_id": "count_with"
+  },
+  {
+   "id": "W1",
+   "title": "reply gives the owed count",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "same count carried into the reply (54)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*54.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "REVISED",
+    "PARENT",
+    "AUDIO",
+    "PICKS"
+   ],
+   "incorporating_span": "reply to him with the counts",
+   "fact_id": "count_owed"
+  },
+  {
+   "id": "W2",
+   "title": "reply gives the ready count",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "same count carried into the reply (30)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*30.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "PARENT",
+    "AUDIO",
+    "REVISED"
+   ],
+   "incorporating_span": "reply to him with the counts",
+   "fact_id": "count_ready"
+  },
+  {
+   "id": "W3",
+   "title": "reply gives the delivered count",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "same count carried into the reply (19)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "replies",
+    ".*19.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "reply to him with the counts",
+   "fact_id": "count_with"
+  },
+  {
+   "id": "W4",
+   "title": "Washing Machine ticket back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "applies that line's Owed call to its own ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*ART-806.*[Tt]odo.*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "EXPORT"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "group": "moves"
+  },
+  {
+   "id": "W5",
+   "title": "Bathtub ticket back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "applies that line's Owed call to its own ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*ART-819.*[Tt]odo.*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "ARTHOLD"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "group": "moves"
+  },
+  {
+   "id": "W6",
+   "title": "Cactus Plant ticket back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "applies that line's Owed call to its own ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*ART-803.*[Tt]odo.*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "REVISED"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "group": "moves"
+  },
+  {
+   "id": "W7",
+   "title": "Cello ticket back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "applies that line's Owed call to its own ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*ART-832.*[Tt]odo.*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "PARENT"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "group": "moves"
+  },
+  {
+   "id": "W8",
+   "title": "Match scale ticket back to Todo",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "applies that line's Owed call to its own ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*ART-884.*[Tt]odo.*"
+   ],
+   "role": "sample",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "group": "moves"
+  },
+  {
+   "id": "W9",
+   "title": "tickets moved to Todo",
+   "weight": 3,
+   "work_kind": "calculation",
+   "work_reason": "exactly the 48 Owed lines that have a ticket (39 decided off the ticket, nine on the ticket's own note); every line ticket starts Done",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "updates",
+    ".*[Tt]odo.*"
+   ],
+   "role": "volume",
+   "mechanisms": [
+    "EXPORT",
+    "ARTHOLD",
+    "REVISED",
+    "PARENT",
+    "AUDIO"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "fact_id": "moves_48",
+   "volume_for": [
+    "moves"
+   ],
+   "atoms": 1
+  },
+  {
+   "id": "W10",
+   "title": "new ticket for Soccer Ball",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a line Robert added has no ticket: one is opened under the pack ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "creates",
+    ".*[Ss]occer [Bb]all.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "fact_id": "new_ticket_soccer"
+  },
+  {
+   "id": "W11",
+   "title": "new ticket for Toy Drum",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "a line Robert added has no ticket: one is opened under the pack ticket",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "creates",
+    ".*[Tt]oy [Dd]rum.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "fact_id": "new_ticket_drum"
+  },
+  {
+   "id": "W12",
+   "title": "comment on the Wooden Crate ticket",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the line's own ticket states what is owed; the comment repeats it for the owner",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "comments",
+    ".*ART-840.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "anything we still owe goes back on its ticket",
+   "fact_id": "comment_crate"
+  },
+  {
+   "id": "B1",
+   "title": "brief: default eight",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "Robert's 23 Sep picks as changed by his 26 Sep reply (bow in, iron out)",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    ".*Bow.*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "PICKS"
+   ],
+   "incorporating_span": "the brief goes in my Drive",
+   "fact_id": "default_eight"
+  },
+  {
+   "id": "B2",
+   "title": "brief: scenario",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Frederick chose Scenario 1 on 15 Sep in the PlayableX channel",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    ".*[Ss]cenario 1.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the brief goes in my Drive",
+   "fact_id": "scenario"
+  },
+  {
+   "id": "B3",
+   "title": "brief: zombies and animation",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "Robert's 29 Sep answer to PlayableX's question: walk; Chef, Bike Kid, Boxer, Mayor",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    ".*[Ww]alk.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the brief goes in my Drive",
+   "fact_id": "zombies_anim"
+  },
+  {
+   "id": "B4",
+   "title": "brief: tray size",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "the design page says a 7-slot tray; the 6-slot proposal in its comments was not adopted",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    ".*(7|seven)[- ]slot.*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the brief goes in my Drive",
+   "fact_id": "tray"
+  },
+  {
+   "id": "B5",
+   "title": "brief: start date",
+   "weight": 3,
+   "work_kind": "interpretation",
+   "work_reason": "29 Sep, then 6 Oct, then 3 Nov in the PlayableX channel: the last stands",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    ".*(3 Nov|Nov 3|November 3|2025-11-03).*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the brief goes in my Drive",
+   "fact_id": "start_date"
+  },
+  {
+   "id": "B6",
+   "title": "brief: sound section",
+   "weight": 5,
+   "work_kind": "multi_source_reconciliation",
+   "work_reason": "the notes' rule (only sound we own leaves) applied to Calvin's source sheet: two cues are out",
+   "class": "write_content",
+   "selector": [
+    "text",
+    "brief",
+    ".*([Mm]atch scale|[Ee]xplosion).*"
+   ],
+   "role": "core",
+   "mechanisms": [
+    "AUDIO"
+   ],
+   "incorporating_span": "the brief goes in my Drive",
+   "fact_id": "sound_section"
+  },
+  {
+   "id": "D1",
+   "title": "reply in Frederick's DM",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "reply where he asked",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_channel_post",
+    "D05SD5QLG94",
+    ".*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "reply to him with the counts"
+  },
+  {
+   "id": "D2",
+   "title": "post in the PlayableX channel",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the channel the ask names",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "slack_channel_post",
+    "C08H78VJG80",
+    ".*"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "post both links in the PlayableX channel"
+  },
+  {
+   "id": "D3",
+   "title": "hand-off list in Julia's Drive",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "created under her own root",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "register_parent",
+    "d_8140f09bf9f1b94cb8ee2d"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the hand-off list goes in my Drive"
+  },
+  {
+   "id": "D4",
+   "title": "both files shared for viewing",
+   "weight": 1,
+   "work_kind": "lookup",
+   "work_reason": "the notes: both files, view only, to the people on the kickoff hold and PlayableX's intake address",
+   "class": "delivery",
+   "selector": [
+    "delivery",
+    "share_reader"
+   ],
+   "role": "core",
+   "mechanisms": [],
+   "incorporating_span": "the brief goes in my Drive"
+  }
+ ]
+}
